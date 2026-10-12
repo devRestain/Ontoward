@@ -1,0 +1,34 @@
+{
+  "sources": [
+    {
+      "name": "opening",
+      "source": "assets/2026Datathon_개회식.pptx",
+      "source_sha256": "bfc6c20f3fe74aa3fd93d6c878739513f52be16d2aef79e562dd944424be9641",
+      "source_date": "2026-10-06",
+      "converted_markdown": "assets/nova-competition-2026/slides/opening-2026-10-06.md",
+      "converted_sha256": "76eae91e16b6108112d2fb30eddc82f204853b40debad520cc5df1b6183cf937",
+      "converter": {
+        "name": "markitdown",
+        "version": "0.1.8"
+      }
+    },
+    {
+      "name": "workflow",
+      "source": "assets/run_agent 실행 흐름과 agent 진료 실제 예시.pptx",
+      "source_sha256": "c865db9d2da64aca3c76b099d4686519ce788ebc41804473e0bbda9eefab0b04",
+      "source_date": "2026-10-11",
+      "converted_markdown": "assets/nova-competition-2026/slides/workflow-2026-10-11.md",
+      "converted_sha256": "7dd7795ef19c1ffe5ea8e3406fe87d037fce464d2a920876c1e0ff3e9195bfcf",
+      "converter": {
+        "name": "markitdown",
+        "version": "0.1.8"
+      }
+    }
+  ],
+  "sdk": {
+    "source": "assets/nova-starter/nova_sdk.py",
+    "version": "1.0.1",
+    "sha256": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    "submission_copy": "submission/nova_sdk.py"
+  }
+}

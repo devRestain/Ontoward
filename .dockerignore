@@ -1,0 +1,17 @@
+**
+!Dockerfile
+!submission/
+submission/**
+!submission/requirements.txt
+!.dockerignore
+!Dev/
+Dev/**
+!Dev/codex/
+Dev/codex/**
+!Dev/codex/Dockerfile
+!Dev/ontology/
+Dev/ontology/**
+!Dev/ontology/requirements.txt
+!Dev/packaging/
+Dev/packaging/**
+!Dev/packaging/package_submission.py

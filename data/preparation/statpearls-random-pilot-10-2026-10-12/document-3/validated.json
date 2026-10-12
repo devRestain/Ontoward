@@ -1,0 +1,42 @@
+{
+  "status": "candidate_validated",
+  "schema_version": 1,
+  "vocabulary_terms_sha256": "30ddfa8762fc073b4b40c1243f89bd5bdb839b85fd4bc7b040dc00023f7d6eb4",
+  "schema_sha256": "ce27d55022476a205816d560fb1b9f5621f676e6d28af4fa80a97f06c345af3f",
+  "response_sha256": "c46e2929ac392a637e0edb11738222b8e9d0736e8e84c1c1a4df1bfb689005e9",
+  "source": {
+    "document": "US_StatPearls/statpearls_article-143429.md",
+    "source_group": "US_StatPearls",
+    "sha256": "f2ebb52cf78debdd65a88f1fb217b31459b98e343ba9c4268dccbc96dba0a160",
+    "start_line": 1,
+    "end_line": 55,
+    "catalog": {
+      "title": "Motor Evoked Potential",
+      "organization": "StatPearls Publishing",
+      "year": "2023",
+      "language": "영어",
+      "source_url": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-143429/",
+      "license": "CC BY-NC-ND",
+      "document_type": "질환 개요(교과서)",
+      "format": "Markdown (원본 XML)"
+    },
+    "frontmatter": {
+      "title": "Motor Evoked Potential",
+      "organization": "StatPearls Publishing",
+      "year": "2023",
+      "language": "en",
+      "source_url": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-143429/",
+      "license": "CC BY-NC-ND"
+    }
+  },
+  "grounded_evidence": [],
+  "candidates": {
+    "patterns": [],
+    "supporting_contexts": [],
+    "finding_methods": [],
+    "planned_tests": []
+  },
+  "clinical_review": "not_run",
+  "rdf_admission": "not_run",
+  "submission_admission": "not_run"
+}

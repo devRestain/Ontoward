@@ -1,0 +1,80 @@
+name: ontoward
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    working_dir: /workspace
+    environment:
+      NOVA_API_BASE: ${NOVA_API_BASE:-https://nova.snubhai.org}
+      NOVA_DEV_KEY: ${NOVA_DEV_KEY:-}
+      NOVA_GUIDELINES_DIR: ${NOVA_GUIDELINES_DIR:-/workspace/assets/guidelines}
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace
+    stdin_open: true
+    tty: true
+
+  package:
+    profiles: [tools]
+    image: ontoward-package:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: package
+    working_dir: /submission
+    network_mode: none
+    read_only: true
+    volumes:
+      - type: bind
+        source: ./submission
+        target: /submission
+        read_only: true
+      - type: bind
+        source: ./Tmp/packaging
+        target: /output
+
+  ontology-extraction:
+    image: ontology-extraction:local
+    build:
+      context: .
+      dockerfile: Dev/codex/Dockerfile
+    working_dir: /workspace
+    environment:
+      CODEX_HOME: /opt/ontology/codex-state
+    networks:
+      - ontology-extraction
+    volumes:
+      - type: bind
+        source: ./Dev/codex
+        target: /workspace/Dev/codex
+        read_only: true
+      - type: bind
+        source: ./Dev/ontology
+        target: /workspace/Dev/ontology
+        read_only: true
+      - type: bind
+        source: ./assets/guidelines
+        target: /workspace/assets/guidelines
+        read_only: true
+      - type: bind
+        source: ./data/ontology
+        target: /workspace/data/ontology
+        read_only: true
+      - type: bind
+        source: ./Tmp/codex
+        target: /workspace/Tmp/codex
+      - type: volume
+        source: ontology-codex-state
+        target: /opt/ontology/codex-state
+    stdin_open: true
+    tty: true
+
+volumes:
+  ontology-codex-state:
+
+networks:
+  ontology-extraction:

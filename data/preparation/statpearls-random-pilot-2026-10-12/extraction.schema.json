@@ -1,0 +1,861 @@
+{
+  "$defs": {
+    "AttributeValueTerm": {
+      "enum": [
+        "Head",
+        "Forehead",
+        "Temple",
+        "Occiput",
+        "Face",
+        "Eye",
+        "Ear",
+        "Nose",
+        "Mouth",
+        "Throat",
+        "Neck",
+        "Chest",
+        "Sternal region",
+        "Lateral chest",
+        "Abdomen",
+        "Epigastrium",
+        "Periumbilical region",
+        "Right upper quadrant",
+        "Left upper quadrant",
+        "Right lower quadrant",
+        "Left lower quadrant",
+        "Suprapubic region",
+        "Flank",
+        "Back",
+        "Upper back",
+        "Lower back",
+        "Pelvis",
+        "Groin",
+        "Perineum",
+        "Shoulder",
+        "Upper arm",
+        "Elbow",
+        "Forearm",
+        "Wrist",
+        "Hand",
+        "Finger",
+        "Hip",
+        "Thigh",
+        "Knee",
+        "Lower leg",
+        "Calf",
+        "Ankle",
+        "Foot",
+        "Toe",
+        "Whole body",
+        "Left",
+        "Right",
+        "Bilateral",
+        "Midline",
+        "Pressure-like",
+        "Squeezing",
+        "Burning",
+        "Stabbing",
+        "Dull",
+        "Aching",
+        "Cramping",
+        "Throbbing",
+        "Sudden",
+        "Gradual",
+        "Continuous",
+        "Intermittent",
+        "Progressive",
+        "Improving",
+        "Morning",
+        "Daytime",
+        "Evening",
+        "Nighttime",
+        "Mild",
+        "Moderate",
+        "Severe",
+        "Exertion",
+        "Meals",
+        "Breathing",
+        "Coughing",
+        "Movement",
+        "Position change",
+        "Rest",
+        "Sharp",
+        "Tearing",
+        "Shooting",
+        "Electric shock-like",
+        "Colicky",
+        "Watery",
+        "Mucoid",
+        "Purulent",
+        "Bloody",
+        "Dry",
+        "Productive",
+        "Recurrent",
+        "Stable",
+        "Fluctuating",
+        "Upon waking",
+        "After meals",
+        "Before meals",
+        "During sleep",
+        "Deep inspiration",
+        "Swallowing",
+        "Defecation",
+        "Sexual intercourse",
+        "Menstruation"
+      ],
+      "title": "AttributeValueTerm",
+      "type": "string"
+    },
+    "ClinicalFeatureCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "qualification": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Qualification"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expected_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "present",
+                "absent"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Expected Status"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/SourceSpan"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "qualification",
+        "expected_status",
+        "evidence"
+      ],
+      "title": "ClinicalFeatureCandidate",
+      "type": "object"
+    },
+    "ClinicalPatternCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "disease": {
+          "$ref": "#/$defs/DiseaseTerm"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SymptomTarget"
+            },
+            {
+              "$ref": "#/$defs/ExamFindingTarget"
+            }
+          ],
+          "title": "Target"
+        },
+        "features": {
+          "items": {
+            "$ref": "#/$defs/ClinicalFeatureCandidate"
+          },
+          "title": "Features",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/SourceSpan"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "disease",
+        "target",
+        "features",
+        "evidence"
+      ],
+      "title": "ClinicalPatternCandidate",
+      "type": "object"
+    },
+    "ContextFactorTerm": {
+      "enum": [
+        "History of hypertension",
+        "History of diabetes mellitus",
+        "History of coronary artery disease",
+        "History of heart failure",
+        "History of atrial fibrillation",
+        "History of venous thromboembolism",
+        "History of asthma",
+        "History of chronic obstructive pulmonary disease",
+        "History of chronic kidney disease",
+        "Immunosuppression",
+        "Previous abdominal surgery",
+        "Previous pelvic surgery",
+        "Previous urinary tract procedure",
+        "Previous joint surgery",
+        "Recent surgery",
+        "NSAID use",
+        "Anticoagulant use",
+        "Antiplatelet use",
+        "Systemic corticosteroid use",
+        "Immunosuppressant use",
+        "Diuretic use",
+        "Oral contraceptive use",
+        "Recent antibiotic use",
+        "Opioid use",
+        "Drug allergy",
+        "Food allergy",
+        "Latex allergy",
+        "Family history of premature cardiovascular disease",
+        "Family history of diabetes mellitus",
+        "Family history of colorectal cancer",
+        "Family history of asthma",
+        "Family history of autoimmune disease",
+        "Current tobacco use",
+        "Previous tobacco use",
+        "Heavy alcohol use",
+        "Injection drug use",
+        "Recent travel",
+        "Sick contact",
+        "Tuberculosis exposure",
+        "Prolonged immobilization",
+        "Unprotected sexual intercourse",
+        "Recent animal exposure",
+        "Recent ingestion of potentially contaminated food",
+        "Asbestos exposure",
+        "Silica exposure",
+        "Repetitive manual work",
+        "Occupational chemical exposure",
+        "Recent major stressor",
+        "Bereavement",
+        "Financial stress",
+        "Social isolation",
+        "Sleep deprivation",
+        "Overdue colorectal cancer screening",
+        "Previous abnormal cervical screening result",
+        "Older age",
+        "Pregnancy",
+        "Postpartum status",
+        "Postmenopausal status",
+        "Female sex",
+        "Male sex"
+      ],
+      "title": "ContextFactorTerm",
+      "type": "string"
+    },
+    "DiseaseTerm": {
+      "enum": [
+        "Acute appendicitis",
+        "Acute cholecystitis",
+        "Acute cholangitis",
+        "Acute pancreatitis",
+        "Acute gastroenteritis",
+        "Acute gastritis",
+        "Peptic ulcer disease",
+        "Gastroesophageal reflux disease",
+        "Irritable bowel syndrome",
+        "Ulcerative colitis",
+        "Crohn disease",
+        "Acute diverticulitis",
+        "Bowel obstruction",
+        "Functional constipation",
+        "Hemorrhoids",
+        "Anal fissure",
+        "Colorectal cancer",
+        "Gastric cancer",
+        "Liver cirrhosis",
+        "Acute viral hepatitis",
+        "Hypertension",
+        "Acute myocardial infarction",
+        "Stable angina",
+        "Unstable angina",
+        "Heart failure",
+        "Atrial fibrillation",
+        "Paroxysmal supraventricular tachycardia",
+        "Pericarditis",
+        "Myocarditis",
+        "Aortic dissection",
+        "Pulmonary embolism",
+        "Deep vein thrombosis",
+        "Peripheral artery disease",
+        "Orthostatic hypotension",
+        "Vasovagal syncope",
+        "Asthma",
+        "Chronic obstructive pulmonary disease",
+        "Pneumonia",
+        "Acute bronchitis",
+        "Bronchiectasis",
+        "Pneumothorax",
+        "Lung cancer",
+        "Acute upper respiratory tract infection",
+        "Influenza",
+        "COVID-19",
+        "Acute tonsillopharyngitis",
+        "Acute sinusitis",
+        "Allergic rhinitis",
+        "Pulmonary tuberculosis",
+        "Obstructive sleep apnea",
+        "Migraine",
+        "Tension-type headache",
+        "Cluster headache",
+        "Ischemic stroke",
+        "Intracerebral hemorrhage",
+        "Subarachnoid hemorrhage",
+        "Meningitis",
+        "Epilepsy",
+        "Benign paroxysmal positional vertigo",
+        "Vestibular neuritis",
+        "Ménière disease",
+        "Bell palsy",
+        "Acute cystitis",
+        "Acute pyelonephritis",
+        "Urolithiasis",
+        "Acute bacterial prostatitis",
+        "Benign prostatic hyperplasia",
+        "Acute kidney injury",
+        "Chronic kidney disease",
+        "Acute glomerulonephritis",
+        "Type 1 diabetes mellitus",
+        "Type 2 diabetes mellitus",
+        "Diabetic ketoacidosis",
+        "Hyperthyroidism",
+        "Hypothyroidism",
+        "Subacute thyroiditis",
+        "Adrenal insufficiency",
+        "Iron deficiency anemia",
+        "Vitamin B12 deficiency anemia",
+        "Gout",
+        "Rheumatoid arthritis",
+        "Osteoarthritis",
+        "Lumbar disc herniation",
+        "Spinal stenosis",
+        "Rotator cuff tear",
+        "Cellulitis",
+        "Herpes zoster",
+        "Atopic dermatitis",
+        "Contact dermatitis",
+        "Urticaria",
+        "Anaphylaxis",
+        "Pelvic inflammatory disease",
+        "Ectopic pregnancy",
+        "Ovarian cyst",
+        "Endometriosis",
+        "Major depressive disorder",
+        "Generalized anxiety disorder",
+        "Panic disorder",
+        "Adjustment disorder",
+        "Insomnia disorder"
+      ],
+      "title": "DiseaseTerm",
+      "type": "string"
+    },
+    "ExamFindingTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "exam_finding",
+          "title": "Kind",
+          "type": "string"
+        },
+        "term": {
+          "$ref": "#/$defs/ExamFindingTerm"
+        }
+      },
+      "required": [
+        "kind",
+        "term"
+      ],
+      "title": "ExamFindingTarget",
+      "type": "object"
+    },
+    "ExamFindingTerm": {
+      "enum": [
+        "Pallor",
+        "Cyanosis",
+        "Jaundice",
+        "Diaphoresis",
+        "Dry oral mucosa",
+        "Elevated body temperature",
+        "Tachycardia",
+        "Bradycardia",
+        "Tachypnea",
+        "Hypotension",
+        "Orthostatic blood pressure drop",
+        "Reduced oxygen saturation",
+        "Conjunctival pallor",
+        "Scleral icterus",
+        "Conjunctival injection",
+        "Anisocoria",
+        "Reduced pupillary light response",
+        "Nystagmus",
+        "Pharyngeal erythema",
+        "Tonsillar exudate",
+        "Cervical lymphadenopathy",
+        "Thyroid enlargement",
+        "Jugular venous distension",
+        "Irregular pulse",
+        "Reduced peripheral pulses",
+        "Delayed capillary refill",
+        "Cardiac murmur",
+        "Pericardial friction rub",
+        "Crackles",
+        "Wheezes",
+        "Stridor",
+        "Decreased breath sounds",
+        "Dullness to percussion",
+        "Asymmetric chest expansion",
+        "Abdominal distension",
+        "Abdominal tenderness",
+        "Abdominal guarding",
+        "Rebound tenderness",
+        "Murphy sign",
+        "Costovertebral angle tenderness",
+        "Hepatomegaly",
+        "Splenomegaly",
+        "Hyperactive bowel sounds",
+        "Decreased bowel sounds",
+        "Neck stiffness",
+        "Muscle weakness",
+        "Reduced sensation",
+        "Hyperreflexia",
+        "Hyporeflexia",
+        "Extensor plantar response",
+        "Positive straight leg raise",
+        "Romberg sign",
+        "Limb dysmetria",
+        "Abnormal gait",
+        "Restricted joint range of motion",
+        "Joint effusion",
+        "Pitting edema",
+        "Petechiae",
+        "Purpura",
+        "Skin erythema"
+      ],
+      "title": "ExamFindingTerm",
+      "type": "string"
+    },
+    "ExamMethodTerm": {
+      "enum": [
+        "Conjunctival inspection",
+        "Oral inspection",
+        "Pharyngeal inspection",
+        "Skin inspection",
+        "Pupillary light reflex assessment",
+        "Cervical lymph node palpation",
+        "Thyroid palpation",
+        "Heart auscultation",
+        "Lung auscultation",
+        "Abdominal inspection",
+        "Abdominal auscultation",
+        "Abdominal percussion",
+        "Epigastric palpation",
+        "Right upper quadrant palpation",
+        "Left upper quadrant palpation",
+        "Right lower quadrant palpation",
+        "Left lower quadrant palpation",
+        "Right costovertebral angle percussion",
+        "Left costovertebral angle percussion",
+        "Radial pulse palpation",
+        "Pretibial pitting assessment",
+        "Knee range of motion assessment",
+        "Patellar reflex assessment",
+        "Gait observation",
+        "Body temperature measurement",
+        "Blood pressure measurement",
+        "Orthostatic blood pressure measurement",
+        "Pulse rate measurement",
+        "Respiratory rate measurement",
+        "Pulse oximetry",
+        "Jugular venous pressure assessment",
+        "Dorsalis pedis pulse palpation",
+        "Capillary refill assessment",
+        "Carotid auscultation",
+        "Chest percussion",
+        "Chest expansion assessment",
+        "Abdominal palpation",
+        "Rebound tenderness assessment",
+        "Murphy sign assessment",
+        "Joint effusion assessment",
+        "Muscle strength testing",
+        "Light touch sensation assessment",
+        "Achilles tendon reflex assessment",
+        "Plantar response assessment",
+        "Straight leg raise test",
+        "Romberg test",
+        "Finger-to-nose test",
+        "Nystagmus assessment",
+        "Neck stiffness assessment",
+        "Otoscopy"
+      ],
+      "title": "ExamMethodTerm",
+      "type": "string"
+    },
+    "FindingAttribute": {
+      "enum": [
+        "Location",
+        "Laterality",
+        "Quality",
+        "Onset",
+        "Course",
+        "EpisodeDuration",
+        "Frequency",
+        "Timing",
+        "Severity",
+        "Trigger",
+        "AggravatingFactor",
+        "RelievingFactor",
+        "Radiation"
+      ],
+      "title": "FindingAttribute",
+      "type": "string"
+    },
+    "FindingMethodCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "finding": {
+          "$ref": "#/$defs/ExamFindingTerm"
+        },
+        "method": {
+          "$ref": "#/$defs/ExamMethodTerm"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/SourceSpan"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "finding",
+        "method",
+        "evidence"
+      ],
+      "title": "FindingMethodCandidate",
+      "type": "object"
+    },
+    "PlannedTestCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "disease": {
+          "$ref": "#/$defs/DiseaseTerm"
+        },
+        "test": {
+          "$ref": "#/$defs/TestTerm"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/SourceSpan"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "disease",
+        "test",
+        "evidence"
+      ],
+      "title": "PlannedTestCandidate",
+      "type": "object"
+    },
+    "Qualification": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute": {
+          "$ref": "#/$defs/FindingAttribute"
+        },
+        "value": {
+          "$ref": "#/$defs/AttributeValueTerm"
+        }
+      },
+      "required": [
+        "attribute",
+        "value"
+      ],
+      "title": "Qualification",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "quote": {
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_line",
+        "end_line",
+        "quote"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "SupportingContextCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "disease": {
+          "$ref": "#/$defs/DiseaseTerm"
+        },
+        "context_factor": {
+          "$ref": "#/$defs/ContextFactorTerm"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/SourceSpan"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "disease",
+        "context_factor",
+        "evidence"
+      ],
+      "title": "SupportingContextCandidate",
+      "type": "object"
+    },
+    "SymptomTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "symptom",
+          "title": "Kind",
+          "type": "string"
+        },
+        "term": {
+          "$ref": "#/$defs/SymptomTerm"
+        }
+      },
+      "required": [
+        "kind",
+        "term"
+      ],
+      "title": "SymptomTarget",
+      "type": "object"
+    },
+    "SymptomTerm": {
+      "enum": [
+        "Abdominal pain",
+        "Chest pain",
+        "Headache",
+        "Back pain",
+        "Neck pain",
+        "Sore throat",
+        "Toothache",
+        "Ear pain",
+        "Eye pain",
+        "Joint pain",
+        "Muscle pain",
+        "Limb pain",
+        "Pelvic pain",
+        "Flank pain",
+        "Anal pain",
+        "Dysuria",
+        "Odynophagia",
+        "Dyspareunia",
+        "Dysmenorrhea",
+        "Nausea",
+        "Vomiting",
+        "Diarrhea",
+        "Constipation",
+        "Hematemesis",
+        "Hematochezia",
+        "Melena",
+        "Fecal incontinence",
+        "Tenesmus",
+        "Abdominal bloating",
+        "Early satiety",
+        "Loss of appetite",
+        "Increased appetite",
+        "Dysphagia",
+        "Regurgitation",
+        "Cough",
+        "Sputum production",
+        "Hemoptysis",
+        "Dyspnea",
+        "Wheezing",
+        "Nasal congestion",
+        "Rhinorrhea",
+        "Sneezing",
+        "Epistaxis",
+        "Hoarseness",
+        "Palpitations",
+        "Syncope",
+        "Presyncope",
+        "Dizziness",
+        "Vertigo",
+        "Imbalance",
+        "Weakness",
+        "Paresthesia",
+        "Numbness",
+        "Tremor",
+        "Seizures",
+        "Memory impairment",
+        "Difficulty concentrating",
+        "Slurred speech",
+        "Blurred vision",
+        "Diplopia",
+        "Photophobia",
+        "Vision loss",
+        "Tinnitus",
+        "Hearing loss",
+        "Loss of smell",
+        "Loss of taste",
+        "Polyuria",
+        "Oliguria",
+        "Urinary frequency",
+        "Nocturia",
+        "Urinary urgency",
+        "Urinary hesitancy",
+        "Weak urinary stream",
+        "Sensation of incomplete bladder emptying",
+        "Urinary incontinence",
+        "Hematuria",
+        "Urethral discharge",
+        "Fever",
+        "Chills",
+        "Fatigue",
+        "Malaise",
+        "Weight gain",
+        "Weight loss",
+        "Excessive thirst",
+        "Excessive sweating",
+        "Night sweats",
+        "Pruritus",
+        "Rash",
+        "Easy bruising",
+        "Swelling",
+        "Vaginal bleeding",
+        "Vaginal discharge",
+        "Menstrual irregularity",
+        "Amenorrhea",
+        "Anxiety",
+        "Depressed mood",
+        "Insomnia",
+        "Excessive daytime sleepiness",
+        "Irritability",
+        "Anhedonia"
+      ],
+      "title": "SymptomTerm",
+      "type": "string"
+    },
+    "TestTerm": {
+      "enum": [
+        "Complete blood count",
+        "C-reactive protein",
+        "Erythrocyte sedimentation rate",
+        "Serum electrolytes",
+        "Blood glucose",
+        "Hemoglobin A1c",
+        "Serum creatinine",
+        "Blood urea nitrogen",
+        "Liver function panel",
+        "Serum bilirubin",
+        "Serum lipase",
+        "Cardiac troponin",
+        "B-type natriuretic peptide",
+        "D-dimer",
+        "Thyroid-stimulating hormone",
+        "Free thyroxine",
+        "Serum cortisol",
+        "Serum ferritin",
+        "Vitamin B12 level",
+        "Coagulation profile",
+        "Urinalysis",
+        "Urine culture",
+        "Urine pregnancy test",
+        "Blood culture",
+        "Stool culture",
+        "Stool occult blood test",
+        "Sputum culture",
+        "Respiratory pathogen PCR panel",
+        "Electrocardiography",
+        "Chest radiography",
+        "Abdominal ultrasonography",
+        "Pelvic ultrasonography",
+        "Echocardiography",
+        "Abdominal and pelvic CT",
+        "Brain CT",
+        "Brain MRI",
+        "CT pulmonary angiography",
+        "Upper gastrointestinal endoscopy",
+        "Colonoscopy",
+        "Spirometry"
+      ],
+      "title": "TestTerm",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "patterns": {
+      "items": {
+        "$ref": "#/$defs/ClinicalPatternCandidate"
+      },
+      "title": "Patterns",
+      "type": "array"
+    },
+    "supporting_contexts": {
+      "items": {
+        "$ref": "#/$defs/SupportingContextCandidate"
+      },
+      "title": "Supporting Contexts",
+      "type": "array"
+    },
+    "finding_methods": {
+      "items": {
+        "$ref": "#/$defs/FindingMethodCandidate"
+      },
+      "title": "Finding Methods",
+      "type": "array"
+    },
+    "planned_tests": {
+      "items": {
+        "$ref": "#/$defs/PlannedTestCandidate"
+      },
+      "title": "Planned Tests",
+      "type": "array"
+    }
+  },
+  "required": [
+    "patterns",
+    "supporting_contexts",
+    "finding_methods",
+    "planned_tests"
+  ],
+  "title": "ExtractionResult",
+  "type": "object"
+}

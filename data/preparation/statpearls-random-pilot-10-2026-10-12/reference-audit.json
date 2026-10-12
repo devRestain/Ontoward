@@ -1,0 +1,16 @@
+{
+  "review_type": "agent_authored_source_reference_subset_not_clinician_gold",
+  "document": "US_StatPearls/statpearls_article-30212.md",
+  "reference_relation_count": 2,
+  "found_relation_count": 0,
+  "missed_relation_count": 2,
+  "reference_pydantic_and_grounding": "pass",
+  "saved_prompt_contains_reference_quotes": true,
+  "reference_concepts_approved": true,
+  "quality_subset_result": "fail",
+  "whole_corpus_precision": "not_estimated",
+  "whole_corpus_recall": "not_estimated",
+  "root_cause": "not_established",
+  "additional_model_calls": 0,
+  "clinical_expert_review": "not_run"
+}

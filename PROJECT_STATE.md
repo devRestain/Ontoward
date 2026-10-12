@@ -1,0 +1,200 @@
+/state version=1
+/project id=ontoward
+/status value=planned
+/checkpoint revision=UNKNOWN dirty=unknown updated=2026-10-13T00:26:57+09:00
+/goal phase=current id=ROOT.PILOT02 state=complete action="Investigate empty outputs and propose evidence-backed falsifiable hypotheses"
+/goal phase=next id=ROOT.DIAG01 state=planned action="Evaluate a user-selected bounded diagnostic experiment after a new request"
+/goal phase=history id=ROOT.RANDOM10 state=complete action="Run ten newly sampled StatPearls Luna jobs and coordinate final verification"
+/goal phase=history id=ROOT.PILOT01 state=complete action="Run two random StatPearls Luna extraction jobs and coordinate completed-result verification"
+/goal phase=history id=ROOT.SCHEMA01 state=complete action="Implement the bounded extraction schema offline validator and English prompt"
+/goal phase=history id=ROOT.VOCABULARY02 state=complete action="Record vocabulary approval and assess existing terminology expansion options"
+/goal phase=history id=ROOT.VOCABULARY03 state=complete action="Coordinate the seven-object vocabulary review scope without starting extraction"
+/goal phase=history id=ROOT.SYMPTOMS01 state=complete action="Coordinate specific symptom retrieval contracts and reconcile all owner states"
+/goal phase=history id=ROOT.VOCABULARY01 state=complete action="Coordinate initial English vocabulary preparation and clinician review"
+/goal phase=history id=ROOT.CONTAINED14 state=complete action="Isolate submission packaging and coordinate the self-contained knowledge layout"
+/goal phase=history id=ROOT.CLEANUP42 state=complete action="Remove retired extraction files and refactor retained preparation helpers without altering unrelated contracts"
+/goal phase=history id=ROOT.MODULAR13 state=complete action="Refactor submission packages and coordinate D13 packaging and state ownership"
+/goal phase=history id=ROOT.CONTEXT12 state=complete action="Integrate current competition context submission packaging and scoped contracts"
+/goal phase=history id=ROOT.WORKFLOW01 state=complete action="Integrate D08 v4.2 and D11 with the NOVA submission skeleton and scoped handoffs"
+/goal phase=history id=ROOT.ONTOLOGY01 state=complete action="Coordinate the adopted ontology schema and reconcile cross-directory requirements"
+/goal phase=history id=ROOT.RDF01 state=complete action="Document RDFLib clinical retrieval and coordinate the revised source preparation and submission contracts"
+/goal phase=history id=ROOT.DOC06 state=complete action="Direct agents to the local competition reference when detailed information is needed"
+/goal phase=history id=ROOT.NOVA01 state=complete action="Integrate public competition references with asset navigation and scoped ownership"
+/goal phase=history id=ROOT.DOC05 state=complete action="Require state reconciliation and removal of withdrawn or rejected records before completion"
+/goal phase=history id=ROOT.DOC04 state=complete action="Define project-wide competition scope verification priorities and anti-slop rules"
+/goal phase=history id=ROOT.DOC03 state=complete action="Document organizer asset architecture and separate human orientation from agent contracts"
+/goal phase=history id=ROOT02 state=complete action="Reconcile organizer requirements user selections and scoped documentation"
+/goal phase=history id=ROOT01 state=complete action="Establish the PRD scoped documentation and Docker development skeleton"
+/accept id=ROOT.WORKFLOW01.A1 state=pass action="Reconcile central decisions requirements contracts and the submission entrypoint" evidence=ROOT.E73,ROOT.E74
+/accept id=ROOT.WORKFLOW01.A2 state=pass action="Review all maintained states and preserve unrelated inputs and stopped preparation" evidence=ROOT.E75,ROOT.E76
+/accept id=ROOT.ONTOLOGY01.A1 state=pass action="Align requirements and central decisions with D08" evidence=ROOT.E47
+/accept id=ROOT.ONTOLOGY01.A2 state=pass action="Reconcile cross-directory guidance links and owning states" evidence=ROOT.E48
+/accept id=ROOT.ONTOLOGY01.A3 state=pass action="Preserve execution configuration and delegate artifact evidence to data" evidence=ROOT.E49
+/accept id=ROOT.RDF01.A1 state=pass action="Align PRD behavior and central decisions with the approved RDF design" evidence=ROOT.E41
+/accept id=ROOT.RDF01.A2 state=pass action="Align scoped contracts and human navigation with the approved ownership boundaries" evidence=ROOT.E42
+/accept id=ROOT.RDF01.A3 state=pass action="Reconcile every maintained operational and decision state with the documentation result" evidence=ROOT.E44
+/accept id=ROOT.RDF01.A4 state=pass action="Preserve original organizer files executable configuration and unrelated workspace content" evidence=ROOT.E45
+/accept id=ROOT.DOC06.A1 state=pass action="Add the local competition reference directory and agent reading entry point to root guidance" evidence=ROOT.E39
+/accept id=ROOT.DOC06.A2 state=pass action="Reconcile relevant state documents with the completed root guidance change" evidence=ROOT.E40
+/accept id=ROOT.NOVA01.A1 state=pass action="Connect competition reference documents through agent guidance and human asset navigation" evidence=ROOT.E35
+/accept id=ROOT.NOVA01.A2 state=pass action="Resolve local reference targets across the new package and parent navigation" evidence=ROOT.E36
+/accept id=ROOT.NOVA01.A3 state=pass action="Reconcile maintained states while preserving decisions and child implementation boundaries" evidence=ROOT.E37
+/accept id=ROOT.DOC05.A1 state=pass action="Require all relevant state documents to match the completed task before declaring completion" evidence=ROOT.E31
+/accept id=ROOT.DOC05.A2 state=pass action="Delete withdrawn or rejected work and its exclusive supporting records while preserving required shared evidence" evidence=ROOT.E32
+/accept id=ROOT.DOC05.A3 state=pass action="Review all maintained state documents and reconcile the owning root state with this documentation result" evidence=ROOT.E33
+/accept id=ROOT.DOC04.A1 state=pass action="Define technical English agent contracts and Korean human READMEs" evidence=ROOT.E23
+/accept id=ROOT.DOC04.A2 state=pass action="Limit development to the selected submission workflow and prioritize final container workflow verification" evidence=ROOT.E24
+/accept id=ROOT.DOC04.A3 state=pass action="Define concise coding and minimal comment rules with essential runtime validation" evidence=ROOT.E25
+/accept id=ROOT.DOC04.A4 state=pass action="Preserve existing ownership requirements decisions source files and executable configuration" evidence=ROOT.E29
+/accept id=ROOT.DOC03.A1 state=pass action="Separate human README orientation from agent-consumed directory contracts" evidence=ROOT.E18
+/accept id=ROOT.DOC03.A2 state=pass action="Explain package relationships and preserve root app and data ownership" evidence=ROOT.E19
+/accept id=ROOT.DOC03.A3 state=pass action="Connect root and asset documentation through existing local targets" evidence=ROOT.E20
+/accept id=ROOT02.A1 state=pass action="Align the PRD preliminary workflow SOAP contract and future acceptance scenarios with organizer sources" evidence=ROOT.E14
+/accept id=ROOT02.A2 state=pass action="Record explicit selections and the remaining terminology choice only in DECISION_STATE.md" evidence=ROOT.E15
+/accept id=ROOT02.A3 state=pass action="Preserve scoped ownership and consistent human and agent navigation" evidence=ROOT.E16
+/accept id=ROOT02.A4 state=pass action="Preserve executable configuration and delegated source boundaries while separating unrun evidence" evidence=ROOT.E17
+/accept id=ROOT01.A1 state=pass action="Define the adopted stack and minimal case workflow in PRD.md" evidence=ROOT.E04
+/accept id=ROOT01.A2 state=pass action="Assign nonoverlapping root application and data responsibilities" evidence=ROOT.E01
+/accept id=ROOT01.A3 state=pass action="Centralize Korean decision options without selecting recommendations" evidence=ROOT.E05
+/accept id=ROOT01.A4 state=pass action="Declare one Docker development service and container-installed Python dependencies" evidence=ROOT.E06
+/accept id=ROOT01.A5 state=pass action="Provide human navigation and agent continuation through distinct documents" evidence=ROOT.E08
+/evidence id=ROOT.E01 class=static result=pass source=AGENTS.md observed="Declare root ownership and reference app/PROJECT_STATE.md and data/PROJECT_STATE.md as separate progress owners"
+/evidence id=ROOT.E02 class=runtime result=not_run source=Dockerfile observed="Leave image building package installation and container execution unrun"
+/evidence id=ROOT.E04 class=semantic result=pass source=PRD.md observed="Define the adopted stack case workflow minimum contracts and future implementation boundary"
+/evidence id=ROOT.E05 class=semantic result=pass source=DECISION_STATE.md observed="Separate decision alternatives and recommendations from explicit user selections"
+/evidence id=ROOT.E06 class=static result=pass source=compose.yaml observed="Declare the dev service with a root Dockerfile container-installed requirements interactive Python and the workspace mount"
+/evidence id=ROOT.E07 class=static result=pass source=.dockerignore observed="Limit build context to Docker configuration and dependency inputs"
+/evidence id=ROOT.E08 class=semantic result=pass source=AGENTS.md observed="Separate human navigation agent instructions scoped progress and central decision ownership across the created documents"
+/evidence id=ROOT.E09 class=external_service result=pass source=https://nova.snubhai.org/docs/ observed="Read public development rules with linked rules and evaluation pages on 2026-10-11 without authenticated API execution"
+/evidence id=ROOT.E10 class=static result=pass source=none observed="Observe no Git repository and retain UNKNOWN revision and unknown dirty status"
+/evidence id=ROOT.E11 class=runtime result=not_run source=assets/nova-starter/local.Dockerfile observed="Leave offline preparation resource limits and submission build verification unrun"
+/evidence id=ROOT.E12 class=external_service result=not_run source=assets/nova-starter/sample.py observed="Leave authenticated sample execution uploads and official evaluation unrun"
+/evidence id=ROOT.E13 class=external_service result=unknown source=none observed="Leave development credential credit sample UUID and service readiness unconfirmed"
+/evidence id=ROOT.E14 class=semantic result=pass source=PRD.md observed="Review preliminary actions session budgets SDK SOAP fields guideline retrieval evaluation mapping and future acceptance scenarios against organizer sources"
+/evidence id=ROOT.E15 class=semantic result=pass source=DECISION_STATE.md observed="Review D01 through D06 against explicit user selections and distinguish environment-imposed language scope from a separate selection"
+/evidence id=ROOT.E16 class=semantic result=pass source=AGENTS.md observed="Review scoped contracts and README references without duplicating child progress or central decision lifecycle records"
+/evidence id=ROOT.E17 class=static result=pass source=compose.yaml observed="Compare unchanged Dockerfile compose.yaml requirements.txt and .dockerignore SHA-256 values and reference source preservation through data/PROJECT_STATE.md"
+/evidence id=ROOT.E18 class=semantic result=pass source=AGENTS.md observed="Reserve all README files for human orientation and use AGENTS contracts for agent work without treating upstream commands as authorization"
+/evidence id=ROOT.E19 class=semantic result=pass source=assets/Architecture.md observed="Review package relationships source-only guidance and app versus data responsibilities without creating an assets state scope"
+/evidence id=ROOT.E20 class=static result=pass source=assets/Architecture.md observed="Resolve 68 local reference targets across root navigation and asset guidance without missing files"
+/evidence id=ROOT.E21 class=external_service result=pass source=https://nova.snubhai.org/docs/ observed="Read public package distribution and use context on 2026-10-11 without downloads or authenticated execution"
+/evidence id=ROOT.E22 class=runtime result=not_run source=AGENTS.md observed="Leave a fresh agent-process hierarchy exercise unrun and review inherited directory meanings directly"
+/evidence id=ROOT.E23 class=semantic result=pass source=AGENTS.md observed="Review explicit language and consumer rules for project-authored AGENTS.md and README.md while preserving upstream inputs"
+/evidence id=ROOT.E24 class=semantic result=pass source=AGENTS.md observed="Review submission endpoint curated artifacts representative container workflow cases and exclusions for structure-only deployment-environment and compatibility tests against the requested philosophy and PRD submission format"
+/evidence id=ROOT.E25 class=semantic result=pass source=AGENTS.md observed="Review current-need abstractions readable implementations minimal useful comments explicit failures and retained competition input-output validation"
+/evidence id=ROOT.E26 class=external_service result=pass source=https://github.com/miqdadbadjuber/anti-slop/blob/main/README.md observed="Read public anti-slop comment-cleanup examples through the GitHub connector without installation or remote writes"
+/evidence id=ROOT.E27 class=external_service result=pass source=https://github.com/dmmulroy/anti-slop/blob/main/README.md observed="Read public opinionated code rules on boundary parsing and preserving type evidence through the GitHub connector"
+/evidence id=ROOT.E28 class=external_service result=pass source=https://martinfowler.com/bliki/Yagni.html observed="Read public YAGNI excerpts through web research for current-needs-only implementation"
+/evidence id=ROOT.E29 class=static result=pass source=AGENTS.md observed="Review the before-and-after contract diff and confine this slice edits to root AGENTS.md and PROJECT_STATE.md while retaining ROOT.DOC03 records"
+/evidence id=ROOT.E30 class=runtime result=not_run source=compose.yaml observed="Leave Docker builds container execution and agent workflow verification unrun during the guidance-only slice"
+/evidence id=ROOT.E31 class=semantic result=pass source=AGENTS.md observed="Review required state discovery evidence comparison owner-scoped updates and the completion gate in the root contract diff"
+/evidence id=ROOT.E32 class=semantic result=pass source=AGENTS.md observed="Review deletion of explicitly withdrawn or rejected decisions tasks exclusive references and evidence while retaining evidence needed by active work or accepted results"
+/evidence id=ROOT.E33 class=semantic result=pass source=PROJECT_STATE.md observed="Review root app/PROJECT_STATE.md data/PROJECT_STATE.md and DECISION_STATE.md and reconcile root completion without finding explicitly withdrawn or rejected entries or changed child facts requiring updates"
+/evidence id=ROOT.E34 class=runtime result=not_run source=compose.yaml observed="Leave Docker builds container execution and application workflow verification unrun during ROOT.DOC05"
+/evidence id=ROOT.E35 class=semantic result=pass source=assets/Architecture.md observed="Review new competition reference ownership and connect parent AGENTS and Korean human navigation without modifying root requirements or central decisions"
+/evidence id=ROOT.E36 class=static result=pass source=assets/nova-competition-2026/AGENTS.md observed="Resolve 132 local reference targets across nine new documents and three parent asset documents with no missing target"
+/evidence id=ROOT.E37 class=semantic result=pass source=PROJECT_STATE.md observed="Review root app/PROJECT_STATE.md data/PROJECT_STATE.md and DECISION_STATE.md and preserve child implementation handoffs central decisions and ROOT.DOC05 records while recording current coordination"
+/evidence id=ROOT.E38 class=runtime result=not_run source=compose.yaml observed="Leave Docker builds container execution application workflow and fresh agent-process hierarchy verification unrun during the reference-documentation slice"
+/evidence id=ROOT.E39 class=semantic result=pass source=AGENTS.md observed="Review the added Working Order rule against the existing assets/nova-competition-2026/AGENTS.md and its reference-document inventory"
+/evidence id=ROOT.E40 class=semantic result=pass source=PROJECT_STATE.md observed="Review root app/PROJECT_STATE.md data/PROJECT_STATE.md and DECISION_STATE.md and update root completion while preserving consistent child facts and implementation handoffs"
+/evidence id=ROOT.E41 class=semantic result=pass source=PRD.md observed="Review prepared-graph retrieval source-first sequencing clinical boundaries multi-file artifacts and D05 D07 alignment without implementing the workflow"
+/evidence id=ROOT.E42 class=semantic result=pass source=AGENTS.md observed="Review root application data and asset guidance for English contracts Korean orientation and consistent extraction submission runtime ownership"
+/evidence id=ROOT.E43 class=static result=pass source=PRD.md observed="Resolve 99 local file-link targets across the 15 edited documents and remove obsolete guideline-text retrieval directions"
+/evidence id=ROOT.E44 class=semantic result=pass source=PROJECT_STATE.md observed="Review root app data and central decision state completion goals evidence references handoffs and removed exclusive retrieval records"
+/evidence id=ROOT.E45 class=static result=pass source=requirements.txt observed="Compare unchanged executable configuration and workspace content outside the 15 document targets and reference asset preservation through data/PROJECT_STATE.md"
+/evidence id=ROOT.E46 class=runtime result=not_run source=compose.yaml observed="Leave dependency installation Docker execution API calls and submission verification unrun during ROOT.RDF01"
+/evidence id=ROOT.E47 class=semantic result=pass source=PRD.md observed="Align D07 external preparation records and D08 ontology matching exam Plan-only Test and findings-list SOAP requirements with DECISION_STATE.md"
+/evidence id=ROOT.E48 class=semantic result=pass source=PROJECT_STATE.md observed="Review all four maintained state documents and related contracts and orientation for bounded completion handoffs and unresolved runtime limits without copying child progress"
+/evidence id=ROOT.E49 class=static result=pass source=compose.yaml observed="Compare unchanged Dockerfile compose.yaml requirements.txt and .dockerignore hashes and delegate artifact and organizer-source preservation evidence to data/PROJECT_STATE.md"
+/evidence id=ROOT.E50 class=static result=pass source=PRD.md observed="Resolve 98 local links across the earlier slice documents and remove obsolete finding-model instructions"
+/evidence id=ROOT.E51 class=runtime result=not_run source=compose.yaml observed="Leave RDFLib execution SDK calls diagnosis SOAP submission and infrastructure changes unrun with the configured Docker socket absent and RDFLib undeclared"
+/evidence id=ROOT.E52 class=semantic result=pass source=assets/nova-competition-2026/API_AND_RECORD.md observed="Align the documented EXAM refusal turn cost with the public source observation owned by data"
+/evidence id=ROOT.E73 class=semantic result=pass source=DECISION_STATE.md observed="Integrate D08 v4.2 and D11 with attachment hashes PRD behavior and scoped contracts while preserving D09 and D10 cancellation boundaries"
+/evidence id=ROOT.E74 class=static result=pass source=submission/run.py observed="Record the earlier ROOT.WORKFLOW01 thin root prepare consult and run_agent entrypoint with preserved nova-starter source without copying or editing the SDK"
+/evidence id=ROOT.E75 class=semantic result=pass source=Tmp/workflow-v42-2026-10-12/review.md observed="Review root app data and central decision states with one current and one next goal per owner and retain unrun execution and deferred preparation alignment"
+/evidence id=ROOT.E76 class=artifact result=pass source=Tmp/workflow-v42-2026-10-12/preservation.log observed="Confine existing-file changes to twelve declared files preserve root dependency and Docker definitions and observe only run.py and app/agent.py as new maintained files"
+/evidence id=ROOT.E77 class=runtime result=not_run source=PRD.md observed="Record Docker setup imports graph compilation packaging and clinical execution as unrun during the earlier ROOT.WORKFLOW01 abstract-skeleton slice"
+/scope id=ROOT.S1 state=in action="Own D09 preparation schema tools prompt container integration and cross-scope coordination"
+/scope id=ROOT.S2 state=out action="Delegate submission-agent implementation and runtime graph contracts to submission/PROJECT_STATE.md"
+/scope id=ROOT.S3 state=out action="Delegate source selection provenance quality review and artifact evidence to data/PROJECT_STATE.md"
+/scope id=ROOT.S4 state=out action="Keep decision alternatives selections and lifecycle records in DECISION_STATE.md"
+/scope id=ROOT.S5 state=out action="Exclude additional calls automatic retries corpus expansion submission WSL2 access and continuous workers from ROOT.RANDOM10"
+/scope id=ROOT.S6 state=in action="Own Dev and Tmp operational progress without adding state scopes and reference child progress through their states"
+/scope id=ROOT.S7 state=in action="Review root submission data and central decision state for completion consistency"
+/accept id=ROOT.CONTEXT12.A1 state=pass action="Align current competition requirements decisions ownership and development configuration" evidence=ROOT.E78,ROOT.E82
+/accept id=ROOT.CONTEXT12.A2 state=pass action="Build pinned wheel dependencies and verify the curated archive" evidence=ROOT.E79,ROOT.E80
+/accept id=ROOT.CONTEXT12.A3 state=pass action="Preserve concurrent work and reconcile scoped handoffs" evidence=ROOT.E81,ROOT.E82
+/evidence id=ROOT.E78 class=semantic result=pass source=Tmp/nova-context-2026-10-12/review.md observed="Review D12 PRD scoped contracts current versus historical rules explicit dev environment values Git exclusions and packaged public settings"
+/evidence id=ROOT.E79 class=runtime result=pass source=Tmp/nova-context-2026-10-12/build-dev.log observed="Build ontoward-dev image 261d00d1b7779ebbf28aeb0ca58b0bf04792e5059a22a10278397cc63261ef25 using pinned PyPI wheels and observe pip check without broken requirements in offline verification"
+/evidence id=ROOT.E80 class=artifact result=pass source=Tmp/nova-context-2026-10-12/verification.json observed="Create a six-file ZIP with public .env at its root 8757 compressed bytes 25219 expanded bytes safe paths matching file bytes and no development documents or credentials"
+/evidence id=ROOT.E81 class=artifact result=pass source=Tmp/nova-context-2026-10-12/verification.json observed="Preserve protected source and data inputs while leaving three concurrent Dev file edits untouched and changing only dev environment values in Compose"
+/evidence id=ROOT.E82 class=semantic result=pass source=Tmp/nova-context-2026-10-12/review.md observed="Resolve 195 local links across 30 documents and reconcile root submission data and central decisions while delegating runtime and source evidence to their owners"
+/evidence id=ROOT.E83 class=external_service result=not_run source=none observed="Leave authenticated competition calls uploads evaluation model calls extraction resume and deployment outside this slice"
+/accept id=ROOT.MODULAR13.A1 state=pass action="Integrate D13 responsibility boundaries configuration and package curation" evidence=ROOT.E84,ROOT.E85
+/accept id=ROOT.MODULAR13.A2 state=pass action="Preserve preparation configuration and reconcile all owner handoffs" evidence=ROOT.E86,ROOT.E87
+/evidence id=ROOT.E84 class=semantic result=pass source=Tmp/submission-oop-2026-10-12/review.md observed="Align PRD D13 root child contracts and human orientation with execution classes common state RDFLib access and retained packaged settings"
+/evidence id=ROOT.E85 class=artifact result=pass source=Tmp/submission-oop-2026-10-12/verification.json observed="Package nineteen runtime and configuration files with nested Python paths public .env ZIP-root entrypoints 12476 compressed bytes and 27599 expanded bytes and verify extracted-package use"
+/evidence id=ROOT.E86 class=artifact result=pass source=Tmp/submission-oop-2026-10-12/verification.json observed="Preserve twenty-five protected configuration organizer ontology and extraction files and retain dependency and public environment bytes without changes"
+/evidence id=ROOT.E87 class=semantic result=pass source=Tmp/submission-oop-2026-10-12/review.md observed="Resolve fifty-eight local links and reconcile root submission data and central decisions with no new operational state owner or automatic next-slice execution"
+/evidence id=ROOT.E88 class=external_service result=not_run source=none observed="Leave competition API model calls sample runs upload evaluation and deployment outside the refactor"
+/accept id=ROOT.CONTAINED14.A1 state=pass action="Build the isolated submission archive image and verify its source boundary" evidence=ROOT.E89,ROOT.E90
+/accept id=ROOT.CONTAINED14.A2 state=pass action="Preserve development resources and reconcile all owner handoffs" evidence=ROOT.E91,ROOT.E92
+/evidence id=ROOT.E89 class=runtime result=pass source=Tmp/submission-contained-2026-10-12/verification.json observed="Build package image 30d118d241f5f26f1200eda6bd4a718f3bb73a5ef9fca144c20a9c5ca114cb9c and observe only submission/output mounts loopback networking and no project dependency installation"
+/evidence id=ROOT.E90 class=artifact result=pass source=Tmp/submission-contained-2026-10-12/verification.json observed="Create nineteen-file ZIP with internal packages and public .env at Tmp/submission-package/ontoward-submission.zip using only submission input and verify 12477 compressed bytes and 27614 expanded bytes"
+/evidence id=ROOT.E91 class=artifact result=pass source=Tmp/submission-contained-2026-10-12/document-and-preservation.json observed="Preserve twenty-four protected files add package service and explicit dev target and leave observed concurrent extraction-related Compose edits intact"
+/evidence id=ROOT.E92 class=semantic result=pass source=Tmp/submission-contained-2026-10-12/review.md observed="Align D14 PRD contracts fifteen documents fifty-eight local links and root submission data handoffs without resuming the next slice"
+/evidence id=ROOT.E93 class=external_service result=not_run source=none observed="Leave competition API calls samples upload evaluation model jobs and deployment outside this slice"
+/accept id=ROOT.CLEANUP42.A1 state=pass action="Remove retired extraction code results and model cache while retaining current inputs and credentials" evidence=ROOT.CLEANUP42.E1,ROOT.CLEANUP42.E2
+/accept id=ROOT.CLEANUP42.A2 state=pass action="Verify moved helper paths and preserve unrelated source contracts decisions and goals" evidence=ROOT.CLEANUP42.E3,ROOT.CLEANUP42.E4
+/evidence id=ROOT.CLEANUP42.E1 class=artifact result=pass source=Dev/AGENTS.md observed="Retain five Dev files two Tmp guidance files and nine data files; remove the legacy extraction implementations runs reviews previews and snapshots without keeping an archive"
+/evidence id=ROOT.CLEANUP42.E2 class=runtime result=pass source=Dev/codex/Dockerfile observed="Build the minimal Codex CLI 0.162.1 environment with local ChatGPT login workspace pin gpt-6-luna medium and disabled search; preserve credential bytes and remove the old extraction image and model-cache volume"
+/evidence id=ROOT.CLEANUP42.E3 class=artifact result=pass source=Dev/packaging/package_submission.py observed="Verify the moved package helper and a nineteen-member archive from submission-only input; remove the disposable ZIP after checking its integrity and preserve submission source and ontology input bytes"
+/evidence id=ROOT.CLEANUP42.E4 class=semantic result=pass source=AGENTS.md observed="Restore exact pre-cleanup root documents and unrelated submission state from this chat record; preserve philosophy unrelated decisions and current ROOT.CONTAINED14 and next ROOT.INPUT12 while changing only cleanup contracts and moved references"
+/evidence id=ROOT.CLEANUP42.E5 class=static result=unconfigured source=DECISION_STATE.md observed="Keep the replacement D09 extraction method input range candidate format and review contract undecided with no extractor clinical results or admitted runtime bundle"
+/evidence id=ROOT.CLEANUP42.E6 class=artifact result=pass source=Tmp/AGENTS.md observed="Remove all old Tmp execution artifacts at user request; retain unrelated state observations as historical records without claiming their former Tmp sources remain available"
+/evidence id=ROOT.CLEANUP42.E7 class=external_service result=not_run source=none observed="Leave new model inference pilot execution competition API calls submission and WSL2 deployment unrun during cleanup"
+/accept id=ROOT.VOCABULARY01.A1 state=pass action="Document English candidate preparation and clinician review before Dev work" evidence=ROOT.VOCABULARY01.E1
+/accept id=ROOT.VOCABULARY01.A2 state=pass action="Review all maintained states and preserve unrelated implementation and environment inputs" evidence=ROOT.VOCABULARY01.E1,ROOT.VOCABULARY01.E2
+/evidence id=ROOT.VOCABULARY01.E1 class=semantic result=pass source=PRD.md observed="Keep English candidate preparation and clinician review before the later Dev schema and pilot slice"
+/evidence id=ROOT.VOCABULARY01.E2 class=artifact result=pass source=Tmp/specific-symptoms-2026-10-12/retained-vocabulary-evidence.json observed="Record twenty-eight preserved files at the initial English vocabulary preparation checkpoint"
+/evidence id=ROOT.VOCABULARY01.E3 class=external_service result=not_run source=Dev/AGENTS.md observed="Leave new model jobs competition calls uploads evaluation and deployment outside the vocabulary slice"
+/blocker id=ROOT.VOCABULARY.B1 state=resolved action="Resolve the data-owned vocabulary approval dependency through D08 and D09" source=data/PROJECT_STATE.md
+/accept id=ROOT.SYMPTOMS01.A1 state=pass action="Align decisions PRD contracts and human orientation with specific symptoms and alternative patterns" evidence=ROOT.SYMPTOMS01.E1
+/accept id=ROOT.SYMPTOMS01.A2 state=pass action="Remove withdrawn-policy records and preserve shared preparation evidence and unrelated inputs" evidence=ROOT.SYMPTOMS01.E2
+/evidence id=ROOT.SYMPTOMS01.E1 class=semantic result=pass source=Tmp/specific-symptoms-2026-10-12/review.md observed="Align D08 D09 root requirements and all three owner handoffs while retaining clinician review and downstream execution boundaries"
+/evidence id=ROOT.SYMPTOMS01.E2 class=artifact result=pass source=Tmp/specific-symptoms-2026-10-12/verification.json observed="Preserve twenty-seven protected project files and remove the dedicated retired-policy scratch after retaining only shared English preparation and preservation evidence"
+/evidence id=ROOT.SYMPTOMS01.E3 class=external_service result=not_run source=Dev/AGENTS.md observed="Leave new model jobs competition API calls uploads evaluation and deployment unrun"
+/accept id=ROOT.VOCABULARY03.A1 state=pass action="Align the seven-object review scope and extraction gate in central requirements and contracts" evidence=ROOT.VOCABULARY03.E1
+/accept id=ROOT.VOCABULARY03.A2 state=pass action="Preserve preparation runtime and owner-state boundaries while coordinating the review handoff" evidence=ROOT.VOCABULARY03.E1,ROOT.VOCABULARY03.E2
+/evidence id=ROOT.VOCABULARY03.E1 class=semantic result=pass source=Tmp/expanded-vocabulary-2026-10-12/review.md observed="Align D08 D09 PRD root and data contracts with unified clinician review; inspect all three owner states and preserve submission handoff without starting schema or pilot work"
+/evidence id=ROOT.VOCABULARY03.E2 class=artifact result=pass source=Tmp/expanded-vocabulary-2026-10-12/verification.json observed="Verify thirty-one protected files including Turtle runtime Python Compose dependencies and unchanged submission owner documents"
+/evidence id=ROOT.VOCABULARY03.E3 class=external_service result=not_run source=Dev/AGENTS.md observed="Leave model calls pilot execution SDK actions submission and deployment unrun"
+/accept id=ROOT.VOCABULARY02.A1 state=pass action="Record approval in central decisions and reconcile all owner handoffs" evidence=ROOT.VOCABULARY02.E1
+/accept id=ROOT.VOCABULARY02.A2 state=pass action="Assess existing terminology resources without adopting imports or starting extraction" evidence=ROOT.VOCABULARY02.E2
+/evidence id=ROOT.VOCABULARY02.E1 class=semantic result=pass source=DECISION_STATE.md observed="Record the explicit vocabulary approval under D08 and D09; resolve the review dependency and leave the schema task planned"
+/evidence id=ROOT.VOCABULARY02.E2 class=semantic result=pass source=Tmp/vocabulary-approval-2026-10-12/review.md observed="Inspect primary SNOMED LOINC MeSH UMLS RxNorm and BODHI documentation and propose selective seed-based mappings without changing D02 or the adopted source sequence"
+/evidence id=ROOT.VOCABULARY02.E3 class=external_service result=not_run source=Dev/AGENTS.md observed="Leave authenticated terminology-service calls downloads data imports model jobs and pilot execution unrun"
+/accept id=ROOT.SCHEMA01.A1 state=pass action="Verify the schema prompt and offline validation workflow in the owned extraction container" evidence=ROOT.SCHEMA01.E1,ROOT.SCHEMA01.E3
+/accept id=ROOT.SCHEMA01.A2 state=pass action="Reconcile contracts and owner states while preserving runtime and ontology inputs" evidence=ROOT.SCHEMA01.E2
+/evidence id=ROOT.SCHEMA01.E1 class=runtime result=pass source=Tmp/codex/schema-check/verification.json observed="Pass 49 offline checks covering typed candidate workflows strict rejection source grounding reproducible schema and prompt handoff without model calls"
+/evidence id=ROOT.SCHEMA01.E2 class=semantic result=pass source=Tmp/codex/schema-check/review.md observed="Reconcile D09 PRD root Dev and data contracts all three owner states candidate admission limits and preserved submission files"
+/evidence id=ROOT.SCHEMA01.E3 class=runtime result=pass source=Tmp/codex/schema-check/container-ownership.log observed="Build and recreate only the owned extraction service with pinned Pydantic and RDFLib read-only preparation mounts and the retained authentication volume"
+/evidence id=ROOT.SCHEMA01.E4 class=external_service result=not_run source=Dev/ontology/extraction_prompt.md observed="Leave Luna calls actual model schema acceptance clinical extraction quality SDK execution submission and deployment unrun"
+/accept id=ROOT.PILOT01.A1 state=pass action="Run the two bounded independent calls with the pinned model and inputs" evidence=ROOT.PILOT01.E1
+/accept id=ROOT.PILOT01.A2 state=pass action="Preserve observed results and reconcile all owner handoffs without RDF admission" evidence=ROOT.PILOT01.E2
+/evidence id=ROOT.PILOT01.E1 class=external_service result=pass source=data/preparation/statpearls-random-pilot-2026-10-12/verification.json observed="Complete exactly two sequential gpt-6-luna medium Standard calls with the pinned schema no automatic retries no model tool events and confirmed termination"
+/evidence id=ROOT.PILOT01.E2 class=semantic result=pass source=data/preparation/statpearls-random-pilot-2026-10-12/source-review.md observed="Review empty-output evidence limits preserve schema and submission inputs and reconcile root data submission and central decision handoffs"
+/evidence id=ROOT.PILOT01.E3 class=runtime result=not_run source=data/preparation/statpearls-random-pilot-2026-10-12/verification.json observed="Leave nonempty extraction quality clinician review RDF generation clinical admission submission and deployment unrun"
+/accept id=ROOT.RANDOM10.A1 state=pass action="Execute the bounded ten-document selection with the pinned model and schema" evidence=ROOT.RANDOM10.E1
+/accept id=ROOT.RANDOM10.A2 state=pass action="Preserve results and reconcile all state handoffs with observed limits" evidence=ROOT.RANDOM10.E2
+/evidence id=ROOT.RANDOM10.E1 class=external_service result=pass source=data/preparation/statpearls-random-pilot-10-2026-10-12/verification.json observed="Complete ten sequential fixed-input gpt-6-luna medium Standard calls in 82.509 seconds with no retries tool events or active recorded invocation processes"
+/evidence id=ROOT.RANDOM10.E2 class=semantic result=pass source=data/preparation/statpearls-random-pilot-10-2026-10-12/source-review.md observed="Preserve all ten empty responses review technical success separately from source omissions reconcile all owner states and retain previous pilot artifacts"
+/evidence id=ROOT.RANDOM10.E3 class=semantic result=fail source=data/preparation/statpearls-random-pilot-10-2026-10-12/reference-audit.json observed="Miss both source-supported approved Tinnitus patterns in the validated two-relationship agent reference subset without establishing root cause"
+/evidence id=ROOT.RANDOM10.E4 class=runtime result=not_run source=data/preparation/statpearls-random-pilot-10-2026-10-12/verification.json observed="Leave corrective model calls clinical-expert review RDF generation runtime knowledge admission submission and deployment unrun"
+/accept id=ROOT.PILOT02.A1 state=pass action="Inspect saved input custody schema semantics and local instruction metadata without model calls" evidence=ROOT.PILOT02.E1
+/accept id=ROOT.PILOT02.A2 state=pass action="Rank falsifiable hypotheses preserve evidence and leave diagnostic proposals unselected" evidence=ROOT.PILOT02.E2,ROOT.PILOT02.E3
+/evidence id=ROOT.PILOT02.E1 class=static result=pass source=data/preparation/empty-output-investigation-2026-10-13/facts.json observed="Inspect all ten raw responses saved prompt hashes typed enum membership zero-feature references and checked local instruction metadata without a model call"
+/evidence id=ROOT.PILOT02.E2 class=semantic result=pass source=Dev/ontology/empty-output-hypotheses.md observed="Rank seven falsifiable hypotheses distinguish observations from causal claims exclude validator filtering and record unobserved provider payload and model rationale"
+/evidence id=ROOT.PILOT02.E3 class=semantic result=pass source=DECISION_STATE.md observed="Keep the four-cell diagnostic and conditional negative control proposal unselected while reconciling root data and unchanged submission state"
+/evidence id=ROOT.PILOT02.E4 class=external_service result=not_run source=data/preparation/empty-output-investigation-2026-10-13/handoff.md observed="Leave new model calls diagnostic contrasts prompt adoption model switching and clinical admission unrun"
+/handoff state=ready action="Await user selection of the bounded D09 diagnostic proposal without automatically starting a model call"

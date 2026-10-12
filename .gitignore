@@ -1,0 +1,39 @@
+# Local credentials; the submission .env contains only approved public settings.
+.env
+.env.*
+!.env.example
+!/submission/.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+.DS_Store
+*.log
+*.zip
+
+# Keep directory guidance while excluding disposable outputs.
+/Tmp/*
+!/Tmp/AGENTS.md
+!/Tmp/README.md
+
+# Preserve organizer originals locally; version curated reference and contracts.
+/assets/*
+!/assets/AGENTS.md
+!/assets/README.md
+!/assets/Architecture.md
+!/assets/nova-competition-2026/
+!/assets/guidelines/
+!/assets/nova-benchmarks-2026/
+!/assets/nova-samples-2026/
+/assets/guidelines/**
+!/assets/guidelines/**/
+!/assets/guidelines/**/AGENTS.md
+/assets/nova-benchmarks-2026/**
+!/assets/nova-benchmarks-2026/**/
+!/assets/nova-benchmarks-2026/**/AGENTS.md
+/assets/nova-samples-2026/**
+!/assets/nova-samples-2026/**/
+!/assets/nova-samples-2026/**/AGENTS.md
+

@@ -1,0 +1,192 @@
+{
+  "additional_model_calls": 0,
+  "inspected_cli_version": "0.162.1",
+  "schema_bytes": 21722,
+  "schema_description_fields": 0,
+  "clinical_enum_count": 510,
+  "system_profile_fields": {
+    "model": "gpt-6-luna",
+    "model_reasoning_effort": "medium",
+    "web_search": "disabled",
+    "sandbox_mode": "read-only",
+    "approval_policy": "never",
+    "service_tier": null
+  },
+  "workspace_pin_configured": true,
+  "custom_instruction_setting_present": {
+    "developer_instructions": false,
+    "model_instructions_file": false,
+    "project_doc_fallback_filenames": false
+  },
+  "potential_instruction_files": [
+    {
+      "path": "/opt/ontology/codex-state/AGENTS.md",
+      "exists": false
+    },
+    {
+      "path": "/workspace/AGENTS.md",
+      "exists": false
+    },
+    {
+      "path": "/workspace/Tmp/AGENTS.md",
+      "exists": false
+    },
+    {
+      "path": "/workspace/Tmp/codex/AGENTS.md",
+      "exists": false
+    },
+    {
+      "path": "/workspace/Tmp/codex/random-statpearls-pilot-10-2026-10-12/AGENTS.md",
+      "exists": false
+    },
+    {
+      "path": "/workspace/Tmp/codex/random-statpearls-pilot-10-2026-10-12/document-8/AGENTS.md",
+      "exists": false
+    }
+  ],
+  "prompt_has_literal_enum_definition": false,
+  "prompt_has_serialized_json_schema": false,
+  "prompt_has_serialized_vocabulary": false,
+  "schema_has_reference_diseases": true,
+  "schema_has_tinnitus": true,
+  "zero_feature_reference_validation": "candidate_validated",
+  "reference_quotes_in_saved_prompt": true,
+  "prompt_has_schema_path": false,
+  "prompt_has_explicit_nonempty_example": false,
+  "prompt_has_document_title_scope_instruction": false,
+  "prompt_favors_omission": true,
+  "extraction_array_constraints": {
+    "patterns": {
+      "items": {
+        "$ref": "#/$defs/ClinicalPatternCandidate"
+      },
+      "title": "Patterns",
+      "type": "array"
+    },
+    "supporting_contexts": {
+      "items": {
+        "$ref": "#/$defs/SupportingContextCandidate"
+      },
+      "title": "Supporting Contexts",
+      "type": "array"
+    },
+    "finding_methods": {
+      "items": {
+        "$ref": "#/$defs/FindingMethodCandidate"
+      },
+      "title": "Finding Methods",
+      "type": "array"
+    },
+    "planned_tests": {
+      "items": {
+        "$ref": "#/$defs/PlannedTestCandidate"
+      },
+      "title": "Planned Tests",
+      "type": "array"
+    }
+  },
+  "records": [
+    {
+      "title": "Prisms",
+      "prompt_bytes": 27263,
+      "prompt_hash_matches": true,
+      "raw_model_response_equals_saved_final_message": true,
+      "response_empty_before_validator": true,
+      "returncode": 0,
+      "elapsed_seconds": 9.364,
+      "stderr_bytes": 0
+    },
+    {
+      "title": "Advancement Flaps",
+      "prompt_bytes": 38145,
+      "prompt_hash_matches": true,
+      "raw_model_response_equals_saved_final_message": true,
+      "response_empty_before_validator": true,
+      "returncode": 0,
+      "elapsed_seconds": 6.777,
+      "stderr_bytes": 0
+    },
+    {
+      "title": "Motor Evoked Potential",
+      "prompt_bytes": 18238,
+      "prompt_hash_matches": true,
+      "raw_model_response_equals_saved_final_message": true,
+      "response_empty_before_validator": true,
+      "returncode": 0,
+      "elapsed_seconds": 8.727,
+      "stderr_bytes": 0
+    },
+    {
+      "title": "Mohs Micrographic Surgery Management of Melanoma and Melanoma In Situ",
+      "prompt_bytes": 29691,
+      "prompt_hash_matches": true,
+      "raw_model_response_equals_saved_final_message": true,
+      "response_empty_before_validator": true,
+      "returncode": 0,
+      "elapsed_seconds": 7.316,
+      "stderr_bytes": 0
+    },
+    {
+      "title": "Defamation in Healthcare",
+      "prompt_bytes": 25330,
+      "prompt_hash_matches": true,
+      "raw_model_response_equals_saved_final_message": true,
+      "response_empty_before_validator": true,
+      "returncode": 0,
+      "elapsed_seconds": 4.659,
+      "stderr_bytes": 0
+    },
+    {
+      "title": "Platysmaplasty Facelift (Archived)",
+      "prompt_bytes": 32842,
+      "prompt_hash_matches": true,
+      "raw_model_response_equals_saved_final_message": true,
+      "response_empty_before_validator": true,
+      "returncode": 0,
+      "elapsed_seconds": 7.038,
+      "stderr_bytes": 0
+    },
+    {
+      "title": "Medicare and Medicaid Accreditation and Deemed Status",
+      "prompt_bytes": 38451,
+      "prompt_hash_matches": true,
+      "raw_model_response_equals_saved_final_message": true,
+      "response_empty_before_validator": true,
+      "returncode": 0,
+      "elapsed_seconds": 5.717,
+      "stderr_bytes": 0
+    },
+    {
+      "title": "Tinnitus",
+      "prompt_bytes": 15672,
+      "prompt_hash_matches": true,
+      "raw_model_response_equals_saved_final_message": true,
+      "response_empty_before_validator": true,
+      "returncode": 0,
+      "elapsed_seconds": 9.517,
+      "stderr_bytes": 0
+    },
+    {
+      "title": "Metoclopramide",
+      "prompt_bytes": 22775,
+      "prompt_hash_matches": true,
+      "raw_model_response_equals_saved_final_message": true,
+      "response_empty_before_validator": true,
+      "returncode": 0,
+      "elapsed_seconds": 13.353,
+      "stderr_bytes": 0
+    },
+    {
+      "title": "Sonography Gynecology Infertility Assessment, Protocols, and Interpretation",
+      "prompt_bytes": 37129,
+      "prompt_hash_matches": true,
+      "raw_model_response_equals_saved_final_message": true,
+      "response_empty_before_validator": true,
+      "returncode": 0,
+      "elapsed_seconds": 10.041,
+      "stderr_bytes": 0
+    }
+  ],
+  "provider_serialized_request_visibility": "not_observed",
+  "model_internal_reason_for_omission": "not_observed"
+}
