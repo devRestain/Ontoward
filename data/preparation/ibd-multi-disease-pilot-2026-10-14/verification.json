@@ -1,0 +1,257 @@
+{
+  "result": "pass",
+  "check_count": 24,
+  "checks": [
+    "fixed_two_call_contract",
+    "prepared_input_identity",
+    "runner_identity",
+    "selection_identity",
+    "schema_identities",
+    "offline_verification_bundle",
+    "exactly_two_sequential_calls",
+    "call_1_complete_boundary",
+    "call_1_fixed_route_no_retries",
+    "call_1_exact_response_and_prompt",
+    "call_1_one_completion_zero_tools",
+    "call_1_saved_response_matches_event",
+    "call_1_process_group_terminated",
+    "call_2_complete_boundary",
+    "call_2_fixed_route_no_retries",
+    "call_2_exact_response_and_prompt",
+    "call_2_one_completion_zero_tools",
+    "call_2_saved_response_matches_event",
+    "call_2_process_group_terminated",
+    "stage_order_and_no_overlap",
+    "atomic_validation_replay",
+    "conversion_validation_replay",
+    "group_context_in_review_packet",
+    "final_output_schema_unchanged"
+  ],
+  "model_calls": 2,
+  "automatic_retries": 0,
+  "model_tool_events": 0,
+  "atomic_claim_count": 16,
+  "relation_counts": {
+    "patterns": 16,
+    "supporting_contexts": 0,
+    "finding_methods": 0,
+    "planned_tests": 0
+  },
+  "patterns_by_disease": {
+    "Crohn disease": 8,
+    "Ulcerative colitis": 8
+  },
+  "targets_by_disease": {
+    "Crohn disease": [
+      "Abdominal bloating",
+      "Abdominal pain",
+      "Constipation",
+      "Diarrhea",
+      "Fatigue",
+      "Fever",
+      "Tenesmus",
+      "Weight loss"
+    ],
+    "Ulcerative colitis": [
+      "Abdominal bloating",
+      "Abdominal pain",
+      "Constipation",
+      "Diarrhea",
+      "Fatigue",
+      "Fever",
+      "Tenesmus",
+      "Weight loss"
+    ]
+  },
+  "conversion_exclusions": [],
+  "core_and_definition_quoted": {
+    "atomic": 16,
+    "patterns": 16
+  },
+  "zero_feature_pattern_count": 16,
+  "comparison": {
+    "prior_pairs": [
+      [
+        "Crohn disease",
+        "Abdominal bloating"
+      ],
+      [
+        "Crohn disease",
+        "Abdominal pain"
+      ],
+      [
+        "Crohn disease",
+        "Constipation"
+      ],
+      [
+        "Crohn disease",
+        "Diarrhea"
+      ],
+      [
+        "Crohn disease",
+        "Fatigue"
+      ],
+      [
+        "Crohn disease",
+        "Fever"
+      ],
+      [
+        "Crohn disease",
+        "Tenesmus"
+      ],
+      [
+        "Crohn disease",
+        "Weight loss"
+      ]
+    ],
+    "current_pairs": [
+      [
+        "Crohn disease",
+        "Abdominal bloating"
+      ],
+      [
+        "Crohn disease",
+        "Abdominal pain"
+      ],
+      [
+        "Crohn disease",
+        "Constipation"
+      ],
+      [
+        "Crohn disease",
+        "Diarrhea"
+      ],
+      [
+        "Crohn disease",
+        "Fatigue"
+      ],
+      [
+        "Crohn disease",
+        "Fever"
+      ],
+      [
+        "Crohn disease",
+        "Tenesmus"
+      ],
+      [
+        "Crohn disease",
+        "Weight loss"
+      ],
+      [
+        "Ulcerative colitis",
+        "Abdominal bloating"
+      ],
+      [
+        "Ulcerative colitis",
+        "Abdominal pain"
+      ],
+      [
+        "Ulcerative colitis",
+        "Constipation"
+      ],
+      [
+        "Ulcerative colitis",
+        "Diarrhea"
+      ],
+      [
+        "Ulcerative colitis",
+        "Fatigue"
+      ],
+      [
+        "Ulcerative colitis",
+        "Fever"
+      ],
+      [
+        "Ulcerative colitis",
+        "Tenesmus"
+      ],
+      [
+        "Ulcerative colitis",
+        "Weight loss"
+      ]
+    ],
+    "retained_prior_pairs": [
+      [
+        "Crohn disease",
+        "Abdominal bloating"
+      ],
+      [
+        "Crohn disease",
+        "Abdominal pain"
+      ],
+      [
+        "Crohn disease",
+        "Constipation"
+      ],
+      [
+        "Crohn disease",
+        "Diarrhea"
+      ],
+      [
+        "Crohn disease",
+        "Fatigue"
+      ],
+      [
+        "Crohn disease",
+        "Fever"
+      ],
+      [
+        "Crohn disease",
+        "Tenesmus"
+      ],
+      [
+        "Crohn disease",
+        "Weight loss"
+      ]
+    ],
+    "added_pairs": [
+      [
+        "Ulcerative colitis",
+        "Abdominal bloating"
+      ],
+      [
+        "Ulcerative colitis",
+        "Abdominal pain"
+      ],
+      [
+        "Ulcerative colitis",
+        "Constipation"
+      ],
+      [
+        "Ulcerative colitis",
+        "Diarrhea"
+      ],
+      [
+        "Ulcerative colitis",
+        "Fatigue"
+      ],
+      [
+        "Ulcerative colitis",
+        "Fever"
+      ],
+      [
+        "Ulcerative colitis",
+        "Tenesmus"
+      ],
+      [
+        "Ulcerative colitis",
+        "Weight loss"
+      ]
+    ],
+    "missing_prior_pairs": [],
+    "interpretation": "Coverage observation for one fixed paragraph; no causal accuracy or corpus-performance claim"
+  },
+  "elapsed_seconds": 100.645,
+  "usage": {
+    "input_tokens": 42434,
+    "output_tokens": 4909,
+    "reasoning_output_tokens": 416
+  },
+  "user_review": "not_run",
+  "separate_agent_source_meaning_audit": "excluded_by_user",
+  "clinical_accuracy": "not_run",
+  "gold_recall": "not_run",
+  "rdf_generation": "not_run",
+  "rdf_admission": "not_run",
+  "submission_admission": "not_run"
+}

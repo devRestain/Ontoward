@@ -1,0 +1,1174 @@
+{
+  "workflow_version": 2,
+  "differential_policy": "possible_association",
+  "selection": {
+    "document": "US_StatPearls/statpearls_article-131092.md",
+    "sha256": "c013e8ad561c0f7264c9f5c48150c5bcbd27d8153b16fb846f0ba0fc29a3794f",
+    "start_line": 1,
+    "end_line": 97,
+    "source_kind": "textbook",
+    "topic_evidence": [
+      {
+        "start_line": 13,
+        "end_line": 13,
+        "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis. Ulcerative colitis affects the large intestine, whereas Crohn disease may affect any part of the gastrointestinal tract (GIT). IBD is a multisystem condition that predominantly affects the gastrointestinal, musculoskeletal, ocular, and cutaneous systems. The complications that arise outside the intestinal inflammation of IBD are known as extraintestinal manifestations (EIMs) of IBD. Regularly, these manifestations result in significant morbidity in IBD patients, even more so than the intestinal disease itself. EIMs are present in 5% to 50% of all IBD patients. See Figure. Extraintestinal Manifestations of Inflammatory Bowel Disease."
+      }
+    ],
+    "reviewer": "Codex source-screening agent; clinician review not_run",
+    "selection_reason": "Retain the prior eligible IBD disease chapter; name both approved topics and the exact group definition for shared possible associations under the selected D09 pilot.",
+    "population": "IBD patients; pediatric and adult differences remain source-specific conditions",
+    "edition": null,
+    "conversion_quality": "acceptable",
+    "quality_notes": "Inspect Markdown headings and diagnostic paragraph; original text and line numbering intact for selected unit. Figure captions are not diagnostic evidence.",
+    "license_notes": "CC BY-NC-ND retained; local pilot only, no transformed submission admission",
+    "topic_diseases": [
+      "Crohn disease",
+      "Ulcerative colitis"
+    ],
+    "group_context": {
+      "source_term": "IBD",
+      "member_diseases": [
+        "Crohn disease",
+        "Ulcerative colitis"
+      ],
+      "evidence": [
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    }
+  },
+  "source": {
+    "document": "US_StatPearls/statpearls_article-131092.md",
+    "source_group": "US_StatPearls",
+    "sha256": "c013e8ad561c0f7264c9f5c48150c5bcbd27d8153b16fb846f0ba0fc29a3794f",
+    "start_line": 1,
+    "end_line": 97,
+    "catalog": {
+      "title": "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+      "organization": "StatPearls Publishing",
+      "year": "2023",
+      "language": "영어",
+      "source_url": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-131092/",
+      "license": "CC BY-NC-ND",
+      "document_type": "질환 개요(교과서)",
+      "format": "Markdown (원본 XML)"
+    },
+    "frontmatter": {
+      "title": "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+      "organization": "StatPearls Publishing",
+      "year": "2023",
+      "language": "en",
+      "source_url": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-131092/",
+      "license": "CC BY-NC-ND"
+    }
+  },
+  "units": [
+    {
+      "unit_id": "5dee9ba71eb4421f",
+      "kind": "paragraph",
+      "start_line": 13,
+      "end_line": 13,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 15,
+          "end_line": 15
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "9dc5bfeb110c5727",
+      "kind": "paragraph",
+      "start_line": 15,
+      "end_line": 15,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 13,
+          "end_line": 13
+        },
+        {
+          "start_line": 17,
+          "end_line": 17
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "a7f070c7341556b1",
+      "kind": "paragraph",
+      "start_line": 17,
+      "end_line": 17,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 15,
+          "end_line": 15
+        },
+        {
+          "start_line": 19,
+          "end_line": 19
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "f4db9df592267549",
+      "kind": "paragraph",
+      "start_line": 19,
+      "end_line": 19,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 17,
+          "end_line": 17
+        },
+        {
+          "start_line": 21,
+          "end_line": 21
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "6f954ea81419cec8",
+      "kind": "paragraph",
+      "start_line": 21,
+      "end_line": 21,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 19,
+          "end_line": 19
+        },
+        {
+          "start_line": 23,
+          "end_line": 23
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "15247fbdd469d2da",
+      "kind": "paragraph",
+      "start_line": 23,
+      "end_line": 23,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 21,
+          "end_line": 21
+        },
+        {
+          "start_line": 25,
+          "end_line": 25
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "9384f7571aca7f96",
+      "kind": "paragraph",
+      "start_line": 25,
+      "end_line": 25,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 23,
+          "end_line": 23
+        },
+        {
+          "start_line": 27,
+          "end_line": 27
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "b7096c6951b0ab6c",
+      "kind": "paragraph",
+      "start_line": 27,
+      "end_line": 27,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 25,
+          "end_line": 25
+        },
+        {
+          "start_line": 29,
+          "end_line": 29
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "9074043e5903bd92",
+      "kind": "paragraph",
+      "start_line": 29,
+      "end_line": 29,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 27,
+          "end_line": 27
+        },
+        {
+          "start_line": 31,
+          "end_line": 31
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "33c19226bc1f09ac",
+      "kind": "paragraph",
+      "start_line": 31,
+      "end_line": 31,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 29,
+          "end_line": 29
+        },
+        {
+          "start_line": 33,
+          "end_line": 33
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "7605256cad9abb59",
+      "kind": "paragraph",
+      "start_line": 33,
+      "end_line": 33,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 31,
+          "end_line": 31
+        },
+        {
+          "start_line": 35,
+          "end_line": 35
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "bf58d2aad77936fc",
+      "kind": "paragraph",
+      "start_line": 35,
+      "end_line": 35,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 33,
+          "end_line": 33
+        },
+        {
+          "start_line": 37,
+          "end_line": 37
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "fc3d27bc47f90675",
+      "kind": "paragraph",
+      "start_line": 37,
+      "end_line": 37,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 35,
+          "end_line": 35
+        },
+        {
+          "start_line": 39,
+          "end_line": 39
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "29d6e164b6b23f4f",
+      "kind": "paragraph",
+      "start_line": 39,
+      "end_line": 39,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 37,
+          "end_line": 37
+        },
+        {
+          "start_line": 41,
+          "end_line": 41
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "2118f76c394943c4",
+      "kind": "paragraph",
+      "start_line": 41,
+      "end_line": 41,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 39,
+          "end_line": 39
+        },
+        {
+          "start_line": 43,
+          "end_line": 43
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "e3d4331e5f344dcc",
+      "kind": "paragraph",
+      "start_line": 43,
+      "end_line": 43,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 41,
+          "end_line": 41
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "1bcb8db1f1435334",
+      "kind": "paragraph",
+      "start_line": 47,
+      "end_line": 47,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Etiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 49,
+          "end_line": 49
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "b9a73ef064298fae",
+      "kind": "paragraph",
+      "start_line": 49,
+      "end_line": 49,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Etiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 47,
+          "end_line": 47
+        },
+        {
+          "start_line": 51,
+          "end_line": 51
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "f773e76836859d75",
+      "kind": "paragraph",
+      "start_line": 51,
+      "end_line": 51,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Etiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 49,
+          "end_line": 49
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "5b98c3714dc4ddf2",
+      "kind": "paragraph",
+      "start_line": 55,
+      "end_line": 55,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Epidemiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "5aa45bf796643b36",
+      "kind": "paragraph",
+      "start_line": 59,
+      "end_line": 59,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "47531d5331d1b231",
+      "kind": "paragraph",
+      "start_line": 63,
+      "end_line": 63,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "973a55029f92ff48",
+      "kind": "paragraph",
+      "start_line": 67,
+      "end_line": 67,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 69,
+          "end_line": 69
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "a730f3a8f7a9654b",
+      "kind": "paragraph",
+      "start_line": 69,
+      "end_line": 69,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 67,
+          "end_line": 67
+        },
+        {
+          "start_line": 71,
+          "end_line": 71
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "b93dbc838dc03ff7",
+      "kind": "paragraph",
+      "start_line": 71,
+      "end_line": 71,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 69,
+          "end_line": 69
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "ea5e09fd543a6105",
+      "kind": "paragraph",
+      "start_line": 75,
+      "end_line": 75,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Differential Diagnosis"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "f04335bc296c4444",
+      "kind": "paragraph",
+      "start_line": 79,
+      "end_line": 79,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Prognosis"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "f81524f6bc4ed7c5",
+      "kind": "paragraph",
+      "start_line": 83,
+      "end_line": 83,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Complications"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "9feabf35b513fb7c",
+      "kind": "paragraph",
+      "start_line": 87,
+      "end_line": 87,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Deterrence and Patient Education"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 89,
+          "end_line": 89
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "61ca504e588804d8",
+      "kind": "paragraph",
+      "start_line": 89,
+      "end_line": 89,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Deterrence and Patient Education"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 87,
+          "end_line": 87
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "413152f5b625e13e",
+      "kind": "paragraph",
+      "start_line": 93,
+      "end_line": 93,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Enhancing Healthcare Team Outcomes"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 95,
+          "end_line": 95
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "503fc9f951079f2c",
+      "kind": "paragraph",
+      "start_line": 95,
+      "end_line": 95,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Enhancing Healthcare Team Outcomes"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 93,
+          "end_line": 93
+        },
+        {
+          "start_line": 97,
+          "end_line": 97
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    },
+    {
+      "unit_id": "966f0b2cf09379ed",
+      "kind": "paragraph",
+      "start_line": 97,
+      "end_line": 97,
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Enhancing Healthcare Team Outcomes"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 95,
+          "end_line": 95
+        }
+      ],
+      "group_context": {
+        "source_term": "IBD",
+        "member_diseases": [
+          "Crohn disease",
+          "Ulcerative colitis"
+        ],
+        "evidence": [
+          {
+            "start_line": 13,
+            "end_line": 13,
+            "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+          }
+        ]
+      }
+    }
+  ],
+  "schema_hashes": {
+    "selection": "b7708fc787fcc43dd6ed4af9dc7e7071ae5b9a84bc80ecf64d3a3ba94e2938e3",
+    "atomic": "7234e61c92317d9b1ff083dab6eceb05f2820d3c10854ed17ff003bae4a84090",
+    "conversion": "34f3b44917c0c0c061874d7a4937d3f8bd886e2694c9da0bdbfe732109cccc51",
+    "review": "1e70eb18566e419da25220f2a4c3359077976812516467c5180433c21e6b02eb"
+  },
+  "vocabulary_sha256": "30ddfa8762fc073b4b40c1243f89bd5bdb839b85fd4bc7b040dc00023f7d6eb4",
+  "clinical_review": "not_run",
+  "model_calls": "not_run",
+  "rdf_admission": "not_run"
+}

@@ -1,6 +1,6 @@
 # Competition Profile and Calendar
 
-Source snapshot: **2026-10-12 KST**. Source IDs resolve in [SOURCES.md](SOURCES.md).
+Source snapshot: **2026-10-14 KST**. Source IDs resolve in [SOURCES.md](SOURCES.md); changes are in [the current update](CHANGES_2026-10-14.md).
 
 ## Published profile
 
@@ -18,16 +18,18 @@ Participation: individual or ≤4 members/team; one team/person. All team roles 
 | Finals | October 27–November 10 |
 | Awards | November 20 |
 
-Sources: [N01: Home](https://nova.snubhai.org/), [N06: Status](https://nova.snubhai.org/status/). Multi-day dates do not establish exact opening or closing clock times. The observation date is the published preliminary start date; operational activation remains a separate website state.
+Sources: [N01: Home](https://nova.snubhai.org/), [N06: Status](https://nova.snubhai.org/status/). Multi-day dates do not establish exact opening or closing clock times. N05 separately announces official preliminary leaderboard submissions from October 13 afternoon KST; no exact opening clock time is published. [N05: Notices](https://nova.snubhai.org/qna/)
 
 ## Phase orientation
 
 | Phase | Engineering route | Deliverables |
 | --- | --- | --- |
-| Preliminary | Fixed organizer Doctor through the SDK; CPU-side retrieval and preparation | Python code ZIP |
+| Preliminary | Fixed `openai/gpt-6-luna` Doctor through the SDK from October 13; CPU-side retrieval and preparation | Python code ZIP |
 | Finals | Locally loaded participant model on one GPU | Code ZIP, separate model ZIP, PPT/PPTX |
 
-Detailed limits belong to [EXECUTION_AND_SUBMISSION.md](EXECUTION_AND_SUBMISSION.md), action differences to [API_AND_RECORD.md](API_AND_RECORD.md), and ranking rules to [EVALUATION.md](EVALUATION.md). Sources: [N01: Home](https://nova.snubhai.org/), [L02: Starter source](../nova-starter/README.md).
+Ten teams advance to finals based on preliminary results. The later physician review concerns the final five teams. [N05: Notices](https://nova.snubhai.org/qna/), [N04: Evaluation](https://nova.snubhai.org/evaluation/)
+
+Detailed limits belong to [EXECUTION_AND_SUBMISSION.md](EXECUTION_AND_SUBMISSION.md), action differences to [API_AND_RECORD.md](API_AND_RECORD.md), and ranking rules to [EVALUATION.md](EVALUATION.md). Sources: [N02: Rules](https://nova.snubhai.org/rules/), [N04: Evaluation](https://nova.snubhai.org/evaluation/).
 
 Published workflow: registered-email login → development key and samples → code upload with optional sample validation or direct leaderboard evaluation → select one final version. Registration or sample testing does not itself request official evaluation. [N01: Home](https://nova.snubhai.org/)
 

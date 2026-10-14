@@ -35,10 +35,12 @@
 - Assign operational progress to the `PROJECT_STATE.md` in its owning scope.
 - Treat root, `submission/`, and `data/` as the three maintained state scopes.
 - Keep generated directories and upstream archive internals under their existing owner.
-- Keep the D11 workflow skeleton separate from clinical implementation and authenticated SDK execution; use D12 for packaging and dependency verification.
+- Apply the latest D11 five-session MVP contract and keep synthetic execution evidence separate from admitted clinical knowledge and authenticated SDK execution.
+- Apply D11 Doctor framing and Gateway parsing as separate designated-model roles; keep education selection in InterviewAgent and final record submission in SubmissionAgent.
+- Maintain the implemented Korean workflow white paper in submission/README.md and keep root README as project orientation.
 - Do not resume cancelled model jobs or expand the corpus without a new user request.
-- Keep diagnosis implementation, corpus expansion, submission publication, and WSL2 deployment outside the pilot slice.
-- Exclude JEV, Laya, HPOA, execution test suites, deployment, and compatibility work from this slice.
+- Keep corpus expansion, submission publication, and WSL2 deployment outside the current offline MVP slice; preserve independent preparation jobs and their review blockers.
+- Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep the authorized synthetic workflow checks in Tmp.
 
 ## Working Order
 
@@ -52,8 +54,10 @@
 - Use D07 for document-level extraction outputs, source-group submission bundles, and one runtime RDFLib Graph.
 - Use D08 and data/ontology/AGENTS.md for the schema, starter vocabulary, flat parallel location values, and SDK text-mapping boundary.
 - Use specific clinical pain complaints as D08 retrieval targets and preserve finer Location values, raw wording, interpretation uncertainty, and separate episodes.
-- Use D11 for the fixed-HPI workflow and D12 for the submission layout, SDK wire format, environment, and packaging.
-- Package only submission runtime Python, pinned requirements, public .env, and knowledge assets through the package Compose service under D14.
+- Use D11 for the five-session workflow, Python routing and scoring, scoped budgets, and unasked-item deletion; use D12 for the SDK wire format and packaging.
+- Apply newer explicit user decisions before stale operational plans or next goals; record implementation and execution only from observed evidence.
+- Isolate runtime LLM instructions and editable clinical text in submission/config with public environment-selected paths; keep machine field names and decision codes in Python.
+- Package only submission runtime Python, pinned requirements, public .env, config prompts and text, and knowledge assets through the package Compose service under D14.
 - Exclude submission guidance, operational state, root .env, caches, preparation files, and organizer originals from the ZIP.
 - Keep local development credentials in the root .env and only application-owned public settings in submission/.env.
 - Resolve runtime knowledge paths inside submission/ without reading parent workspace data.
@@ -61,6 +65,8 @@
 - Use package-relative imports within runtime packages and settings.py for file-relative submission data paths.
 - Require an adopted D09 preparation contract and D08 v4.2 alignment before generating or admitting new clinical artifacts.
 - Apply the adopted D09 schema-only slice through Dev/ontology/ and data/ontology/extraction-vocabulary.json and extraction.schema.json; keep actual model extraction and RDF admission separate.
+- Apply the D09 two-stage workflow through reviewed disease-focused textbook or guideline units, atomic statements, structured candidates, and complete human review.
+- Treat explicit differential lists as possible disease-target associations without inferred expected status or features and retain their origin outside runtime RDF.
 - Use D09 and Dev/AGENTS.md for textbook preparation ownership and the SNU Edu Codex CLI route.
 - Require clinician review of all seven English vocabulary candidate tables before the later Pydantic extraction-schema and model-pilot slice under D09.
 - Use D10 for the separate extraction image and later WSL2 operating boundary.

@@ -1,9 +1,16 @@
 /state version=1
 /project id=ontoward
-/status value=planned
-/checkpoint revision=UNKNOWN dirty=unknown updated=2026-10-13T00:26:57+09:00
-/goal phase=current id=ROOT.PILOT02 state=complete action="Investigate empty outputs and propose evidence-backed falsifiable hypotheses"
-/goal phase=next id=ROOT.DIAG01 state=planned action="Evaluate a user-selected bounded diagnostic experiment after a new request"
+/status value=complete
+/checkpoint revision=0dde400ff6eb5879aafabcabf5e994563d1c8de6 dirty=true updated=2026-10-14T10:56:39+09:00
+/goal phase=current id=ROOT.WORKFLOW14 state=complete action="Integrate the approved Doctor interface ROS and recovery revision with the submission white paper and isolated packaging"
+/goal phase=history id=ROOT.MULTIDISEASE01 state=complete action="Implement approved disease group context and execute the bounded IBD two-stage pilot"
+/goal phase=history id=ROOT.RULES14 state=complete action="Reconcile current NOVA rules the confirmed Doctor selection and all maintained project states"
+/goal phase=history id=ROOT.USERREVIEW14 state=complete action="Reconcile user candidate acceptance and the D09 review policy without changing active rules work"
+/goal phase=history id=ROOT.WORKFLOW02 state=complete action="Reconcile D11 D13 requirements packaging and scoped state for the offline workflow MVP"
+/goal phase=history id=ROOT.TWOPILOT10 state=complete action="Execute the bounded ten-source screening and two-stage pilot and preserve its outputs"
+/goal phase=history id=ROOT.TWOSTAGE01 state=complete action="Implement the selected offline two-stage preparation workflow and reconcile scoped contracts"
+/goal phase=history id=ROOT.DIAG01 state=complete action="Run the selected sequential Tinnitus diagnostic experiment within ten model calls"
+/goal phase=history id=ROOT.PILOT02 state=complete action="Investigate empty outputs and propose evidence-backed falsifiable hypotheses"
 /goal phase=history id=ROOT.RANDOM10 state=complete action="Run ten newly sampled StatPearls Luna jobs and coordinate final verification"
 /goal phase=history id=ROOT.PILOT01 state=complete action="Run two random StatPearls Luna extraction jobs and coordinate completed-result verification"
 /goal phase=history id=ROOT.SCHEMA01 state=complete action="Implement the bounded extraction schema offline validator and English prompt"
@@ -114,11 +121,11 @@
 /evidence id=ROOT.E75 class=semantic result=pass source=Tmp/workflow-v42-2026-10-12/review.md observed="Review root app data and central decision states with one current and one next goal per owner and retain unrun execution and deferred preparation alignment"
 /evidence id=ROOT.E76 class=artifact result=pass source=Tmp/workflow-v42-2026-10-12/preservation.log observed="Confine existing-file changes to twelve declared files preserve root dependency and Docker definitions and observe only run.py and app/agent.py as new maintained files"
 /evidence id=ROOT.E77 class=runtime result=not_run source=PRD.md observed="Record Docker setup imports graph compilation packaging and clinical execution as unrun during the earlier ROOT.WORKFLOW01 abstract-skeleton slice"
-/scope id=ROOT.S1 state=in action="Own D09 preparation schema tools prompt container integration and cross-scope coordination"
+/scope id=ROOT.S1 state=in action="Own D09 preparation tools and D11 requirements packaging and cross-scope coordination"
 /scope id=ROOT.S2 state=out action="Delegate submission-agent implementation and runtime graph contracts to submission/PROJECT_STATE.md"
 /scope id=ROOT.S3 state=out action="Delegate source selection provenance quality review and artifact evidence to data/PROJECT_STATE.md"
 /scope id=ROOT.S4 state=out action="Keep decision alternatives selections and lifecycle records in DECISION_STATE.md"
-/scope id=ROOT.S5 state=out action="Exclude additional calls automatic retries corpus expansion submission WSL2 access and continuous workers from ROOT.RANDOM10"
+/scope id=ROOT.S5 state=out action="Exclude model calls automatic retries corpus expansion submission WSL2 access and continuous workers from ROOT.TWOSTAGE01"
 /scope id=ROOT.S6 state=in action="Own Dev and Tmp operational progress without adding state scopes and reference child progress through their states"
 /scope id=ROOT.S7 state=in action="Review root submission data and central decision state for completion consistency"
 /accept id=ROOT.CONTEXT12.A1 state=pass action="Align current competition requirements decisions ownership and development configuration" evidence=ROOT.E78,ROOT.E82
@@ -192,9 +199,67 @@
 /evidence id=ROOT.RANDOM10.E3 class=semantic result=fail source=data/preparation/statpearls-random-pilot-10-2026-10-12/reference-audit.json observed="Miss both source-supported approved Tinnitus patterns in the validated two-relationship agent reference subset without establishing root cause"
 /evidence id=ROOT.RANDOM10.E4 class=runtime result=not_run source=data/preparation/statpearls-random-pilot-10-2026-10-12/verification.json observed="Leave corrective model calls clinical-expert review RDF generation runtime knowledge admission submission and deployment unrun"
 /accept id=ROOT.PILOT02.A1 state=pass action="Inspect saved input custody schema semantics and local instruction metadata without model calls" evidence=ROOT.PILOT02.E1
-/accept id=ROOT.PILOT02.A2 state=pass action="Rank falsifiable hypotheses preserve evidence and leave diagnostic proposals unselected" evidence=ROOT.PILOT02.E2,ROOT.PILOT02.E3
+/accept id=ROOT.PILOT02.A2 state=pass action="Rank falsifiable hypotheses and preserve the pre-experiment investigation" evidence=ROOT.PILOT02.E2,ROOT.PILOT02.E3
 /evidence id=ROOT.PILOT02.E1 class=static result=pass source=data/preparation/empty-output-investigation-2026-10-13/facts.json observed="Inspect all ten raw responses saved prompt hashes typed enum membership zero-feature references and checked local instruction metadata without a model call"
 /evidence id=ROOT.PILOT02.E2 class=semantic result=pass source=Dev/ontology/empty-output-hypotheses.md observed="Rank seven falsifiable hypotheses distinguish observations from causal claims exclude validator filtering and record unobserved provider payload and model rationale"
-/evidence id=ROOT.PILOT02.E3 class=semantic result=pass source=DECISION_STATE.md observed="Keep the four-cell diagnostic and conditional negative control proposal unselected while reconciling root data and unchanged submission state"
+/evidence id=ROOT.PILOT02.E3 class=semantic result=pass source=data/preparation/empty-output-investigation-2026-10-13/handoff.md observed="Record the initial unselected diagnostic proposal before the later user-selected sequential Tinnitus experiment"
 /evidence id=ROOT.PILOT02.E4 class=external_service result=not_run source=data/preparation/empty-output-investigation-2026-10-13/handoff.md observed="Leave new model calls diagnostic contrasts prompt adoption model switching and clinical admission unrun"
-/handoff state=ready action="Await user selection of the bounded D09 diagnostic proposal without automatically starting a model call"
+/accept id=ROOT.DIAG01.A1 state=pass action="Execute the selected Tinnitus sequence within ten independent calls" evidence=ROOT.DIAG01.E1,ROOT.DIAG01.E2
+/accept id=ROOT.DIAG01.A2 state=pass action="Report reproducibility and the negative counterexample without adopting a prompt" evidence=ROOT.DIAG01.E3,ROOT.DIAG01.E4
+/accept id=ROOT.DIAG01.A3 state=pass action="Preserve protected artifacts and reconcile root data submission and central decisions" evidence=ROOT.DIAG01.E5,ROOT.DIAG01.E6
+/evidence id=ROOT.DIAG01.E1 class=external_service result=pass source=data/preparation/tinnitus-diagnostic-2026-10-13/verification.json observed="Complete exactly ten sequential gpt-6-luna medium Standard calls in 113.137 seconds with zero retries model tool events or active recorded processes"
+/evidence id=ROOT.DIAG01.E2 class=static result=pass source=data/preparation/tinnitus-diagnostic-2026-10-13/verification.json observed="Verify the original baseline hash sixteen prepared transforms shared schema and unchanged source identity while leaving T8 unrun under the selected branch"
+/evidence id=ROOT.DIAG01.E3 class=semantic result=pass source=data/preparation/tinnitus-diagnostic-2026-10-13/report.ko.md observed="Compare two empty baselines one vocabulary-only reference and two repeated complete combined outputs without claiming a single internal cause"
+/evidence id=ROOT.DIAG01.E4 class=semantic result=fail source=data/preparation/tinnitus-diagnostic-2026-10-13/call-10/review.json observed="Reject the whole negative response for asserting Meningitis to Tinnitus from a differential list despite exact quote and schema validation"
+/evidence id=ROOT.DIAG01.E5 class=artifact result=pass source=data/preparation/tinnitus-diagnostic-2026-10-13/manifest.sha256 observed="Verify ninety-seven durable experiment files and preserve 118 protected files plus all eighteen and seventy prior pilot manifest entries"
+/evidence id=ROOT.DIAG01.E6 class=semantic result=pass source=DECISION_STATE.md observed="Record the selected D09 experiment and unselected follow-up while reconciling root data and unchanged submission handoffs"
+/evidence id=ROOT.DIAG01.E7 class=runtime result=not_run source=data/preparation/tinnitus-diagnostic-2026-10-13/handoff.json observed="Leave prompt adoption T8 clinician review RDF generation RDF admission submission and deployment unrun"
+/accept id=ROOT.TWOSTAGE01.A1 state=pass action="Verify source parsing prompts atomic conversion links and review custody in the owned container" evidence=ROOT.TWOSTAGE01.E1
+/accept id=ROOT.TWOSTAGE01.A2 state=pass action="Align D09 requirements guidance and all three owner states with the clarified policy" evidence=ROOT.TWOSTAGE01.E2
+/accept id=ROOT.TWOSTAGE01.A3 state=pass action="Preserve credentials submission runtime vocabulary and prior experiment artifacts" evidence=ROOT.TWOSTAGE01.E3
+/evidence id=ROOT.TWOSTAGE01.E1 class=runtime result=pass source=Tmp/codex/two-stage-workflow-2026-10-13/workflow/verification.json observed="Pass 71 offline workflow checks and retain the 49 passed existing checks without model calls"
+/evidence id=ROOT.TWOSTAGE01.E2 class=semantic result=pass source=DECISION_STATE.md observed="Apply the selected D09 workflow and explicit differential-list clarification across PRD contracts and root data submission handoffs"
+/evidence id=ROOT.TWOSTAGE01.E3 class=artifact result=pass source=data/preparation/two-stage-workflow-2026-10-13/preservation.json observed="Verify protected input hashes and retain unrelated Git changes while referencing data-owned schema evidence"
+/evidence id=ROOT.TWOSTAGE01.E4 class=external_service result=not_run source=data/preparation/two-stage-workflow-2026-10-13/handoff.json observed="Leave model comparison extraction quality clinical review RDF generation admission and submission unrun"
+/accept id=ROOT.TWOPILOT10.A1 state=pass action="Screen the fixed ten draws and execute eligible units within the selected call budget" evidence=ROOT.TWOPILOT10.E1
+/accept id=ROOT.TWOPILOT10.A2 state=pass action="Preserve raw responses reconcile states and verify protected inputs" evidence=ROOT.TWOPILOT10.E2,ROOT.TWOPILOT10.E4
+/evidence id=ROOT.TWOPILOT10.E1 class=external_service result=pass source=data/preparation/statpearls-two-stage-pilot-10-2026-10-13/verification.json observed="Complete two sequential gpt-6-luna medium Standard calls for one eligible unit within the selected twenty-call ceiling with no retries or tool events"
+/evidence id=ROOT.TWOPILOT10.E2 class=runtime result=pass source=data/preparation/statpearls-two-stage-pilot-10-2026-10-13/verification.json observed="Pass sixteen saved-result input custody execution validation replay and termination checks without further model calls"
+/evidence id=ROOT.TWOPILOT10.E4 class=artifact result=pass source=data/preparation/statpearls-two-stage-pilot-10-2026-10-13/preservation.json observed="Verify 250 protected files including preparation code schemas submission settings and earlier pilot artifacts"
+/evidence id=ROOT.TWOPILOT10.E5 class=external_service result=not_run source=data/preparation/statpearls-two-stage-pilot-10-2026-10-13/handoff.json observed="Leave independent clinical validation direct comparison prompt correction RDF admission submission and additional calls unrun"
+/accept id=ROOT.WORKFLOW02.A1 state=pass action="Reconcile the latest workflow decision requirements and scoped handoffs" evidence=ROOT.WORKFLOW02.E1
+/accept id=ROOT.WORKFLOW02.A2 state=pass action="Package the current runtime and preserve unrelated protected inputs" evidence=ROOT.WORKFLOW02.E2,ROOT.WORKFLOW02.E3
+/evidence id=ROOT.WORKFLOW02.E1 class=semantic result=pass source=Tmp/workflow-mvp-2026-10-13/review.md observed="Reconcile D11 D13 PRD root and child contracts and all three operating scopes while referencing application completion through submission/PROJECT_STATE.md"
+/evidence id=ROOT.WORKFLOW02.E2 class=artifact result=pass source=Tmp/workflow-mvp-2026-10-13/package.json observed="Build from the cached package base without downloads and produce a twenty-two-file ZIP including configured prompts and text while excluding guidance and synthetic assets"
+/evidence id=ROOT.WORKFLOW02.E3 class=artifact result=pass source=Tmp/workflow-mvp-2026-10-13/artifacts.json observed="Verify ZIP source identity six protected input hashes and 122 existing pilot-manifest entries while recording the authorized public environment update"
+/evidence id=ROOT.WORKFLOW02.E4 class=external_service result=not_run source=Tmp/workflow-mvp-2026-10-13/review.md observed="Leave real Doctor calls official submission evaluation further extraction commits and deployment unrun"
+/accept id=ROOT.RULES14.A1 state=pass action="Compare current public rules and notices with the October twelve reference" evidence=ROOT.RULES14.E1,ROOT.RULES14.E2
+/accept id=ROOT.RULES14.A2 state=pass action="Update D01 D12 requirements references and owner handoffs without reopening completed workflow evidence" evidence=ROOT.RULES14.E2,ROOT.RULES14.E3
+/accept id=ROOT.RULES14.A3 state=pass action="Review the final document changes and preserve unrelated inputs" evidence=ROOT.RULES14.E4
+/evidence id=ROOT.RULES14.E1 class=external_service result=pass source=data/provenance/competition-web-2026-10-14.json observed="Read seven public page surfaces on October fourteen KST without authentication API calls downloads or submission"
+/evidence id=ROOT.RULES14.E2 class=semantic result=pass source=assets/nova-competition-2026/CHANGES_2026-10-14.md observed="Compare the dated baseline with adopted model controls quotas recovery events official opening ten finalists pending-request guidance and dependency limits"
+/evidence id=ROOT.RULES14.E3 class=semantic result=pass source=DECISION_STATE.md observed="Apply the confirmed D01 Doctor selection and D12 rule refresh across PRD and all three owner states while retaining D09 review and D11 implementation boundaries"
+/evidence id=ROOT.RULES14.E4 class=static result=pass source=data/provenance/competition-web-2026-10-14-verification.json observed="Review incremental document diffs all four maintained states and 101 resolvable local links while referencing data-owned protected-file evidence"
+/evidence id=ROOT.RULES14.E5 class=runtime result=not_run source=compose.yaml observed="Leave Docker builds workflow tests Doctor transport recovery SDK replacement and packaging unrun during the documentation slice"
+/scope id=ROOT.RULES14.S1 state=in action="Update competition reference requirements central decisions and all maintained operational states"
+/scope id=ROOT.RULES14.S2 state=out action="Exclude SDK downloads runtime edits model jobs authentication upload official evaluation commits and deployment"
+/accept id=ROOT.USERREVIEW14.A1 state=pass action="Replay saved validations and bind explicit user acceptance to unchanged candidates" evidence=ROOT.USERREVIEW14.E1
+/accept id=ROOT.USERREVIEW14.A2 state=pass action="Reconcile D09 review policy owning states and shared evidence without altering runtime work" evidence=ROOT.USERREVIEW14.E2
+/evidence id=ROOT.USERREVIEW14.E1 class=runtime result=pass source=Tmp/codex/ontology-candidate-review-2026-10-14/verification.json observed="Replay sixteen pilot checks and pass saved conversion exact review binding and unchanged eight-candidate checks without model calls"
+/evidence id=ROOT.USERREVIEW14.E2 class=semantic result=pass source=DECISION_STATE.md observed="Record earlier user candidate acceptance and the then-proposed multi-disease scope before ROOT.MULTIDISEASE01 without changing ROOT.RULES14"
+/accept id=ROOT.MULTIDISEASE01.A1 state=pass action="Implement reviewed disease lists grounded group context and single-disease conversion without changing ExtractionResult" evidence=ROOT.MULTIDISEASE01.E1
+/accept id=ROOT.MULTIDISEASE01.A2 state=pass action="Complete the selected D09 pilot and reconcile owner handoffs while preserving previous inputs" evidence=ROOT.MULTIDISEASE01.E2,ROOT.MULTIDISEASE01.E3
+/evidence id=ROOT.MULTIDISEASE01.E1 class=runtime result=pass source=data/preparation/ibd-multi-disease-pilot-2026-10-14/workflow-check/verification.json observed="Pass 83 offline workflow checks including shared-group ownership and retain all 49 existing schema checks"
+/evidence id=ROOT.MULTIDISEASE01.E2 class=semantic result=pass source=DECISION_STATE.md observed="Apply the approved bounded D09 group-context scope and reconcile data-owned pilot evidence with unchanged submission admission blockers"
+/evidence id=ROOT.MULTIDISEASE01.E3 class=artifact result=pass source=data/PROJECT_STATE.md observed="Reference persisted execution and preservation evidence without admitting clinical RDF or submission assets"
+/scope id=ROOT.MULTIDISEASE01.S1 state=in action="Own preparation schema prompts offline verification and bounded two-call coordination under D09"
+/scope id=ROOT.MULTIDISEASE01.S2 state=out action="Exclude new documents retries separate source-meaning audits RDF admission runtime changes and publication"
+/accept id=ROOT.WORKFLOW14.A1 state=pass action="Reconcile the approved D11 revision across requirements decisions contracts and owning states" evidence=ROOT.WORKFLOW14.E1
+/accept id=ROOT.WORKFLOW14.A2 state=pass action="Build the isolated current archive and preserve unrelated inputs" evidence=ROOT.WORKFLOW14.E2,ROOT.WORKFLOW14.E3
+/evidence id=ROOT.WORKFLOW14.E1 class=semantic result=pass source=Tmp/workflow-revision-2026-10-14/review.md observed="Align D01 D11 D12 D13 D14 PRD contracts and the Korean submission white paper while delegating runtime acceptance to submission state and retaining data review blockers"
+/evidence id=ROOT.WORKFLOW14.E2 class=artifact result=pass source=Tmp/workflow-revision-2026-10-14/package.json observed="Build the package image from the cached base without downloads and create a twenty-five-file archive containing both configured prompts public settings and runtime code"
+/evidence id=ROOT.WORKFLOW14.E3 class=artifact result=pass source=Tmp/workflow-revision-2026-10-14/artifacts.json observed="Match every archive entry to submission bytes verify the pinned SDK isolated imports and explicit missing manifest check sixty-four local links and forty-two documented functions and retain all 16372 protected file hashes"
+/evidence id=ROOT.WORKFLOW14.E4 class=runtime result=not_run source=Tmp/workflow-revision-2026-10-14/review.md observed="Leave Mermaid visual rendering unrun because no renderer Node or Chromium is installed in the project dev container"
+/evidence id=ROOT.WORKFLOW14.E5 class=external_service result=not_run source=Tmp/workflow-revision-2026-10-14/review.md observed="Leave real Luna calls official API submission evaluation extraction publication commits and deployment unperformed"
+/scope id=ROOT.WORKFLOW14.S1 state=in action="Own documentation integration package tooling and the cross-scope handoff under D11 through D14"
+/handoff state=blocked action="Use submission state for the completed runtime slice and wait for data-owned review and runtime-asset admission before authenticated execution"

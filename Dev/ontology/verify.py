@@ -1,4 +1,5 @@
 import copy
+import argparse
 import json
 import subprocess
 import sys
@@ -13,7 +14,9 @@ from .vocabulary import COUNTS, REGISTRY, ROOT, approved_tables, digest, encode,
 
 
 def main():
-    out = ROOT / "Tmp/codex/schema-check"
+    parser = argparse.ArgumentParser(description="Verify saved candidate boundaries without model calls")
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "Tmp/codex/schema-check")
+    out = parser.parse_args().output_dir
     out.mkdir(parents=True, exist_ok=True)
     checks = []
 

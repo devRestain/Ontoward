@@ -1,0 +1,61 @@
+{
+  "$defs": {
+    "ReviewDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate": {
+          "pattern": "^/(patterns|supporting_contexts|finding_methods|planned_tests)/[0-9]+$",
+          "title": "Candidate",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "approved",
+            "rejected"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate",
+        "decision",
+        "reason"
+      ],
+      "title": "ReviewDecision",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "validation_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Validation Sha256",
+      "type": "string"
+    },
+    "reviewer": {
+      "minLength": 1,
+      "title": "Reviewer",
+      "type": "string"
+    },
+    "decisions": {
+      "items": {
+        "$ref": "#/$defs/ReviewDecision"
+      },
+      "title": "Decisions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "validation_sha256",
+    "reviewer",
+    "decisions"
+  ],
+  "title": "ClinicalReview",
+  "type": "object"
+}

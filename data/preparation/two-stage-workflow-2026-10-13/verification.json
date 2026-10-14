@@ -1,0 +1,28 @@
+{
+  "result": "pass",
+  "legacy_check_count": 49,
+  "workflow_check_count": 71,
+  "total_check_count": 120,
+  "runtime": "ontoward-ontology-extraction-1",
+  "source_checks": [
+    "Tmp/codex/two-stage-workflow-2026-10-13/legacy/verification.json",
+    "Tmp/codex/two-stage-workflow-2026-10-13/workflow/verification.json"
+  ],
+  "schema_sha256": {
+    "atomic.schema.json": "7234e61c92317d9b1ff083dab6eceb05f2820d3c10854ed17ff003bae4a84090",
+    "extraction.schema.json": "ce27d55022476a205816d560fb1b9f5621f676e6d28af4fa80a97f06c345af3f",
+    "clinical-review.schema.json": "1e70eb18566e419da25220f2a4c3359077976812516467c5180433c21e6b02eb",
+    "conversion.schema.json": "34f3b44917c0c0c061874d7a4937d3f8bd886e2694c9da0bdbfe732109cccc51",
+    "source-selection.schema.json": "3fddcb3ea3453263deb2c355c80594d34726320698c5322cfe202965a74a957b"
+  },
+  "existing_final_schema_unchanged": true,
+  "protected_file_count": 222,
+  "model_calls": "not_run",
+  "clinical_expert_review": "not_run",
+  "clinical_extraction_quality": "not_run",
+  "model_comparison": "not_run",
+  "rdf_generation": "not_run",
+  "rdf_admission": "not_run",
+  "submission_admission": "not_run",
+  "fixture_scope": "Hand-authored source-grounding and custody cases plus synthetic Markdown; no clinician gold or admitted clinical data"
+}

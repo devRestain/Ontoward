@@ -1,0 +1,324 @@
+{
+  "documents": [
+    {
+      "index": 1,
+      "document": "US_StatPearls/statpearls_article-34504.md",
+      "sha256": "a10e1448c12fecc3cf8bb5745dd59d23a4052ee264cc2b6cf2141c46cf4edd0c",
+      "catalog": {
+        "파일명": "US_StatPearls/statpearls_article-34504.md",
+        "제목": "Wound Dressings",
+        "발행기관": "StatPearls Publishing",
+        "연도": "2024",
+        "언어": "영어",
+        "문서 유형": "질환 개요(교과서)",
+        "형식": "Markdown (원본 XML)",
+        "라이선스": "CC BY-NC-ND",
+        "출처 URL": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-34504/"
+      },
+      "line_count": 116,
+      "source_bytes": 13143,
+      "screening_status": "excluded",
+      "reason_code": "not_disease_focused",
+      "reason": "The introduction and clinical considerations concern selecting wound dressings and wound healing, rather than a disease-focused diagnostic chapter.",
+      "evidence": [
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "A wound is defined as a discontinuity of the epithelial lining of the skin or mucosa due to physical or thermal damage, which may lead to temporary or permanent dysfunction. All wounds have the potential to heal well. However, various factors can impede the process, especially in patients with multiple comorbidities. Understanding the healing process can build the foundation to assist in selecting an appropriate wound dressing."
+        }
+      ],
+      "reviewer": "Codex source screening; not clinician approval",
+      "clinical_expert_review": "not_run",
+      "model_extraction": "not_run_source_excluded"
+    },
+    {
+      "index": 2,
+      "document": "US_StatPearls/statpearls_article-25388.md",
+      "sha256": "2c01a0b71bdbe7fc6cd61b9800996ccceef520d83e3d7a0ca2c2dec35ba87c43",
+      "catalog": {
+        "파일명": "US_StatPearls/statpearls_article-25388.md",
+        "제목": "Physiology, Muscle",
+        "발행기관": "StatPearls Publishing",
+        "연도": "2023",
+        "언어": "영어",
+        "문서 유형": "질환 개요(교과서)",
+        "형식": "Markdown (원본 XML)",
+        "라이선스": "CC BY-NC-ND",
+        "출처 URL": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-25388/"
+      },
+      "line_count": 43,
+      "source_bytes": 8025,
+      "screening_status": "excluded",
+      "reason_code": "not_disease_focused",
+      "reason": "The introduction and cellular/function sections describe skeletal, cardiac and smooth muscle physiology.",
+      "evidence": [
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "There are three major muscle types found in the human body: skeletal, cardiac, and smooth muscle. Each muscle type has unique cellular components, physiology, specific functions, and pathology. Skeletal muscle is an organ that primarily controls movement and posture. Cardiac muscle encompasses the heart, which keeps the human body alive. Smooth muscle is present throughout the gastrointestinal, reproductive, urinary, vascular, and respiratory systems."
+        }
+      ],
+      "reviewer": "Codex source screening; not clinician approval",
+      "clinical_expert_review": "not_run",
+      "model_extraction": "not_run_source_excluded"
+    },
+    {
+      "index": 3,
+      "document": "US_StatPearls/statpearls_article-32191.md",
+      "sha256": "90e9625b17f4ebe8e35726c5c32ab8d4ea58e9cb02eaa4da4c788bfff44540d3",
+      "catalog": {
+        "파일명": "US_StatPearls/statpearls_article-32191.md",
+        "제목": "Anatomy, Head and Neck, Eye Extraocular Muscles",
+        "발행기관": "StatPearls Publishing",
+        "연도": "2022",
+        "언어": "영어",
+        "문서 유형": "질환 개요(교과서)",
+        "형식": "Markdown (원본 XML)",
+        "라이선스": "CC BY-NC-ND",
+        "출처 URL": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-32191/"
+      },
+      "line_count": 73,
+      "source_bytes": 8787,
+      "screening_status": "excluded",
+      "reason_code": "not_disease_focused",
+      "reason": "The introduction and structure/function sections describe extraocular muscle anatomy.",
+      "evidence": [
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "There are 7 extraocular muscles. There are 4 rectus muscles, 2 oblique muscles, and the standalone levator palpebrae superioris. The 4 rectus muscles are the medial rectus, lateral rectus, superior rectus, and inferior rectus. The oblique muscles are the superior and inferior obliques. The levator palpebrae superioris is primarily responsible for eyelid elevation (see Image. The Extraocular Muscles of the Orbit)."
+        }
+      ],
+      "reviewer": "Codex source screening; not clinician approval",
+      "clinical_expert_review": "not_run",
+      "model_extraction": "not_run_source_excluded"
+    },
+    {
+      "index": 4,
+      "document": "US_StatPearls/statpearls_article-132552.md",
+      "sha256": "fa1ecf5a5532f809c5c664fc26214e78aac443a781ab0e1fa2416b01d6d1cbb2",
+      "catalog": {
+        "파일명": "US_StatPearls/statpearls_article-132552.md",
+        "제목": "Pubovaginal Sling",
+        "발행기관": "StatPearls Publishing",
+        "연도": "2023",
+        "언어": "영어",
+        "문서 유형": "질환 개요(교과서)",
+        "형식": "Markdown (원본 XML)",
+        "라이선스": "CC BY-NC-ND",
+        "출처 URL": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-132552/"
+      },
+      "line_count": 81,
+      "source_bytes": 11184,
+      "screening_status": "excluded",
+      "reason_code": "not_disease_focused",
+      "reason": "The introduction and technique/indications sections concern a pubovaginal sling procedure; its disease mention does not make the procedure chapter a disease-focused source.",
+      "evidence": [
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Stress urinary incontinence (SUI) is defined as the spontaneous urine discharge associated with occurrences of increased intra-abdominal pressure. Considered the most common type of incontinence, SUI affects up to 50% of females worldwide. Although the literature documents about 200 different surgical methods, pubovaginal slings (PVS) are widely accepted as the gold standard treatment."
+        }
+      ],
+      "reviewer": "Codex source screening; not clinician approval",
+      "clinical_expert_review": "not_run",
+      "model_extraction": "not_run_source_excluded"
+    },
+    {
+      "index": 5,
+      "document": "US_StatPearls/statpearls_article-26781.md",
+      "sha256": "74dfcb5b3245eeb4180f28fddd38b3360cc8db8337ccae4477bed251bd72b066",
+      "catalog": {
+        "파일명": "US_StatPearls/statpearls_article-26781.md",
+        "제목": "Pearly Penile Papule",
+        "발행기관": "StatPearls Publishing",
+        "연도": "2023",
+        "언어": "영어",
+        "문서 유형": "질환 개요(교과서)",
+        "형식": "Markdown (원본 XML)",
+        "라이선스": "CC BY-NC-ND",
+        "출처 URL": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-26781/"
+      },
+      "line_count": 64,
+      "source_bytes": 7950,
+      "screening_status": "excluded",
+      "reason_code": "normal_anatomical_variant",
+      "reason": "The introduction calls these benign lesions and the Etiology section explicitly identifies a normal anatomical variant; no approved disease topic is established.",
+      "evidence": [
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Pearly penile papules, also known as papillomatosis corona penis, corona capillitii, hirsuties coronae glandis, papillae coronis glandis, and hirsutoid papillomas, are benign lesions of the penis."
+        },
+        {
+          "start_line": 17,
+          "end_line": 17,
+          "quote": "Pearly penile papules are considered a normal anatomical variant."
+        }
+      ],
+      "reviewer": "Codex source screening; not clinician approval",
+      "clinical_expert_review": "not_run",
+      "model_extraction": "not_run_source_excluded"
+    },
+    {
+      "index": 6,
+      "document": "US_StatPearls/statpearls_article-19001.md",
+      "sha256": "46196bdfb9c181c55c6d8aeaa48cf0fe1d7f6703cff9351b5cc8e9ff8b85a279",
+      "catalog": {
+        "파일명": "US_StatPearls/statpearls_article-19001.md",
+        "제목": "Cat Scratch Disease",
+        "발행기관": "StatPearls Publishing",
+        "연도": "2025",
+        "언어": "영어",
+        "문서 유형": "질환 개요(교과서)",
+        "형식": "Markdown (원본 XML)",
+        "라이선스": "CC BY-NC-ND",
+        "출처 URL": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-19001/"
+      },
+      "line_count": 114,
+      "source_bytes": 21185,
+      "screening_status": "excluded",
+      "reason_code": "topic_outside_approved_vocabulary",
+      "reason": "This is a disease-focused chapter, but Cat scratch disease is absent from the approved Disease enum; do not substitute another disease or expand vocabulary.",
+      "evidence": [
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Cat scratch disease (CSD), also known as cat scratch fever, is a febrile illness primarily characterized by subacute regional lymphadenopathy caused by the intracellular, gram-negative bacillus Bartonella henselae. The infection often resolves spontaneously within 2 to 4 weeks in immunocompetent individuals, but more severe or disseminated forms can occur in both immunocompetent and immunocompromised hosts. CSD was first identified in the 1930s, with its link to cats recognized in the 1950s. Transmission mainly occurs through scratches or bites from infected cats, especially kittens, which carry B henselae in their claws and oral cavity, often transmitted among cats via fleas."
+        }
+      ],
+      "reviewer": "Codex source screening; not clinician approval",
+      "clinical_expert_review": "not_run",
+      "model_extraction": "not_run_source_excluded"
+    },
+    {
+      "index": 7,
+      "document": "US_StatPearls/statpearls_article-23913.md",
+      "sha256": "0629ad960d39692018abdd61cfed4b54bc46e23abf72ef8840c00d61ed509355",
+      "catalog": {
+        "파일명": "US_StatPearls/statpearls_article-23913.md",
+        "제목": "Anatomy, Bony Pelvis and Lower Limb, Knee",
+        "발행기관": "StatPearls Publishing",
+        "연도": "2023",
+        "언어": "영어",
+        "문서 유형": "질환 개요(교과서)",
+        "형식": "Markdown (원본 XML)",
+        "라이선스": "CC BY-NC-ND",
+        "출처 URL": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-23913/"
+      },
+      "line_count": 187,
+      "source_bytes": 18687,
+      "screening_status": "excluded",
+      "reason_code": "not_disease_focused",
+      "reason": "The introduction and structure/function sections concern knee anatomy and biomechanical function.",
+      "evidence": [
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "The knee is the largest joint in the body (see Image. Lateral View of the Right Knee). The knee is primarily a hinge joint, allowing leg flexion and extension. Other movements are also possible, though to a limited extent. Tibiofemoral and patellofemoral articulations make the knee a compound synovial joint."
+        }
+      ],
+      "reviewer": "Codex source screening; not clinician approval",
+      "clinical_expert_review": "not_run",
+      "model_extraction": "not_run_source_excluded"
+    },
+    {
+      "index": 8,
+      "document": "US_StatPearls/statpearls_article-131092.md",
+      "sha256": "c013e8ad561c0f7264c9f5c48150c5bcbd27d8153b16fb846f0ba0fc29a3794f",
+      "catalog": {
+        "파일명": "US_StatPearls/statpearls_article-131092.md",
+        "제목": "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "발행기관": "StatPearls Publishing",
+        "연도": "2023",
+        "언어": "영어",
+        "문서 유형": "질환 개요(교과서)",
+        "형식": "Markdown (원본 XML)",
+        "라이선스": "CC BY-NC-ND",
+        "출처 URL": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-131092/"
+      },
+      "line_count": 97,
+      "source_bytes": 19432,
+      "screening_status": "eligible",
+      "reason_code": "disease_focused_approved_topics",
+      "reason": "The chapter focuses on inflammatory bowel disease manifestations, explicitly defining Crohn disease and ulcerative colitis in line 13. Both are approved Disease labels; topic_disease records Crohn disease as one explicit topic, without equating the umbrella IBD label with it.",
+      "evidence": [
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis. Ulcerative colitis affects the large intestine, whereas Crohn disease may affect any part of the gastrointestinal tract (GIT). IBD is a multisystem condition that predominantly affects the gastrointestinal, musculoskeletal, ocular, and cutaneous systems. The complications that arise outside the intestinal inflammation of IBD are known as extraintestinal manifestations (EIMs) of IBD. Regularly, these manifestations result in significant morbidity in IBD patients, even more so than the intestinal disease itself. EIMs are present in 5% to 50% of all IBD patients. See Figure. Extraintestinal Manifestations of Inflammatory Bowel Disease."
+        }
+      ],
+      "reviewer": "Codex source screening; not clinician approval",
+      "clinical_expert_review": "not_run",
+      "model_extraction": "not_started"
+    },
+    {
+      "index": 9,
+      "document": "US_StatPearls/statpearls_article-36968.md",
+      "sha256": "b3d9c94a295e71414948ae52fe6f1b1665f1b99c89811fb4a2b9106004f9a35f",
+      "catalog": {
+        "파일명": "US_StatPearls/statpearls_article-36968.md",
+        "제목": "Conversion Weights",
+        "발행기관": "StatPearls Publishing",
+        "연도": "2023",
+        "언어": "영어",
+        "문서 유형": "질환 개요(교과서)",
+        "형식": "Markdown (원본 XML)",
+        "라이선스": "CC BY-NC-ND",
+        "출처 URL": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-36968/"
+      },
+      "line_count": 130,
+      "source_bytes": 11441,
+      "screening_status": "excluded",
+      "reason_code": "not_disease_focused",
+      "reason": "The introduction and issues sections concern weight units and conversion; incidental mentions of diseases do not establish a disease chapter.",
+      "evidence": [
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Weight is among the most essential components of science and non-science daily life routines. Weight can be defined as the force exerted on a body due to gravity. The weight (W) of a body equals the magnitude (F) of the gravitational force on the body. In particular, weight and conversion are paramount for managing patient care among healthcare providers."
+        }
+      ],
+      "reviewer": "Codex source screening; not clinician approval",
+      "clinical_expert_review": "not_run",
+      "model_extraction": "not_run_source_excluded"
+    },
+    {
+      "index": 10,
+      "document": "US_StatPearls/statpearls_article-27616.md",
+      "sha256": "ef66fb9dfab5df8d1e7893281d3c065d8a1c98ceb855c019dda2ec9917cdf607",
+      "catalog": {
+        "파일명": "US_StatPearls/statpearls_article-27616.md",
+        "제목": "Neuroanatomy, Prefrontal Association Cortex",
+        "발행기관": "StatPearls Publishing",
+        "연도": "2023",
+        "언어": "영어",
+        "문서 유형": "질환 개요(교과서)",
+        "형식": "Markdown (원본 XML)",
+        "라이선스": "CC BY-NC-ND",
+        "출처 URL": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-27616/"
+      },
+      "line_count": 63,
+      "source_bytes": 11469,
+      "screening_status": "excluded",
+      "reason_code": "not_disease_focused",
+      "reason": "The introduction and structure/function sections concern prefrontal cortical neuroanatomy; clinical mentions do not change its primary topic.",
+      "evidence": [
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "The brain ranks as the most complex organ in the human body. The brain constantly receives numerous visual, auditory, olfactory, vestibular, proprioceptive, tactile, and gustatory sensory inputs. In addition to identifying and processing important information from these various sensory inputs, humans have a unique ability to suppress ruminative and socially unwanted behaviors. Research has attributed this function primarily to the prefrontal association cortex (PFC). Studies show that the PFC, mainly the dorsolateral prefrontal cortex, downregulates hippocampal activity to suppress unwanted thoughts. The prefrontal association cortex is a cortical region in the anterior part of the cerebrum; it is involved in the top-down processing of sensory and motor information."
+        }
+      ],
+      "reviewer": "Codex source screening; not clinician approval",
+      "clinical_expert_review": "not_run",
+      "model_extraction": "not_run_source_excluded"
+    }
+  ],
+  "sampled": 10,
+  "eligible": 1,
+  "excluded": 9,
+  "replacement_draws": 0,
+  "source_screening": "agent_review_not_clinician_admission"
+}

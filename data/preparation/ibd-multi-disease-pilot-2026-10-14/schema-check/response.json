@@ -1,0 +1,88 @@
+{
+  "patterns": [
+    {
+      "disease": "Acute appendicitis",
+      "target": {
+        "kind": "symptom",
+        "term": "Abdominal pain"
+      },
+      "features": [
+        {
+          "qualification": {
+            "attribute": "Location",
+            "value": "Right lower quadrant"
+          },
+          "expected_status": null,
+          "evidence": [
+            {
+              "start_line": 73,
+              "end_line": 73,
+              "quote": "The primary symptom of acute appendicitis typically begins as a diffuse or periumbilical abdominal pain that eventually becomes localized to the right lower quadrant. Stimulation of the visceral T8-T10 afferent nerve fibers causes this initial vague abdominal pain. As the inflamed parietal peritoneum in the adjacent area becomes irritated, the pain becomes more focused in the right lower quadrant. Patients may experience pain that awakens them from sleep or intensifies when walking or coughing. Alongside abdominal pain, individuals may also present with anorexia, nausea with or without vomiting, diarrhea, malaise, and urinary frequency or urgency. Approximately 40% of patients with acute appendicitis are febrile at the time of presentation. Some patients may exhibit atypical or uncommon presenting features."
+            }
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 73,
+          "end_line": 73,
+          "quote": "The primary symptom of acute appendicitis typically begins as a diffuse or periumbilical abdominal pain that eventually becomes localized to the right lower quadrant. Stimulation of the visceral T8-T10 afferent nerve fibers causes this initial vague abdominal pain. As the inflamed parietal peritoneum in the adjacent area becomes irritated, the pain becomes more focused in the right lower quadrant. Patients may experience pain that awakens them from sleep or intensifies when walking or coughing. Alongside abdominal pain, individuals may also present with anorexia, nausea with or without vomiting, diarrhea, malaise, and urinary frequency or urgency. Approximately 40% of patients with acute appendicitis are febrile at the time of presentation. Some patients may exhibit atypical or uncommon presenting features."
+        }
+      ]
+    },
+    {
+      "disease": "Acute appendicitis",
+      "target": {
+        "kind": "exam_finding",
+        "term": "Rebound tenderness"
+      },
+      "features": [
+        {
+          "qualification": null,
+          "expected_status": "present",
+          "evidence": [
+            {
+              "start_line": 75,
+              "end_line": 75,
+              "quote": "Physical examination findings are often subtle, especially in early appendicitis. As inflammation progresses, signs of peritoneal irritation develop. Localized guarding of the right lower abdominal quadrant and rebound tenderness of McBurney point, approximately 1.5 to 2 inches from the anterior superior iliac spine (ASIS) on a straight imaginary line to the umbilicus, are frequently observed in cases of acute appendicitis. However, these clinical findings are not specific to appendicitis and can also be present in other conditions."
+            }
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 75,
+          "end_line": 75,
+          "quote": "Physical examination findings are often subtle, especially in early appendicitis. As inflammation progresses, signs of peritoneal irritation develop. Localized guarding of the right lower abdominal quadrant and rebound tenderness of McBurney point, approximately 1.5 to 2 inches from the anterior superior iliac spine (ASIS) on a straight imaginary line to the umbilicus, are frequently observed in cases of acute appendicitis. However, these clinical findings are not specific to appendicitis and can also be present in other conditions."
+        }
+      ]
+    }
+  ],
+  "supporting_contexts": [],
+  "finding_methods": [
+    {
+      "finding": "Rebound tenderness",
+      "method": "Rebound tenderness assessment",
+      "evidence": [
+        {
+          "start_line": 75,
+          "end_line": 75,
+          "quote": "Physical examination findings are often subtle, especially in early appendicitis. As inflammation progresses, signs of peritoneal irritation develop. Localized guarding of the right lower abdominal quadrant and rebound tenderness of McBurney point, approximately 1.5 to 2 inches from the anterior superior iliac spine (ASIS) on a straight imaginary line to the umbilicus, are frequently observed in cases of acute appendicitis. However, these clinical findings are not specific to appendicitis and can also be present in other conditions."
+        }
+      ]
+    }
+  ],
+  "planned_tests": [
+    {
+      "disease": "Acute appendicitis",
+      "test": "Abdominal ultrasonography",
+      "evidence": [
+        {
+          "start_line": 93,
+          "end_line": 93,
+          "quote": "Appendicitis is primarily diagnosed based on clinical evaluation and examination. However, imaging modalities such as computed tomography (CT), ultrasonography (US), and magnetic resonance imaging (MRI) may be used to improve the specificity of the presumptive diagnosis. CT is the preferred imaging modality in patients with suspected acute appendicitis. Ultrasound is less sensitive and specific than CT for diagnosing appendicitis. However, US is useful in evaluating populations where the avoidance of ionizing radiation is preferred, such as children and pregnant patients. MRI may also be useful for pregnant patients with suspected appendicitis who have had an indeterminate ultrasound."
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Organizer Data and Source Boundaries
 
-Source snapshot: **2026-10-12 KST**. Existing organizer files remain in their sibling directories.
+Public-source snapshot: **2026-10-14 KST**. Earlier local corpus inspection remains the basis for local counts; no new corpus ingestion was performed. Existing organizer files remain in their sibling directories.
 
 ## Asset roles
 

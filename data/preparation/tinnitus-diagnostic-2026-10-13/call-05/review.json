@@ -1,0 +1,12 @@
+{
+  "review_type": "agent_source_audit_not_clinician_gold",
+  "whole_response_semantic_status": "pass_empty_response",
+  "reference_found": {"Hypertension -> Tinnitus": false, "Ménière disease -> Tinnitus": false},
+  "reference_found_count": 0,
+  "reference_total": 2,
+  "additional_candidates": 0,
+  "unsupported_candidates": [],
+  "condition_success": false,
+  "next_condition": "T6",
+  "reason": "Clarifying independent relation units alone does not recover either reference."
+}

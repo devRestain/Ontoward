@@ -1,0 +1,69 @@
+{
+  "status": "candidate_validated",
+  "schema_version": 1,
+  "vocabulary_terms_sha256": "30ddfa8762fc073b4b40c1243f89bd5bdb839b85fd4bc7b040dc00023f7d6eb4",
+  "schema_sha256": "ce27d55022476a205816d560fb1b9f5621f676e6d28af4fa80a97f06c345af3f",
+  "response_sha256": "1589e07b1da1a89fe38503c5b123864d6897d60da9ac0b8a8035bd189cf2afe6",
+  "source": {
+    "document": "US_StatPearls/statpearls_article-30212.md",
+    "source_group": "US_StatPearls",
+    "sha256": "eb0d350109ec360ad6cf9ea01dbde9e7ddab7a0c778d0091773f892a9d6d08c7",
+    "start_line": 1,
+    "end_line": 84,
+    "catalog": {
+      "title": "Tinnitus",
+      "organization": "StatPearls Publishing",
+      "year": "2023",
+      "language": "영어",
+      "source_url": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-30212/",
+      "license": "CC BY-NC-ND",
+      "document_type": "질환 개요(교과서)",
+      "format": "Markdown (원본 XML)"
+    },
+    "frontmatter": {
+      "title": "Tinnitus",
+      "organization": "StatPearls Publishing",
+      "year": "2023",
+      "language": "en",
+      "source_url": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-30212/",
+      "license": "CC BY-NC-ND"
+    }
+  },
+  "grounded_evidence": [
+    {
+      "pointer": "/patterns/0/evidence/0",
+      "sections": [
+        "Tinnitus",
+        "Etiology"
+      ],
+      "start_line": 20,
+      "end_line": 20,
+      "quote": "- Metabolic diseases such as heart disease, hypertension, and diabetes are associated with an onset of tinnitus."
+    }
+  ],
+  "candidates": {
+    "patterns": [
+      {
+        "disease": "Hypertension",
+        "target": {
+          "kind": "symptom",
+          "term": "Tinnitus"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 20,
+            "end_line": 20,
+            "quote": "- Metabolic diseases such as heart disease, hypertension, and diabetes are associated with an onset of tinnitus."
+          }
+        ]
+      }
+    ],
+    "supporting_contexts": [],
+    "finding_methods": [],
+    "planned_tests": []
+  },
+  "clinical_review": "not_run",
+  "rdf_admission": "not_run",
+  "submission_admission": "not_run"
+}

@@ -1,71 +1,254 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from nova_sdk import RECORD_FIELDS
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-
-Phase = Literal[
-    "hpi", "open_inquiry", "retrieval", "context", "investigation",
-    "synthesis", "education", "soap",
+Scope = Literal["Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education"]
+SCOPES: tuple[Scope, ...] = ("Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education")
+SOAPField = Literal[
+    "S.cc", "S.hpi", "S.pmh", "S.fh", "S.sh", "S.ros", "O.exam", "O.tests",
+    "A.evidence", "A.differential", "P.tests", "P.treatment", "P.disposition", "P.follow_up", "P.education",
 ]
-Update = dict[str, object]
 
 
-class InquirySlot(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class Model(BaseModel):
+    model_config = ConfigDict(extra="forbid", validate_assignment=True)
 
+
+class ClinicalValue(Model):
+    kind: Literal["symptom", "finding", "context", "attribute", "text", "plan", "education"]
+    text: str
+    status: Literal["present", "absent", "uncertain", "unknown"] = "unknown"
+    concept_ids: list[str] = Field(default_factory=list)
+    observation_id: str | None = None
+    episode_id: str | None = None
+    attribute_id: str | None = None
+    values: list[str] = Field(default_factory=list)
+    subject: Literal["patient", "family"] = "patient"
+    time_context: Literal["current", "past", "unspecified"] = "unspecified"
+
+
+class RecordItem(Model):
     id: str
-    observation_id: str
-    attribute_id: str
-    status: Literal[
-        "pending", "resolved", "unknown", "not_applicable", "conflicted"
-    ] = "pending"
+    scope: Scope
+    status: Literal["unasked", "done"] = "unasked"
+    value: ClinicalValue | None = None
+    source_refs: list[str] = Field(default_factory=list)
+    context_refs: list[str] = Field(default_factory=list)
 
 
-class ActionSpec(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    kind: Literal["SAY", "EXAM"]
-    purpose: Literal["hpi", "open_inquiry", "context", "investigation", "education"]
-    target_id: str
-    evidence_ids: list[str] = Field(default_factory=list)
-    slot_id: str | None = None
-    content: str | None = None
-    request_id: str | None = None
-
-
-class CaseState(BaseModel):
-    """Case-only state; detailed evidence and SDK payload models are deferred."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    session_id: str
-    phase: Phase = "hpi"
-    session: dict[str, object] = Field(default_factory=dict)
-    incoming: dict[str, object] | None = None
-    observations: list[dict[str, object]] = Field(default_factory=list)
-    chief_complaint_ids: list[str] = Field(default_factory=list)
-    symptom_groups: list[dict[str, object]] = Field(default_factory=list)
-    hpi_slots: list[InquirySlot] = Field(default_factory=list)
-    hpi_initialized: bool = False
-    hpi_complete: bool = False
-    open_inquiry_processed: bool = False
-    evidence_changed: bool = False
-    candidates_initialized: bool = False
-    hypotheses: list[dict[str, object]] = Field(default_factory=list)
-    active_hypotheses: list[str] = Field(default_factory=list)
-    reserve_hypotheses: list[str] = Field(default_factory=list)
-    next_action: ActionSpec | None = None
-    pending_action: ActionSpec | None = None
-    action_history: list[dict[str, object]] = Field(default_factory=list)
-    turns_remaining: int | None = None
-    deadline: str | None = None
-    budget_decision: Literal["continue", "finalize", "stop"] | None = None
-    doctor_calls: int = 0
-    education_status: Literal["pending", "delivered", "undelivered"] = "pending"
-    soap_draft: dict[str, object] | None = None
+class CaseState(Model):
+    S: dict[str, dict[str, RecordItem]] = Field(default_factory=lambda: {key: {} for key in RECORD_FIELDS["S"]})
+    O: dict[str, dict[str, RecordItem]] = Field(default_factory=lambda: {key: {} for key in RECORD_FIELDS["O"]})
+    A: dict[str, dict[str, RecordItem]] = Field(default_factory=lambda: {key: {} for key in RECORD_FIELDS["A"]})
+    P: dict[str, dict[str, RecordItem]] = Field(default_factory=lambda: {key: {} for key in RECORD_FIELDS["P"]})
     diagnosis: str | None = None
+    diagnosis_kind: Literal["disease", "symptom"] | None = None
+    diagnosis_evidence: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def validate_sections(self):
+        ids = []
+        for section, fields in RECORD_FIELDS.items():
+            if set(getattr(self, section)) != set(fields):
+                raise ValueError(f"Invalid SOAP section: {section}")
+            for records in getattr(self, section).values():
+                for key, item in records.items():
+                    if key != item.id:
+                        raise ValueError("Record key must match its ID")
+                    ids.append(key)
+        if len(ids) != len(set(ids)):
+            raise ValueError("Record IDs must be unique")
+        return self
+
+    def entries(self):
+        for section, fields in RECORD_FIELDS.items():
+            for field in fields:
+                for item in getattr(self, section)[field].values():
+                    yield f"{section}.{field}", item
+
+    def get(self, item_id: str) -> RecordItem | None:
+        return next((item for _, item in self.entries() if item.id == item_id), None)
+
+    def put(self, field: SOAPField, item: RecordItem) -> None:
+        self.remove({item.id})
+        section, name = field.split(".")
+        getattr(self, section)[name][item.id] = item
+
+    def remove(self, ids: set[str]) -> None:
+        for section in RECORD_FIELDS:
+            for records in getattr(self, section).values():
+                for item_id in ids:
+                    records.pop(item_id, None)
+
+    def unasked(self, scope: Scope) -> list[RecordItem]:
+        return [item for _, item in self.entries() if item.scope == scope and item.status == "unasked"]
+
+    def chief_complaints(self, *, confirmed=False) -> list[RecordItem]:
+        statuses = {"present"} if confirmed else {"present", "uncertain"}
+        return [item for item in self.S["cc"].values() if item.status == "done" and item.source_refs
+                and item.value and item.value.kind == "symptom" and item.value.subject == "patient"
+                and item.value.time_context != "past" and item.value.status in statuses]
+
+
+class SessionLimit(Model):
+    actions: int = Field(ge=0)
+
+
+def default_limits() -> dict[Scope, SessionLimit]:
+    return {scope: SessionLimit(actions=actions) for scope, actions in zip(SCOPES, (1, 20, 10, 14, 5))}
+
+
+class Usage(Model):
+    actions: int = 0
+    calls: int = 0
+
+
+class SessionContext(Model):
+    session_id: str
+    deadline: datetime
+    turns_remaining: int = Field(ge=0, le=50)
+    current: Scope = "Initiation"
+    initialized: bool = False
+    questions_prepared: bool = False
+    finalizing: bool = False
+    reserve_seconds: int = 120
+    limits: dict[Scope, SessionLimit] = Field(default_factory=default_limits)
+    usage: dict[Scope, Usage] = Field(default_factory=lambda: {scope: Usage() for scope in SCOPES})
+    allowed_actions: list[str] = Field(default_factory=lambda: ["SAY", "EXAM", "DIAGNOSE"])
+    doctor_calls: int = 0
+    doctor_successes: int = 0
+    input_tokens: int = 0
+    output_tokens: int = 0
+    call_limit: int = 200
+    input_token_limit: int = 500000
+    output_token_limit: int = 100000
+    models_available: bool = True
+    clarifications: int = Field(default=0, ge=0, le=2)
+
+    def seconds_left(self) -> float:
+        return (self.deadline - datetime.now(timezone.utc)).total_seconds()
+
+    def calls_left(self) -> int:
+        if not self.models_available or self.seconds_left() <= self.reserve_seconds or self.input_tokens >= self.input_token_limit or self.output_tokens >= self.output_token_limit:
+            return 0
+        return max(0, self.call_limit - self.doctor_calls)
+
+
+class Hypothesis(Model):
+    disease_id: str
+    pattern_ids: list[str] = Field(default_factory=list)
+    feature_ids: list[str] = Field(default_factory=list)
+    evidence_ids: list[str] = Field(default_factory=list)
+    opposing_ids: list[str] = Field(default_factory=list)
+    evidence_score: int = 0
+    context_bonus: int | None = None
+
+    @property
+    def score(self) -> int:
+        return self.evidence_score + (self.context_bonus or 0)
+
+
+class DifferentialState(Model):
+    initialized: bool = False
+    hypotheses: list[Hypothesis] = Field(default_factory=list)
+    selected_id: str | None = None
+
+
+class Question(Model):
+    item_id: str
+    field: SOAPField
+    kind: Literal["SAY", "EXAM"] = "SAY"
+    purpose: Literal["chief", "hpi", "open_inquiry", "ros", "clarification", "context", "feature", "education"]
+    text: str
+    order: int
+    priority: int
+    target_id: str | None = None
+    attribute_id: str | None = None
+    observation_id: str | None = None
+    episode_id: str | None = None
+    subject: Literal["patient", "family"] = "patient"
+    time_context: Literal["current", "past", "unspecified"] = "unspecified"
+    parsing_required: bool = True
+    affirmative_presence: bool = False
+
+
+class QuestionPlan(Model):
+    questions: list[Question] = Field(default_factory=list)
+
+
+class ActionSpec(Model):
+    question: Question
+    content: str
+    request_id: str
+    render_attempts: int = Field(default=0, ge=0, le=3)
+    render_source: Literal["prepared", "doctor"] = "prepared"
+    ready: bool = False
+    feedback: dict[str, object] | None = None
+
+
+class InteractionEntry(Model):
+    id: str
+    kind: Literal["initial", "SAY", "EXAM", "DIAGNOSE"]
+    request: dict[str, object] = Field(default_factory=dict)
+    response: dict[str, object] = Field(default_factory=dict)
+    turn: int | None = None
+    delivered: bool = False
+    question: Question | None = None
+    attempts: list[dict[str, object]] = Field(default_factory=list)
+
+
+class InteractionState(Model):
+    model_history: list[dict[str, object]] = Field(default_factory=list)
+    history: list[InteractionEntry] = Field(default_factory=list)
+    incoming: dict[str, object] | None = None
+    selected: ActionSpec | None = None
+    pending: ActionSpec | None = None
     submission_payload: dict[str, object] | None = None
+    submission_request_id: str | None = None
     submission_result: dict[str, object] | None = None
     termination: Literal["submitted", "failed", "unknown", "expired", "closed"] | None = None
+    reason: str | None = None
+    issues: list[str] = Field(default_factory=list)
+    needs_clarification: bool = False
+    clarification_target: Question | None = None
+    submission_repairs: int = Field(default=0, ge=0, le=1)
+    submission_error: str | None = None
+
+    def dialogue(self) -> list[dict[str, object]]:
+        turns = []
+        for entry in self.history:
+            if entry.kind == "initial" and entry.response.get("opening"):
+                turns.append({"id": entry.id, "kind": "initial", "patient": entry.response["opening"]})
+            elif entry.kind == "SAY" and entry.delivered:
+                turns.append({"id": entry.id, "kind": "SAY", "turn": entry.turn,
+                              "question_id": entry.question.item_id if entry.question else None,
+                              "doctor": entry.request["content"], "patient": entry.response.get("content", "")})
+        return turns
+
+
+class WorkflowState(Model):
+    case: CaseState = Field(default_factory=CaseState)
+    session: SessionContext
+    differential: DifferentialState = Field(default_factory=DifferentialState)
+    questions: QuestionPlan = Field(default_factory=QuestionPlan)
+    interaction: InteractionState = Field(default_factory=InteractionState)
+
+    def stop(self, outcome: Literal["failed", "unknown", "expired", "closed"], reason: str) -> None:
+        self.interaction.termination = outcome
+        self.interaction.reason = reason
+
+
+class Fact(Model):
+    field: SOAPField
+    value: ClinicalValue
+    quote: str = Field(min_length=1)
+    record_id: str | None = None
+    context_refs: list[str] = Field(default_factory=list)
+
+
+class ParsedInput(Model):
+    facts: list[Fact] = Field(default_factory=list)

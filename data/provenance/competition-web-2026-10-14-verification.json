@@ -1,0 +1,73 @@
+{
+  "verified_at": "2026-10-14T01:13:20+09:00",
+  "execution": "docker compose run --rm --no-deps --pull never -T dev python -",
+  "classes": [
+    "artifact",
+    "static"
+  ],
+  "protected_file_count": 16327,
+  "protected_sha256_match": true,
+  "missing_protected_files": [],
+  "changed_protected_files": [],
+  "local_document_link_count": 101,
+  "broken_local_links": [],
+  "web_provenance_json_readable": true,
+  "changed_document_paths_before_final_state_promotion": [
+    "PROJECT_STATE.md",
+    "submission/PROJECT_STATE.md",
+    "data/PROJECT_STATE.md",
+    "DECISION_STATE.md",
+    "PRD.md",
+    "assets/nova-competition-2026/AGENTS.md",
+    "assets/nova-competition-2026/SOURCES.md",
+    "assets/nova-competition-2026/COMPETITION.md",
+    "assets/nova-competition-2026/EXECUTION_AND_SUBMISSION.md",
+    "assets/nova-competition-2026/API_AND_RECORD.md",
+    "assets/nova-competition-2026/EVALUATION.md",
+    "assets/nova-competition-2026/OPERATIONS.md",
+    "assets/nova-competition-2026/DATA_AND_ASSETS.md",
+    "assets/nova-competition-2026/README.md",
+    "assets/nova-competition-2026/CHANGES_2026-10-14.md",
+    "data/provenance/competition-web-2026-10-14.json"
+  ],
+  "document_allowlist": [
+    "PROJECT_STATE.md",
+    "submission/PROJECT_STATE.md",
+    "data/PROJECT_STATE.md",
+    "DECISION_STATE.md",
+    "PRD.md",
+    "assets/nova-competition-2026/AGENTS.md",
+    "assets/nova-competition-2026/SOURCES.md",
+    "assets/nova-competition-2026/COMPETITION.md",
+    "assets/nova-competition-2026/EXECUTION_AND_SUBMISSION.md",
+    "assets/nova-competition-2026/API_AND_RECORD.md",
+    "assets/nova-competition-2026/EVALUATION.md",
+    "assets/nova-competition-2026/OPERATIONS.md",
+    "assets/nova-competition-2026/DATA_AND_ASSETS.md",
+    "assets/nova-competition-2026/README.md",
+    "assets/nova-competition-2026/CHANGES_2026-10-14.md",
+    "data/provenance/competition-web-2026-10-14.json",
+    "data/provenance/competition-web-2026-10-14-verification.json"
+  ],
+  "sdk_original_and_copy_sha256": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+  "source_baseline": "Tmp/competition-update-2026-10-14/baseline.json",
+  "state_review": {
+    "result": "pass",
+    "method": "Review current and next goals blockers evidence sources and incremental document diffs directly",
+    "scope": ["PROJECT_STATE.md", "submission/PROJECT_STATE.md", "data/PROJECT_STATE.md", "DECISION_STATE.md"],
+    "observations": "Complete the rule-refresh slices while retaining prior workflow evidence source-review blockers and one existing next goal per owner",
+    "final_document_paths": 17,
+    "state_protocol_syntax_diagnostics": "not_run"
+  },
+  "unrun": [
+    "workflow runtime tests",
+    "Docker build",
+    "SDK download or replacement",
+    "Doctor API execution",
+    "authentication",
+    "archive download",
+    "submission",
+    "evaluation",
+    "model extraction resume"
+  ]
+}

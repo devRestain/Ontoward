@@ -1,0 +1,794 @@
+{
+  "status": "atomic_validated",
+  "unit_id": "5aa45bf796643b36",
+  "prepared_sha256": "900a9ff0358d1267ffe50be5c8748a97e6821464761f3c1174aa25c8451e7420",
+  "response_sha256": "1fce53684c263b958660dfa96246c66b8cafedd190cb10db0639b71a6d2f0a9f",
+  "claims": [
+    {
+      "claim_id": "c1",
+      "statement": "Crohn disease commonly presents with abdominal pain.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Abdominal pain"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c2",
+      "statement": "Ulcerative colitis commonly presents with abdominal pain.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Ulcerative colitis"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Abdominal pain"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c3",
+      "statement": "Crohn disease commonly presents with abdominal bloating.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Abdominal bloating"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c4",
+      "statement": "Ulcerative colitis commonly presents with abdominal bloating.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Ulcerative colitis"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Abdominal bloating"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c5",
+      "statement": "Crohn disease commonly presents with diarrhea.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Diarrhea"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c6",
+      "statement": "Ulcerative colitis commonly presents with diarrhea.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Ulcerative colitis"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Diarrhea"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c7",
+      "statement": "Crohn disease commonly presents with constipation.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Constipation"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c8",
+      "statement": "Ulcerative colitis commonly presents with constipation.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Ulcerative colitis"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Constipation"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c9",
+      "statement": "Crohn disease commonly presents with fever.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Fever"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c10",
+      "statement": "Ulcerative colitis commonly presents with fever.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Ulcerative colitis"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Fever"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c11",
+      "statement": "Crohn disease commonly presents with fatigue.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Fatigue"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c12",
+      "statement": "Ulcerative colitis commonly presents with fatigue.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Ulcerative colitis"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Fatigue"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c13",
+      "statement": "Crohn disease commonly presents with weight loss.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Weight loss"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c14",
+      "statement": "Ulcerative colitis commonly presents with weight loss.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Ulcerative colitis"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Weight loss"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c15",
+      "statement": "Crohn disease commonly presents with tenesmus.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Tenesmus"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    },
+    {
+      "claim_id": "c16",
+      "statement": "Ulcerative colitis commonly presents with tenesmus.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Ulcerative colitis"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Tenesmus"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus"
+        },
+        {
+          "start_line": 13,
+          "end_line": 13,
+          "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+        }
+      ]
+    }
+  ],
+  "grounded_evidence": [
+    {
+      "pointer": "/claims/0/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain"
+    },
+    {
+      "pointer": "/claims/0/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/1/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain"
+    },
+    {
+      "pointer": "/claims/1/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/2/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating"
+    },
+    {
+      "pointer": "/claims/2/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/3/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating"
+    },
+    {
+      "pointer": "/claims/3/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/4/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea"
+    },
+    {
+      "pointer": "/claims/4/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/5/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea"
+    },
+    {
+      "pointer": "/claims/5/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/6/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation"
+    },
+    {
+      "pointer": "/claims/6/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/7/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation"
+    },
+    {
+      "pointer": "/claims/7/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/8/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever"
+    },
+    {
+      "pointer": "/claims/8/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/9/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever"
+    },
+    {
+      "pointer": "/claims/9/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/10/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue"
+    },
+    {
+      "pointer": "/claims/10/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/11/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue"
+    },
+    {
+      "pointer": "/claims/11/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/12/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss"
+    },
+    {
+      "pointer": "/claims/12/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/13/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss"
+    },
+    {
+      "pointer": "/claims/13/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/14/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus"
+    },
+    {
+      "pointer": "/claims/14/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    },
+    {
+      "pointer": "/claims/15/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus"
+    },
+    {
+      "pointer": "/claims/15/evidence/1",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "Introduction"
+      ],
+      "start_line": 13,
+      "end_line": 13,
+      "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+    }
+  ],
+  "group_context": {
+    "source_term": "IBD",
+    "member_diseases": [
+      "Crohn disease",
+      "Ulcerative colitis"
+    ],
+    "evidence": [
+      {
+        "start_line": 13,
+        "end_line": 13,
+        "quote": "Inflammatory bowel disease (IBD) is a chronic immune-mediated disorder comprised of Crohn disease and ulcerative colitis."
+      }
+    ]
+  },
+  "clinical_review": "not_run",
+  "rdf_admission": "not_run"
+}

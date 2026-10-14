@@ -21,6 +21,10 @@
 - Apply the ontology model and consumption boundaries from D08.
 - Keep source-supported alternative disease presentations distinct from corrections of patient wording without creating unsupported clinical relations.
 - Apply the adopted D09 extraction-schema and offline-validation contract; require a later bounded pilot and admission contract before producing clinical RDF.
+- Keep generated two-stage schemas in ontology/ and source selections, unit inputs, atomic statements, candidate links, and clinical-review records outside submission/.
+- Require reviewed disease-focused textbook or clinician-guideline inputs for the two-stage workflow.
+- Record multiple approved disease topics and exact source group-definition evidence as preparation metadata; preserve single-disease candidate ownership and member-specific conditions.
+- Preserve differential-list provenance without treating a possible association as expected presence or clinical importance.
 - Keep Disease, Symptom, ExamFinding, AttributeValue, ContextFactor, Test, and ExamMethod candidates in English until clinician review before later extraction-schema and pilot work.
 - Apply source acquisition choices from root decision D02 only when preparing SNOMED CT.
 - Apply language-dependent source choices from root decision D04 when relevant.
@@ -46,6 +50,7 @@
 - Retain document-level extraction outputs and failed, pending-review, excluded, or approved preparation records outside submission bundles.
 - Define durable model-response, checkpoint, mapping, and clinical-review paths through the later D09 pilot contract rather than disposable Tmp/.
 - Distinguish automated validation, complete pilot review, sampled batch review, quality admission, and submission admission.
+- Record explicit user candidate acceptance without an additional agent source-meaning audit gate.
 - Bundle only quality-admitted and submission-admitted outputs by existing source group.
 - Preserve bundle file lists, versions, source identity, triple counts, and preparation-result links in the submission manifest.
 - Distinguish source inspection from generated Turtle and manifest evidence.

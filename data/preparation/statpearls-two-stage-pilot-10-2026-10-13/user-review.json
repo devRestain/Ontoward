@@ -1,0 +1,46 @@
+{
+  "validation_sha256": "e19e69bde139b3eccfb7e7192104a7be23766590f582eba6c413068e85160f85",
+  "reviewer": "Human user, explicit candidate acceptance in the current chat on 2026-10-14",
+  "decisions": [
+    {
+      "candidate": "/patterns/0",
+      "decision": "approved",
+      "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+    },
+    {
+      "candidate": "/patterns/1",
+      "decision": "approved",
+      "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+    },
+    {
+      "candidate": "/patterns/2",
+      "decision": "approved",
+      "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+    },
+    {
+      "candidate": "/patterns/3",
+      "decision": "approved",
+      "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+    },
+    {
+      "candidate": "/patterns/4",
+      "decision": "approved",
+      "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+    },
+    {
+      "candidate": "/patterns/5",
+      "decision": "approved",
+      "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+    },
+    {
+      "candidate": "/patterns/6",
+      "decision": "approved",
+      "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+    },
+    {
+      "candidate": "/patterns/7",
+      "decision": "approved",
+      "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+    }
+  ]
+}

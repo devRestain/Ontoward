@@ -12,6 +12,7 @@
 - Preserve agents/ and knowledge/ package paths in the archive and require their shared models and execution modules.
 - Read archive inputs only from /submission and write output only to /output without traversing the project root or preparation data.
 - Include required knowledge/*.ttl and knowledge/*.json assets below the submission package alongside its Python graph readers.
+- Include the environment-selected runtime prompt and text files under submission/config without packaging verification fixtures.
 - Treat archive validation as artifact evidence rather than clinical readiness or source admission.
 
 ## Preparation Workflow
@@ -19,6 +20,15 @@
 - Read root AGENTS.md, PROJECT_STATE.md, PRD.md, and DECISION_STATE.md D07 through D10 before implementation.
 - Read root data/AGENTS.md, data/PROJECT_STATE.md, data/ontology/AGENTS.md, and applicable asset contracts before handling inputs.
 - Apply the adopted D09 schema and offline candidate contract through ontology/models.py, ontology/tools.py, and ontology/extraction_prompt.md.
+- Use ontology/workflow.py for reviewed disease-focused textbook or guideline selection, Markdown units, two-stage prompts, candidate links, and clinical-review records.
+- Generate atomic, conversion, source-selection, and clinical-review JSON schemas from ontology/models.py without changing ExtractionResult.
+- Keep core text separate from same-section paragraph context and require every atomic claim to quote core text.
+- Use unique approved topic_diseases and optional source-grounded group_context for shared group subjects; keep definition context distinct from core and adjacent paragraphs.
+- Extract shared possible associations as separate single-disease claims with both core and group-definition evidence; retain member-specific restrictions and never infer expansion from topic membership alone.
+- Preserve group context in validation and review metadata without adding ontology classes or changing ExtractionResult.
+- Preserve explicit differential-list origin as a possible association without inferred expected status or features.
+- Account for every atomic claim through candidate links or conversion exclusions and recheck original evidence at both stages.
+- Record complete human review against the exact validation packet before any separate RDF admission.
 - Use the clinician-approved seven-object vocabulary in data/ontology/vocabulary-candidates.md as the baseline for later extraction-schema and pilot work under D09.
 - Run preparation dependencies and Codex CLI in the project-owned ontology-extraction Compose service.
 - Keep codex/Dockerfile and codex/environment.py separate from the submitted agent environment.
@@ -45,7 +55,8 @@
 
 ## Verification and Handoff
 
-- Apply source grounding, schema, semantic review, quality admission, and separate submission checks under the adopted D09 contract.
+- Apply structural, vocabulary, exact-quote, hash, linkage, user-review, and separate RDF/submission admission checks under D09.
+- Exclude a separate agent source-meaning audit from candidate acceptance.
 - Preserve document-specific patterns and feature ownership when merging common concept URIs.
 - Extract source-supported alternative symptom-targeted patterns independently without converting tentative patient interpretations into disease facts.
 - Omit conditions or concepts that cannot be safely represented without weakening a retained relation.

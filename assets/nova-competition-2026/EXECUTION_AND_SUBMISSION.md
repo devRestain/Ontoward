@@ -1,19 +1,19 @@
 # Execution and Submission Contract
 
-Observed **2026-10-12 KST**. Published requirements come from [N02](https://nova.snubhai.org/rules/) and [N03](https://nova.snubhai.org/docs/); execution details are supplemented by [L07 slides 3–12](slides/workflow-2026-10-11.md).
+Observed **2026-10-14 KST**. Published requirements come from [N02](https://nova.snubhai.org/rules/) and [N03](https://nova.snubhai.org/docs/); execution details are supplemented by [L07 slides 3–12](slides/workflow-2026-10-11.md). Apply [the current update](CHANGES_2026-10-14.md).
 
 ## Runtime lifecycle
 
 | Boundary | Contract |
 | --- | --- |
-| Build | PyPI wheels and pinned name==version requirements; 20-minute limit |
+| Build | PyPI wheels and pinned name==version requirements; 20-minute limit and 8 GB aggregate wheel downloads |
 | prepare() | Up to 10 minutes, no case access |
 | ready() | SDK signals readiness before consultation |
 | consult(client, prepared) | Up to 30 minutes; 50 interaction turns |
 | Termination | Submit through client.diagnose and inspect its response |
 | Case isolation | New case container; no cross-case memory, files or statistics |
 
-Preliminary resources: two CPUs, 8 GB RAM, no GPU; designated openai/gpt-oss-20b via client.chat. Finals: eight CPUs, 32 GB RAM, one A6000-class 48 GB GPU; participant model from NOVA_MODEL_DIR, without preliminary client.chat.
+Preliminary resources: two CPUs, 8 GB RAM, no GPU; designated openai/gpt-6-luna via client.chat from October 13. Finals: eight CPUs, 32 GB RAM, one A6000-class 48 GB GPU; participant model from NOVA_MODEL_DIR, without preliminary client.chat.
 
 The workflow deck describes a read-only filesystem with /tmp (512 MB) and /output writable. Official session reads omit past events; the application must maintain its transcript. A process exit alone does not establish a valid diagnosis submission or score. These are organizer descriptions, not locally reproduced server behavior.
 
@@ -25,7 +25,7 @@ The workflow deck describes a read-only filesystem with /tmp (512 MB) and /outpu
 | NOVA_GUIDELINES_DIR | Organizer corpus mount, usually /opt/nova/guidelines |
 | NOVA_MODEL_DIR, NOVA_OUTPUT_DIR | Runner model/output locations |
 | Root .env: NOVA_API_BASE, NOVA_DEV_KEY, local guideline path | Local development only; never packaged |
-| submission/.env: ONTOWARD_KNOWLEDGE_MANIFEST | Public application setting; included in code ZIP |
+| submission/.env: ONTOWARD_KNOWLEDGE_MANIFEST, ONTOWARD_PARSER_PROMPT, ONTOWARD_TEXTS | Public application settings; included in code ZIP |
 
 Packaged settings use literal KEY=VALUE, without shell expansion. Runtime environment values take precedence. The application reads its manifest relative to the submission directory and cannot escape into the development workspace. Runner credentials are not stored in the packaged .env.
 
@@ -35,7 +35,7 @@ ZIP root must contain run.py and requirements.txt. Limits are **50,000,000 compr
 
 Ontoward maintains runtime source in submission/. It includes the unchanged SDK 1.0.1 and public .env. Its AGENTS.md, README.md, PROJECT_STATE.md and caches are development metadata and must be excluded. The project command `docker compose run --rm -T package` creates `Tmp/packaging/ontoward-submission.zip` with root-relative members and checks the archive constraints. D14 uses a dedicated package image with only /submission input and /output mounts and no network; runtime and test assets stay inside the submission knowledge directory.
 
-An archive can satisfy packaging constraints while the clinical workflow remains unimplemented. The packager does not grant clinical knowledge admission or certify working diagnosis. No empty manifest or unapproved extraction preview is packaged.
+An archive can satisfy packaging constraints without admitted clinical assets or official execution evidence. The offline workflow is implemented under D11; its synthetic verification does not grant clinical knowledge admission or certify real Doctor behavior. No empty manifest or unapproved extraction preview is packaged.
 
 ## Dependencies and later assets
 

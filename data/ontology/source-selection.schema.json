@@ -1,0 +1,286 @@
+{
+  "$defs": {
+    "DiseaseTerm": {
+      "enum": [
+        "Acute appendicitis",
+        "Acute cholecystitis",
+        "Acute cholangitis",
+        "Acute pancreatitis",
+        "Acute gastroenteritis",
+        "Acute gastritis",
+        "Peptic ulcer disease",
+        "Gastroesophageal reflux disease",
+        "Irritable bowel syndrome",
+        "Ulcerative colitis",
+        "Crohn disease",
+        "Acute diverticulitis",
+        "Bowel obstruction",
+        "Functional constipation",
+        "Hemorrhoids",
+        "Anal fissure",
+        "Colorectal cancer",
+        "Gastric cancer",
+        "Liver cirrhosis",
+        "Acute viral hepatitis",
+        "Hypertension",
+        "Acute myocardial infarction",
+        "Stable angina",
+        "Unstable angina",
+        "Heart failure",
+        "Atrial fibrillation",
+        "Paroxysmal supraventricular tachycardia",
+        "Pericarditis",
+        "Myocarditis",
+        "Aortic dissection",
+        "Pulmonary embolism",
+        "Deep vein thrombosis",
+        "Peripheral artery disease",
+        "Orthostatic hypotension",
+        "Vasovagal syncope",
+        "Asthma",
+        "Chronic obstructive pulmonary disease",
+        "Pneumonia",
+        "Acute bronchitis",
+        "Bronchiectasis",
+        "Pneumothorax",
+        "Lung cancer",
+        "Acute upper respiratory tract infection",
+        "Influenza",
+        "COVID-19",
+        "Acute tonsillopharyngitis",
+        "Acute sinusitis",
+        "Allergic rhinitis",
+        "Pulmonary tuberculosis",
+        "Obstructive sleep apnea",
+        "Migraine",
+        "Tension-type headache",
+        "Cluster headache",
+        "Ischemic stroke",
+        "Intracerebral hemorrhage",
+        "Subarachnoid hemorrhage",
+        "Meningitis",
+        "Epilepsy",
+        "Benign paroxysmal positional vertigo",
+        "Vestibular neuritis",
+        "Ménière disease",
+        "Bell palsy",
+        "Acute cystitis",
+        "Acute pyelonephritis",
+        "Urolithiasis",
+        "Acute bacterial prostatitis",
+        "Benign prostatic hyperplasia",
+        "Acute kidney injury",
+        "Chronic kidney disease",
+        "Acute glomerulonephritis",
+        "Type 1 diabetes mellitus",
+        "Type 2 diabetes mellitus",
+        "Diabetic ketoacidosis",
+        "Hyperthyroidism",
+        "Hypothyroidism",
+        "Subacute thyroiditis",
+        "Adrenal insufficiency",
+        "Iron deficiency anemia",
+        "Vitamin B12 deficiency anemia",
+        "Gout",
+        "Rheumatoid arthritis",
+        "Osteoarthritis",
+        "Lumbar disc herniation",
+        "Spinal stenosis",
+        "Rotator cuff tear",
+        "Cellulitis",
+        "Herpes zoster",
+        "Atopic dermatitis",
+        "Contact dermatitis",
+        "Urticaria",
+        "Anaphylaxis",
+        "Pelvic inflammatory disease",
+        "Ectopic pregnancy",
+        "Ovarian cyst",
+        "Endometriosis",
+        "Major depressive disorder",
+        "Generalized anxiety disorder",
+        "Panic disorder",
+        "Adjustment disorder",
+        "Insomnia disorder"
+      ],
+      "title": "DiseaseTerm",
+      "type": "string"
+    },
+    "GroupContext": {
+      "additionalProperties": false,
+      "properties": {
+        "source_term": {
+          "minLength": 1,
+          "title": "Source Term",
+          "type": "string"
+        },
+        "member_diseases": {
+          "items": {
+            "$ref": "#/$defs/DiseaseTerm"
+          },
+          "minItems": 2,
+          "title": "Member Diseases",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/SourceSpan"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_term",
+        "member_diseases",
+        "evidence"
+      ],
+      "title": "GroupContext",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "quote": {
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_line",
+        "end_line",
+        "quote"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "document": {
+      "title": "Document",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "start_line": {
+      "minimum": 1,
+      "title": "Start Line",
+      "type": "integer"
+    },
+    "end_line": {
+      "minimum": 1,
+      "title": "End Line",
+      "type": "integer"
+    },
+    "source_kind": {
+      "enum": [
+        "textbook",
+        "guideline"
+      ],
+      "title": "Source Kind",
+      "type": "string"
+    },
+    "topic_diseases": {
+      "items": {
+        "$ref": "#/$defs/DiseaseTerm"
+      },
+      "minItems": 1,
+      "title": "Topic Diseases",
+      "type": "array"
+    },
+    "group_context": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GroupContext"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "topic_evidence": {
+      "items": {
+        "$ref": "#/$defs/SourceSpan"
+      },
+      "minItems": 1,
+      "title": "Topic Evidence",
+      "type": "array"
+    },
+    "reviewer": {
+      "minLength": 1,
+      "title": "Reviewer",
+      "type": "string"
+    },
+    "selection_reason": {
+      "minLength": 1,
+      "title": "Selection Reason",
+      "type": "string"
+    },
+    "population": {
+      "minLength": 1,
+      "title": "Population",
+      "type": "string"
+    },
+    "edition": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Edition"
+    },
+    "conversion_quality": {
+      "const": "acceptable",
+      "title": "Conversion Quality",
+      "type": "string"
+    },
+    "quality_notes": {
+      "minLength": 1,
+      "title": "Quality Notes",
+      "type": "string"
+    },
+    "license_notes": {
+      "minLength": 1,
+      "title": "License Notes",
+      "type": "string"
+    }
+  },
+  "required": [
+    "document",
+    "sha256",
+    "start_line",
+    "end_line",
+    "source_kind",
+    "topic_diseases",
+    "group_context",
+    "topic_evidence",
+    "reviewer",
+    "selection_reason",
+    "population",
+    "edition",
+    "conversion_quality",
+    "quality_notes",
+    "license_notes"
+  ],
+  "title": "SourceSelection",
+  "type": "object"
+}

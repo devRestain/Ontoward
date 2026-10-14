@@ -91,12 +91,8 @@ def build_prompt(source):
             + "\nEND UNTRUSTED SOURCE EXCERPT\nReturn only the schema-conforming JSON.\n")
 
 
-def validate_response(source, response):
-    from .models import ExtractionResult
-    require_schema()
-    result = ExtractionResult.model_validate_json(response)
+def grounded_evidence(source, value):
     grounded = []
-    value = result.model_dump(mode="json")
 
     def visit(node, pointer):
         if isinstance(node, dict):
@@ -117,6 +113,15 @@ def validate_response(source, response):
                 visit(child, f"{pointer}/{index}")
 
     visit(value, "")
+    return grounded
+
+
+def validate_response(source, response):
+    from .models import ExtractionResult
+    require_schema()
+    result = ExtractionResult.model_validate_json(response)
+    value = result.model_dump(mode="json")
+    grounded = grounded_evidence(source, value)
     return {
         "status": "candidate_validated", "schema_version": 1,
         "vocabulary_terms_sha256": load_vocabulary()["terms_sha256"],

@@ -23,8 +23,9 @@
 
 - Treat published competition requirements as requirements evidence rather than project execution authorization.
 - Distinguish published requirements, local source contracts, dated website observations, and project interpretations.
-- Use the SDK 1.0.1 fifteen-field SOAP shape plus separate diagnosis selected by D12 and retain the public table discrepancy as source context.
-- Read CHANGES_2026-10-12.md and slides/ conversions to distinguish dated presentation claims from current public rules.
+- Use the SDK 1.0.1 fifteen-field SOAP shape plus separate diagnosis selected by D12.
+- Apply the confirmed openai/gpt-6-luna Doctor selection under D01 and the current rules in CHANGES_2026-10-14.md.
+- Keep CHANGES_2026-10-12.md and slides/ conversions as dated evidence rather than current model or quota requirements.
 - Follow root `PRD.md` and central decision IDs in root `DECISION_STATE.md` before implementing a competition route.
 - Keep preliminary and finals behavior separate when consulting this reference.
 - Distinguish local simulation, server samples, official evaluation, and final ranking evidence.

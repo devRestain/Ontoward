@@ -1,81 +1,145 @@
 from functools import partial
 
 from langgraph.graph import END, START, StateGraph
-from nova_sdk import Client
 
 from .interview import InterviewAgent
 from .reasoning import ReasoningAgent
 from .resources import Resources
-from .routing import (
-    finish, route_action_budget, route_budget, route_phase, route_selection,
-    route_soap, route_submission,
-)
+from .routing import (abort, finish, route_action_budget, route_after_submit, route_budget,
+                      route_confirmation, route_soap, route_submission, route_validation)
 from .session import SessionController
-from .state import CaseState
+from .state import WorkflowState
 from .submission import SubmissionAgent
 
 
 class ConsultationWorkflow:
-    def __init__(self, client: Client, resources: Resources):
+    def __init__(self, client, resources: Resources):
         self.client = client
         self.resources = resources
         self.session = SessionController()
-        self.interview = InterviewAgent(resources.knowledge)
-        self.reasoning = ReasoningAgent(resources.knowledge, client)
-        self.submission = SubmissionAgent(client)
+        self.interview = InterviewAgent(resources.knowledge, resources.config)
+        self.reasoning = ReasoningAgent(resources.knowledge)
+        self.submission = SubmissionAgent(client, resources.knowledge, resources.config)
+
+    @staticmethod
+    def _node(state: WorkflowState, operation):
+        updated = state.model_copy(deep=True)
+        operation(updated)
+        return WorkflowState.model_validate(updated.model_dump()).model_dump()
+
+    def enter_scope(self, state: WorkflowState) -> None:
+        if state.interaction.termination or state.session.initialized or state.interaction.pending:
+            return
+        state.session.initialized = True
+        self.prepare_questions(state)
+        if state.session.current != "Initiation" and state.interaction.needs_clarification:
+            if state.session.questions_prepared:
+                self.interview.clarify(state, state.interaction.clarification_target)
+            state.interaction.needs_clarification = False
+            state.interaction.clarification_target = None
+
+    def prepare_questions(self, state: WorkflowState) -> None:
+        scope = state.session.current
+        if scope == "Initiation":
+            self.interview.initiation(state)
+        elif scope == "ChiefComplaint":
+            if not state.case.chief_complaints():
+                if self.interview.clarify(state):
+                    return
+                state.stop("failed", "no_supported_chief_complaint")
+                return
+            self.interview.fixed_hpi(state)
+        elif scope == "ContextFactor":
+            self.reasoning.retrieve_candidates(state)
+            if not state.differential.hypotheses and self.interview.clarify(state):
+                return
+            self.interview.collect_context(state)
+        elif scope == "DifferentialDiagnosis":
+            self.reasoning.refresh_hypotheses(state, score_context=True)
+            self.interview.investigate(state)
+        else:
+            self.reasoning.select_diagnosis(state)
+            if not state.interaction.termination:
+                self.interview.prepare_education(state)
+        state.session.questions_prepared = True
+
+    def refresh(self, state: WorkflowState) -> None:
+        if state.interaction.termination:
+            return
+        previous = (state.case.diagnosis_kind, state.case.diagnosis)
+        self.reasoning.refresh_hypotheses(state)
+        interaction = state.interaction
+        if state.session.current != "Initiation" and interaction.needs_clarification:
+            self.interview.clarify(state, interaction.clarification_target)
+            interaction.needs_clarification = False
+            interaction.clarification_target = None
+        if state.session.current == "Education" and state.session.initialized:
+            self.reasoning.select_diagnosis(state)
+            if not interaction.termination and previous != (state.case.diagnosis_kind, state.case.diagnosis):
+                self.interview.prepare_education(state, replace=True)
+
+    def advance(self, state: WorkflowState) -> None:
+        if not state.session.initialized or state.interaction.pending or state.case.unasked(state.session.current):
+            raise ValueError("Cannot advance an unfinished scope")
+        if not state.session.questions_prepared:
+            self.prepare_questions(state)
+            return
+        scope = state.session.current
+        if scope in {"ContextFactor", "DifferentialDiagnosis"}:
+            self.reasoning.refresh_hypotheses(state, score_context=True)
+            if not state.differential.hypotheses and self.interview.clarify(state):
+                return
+        if state.interaction.termination:
+            return
+        self.session.advance_scope(state)
+
+    def finalize(self, state: WorkflowState) -> None:
+        if state.interaction.termination:
+            return
+        self.reasoning.select_diagnosis(state)
+        if not state.interaction.termination:
+            self.interview.prepare_education(state, create_questions=False)
+            self.submission.render_soap(state)
+
+    def repair_submission(self, state: WorkflowState) -> None:
+        state.interaction.submission_repairs += 1
+        state.interaction.submission_request_id = None
+        state.interaction.submission_result = None
+        state.interaction.submission_error = None
+        self.finalize(state)
 
     def compile(self):
-        graph = StateGraph(CaseState)
-        graph.add_node("gateway", partial(self.resources.gateway.ingest, knowledge=self.resources.knowledge, client=self.client))
-        graph.add_node("budget", self.session.budget_guard)
-        graph.add_node("route_phase", lambda state: {})
-        graph.add_node("refresh", self.reasoning.refresh_hypotheses)
-        graph.add_node("hpi", self.interview.fixed_hpi)
-        graph.add_node("open_inquiry", self.interview.open_inquiry)
-        graph.add_node("retrieval", self.reasoning.retrieve_candidates)
-        graph.add_node("context", self.interview.collect_context)
-        graph.add_node("investigation", self.interview.investigate)
-        graph.add_node("synthesis", self.reasoning.synthesize)
-        graph.add_node("education", self.submission.select_education)
-        graph.add_node("render_action", partial(self.resources.interface.render, client=self.client))
-        graph.add_node("validate_action", self.resources.interface.validate)
-        graph.add_node("action_budget", self.session.budget_guard)
-        graph.add_node("execute_action", partial(self.resources.interface.execute, client=self.client))
-        graph.add_node("soap", self.submission.render_soap)
-        graph.add_node("validate_submission", self.submission.validate_submission)
-        graph.add_node("submit", self.submission.submit_diagnosis)
-        graph.add_node("confirm_submission", self.submission.confirm_submission)
-        graph.add_node("finish", finish)
-
+        graph = StateGraph(WorkflowState)
+        operations = {
+            "gateway": partial(self.resources.gateway.ingest, knowledge=self.resources.knowledge, client=self.client),
+            "refresh": self.refresh, "enter": self.enter_scope, "budget": self.session.budget_guard,
+            "select": self.interview.select_question,
+            "render": partial(self.resources.interface.render, client=self.client),
+            "validate": self.resources.interface.validate, "action_budget": self.session.budget_guard,
+            "execute": partial(self.resources.interface.execute, client=self.client), "advance": self.advance,
+            "soap": self.finalize, "validate_submission": self.submission.validate_submission,
+            "repair_submission": self.repair_submission, "submit": self.submission.submit_diagnosis,
+            "confirm_submission": self.submission.confirm_submission, "finish": finish, "abort": abort,
+        }
+        for name, operation in operations.items():
+            graph.add_node(name, partial(self._node, operation=operation))
         graph.add_edge(START, "gateway")
-        graph.add_edge("gateway", "budget")
-        graph.add_conditional_edges("budget", route_budget, {
-            name: name for name in ("finish", "soap", "synthesis", "refresh", "route_phase")
-        })
-        graph.add_edge("refresh", "route_phase")
-        graph.add_conditional_edges("route_phase", route_phase, {
-            name: name for name in (
-                "hpi", "open_inquiry", "retrieval", "context", "investigation",
-                "synthesis", "education", "soap", "finish",
-            )
-        })
-        for node in ("hpi", "open_inquiry", "retrieval", "context", "investigation", "synthesis", "education"):
-            graph.add_conditional_edges(node, route_selection, {
-                name: name for name in ("finish", "render_action", "route_phase")
-            })
-        graph.add_edge("render_action", "validate_action")
-        graph.add_edge("validate_action", "action_budget")
-        graph.add_conditional_edges("action_budget", route_action_budget, {
-            name: name for name in ("finish", "soap", "synthesis", "execute_action")
-        })
-        graph.add_edge("execute_action", "gateway")
-        graph.add_conditional_edges("soap", route_soap, {
-            name: name for name in ("finish", "validate_submission")
-        })
-        graph.add_conditional_edges("validate_submission", route_submission, {
-            name: name for name in ("finish", "submit")
-        })
-        graph.add_edge("submit", "confirm_submission")
-        graph.add_edge("confirm_submission", "finish")
+        graph.add_edge("gateway", "refresh")
+        graph.add_edge("refresh", "budget")
+        graph.add_edge("enter", "budget")
+        graph.add_conditional_edges("budget", route_budget, {key: key for key in ("abort", "gateway", "soap", "enter", "select", "advance")})
+        graph.add_edge("select", "render")
+        graph.add_edge("render", "validate")
+        graph.add_conditional_edges("validate", route_validation, {key: key for key in ("abort", "render", "budget", "action_budget")})
+        graph.add_conditional_edges("action_budget", route_action_budget,
+                                    {key: key for key in ("abort", "gateway", "soap", "enter", "advance", "execute", "budget")})
+        graph.add_edge("execute", "gateway")
+        graph.add_edge("advance", "budget")
+        graph.add_conditional_edges("soap", route_soap, {key: key for key in ("abort", "validate_submission")})
+        graph.add_conditional_edges("validate_submission", route_submission, {key: key for key in ("abort", "repair_submission", "submit")})
+        graph.add_edge("repair_submission", "validate_submission")
+        graph.add_conditional_edges("submit", route_after_submit, {key: key for key in ("repair_submission", "confirm_submission")})
+        graph.add_conditional_edges("confirm_submission", route_confirmation, {"finish": "finish", "abort": "abort"})
         graph.add_edge("finish", END)
+        graph.add_edge("abort", END)
         return graph.compile()

@@ -1,0 +1,12 @@
+{
+  "result": "pass",
+  "protected_file_count": 16315,
+  "changed_in_scope": [
+    "data/ontology/source-selection.schema.json"
+  ],
+  "unexpected_changes": [],
+  "prior_preparation_files": 223,
+  "submission_files": 27,
+  "original_source_files": 16050,
+  "credentials_contents": "not_disclosed"
+}

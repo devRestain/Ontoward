@@ -1,0 +1,276 @@
+{
+  "status": "atomic_validated",
+  "unit_id": "5aa45bf796643b36",
+  "prepared_sha256": "046d5e1cf0b2e9c79ca8d7e773de58f296458731f14213816de662825a55bdac",
+  "response_sha256": "c5c1b5bd19139c49325c1252833fad83c1899236ec8b855eb8acb4e4ad81ba48",
+  "claims": [
+    {
+      "claim_id": "c1",
+      "statement": "IBD patients presenting to the clinic may have abdominal pain.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Abdominal pain"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+        }
+      ]
+    },
+    {
+      "claim_id": "c2",
+      "statement": "IBD patients presenting to the clinic may have abdominal bloating.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Abdominal bloating"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+        }
+      ]
+    },
+    {
+      "claim_id": "c3",
+      "statement": "IBD patients presenting to the clinic may have diarrhea.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Diarrhea"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+        }
+      ]
+    },
+    {
+      "claim_id": "c4",
+      "statement": "IBD patients presenting to the clinic may have constipation.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Constipation"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+        }
+      ]
+    },
+    {
+      "claim_id": "c5",
+      "statement": "IBD patients presenting to the clinic may have fever.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Fever"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+        }
+      ]
+    },
+    {
+      "claim_id": "c6",
+      "statement": "IBD patients presenting to the clinic may have fatigue.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Fatigue"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+        }
+      ]
+    },
+    {
+      "claim_id": "c7",
+      "statement": "IBD patients presenting to the clinic may have weight loss.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Weight loss"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+        }
+      ]
+    },
+    {
+      "claim_id": "c8",
+      "statement": "IBD patients presenting to the clinic may have tenesmus.",
+      "relation_type": "patterns",
+      "source_basis": "direct",
+      "concepts": [
+        {
+          "kind": "Disease",
+          "term": "Crohn disease"
+        },
+        {
+          "kind": "Symptom",
+          "term": "Tenesmus"
+        }
+      ],
+      "evidence": [
+        {
+          "start_line": 59,
+          "end_line": 59,
+          "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+        }
+      ]
+    }
+  ],
+  "grounded_evidence": [
+    {
+      "pointer": "/claims/0/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+    },
+    {
+      "pointer": "/claims/1/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+    },
+    {
+      "pointer": "/claims/2/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+    },
+    {
+      "pointer": "/claims/3/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+    },
+    {
+      "pointer": "/claims/4/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+    },
+    {
+      "pointer": "/claims/5/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+    },
+    {
+      "pointer": "/claims/6/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+    },
+    {
+      "pointer": "/claims/7/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+    }
+  ],
+  "clinical_review": "not_run",
+  "rdf_admission": "not_run"
+}

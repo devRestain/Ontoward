@@ -1,0 +1,694 @@
+{
+  "status": "candidate_validated",
+  "schema_version": 1,
+  "vocabulary_terms_sha256": "30ddfa8762fc073b4b40c1243f89bd5bdb839b85fd4bc7b040dc00023f7d6eb4",
+  "schema_sha256": "ce27d55022476a205816d560fb1b9f5621f676e6d28af4fa80a97f06c345af3f",
+  "response_sha256": "8c7cbab4f3e085720d780920599131a37d13e19c0719af44f98b5166ea778dfc",
+  "source": {
+    "document": "US_StatPearls/statpearls_article-131092.md",
+    "source_group": "US_StatPearls",
+    "sha256": "c013e8ad561c0f7264c9f5c48150c5bcbd27d8153b16fb846f0ba0fc29a3794f",
+    "start_line": 1,
+    "end_line": 97,
+    "catalog": {
+      "title": "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+      "organization": "StatPearls Publishing",
+      "year": "2023",
+      "language": "영어",
+      "source_url": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-131092/",
+      "license": "CC BY-NC-ND",
+      "document_type": "질환 개요(교과서)",
+      "format": "Markdown (원본 XML)"
+    },
+    "frontmatter": {
+      "title": "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+      "organization": "StatPearls Publishing",
+      "year": "2023",
+      "language": "en",
+      "source_url": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-131092/",
+      "license": "CC BY-NC-ND"
+    }
+  },
+  "grounded_evidence": [
+    {
+      "pointer": "/patterns/0/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "Common presenting complaints include abdominal pain"
+    },
+    {
+      "pointer": "/patterns/1/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "Common presenting complaints include abdominal pain and bloating"
+    },
+    {
+      "pointer": "/patterns/2/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "diarrhea/constipation"
+    },
+    {
+      "pointer": "/patterns/3/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "diarrhea/constipation"
+    },
+    {
+      "pointer": "/patterns/4/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "fever"
+    },
+    {
+      "pointer": "/patterns/5/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "fatigue"
+    },
+    {
+      "pointer": "/patterns/6/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "weight loss"
+    },
+    {
+      "pointer": "/patterns/7/evidence/0",
+      "sections": [
+        "Extraintestinal Manifestations of Inflammatory Bowel Disease",
+        "History and Physical"
+      ],
+      "start_line": 59,
+      "end_line": 59,
+      "quote": "tenesmus"
+    }
+  ],
+  "candidates": {
+    "patterns": [
+      {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Abdominal pain"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "Common presenting complaints include abdominal pain"
+          }
+        ]
+      },
+      {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Abdominal bloating"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "Common presenting complaints include abdominal pain and bloating"
+          }
+        ]
+      },
+      {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Diarrhea"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "diarrhea/constipation"
+          }
+        ]
+      },
+      {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Constipation"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "diarrhea/constipation"
+          }
+        ]
+      },
+      {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Fever"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "fever"
+          }
+        ]
+      },
+      {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Fatigue"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "fatigue"
+          }
+        ]
+      },
+      {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Weight loss"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "weight loss"
+          }
+        ]
+      },
+      {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Tenesmus"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "tenesmus"
+          }
+        ]
+      }
+    ],
+    "supporting_contexts": [],
+    "finding_methods": [],
+    "planned_tests": []
+  },
+  "clinical_review": "approved",
+  "rdf_admission": "not_run",
+  "submission_admission": "not_run",
+  "workflow_version": 1,
+  "unit_id": "5aa45bf796643b36",
+  "prepared_sha256": "046d5e1cf0b2e9c79ca8d7e773de58f296458731f14213816de662825a55bdac",
+  "atomic_response_sha256": "c5c1b5bd19139c49325c1252833fad83c1899236ec8b855eb8acb4e4ad81ba48",
+  "conversion_response_sha256": "8118cd68b1cea72c29811df52d58956bcc4abd53debc164d62d03afbdad19b54",
+  "links": [
+    {
+      "candidate": "/patterns/0",
+      "claim_ids": [
+        "c1"
+      ]
+    },
+    {
+      "candidate": "/patterns/1",
+      "claim_ids": [
+        "c2"
+      ]
+    },
+    {
+      "candidate": "/patterns/2",
+      "claim_ids": [
+        "c3"
+      ]
+    },
+    {
+      "candidate": "/patterns/3",
+      "claim_ids": [
+        "c4"
+      ]
+    },
+    {
+      "candidate": "/patterns/4",
+      "claim_ids": [
+        "c5"
+      ]
+    },
+    {
+      "candidate": "/patterns/5",
+      "claim_ids": [
+        "c6"
+      ]
+    },
+    {
+      "candidate": "/patterns/6",
+      "claim_ids": [
+        "c7"
+      ]
+    },
+    {
+      "candidate": "/patterns/7",
+      "claim_ids": [
+        "c8"
+      ]
+    }
+  ],
+  "excluded_claims": [],
+  "review_items": [
+    {
+      "candidate": "/patterns/0",
+      "candidate_value": {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Abdominal pain"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "Common presenting complaints include abdominal pain"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "claim_id": "c1",
+          "statement": "IBD patients presenting to the clinic may have abdominal pain.",
+          "relation_type": "patterns",
+          "source_basis": "direct",
+          "concepts": [
+            {
+              "kind": "Disease",
+              "term": "Crohn disease"
+            },
+            {
+              "kind": "Symptom",
+              "term": "Abdominal pain"
+            }
+          ],
+          "evidence": [
+            {
+              "start_line": 59,
+              "end_line": 59,
+              "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "/patterns/1",
+      "candidate_value": {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Abdominal bloating"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "Common presenting complaints include abdominal pain and bloating"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "claim_id": "c2",
+          "statement": "IBD patients presenting to the clinic may have abdominal bloating.",
+          "relation_type": "patterns",
+          "source_basis": "direct",
+          "concepts": [
+            {
+              "kind": "Disease",
+              "term": "Crohn disease"
+            },
+            {
+              "kind": "Symptom",
+              "term": "Abdominal bloating"
+            }
+          ],
+          "evidence": [
+            {
+              "start_line": 59,
+              "end_line": 59,
+              "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "/patterns/2",
+      "candidate_value": {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Diarrhea"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "diarrhea/constipation"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "claim_id": "c3",
+          "statement": "IBD patients presenting to the clinic may have diarrhea.",
+          "relation_type": "patterns",
+          "source_basis": "direct",
+          "concepts": [
+            {
+              "kind": "Disease",
+              "term": "Crohn disease"
+            },
+            {
+              "kind": "Symptom",
+              "term": "Diarrhea"
+            }
+          ],
+          "evidence": [
+            {
+              "start_line": 59,
+              "end_line": 59,
+              "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "/patterns/3",
+      "candidate_value": {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Constipation"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "diarrhea/constipation"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "claim_id": "c4",
+          "statement": "IBD patients presenting to the clinic may have constipation.",
+          "relation_type": "patterns",
+          "source_basis": "direct",
+          "concepts": [
+            {
+              "kind": "Disease",
+              "term": "Crohn disease"
+            },
+            {
+              "kind": "Symptom",
+              "term": "Constipation"
+            }
+          ],
+          "evidence": [
+            {
+              "start_line": 59,
+              "end_line": 59,
+              "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "/patterns/4",
+      "candidate_value": {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Fever"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "fever"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "claim_id": "c5",
+          "statement": "IBD patients presenting to the clinic may have fever.",
+          "relation_type": "patterns",
+          "source_basis": "direct",
+          "concepts": [
+            {
+              "kind": "Disease",
+              "term": "Crohn disease"
+            },
+            {
+              "kind": "Symptom",
+              "term": "Fever"
+            }
+          ],
+          "evidence": [
+            {
+              "start_line": 59,
+              "end_line": 59,
+              "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "/patterns/5",
+      "candidate_value": {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Fatigue"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "fatigue"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "claim_id": "c6",
+          "statement": "IBD patients presenting to the clinic may have fatigue.",
+          "relation_type": "patterns",
+          "source_basis": "direct",
+          "concepts": [
+            {
+              "kind": "Disease",
+              "term": "Crohn disease"
+            },
+            {
+              "kind": "Symptom",
+              "term": "Fatigue"
+            }
+          ],
+          "evidence": [
+            {
+              "start_line": 59,
+              "end_line": 59,
+              "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "/patterns/6",
+      "candidate_value": {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Weight loss"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "weight loss"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "claim_id": "c7",
+          "statement": "IBD patients presenting to the clinic may have weight loss.",
+          "relation_type": "patterns",
+          "source_basis": "direct",
+          "concepts": [
+            {
+              "kind": "Disease",
+              "term": "Crohn disease"
+            },
+            {
+              "kind": "Symptom",
+              "term": "Weight loss"
+            }
+          ],
+          "evidence": [
+            {
+              "start_line": 59,
+              "end_line": 59,
+              "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "/patterns/7",
+      "candidate_value": {
+        "disease": "Crohn disease",
+        "target": {
+          "kind": "symptom",
+          "term": "Tenesmus"
+        },
+        "features": [],
+        "evidence": [
+          {
+            "start_line": 59,
+            "end_line": 59,
+            "quote": "tenesmus"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "claim_id": "c8",
+          "statement": "IBD patients presenting to the clinic may have tenesmus.",
+          "relation_type": "patterns",
+          "source_basis": "direct",
+          "concepts": [
+            {
+              "kind": "Disease",
+              "term": "Crohn disease"
+            },
+            {
+              "kind": "Symptom",
+              "term": "Tenesmus"
+            }
+          ],
+          "evidence": [
+            {
+              "start_line": 59,
+              "end_line": 59,
+              "quote": "IBD patients presenting to the clinic require a thorough evaluation for signs and symptoms of EIMs. Common presenting complaints include abdominal pain and bloating; diarrhea/constipation; fever; fatigue; weight loss; tenesmus; and inflammation of the joints, skin, eyes, and liver."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "semantic_validation": "not_run",
+  "quality_admission": "not_run",
+  "clinical_review_record": {
+    "validation_sha256": "e19e69bde139b3eccfb7e7192104a7be23766590f582eba6c413068e85160f85",
+    "reviewer": "Human user, explicit candidate acceptance in the current chat on 2026-10-14",
+    "decisions": [
+      {
+        "candidate": "/patterns/0",
+        "decision": "approved",
+        "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+      },
+      {
+        "candidate": "/patterns/1",
+        "decision": "approved",
+        "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+      },
+      {
+        "candidate": "/patterns/2",
+        "decision": "approved",
+        "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+      },
+      {
+        "candidate": "/patterns/3",
+        "decision": "approved",
+        "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+      },
+      {
+        "candidate": "/patterns/4",
+        "decision": "approved",
+        "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+      },
+      {
+        "candidate": "/patterns/5",
+        "decision": "approved",
+        "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+      },
+      {
+        "candidate": "/patterns/6",
+        "decision": "approved",
+        "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+      },
+      {
+        "candidate": "/patterns/7",
+        "decision": "approved",
+        "reason": "Accept the complete final relation proposal under the user's selected candidate-review workflow"
+      }
+    ]
+  }
+}

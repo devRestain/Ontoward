@@ -13,6 +13,7 @@ OUTPUT = Path("/output/ontoward-submission.zip")
 REQUIRED = {
     "run.py", "settings.py", "nova_sdk.py", "requirements.txt", ".env",
     "agents/__init__.py", "agents/runtime.py", "agents/state.py", "agents/resources.py",
+    "agents/config.py", "agents/model.py", "agents/transport.py",
     "agents/gateway.py", "agents/interface.py", "agents/session.py", "agents/interview.py",
     "agents/reasoning.py", "agents/submission.py", "agents/routing.py", "agents/workflow.py",
     "knowledge/__init__.py", "knowledge/graph.py",
@@ -21,6 +22,13 @@ EXCLUDED = {"AGENTS.md", "README.md", "PROJECT_STATE.md", ".DS_Store"}
 
 
 def main() -> None:
+    sys.path.insert(0, str(SOURCE))
+    from settings import SETTING, contained_path, knowledge_path, packaged_settings
+
+    settings = packaged_settings()
+    text_files = {contained_path(settings[key], "config").relative_to(SOURCE).as_posix()
+                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_DOCTOR_PROMPT", "ONTOWARD_TEXTS")}
+    required = REQUIRED | text_files
     files = []
     for path in sorted(SOURCE.rglob("*")):
         relative = path.relative_to(SOURCE)
@@ -32,7 +40,7 @@ def main() -> None:
             continue
         if "\\" in relative.as_posix() or ":" in relative.as_posix():
             raise ValueError(f"Unsafe submission path: {relative}")
-        runtime = relative.as_posix() in REQUIRED or (
+        runtime = relative.as_posix() in required or (
             relative.parts[0] in {"agents", "knowledge"} and path.suffix == ".py"
         )
         knowledge = relative.parts[0] == "knowledge" and path.suffix in {".ttl", ".json"}
@@ -40,13 +48,10 @@ def main() -> None:
             raise ValueError(f"Unapproved submission file: {relative}")
         files.append((path, relative.as_posix()))
     names = {name for _, name in files}
-    if REQUIRED - names:
-        raise ValueError(f"Missing runtime files: {sorted(REQUIRED - names)}")
-    sys.path.insert(0, str(SOURCE))
-    from settings import SETTING, knowledge_path, packaged_settings
-
-    manifest = knowledge_path(packaged_settings()[SETTING]).relative_to(SOURCE).as_posix()
-    if any(Path(name).suffix in {".ttl", ".json"} for name in names) and manifest not in names:
+    if required - names:
+        raise ValueError(f"Missing runtime files: {sorted(required - names)}")
+    manifest = knowledge_path(settings[SETTING]).relative_to(SOURCE).as_posix()
+    if any(name.startswith("knowledge/") and Path(name).suffix in {".ttl", ".json"} for name in names) and manifest not in names:
         raise ValueError("Knowledge assets require their configured manifest inside submission/knowledge")
     for line in (SOURCE / "requirements.txt").read_text().splitlines():
         if line.strip() and not line.startswith("#") and not re.fullmatch(r"[A-Za-z0-9_.-]+==[A-Za-z0-9_.+-]+", line):

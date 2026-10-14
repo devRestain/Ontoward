@@ -1,6 +1,6 @@
 # Ontoward
 
-Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단을 제출하는 에이전트 프로젝트다. 현재 임상 처리는 D11의 추상 골격이며, 전체 진료와 공식 제출이 완료된 상태는 아니다.
+Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단을 제출하는 에이전트 프로젝트다. D11의 실행 코드와 합성 전체 진료 검증을 구현했으며 실제 임상 자산 승인·Luna 품질·공식 제출은 별도 검증 대상이다. 처음 읽는 분은 [워크플로우 백서](submission/README.md)에서 인사부터 진단 제출까지와 각 함수의 책임을 따라갈 수 있다.
 
 [PRD](PRD.md)는 동작 요구사항, [결정 문서](DECISION_STATE.md)는 사용자 선택, 각 범위의 PROJECT_STATE.md는 관측된 진행과 다음 작업을 관리한다. 공모전 규칙은 [공모전 참고 자료](assets/nova-competition-2026/README.md)와 [10월 12일 변경 비교](assets/nova-competition-2026/CHANGES_2026-10-12.md)에서 확인한다.
 
@@ -43,9 +43,12 @@ submission/.env는 **ZIP에 포함하는 공개 실행 설정**이다. 현재 �
 
 ```dotenv
 ONTOWARD_KNOWLEDGE_MANIFEST=knowledge/manifest.json
+ONTOWARD_DOCTOR_PROMPT=config/doctor.txt
+ONTOWARD_PARSER_PROMPT=config/input_parser.txt
+ONTOWARD_TEXTS=config/texts.ko.json
 ```
 
-공통 설정을 중복하지 않도록 .env와 settings.py를 유지한다. settings.py가 prepare()에서 이 파일을 읽으며 파일 경로는 settings.py 위치를 기준으로 결정한다. 실행 위치가 바뀌어도 같은 submission/knowledge를 참조한다. 같은 이름의 환경변수가 있으면 그것이 우선하며 설정·환경값의 경로는 submission/knowledge 내부 상대 경로여야 한다. 단순 KEY=VALUE 형식으로 공백 행과 주석을 허용하고 셸 확장·따옴표 처리는 하지 않는다. 공식 토큰·세션은 실행기가 제공하며 이 파일에 넣지 않는다. 새로운 설정을 추가할 때는 코드의 허용 항목과 실제 소비 위치도 함께 추가한다.
+공통 설정을 중복하지 않도록 .env와 settings.py를 유지한다. settings.py가 prepare()에서 이 파일을 읽으며 파일 경로는 settings.py 위치를 기준으로 결정한다. 실행 위치가 바뀌어도 같은 submission/knowledge를 참조한다. 같은 이름의 환경변수가 있으면 그것이 우선하며 manifest 경로는 submission/knowledge, 프롬프트·문구는 submission/config 내부 상대 경로여야 한다. 단순 KEY=VALUE 형식으로 공백 행과 주석을 허용하고 셸 확장·따옴표 처리는 하지 않는다. 공식 토큰·세션은 실행기가 제공하며 이 파일에 넣지 않는다. 새로운 설정을 추가할 때는 코드의 허용 항목과 실제 소비 위치도 함께 추가한다.
 
 프로젝트 의존성은 호스트에 설치하지 않고 Docker dev 환경을 사용한다.
 
@@ -54,7 +57,7 @@ docker compose build dev
 docker compose run --rm dev
 ```
 
-Dockerfile은 submission/requirements.txt의 고정 버전을 PyPI 휠로 설치한다. 별도 ontology-extraction 서비스는 gpt-6-luna·medium 설정의 최소 Codex 환경과 전용 인증 volume을 소유한다. 현재 자동 추출 프로그램과 임상 산출물은 없으며 새 준비 계약은 D09에서 정한다. 개발·환경 확인 명령이 모델 호출을 시작하지 않는다.
+Dockerfile은 submission/requirements.txt의 고정 버전을 PyPI 휠로 설치한다. 별도 ontology-extraction 서비스는 gpt-6-luna·medium 설정의 최소 Codex 환경과 전용 인증 volume을 소유한다. D09의 준비 도구·저장된 후보·검토 결과는 Dev/ontology와 data가 관리하며 제출용 임상 자산 승인과 구분한다. 개발·환경 확인 명령이 모델 호출을 시작하지 않는다.
 
 ## ZIP 만들기
 
@@ -69,7 +72,7 @@ docker compose run --rm -T package
 
 수동으로 압축할 때도 **submission 폴더 자체가 아니라 필요한 내부 파일**을 선택하고 안내·상태 문서를 제외한다. .env가 숨김 파일이므로 위 명령 사용을 권장한다. .gitignore는 ZIP 구성 규칙을 대신하지 않는다.
 
-현재 ZIP은 구조 검증용이다. 임상 함수와 지식 로딩은 미구현이며 승인된 임상 묶음과 manifest도 준비되지 않았다. 빈 manifest나 임의 진단으로 이를 채우지 않는다.
+현재 ZIP은 구현된 실행 코드를 포함한다. 지식 로더·문진·검색·복구·SOAP·제출 경계는 합성 자료로 검증하지만 승인된 실제 임상 묶음과 manifest는 없다. 따라서 production prepare()는 파일 오류로 멈추며 빈 그래프로 우회하지 않는다.
 
 ## 자료와 Git 관리
 
@@ -77,4 +80,4 @@ docker compose run --rm -T package
 
 Git에는 코드·계약·상태·PPTX 변환 Markdown·간결한 출처와 검토 요약·공개 실행 설정을 남긴다. 대용량 원본, 생성 추출 결과, 임시 작업, 캐시와 로컬 비밀값은 .gitignore로 제외한다. 실제 파일을 삭제하거나 Git 저장소를 초기화하는 규칙은 아니다.
 
-다음 애플리케이션 작업은 세션 입력·공통 Gateway·Fixed HPI 구현이며, 실행 여부와 준비 작업의 별도 진행은 각 상태 문서에서 확인한다.
+다음 애플리케이션 경계는 검토·승인된 실행 지식과 준비 문구의 수용이다. 준비 작업의 별도 검토와 실제 모델·공식 실행 여부는 각 소유 상태에서 확인한다.

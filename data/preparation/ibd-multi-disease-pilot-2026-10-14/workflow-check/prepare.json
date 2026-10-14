@@ -1,0 +1,2167 @@
+{
+  "workflow_version": 2,
+  "differential_policy": "possible_association",
+  "selection": {
+    "document": "US_StatPearls/statpearls_article-17784.md",
+    "sha256": "7d11bb91054ef73435a0fd3ebec577385df8a5a9ed179a42cc756dfbb56255ca",
+    "start_line": 1,
+    "end_line": 238,
+    "source_kind": "textbook",
+    "topic_diseases": [
+      "Acute appendicitis"
+    ],
+    "group_context": null,
+    "topic_evidence": [
+      {
+        "start_line": 9,
+        "end_line": 9,
+        "quote": "# Appendicitis"
+      }
+    ],
+    "reviewer": "offline_fixture_not_a_clinician",
+    "selection_reason": "Exercise disease-chapter input custody",
+    "population": "Not restricted for this structural fixture",
+    "edition": null,
+    "conversion_quality": "acceptable",
+    "quality_notes": "Exercise paragraph parsing only",
+    "license_notes": "Retain CC BY-NC-ND; no submission or derivative admission"
+  },
+  "source": {
+    "document": "US_StatPearls/statpearls_article-17784.md",
+    "source_group": "US_StatPearls",
+    "sha256": "7d11bb91054ef73435a0fd3ebec577385df8a5a9ed179a42cc756dfbb56255ca",
+    "start_line": 1,
+    "end_line": 238,
+    "catalog": {
+      "title": "Appendicitis",
+      "organization": "StatPearls Publishing",
+      "year": "2024",
+      "language": "영어",
+      "source_url": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-17784/",
+      "license": "CC BY-NC-ND",
+      "document_type": "질환 개요(교과서)",
+      "format": "Markdown (원본 XML)"
+    },
+    "frontmatter": {
+      "title": "Appendicitis",
+      "organization": "StatPearls Publishing",
+      "year": "2024",
+      "language": "en",
+      "source_url": "https://www.ncbi.nlm.nih.gov/books/n/statpearls/article-17784/",
+      "license": "CC BY-NC-ND"
+    }
+  },
+  "units": [
+    {
+      "unit_id": "81fdd6f2fd1a3e47",
+      "kind": "paragraph",
+      "start_line": 13,
+      "end_line": 13,
+      "sections": [
+        "Appendicitis",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 15,
+          "end_line": 15
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "1e7b778d1d881692",
+      "kind": "paragraph",
+      "start_line": 15,
+      "end_line": 15,
+      "sections": [
+        "Appendicitis",
+        "Introduction"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 13,
+          "end_line": 13
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "8b39d2f569b2eacf",
+      "kind": "paragraph",
+      "start_line": 19,
+      "end_line": 19,
+      "sections": [
+        "Appendicitis",
+        "Etiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 21,
+          "end_line": 21
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "a25309f5e57d7ff4",
+      "kind": "paragraph",
+      "start_line": 21,
+      "end_line": 21,
+      "sections": [
+        "Appendicitis",
+        "Etiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 19,
+          "end_line": 19
+        },
+        {
+          "start_line": 23,
+          "end_line": 23
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "3aa45108447fbb5c",
+      "kind": "paragraph",
+      "start_line": 23,
+      "end_line": 23,
+      "sections": [
+        "Appendicitis",
+        "Etiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 21,
+          "end_line": 21
+        },
+        {
+          "start_line": 25,
+          "end_line": 25
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "870908ba0bb34237",
+      "kind": "paragraph",
+      "start_line": 25,
+      "end_line": 25,
+      "sections": [
+        "Appendicitis",
+        "Etiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 23,
+          "end_line": 23
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "1017c3967c12a6a2",
+      "kind": "paragraph",
+      "start_line": 29,
+      "end_line": 29,
+      "sections": [
+        "Appendicitis",
+        "Epidemiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 31,
+          "end_line": 31
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "68085d6da8c17cec",
+      "kind": "paragraph",
+      "start_line": 31,
+      "end_line": 31,
+      "sections": [
+        "Appendicitis",
+        "Epidemiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 29,
+          "end_line": 29
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "e14322cc78dfe2de",
+      "kind": "paragraph",
+      "start_line": 35,
+      "end_line": 35,
+      "sections": [
+        "Appendicitis",
+        "Pathophysiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 37,
+          "end_line": 37
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "eff1ef855d6a0a0f",
+      "kind": "paragraph",
+      "start_line": 37,
+      "end_line": 37,
+      "sections": [
+        "Appendicitis",
+        "Pathophysiology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 35,
+          "end_line": 35
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "8f96e8dde9b59305",
+      "kind": "paragraph",
+      "start_line": 41,
+      "end_line": 41,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 43,
+          "end_line": 43
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "c802b61c3c4afe15",
+      "kind": "paragraph",
+      "start_line": 43,
+      "end_line": 43,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 41,
+          "end_line": 41
+        },
+        {
+          "start_line": 45,
+          "end_line": 45
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "b4d579e331f7861f",
+      "kind": "paragraph",
+      "start_line": 45,
+      "end_line": 45,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 43,
+          "end_line": 43
+        },
+        {
+          "start_line": 47,
+          "end_line": 47
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "6c99feda69f008f7",
+      "kind": "paragraph",
+      "start_line": 47,
+      "end_line": 47,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 45,
+          "end_line": 45
+        },
+        {
+          "start_line": 49,
+          "end_line": 49
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "876d9b0fec1054f4",
+      "kind": "paragraph",
+      "start_line": 49,
+      "end_line": 49,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 47,
+          "end_line": 47
+        },
+        {
+          "start_line": 51,
+          "end_line": 51
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "3ec762e330380f9d",
+      "kind": "paragraph",
+      "start_line": 51,
+      "end_line": 51,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 49,
+          "end_line": 49
+        },
+        {
+          "start_line": 53,
+          "end_line": 53
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "e56b65b5e7497834",
+      "kind": "paragraph",
+      "start_line": 53,
+      "end_line": 53,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 51,
+          "end_line": 51
+        },
+        {
+          "start_line": 55,
+          "end_line": 55
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "b1bbfeec11c91dcd",
+      "kind": "paragraph",
+      "start_line": 55,
+      "end_line": 55,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 53,
+          "end_line": 53
+        },
+        {
+          "start_line": 57,
+          "end_line": 57
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "689472762ff57468",
+      "kind": "paragraph",
+      "start_line": 57,
+      "end_line": 57,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 55,
+          "end_line": 55
+        },
+        {
+          "start_line": 59,
+          "end_line": 59
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "86884138da03d611",
+      "kind": "paragraph",
+      "start_line": 59,
+      "end_line": 59,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 57,
+          "end_line": 57
+        },
+        {
+          "start_line": 61,
+          "end_line": 61
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "e6d46be26938b151",
+      "kind": "paragraph",
+      "start_line": 61,
+      "end_line": 61,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 59,
+          "end_line": 59
+        },
+        {
+          "start_line": 63,
+          "end_line": 63
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "1b0b2264c04ac8b4",
+      "kind": "paragraph",
+      "start_line": 63,
+      "end_line": 63,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 61,
+          "end_line": 61
+        },
+        {
+          "start_line": 65,
+          "end_line": 65
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "f13b898485bdea6f",
+      "kind": "paragraph",
+      "start_line": 65,
+      "end_line": 65,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 63,
+          "end_line": 63
+        },
+        {
+          "start_line": 67,
+          "end_line": 67
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "379736d07c8e38f4",
+      "kind": "paragraph",
+      "start_line": 67,
+      "end_line": 67,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 65,
+          "end_line": 65
+        },
+        {
+          "start_line": 69,
+          "end_line": 69
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "cd8dcaf67a62ab16",
+      "kind": "paragraph",
+      "start_line": 69,
+      "end_line": 69,
+      "sections": [
+        "Appendicitis",
+        "Histopathology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 67,
+          "end_line": 67
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "10ab4ab6d7aae029",
+      "kind": "paragraph",
+      "start_line": 73,
+      "end_line": 73,
+      "sections": [
+        "Appendicitis",
+        "History and Physical"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 75,
+          "end_line": 75
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "683506f03a377125",
+      "kind": "paragraph",
+      "start_line": 75,
+      "end_line": 75,
+      "sections": [
+        "Appendicitis",
+        "History and Physical"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 73,
+          "end_line": 73
+        },
+        {
+          "start_line": 77,
+          "end_line": 77
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "df5831edcae0d759",
+      "kind": "paragraph",
+      "start_line": 77,
+      "end_line": 77,
+      "sections": [
+        "Appendicitis",
+        "History and Physical"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 75,
+          "end_line": 75
+        },
+        {
+          "start_line": 79,
+          "end_line": 79
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "61d9e1b17826a7a8",
+      "kind": "paragraph",
+      "start_line": 79,
+      "end_line": 79,
+      "sections": [
+        "Appendicitis",
+        "History and Physical"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 77,
+          "end_line": 77
+        },
+        {
+          "start_line": 81,
+          "end_line": 81
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "f2078a5f431f4f2e",
+      "kind": "paragraph",
+      "start_line": 81,
+      "end_line": 81,
+      "sections": [
+        "Appendicitis",
+        "History and Physical"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 79,
+          "end_line": 79
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "db7a6193aa11e05d",
+      "kind": "paragraph",
+      "start_line": 85,
+      "end_line": 85,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 87,
+          "end_line": 87
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "52c14228e981b12c",
+      "kind": "paragraph",
+      "start_line": 87,
+      "end_line": 87,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 85,
+          "end_line": 85
+        },
+        {
+          "start_line": 89,
+          "end_line": 89
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "559dcbf212852af5",
+      "kind": "paragraph",
+      "start_line": 89,
+      "end_line": 89,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 87,
+          "end_line": 87
+        },
+        {
+          "start_line": 91,
+          "end_line": 91
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "a020ff3713962504",
+      "kind": "paragraph",
+      "start_line": 91,
+      "end_line": 91,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 89,
+          "end_line": 89
+        },
+        {
+          "start_line": 93,
+          "end_line": 93
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "1d9b3b363aa5b2f3",
+      "kind": "paragraph",
+      "start_line": 93,
+      "end_line": 93,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 91,
+          "end_line": 91
+        },
+        {
+          "start_line": 95,
+          "end_line": 95
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "9c1523ff674f607c",
+      "kind": "paragraph",
+      "start_line": 95,
+      "end_line": 95,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 93,
+          "end_line": 93
+        },
+        {
+          "start_line": 97,
+          "end_line": 97
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "134ab6bb4f9c97d8",
+      "kind": "paragraph",
+      "start_line": 97,
+      "end_line": 97,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 95,
+          "end_line": 95
+        },
+        {
+          "start_line": 99,
+          "end_line": 99
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "a0927f910f0b5027",
+      "kind": "paragraph",
+      "start_line": 99,
+      "end_line": 99,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 97,
+          "end_line": 97
+        },
+        {
+          "start_line": 101,
+          "end_line": 101
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "f279eae6a3a0353e",
+      "kind": "paragraph",
+      "start_line": 101,
+      "end_line": 101,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 99,
+          "end_line": 99
+        },
+        {
+          "start_line": 103,
+          "end_line": 103
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "1c256c8d4bf4984e",
+      "kind": "paragraph",
+      "start_line": 103,
+      "end_line": 103,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 101,
+          "end_line": 101
+        },
+        {
+          "start_line": 105,
+          "end_line": 105
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "7cf653351df6a145",
+      "kind": "paragraph",
+      "start_line": 105,
+      "end_line": 105,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 103,
+          "end_line": 103
+        },
+        {
+          "start_line": 107,
+          "end_line": 107
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "9ff156b8376a2233",
+      "kind": "paragraph",
+      "start_line": 107,
+      "end_line": 107,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 105,
+          "end_line": 105
+        },
+        {
+          "start_line": 109,
+          "end_line": 109
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "241531a5e7e66917",
+      "kind": "paragraph",
+      "start_line": 109,
+      "end_line": 109,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 107,
+          "end_line": 107
+        },
+        {
+          "start_line": 111,
+          "end_line": 111
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "a3b13f101319fe6c",
+      "kind": "paragraph",
+      "start_line": 111,
+      "end_line": 111,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 109,
+          "end_line": 109
+        },
+        {
+          "start_line": 113,
+          "end_line": 113
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "a44b08c60475af92",
+      "kind": "paragraph",
+      "start_line": 113,
+      "end_line": 113,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 111,
+          "end_line": 111
+        },
+        {
+          "start_line": 115,
+          "end_line": 115
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "b1100c69661d0c27",
+      "kind": "paragraph",
+      "start_line": 115,
+      "end_line": 115,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 113,
+          "end_line": 113
+        },
+        {
+          "start_line": 117,
+          "end_line": 117
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "3038017bd28195fd",
+      "kind": "paragraph",
+      "start_line": 117,
+      "end_line": 117,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 115,
+          "end_line": 115
+        },
+        {
+          "start_line": 124,
+          "end_line": 124
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "1a334f135efcc1f3",
+      "kind": "list",
+      "start_line": 119,
+      "end_line": 122,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 117,
+          "end_line": 117
+        },
+        {
+          "start_line": 124,
+          "end_line": 124
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "ce55360ceec8609b",
+      "kind": "paragraph",
+      "start_line": 124,
+      "end_line": 124,
+      "sections": [
+        "Appendicitis",
+        "Evaluation"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 117,
+          "end_line": 117
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "f88e7527c85f359a",
+      "kind": "paragraph",
+      "start_line": 128,
+      "end_line": 128,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 130,
+          "end_line": 130
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "621e6a87f12df188",
+      "kind": "paragraph",
+      "start_line": 130,
+      "end_line": 130,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 128,
+          "end_line": 128
+        },
+        {
+          "start_line": 132,
+          "end_line": 132
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "38e8216ca664d590",
+      "kind": "paragraph",
+      "start_line": 132,
+      "end_line": 132,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 130,
+          "end_line": 130
+        },
+        {
+          "start_line": 134,
+          "end_line": 134
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "75ce1fdb7f8d80ac",
+      "kind": "paragraph",
+      "start_line": 134,
+      "end_line": 134,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 132,
+          "end_line": 132
+        },
+        {
+          "start_line": 136,
+          "end_line": 136
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "679a353136bcae9b",
+      "kind": "paragraph",
+      "start_line": 136,
+      "end_line": 136,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 134,
+          "end_line": 134
+        },
+        {
+          "start_line": 138,
+          "end_line": 138
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "ad0d5640723ee413",
+      "kind": "paragraph",
+      "start_line": 138,
+      "end_line": 138,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 136,
+          "end_line": 136
+        },
+        {
+          "start_line": 140,
+          "end_line": 140
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "54a824e4d209e82b",
+      "kind": "paragraph",
+      "start_line": 140,
+      "end_line": 140,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 138,
+          "end_line": 138
+        },
+        {
+          "start_line": 142,
+          "end_line": 142
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "ea5db041d77c8366",
+      "kind": "paragraph",
+      "start_line": 142,
+      "end_line": 142,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 140,
+          "end_line": 140
+        },
+        {
+          "start_line": 144,
+          "end_line": 144
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "1f7877a84d6df135",
+      "kind": "paragraph",
+      "start_line": 144,
+      "end_line": 144,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 142,
+          "end_line": 142
+        },
+        {
+          "start_line": 146,
+          "end_line": 146
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "3b91441da83db35b",
+      "kind": "paragraph",
+      "start_line": 146,
+      "end_line": 146,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 144,
+          "end_line": 144
+        },
+        {
+          "start_line": 148,
+          "end_line": 148
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "953ac08d983fe65b",
+      "kind": "paragraph",
+      "start_line": 148,
+      "end_line": 148,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 146,
+          "end_line": 146
+        },
+        {
+          "start_line": 150,
+          "end_line": 150
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "d0cd41b20fab35f2",
+      "kind": "paragraph",
+      "start_line": 150,
+      "end_line": 150,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 148,
+          "end_line": 148
+        },
+        {
+          "start_line": 152,
+          "end_line": 152
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "96e3af27e74d4a1a",
+      "kind": "paragraph",
+      "start_line": 152,
+      "end_line": 152,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 150,
+          "end_line": 150
+        },
+        {
+          "start_line": 154,
+          "end_line": 154
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "7a4aec28e4f23a94",
+      "kind": "paragraph",
+      "start_line": 154,
+      "end_line": 154,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 152,
+          "end_line": 152
+        },
+        {
+          "start_line": 156,
+          "end_line": 156
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "2774594a24534848",
+      "kind": "paragraph",
+      "start_line": 156,
+      "end_line": 156,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 154,
+          "end_line": 154
+        },
+        {
+          "start_line": 158,
+          "end_line": 158
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "2a428d5b4bdbe20b",
+      "kind": "paragraph",
+      "start_line": 158,
+      "end_line": 158,
+      "sections": [
+        "Appendicitis",
+        "Treatment / Management"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 156,
+          "end_line": 156
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "bb8b128331b0e6bd",
+      "kind": "paragraph",
+      "start_line": 162,
+      "end_line": 162,
+      "sections": [
+        "Appendicitis",
+        "Differential Diagnosis"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 164,
+          "end_line": 164
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "6ee51d33706fe865",
+      "kind": "paragraph",
+      "start_line": 164,
+      "end_line": 164,
+      "sections": [
+        "Appendicitis",
+        "Differential Diagnosis"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 162,
+          "end_line": 162
+        },
+        {
+          "start_line": 166,
+          "end_line": 166
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "a81ad1264ae63222",
+      "kind": "paragraph",
+      "start_line": 166,
+      "end_line": 166,
+      "sections": [
+        "Appendicitis",
+        "Differential Diagnosis"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 164,
+          "end_line": 164
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "079bb8a0e199a329",
+      "kind": "paragraph",
+      "start_line": 170,
+      "end_line": 170,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 172,
+          "end_line": 172
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "4003bd051001ee9c",
+      "kind": "paragraph",
+      "start_line": 172,
+      "end_line": 172,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 170,
+          "end_line": 170
+        },
+        {
+          "start_line": 174,
+          "end_line": 174
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "c70687b4e96fd78c",
+      "kind": "paragraph",
+      "start_line": 174,
+      "end_line": 174,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 172,
+          "end_line": 172
+        },
+        {
+          "start_line": 176,
+          "end_line": 176
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "12bda675641b089c",
+      "kind": "paragraph",
+      "start_line": 176,
+      "end_line": 176,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 174,
+          "end_line": 174
+        },
+        {
+          "start_line": 178,
+          "end_line": 178
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "168de4d585e302f0",
+      "kind": "paragraph",
+      "start_line": 178,
+      "end_line": 178,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 176,
+          "end_line": 176
+        },
+        {
+          "start_line": 180,
+          "end_line": 180
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "b0bebdbfd6bf8019",
+      "kind": "paragraph",
+      "start_line": 180,
+      "end_line": 180,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 178,
+          "end_line": 178
+        },
+        {
+          "start_line": 182,
+          "end_line": 182
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "ec1c07a594f916d2",
+      "kind": "paragraph",
+      "start_line": 182,
+      "end_line": 182,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 180,
+          "end_line": 180
+        },
+        {
+          "start_line": 184,
+          "end_line": 184
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "849054ac3f7448d7",
+      "kind": "paragraph",
+      "start_line": 184,
+      "end_line": 184,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 182,
+          "end_line": 182
+        },
+        {
+          "start_line": 186,
+          "end_line": 186
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "574275048dbf381f",
+      "kind": "paragraph",
+      "start_line": 186,
+      "end_line": 186,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 184,
+          "end_line": 184
+        },
+        {
+          "start_line": 188,
+          "end_line": 188
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "9a98242cf7684115",
+      "kind": "paragraph",
+      "start_line": 188,
+      "end_line": 188,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 186,
+          "end_line": 186
+        },
+        {
+          "start_line": 190,
+          "end_line": 190
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "8aa3713a2670dcff",
+      "kind": "paragraph",
+      "start_line": 190,
+      "end_line": 190,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 188,
+          "end_line": 188
+        },
+        {
+          "start_line": 192,
+          "end_line": 192
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "a9819a4114329b75",
+      "kind": "paragraph",
+      "start_line": 192,
+      "end_line": 192,
+      "sections": [
+        "Appendicitis",
+        "Surgical Oncology"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 190,
+          "end_line": 190
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "cd68751f16bce365",
+      "kind": "paragraph",
+      "start_line": 196,
+      "end_line": 196,
+      "sections": [
+        "Appendicitis",
+        "Prognosis"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 198,
+          "end_line": 198
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "1c1ef316b75bf349",
+      "kind": "paragraph",
+      "start_line": 198,
+      "end_line": 198,
+      "sections": [
+        "Appendicitis",
+        "Prognosis"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 196,
+          "end_line": 196
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "133e1ae8b37c88d4",
+      "kind": "paragraph",
+      "start_line": 202,
+      "end_line": 202,
+      "sections": [
+        "Appendicitis",
+        "Complications"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 204,
+          "end_line": 204
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "5768ce63b1a03e29",
+      "kind": "paragraph",
+      "start_line": 204,
+      "end_line": 204,
+      "sections": [
+        "Appendicitis",
+        "Complications"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 202,
+          "end_line": 202
+        },
+        {
+          "start_line": 206,
+          "end_line": 206
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "45fb3af161cf91d3",
+      "kind": "paragraph",
+      "start_line": 206,
+      "end_line": 206,
+      "sections": [
+        "Appendicitis",
+        "Complications"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 204,
+          "end_line": 204
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "9cda6edc6284fa6d",
+      "kind": "paragraph",
+      "start_line": 210,
+      "end_line": 210,
+      "sections": [
+        "Appendicitis",
+        "Postoperative and Rehabilitation Care"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [],
+      "group_context": null
+    },
+    {
+      "unit_id": "4099798264832f52",
+      "kind": "paragraph",
+      "start_line": 214,
+      "end_line": 214,
+      "sections": [
+        "Appendicitis",
+        "Deterrence and Patient Education"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [],
+      "group_context": null
+    },
+    {
+      "unit_id": "60e72b1255e5f7dd",
+      "kind": "paragraph",
+      "start_line": 218,
+      "end_line": 218,
+      "sections": [
+        "Appendicitis",
+        "Pearls and Other Issues"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 220,
+          "end_line": 220
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "edf17d7682a5e47e",
+      "kind": "paragraph",
+      "start_line": 220,
+      "end_line": 220,
+      "sections": [
+        "Appendicitis",
+        "Pearls and Other Issues"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 218,
+          "end_line": 218
+        },
+        {
+          "start_line": 222,
+          "end_line": 222
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "ca2bc6fc0255609d",
+      "kind": "paragraph",
+      "start_line": 222,
+      "end_line": 222,
+      "sections": [
+        "Appendicitis",
+        "Pearls and Other Issues"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 220,
+          "end_line": 220
+        },
+        {
+          "start_line": 224,
+          "end_line": 224
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "44291def5345a14a",
+      "kind": "paragraph",
+      "start_line": 224,
+      "end_line": 224,
+      "sections": [
+        "Appendicitis",
+        "Pearls and Other Issues"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 222,
+          "end_line": 222
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "641ced5689541f93",
+      "kind": "paragraph",
+      "start_line": 228,
+      "end_line": 228,
+      "sections": [
+        "Appendicitis",
+        "Enhancing Healthcare Team Outcomes"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 230,
+          "end_line": 230
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "5b8c6f022b44f3a9",
+      "kind": "paragraph",
+      "start_line": 230,
+      "end_line": 230,
+      "sections": [
+        "Appendicitis",
+        "Enhancing Healthcare Team Outcomes"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 228,
+          "end_line": 228
+        },
+        {
+          "start_line": 232,
+          "end_line": 232
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "3ccaa464c5719c51",
+      "kind": "paragraph",
+      "start_line": 232,
+      "end_line": 232,
+      "sections": [
+        "Appendicitis",
+        "Enhancing Healthcare Team Outcomes"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 230,
+          "end_line": 230
+        },
+        {
+          "start_line": 234,
+          "end_line": 234
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "fc4a43f4fc2e158b",
+      "kind": "paragraph",
+      "start_line": 234,
+      "end_line": 234,
+      "sections": [
+        "Appendicitis",
+        "Enhancing Healthcare Team Outcomes"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 232,
+          "end_line": 232
+        },
+        {
+          "start_line": 236,
+          "end_line": 236
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "f543ee2c7739fe51",
+      "kind": "paragraph",
+      "start_line": 236,
+      "end_line": 236,
+      "sections": [
+        "Appendicitis",
+        "Enhancing Healthcare Team Outcomes"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 234,
+          "end_line": 234
+        },
+        {
+          "start_line": 238,
+          "end_line": 238
+        }
+      ],
+      "group_context": null
+    },
+    {
+      "unit_id": "1be0e9fae4c4ba8f",
+      "kind": "paragraph",
+      "start_line": 238,
+      "end_line": 238,
+      "sections": [
+        "Appendicitis",
+        "Enhancing Healthcare Team Outcomes"
+      ],
+      "status": "ready",
+      "reason": null,
+      "context": [
+        {
+          "start_line": 236,
+          "end_line": 236
+        }
+      ],
+      "group_context": null
+    }
+  ],
+  "schema_hashes": {
+    "selection": "b7708fc787fcc43dd6ed4af9dc7e7071ae5b9a84bc80ecf64d3a3ba94e2938e3",
+    "atomic": "7234e61c92317d9b1ff083dab6eceb05f2820d3c10854ed17ff003bae4a84090",
+    "conversion": "34f3b44917c0c0c061874d7a4937d3f8bd886e2694c9da0bdbfe732109cccc51",
+    "review": "1e70eb18566e419da25220f2a4c3359077976812516467c5180433c21e6b02eb"
+  },
+  "vocabulary_sha256": "30ddfa8762fc073b4b40c1243f89bd5bdb839b85fd4bc7b040dc00023f7d6eb4",
+  "clinical_review": "not_run",
+  "model_calls": "not_run",
+  "rdf_admission": "not_run"
+}

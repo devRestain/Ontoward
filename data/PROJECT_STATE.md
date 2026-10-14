@@ -1,9 +1,15 @@
 /state version=1
 /project id=ontoward-data
 /status value=blocked
-/checkpoint revision=UNKNOWN dirty=unknown updated=2026-10-13T00:26:57+09:00
-/goal phase=current id=DATA.EMPTY01 state=complete action="Preserve offline observations about empty-output inputs and source-reference validation"
-/goal phase=next id=DATA.ADMISSION01 state=blocked action="Define concept URIs and RDF admission after reviewed nonempty clinical evidence"
+/checkpoint revision=0dde400ff6eb5879aafabcabf5e994563d1c8de6 dirty=true updated=2026-10-14T10:56:39+09:00
+/goal phase=current id=DATA.MULTIDISEASE01 state=complete action="Persist the bounded IBD group-context pilot and preserve previous accepted candidates"
+/goal phase=history id=DATA.RULES14 state=complete action="Persist current competition-source observations and reconcile provenance without clinical admission"
+/goal phase=history id=DATA.USERREVIEW14 state=complete action="Record exact user review of eight unchanged relation candidates and retain shared pilot evidence"
+/goal phase=next id=DATA.ADMISSION01 state=blocked action="Define concept URIs and RDF admission for user-approved candidates after a new bounded request"
+/goal phase=history id=DATA.TWOPILOT10 state=complete action="Persist ten-source screening both model responses verification and candidate review"
+/goal phase=history id=DATA.TWOSTAGE01 state=complete action="Persist generated two-stage preparation interfaces verification and preservation evidence"
+/goal phase=history id=DATA.DIAG01 state=complete action="Preserve sequential Tinnitus responses source reviews and reproducibility evidence"
+/goal phase=history id=DATA.EMPTY01 state=complete action="Preserve offline observations about empty-output inputs and source-reference validation"
 /goal phase=history id=DATA.RANDOM10 state=complete action="Preserve and review ten randomly selected StatPearls responses and validation evidence"
 /goal phase=history id=DATA.PILOT01 state=complete action="Preserve two randomly selected StatPearls inputs responses validation and source-review evidence"
 /goal phase=history id=DATA.SCHEMA01 state=complete action="Persist the generated approved vocabulary and extraction JSON Schema"
@@ -92,12 +98,11 @@
 /evidence id=DATA.E61 class=semantic result=pass source=data/ontology/AGENTS.md observed="Require an adopted preparation contract and reviewed clinical artifacts before v4.2 runtime admission; retain D08 ontology semantics independently of removed legacy previews"
 /evidence id=DATA.E62 class=runtime result=not_run source=data/ontology/schema.ttl observed="Leave v4.2 RDFLib parsing schema enforcement extraction reprojection query execution and submission admission unrun"
 /blocker id=DATA.B1 state=resolved action="Adopt the D09 schema and offline candidate preparation contract" source=DECISION_STATE.md
-/blocker id=DATA.ADMISSION.B1 state=open action="Obtain nonempty clinical evidence clinician review concept URIs and the RDF admission contract" source=DECISION_STATE.md
-/blocker id=DATA.QUALITY.B1 state=open action="Resolve the two observed source-reference omissions before quality admission" source=data/preparation/statpearls-random-pilot-10-2026-10-12/reference-audit.json
+/blocker id=DATA.ADMISSION.B1 state=open action="Define concept URIs RDF admission and permitted runtime assets for user-approved candidates" source=DECISION_STATE.md
 /scope id=DATA.S1 state=in action="Own the approved baseline generated schemas ontology inputs and durable random-pilot responses and review records"
 /scope id=DATA.S2 state=out action="Delegate preparation tools to Dev under root state and runtime graph readers and SDK adapters to submission"
-/scope id=DATA.S3 state=out action="Exclude RDF admission external vocabulary imports actual clinical extraction and model calls from DATA.SCHEMA01"
-/scope id=DATA.S4 state=in action="Reference D02 D04 D05 D06 D07 D08 D09 D10 D12 D13 and D14 through DECISION_STATE.md without copying decision records"
+/scope id=DATA.S3 state=out action="Exclude RDF admission external vocabulary imports actual clinical extraction and model calls from DATA.TWOSTAGE01"
+/scope id=DATA.S4 state=in action="Reference D02 D04 D05 D06 D07 D08 D09 D10 D11 D12 D13 and D14 through DECISION_STATE.md without copying decision records"
 /accept id=DATA.CONTEXT12.A1 state=pass action="Preserve dated presentation conversions notes and source identity" evidence=DATA.E63,DATA.E64
 /accept id=DATA.CONTEXT12.A2 state=pass action="Update sourced competition context while separating original claims current rules and admission" evidence=DATA.E65,DATA.E66
 /evidence id=DATA.E63 class=artifact result=pass source=data/provenance/competition.json observed="Preserve MarkItDown 0.1.8 outputs for 26 opening slides with 26 note sections and 22 workflow slides with two substantive note sections alongside source hashes and original-slide image references"
@@ -175,4 +180,49 @@
 /evidence id=DATA.EMPTY01.E2 class=artifact result=pass source=data/preparation/empty-output-investigation-2026-10-13/pilot-preservation.log observed="Verify all seventy prior pilot artifact hashes and preserve ten protected code schema vocabulary and submission owner-document hashes"
 /evidence id=DATA.EMPTY01.E3 class=semantic result=pass source=data/preparation/empty-output-investigation-2026-10-13/handoff.md observed="Retain the two source-reference misses and unresolved quality gate without admitting any causal hypothesis or clinical artifact"
 /evidence id=DATA.EMPTY01.E4 class=external_service result=not_run source=data/preparation/empty-output-investigation-2026-10-13/handoff.md observed="Leave new extraction calls diagnostic variants corrective responses clinician review and RDF admission unrun"
-/handoff state=blocked action="Retain investigation facts and resolve source-reference misses before clinical RDF admission"
+/accept id=DATA.DIAG01.A1 state=pass action="Preserve ten raw calls and verify exact source and input identities" evidence=DATA.DIAG01.E1,DATA.DIAG01.E2
+/accept id=DATA.DIAG01.A2 state=pass action="Record the semantic counterexample and retain the failed quality gate" evidence=DATA.DIAG01.E3,DATA.DIAG01.E4
+/evidence id=DATA.DIAG01.E1 class=artifact result=pass source=data/preparation/tinnitus-diagnostic-2026-10-13/manifest.sha256 observed="Verify ninety-seven durable files containing raw responses events checkpoints reviews prepared conditions source identities schema and vocabulary snapshots and Korean report"
+/evidence id=DATA.DIAG01.E2 class=runtime result=pass source=data/preparation/tinnitus-diagnostic-2026-10-13/verification.json observed="Validate all ten response structures source hashes and completion events and all six emitted quote spans across four nonempty responses"
+/evidence id=DATA.DIAG01.E3 class=semantic result=pass source=data/preparation/tinnitus-diagnostic-2026-10-13/report.ko.md observed="Record empty baseline reproducibility partial vocabulary recovery repeated combined recovery and unobserved provider payload without repairing earlier pilot results"
+/evidence id=DATA.DIAG01.E4 class=semantic result=fail source=data/preparation/tinnitus-diagnostic-2026-10-13/call-10/review.json observed="Find a Meningitis to Tinnitus false positive from the negative differential list and reject the complete response without filtering"
+/evidence id=DATA.DIAG01.E5 class=artifact result=pass source=data/preparation/tinnitus-diagnostic-2026-10-13/preservation.log observed="Preserve 118 protected files including submission and ontology inputs and verify prior pilot manifests through the retained eighteen and seventy entry logs"
+/evidence id=DATA.DIAG01.E6 class=runtime result=not_run source=data/preparation/tinnitus-diagnostic-2026-10-13/handoff.json observed="Leave T8 public prompt adoption clinician review concept URI assignment clinical RDF generation and submission admission unrun"
+/accept id=DATA.TWOSTAGE01.A1 state=pass action="Persist reproducible selection atomic conversion and clinical-review schemas" evidence=DATA.TWOSTAGE01.E1
+/accept id=DATA.TWOSTAGE01.A2 state=pass action="Preserve the approved vocabulary existing final schema runtime assets and prior pilots" evidence=DATA.TWOSTAGE01.E2
+/evidence id=DATA.TWOSTAGE01.E1 class=artifact result=pass source=data/preparation/two-stage-workflow-2026-10-13/verification.json observed="Persist four container-generated schemas and exact hashes while retaining the unchanged final extraction schema"
+/evidence id=DATA.TWOSTAGE01.E2 class=artifact result=pass source=data/preparation/two-stage-workflow-2026-10-13/preservation.json observed="Verify protected source and artifact bytes and retain original historical experiment results"
+/evidence id=DATA.TWOSTAGE01.E3 class=semantic result=pass source=DECISION_STATE.md observed="Reference the current D09 selection and preserve the earlier Tinnitus rejection as an observation under its prior policy"
+/evidence id=DATA.TWOSTAGE01.E4 class=external_service result=not_run source=data/preparation/two-stage-workflow-2026-10-13/handoff.json observed="Leave new model responses clinician gold actual clinical review concept URIs RDF and submission admission unrun"
+/accept id=DATA.TWOPILOT10.A1 state=pass action="Preserve the reproducible random draw grounded screening and complete raw model records" evidence=DATA.TWOPILOT10.E1
+/accept id=DATA.TWOPILOT10.A2 state=pass action="Record user candidate acceptance without altering raw responses or admitting RDF" evidence=DATA.TWOPILOT10.E3
+/evidence id=DATA.TWOPILOT10.E1 class=artifact result=pass source=data/preparation/statpearls-two-stage-pilot-10-2026-10-13/manifest.sha256 observed="Persist the fixed draw ten source reviews one prepared diagnostic paragraph two raw responses events validations and final verification"
+/evidence id=DATA.TWOPILOT10.E3 class=semantic result=pass source=data/preparation/statpearls-two-stage-pilot-10-2026-10-13/report.ko.md observed="Separate source-screening exclusions technical success user candidate acceptance and unrun RDF admission"
+/evidence id=DATA.TWOPILOT10.E4 class=external_service result=not_run source=data/preparation/statpearls-two-stage-pilot-10-2026-10-13/handoff.json observed="Leave independent clinician gold RDF admission generation submission and further model experiments unrun"
+/scope id=DATA.S5 state=out action="Delegate D11 runtime consumption and synthetic verification to submission without admitting test assets"
+/evidence id=DATA.HANDOFF11.E1 class=semantic result=pass source=Tmp/workflow-mvp-2026-10-13/review.md observed="Reconcile the runtime asset handoff under D11 and D13 while preserving separate candidate-review and runtime-admission boundaries"
+/evidence id=DATA.HANDOFF11.E2 class=artifact result=pass source=Tmp/workflow-mvp-2026-10-13/artifacts.json observed="Verify unchanged schema and vocabulary hashes plus all 122 existing two-stage and Tinnitus diagnostic manifest entries"
+/accept id=DATA.RULES14.A1 state=pass action="Persist dated public observations and compare current rules with the retained reference" evidence=DATA.RULES14.E1,DATA.RULES14.E2
+/accept id=DATA.RULES14.A2 state=pass action="Preserve source-quality clinician-review and runtime-admission boundaries" evidence=DATA.RULES14.E2,DATA.RULES14.E3
+/accept id=DATA.RULES14.A3 state=pass action="Verify unchanged organizer inputs ontology and preparation results" evidence=DATA.RULES14.E4
+/evidence id=DATA.RULES14.E1 class=external_service result=pass source=data/provenance/competition-web-2026-10-14.json observed="Read current home rules docs evaluation notices status and main leaderboard without refreshing unvisited private or phase-query surfaces"
+/evidence id=DATA.RULES14.E2 class=semantic result=pass source=assets/nova-competition-2026/CHANGES_2026-10-14.md observed="Distinguish current adopted rules dated recovery events local SDK identity public board display and unknown account values"
+/evidence id=DATA.RULES14.E3 class=semantic result=pass source=data/PROJECT_STATE.md observed="Retain raw pilot outputs and recorded user candidate acceptance while preserving RDF-admission blockers without resuming model jobs"
+/evidence id=DATA.RULES14.E4 class=artifact result=pass source=data/provenance/competition-web-2026-10-14-verification.json observed="Match all 16327 protected file hashes including original organizer inputs ontology preparation results runtime and retained configuration in the project dev container"
+/evidence id=DATA.RULES14.E5 class=external_service result=not_run source=data/provenance/competition-web-2026-10-14.json observed="Leave new archive acquisition latest remote SDK identity authentication actual balances extraction and official evaluation unverified"
+/scope id=DATA.RULES14.S1 state=in action="Own dated public-source provenance reference inspection and protected-input identity evidence"
+/accept id=DATA.USERREVIEW14.A1 state=pass action="Persist the exact user review receipt and unchanged candidate payload" evidence=DATA.USERREVIEW14.E1
+/accept id=DATA.USERREVIEW14.A2 state=pass action="Retain shared execution and schema evidence with a consistent preparation manifest" evidence=DATA.USERREVIEW14.E2
+/evidence id=DATA.USERREVIEW14.E1 class=artifact result=pass source=data/preparation/statpearls-two-stage-pilot-10-2026-10-13/user-reviewed.json observed="Bind user approval to all eight saved Crohn disease candidates while leaving RDF and submission admission unrun"
+/evidence id=DATA.USERREVIEW14.E2 class=artifact result=pass source=data/preparation/statpearls-two-stage-pilot-10-2026-10-13/manifest.sha256 observed="Retain raw prompts responses events input identities and updated review evidence under exact hashes"
+/accept id=DATA.MULTIDISEASE01.A1 state=pass action="Preserve fixed inputs complete model records candidate links and exact result hashes" evidence=DATA.MULTIDISEASE01.E1,DATA.MULTIDISEASE01.E2
+/accept id=DATA.MULTIDISEASE01.A2 state=pass action="Preserve prior accepted evidence and separate new candidate review from RDF admission" evidence=DATA.MULTIDISEASE01.E3,DATA.MULTIDISEASE01.E4
+/evidence id=DATA.MULTIDISEASE01.E1 class=external_service result=pass source=data/preparation/ibd-multi-disease-pilot-2026-10-14/verification.json observed="Complete two sequential gpt-6-luna medium Standard calls yielding sixteen claims and sixteen zero-feature patterns with eight per disease and no retries or tool events"
+/evidence id=DATA.MULTIDISEASE01.E2 class=artifact result=pass source=data/preparation/ibd-multi-disease-pilot-2026-10-14/manifest.sha256 observed="Persist fifty-seven hash-pinned input response execution validation code schema and report files"
+/evidence id=DATA.MULTIDISEASE01.E3 class=artifact result=pass source=data/preparation/ibd-multi-disease-pilot-2026-10-14/preservation.json observed="Compare 16315 protected files and retain all 223 prior preparation files 27 submission files 16050 original asset files and settings while regenerating only the current selection schema"
+/evidence id=DATA.MULTIDISEASE01.E4 class=runtime result=pass source=data/preparation/ibd-multi-disease-pilot-2026-10-14/verification.json observed="Pass twenty-four saved-result checks and retain all sixteen core-plus-definition quotes eight prior pairs and eight added Ulcerative colitis pairs"
+/evidence id=DATA.MULTIDISEASE01.E5 class=semantic result=not_run source=data/preparation/ibd-multi-disease-pilot-2026-10-14/handoff.json observed="Leave new user candidate review gold accuracy recall concept URI assignment RDF generation and runtime admission unperformed"
+/blocker id=DATA.MULTIDISEASE01.B1 state=open action="Obtain explicit user review of the exact new sixteen-candidate packet before candidate acceptance" source=data/preparation/ibd-multi-disease-pilot-2026-10-14/review-packet.json
+/evidence id=DATA.WORKFLOW14.E1 class=artifact result=pass source=Tmp/workflow-revision-2026-10-14/artifacts.json observed="Retain every protected organizer source ontology preparation artifact and existing review file among 16372 unchanged hashes during the application revision"
+/evidence id=DATA.WORKFLOW14.E2 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Reference D11 revised runtime acceptance without admitting synthetic assets resuming extraction changing prior candidate approvals or resolving current IBD review and RDF-admission blockers"
+/handoff state=blocked action="Obtain the existing new candidate user review and separately authorize RDF and runtime-asset admission; the application revision does not admit synthetic or preparation assets"

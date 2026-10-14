@@ -1,0 +1,90 @@
+{
+  "observed_on": "2026-10-14",
+  "timezone": "Asia/Seoul",
+  "website_revision_time": null,
+  "method": "Read public organizer pages with built-in web research and compare workspace references",
+  "sources": [
+    {"id": "N01", "url": "https://nova.snubhai.org/", "observed_on": "2026-10-14", "coverage": "Calendar and public submission workflow"},
+    {"id": "N02", "url": "https://nova.snubhai.org/rules/", "observed_on": "2026-10-14", "coverage": "Designated Doctor, resources, budgets, quota and security"},
+    {"id": "N03", "url": "https://nova.snubhai.org/docs/", "observed_on": "2026-10-14", "coverage": "Model controls, quotas, record format, pending requests, timeouts and build limits"},
+    {"id": "N04", "url": "https://nova.snubhai.org/evaluation/", "observed_on": "2026-10-14", "coverage": "Doctor replacement, official judging and ranking boundaries"},
+    {"id": "N05", "url": "https://nova.snubhai.org/qna/", "observed_on": "2026-10-14", "notice_date": "2026-10-13", "coverage": "Doctor replacement, credit recovery, one-time quota reset, leaderboard opening and ten finalists"},
+    {"id": "N06", "url": "https://nova.snubhai.org/status/", "observed_on": "2026-10-14", "coverage": "Four services display available; no authenticated health test"},
+    {"id": "N10", "url": "https://nova.snubhai.org/leaderboard/", "observed_on": "2026-10-14", "coverage": "Team-best ranking, earlier-submission tie break and 24 scored rows"}
+  ],
+  "adopted_doctor": {
+    "model": "openai/gpt-6-luna",
+    "effective_from": "2026-10-13",
+    "user_confirmed_on": "2026-10-14",
+    "decision_ids": ["D01", "D12"],
+    "model_omission_routes_to_doctor": true,
+    "previous_id_routes_to_doctor": true,
+    "reasoning_effort": ["low", "medium", "high"],
+    "temperature_effect": "ignored",
+    "development_krw_per_million_tokens": {"input": 152, "cached_input": 15, "output": 761}
+  },
+  "daily_team_quotas": {
+    "reset": "KST midnight",
+    "development_sample_sessions": 100,
+    "uploaded_code_sample_validations": 10,
+    "official_evaluations_per_phase": 1,
+    "outside_session_successful_luna_calls_including_default_doctor": 1000,
+    "outside_session_successful_sol_calls": 100,
+    "in_session_doctor_uses_separate_per_case_budget": true
+  },
+  "dated_operations": {
+    "credit_restore_date": "2026-10-13",
+    "credit_restore_allocation_krw": 40000,
+    "one_time_quota_reset_at": "2026-10-13T12:30:00+09:00",
+    "early_outage_validations": "Cancelled without automatic replay",
+    "leaderboard_opening": "2026-10-13 afternoon KST; exact clock time not published",
+    "finals_advancing_teams": 10
+  },
+  "guide_transport_requirements": {
+    "provider_response_start_limit_seconds": 180,
+    "described_new_sdk_default_timeout_seconds": 240,
+    "pending_error": "REQUEST_PENDING",
+    "pending_http_statuses": [503, 409],
+    "recovery_identity": "Retain the same request_id and payload",
+    "aggregate_dependency_wheel_download_limit": "8 GB; exact byte interpretation not published"
+  },
+  "public_evaluation_details": {
+    "official_preliminary_judge": "gpt-6.1-sol",
+    "main_diagnosis_rating_levels": 5,
+    "diagnostic_domain_points": 15,
+    "private_rubric_and_point_conversion": "unpublished",
+    "leaderboard_ranking": "Team-best score with earlier submission breaking ties",
+    "leaderboard_scored_team_rows_observed": 24,
+    "finals_physician_review_teams": 5,
+    "finals_score_combination": "unpublished"
+  },
+  "local_static_observations": {
+    "sdk_source": "assets/nova-starter/nova_sdk.py",
+    "sdk_submission_copy": "submission/nova_sdk.py",
+    "sdk_version": "1.0.1",
+    "sdk_sha256": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    "sdk_default_timeout_seconds": 120,
+    "gateway_source": "submission/agents/gateway.py",
+    "gateway_model_argument": "omitted",
+    "gateway_temperature_argument": "omitted",
+    "gateway_reasoning_effort": "medium",
+    "gateway_max_tokens_cap": 2048,
+    "pending_recovery": "not_implemented",
+    "remote_starter_or_sdk_bytes": "not_inspected"
+  },
+  "published_archive_identifiers": {
+    "benchmark_sha256": "a2b4dbc6a2bc177a54cf7c7f1a4e15f94625bfd335738737b575c6832a1060a7",
+    "guideline_sha256": "ef58c2f4369750af382f2706dcc1c9c7a85e3a93c261d880f7470d695eaf30d5",
+    "fresh_download_or_archive_verification": "not_run"
+  },
+  "evidence_limits": {
+    "authentication": "not_run",
+    "account_credit_balance": "unknown",
+    "remaining_daily_quotas": "unknown",
+    "real_doctor_execution": "not_run",
+    "official_sdk_acceptance": "not_run",
+    "upload_and_evaluation": "not_run",
+    "model_extraction_resume": "not_run"
+  },
+  "comparison": "assets/nova-competition-2026/CHANGES_2026-10-14.md"
+}

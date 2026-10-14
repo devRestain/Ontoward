@@ -7,6 +7,7 @@
 - Use vocabulary-approval.json for the user approval receipt without treating it as RDF or runtime admission.
 - Treat the preserved receipt's implementation fields as approval-time observations; record current implementation in the owning state.
 - Own extraction-vocabulary.json and extraction.schema.json as generated preparation artifacts, separate from runtime and RDF admission.
+- Own source-selection.schema.json, atomic.schema.json, conversion.schema.json, and clinical-review.schema.json as generated D09 preparation interfaces.
 - Regenerate the vocabulary with root Dev/ontology/tools.py from exact approved term tables and a retained baseline; preserve the original approval receipt.
 - Regenerate the JSON Schema solely from root Dev/ontology/models.py; keep seven shared English term enums and existing attribute names.
 - Preserve approval-time document, annotated document, term-content, receipt, and ontology input hashes as distinct identities.

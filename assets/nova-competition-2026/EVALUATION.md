@@ -1,6 +1,6 @@
 # Evaluation and Ranking
 
-Observed **2026-10-12 KST**. Sources: [N04 evaluation](https://nova.snubhai.org/evaluation/), [N02 rules](https://nova.snubhai.org/rules/), [L07 slides 10–12](slides/workflow-2026-10-11.md).
+Observed **2026-10-14 KST**. Sources: [N04 evaluation](https://nova.snubhai.org/evaluation/), [N02 rules](https://nova.snubhai.org/rules/), [N05 notices](https://nova.snubhai.org/qna/), and [N10 leaderboard](https://nova.snubhai.org/leaderboard/). [L07 slides 10–12](slides/workflow-2026-10-11.md) remain dated context.
 
 | Domain | Points |
 | --- | ---: |
@@ -13,6 +13,8 @@ Observed **2026-10-12 KST**. Sources: [N04 evaluation](https://nova.snubhai.org/
 
 Evaluation uses the interaction evidence, submitted record and diagnosis. Obtaining information and recording it are distinct requirements. Unsupported facts receive no credit; actual dialogue matters for communication. Private rubrics and per-case criteria remain unpublished.
 
+The public diagnostic-reasoning description specifies a five-level judgment of the main diagnosis. It does not publish the conversion into the fifteen-point domain or its private rubric. [N04 evaluation](https://nova.snubhai.org/evaluation/)
+
 | Route | Result and model boundary |
 | --- | --- |
 | Local devkit | Unscored simulation |
@@ -23,6 +25,8 @@ Evaluation uses the interaction evidence, submitted record and diagnosis. Obtain
 | Finals | Automatic evaluation and top-five physician review; final combination to be announced |
 
 Official evaluation is one per team/phase/KST day. Upload/build/sample validation do not consume that quota. Participant failures after evaluation starts count; confirmed service recovery does not consume an additional opportunity. Sample validation is optional before leaderboard submission. Select one version for final evaluation.
+
+Preliminary Doctor is openai/gpt-6-luna from October 13; the official judge remains gpt-6.1-sol. Official leaderboard submissions opened October 13 afternoon KST. The board ranks each team's highest score, breaking ties by earlier submission; scored evaluation count and the time of the best result have distinct display meanings. The October 14 public page shows 24 scored teams. Board position is not preliminary final ranking. Ten teams advance to finals, while the later physician review concerns five. Uploaded-code sample validation has a separate ten-per-day quota. [N04](https://nova.snubhai.org/evaluation/), [N05](https://nova.snubhai.org/qna/), [N10](https://nova.snubhai.org/leaderboard/)
 
 The opening deck's 40/30/30 finals breakdown is dated evidence, not the currently confirmed combination policy. See [the conflict record](CHANGES_2026-10-12.md).
 

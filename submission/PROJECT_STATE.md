@@ -1,9 +1,12 @@
 /state version=1
 /project id=ontoward-app
-/status value=planned
-/checkpoint revision=UNKNOWN dirty=unknown updated=2026-10-12T21:13:46+09:00
-/goal phase=current id=APP.SYMPTOMS01 state=complete action="Align specific-symptom interpretation and alternative-pattern retrieval contracts"
-/goal phase=next id=APP.INPUT01 state=planned action="Implement SessionController input InputGateway normalization and InterviewAgent fixed HPI after a new bounded request"
+/status value=blocked
+/checkpoint revision=0dde400ff6eb5879aafabcabf5e994563d1c8de6 dirty=true updated=2026-10-14T10:56:39+09:00
+/goal phase=current id=APP.WORKFLOW14 state=complete action="Implement and accept the approved Doctor dialogue ROS and diagnosis-recovery workflow with the Korean submission white paper"
+/goal phase=history id=APP.RULES14 state=complete action="Reconcile the confirmed Doctor selection and current transport requirements with application readiness"
+/goal phase=history id=APP.MVP01 state=complete action="Implement D11 five-session MVP and environment-selected prompts with offline full-flow verification"
+/goal phase=next id=APP.ASSETS01 state=blocked action="Integrate a reviewed runtime manifest RDF questions and plans after data-owner admission"
+/goal phase=history id=APP.SYMPTOMS01 state=complete action="Align specific-symptom interpretation and alternative-pattern retrieval contracts"
 /goal phase=history id=APP.CONTAINED14 state=complete action="Resolve all runtime knowledge inside the submission knowledge directory"
 /goal phase=history id=APP.MODULAR13 state=complete action="Split execution objects shared state and RDFLib access while preserving existing workflow behavior"
 /goal phase=history id=APP.PACKAGE12 state=complete action="Relocate runtime code adopt SDK SOAP fields and package application settings"
@@ -54,18 +57,18 @@
 /evidence id=APP.E25 class=semantic result=pass source=Tmp/workflow-v42-2026-10-12/review.md observed="Trace fixed HPI open inquiry candidate refresh budget interruption education revision validation failure and confirmed termination through source and stub contracts without executing them"
 /evidence id=APP.E26 class=semantic result=pass source=Tmp/submission-oop-2026-10-12/before/submission/agent.py observed="Separate graph-step budgeting from SDK turns while leaving detailed submission validation unimplemented"
 /evidence id=APP.E27 class=runtime result=not_run source=Tmp/submission-oop-2026-10-12/before/submission/agent.py observed="Record imports graph compilation and clinical execution as unrun during the earlier APP.WORKFLOW01 source-only slice"
-/scope id=APP.S1 state=in action="Own D08 specific-symptom interpretation and alternative-pattern retrieval contracts"
+/scope id=APP.S1 state=in action="Own the D11 five-session runtime D13 state boundaries and environment-selected Doctor Gateway and text files"
 /scope id=APP.S2 state=out action="Delegate provenance quality review and preparation records to data/PROJECT_STATE.md"
 /scope id=APP.S3 state=out action="Delegate Dev preparation-tool progress to root PROJECT_STATE.md under D09"
-/scope id=APP.S4 state=out action="Exclude clinical implementation model calls official SDK execution vocabulary admission and simulation from APP.SYMPTOMS01"
+/scope id=APP.S4 state=out action="Exclude actual clinical admission real Doctor calls official SDK acceptance evaluation and deployment from APP.MVP01"
 /accept id=APP.PACKAGE12.A1 state=pass action="Relocate the single runtime source and read packaged settings without parent-workspace dependence" evidence=APP.E28,APP.E30
 /accept id=APP.PACKAGE12.A2 state=pass action="Verify the unchanged SDK and selected SOAP boundary without server calls" evidence=APP.E29
 /accept id=APP.PACKAGE12.A3 state=pass action="Retain explicit clinical stubs and reconcile the application handoff" evidence=APP.E28,APP.E31
 /evidence id=APP.E28 class=runtime result=pass source=Tmp/nova-context-2026-10-12/verification.json observed="Import relocated modules compile the 22-node graph verify packaged settings environment precedence and unsafe-path rejection and observe the expected unimplemented prepare boundary"
 /evidence id=APP.E29 class=runtime result=pass source=Tmp/nova-context-2026-10-12/verification.json observed="Verify SDK 1.0.1 and unchanged source-copy hash then capture fifteen-field SOAP plus separate diagnosis locally and reject extra A.diagnosis before the mocked request boundary"
 /evidence id=APP.E30 class=artifact result=pass source=Tmp/nova-context-2026-10-12/verification.json observed="Extract the six-file ZIP and import run read public .env and compile the graph from a fresh subprocess without parent workspace modules"
-/evidence id=APP.E31 class=semantic result=pass source=Tmp/nova-context-2026-10-12/review.md observed="Remove the withdrawn dual-diagnosis blocker keep application state in submission and preserve the unimplemented APP.INPUT01 boundary"
-/evidence id=APP.E32 class=runtime result=not_run source=Tmp/submission-oop-2026-10-12/before/submission/agent.py observed="Leave clinical knowledge loading case initialization gateway HPI budget action SOAP generation full consultation and official API calls unimplemented or unrun"
+/evidence id=APP.E31 class=semantic result=pass source=Tmp/nova-context-2026-10-12/review.md observed="Remove the withdrawn dual-diagnosis blocker keep application state in submission at that earlier checkpoint"
+/evidence id=APP.E32 class=runtime result=not_run source=Tmp/submission-oop-2026-10-12/before/submission/agent.py observed="Leave clinical knowledge loading case initialization gateway HPI budget action SOAP generation full consultation and official API calls unimplemented or unrun at the earlier checkpoint"
 /accept id=APP.MODULAR13.A1 state=pass action="Separate execution objects shared models and RDFLib ownership while preserving graph behavior" evidence=APP.E33,APP.E34
 /accept id=APP.MODULAR13.A2 state=pass action="Verify relative configuration and extracted runtime packages" evidence=APP.E35,APP.E36
 /accept id=APP.MODULAR13.A3 state=pass action="Retain clinical stubs and reconcile the next implementation boundary" evidence=APP.E34,APP.E37
@@ -74,17 +77,47 @@
 /evidence id=APP.E35 class=runtime result=pass source=Tmp/submission-oop-2026-10-12/verification.json observed="Resolve packaged data paths independently of cwd preserve environment precedence and reject absolute and traversal paths with the manifest still absent"
 /evidence id=APP.E36 class=artifact result=pass source=Tmp/submission-oop-2026-10-12/verification.json observed="Extract nineteen curated files and import compile and resolve paths in a fresh process launched outside the archive directory without parent-workspace modules"
 /evidence id=APP.E37 class=semantic result=pass source=Tmp/submission-oop-2026-10-12/review.md observed="Assign session Gateway HPI reasoning interface and submission responsibilities to separate classes sharing CaseState Resources and one knowledge object under D13"
-/evidence id=APP.E38 class=runtime result=not_run source=submission/agents/runtime.py observed="Leave actual clinical preparation consultation model interaction SDK actions SOAP synthesis and diagnosis submission unimplemented or unrun"
+/evidence id=APP.E38 class=runtime result=not_run source=submission/agents/runtime.py observed="Leave actual clinical preparation consultation model interaction SDK actions SOAP synthesis and diagnosis submission unimplemented or unrun at the earlier checkpoint"
 /accept id=APP.CONTAINED14.A1 state=pass action="Resolve runtime knowledge only inside submission knowledge with no development fallback" evidence=APP.E39,APP.E40
 /accept id=APP.CONTAINED14.A2 state=pass action="Verify the isolated ZIP and preserve the next clinical implementation boundary" evidence=APP.E41,APP.E42
 /evidence id=APP.E39 class=runtime result=pass source=Tmp/submission-contained-2026-10-12/runtime-verification.json observed="Resolve knowledge/manifest.json from the submission file location independently of cwd allow only internal overrides and reject external old-data traversal absolute and symlink paths"
 /evidence id=APP.E40 class=runtime result=pass source=Tmp/submission-contained-2026-10-12/runtime-verification.json observed="Import and compile the twenty-two-node graph using only submission application input with development data Dev and assets mounts absent and retain the unimplemented prepare boundary"
 /evidence id=APP.E41 class=artifact result=pass source=Tmp/submission-contained-2026-10-12/runtime-verification.json observed="Extract the nineteen-file archive and verify independent imports paths graph construction exact bytes and absence of development documents or former data paths"
-/evidence id=APP.E42 class=semantic result=pass source=Tmp/submission-contained-2026-10-12/review.md observed="Keep graph readers and future Turtle required JSON and manifest together under knowledge and preserve APP.INPUT01 as the next unstarted implementation slice"
-/evidence id=APP.E43 class=runtime result=not_run source=submission/knowledge/graph.py observed="Leave actual knowledge loading clinical readers full consultation Doctor calls and SDK diagnosis execution unimplemented or unrun"
+/evidence id=APP.E42 class=semantic result=pass source=Tmp/submission-contained-2026-10-12/review.md observed="Keep graph readers and future Turtle required JSON and manifest together under knowledge without treating the earlier checkpoint as current runtime evidence"
+/evidence id=APP.E43 class=runtime result=not_run source=submission/knowledge/graph.py observed="Leave actual knowledge loading clinical readers full consultation Doctor calls and SDK diagnosis execution unimplemented or unrun at the earlier checkpoint"
 /accept id=APP.SYMPTOMS01.A1 state=pass action="Preserve raw wording uncertainty episodes and independent alternative-pattern retrieval in the contract" evidence=APP.SYMPTOMS01.E1
-/accept id=APP.SYMPTOMS01.A2 state=pass action="Preserve application source and the unstarted APP.INPUT01 boundary" evidence=APP.SYMPTOMS01.E2,APP.SYMPTOMS01.E3
+/accept id=APP.SYMPTOMS01.A2 state=pass action="Preserve application source at the earlier contract checkpoint" evidence=APP.SYMPTOMS01.E2,APP.SYMPTOMS01.E3
 /evidence id=APP.SYMPTOMS01.E1 class=semantic result=pass source=Tmp/specific-symptoms-2026-10-12/review.md observed="Review unresolved pain acquired-evidence corrections tentative recall union scoped negatives and episode separation while keeping source-supported alternative disease patterns distinct"
 /evidence id=APP.SYMPTOMS01.E2 class=artifact result=pass source=Tmp/specific-symptoms-2026-10-12/verification.json observed="Verify protected submission runtime Python requirements and public environment bytes while changing only the application contract and owning state"
-/evidence id=APP.SYMPTOMS01.E3 class=runtime result=not_run source=submission/knowledge/graph.py observed="Leave actual readers partial matching patient normalization model interaction clinical consultation and SDK execution unimplemented or unrun"
-/handoff state=ready action="Await a new bounded request for APP.INPUT01 while preserving the revised symptom contract"
+/evidence id=APP.SYMPTOMS01.E3 class=runtime result=not_run source=submission/knowledge/graph.py observed="Leave actual readers partial matching patient normalization model interaction clinical consultation and SDK execution unimplemented or unrun at the earlier checkpoint"
+/evidence id=APP.TWOSTAGE.E1 class=artifact result=pass source=../data/preparation/two-stage-workflow-2026-10-13/preservation.json observed="Verify unchanged submission runtime and public settings while leaving preparation interfaces outside runtime assets"
+/accept id=APP.MVP01.A1 state=pass action="Complete the five-session workflow and Python-only decisions through synthetic confirmed submission" evidence=APP.MVP01.E1
+/accept id=APP.MVP01.A2 state=pass action="Verify record ownership pruning evidence scoring response boundaries and editable text settings" evidence=APP.MVP01.E1,APP.MVP01.E2
+/accept id=APP.MVP01.A3 state=pass action="Reconcile current contracts and isolate verification assets from the submission" evidence=APP.MVP01.E2,APP.MVP01.E3
+/evidence id=APP.MVP01.E1 class=runtime result=pass source=Tmp/workflow-mvp-2026-10-13/verification.json observed="Pass twenty-three behavioral tests in the network-disabled project dev image with LangGraph 1.2.13 Pydantic 2.14.0 and RDFLib 7.6.0"
+/evidence id=APP.MVP01.E2 class=runtime result=pass source=Tmp/workflow-mvp-2026-10-13/synthetic-full-flow.json observed="Complete the synthetic normal path with four parsing-only Doctor doubles six interactions zero decision-model calls and a final feature that changes the leading diagnosis"
+/evidence id=APP.MVP01.E3 class=semantic result=pass source=Tmp/workflow-mvp-2026-10-13/review.md observed="Review D11 D13 ownership prompt editing instructions source identity and the independent data admission boundary"
+/evidence id=APP.MVP01.E4 class=artifact result=unconfigured source=submission/knowledge observed="Keep the production manifest clinical RDF questions and treatment education bundles absent pending admission"
+/evidence id=APP.MVP01.E5 class=external_service result=not_run source=Tmp/workflow-mvp-2026-10-13/review.md observed="Leave actual Doctor quality official SDK acceptance submission and evaluation unverified"
+/blocker id=APP.ASSETS01.B1 state=open action="Obtain data-owner admission of runtime assets and prepared clinical text before production prepare can succeed" source=data/PROJECT_STATE.md
+/accept id=APP.RULES14.A1 state=pass action="Review current Doctor controls and local model-call boundaries without claiming authenticated behavior" evidence=APP.RULES14.E1,APP.RULES14.E2
+/accept id=APP.RULES14.A2 state=pass action="Retain completed offline workflow evidence and record unperformed transport alignment" evidence=APP.RULES14.E2,APP.RULES14.E3
+/accept id=APP.RULES14.A3 state=pass action="Preserve submission source settings SDK and dependency bytes" evidence=APP.RULES14.E4
+/evidence id=APP.RULES14.E1 class=semantic result=pass source=DECISION_STATE.md observed="Review D01 and D12 model selection and controls during the earlier APP.RULES14 documentation checkpoint before the D11 interface and recovery revision"
+/evidence id=APP.RULES14.E2 class=static result=pass source=Tmp/workflow-revision-2026-10-14/before/submission/agents/gateway.py observed="Inspect the pre-revision parsing-only model boundary with medium reasoning a 2048-token cap and no pending-request recovery during APP.RULES14"
+/evidence id=APP.RULES14.E3 class=semantic result=pass source=assets/nova-competition-2026/API_AND_RECORD.md observed="Record the guide provider wait pending-call identity and new-SDK timeout while preserving local SDK 1.0.1 and the separate clinical asset blocker"
+/evidence id=APP.RULES14.E4 class=artifact result=pass source=data/provenance/competition-web-2026-10-14-verification.json observed="Match unchanged submission runtime settings prompts SDK and dependency hashes against the slice baseline in the project dev container"
+/evidence id=APP.RULES14.E5 class=external_service result=not_run source=data/provenance/competition-web-2026-10-14.json observed="Leave real Luna response quality token consumption pending recovery official SDK acceptance and evaluation unverified"
+/blocker id=APP.TRANSPORT14.B1 state=resolved action="Complete application timeout exact-request recovery and shared output budgeting in APP.WORKFLOW14 while leaving real server behavior unverified" source=Tmp/workflow-revision-2026-10-14/verification.json
+/accept id=APP.WORKFLOW14.A1 state=pass action="Implement separate Doctor framing Gateway context and case-local delivered dialogue with bounded output validation" evidence=APP.WORKFLOW14.E1,APP.WORKFLOW14.E2
+/accept id=APP.WORKFLOW14.A2 state=pass action="Complete focused ROS bounded clarification symptom fallback transport recovery and confirmed diagnosis submission" evidence=APP.WORKFLOW14.E1,APP.WORKFLOW14.E3
+/accept id=APP.WORKFLOW14.A3 state=pass action="Explain implemented functions and state ownership in the Korean white paper and preserve package boundaries" evidence=APP.WORKFLOW14.E4,APP.WORKFLOW14.E5
+/evidence id=APP.WORKFLOW14.E1 class=runtime result=pass source=Tmp/workflow-revision-2026-10-14/verification.json observed="Pass forty behavioral cases in the verified project dev container with network none LangGraph 1.2.13 Pydantic 2.14.0 and RDFLib 7.6.0 using only temporary synthetic assets"
+/evidence id=APP.WORKFLOW14.E2 class=runtime result=pass source=Tmp/workflow-revision-2026-10-14/synthetic-full-flow.json observed="Run the greeting-first five-session path with distinct Luna framing and parsing records full delivered dialogue independent output validation and final feature-driven diagnosis selection"
+/evidence id=APP.WORKFLOW14.E3 class=runtime result=pass source=Tmp/workflow-revision-2026-10-14/synthetic-sdk-wire.json observed="Execute the complete workflow through the unchanged SDK with a local request double and emit fifteen SOAP strings plus separate diagnosis without a network call"
+/evidence id=APP.WORKFLOW14.E4 class=semantic result=pass source=Tmp/workflow-revision-2026-10-14/review.md observed="Trace three Mermaid sources actual functions and state ownership including InterviewAgent education selection SubmissionAgent final record responsibility and finish versus abort"
+/evidence id=APP.WORKFLOW14.E5 class=artifact result=pass source=Tmp/workflow-revision-2026-10-14/artifacts.json observed="Verify both configured prompts public settings current archive bytes pinned SDK and absence of synthetic clinical assets while testing explicit missing production manifest failure"
+/evidence id=APP.WORKFLOW14.E6 class=runtime result=not_run source=Tmp/workflow-revision-2026-10-14/review.md observed="Leave Mermaid visual rendering unperformed because the project container has no renderer"
+/evidence id=APP.WORKFLOW14.E7 class=external_service result=not_run source=Tmp/workflow-revision-2026-10-14/review.md observed="Leave actual Luna framing and Korean interpretation quality official transport behavior API submission and evaluation unverified"
+/evidence id=APP.WORKFLOW14.E8 class=artifact result=unconfigured source=submission/knowledge observed="Retain absent approved runtime manifest clinical RDF questions and plans pending data-owner admission"
+/handoff state=blocked action="Wait for admitted runtime knowledge and prepared clinical text under APP.ASSETS01 then separately authorize real Luna and official API acceptance"
