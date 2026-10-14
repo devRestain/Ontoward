@@ -40,7 +40,7 @@ JEV, Laya, HPOA는 사용하지 않는다. 이번 MVP는 대표 합성 사례의
 | ChiefComplaint | 유지된 HPI → Open Inquiry 1회 → 주호소 계통의 미확인 ROS 최대 6개 | 20 |
 | ContextFactor | 증상 후보 합집합 검색, 제한된 명료화·재검색, 관련 Context 문진 | 10 |
 | DifferentialDiagnosis | Context 가점과 특징·진찰 질문 처리, 마지막 답까지 재계산 | 14 |
-| Education | 질환 또는 증상 수준 진단 선택, InterviewAgent가 준비 교육 선택 | 5 |
+| Education | 질환 또는 증상 수준 진단 선택, InterviewPlanner가 준비 교육 선택 | 5 |
 | 최종화 | SOAP 구성·검증·필요 시 1회 재구성 → DIAGNOSE → completed 확인 | 0 |
 
 시작 준비 문구는 “안녕하세요. 무엇이 어떻게 불편하세요?”다. 초기 정보가 있어도 인사·주호소 유도를 수행하며 이미 확인한 세부 사실은 HPI에서 반복하지 않는다. EXAM은 준비된 단일 진찰 문구를 사용한다.
@@ -49,7 +49,7 @@ JEV, Laya, HPOA는 사용하지 않는다. 이번 MVP는 대표 합성 사례의
 
 집중 ROS는 확인된 주호소의 기존 `inSystem`과 `BodySystem` 관계를 사용한다. 계통들의 증상을 합집합으로 모아 주호소 자체·기확인·중복을 제외하고 URI 순으로 최대 6개 준비한다. HPI 준비 시 목록을 고정하며 Open Inquiry에서 확인한 항목은 실행 전에 건너뛴다. 새 ROS 증상으로 다른 계통을 확장하거나 연결이 없는 계통을 추정하지 않는다. 보존 우선순위는 Open Inquiry, ROS, HPI이며 실행 순서는 HPI, Open Inquiry, ROS다. ChiefComplaint 20턴 안에서 뒤쪽 HPI를 줄여 Open 1턴·가능한 ROS 6턴을 확보한다. BodySystem은 질환 후보 검색을 제한하지 않는다.
 
-Context 질문은 연결 후보 수, 감별 질문은 후보 순위와 검토된 characteristic 표시로 정렬한다. 단독 선두라도 남은 감별을 계속한다. 새로운 관찰·정정·교육 응답이 들어오면 현재 사실에서 후보와 점수를 다시 계산한다. 교육 중 진단이 바뀌면 아직 전달하지 않은 부적합한 설명만 남은 예산 안에서 교체하며 앞 세션으로 돌아가지 않는다. SubmissionAgent는 최종 기록·검증·제출만 담당한다.
+Context 질문은 연결 후보 수, 감별 질문은 후보 순위와 검토된 characteristic 표시로 정렬한다. 단독 선두라도 남은 감별을 계속한다. 새로운 관찰·정정·교육 응답이 들어오면 현재 사실에서 후보와 점수를 다시 계산한다. 교육 중 진단이 바뀌면 아직 전달하지 않은 부적합한 설명만 남은 예산 안에서 교체하며 앞 세션으로 돌아가지 않는다. SubmissionWriter는 최종 기록·검증·제출만 담당한다.
 
 점수는 characteristic 지지 +2, 일반 지지 +1, 명시적 반대·모순 −1이다. 확인된 관련 Context는 후보당 최대 +1이고 그 외 0이다. 같은 원관찰·조건을 대안 Pattern이나 출처 수만큼 가산하지 않으며 불확실한 개념 대안·다른 에피소드를 합치지 않는다. 최종 동률은 질환 URI 순이다. 별도 ClinicalSynthesis는 없다.
 
@@ -103,9 +103,9 @@ Doctor는 `client.chat()`에서 model을 생략해도 현재 지정 모델로 �
 
 SOAP 항목은 id·scope·status·value·출처 참조를 가진다. status는 unasked/done으로 처리 여부만 나타내며, value의 present/absent/uncertain/unknown은 임상 의미를 구분한다. 모른다는 답도 done으로 닫을 수 있으나 음성으로 바꾸지 않는다. 대상·현재/과거·가족력·관찰·에피소드와 정정을 보존한다. 수치·단위·시간은 원문에 남기며 근거 없는 범주를 추정하지 않는다.
 
-InputGateway는 현재 응답, 실제 전달된 문장, InterviewAgent의 구조화된 질문 의도, 전체 한국어 대화, 기존 관찰과 허용 용어를 함께 읽는다. 정확한 현재 답변 인용과 유효한 대화 context_refs를 검증한다. Doctor의 말·교육을 환자의 양성 소견으로 바꾸지 않는다. Doctor가 표현한 질문의 짧은 답은 원래 템플릿으로 자동 분류하지 않는다. Python 단축 처리는 긍정형 존재 질문으로 명시된 준비 문구와 모름·교육 확인에만 적용한다. 해석 실패는 원문·문제를 보존하고 제한된 명료화를 허용한다. 실제 EXAM 없이 O.exam 소견을 만들지 않는다.
+InputInterpreter는 현재 응답, 실제 전달된 문장, InterviewPlanner의 구조화된 질문 의도, 전체 한국어 대화, 기존 관찰과 허용 용어를 함께 읽는다. 정확한 현재 답변 인용과 유효한 대화 context_refs를 검증한다. Doctor의 말·교육을 환자의 양성 소견으로 바꾸지 않는다. Doctor가 표현한 질문의 짧은 답은 원래 템플릿으로 자동 분류하지 않는다. Python 단축 처리는 긍정형 존재 질문으로 명시된 준비 문구와 모름·교육 확인에만 적용한다. 해석 실패는 원문·문제를 보존하고 제한된 명료화를 허용한다. 실제 EXAM 없이 O.exam 소견을 만들지 않는다.
 
-InteractionState는 증례별 실제 전달 문장·환자 답·턴·요청 ID·질문 항목을 보존한다. dialogue()가 두 역할에 같은 전체 대화 뷰를 제공하며 최근 네 로그로 자르지 않는다. 실패 생성·미전송 문구·사용량·전송 오류는 별도 실행 기록에 둔다. Resources나 모델 객체에 증례 기억을 누적하지 않는다. Doctor 프롬프트는 ONTOWARD_DOCTOR_PROMPT, Gateway는 ONTOWARD_PARSER_PROMPT, 문구는 ONTOWARD_TEXTS로 config 내부 파일을 선택한다. 모든 노드 갱신을 검증하며 분기에는 모델을 호출하지 않는다.
+InteractionState는 증례별 실제 전달 문장·환자 답·턴·요청 ID·질문 항목을 보존한다. dialogue()가 두 역할에 같은 전체 대화 뷰를 제공하며 최근 네 로그로 자르지 않는다. 실패 생성·미전송 문구·사용량·전송 오류는 별도 실행 기록에 둔다. PreparedResources나 모델 객체에 증례 기억을 누적하지 않는다. Doctor 프롬프트는 ONTOWARD_DOCTOR_PROMPT, Gateway는 ONTOWARD_PARSER_PROMPT, 문구는 ONTOWARD_TEXTS로 config 내부 파일을 선택한다. 모든 노드 갱신을 검증하며 분기에는 모델을 호출하지 않는다.
 
 ## SOAP 기록과 최종 제출
 
@@ -284,7 +284,7 @@ SNOMED CT의 동의어와 계층은 개념을 식별하고 검색을 확장하�
 
 ## 제출환경과 실행 자산
 
-submission/run.py는 agents/runtime.py의 prepare()와 consult(client, resources)를 SDK run_agent()에 전달한다. D13에 따라 agents/state.py는 공통 Pydantic 상태를, resources.py는 공유 실행 자원을, session·gateway·interview·reasoning·interface·submission 모듈은 각각의 책임을 가진 객체를 정의한다. workflow.py는 객체 메서드와 routing.py의 상태 분기를 기존 StateGraph에 연결한다. knowledge/graph.py의 ClinicalKnowledge는 하나의 RDFLib Graph를 소유한다. 각 책임은 D11의 최소 Python 구현과 SDK 어댑터를 제공한다. 승인된 실제 지식 자산과 공식 API 실행은 별도 검증 대상이다. import는 API 호출이나 지식 로딩을 수행하지 않는다.
+submission/run.py는 workflow/runtime.py의 prepare()와 consult(client, resources)를 SDK run_agent()에 전달한다. prepare()는 읽기 전용으로 사용하는 지식과 텍스트 설정을 PreparedResources에 담고 consult()는 증례별 객체와 새 상태를 조립한다. D13의 Consultation 하나가 다섯 내부 세션을 조정하며 graph.py는 노드·엣지·상태 기반 분기와 deep-copy/Pydantic 검증을 연결한다. Doctor·InputInterpreter·InterviewPlanner·ClinicalReasoner·SubmissionWriter는 각각 환자 행동·입력 사실·질문과 교육·진단 추론·최종 제출을 맡는다. rules/는 불변 한도와 순수 판단, state/는 기존 다섯 상태 모델과 질문·상호작용·사용량 변경 연산, io/는 모델 호출·공식 NOVA 세션·전송 복구를 맡는다. 기존 agents/와 호환 wrapper는 남기지 않는다. knowledge/graph.py의 ClinicalKnowledge는 하나의 RDFLib Graph를 소유한다. import는 API 호출이나 지식 로딩을 수행하지 않는다.
 
 submission/을 런타임 코드의 단일 원본으로 사용한다. 공개 설정인 submission/.env는 ZIP에 포함하고, 같은 폴더의 AGENTS.md·README.md·PROJECT_STATE.md는 제출에서 제외한다. SDK는 assets/nova-starter/nova_sdk.py의 수정 없는 사본이며 버전과 해시는 공모전 출처 기록에 남긴다. 원본 복제 허용은 이 SDK 사본으로 한정한다.
 
@@ -323,7 +323,7 @@ HPI는 고정된 정보 슬롯을 처리하고, 그 이후에는 현재 후보 �
 
 ### 구현 수용 시나리오
 
-구현 단위를 조립한 뒤 프로젝트 dev 컨테이너에서 하나의 오프라인 묶음으로 검증한다. 작은 합성 RDF·질문·계획은 임시 제출 복사본의 knowledge 내부에만 배치하며 실제 제출 자산으로 승격하지 않는다.
+구현 단위를 조립한 뒤 Dev/tests/workflow의 유지 테스트를 프로젝트 dev 컨테이너에서 하나의 오프라인 묶음으로 검증한다. Dev/architecture/WORKFLOW_RULES.md는 실행 규칙과 검증 위치의 색인이다. 리팩토링 전후의 상태 스키마·모델/SDK 요청·질문 순서·사용량·SOAP·종료 의미를 비교한다. 작은 합성 RDF·질문·계획은 임시 제출 복사본의 knowledge 내부에만 배치하며 실제 제출 자산으로 승격하지 않는다.
 
 - 초기 입력 → Doctor 인사·주호소 유도 → HPI → Open Inquiry → 집중 ROS → 후보 검색 → Context → 감별 → 교육 → SOAP → 확인된 제출의 전체 흐름.
 - 역할별 프롬프트·호출 기록, 독립 NFC 30자 검증, 2회 재생성·준비 문구·미전달 격리, 실제 질문과 전체 대화의 문맥 참조.

@@ -1,7 +1,7 @@
 /state version=1
 /project id=ontoward-data
 /status value=blocked
-/checkpoint revision=0dde400ff6eb5879aafabcabf5e994563d1c8de6 dirty=true updated=2026-10-14T10:56:39+09:00
+/checkpoint revision=185d6ab27f575ca205a0fa00a909688ad5ff178b dirty=true updated=2026-10-14T15:06:23+09:00
 /goal phase=current id=DATA.MULTIDISEASE01 state=complete action="Persist the bounded IBD group-context pilot and preserve previous accepted candidates"
 /goal phase=history id=DATA.RULES14 state=complete action="Persist current competition-source observations and reconcile provenance without clinical admission"
 /goal phase=history id=DATA.USERREVIEW14 state=complete action="Record exact user review of eight unchanged relation candidates and retain shared pilot evidence"
@@ -100,7 +100,7 @@
 /blocker id=DATA.B1 state=resolved action="Adopt the D09 schema and offline candidate preparation contract" source=DECISION_STATE.md
 /blocker id=DATA.ADMISSION.B1 state=open action="Define concept URIs RDF admission and permitted runtime assets for user-approved candidates" source=DECISION_STATE.md
 /scope id=DATA.S1 state=in action="Own the approved baseline generated schemas ontology inputs and durable random-pilot responses and review records"
-/scope id=DATA.S2 state=out action="Delegate preparation tools to Dev under root state and runtime graph readers and SDK adapters to submission"
+/scope id=DATA.S2 state=out action="Delegate preparation tools to Dev under root state and runtime graph readers to submission/knowledge and the consultation workflow and SDK boundaries to submission/workflow"
 /scope id=DATA.S3 state=out action="Exclude RDF admission external vocabulary imports actual clinical extraction and model calls from DATA.TWOSTAGE01"
 /scope id=DATA.S4 state=in action="Reference D02 D04 D05 D06 D07 D08 D09 D10 D11 D12 D13 and D14 through DECISION_STATE.md without copying decision records"
 /accept id=DATA.CONTEXT12.A1 state=pass action="Preserve dated presentation conversions notes and source identity" evidence=DATA.E63,DATA.E64
@@ -225,4 +225,6 @@
 /blocker id=DATA.MULTIDISEASE01.B1 state=open action="Obtain explicit user review of the exact new sixteen-candidate packet before candidate acceptance" source=data/preparation/ibd-multi-disease-pilot-2026-10-14/review-packet.json
 /evidence id=DATA.WORKFLOW14.E1 class=artifact result=pass source=Tmp/workflow-revision-2026-10-14/artifacts.json observed="Retain every protected organizer source ontology preparation artifact and existing review file among 16372 unchanged hashes during the application revision"
 /evidence id=DATA.WORKFLOW14.E2 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Reference D11 revised runtime acceptance without admitting synthetic assets resuming extraction changing prior candidate approvals or resolving current IBD review and RDF-admission blockers"
-/handoff state=blocked action="Obtain the existing new candidate user review and separately authorize RDF and runtime-asset admission; the application revision does not admit synthetic or preparation assets"
+/evidence id=DATA.REFACTOR14.E1 class=artifact result=pass source=Tmp/workflow-refactor-2026-10-14/artifacts.json observed="Preserve all organizer sources ontology preparation results and review records among 16375 unchanged protected file hashes during the workflow refactor"
+/evidence id=DATA.REFACTOR14.E2 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Reference APP.REFACTOR14 and the new submission/workflow consumers while retaining DATA.MULTIDISEASE01 DATA.ADMISSION01 prior candidate acceptance the pending sixteen-candidate review and separate RDF and runtime-asset admission blockers"
+/handoff state=blocked action="Obtain the existing sixteen-candidate user review and separately authorize concept URI RDF and runtime-asset admission before APP.ASSETS01; APP.REFACTOR14 synthetic and ZIP acceptance does not admit preparation assets"

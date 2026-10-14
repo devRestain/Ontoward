@@ -1,21 +1,23 @@
-import json
-from uuid import uuid4
-
 from knowledge.graph import ClinicalKnowledge
 from nova_sdk import RECORD_FIELDS, NovaError
 
-from .session import SessionController, sdk_failure
-from .state import ClinicalValue, InteractionEntry, RecordItem, WorkflowState
-from .transport import request_with_recovery
+from .rules.action import failure_outcome
+from .rules.limits import LIMITS
+from .rules.submission import validate_payload
+from .state.models import ClinicalValue, RecordItem, WorkflowState
 
 
-class SubmissionAgent:
-    def __init__(self, client, knowledge: ClinicalKnowledge, config):
+class SubmissionWriter:
+    def __init__(self, client, knowledge: ClinicalKnowledge, config, executor, nova_session, interactions, new_request_id):
         self.client = client
         self.knowledge = knowledge
         self.config = config
+        self.executor = executor
+        self.nova_session = nova_session
+        self.interactions = interactions
+        self.new_request_id = new_request_id
 
-    def _describe(self, item) -> str:
+    def _describe_record(self, item) -> str:
         value = item.value
         if value is None:
             return ""
@@ -32,7 +34,7 @@ class SubmissionAgent:
             return texts.finding_format.format(labels=texts.label_separator.join(labels), status=status, text=value.text)
         return value.text if value.status == "present" else texts.unlinked_format.format(text=value.text, status=status)
 
-    def render_soap(self, state: WorkflowState) -> None:
+    def build_soap(self, state: WorkflowState) -> None:
         if state.interaction.termination:
             return
         if state.interaction.pending:
@@ -41,7 +43,7 @@ class SubmissionAgent:
         evidence = [state.case.get(item_id) for item_id in state.case.diagnosis_evidence]
         evidence = [item for item in evidence if item and item.source_refs and item.value]
         texts = self.config.texts
-        evidence_text = texts.record_separator.join(self._describe(item) for item in evidence)
+        evidence_text = texts.record_separator.join(self._describe_record(item) for item in evidence)
         if state.case.diagnosis_kind == "symptom":
             evidence_text = texts.record_separator.join(filter(None, (evidence_text, texts.symptom_assessment)))
         summaries = {"evidence": evidence_text, "differential": texts.record_separator.join(
@@ -54,7 +56,7 @@ class SubmissionAgent:
         for field, item in state.case.entries():
             section, name = field.split(".")
             if item.status == "done" and item.value and (section in {"A", "P"} or item.source_refs):
-                text = self._describe(item)
+                text = self._describe_record(item)
                 if text:
                     if field == "O.exam":
                         turns = sorted({entry.turn for entry in state.interaction.history if entry.id in item.source_refs
@@ -71,26 +73,8 @@ class SubmissionAgent:
         if state.interaction.termination:
             return
         state.interaction.submission_error = None
-        payload = state.interaction.submission_payload
         try:
-            if not payload or set(payload) != {"note", "diagnosis"}:
-                raise ValueError("invalid_submission_payload")
-            note, diagnosis = payload["note"], payload["diagnosis"]
-            if not isinstance(note, dict) or set(note) != set(RECORD_FIELDS):
-                raise ValueError("invalid_soap_fields")
-            for section, fields in RECORD_FIELDS.items():
-                if not isinstance(note[section], dict) or set(note[section]) != set(fields) or not all(isinstance(v, str) for v in note[section].values()):
-                    raise ValueError("invalid_soap_fields")
-            if note["O"]["tests"] or not any(text.strip() for fields in note.values() for text in fields.values()):
-                raise ValueError("invalid_soap_content")
-            if not isinstance(diagnosis, str) or not diagnosis.strip() or len(diagnosis.encode("utf-8")) > 500:
-                raise ValueError("invalid_diagnosis")
-            if len(json.dumps(note, ensure_ascii=False).encode("utf-8")) > 100000:
-                raise ValueError("record_too_large")
-            if state.session.doctor_successes < 1:
-                raise ValueError("doctor_call_required")
-            if "DIAGNOSE" not in state.session.allowed_actions:
-                raise ValueError("diagnosis_not_allowed")
+            validate_payload(state)
         except (KeyError, TypeError, ValueError) as error:
             state.interaction.submission_error = str(error)
             if state.interaction.submission_repairs or str(error) in {"doctor_call_required", "diagnosis_not_allowed"}:
@@ -101,27 +85,26 @@ class SubmissionAgent:
             return
         entry = None
         try:
-            SessionController().refresh(state, self.client, final=True)
+            self.nova_session.refresh_snapshot(state, self.client, final=True)
             if state.interaction.termination:
                 return
             self.validate_submission(state)
             if state.interaction.termination or state.interaction.submission_error:
                 return
             interaction = state.interaction
-            interaction.submission_request_id = interaction.submission_request_id or str(uuid4())
+            interaction.submission_request_id = interaction.submission_request_id or self.new_request_id()
             request = {**interaction.submission_payload, "request_id": interaction.submission_request_id}
-            entry = InteractionEntry(id=interaction.submission_request_id, kind="DIAGNOSE", request=request)
-            interaction.history.append(entry)
-            result = request_with_recovery(state, self.client, self.client.diagnose, request, entry.attempts, final=True)
+            entry = self.interactions.record_submission_attempt(state, request)
+            result = self.executor.execute(state, self.client, self.client.diagnose, request, entry.attempts, final=True)
             entry.response = result
             interaction.submission_result = result
         except NovaError as error:
             if entry:
                 entry.response = {"error": error.code}
-            if error.code == "INVALID_RECORD_FIELDS" and state.interaction.submission_repairs == 0:
+            if error.code == "INVALID_RECORD_FIELDS" and state.interaction.submission_repairs < LIMITS.submission_repairs:
                 state.interaction.submission_error = error.code
             else:
-                sdk_failure(state, error)
+                state.stop(failure_outcome(error), error.code)
         except (TypeError, ValueError):
             state.stop("unknown", "invalid_submission_response")
 
@@ -133,3 +116,11 @@ class SubmissionAgent:
             state.interaction.termination = "submitted"
         else:
             state.stop("unknown", "unconfirmed_submission")
+
+    def begin_repair(self, state: WorkflowState) -> None:
+        if state.interaction.submission_repairs >= LIMITS.submission_repairs:
+            raise ValueError("Submission repair limit reached")
+        state.interaction.submission_repairs += 1
+        state.interaction.submission_request_id = None
+        state.interaction.submission_result = None
+        state.interaction.submission_error = None

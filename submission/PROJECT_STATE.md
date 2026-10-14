@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-app
 /status value=blocked
-/checkpoint revision=0dde400ff6eb5879aafabcabf5e994563d1c8de6 dirty=true updated=2026-10-14T10:56:39+09:00
-/goal phase=current id=APP.WORKFLOW14 state=complete action="Implement and accept the approved Doctor dialogue ROS and diagnosis-recovery workflow with the Korean submission white paper"
+/checkpoint revision=185d6ab27f575ca205a0fa00a909688ad5ff178b dirty=true updated=2026-10-14T15:06:23+09:00
+/goal phase=current id=APP.REFACTOR14 state=complete action="Refactor workflow ownership rules and names while preserving behavior"
+/goal phase=history id=APP.WORKFLOW14 state=complete action="Implement and accept the approved Doctor dialogue ROS and diagnosis-recovery workflow with the Korean submission white paper"
 /goal phase=history id=APP.RULES14 state=complete action="Reconcile the confirmed Doctor selection and current transport requirements with application readiness"
 /goal phase=history id=APP.MVP01 state=complete action="Implement D11 five-session MVP and environment-selected prompts with offline full-flow verification"
 /goal phase=next id=APP.ASSETS01 state=blocked action="Integrate a reviewed runtime manifest RDF questions and plans after data-owner admission"
@@ -120,4 +121,17 @@
 /evidence id=APP.WORKFLOW14.E6 class=runtime result=not_run source=Tmp/workflow-revision-2026-10-14/review.md observed="Leave Mermaid visual rendering unperformed because the project container has no renderer"
 /evidence id=APP.WORKFLOW14.E7 class=external_service result=not_run source=Tmp/workflow-revision-2026-10-14/review.md observed="Leave actual Luna framing and Korean interpretation quality official transport behavior API submission and evaluation unverified"
 /evidence id=APP.WORKFLOW14.E8 class=artifact result=unconfigured source=submission/knowledge observed="Retain absent approved runtime manifest clinical RDF questions and plans pending data-owner admission"
-/handoff state=blocked action="Wait for admitted runtime knowledge and prepared clinical text under APP.ASSETS01 then separately authorize real Luna and official API acceptance"
+/accept id=APP.REFACTOR14.A1 state=pass action="Implement one Consultation Doctor and designated functional and state owners with pure rules and the unchanged public entrypoint" evidence=APP.REFACTOR14.E1,APP.REFACTOR14.E2
+/accept id=APP.REFACTOR14.A2 state=pass action="Preserve baseline clinical behavior schemas requests usage SOAP and outcomes while testing additional ownership boundaries" evidence=APP.REFACTOR14.E2,APP.REFACTOR14.E3,APP.REFACTOR14.E4,APP.REFACTOR14.E9
+/accept id=APP.REFACTOR14.A3 state=pass action="Run the synthetic workflow from an independent ZIP extraction and retain explicit missing production asset failure" evidence=APP.REFACTOR14.E5,APP.REFACTOR14.E6
+/evidence id=APP.REFACTOR14.E1 class=semantic result=pass source=Tmp/workflow-refactor-2026-10-14/review.md observed="Review workflow runtime assembly five explicit Consultation preparation methods Doctor InputInterpreter InterviewPlanner ClinicalReasoner SubmissionWriter rules and state owners against D13 and the Korean white paper without session subclasses or compatibility wrappers"
+/evidence id=APP.REFACTOR14.E2 class=runtime result=pass source=Tmp/workflow-refactor-2026-10-14/after/verification.json observed="Pass all forty-seven maintained behavioral cases in the project dev container with network none and a blank development key including seven new deletion preparation budget node-copy and repair-boundary cases"
+/evidence id=APP.REFACTOR14.E3 class=runtime result=pass source=Tmp/workflow-refactor-2026-10-14/comparison/comparison.json observed="Match thirteen deterministic scenarios and 797 node updates including schemas model and SDK wire payloads retry identities timeouts usage clinical state SOAP and termination after mapping only internal node names"
+/evidence id=APP.REFACTOR14.E4 class=artifact result=pass source=Tmp/workflow-refactor-2026-10-14/artifacts.json observed="Verify ClinicalReasoner differs from preserved baseline source only in class name and import while preserving knowledge SDK prompts text configuration public settings and dependencies"
+/evidence id=APP.REFACTOR14.E5 class=runtime result=pass source=Tmp/workflow-refactor-2026-10-14/isolated/verification.json observed="Pass all forty-seven cases from an independently extracted ZIP using disposable synthetic assets and the unchanged SDK with a local response double and no network"
+/evidence id=APP.REFACTOR14.E6 class=artifact result=pass source=Tmp/workflow-refactor-2026-10-14/isolated/import.json observed="Import run and workflow runtime from the extracted submission with no project-root mount and confirm production prepare explicitly fails at the absent knowledge manifest"
+/evidence id=APP.REFACTOR14.E7 class=artifact result=unconfigured source=submission/knowledge observed="Retain absent approved runtime manifest clinical RDF questions and plans pending the existing data-owner admission boundary"
+/evidence id=APP.REFACTOR14.E8 class=external_service result=not_run source=Tmp/workflow-refactor-2026-10-14/review.md observed="Leave real Luna quality official transport acceptance API submission evaluation clinical admission and deployment unverified"
+/evidence id=APP.REFACTOR14.E9 class=runtime result=pass source=Tmp/workflow-refactor-2026-10-14/baseline/verification.json observed="Reproduce all forty original behavioral cases from the separately preserved pre-refactor checkout without overwriting the earlier revision evidence"
+/scope id=APP.REFACTOR14.S1 state=in action="Own workflow runtime responsibility refactoring behavior preservation and offline artifact execution while root owns maintained verification tools and data owns clinical admission"
+/handoff state=blocked action="Continue only the existing APP.ASSETS01 after data-owner admission of reviewed runtime knowledge and prepared clinical text then separately authorize real Luna and official API acceptance"

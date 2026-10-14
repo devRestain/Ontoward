@@ -23,8 +23,8 @@
 - Use `PRD.md` for the intended MVP behavior and adopted technology roles.
 - Keep root documentation, dependency declarations, Docker configuration, and cross-directory integration in the root scope.
 - Keep submission-agent Python and runtime graph readers in `submission/`.
-- Keep submission/run.py as the thin NOVA entrypoint exposing prepare and consult from submission/agents/runtime.py.
-- Keep execution classes and shared case models in submission/agents/ and RDFLib access code in submission/knowledge/ under D13.
+- Keep submission/run.py as the thin NOVA entrypoint exposing prepare and consult from submission/workflow/runtime.py.
+- Keep execution classes and shared case models in submission/workflow/ and RDFLib access code in submission/knowledge/ under D13.
 - Keep pre-submission extraction, validation, RDF generation, and bundle preparation code and prompts in `Dev/`.
 - Keep disposable project scratch in `Tmp/` and durable preparation results in `data/`.
 - Assign Dev and Tmp operational progress to root `PROJECT_STATE.md` without adding state scopes.
@@ -36,11 +36,11 @@
 - Treat root, `submission/`, and `data/` as the three maintained state scopes.
 - Keep generated directories and upstream archive internals under their existing owner.
 - Apply the latest D11 five-session MVP contract and keep synthetic execution evidence separate from admitted clinical knowledge and authenticated SDK execution.
-- Apply D11 Doctor framing and Gateway parsing as separate designated-model roles; keep education selection in InterviewAgent and final record submission in SubmissionAgent.
+- Apply D11 Doctor framing and Gateway parsing as separate designated-model roles; keep education selection in InterviewPlanner and final record submission in SubmissionWriter.
 - Maintain the implemented Korean workflow white paper in submission/README.md and keep root README as project orientation.
 - Do not resume cancelled model jobs or expand the corpus without a new user request.
 - Keep corpus expansion, submission publication, and WSL2 deployment outside the current offline MVP slice; preserve independent preparation jobs and their review blockers.
-- Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep the authorized synthetic workflow checks in Tmp.
+- Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep maintained workflow tests in Dev/tests/workflow and generated synthetic assets and evidence in Tmp.
 
 ## Working Order
 
@@ -63,6 +63,9 @@
 - Resolve runtime knowledge paths inside submission/ without reading parent workspace data.
 - Keep runtime Turtle, required JSON schemas, and their manifest inside submission/knowledge/ for both execution and tests.
 - Use package-relative imports within runtime packages and settings.py for file-relative submission data paths.
+- Apply D13 responsibility names and keep Consultation as the sole internal-session coordinator.
+- Keep pure workflow decisions in workflow/rules and cross-state question interaction and usage operations in their designated workflow/state owners.
+- Run maintained offline workflow checks with Dev/tests/workflow/compose.offline.yaml and exclude tests and synthetic assets from the submission.
 - Require an adopted D09 preparation contract and D08 v4.2 alignment before generating or admitting new clinical artifacts.
 - Apply the adopted D09 schema-only slice through Dev/ontology/ and data/ontology/extraction-vocabulary.json and extraction.schema.json; keep actual model extraction and RDF admission separate.
 - Apply the D09 two-stage workflow through reviewed disease-focused textbook or guideline units, atomic statements, structured candidates, and complete human review.

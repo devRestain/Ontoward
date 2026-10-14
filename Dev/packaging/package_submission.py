@@ -12,10 +12,31 @@ SOURCE = Path("/submission")
 OUTPUT = Path("/output/ontoward-submission.zip")
 REQUIRED = {
     "run.py", "settings.py", "nova_sdk.py", "requirements.txt", ".env",
-    "agents/__init__.py", "agents/runtime.py", "agents/state.py", "agents/resources.py",
-    "agents/config.py", "agents/model.py", "agents/transport.py",
-    "agents/gateway.py", "agents/interface.py", "agents/session.py", "agents/interview.py",
-    "agents/reasoning.py", "agents/submission.py", "agents/routing.py", "agents/workflow.py",
+    'workflow/__init__.py',
+    'workflow/clinical_reasoner.py',
+    'workflow/consultation.py',
+    'workflow/doctor.py',
+    'workflow/graph.py',
+    'workflow/input_interpreter.py',
+    'workflow/interview_planner.py',
+    'workflow/io/__init__.py',
+    'workflow/io/model_client.py',
+    'workflow/io/nova_session.py',
+    'workflow/io/request_executor.py',
+    'workflow/rules/__init__.py',
+    'workflow/rules/action.py',
+    'workflow/rules/budget.py',
+    'workflow/rules/input.py',
+    'workflow/rules/limits.py',
+    'workflow/rules/submission.py',
+    'workflow/runtime.py',
+    'workflow/state/__init__.py',
+    'workflow/state/interactions.py',
+    'workflow/state/models.py',
+    'workflow/state/questions.py',
+    'workflow/state/usage.py',
+    'workflow/submission_writer.py',
+    'workflow/text_config.py',
     "knowledge/__init__.py", "knowledge/graph.py",
 }
 EXCLUDED = {"AGENTS.md", "README.md", "PROJECT_STATE.md", ".DS_Store"}
@@ -41,7 +62,7 @@ def main() -> None:
         if "\\" in relative.as_posix() or ":" in relative.as_posix():
             raise ValueError(f"Unsafe submission path: {relative}")
         runtime = relative.as_posix() in required or (
-            relative.parts[0] in {"agents", "knowledge"} and path.suffix == ".py"
+            relative.parts[0] in {"workflow", "knowledge"} and path.suffix == ".py"
         )
         knowledge = relative.parts[0] == "knowledge" and path.suffix in {".ttl", ".json"}
         if not (runtime or knowledge):

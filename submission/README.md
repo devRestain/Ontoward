@@ -1,6 +1,6 @@
 # Ontoward 제출 에이전트와 워크플로우 백서
 
-Ontoward는 N.O.V.A. 예선의 모의 환자와 한국어로 문진하고, 실제로 받은 진찰 결과를 정리하여 **SOAP 초진 기록과 주진단 하나를 제출하는 에이전트**다. 이 디렉터리는 제출 실행 코드의 단일 원본이다. `run.py`가 `agents/runtime.py`의 `prepare()`와 `consult()`를 SDK에 전달한다.
+Ontoward는 N.O.V.A. 예선의 모의 환자와 한국어로 문진하고, 실제로 받은 진찰 결과를 정리하여 **SOAP 초진 기록과 주진단 하나를 제출하는 에이전트**다. 이 디렉터리는 제출 실행 코드의 단일 원본이다. `run.py`가 `workflow/runtime.py`의 `prepare()`와 `consult()`를 SDK에 전달한다.
 
 이 백서는 2026-10-14 개정 구현을 처음 읽는 사람을 위한 안내다. 실행 코드와 합성 증례 검증을 설명한다. 현재 실제 승인 임상 RDF·질문·계획·manifest가 없으므로, 공식 환자를 대상으로 바로 실행할 준비가 완료된 상태는 아니다. 코드 검증, 임상 자료 승인, 실제 모델 품질, 공식 제출 성공은 각각 확인해야 한다.
 
@@ -10,11 +10,11 @@ Ontoward는 N.O.V.A. 예선의 모의 환자와 한국어로 문진하고, 실�
 
 | 담당 | 하는 일 | 입력 |
 |---|---|---|
-| `InterviewAgent` | 질문 대상·목적·순서와 준비된 교육 내용 선택 | 기록, 예산, 온톨로지와 준비 문구 |
-| Doctor / `InterfaceAgent.render()` | 선택한 질문·설명을 정중한 한국어 문장으로 표현 | 구조화된 질문 의도와 실제 한국어 대화 |
-| `InputGateway` | 현재 환자 답을 문맥과 함께 읽고 구조화 | 실제 전달 문장, 원래 질문 의도, 대화, 기존 관찰, 허용 용어 |
-| `ReasoningAgent` | 후보 검색·근거 점수·최종 진단 선택 | 출처가 있는 현재 관찰과 RDF 관계 |
-| `SubmissionAgent` | SOAP 구성·검증·DIAGNOSE·제출 확인 | 확보한 사실, 선택 진단, 계획과 실제 교육 이력 |
+| `InterviewPlanner` | 질문 대상·목적·순서와 준비된 교육 내용 선택 | 기록, 예산, 온톨로지와 준비 문구 |
+| `Doctor.frame_action()` | 선택한 질문·설명을 정중한 한국어 문장으로 표현 | 구조화된 질문 의도와 실제 한국어 대화 |
+| `InputInterpreter` | 현재 환자 답을 문맥과 함께 읽고 구조화 | 실제 전달 문장, 원래 질문 의도, 대화, 기존 관찰, 허용 용어 |
+| `ClinicalReasoner` | 후보 검색·근거 점수·최종 진단 선택 | 출처가 있는 현재 관찰과 RDF 관계 |
+| `SubmissionWriter` | SOAP 구성·검증·DIAGNOSE·제출 확인 | 확보한 사실, 선택 진단, 계획과 실제 교육 이력 |
 
 Doctor와 Gateway는 모두 공식 경로의 `openai/gpt-6-luna`를 사용한다. Doctor는 `config/doctor.txt`, Gateway는 `config/input_parser.txt`로 지시하며 호출 기록도 `role=doctor`와 `role=gateway`로 구분한다. 질문 선택과 진단 판단은 Python이 담당한다. 별도의 ClinicalSynthesis 호출은 없다. EXAM은 검토된 단일 진찰 문구를 사용하며 Doctor의 문장 생성 대상은 SAY다.
 
@@ -24,18 +24,18 @@ Doctor와 Gateway는 모두 공식 경로의 `openai/gpt-6-luna`를 사용한다
 
 1. **준비:** `prepare()`가 공개 설정과 manifest를 읽고 파일 해시를 확인한 뒤 하나의 RDFLib Graph와 준비 문구를 만든다. 증례나 환자에게 접근하지 않는다.
 2. **인사:** `consult()`가 새 상태를 만들고 초기 정보·활력징후를 보존한다. 초기 정보에 증상이 있어도 첫 환자 행동은 인사와 주호소 유도다. 준비 문구는 “안녕하세요. 무엇이 어떻게 불편하세요?”다.
-3. **HPI:** “가상증상이 있어요”라는 답을 Gateway가 허용된 개념에 연결한다. `fixed_hpi()`가 위치·양상 등 적용 가능한 질문을 준비한다. 초기 정보나 한 답변에서 이미 확인한 속성은 반복해서 묻지 않는다.
+3. **HPI:** “가상증상이 있어요”라는 답을 Gateway가 허용된 개념에 연결한다. `InterviewPlanner.prepare_chief_complaint()`가 위치·양상 등 적용 가능한 질문을 준비한다. 초기 정보나 한 답변에서 이미 확인한 속성은 반복해서 묻지 않는다.
 4. **Open Inquiry와 집중 ROS:** 유지된 HPI 다음 다른 불편함을 자유롭게 말할 기회를 한 번 준다. 이어 주호소 계통의 다른 증상을 최대 6개 확인한다. 계통 연결이 없으면 집중 ROS를 만들지 않는다.
 5. **후보와 Context:** 주호소·추가 증상에서 질환 후보를 합집합으로 찾는다. 가상질환A/B와 연결된 병력이 있으면 질문하며, 없다는 답도 그대로 보존한다.
 6. **감별:** 후보 순위와 특징에 따라 질문·진찰을 실행한다. 합성 정상 증례에서는 실제 반환된 가상 진찰 소견이 B를 선두로 바꾼다. 단독 선두라도 질문이 남으면 감별을 계속한다.
-7. **교육:** `InterviewAgent.prepare_education()`이 B의 준비 계획·교육을 선택하고 Doctor가 표현한다. 환자가 새 사실을 말하면 후보를 다시 계산하고 아직 전달하지 않은 설명만 수정한다.
+7. **교육:** `InterviewPlanner.prepare_education()`이 B의 준비 계획·교육을 선택하고 Doctor가 표현한다. 환자가 새 사실을 말하면 후보를 다시 계산하고 아직 전달하지 않은 설명만 수정한다.
 8. **제출:** 마지막 답까지 반영하여 SOAP 15개 문자열과 별도 주진단을 만든다. `DIAGNOSE`의 `completed` 응답을 확인한 뒤에만 정상 종료한다.
 
 다섯 내부 세션은 하나의 공식 진료 세션 안에서 진행된다. 세션별 질문을 한 번 준비하며, 예산 때문에 삭제한 질문을 되살리지 않는다. 최대 2개의 명료화는 제한된 별도 질문이다.
 
 ```mermaid
 flowchart TD
-    INIT["initialize_case · 초기 정보 보존"] --> GATE["gateway · 응답 구조화"]
+    INIT["initialize_case · 초기 정보 보존"] --> GATE["process_input · 응답 구조화"]
     GATE --> HELLO["Initiation · Doctor 인사와 주호소 유도"]
     HELLO --> HPI["ChiefComplaint · HPI"]
     HPI --> OPEN["Open Inquiry 1회"]
@@ -50,11 +50,11 @@ flowchart TD
     DIFF --> EDU["Education · 진단 선택과 교육"]
     SYMPTOM --> EDU
     SYMPTOM -->|근거 주호소 없음| ABORT["abort · 명시적 실패"]
-    EDU --> SOAP["soap · 기록 구성"]
+    EDU --> SOAP["build_soap · 기록 구성"]
     SOAP --> CHECK["validate_submission"]
     CHECK -->|형식 오류 1회 복구| REPAIR["repair_submission"]
     REPAIR --> CHECK
-    CHECK -->|유효| SEND["submit · DIAGNOSE"]
+    CHECK -->|유효| SEND["submit_diagnosis · DIAGNOSE"]
     SEND -->|일시적 전송 오류| RETRY["동일 ID와 payload · 최대 2회 재전송"]
     RETRY --> SEND
     SEND --> CONFIRM["confirm_submission"]
@@ -65,7 +65,7 @@ flowchart TD
     GATE -.->|수집 예산 소진 · 대기 응답 처리 후| SOAP
 ```
 
-세션 상자는 여러 LangGraph 노드를 묶은 설명이다. 실제 조립은 `ConsultationWorkflow.compile()`에 있다. 모든 응답은 `gateway → refresh → budget`으로 돌아오며, 예산 부족은 남은 수집을 접고 SOAP로 이동한다. 만료·폐쇄·복구 후에도 불명확한 전송은 어느 단계에서든 `abort`로 끝날 수 있다.
+세션 상자는 여러 LangGraph 노드를 묶은 설명이다. 실제 조립은 `workflow.graph.build_graph()`에 있다. 모든 응답은 `process_input → refresh_after_input → check_budget`으로 돌아오며, 예산 부족은 남은 수집을 접고 SOAP로 이동한다. 만료·폐쇄·복구 후에도 불명확한 전송은 어느 단계에서든 `abort`로 끝날 수 있다.
 
 ## 3. 코드를 읽을 때 따라갈 함수
 
@@ -73,57 +73,59 @@ flowchart TD
 
 | 함수와 파일 | 입력 → 출력 또는 변경 | 상태 책임과 호출 순서 |
 |---|---|---|
-| [`prepare`, `consult`](agents/runtime.py) | 설정·자산 → Resources; client·Resources → 증례 결과 dict | 준비 후 증례마다 독립 C/S/D/Q/I 생성, 그래프 실행 |
-| [`initialize_case`, `apply_session`](agents/session.py) | 서버 세션 → WorkflowState; 남은 예산 → S | 초기화에서 마감·턴·허용 행동 수용 |
-| [`ingest`, `_parse`, `_validated`, `_apply`](agents/gateway.py) | 원문·실제 질문·의도·대화 → 검증된 관찰 | I 대기 응답 소비, C 출처·문맥 참조 갱신 |
-| [`enter_scope`, `prepare_questions`](agents/workflow.py) | 현재 세션 → 질문 계획 | S 초기화/준비 여부, Q·C 질문 항목 |
-| [`fixed_hpi`, `open_inquiry`, `focused_ros`](agents/interview.py) | 주호소·지식 → HPI/Open/ROS | C의 미질문 항목과 Q를 함께 생성 |
-| [`collect_context`, `investigate`](agents/interview.py) | 후보 → Context·감별·진찰 질문 | 확인한 대상·속성·에피소드 제외 |
-| [`clarify`, `select_question`](agents/interview.py) | 해석 실패/후보 없음 → 명료화; Q → 한 행동 | S 명료화 횟수, I.selected |
-| [`budget_guard`, `advance_scope`](agents/session.py) | 예산 → 유지 항목·다음 세션 | C/Q 동시 삭제, S.finalizing 또는 다음 scope |
-| [`render`, `validate`, `execute`](agents/interface.py) | 선택 의도 → 문장 → 검증 → SDK 응답 | 생성 기록, I 실제 요청·응답, 실제 턴 사용량 |
-| [`complete`](agents/model.py) | 역할·프롬프트 → 문자열 또는 실패 | S 공유 호출·토큰, I.model_history |
-| [`request_with_recovery`](agents/transport.py) | 보존 payload·호출 → 응답 또는 오류 | 동일 요청 재전송·시도 로그·timeout |
-| [`refresh_hypotheses`, `select_diagnosis`](agents/reasoning.py) | 관찰 → 후보·점수·진단 | D 재계산, C 진단 종류·근거 ID |
-| [`prepare_education`](agents/interview.py) | 진단·준비 계획 → P와 설명 질문 | C.P 계획, Q 미전달 교육; 전달 이력 보존 |
-| [`finalize`, `repair_submission`](agents/workflow.py) | 최종 사실 → 진단·계획·SOAP; 오류 → 1회 재구성 | 복구 횟수·새 제출 ID |
-| [`render_soap`, `validate_submission`](agents/submission.py) | C/D/I → 15필드 note + diagnosis | I.submission_payload와 검증 오류 |
-| [`submit_diagnosis`, `confirm_submission`](agents/submission.py) | payload → 실제 제출 결과 | I ID·시도·결과, completed만 submitted |
-| [`route_*`, `finish`, `abort`](agents/routing.py) | 상태 → 다음 노드; 종료 조건 확인 | 모델 없는 분기, 성공과 실패 분리 |
+| [`prepare`, `assemble_consultation`, `consult`](workflow/runtime.py) | 설정·지식 → PreparedResources; client → 증례별 객체와 상태 | 자원에는 환자 기억을 담지 않음 |
+| [`initialize_case`, `apply_snapshot`, `refresh_snapshot`](workflow/io/nova_session.py) | 공식 세션 → 상태와 서버 제약 | NOVA 조회와 검증; 예산 반영은 UsageAccounting |
+| [`process_input`, `_parse_text`, `_validate_facts`, `_apply_facts`](workflow/input_interpreter.py) | 현재 원문·문맥 → 검증된 관찰 | 임상 사실과 출처·정정의 단독 반영 경로 |
+| [`enter_session`, `prepare_session`, `advance_session`](workflow/consultation.py) | 현재 내부 세션 → 준비·전환 | initialized와 questions_prepared를 따로 유지 |
+| [`prepare_initiation`, `prepare_chief_complaint`, `prepare_context_factors`, `prepare_differential_diagnosis`, `prepare_education`](workflow/consultation.py) | 다섯 세션 → 명시적인 역할 호출 순서 | 세션별 객체나 상속 없이 조정 |
+| [`prepare_chief_complaint`, `prepare_context_questions`, `prepare_differential_questions`, `prepare_clarification`, `select_question`, `prepare_education`](workflow/interview_planner.py) | 사실·지식 → 질문과 교육 계획 | 질문 선택과 전달을 분리 |
+| [`evaluate`, `can_frame`, `can_clarify`, `model_allowance`](workflow/rules/budget.py) | 현재 예산 → 허용·폐기·최종화 판단 | 상태를 수정하지 않음 |
+| [`register`, `discard_unasked`, `complete_unresolved`](workflow/state/questions.py) | 질문 연산 → C/Q 일관성 | pending/완료 충돌 전체 사전 확인과 반복 폐기 no-op |
+| [`select_question`, `begin_action`, `record_delivery`, `consume_input`](workflow/state/interactions.py) | 행동 → selected/pending/incoming과 전달 이력 | SDK 응답 확인에서 교육 전달 확정 |
+| [`record_model_request`, `record_tokens`, `record_actions`, `record_clarification`, `apply_server_budget`](workflow/state/usage.py) | 실행·서버 결과 → 사용량 | 전송 재시도와 논리 요청 사용량 구분 |
+| [`frame_action`, `validate_action`, `execute_action`](workflow/doctor.py) | 선택 의도 → 표현 → 검증 → 환자/진찰 응답 | 환자와 맞닿는 Doctor 경계 |
+| [`complete`](workflow/io/model_client.py) | 역할·프롬프트 → 모델 응답 | doctor/gateway 태그와 공유 예산 유지 |
+| [`execute`](workflow/io/request_executor.py) | 동일 요청 → 응답 또는 오류 | ID·payload 보존, 제한 재시도, timeout 복원 |
+| [`refresh_hypotheses`, `select_diagnosis`](workflow/clinical_reasoner.py) | 관찰 → 후보·점수·진단 | 기존 임상 알고리즘 보존 |
+| [`refresh_after_input`, `check_budget`, `finalize`, `repair_submission`](workflow/consultation.py) | 현재 상태 → 임상 갱신·최종화 | 진단 선택→계획 준비→SOAP 작성 순서 유지 |
+| [`build_soap`, `validate_submission`, `begin_repair`, `submit_diagnosis`, `confirm_submission`](workflow/submission_writer.py) | 사실·진단 → SOAP·제출 결과 | 수리 상태 초기화와 completed 확인 책임 |
+| [`build_graph`, `run_node`, `finish`, `abort`](workflow/graph.py) | 상태·협력 객체 → LangGraph | 모델 없는 분기와 노드 검증; 외부 실행 자동 재생 없음 |
 | [`load`, `get_symptom_systems`, `get_system_symptoms`](knowledge/graph.py) | manifest → 지식; 증상/계통 URI → URI 목록 | 해시 검증과 집중 ROS 범위 조회 |
 | [`get_patterns_by_target`, `get_disease_patterns`, `get_pattern_features`](knowledge/graph.py) | 증상·질환·Pattern → 관계 | 계통 제한 없는 합집합 검색과 근거 평가 |
 
 ## 4. 다섯 상태 객체와 원문 대화 기억
 
-상태는 [`agents/state.py`](agents/state.py)에 모여 있다. 객체를 늘리거나 외부 기억 저장소를 추가하지 않았다.
+상태는 [`workflow/state/models.py`](workflow/state/models.py)에 모여 있다. 기존 다섯 상태 객체와 직렬화 필드·값을 유지한다. 상태를 바꾸는 책임은 별도 객체로 구분하며 외부 기억 저장소는 없다.
 
 | 객체 | 소유 정보 | 구분해야 할 점 |
 |---|---|---|
 | CaseState | S/O/A/P, 진단, diagnosis_kind, 진단 근거 ID | source_refs는 실제 입력, context_refs는 참고 대화 |
-| SessionContext | scope, 행동·모델·토큰·시간 예산, 명료화 횟수 | 동일 요청 재전송을 새 턴·모델 호출로 중복 계산하지 않음 |
+| SessionContext | current 내부 세션, 행동·모델·토큰·시간 예산, 명료화 횟수 | 각 RecordItem의 scope는 기록을 만든 내부 세션; 공식 세션 ID는 session_id |
 | DifferentialState | 질환 후보·Pattern/Feature·점수·선택 ID | 증상 진단을 가짜 Disease 후보로 넣지 않음 |
 | QuestionPlan | 대상·속성·목적·문구·순서·우선순위 | 선택 의도이며 실제 발화는 별도 |
 | InteractionState | 요청·응답·턴·전달 여부, 역할별 모델 기록, 제출 결과 | 실패한 생성·미전송 문구·오류 로그는 환자 대화에서 제외 |
 
 `RecordItem.status`의 `unasked/done`은 처리 상태다. `ClinicalValue.status`의 `present/absent/uncertain/unknown`은 임상 의미다. “모르겠어요”를 처리 완료로 표시해도 음성으로 바꾸지 않는다. 예산 때문에 보내지 못한 질문은 제거하며, 물었지만 해석하지 못한 답은 원문과 미확인 상태로 남긴다.
 
-`InteractionState.dialogue()`는 전체 증례에서 전달된 SAY의 **실제 한국어 문장과 환자 답**을 투영한다. 요청 ID·턴·질문 ID를 붙인다. 초기 opening은 SAY와 구별한 초기 입력으로 포함한다. EXAM·DIAGNOSE·미전송 초안은 섞지 않는다. Doctor와 Gateway가 같은 함수를 사용하되 Gateway 호출 시에는 방금 받은 턴이 추가되어 있다. 새 증례는 새 기억으로 시작하며 공유 Resources에 대화를 쌓지 않는다.
+`InteractionState.dialogue()`는 전체 증례에서 전달된 SAY의 **실제 한국어 문장과 환자 답**을 투영한다. 요청 ID·턴·질문 ID를 붙인다. 초기 opening은 SAY와 구별한 초기 입력으로 포함한다. EXAM·DIAGNOSE·미전송 초안은 섞지 않는다. Doctor와 Gateway가 같은 함수를 사용하되 Gateway 호출 시에는 방금 받은 턴이 추가되어 있다. 새 증례는 새 기억으로 시작하며 공유 PreparedResources에 대화를 쌓지 않는다.
 
 ```mermaid
 sequenceDiagram
-    participant Q as InterviewAgent
+    participant Q as InterviewPlanner
     participant I as InteractionState
-    participant D as InterfaceAgent와 Doctor
+    participant L as InteractionLifecycle
+    participant D as Doctor
     participant P as 모의 환자 SDK
-    participant G as InputGateway
+    participant G as InputInterpreter
     participant C as CaseState
     Q->>D: 대상과 목적이 있는 Question
     D->>I: dialogue 전체 증례 조회
     I-->>D: 실제 한국어 대화
-    D->>D: render 후 독립 validate
+    D->>D: frame_action 후 validate_action
     D->>P: 검증된 실제 문장 SAY
     P-->>D: 현재 환자 답변과 턴
-    D->>I: 실제 문장과 답변 및 요청 ID 보존
+    D->>L: record_delivery로 전달 확인
+    L->>I: 실제 문장과 답변 및 요청 ID 보존
     G->>I: dialogue 조회
     I-->>G: 방금 받은 응답까지 포함한 대화
     G->>G: input + spoken_question + Question + records + vocabulary
@@ -139,14 +141,14 @@ sequenceDiagram
 
 Python이 선택한 Question에는 대상·속성·관찰·에피소드·목적이 들어 있다. Doctor는 이를 표현하되 대상·긍정/부정 의미·교육 내용을 보존하고 새 임상 판단을 추가하지 않도록 지시받는다. 이 지시 자체가 자동 임상 검증을 대신하지는 않는다.
 
-`render()`는 문장 생성, `validate()`는 독립적인 NFC 정규화와 길이 검사를 담당한다. 실제 전송 문자열의 공백·문장부호·줄바꿈을 포함한 Python `len()` 기준이다. 분해형 한글은 NFC 후 길이를 사용하며 공백뿐인 출력도 거절한다.
+`frame_action()`는 문장 생성, `validate_action()`는 독립적인 NFC 정규화와 길이 검사를 담당한다. 실제 전송 문자열의 공백·문장부호·줄바꿈을 포함한 Python `len()` 기준이다. 분해형 한글은 NFC 후 길이를 사용하며 공백뿐인 출력도 거절한다.
 
 ```mermaid
 flowchart TD
     Q["선택된 SAY 의도"] --> B{"응답 처리 비용을 남기고 생성 가능한가?"}
-    B -->|가능| R["render · Doctor 생성"]
-    R --> V["validate · NFC 정규화와 빈 문장 및 30자 검사"]
-    V -->|통과| X["action_budget 재확인 후 execute"]
+    B -->|가능| R["frame_action · Doctor 생성"]
+    R --> V["validate_action · NFC 정규화와 빈 문장 및 30자 검사"]
+    V -->|통과| X["recheck_action_budget 후 execute_action"]
     V -->|실패| N{"생성 3회 미만이며 예산이 있는가?"}
     N -->|있음| F["오류 종류와 실제 길이를 feedback으로 전달"]
     F --> R
@@ -211,7 +213,7 @@ SOAP는 다음 **15개 문자열 칸**을 정확히 만든다. 주진단은 note
 
 ## 8. 설정·Docker 검증·패키징·현재 한계
 
-agents/는 실행 객체와 공통 상태, knowledge/graph.py는 조회, config/는 지시문·한국어 문구를 맡는다. [설정 편집 안내](config/README.md)에 자리표시자와 적용 방법이 있다.
+workflow/는 실행 객체·세션 조정·규칙·상태 변경·I/O, knowledge/graph.py는 조회, config/는 지시문·한국어 문구를 맡는다. [설정 편집 안내](config/README.md)에 자리표시자와 적용 방법이 있다.
 
 ```dotenv
 ONTOWARD_KNOWLEDGE_MANIFEST=knowledge/manifest.json
@@ -226,22 +228,24 @@ ONTOWARD_TEXTS=config/texts.ko.json
 
 ```sh
 docker compose build dev
-docker compose -f compose.yaml -f Tmp/workflow-revision-2026-10-14/compose.offline.yaml run --rm --no-deps --pull never -T dev python Tmp/workflow-revision-2026-10-14/verify.py
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python Dev/tests/workflow/test_workflow.py
 ```
 
-두 번째 명령은 이 개정의 로컬 검증 자료가 있는 체크아웃에서 실행한다. 네트워크·개발 키를 끄고 임시 제출 복사본의 합성 RDF·문구·SDK 대역만 사용한다. 결과는 Tmp/workflow-revision-2026-10-14/verification.json, 정상 증례 이력은 같은 위치의 synthetic-full-flow.json이다. 이전 Tmp/workflow-mvp-2026-10-13/ 자료도 보존한다. 임시 검증 도구와 자산은 제출 ZIP에 포함하지 않는다.
+두 번째 명령은 저장소에 유지되는 행동 검증을 실행한다. 네트워크·개발 키를 끄고 Tmp/workflow-tests 아래 매 실행마다 새 제출 복사본과 합성 RDF·문구·SDK 대역을 만든다. verification.json과 synthetic-full-flow.json, synthetic-sdk-wire.json에서 결과를 확인한다. ONTOWARD_TEST_OUTPUT으로 증거 디렉터리를 선택할 수 있다. 테스트와 합성 자산은 제출 ZIP에 포함하지 않는다.
 
-이번 개정에서는 **40개 행동 검증이 통과**했다. 수정 없는 SDK의 요청 경계를 로컬 응답 대역으로 연결한 전체 흐름도 포함한다. 압축 결과는 25개 파일이며 원본과의 바이트 일치·설정 및 프롬프트 포함·임시 임상 자산 제외를 확인했다. 문서의 로컬 링크 64개와 함수 참조 42개를 대조했고, 별도 자료 준비와 원본 등 보호 파일 16,372개의 해시가 유지되었다.
+이번 리팩토링은 기존 40개 사례에 질문 폐기 원자성·반복 호출·준비 재개·전송 직전 시간 변화·노드 검증 후 외부 실행 재생 금지·제출 수리 한도를 더한 행동 검증을 사용한다. 전후 비교 도구 [compare_traces.py](../Dev/tests/workflow/compare_traces.py)는 보존한 이전 소스를 별도 프로세스로 실행하여 고정 시간·ID·응답에서 상태 스키마, 각 노드 상태, 모델/SDK 요청·응답과 지연을 비교한다. 최신 실행 결과는 [제출 상태](PROJECT_STATE.md)가 소유한다.
+
+규칙은 [workflow/rules](workflow/rules/limits.py)에 모여 있으며 [규칙 색인](../Dev/architecture/WORKFLOW_RULES.md)에서 담당 객체·함수·검증을 찾을 수 있다. 질문 폐기는 QuestionLifecycle, 행동과 전달은 InteractionLifecycle, 사용량은 UsageAccounting이 함께 바꿔야 할 상태를 묶어 처리한다. 예산 정책의 판단과 실제 상태 반영은 구분한다.
 
 ```sh
 docker compose build package
 docker compose run --rm -T package
 ```
 
-결과는 Tmp/packaging/ontoward-submission.zip이다. ZIP 루트에 run.py·nova_sdk.py·requirements.txt·settings.py·공개 .env를 놓고 agents/·knowledge/·지정 config/ 경로를 유지한다. package 서비스는 submission을 읽기 전용으로 연결하고 전용 출력만 쓴다. README·AGENTS·PROJECT_STATE·캐시·개발 키·임시 자산은 제외한다. SDK 1.0.1 사본의 SHA-256은 `c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d`이며 변경하지 않는다.
+결과는 Tmp/packaging/ontoward-submission.zip이다. ZIP 루트에 run.py·nova_sdk.py·requirements.txt·settings.py·공개 .env를 놓고 workflow/·knowledge/·지정 config/ 경로를 유지한다. package 서비스는 submission을 읽기 전용으로 연결하고 전용 출력만 쓴다. README·AGENTS·PROJECT_STATE·캐시·개발 키·임시 자산은 제외한다. SDK 1.0.1 사본의 SHA-256은 `c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d`이며 변경하지 않는다.
 
 실제 승인 manifest가 없으므로 production prepare()는 파일 오류로 멈춘다. 빈 그래프로 넘어가지 않는다. ZIP 생성은 임상 실행 준비 완료를 뜻하지 않는다. 실제 Luna의 문장·한국어 해석 품질, 임상 자산 수용, 공식 API 복구·제출·평가는 합성 검증에 포함되지 않는다.
 
-Mermaid 세 도식은 구현의 함수·분기와 대조했다. 프로젝트 dev 컨테이너에 Mermaid 렌더러·Node·브라우저가 없어 **시각 렌더링은 not_run**이다. 원문 검토를 렌더링 성공으로 표현하지 않는다. 최종 관측 결과는 [제출 상태](PROJECT_STATE.md)와 [검증 기록](../Tmp/workflow-revision-2026-10-14/review.md)을 기준으로 확인한다.
+Mermaid 세 도식은 구현의 함수·분기와 대조했다. 프로젝트 dev 컨테이너에 Mermaid 렌더러·Node·브라우저가 없어 **시각 렌더링은 not_run**이다. 원문 검토를 렌더링 성공으로 표현하지 않는다. 최종 관측 결과는 [제출 상태](PROJECT_STATE.md)와 [검증 기록](../Tmp/workflow-refactor-2026-10-14/review.md)을 기준으로 확인한다.
 
 요구사항은 [PRD](../PRD.md), 선택은 [D01·D11·D12·D13·D14](../DECISION_STATE.md), 자료 승인·준비·검토는 [data 상태](../data/PROJECT_STATE.md)가 관리한다.

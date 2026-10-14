@@ -2,15 +2,19 @@
 
 ## Ownership
 
-- Own submission-agent Python, application Pydantic schemas, CaseState, LangGraph flow, runtime graph readers, and model and patient interfaces.
-- Keep execution classes in agents/ and RDFLib graph ownership and fixed readers in knowledge/ under D13.
-- Share the five WorkflowState objects from agents/state.py and case-independent Resources from agents/resources.py.
-- Keep SOAP records and final diagnosis in CaseState; sessions and budgets in SessionContext; candidates and scores in DifferentialState; question references and priorities in QuestionPlan; raw exchanges and execution outcomes in InteractionState.
-- Keep run.py limited to the SDK entrypoint and agents/runtime.py limited to prepare and consult orchestration.
-- Keep session, gateway, interview, reasoning, action, and submission responsibilities in their dedicated classes without inheritance scaffolds or registries.
-- Use package-relative imports within agents/ and keep graph assembly in agents/workflow.py.
-- Resolve file paths through this directory's settings.py and keep every knowledge asset below knowledge/.
-- Leave source provenance, RDF artifact provenance, review records, and preparation-result state to the data owner.
+- Own submission runtime code, Pydantic state, LangGraph flow, model calls, and patient interfaces under workflow/.
+- Keep run.py limited to the SDK callbacks from workflow/runtime.py.
+- Assemble case-independent knowledge and text configuration in PreparedResources and create execution objects and state per consult call.
+- Keep Consultation as the sole coordinator for internal session preparation transitions refresh and finalization.
+- Keep graph.py limited to graph assembly state-based routing and the deep-copy validation wrapper.
+- Assign SAY framing and SAY/EXAM execution to Doctor, input interpretation and clinical fact application to InputInterpreter, question and education selection to InterviewPlanner, clinical algorithms to ClinicalReasoner, and SOAP and submission attempts to SubmissionWriter.
+- Assign question registration discard and unresolved closure to QuestionLifecycle, action references dialogue and delivery to InteractionLifecycle, and all usage accounting to UsageAccounting.
+- Keep immutable limits and pure budget input action and submission decisions in workflow/rules without a generic rule engine.
+- Keep NOVA session access model requests and identical-request recovery in workflow/io with injected clock sleep and request identity dependencies.
+- Preserve the five serialized WorkflowState objects in workflow/state/models.py and keep mutable case state out of execution-object attributes.
+- Use session for internal stages and nova_session for the official server session; preserve existing scope fields and serialized values.
+- Use package-relative imports within workflow/ and settings.py for submission-local data paths.
+- Keep RDFLib graph ownership and fixed readers in knowledge/ and preserve preparation and admission ownership in root data/.
 
 ## Application Behavior
 
@@ -20,7 +24,7 @@
 - Freeze applicable HPI slots for each initial chief complaint and process them without diagnostic ranking or score-based early termination.
 - Execute retained HPI, one open inquiry, then at most six focused ROS questions from confirmed chief-complaint systems before normal disease retrieval.
 - Freeze focused ROS in sorted URI order using existing inSystem and BodySystem links; deduplicate and skip known symptoms without expanding into newly reported systems.
-- Return every SAY and EXAM response through one InputGateway, including education responses.
+- Return every SAY and EXAM response through one InputInterpreter, including education responses.
 - Use unasked and done for record processing; preserve present, absent, uncertain, and unknown within values.
 - Initialize each scope once and finish only after pending replies are handled and the current scope has no unasked records.
 - Delete low-priority unasked records and question references together; do not retain deferred queues or recreate deleted questions.
@@ -33,7 +37,7 @@
 - Use Initiation, ChiefComplaint, ContextFactor, DifferentialDiagnosis, and Education in order without ClinicalSynthesis.
 - Keep routing, question and education selection, scoring, final diagnosis, and SOAP serialization in Python.
 - Use openai/gpt-6-luna separately for Doctor SAY framing and Gateway parsing with distinct prompts and role-tagged model records.
-- Pass actual spoken wording, the structured InterviewAgent question, all delivered Korean dialogue, existing observations, and allowed vocabulary to Gateway.
+- Pass actual spoken wording, the structured InterviewPlanner question, all delivered Korean dialogue, existing observations, and allowed vocabulary to Gateway.
 - Keep delivered dialogue case-local in InteractionState and exclude drafts errors and unsent phrases from its dialogue projection.
 - Ground every fact in an exact current quote and validate context references; never turn Doctor speech into a patient observation.
 - Restrict Python yes/no mapping to explicitly affirmative prepared presence questions; use Gateway for Doctor-rephrased questions.
@@ -47,7 +51,7 @@
 - Preserve scoped action caps 1/20/10/14/5 and a 120-second finalization reserve.
 - Recover transient requests at most twice with identical IDs and payloads after two and five seconds; bound timeout by 240 seconds and remaining time without modifying the pinned SDK.
 - Retry explicit patient or examiner response-format errors once with a new ID; count successful actions and unique model requests once.
-- Assign prepared education selection to InterviewAgent and final record validation and submission to SubmissionAgent.
+- Assign prepared education selection to InterviewPlanner and final record validation and submission to SubmissionWriter.
 - Reconstruct an invalid SOAP record once; enter finish only after the submitted DIAGNOSE request returns completed and use abort for explicit unsuccessful outcomes.
 - Separate confirmed submission, failure, unknown outcome, closed session, and expiry.
 - Implement the authorized offline MVP and leave actual clinical admission and authenticated SDK acceptance explicitly unverified.
@@ -111,6 +115,8 @@
 - Exclude AGENTS.md, README.md, PROJECT_STATE.md, and caches from submission archives while including the public .env.
 - Run the package Compose service to archive only this directory's runtime files and knowledge assets.
 - Keep Turtle, required JSON schemas, and the runtime manifest in knowledge/ without parent-project fallbacks in execution or tests.
-- Run synthetic full-flow verification in a temporary submission copy with its assets inside that copy; exclude fixtures from the real archive.
+- Run Dev/tests/workflow/test_workflow.py in the project dev container with Dev/tests/workflow/compose.offline.yaml.
+- Keep generated full-flow assets inside a temporary submission copy under Tmp and exclude fixtures from the real archive.
+- Use Dev/architecture/WORKFLOW_RULES.md to locate each rule owner and behavioral test without duplicating executable rules.
 - Reference D01, D03, D04, D05, D06, D07, D08, D09, D11, D12, D13, and D14 in `../DECISION_STATE.md` without duplicating options or decision statuses.
 - Leave source admission and preparation-result records to `../data/PROJECT_STATE.md`.

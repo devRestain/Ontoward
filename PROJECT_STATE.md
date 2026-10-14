@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=0dde400ff6eb5879aafabcabf5e994563d1c8de6 dirty=true updated=2026-10-14T10:56:39+09:00
-/goal phase=current id=ROOT.WORKFLOW14 state=complete action="Integrate the approved Doctor interface ROS and recovery revision with the submission white paper and isolated packaging"
+/checkpoint revision=185d6ab27f575ca205a0fa00a909688ad5ff178b dirty=true updated=2026-10-14T15:06:23+09:00
+/goal phase=current id=ROOT.REFACTOR14 state=complete action="Reconcile workflow contracts maintained tests packaging and scoped state"
+/goal phase=history id=ROOT.WORKFLOW14 state=complete action="Integrate the approved Doctor interface ROS and recovery revision with the submission white paper and isolated packaging"
 /goal phase=history id=ROOT.MULTIDISEASE01 state=complete action="Implement approved disease group context and execute the bounded IBD two-stage pilot"
 /goal phase=history id=ROOT.RULES14 state=complete action="Reconcile current NOVA rules the confirmed Doctor selection and all maintained project states"
 /goal phase=history id=ROOT.USERREVIEW14 state=complete action="Reconcile user candidate acceptance and the D09 review policy without changing active rules work"
@@ -262,4 +263,15 @@
 /evidence id=ROOT.WORKFLOW14.E4 class=runtime result=not_run source=Tmp/workflow-revision-2026-10-14/review.md observed="Leave Mermaid visual rendering unrun because no renderer Node or Chromium is installed in the project dev container"
 /evidence id=ROOT.WORKFLOW14.E5 class=external_service result=not_run source=Tmp/workflow-revision-2026-10-14/review.md observed="Leave real Luna calls official API submission evaluation extraction publication commits and deployment unperformed"
 /scope id=ROOT.WORKFLOW14.S1 state=in action="Own documentation integration package tooling and the cross-scope handoff under D11 through D14"
-/handoff state=blocked action="Use submission state for the completed runtime slice and wait for data-owned review and runtime-asset admission before authenticated execution"
+/accept id=ROOT.REFACTOR14.A1 state=pass action="Align D13 requirements contracts rule navigation and Korean workflow documentation with implemented responsibility names" evidence=ROOT.REFACTOR14.E1,ROOT.REFACTOR14.E2
+/accept id=ROOT.REFACTOR14.A2 state=pass action="Maintain behavioral verification tools and package the new workflow namespace without legacy wrappers or protected-file changes" evidence=ROOT.REFACTOR14.E3,ROOT.REFACTOR14.E4
+/accept id=ROOT.REFACTOR14.A3 state=pass action="Reconcile all three operational scopes and central decisions while preserving data review and runtime-admission blockers" evidence=ROOT.REFACTOR14.E5
+/evidence id=ROOT.REFACTOR14.E1 class=semantic result=pass source=Tmp/workflow-refactor-2026-10-14/review.md observed="Align D11 roles D12 and D14 packaging D13 ownership PRD root submission and Dev contracts rule index and Korean orientation with the approved refactor"
+/evidence id=ROOT.REFACTOR14.E2 class=static result=pass source=Tmp/workflow-refactor-2026-10-14/artifacts.json observed="Resolve sixty-four local links sixty-six documented functions and thirty-three distinct behavioral test references in the rule index"
+/evidence id=ROOT.REFACTOR14.E3 class=artifact result=pass source=Tmp/workflow-refactor-2026-10-14/package.json observed="Build the isolated package image from the cached base without downloads and create a thirty-five-file archive containing workflow knowledge configured texts and public settings while excluding agents guidance tests and synthetic assets"
+/evidence id=ROOT.REFACTOR14.E4 class=artifact result=pass source=Tmp/workflow-refactor-2026-10-14/artifacts.json observed="Match every archive entry to current submission bytes and all 16375 protected hashes while maintaining verification in Dev/tests/workflow and generated evidence only in Tmp"
+/evidence id=ROOT.REFACTOR14.E5 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Delegate completed application behavior and isolated ZIP execution to APP.REFACTOR14 retain APP.ASSETS01 and data-owned candidate review and RDF-admission blockers and keep decisions only in DECISION_STATE.md"
+/evidence id=ROOT.REFACTOR14.E6 class=runtime result=not_run source=Tmp/workflow-refactor-2026-10-14/artifacts.json observed="Leave Mermaid visual rendering unrun because the project dev container has no renderer Node or browser"
+/evidence id=ROOT.REFACTOR14.E7 class=external_service result=not_run source=Tmp/workflow-refactor-2026-10-14/review.md observed="Leave real model calls official API submission evaluation further extraction corpus expansion publication commits and deployment unperformed"
+/scope id=ROOT.REFACTOR14.S1 state=in action="Own D13 document integration maintained Dev verification tooling package allowlists disposable evidence and cross-scope reconciliation"
+/handoff state=blocked action="Use APP.REFACTOR14 in submission state for completed runtime acceptance and retain data-owned review and runtime-asset admission as the next bounded dependency"

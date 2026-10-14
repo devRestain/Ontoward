@@ -14,7 +14,7 @@ Ontoward/
 ├── .gitignore / .env / .env.example
 ├── submission/
 │   ├── run.py / settings.py / nova_sdk.py
-│   ├── agents/      # 실행 객체·공통 상태·워크플로우
+│   ├── workflow/    # 책임 객체·규칙·상태·실행 흐름
 │   ├── knowledge/   # RDFLib 코드·실행 Turtle·필요한 JSON
 │   ├── requirements.txt / .env
 │   └── AGENTS.md / README.md / PROJECT_STATE.md
@@ -33,7 +33,7 @@ Ontoward/
 
 루트는 Docker·공통 문서·Dev 도구와 범위 조정을 소유한다. [submission](submission/README.md)은 실행 코드와 애플리케이션 상태, [data](data/README.md)는 자료·준비 결과를 소유한다. 운영 상태는 [루트](PROJECT_STATE.md), [제출 코드](submission/PROJECT_STATE.md), [데이터](data/PROJECT_STATE.md) 세 곳이며 Dev·Tmp에 상태 범위를 추가하지 않는다.
 
-실행 객체는 submission/agents/에서, RDFLib 접근 코드는 submission/knowledge/에서 수정한다. 공통 상태·자원은 agents/state.py와 agents/resources.py에서 공유하며 run.py는 agents/runtime.py의 prepare·consult를 전달한다. 별도 app/ 코드나 루트 실행 래퍼는 두지 않는다. SDK 1.0.1은 제공 원본의 수정 없는 사본이며 해시는 [출처 기록](assets/nova-competition-2026/SOURCES.md)에 있다.
+실행 코드는 submission/workflow/에 모여 있다. Consultation 하나가 다섯 세션을 조정하고 Doctor·InputInterpreter·InterviewPlanner·ClinicalReasoner·SubmissionWriter가 각 기능을 맡는다. rules/에서 규칙을, state/에서 상태와 변경 연산을, io/에서 모델·공식 세션·전송 복구를 찾을 수 있다. run.py는 workflow/runtime.py의 prepare·consult를 SDK에 전달한다. RDFLib 조회와 실행 자산은 submission/knowledge/에 둔다. 자세한 함수·상태·예제는 [제출 워크플로우 백서](submission/README.md), 규칙별 구현과 테스트는 [규칙 색인](Dev/architecture/WORKFLOW_RULES.md)을 참고한다.
 
 ## 설정과 개발환경
 
@@ -68,7 +68,7 @@ docker compose build package
 docker compose run --rm -T package
 ```
 
-결과는 Tmp/packaging/ontoward-submission.zip이다. 압축 루트에는 run.py·requirements.txt·설정·SDK·공개 .env가 놓이고, agents/·knowledge/ 패키지는 하위 경로를 유지한다. 제출 디렉터리의 AGENTS.md·README.md·PROJECT_STATE.md, 캐시와 루트 개발 .env는 제외된다. package 이미지는 submission/ 입력과 전용 출력만 연결하고 네트워크를 끈다. 구성 도구는 포함 파일·해시·크기·개수를 출력하며, 심볼릭 링크와 허용하지 않은 파일을 거절한다.
+결과는 Tmp/packaging/ontoward-submission.zip이다. 압축 루트에는 run.py·requirements.txt·설정·SDK·공개 .env가 놓이고, workflow/·knowledge/ 패키지는 하위 경로를 유지한다. 제출 디렉터리의 AGENTS.md·README.md·PROJECT_STATE.md, 캐시와 루트 개발 .env는 제외된다. package 이미지는 submission/ 입력과 전용 출력만 연결하고 네트워크를 끈다. 구성 도구는 포함 파일·해시·크기·개수를 출력하며, 심볼릭 링크와 허용하지 않은 파일을 거절한다.
 
 수동으로 압축할 때도 **submission 폴더 자체가 아니라 필요한 내부 파일**을 선택하고 안내·상태 문서를 제외한다. .env가 숨김 파일이므로 위 명령 사용을 권장한다. .gitignore는 ZIP 구성 규칙을 대신하지 않는다.
 

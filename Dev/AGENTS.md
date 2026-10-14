@@ -7,9 +7,10 @@
 - Keep durable responses, provenance, checkpoints, concept mappings, reviews, and generated artifacts in root data/.
 - Keep disposable run inputs and drafts in root Tmp/.
 - Record preparation-tool progress in root PROJECT_STATE.md without creating a Dev state scope.
+- Own maintained behavioral tests in tests/workflow and the implementation-to-test rule index in architecture/WORKFLOW_RULES.md; keep generated test assets and reports under root Tmp.
 - Own packaging/package_submission.py as the development archive helper copied into the package image without runtime dependency on Dev/.
 - Package submission runtime files and its public .env at the ZIP root; exclude guidance, state, caches, and root development credentials.
-- Preserve agents/ and knowledge/ package paths in the archive and require their shared models and execution modules.
+- Preserve workflow/ and knowledge/ package paths in the archive and require their shared models and execution modules.
 - Read archive inputs only from /submission and write output only to /output without traversing the project root or preparation data.
 - Include required knowledge/*.ttl and knowledge/*.json assets below the submission package alongside its Python graph readers.
 - Include the environment-selected runtime prompt and text files under submission/config without packaging verification fixtures.

@@ -1,7 +1,7 @@
-"""NOVA submission entrypoint; clinical execution remains unimplemented."""
+"""Expose the NOVA preparation and consultation callbacks."""
 
 from nova_sdk import run_agent
-from agents.runtime import consult, prepare
+from workflow.runtime import consult, prepare
 
 
 if __name__ == "__main__":

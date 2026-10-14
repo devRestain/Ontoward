@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Literal
 
 from nova_sdk import RECORD_FIELDS
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-Scope = Literal["Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education"]
-SCOPES: tuple[Scope, ...] = ("Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education")
+from ..rules.limits import LIMITS, SESSION_ORDER, SessionName
 SOAPField = Literal[
     "S.cc", "S.hpi", "S.pmh", "S.fh", "S.sh", "S.ros", "O.exam", "O.tests",
     "A.evidence", "A.differential", "P.tests", "P.treatment", "P.disposition", "P.follow_up", "P.education",
@@ -33,7 +32,7 @@ class ClinicalValue(Model):
 
 class RecordItem(Model):
     id: str
-    scope: Scope
+    scope: SessionName
     status: Literal["unasked", "done"] = "unasked"
     value: ClinicalValue | None = None
     source_refs: list[str] = Field(default_factory=list)
@@ -84,7 +83,7 @@ class CaseState(Model):
                 for item_id in ids:
                     records.pop(item_id, None)
 
-    def unasked(self, scope: Scope) -> list[RecordItem]:
+    def unasked(self, scope: SessionName) -> list[RecordItem]:
         return [item for _, item in self.entries() if item.scope == scope and item.status == "unasked"]
 
     def chief_complaints(self, *, confirmed=False) -> list[RecordItem]:
@@ -98,8 +97,8 @@ class SessionLimit(Model):
     actions: int = Field(ge=0)
 
 
-def default_limits() -> dict[Scope, SessionLimit]:
-    return {scope: SessionLimit(actions=actions) for scope, actions in zip(SCOPES, (1, 20, 10, 14, 5))}
+def default_limits() -> dict[SessionName, SessionLimit]:
+    return {scope: SessionLimit(actions=actions) for scope, actions in zip(SESSION_ORDER, LIMITS.session_actions)}
 
 
 class Usage(Model):
@@ -110,32 +109,25 @@ class Usage(Model):
 class SessionContext(Model):
     session_id: str
     deadline: datetime
-    turns_remaining: int = Field(ge=0, le=50)
-    current: Scope = "Initiation"
+    turns_remaining: int = Field(ge=0, le=LIMITS.turns)
+    current: SessionName = "Initiation"
     initialized: bool = False
     questions_prepared: bool = False
     finalizing: bool = False
-    reserve_seconds: int = 120
-    limits: dict[Scope, SessionLimit] = Field(default_factory=default_limits)
-    usage: dict[Scope, Usage] = Field(default_factory=lambda: {scope: Usage() for scope in SCOPES})
+    reserve_seconds: int = LIMITS.finalization_seconds
+    limits: dict[SessionName, SessionLimit] = Field(default_factory=default_limits)
+    usage: dict[SessionName, Usage] = Field(default_factory=lambda: {scope: Usage() for scope in SESSION_ORDER})
     allowed_actions: list[str] = Field(default_factory=lambda: ["SAY", "EXAM", "DIAGNOSE"])
     doctor_calls: int = 0
     doctor_successes: int = 0
     input_tokens: int = 0
     output_tokens: int = 0
-    call_limit: int = 200
-    input_token_limit: int = 500000
-    output_token_limit: int = 100000
+    call_limit: int = LIMITS.model_calls
+    input_token_limit: int = LIMITS.input_tokens
+    output_token_limit: int = LIMITS.output_tokens
     models_available: bool = True
-    clarifications: int = Field(default=0, ge=0, le=2)
+    clarifications: int = Field(default=0, ge=0, le=LIMITS.clarifications)
 
-    def seconds_left(self) -> float:
-        return (self.deadline - datetime.now(timezone.utc)).total_seconds()
-
-    def calls_left(self) -> int:
-        if not self.models_available or self.seconds_left() <= self.reserve_seconds or self.input_tokens >= self.input_token_limit or self.output_tokens >= self.output_token_limit:
-            return 0
-        return max(0, self.call_limit - self.doctor_calls)
 
 
 class Hypothesis(Model):
@@ -184,7 +176,7 @@ class ActionSpec(Model):
     question: Question
     content: str
     request_id: str
-    render_attempts: int = Field(default=0, ge=0, le=3)
+    render_attempts: int = Field(default=0, ge=0, le=LIMITS.doctor_generations)
     render_source: Literal["prepared", "doctor"] = "prepared"
     ready: bool = False
     feedback: dict[str, object] | None = None
@@ -215,7 +207,7 @@ class InteractionState(Model):
     issues: list[str] = Field(default_factory=list)
     needs_clarification: bool = False
     clarification_target: Question | None = None
-    submission_repairs: int = Field(default=0, ge=0, le=1)
+    submission_repairs: int = Field(default=0, ge=0, le=LIMITS.submission_repairs)
     submission_error: str | None = None
 
     def dialogue(self) -> list[dict[str, object]]:

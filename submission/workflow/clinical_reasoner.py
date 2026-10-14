@@ -1,6 +1,6 @@
 from knowledge.graph import ClinicalKnowledge
 
-from .state import Hypothesis, WorkflowState
+from .state.models import Hypothesis, WorkflowState
 
 
 def observation_groups(state: WorkflowState):
@@ -17,7 +17,7 @@ def observation_groups(state: WorkflowState):
     return groups
 
 
-class ReasoningAgent:
+class ClinicalReasoner:
     def __init__(self, knowledge: ClinicalKnowledge):
         self.knowledge = knowledge
 

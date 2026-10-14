@@ -1,26 +1,17 @@
-from uuid import uuid4
-
 from knowledge.graph import ClinicalKnowledge, Plan
 
-from .state import ActionSpec, ClinicalValue, Question, RecordItem, WorkflowState
+from .state.models import ClinicalValue, Question, RecordItem, WorkflowState
+from .rules.limits import LIMITS
 
 
-class InterviewAgent:
-    def __init__(self, knowledge: ClinicalKnowledge, config):
+class InterviewPlanner:
+    def __init__(self, knowledge: ClinicalKnowledge, config, questions, interactions, budget, usage):
         self.knowledge = knowledge
         self.config = config
-
-    def add_question(self, state: WorkflowState, question: Question) -> None:
-        if state.case.get(question.item_id):
-            return
-        item = RecordItem(id=question.item_id, scope=state.session.current)
-        if not question.text:
-            item.status = "done"
-            item.value = ClinicalValue(kind="text", text=self.config.texts.missing_question_text, status="unknown")
-            state.interaction.issues.append(f"missing_template:{question.item_id}")
-        else:
-            state.questions.questions.append(question)
-        state.case.put(question.field, item)
+        self.questions = questions
+        self.interactions = interactions
+        self.budget = budget
+        self.usage = usage
 
     @staticmethod
     def known(state: WorkflowState, target, attribute=None, observation=None, episode=None, subject="patient"):
@@ -31,11 +22,11 @@ class InterviewAgent:
                    and (episode is None or item.value.episode_id == episode)
                    for _, item in state.case.entries())
 
-    def initiation(self, state: WorkflowState) -> None:
-        self.add_question(state, Question(item_id="Initiation:chief", field="S.cc", purpose="chief",
+    def prepare_initiation(self, state: WorkflowState) -> None:
+        self.questions.register(state, Question(item_id="Initiation:chief", field="S.cc", purpose="chief",
             text=self.config.texts.chief_question, order=0, priority=1))
 
-    def fixed_hpi(self, state: WorkflowState) -> None:
+    def prepare_chief_complaint(self, state: WorkflowState) -> None:
         order = 0
         for chief in state.case.chief_complaints():
             value = chief.value
@@ -44,51 +35,49 @@ class InterviewAgent:
             concepts = value.concept_ids
             attributes = list(dict.fromkeys(attribute for target in concepts for attribute in self.knowledge.get_symptom_attributes(target)))
             if not concepts:
-                self.add_question(state, Question(item_id=f"ChiefComplaint:{chief.id}:location", field="S.hpi",
+                self.questions.register(state, Question(item_id=f"ChiefComplaint:{chief.id}:location", field="S.hpi",
                     purpose="hpi", text=self.config.texts.unmapped_question, observation_id=value.observation_id,
-                    episode_id=value.episode_id, order=order, priority=10000 - order))
+                    episode_id=value.episode_id, order=order, priority=LIMITS.hpi_priority - order))
                 order += 1
             for attribute in attributes:
                 target = next(concept for concept in concepts if attribute in self.knowledge.get_symptom_attributes(concept))
                 if self.known(state, target, attribute, value.observation_id, value.episode_id):
                     continue
-                self.add_question(state, Question(item_id=f"ChiefComplaint:{chief.id}:{attribute}", field="S.hpi",
+                self.questions.register(state, Question(item_id=f"ChiefComplaint:{chief.id}:{attribute}", field="S.hpi",
                     purpose="hpi", target_id=target, attribute_id=attribute, observation_id=value.observation_id,
                     episode_id=value.episode_id, text=self.knowledge.question(attribute, target),
-                    order=order, priority=10000 - order))
+                    order=order, priority=LIMITS.hpi_priority - order))
                 order += 1
-        self.open_inquiry(state, order)
-        self.focused_ros(state, order + 1)
+        self.prepare_open_inquiry(state, order)
+        self.prepare_focused_ros(state, order + 1)
 
-    def open_inquiry(self, state: WorkflowState, order: int) -> None:
-        self.add_question(state, Question(item_id="ChiefComplaint:open", field="S.ros", purpose="open_inquiry",
-            text=self.config.texts.open_question, order=order, priority=1000000))
+    def prepare_open_inquiry(self, state: WorkflowState, order: int) -> None:
+        self.questions.register(state, Question(item_id="ChiefComplaint:open", field="S.ros", purpose="open_inquiry",
+            text=self.config.texts.open_question, order=order, priority=LIMITS.open_inquiry_priority))
 
-    def focused_ros(self, state: WorkflowState, order: int) -> None:
+    def prepare_focused_ros(self, state: WorkflowState, order: int) -> None:
         targets = {target for item in state.case.chief_complaints(confirmed=True) for target in item.value.concept_ids}
         systems = {system for target in targets for system in self.knowledge.get_symptom_systems(target)}
         related = {target for system in systems for target in self.knowledge.get_system_symptoms(system)}
         unasked = [target for target in sorted(related - targets) if not self.known(state, target)]
-        for index, target in enumerate(unasked[:6]):
-            self.add_question(state, Question(item_id=f"ChiefComplaint:ros:{target}", field="S.ros", purpose="ros",
+        for index, target in enumerate(unasked[:LIMITS.focused_ros]):
+            self.questions.register(state, Question(item_id=f"ChiefComplaint:ros:{target}", field="S.ros", purpose="ros",
                 target_id=target, text=self.config.texts.ros_question.format(symptom=self.knowledge.label(target)),
                 affirmative_presence=self.config.texts.ros_question == "{symptom}도 있나요?",
-                order=order + index, priority=900000 - index))
+                order=order + index, priority=LIMITS.ros_priority - index))
 
-    def clarify(self, state: WorkflowState, original: Question | None = None) -> bool:
+    def prepare_clarification(self, state: WorkflowState, original: Question | None = None) -> bool:
         session = state.session
-        if (session.clarifications >= 2 or session.finalizing or session.calls_left() < 2
-                or session.usage[session.current].actions >= session.limits[session.current].actions
-                or session.turns_remaining == 0):
+        if not self.budget.can_clarify(state):
             return False
-        session.clarifications += 1
+        self.usage.record_clarification(state)
         if original and (original.kind == "EXAM" or original.field.startswith("P.")):
             original = None
         values = original.model_dump() if original else {"field": "S.ros" if state.case.chief_complaints() else "S.cc"}
         values.update(item_id=f"{session.current}:clarification:{session.clarifications}", kind="SAY",
                       purpose="clarification", text=self.config.texts.clarification_question,
-                      order=-session.clarifications, priority=2000000)
-        self.add_question(state, Question(**values))
+                      order=-session.clarifications, priority=LIMITS.clarification_priority)
+        self.questions.register(state, Question(**values))
         return True
 
     def prepare_education(self, state: WorkflowState, *, replace=False, create_questions=True) -> None:
@@ -97,8 +86,7 @@ class InterviewAgent:
         capacity = len(remaining) if replace else max(0, state.session.limits["Education"].actions - state.session.usage["Education"].actions)
         if replace:
             removed = {q.item_id for q in remaining}
-            state.case.remove(removed)
-            state.questions.questions = [q for q in state.questions.questions if q.item_id not in removed]
+            self.questions.discard_unasked(state, removed)
         selected = state.differential.selected_id
         if state.case.diagnosis_kind == "symptom":
             plan = Plan(education=[self.config.texts.symptom_education])
@@ -122,10 +110,10 @@ class InterviewAgent:
                     value=ClinicalValue(kind="plan", text=text, status="present", concept_ids=[selected] if selected else [])))
         if create_questions:
             for order, text in enumerate(plan.education[:capacity]):
-                self.add_question(state, Question(item_id=f"Education:{selected or 'symptom'}:{order}", field="P.education",
+                self.questions.register(state, Question(item_id=f"Education:{selected or 'symptom'}:{order}", field="P.education",
                     purpose="education", text=text, order=order, priority=capacity - order))
 
-    def collect_context(self, state: WorkflowState) -> None:
+    def prepare_context_questions(self, state: WorkflowState) -> None:
         contexts = {}
         for hypothesis in state.differential.hypotheses:
             for context in self.knowledge.get_supporting_context(hypothesis.disease_id):
@@ -138,11 +126,11 @@ class InterviewAgent:
                 continue
             field = "S.fh" if subject == "family" else ("S.sh" if kind in {
                 "social_history", "occupational_history", "psychosocial_history", "demographic"} else "S.pmh")
-            self.add_question(state, Question(item_id=f"ContextFactor:{target}", field=field, purpose="context",
+            self.questions.register(state, Question(item_id=f"ContextFactor:{target}", field=field, purpose="context",
                 target_id=target, subject=subject, text=self.knowledge.question(target),
                 order=order, priority=context["count"]))
 
-    def investigate(self, state: WorkflowState) -> None:
+    def prepare_differential_questions(self, state: WorkflowState) -> None:
         options = []
         for rank, hypothesis in enumerate(state.differential.hypotheses):
             for pattern in self.knowledge.get_disease_patterns(hypothesis.disease_id):
@@ -169,18 +157,17 @@ class InterviewAgent:
                 if method:
                     methods_seen.add((method["id"], episode))
                 order = len(state.questions.questions)
-                self.add_question(state, Question(item_id=f"DifferentialDiagnosis:{order}", field="O.exam" if exam else "S.ros",
+                self.questions.register(state, Question(item_id=f"DifferentialDiagnosis:{order}", field="O.exam" if exam else "S.ros",
                     kind="EXAM" if exam else "SAY", purpose="feature", target_id=target, attribute_id=attribute,
                     observation_id=observation, episode_id=episode,
                     text=method["text"] if method else self.knowledge.question(attribute or target, target),
-                    order=order, priority=(len(state.differential.hypotheses) - rank) * 10 + int(not ordinary)))
+                    order=order, priority=(len(state.differential.hypotheses) - rank) * LIMITS.differential_rank_weight + int(not ordinary)))
 
     def select_question(self, state: WorkflowState) -> None:
         answered = {q.item_id for q in state.questions.questions if q.target_id and q.purpose != "clarification" and
                     (item := state.case.get(q.item_id)) and item.status == "unasked" and
                     self.known(state, q.target_id, q.attribute_id, q.observation_id, q.episode_id, q.subject)}
-        state.case.remove(answered)
-        state.questions.questions = [q for q in state.questions.questions if q.item_id not in answered]
+        self.questions.discard_unasked(state, answered)
         questions = [q for q in state.questions.questions
                      if (item := state.case.get(q.item_id)) and item.scope == state.session.current and item.status == "unasked"]
         if not questions:
@@ -188,4 +175,4 @@ class InterviewAgent:
                 state.stop("failed", "unplanned_unasked_record")
             return
         question = min(questions, key=lambda q: (q.order, q.item_id))
-        state.interaction.selected = ActionSpec(question=question, content=question.text, request_id=str(uuid4()))
+        self.interactions.select_question(state, question)

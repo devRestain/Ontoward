@@ -1,0 +1,8 @@
+services:
+  dev:
+    network_mode: none
+    environment:
+      NOVA_DEV_KEY: ""
+  package:
+    build:
+      network: none
