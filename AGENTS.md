@@ -50,7 +50,7 @@
 - Consult `assets/nova-competition-2026/` for detailed competition information, starting with its `AGENTS.md` and the relevant reference documents.
 - Read `DECISION_STATE.md` when an action depends on a user choice.
 - Treat recommendations in `DECISION_STATE.md` as proposals until the user selects an option.
-- Apply the selected preliminary SDK route and guideline-derived RDF preparation sequence through the PRD and central decision IDs.
+- Keep the selected preliminary SDK route for the Doctor; apply the current SNOMED-first preparation sequence through D05 and D09.
 - Use D07 for document-level extraction outputs, source-group submission bundles, and one runtime RDFLib Graph.
 - Use D08 and data/ontology/AGENTS.md for the schema, starter vocabulary, flat parallel location values, and SDK text-mapping boundary.
 - Use specific clinical pain complaints as D08 retrieval targets and preserve finer Location values, raw wording, interpretation uncertainty, and separate episodes.
@@ -66,12 +66,12 @@
 - Apply D13 responsibility names and keep Consultation as the sole internal-session coordinator.
 - Keep pure workflow decisions in workflow/rules and cross-state question interaction and usage operations in their designated workflow/state owners.
 - Run maintained offline workflow checks with Dev/tests/workflow/compose.offline.yaml and exclude tests and synthetic assets from the submission.
-- Require an adopted D09 preparation contract and D08 v4.2 alignment before generating or admitting new clinical artifacts.
-- Apply the adopted D09 schema-only slice through Dev/ontology/ and data/ontology/extraction-vocabulary.json and extraction.schema.json; keep actual model extraction and RDF admission separate.
-- Apply the D09 two-stage workflow through reviewed disease-focused textbook or guideline units, atomic statements, structured candidates, and complete human review.
+- Require the adopted D09 SNOMED preparation contract and D08 v4.2 alignment before generating or admitting new clinical artifacts.
+- Apply D09's two stages through Dev/ontology/snomed/: expand and human-review the versioned terminology registry first, then project RF2 concepts and relations into Ontoward patterns and features.
+- Keep the old guideline schemas, candidate records, responses, and pilot outputs intact without making that route the default or automatically resuming it.
 - Treat explicit differential lists as possible disease-target associations without inferred expected status or features and retain their origin outside runtime RDF.
-- Use D09 and Dev/AGENTS.md for textbook preparation ownership and the SNU Edu Codex CLI route.
-- Require clinician review of all seven English vocabulary candidate tables before the later Pydantic extraction-schema and model-pilot slice under D09.
+- Use D09 and Dev/AGENTS.md for RF2 input, SNOMED preparation, the sessionless NOVA `gpt-6.1-sol` runner, and its explicit dry-run/live boundary.
+- Treat the approved 510 English terms as expandable seeds; require human selection of the generated registry before stage two.
 - Use D10 for the separate extraction image and later WSL2 operating boundary.
 - Record decision alternatives, selections, and lifecycle changes only in `DECISION_STATE.md`.
 - Reference decision IDs from operational state without copying their alternatives or statuses.
@@ -92,7 +92,7 @@
 - Use `docker compose build dev` to build the declared environment when image building is in the active scope.
 - Use `docker compose run --rm dev` to enter its Python interpreter when container execution is in the active scope.
 - Keep submission-agent dependencies in `submission/requirements.txt` and install them through the root Dockerfile.
-- Keep the Codex environment in `Dev/codex/Dockerfile` and its setup helper in `Dev/codex/environment.py`; define the adopted D09 preparation dependencies in Dev/ontology/requirements.txt.
+- Keep the preparation environment in `Dev/codex/Dockerfile` and its setup helper in `Dev/codex/environment.py`; use the existing Pydantic, RDFLib, and standard-library SQLite dependencies.
 - Use `/workspace` as the container working directory; mount the project root in dev and only declared input/output paths in ontology-extraction.
 - Identify existing Docker resources through the Compose project and service labels plus the workspace mount before using them.
 - Keep extraction CLI state and credentials in a dedicated project-owned Docker volume outside disposable scratch and submission artifacts.

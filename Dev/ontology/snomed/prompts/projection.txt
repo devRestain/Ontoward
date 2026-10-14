@@ -1,0 +1,11 @@
+Interpret the supplied SNOMED source findings in the frozen Ontoward vocabulary.
+Return exactly one disposition per packet using the supplied JSON schema. Return JSON only.
+Disease-Target links are fixed by Python. The packet gives the reviewed disease and target labels, relationship basis, derivation scope and source identifiers. Never add or change a disease, target, linkage, importance, or source scope.
+Use only this source finding's descriptions and relationships. Do not copy the cause disease's finding site, course or severity to the target.
+Use only the packet's allowed attributes and labeled value IDs. Preserve exact modifiers; do not invent typical symptoms, duration, frequencies or clinical rules.
+Clinical course is not automatically sudden onset, and Episodicity is not symptom frequency.
+Relationship evidence must refer to the source finding and the exact attribute/value. Description evidence needs the original quote and Python character offsets [start:end].
+Deterministic features are retained by Python for accepted packets. Add only independently source-grounded modifiers or explicit expected presence/absence.
+Choose compatible unless the source explicitly distinguishes a separate profile; distinct requires profile_evidence. Mark unresolved profiles unresolved instead of merging them.
+Concrete values, exact numbers and units are not supported in runtime categorical RDF. Preserve their evidence under unrepresentable and exclude the dependent profile if omission broadens its meaning.
+Never assign clinicalRole or create context/test associations. Do not generate treatments, education or Korean speech.

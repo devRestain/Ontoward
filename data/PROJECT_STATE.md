@@ -1,11 +1,12 @@
 /state version=1
 /project id=ontoward-data
 /status value=blocked
-/checkpoint revision=185d6ab27f575ca205a0fa00a909688ad5ff178b dirty=true updated=2026-10-14T15:06:23+09:00
-/goal phase=current id=DATA.MULTIDISEASE01 state=complete action="Persist the bounded IBD group-context pilot and preserve previous accepted candidates"
+/checkpoint revision=185d6ab27f575ca205a0fa00a909688ad5ff178b dirty=true updated=2026-10-14T17:30:00+09:00
+/goal phase=current id=DATA.SNOMED01 state=complete action="Align durable SNOMED preparation ownership and verify synthetic release artifacts without real RF2 or admission"
+/goal phase=next id=DATA.SNOMEDPILOT01 state=blocked action="Run the bounded stage-one vocabulary pilot after a licensed International RF2 Snapshot is present and quota is declared"
+/goal phase=history id=DATA.MULTIDISEASE01 state=complete action="Preserve the bounded IBD group-context pilot and previous accepted candidates"
 /goal phase=history id=DATA.RULES14 state=complete action="Persist current competition-source observations and reconcile provenance without clinical admission"
 /goal phase=history id=DATA.USERREVIEW14 state=complete action="Record exact user review of eight unchanged relation candidates and retain shared pilot evidence"
-/goal phase=next id=DATA.ADMISSION01 state=blocked action="Define concept URIs and RDF admission for user-approved candidates after a new bounded request"
 /goal phase=history id=DATA.TWOPILOT10 state=complete action="Persist ten-source screening both model responses verification and candidate review"
 /goal phase=history id=DATA.TWOSTAGE01 state=complete action="Persist generated two-stage preparation interfaces verification and preservation evidence"
 /goal phase=history id=DATA.DIAG01 state=complete action="Preserve sequential Tinnitus responses source reviews and reproducibility evidence"
@@ -98,7 +99,7 @@
 /evidence id=DATA.E61 class=semantic result=pass source=data/ontology/AGENTS.md observed="Require an adopted preparation contract and reviewed clinical artifacts before v4.2 runtime admission; retain D08 ontology semantics independently of removed legacy previews"
 /evidence id=DATA.E62 class=runtime result=not_run source=data/ontology/schema.ttl observed="Leave v4.2 RDFLib parsing schema enforcement extraction reprojection query execution and submission admission unrun"
 /blocker id=DATA.B1 state=resolved action="Adopt the D09 schema and offline candidate preparation contract" source=DECISION_STATE.md
-/blocker id=DATA.ADMISSION.B1 state=open action="Define concept URIs RDF admission and permitted runtime assets for user-approved candidates" source=DECISION_STATE.md
+/blocker id=DATA.ADMISSION.B1 state=open action="Keep admission of earlier guideline-derived candidates deferred; require a separate explicit scope before resuming their URI or RDF work" source=DECISION_STATE.md
 /scope id=DATA.S1 state=in action="Own the approved baseline generated schemas ontology inputs and durable random-pilot responses and review records"
 /scope id=DATA.S2 state=out action="Delegate preparation tools to Dev under root state and runtime graph readers to submission/knowledge and the consultation workflow and SDK boundaries to submission/workflow"
 /scope id=DATA.S3 state=out action="Exclude RDF admission external vocabulary imports actual clinical extraction and model calls from DATA.TWOSTAGE01"
@@ -222,9 +223,19 @@
 /evidence id=DATA.MULTIDISEASE01.E3 class=artifact result=pass source=data/preparation/ibd-multi-disease-pilot-2026-10-14/preservation.json observed="Compare 16315 protected files and retain all 223 prior preparation files 27 submission files 16050 original asset files and settings while regenerating only the current selection schema"
 /evidence id=DATA.MULTIDISEASE01.E4 class=runtime result=pass source=data/preparation/ibd-multi-disease-pilot-2026-10-14/verification.json observed="Pass twenty-four saved-result checks and retain all sixteen core-plus-definition quotes eight prior pairs and eight added Ulcerative colitis pairs"
 /evidence id=DATA.MULTIDISEASE01.E5 class=semantic result=not_run source=data/preparation/ibd-multi-disease-pilot-2026-10-14/handoff.json observed="Leave new user candidate review gold accuracy recall concept URI assignment RDF generation and runtime admission unperformed"
-/blocker id=DATA.MULTIDISEASE01.B1 state=open action="Obtain explicit user review of the exact new sixteen-candidate packet before candidate acceptance" source=data/preparation/ibd-multi-disease-pilot-2026-10-14/review-packet.json
 /evidence id=DATA.WORKFLOW14.E1 class=artifact result=pass source=Tmp/workflow-revision-2026-10-14/artifacts.json observed="Retain every protected organizer source ontology preparation artifact and existing review file among 16372 unchanged hashes during the application revision"
 /evidence id=DATA.WORKFLOW14.E2 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Reference D11 revised runtime acceptance without admitting synthetic assets resuming extraction changing prior candidate approvals or resolving current IBD review and RDF-admission blockers"
 /evidence id=DATA.REFACTOR14.E1 class=artifact result=pass source=Tmp/workflow-refactor-2026-10-14/artifacts.json observed="Preserve all organizer sources ontology preparation results and review records among 16375 unchanged protected file hashes during the workflow refactor"
 /evidence id=DATA.REFACTOR14.E2 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Reference APP.REFACTOR14 and the new submission/workflow consumers while retaining DATA.MULTIDISEASE01 DATA.ADMISSION01 prior candidate acceptance the pending sixteen-candidate review and separate RDF and runtime-asset admission blockers"
-/handoff state=blocked action="Obtain the existing sixteen-candidate user review and separately authorize concept URI RDF and runtime-asset admission before APP.ASSETS01; APP.REFACTOR14 synthetic and ZIP acceptance does not admit preparation assets"
+/handoff state=blocked action="Start only the bounded SNOMED Stage 1 pilot after the licensed International RF2 Snapshot and declared call allowance are available; keep earlier guideline review and RDF admission deferred and preview assets unadmitted"
+/scope id=DATA.SNOMED01.S1 state=in action="Own durable SNOMED release metadata registry review call records preparation outputs and their separate admission evidence"
+/scope id=DATA.SNOMED01.S2 state=out action="Exclude real RF2 assets NOVA responses clinician review generated datasets and submission asset admission from this completed slice"
+/accept id=DATA.SNOMED01.A1 state=pass action="Establish data-owned locations and review boundaries for SNOMED datasets and preserve the legacy guideline artifacts" evidence=DATA.SNOMED01.E1,DATA.SNOMED01.E2
+/accept id=DATA.SNOMED01.A2 state=pass action="Verify only synthetic RF2 and preview evidence while leaving real release and service work unrun" evidence=DATA.SNOMED01.E1,DATA.SNOMED01.E3,DATA.SNOMED01.E4
+/accept id=DATA.SNOMED01.A3 state=pass action="Remove the stale pending guideline candidate review from active handoff without deleting its packet or responses" evidence=DATA.SNOMED01.E2,DATA.SNOMED01.E5
+/evidence id=DATA.SNOMED01.E1 class=runtime result=pass source=Tmp/snomed/verification.json observed="Verify the synthetic RF2 SQLite flow through frozen vocabulary registry, disease-target packets, Pattern profiles and preview graph with no dataset persisted under data"
+/evidence id=DATA.SNOMED01.E2 class=semantic result=pass source=DECISION_STATE.md observed="Keep guideline candidates and raw responses intact but remove their old pending review from the active D09 handoff"
+/evidence id=DATA.SNOMED01.E3 class=runtime result=not_run source=assets/snomed observed="Leave actual release import and real RF2 coverage unrun because the local source directory contains no RF2 Snapshot"
+/evidence id=DATA.SNOMED01.E4 class=external_service result=not_run source=Dev/ontology/snomed/extractor.py observed="Leave real NOVA development API calls and token usage unrun"
+/evidence id=DATA.SNOMED01.E5 class=artifact result=unconfigured source=data/preparation/snomed observed="Keep the durable output location documented but leave a real SQLite dataset vocabulary registry response ledger and preview absent"
+/blocker id=DATA.SNOMEDPILOT01.B1 state=open action="Place the authorized International RF2 Snapshot under assets/snomed and explicitly declare the per-run cap and remaining team allowance before a live Stage 1 pilot" source=assets/snomed/AGENTS.md

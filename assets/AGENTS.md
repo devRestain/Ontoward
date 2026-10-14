@@ -19,7 +19,8 @@
 - Use `nova-devkit/` as the reference for an unscored local patient and examiner simulator.
 - Use `nova-samples-2026/` as public case fixtures and reference SOAP records for development review.
 - Use `nova-benchmarks-2026/` as external English research datasets for separately scoped development or evaluation.
-- Use `guidelines/` as the pre-submission clinical extraction corpus for root decisions D05, D07, and D09.
+- Use `snomed/` for the manually supplied, authorized International Edition RF2 Snapshot that drives the current D05/D09 preparation path. Keep it read-only and preserve the release files unchanged.
+- Preserve `guidelines/` and its catalog as the source corpus and evidence for earlier preparation work; it is no longer the default extraction path and must not be resumed automatically.
 - Use `nova-guidelines-catalog.xlsx` as the separately downloaded human browsing catalog corresponding to `guidelines/catalog.xlsx`.
 - Ignore `.DS_Store` as filesystem metadata without treating it as a source asset.
 

@@ -20,46 +20,30 @@
 
 - Read root AGENTS.md, PROJECT_STATE.md, PRD.md, and DECISION_STATE.md D07 through D10 before implementation.
 - Read root data/AGENTS.md, data/PROJECT_STATE.md, data/ontology/AGENTS.md, and applicable asset contracts before handling inputs.
-- Apply the adopted D09 schema and offline candidate contract through ontology/models.py, ontology/tools.py, and ontology/extraction_prompt.md.
-- Use ontology/workflow.py for reviewed disease-focused textbook or guideline selection, Markdown units, two-stage prompts, candidate links, and clinical-review records.
-- Generate atomic, conversion, source-selection, and clinical-review JSON schemas from ontology/models.py without changing ExtractionResult.
-- Keep core text separate from same-section paragraph context and require every atomic claim to quote core text.
-- Use unique approved topic_diseases and optional source-grounded group_context for shared group subjects; keep definition context distinct from core and adjacent paragraphs.
-- Extract shared possible associations as separate single-disease claims with both core and group-definition evidence; retain member-specific restrictions and never infer expansion from topic membership alone.
-- Preserve group context in validation and review metadata without adding ontology classes or changing ExtractionResult.
-- Preserve explicit differential-list origin as a possible association without inferred expected status or features.
-- Account for every atomic claim through candidate links or conversion exclusions and recheck original evidence at both stages.
-- Record complete human review against the exact validation packet before any separate RDF admission.
-- Use the clinician-approved seven-object vocabulary in data/ontology/vocabulary-candidates.md as the baseline for later extraction-schema and pilot work under D09.
-- Run preparation dependencies and Codex CLI in the project-owned ontology-extraction Compose service.
-- Keep codex/Dockerfile and codex/environment.py separate from the submitted agent environment.
-- Use relative project mounts and rebuild for the target machine architecture without transferring host authentication stores.
-- Require the configured SNU workspace UUID and ChatGPT authentication before subscription calls.
-- Keep credentials in isolated project-owned Docker state outside workspace artifacts.
-- Run one independent read-only Codex extraction job at a time with web search disabled.
-- Use gpt-6-luna with the user-selected medium reasoning pilot and Standard speed without silently substituting a model or account.
-- Install only the pinned ontology/requirements.txt preparation dependencies in the extraction image; mount ontology/ read-only.
-- Generate the data-owned extraction vocabulary and JSON Schema from approved tables and Python models; never hand-edit generated files.
-- Use ontology.tools prompt and validate with a catalog-relative document, exact SHA-256, and inclusive one-based permitted lines.
-- Reject the entire response on structural, vocabulary, source-hash, or span failure without repair or model retry.
-- Treat candidate_validated as structural and quote-grounding evidence only; require separate clinical review and RDF admission.
-- Permit source-supported new target/attribute/value candidates without admitting their applicability through schema validation.
-- Exclude unrepresentable concepts and conditions without a hold queue; omit whole dependent relations when exclusion would broaden their meaning.
-- Keep model calls, batch execution, resume policy, concept URI assignment, Turtle generation, and submission admission outside the schema slice.
-- Use root Tmp/codex/ for disposable CLI scratch and root Tmp/packaging/ for generated archives.
-- Mark imported fixtures as offline evidence and compare pilots only with identical selected source inputs.
-- Define durable model-response, normalization, and resume records only with the later pilot contract without changing raw clinical assertions.
-- Let deterministic Python validate source spans, assign URIs, and write Turtle and durable records.
-- Stop and checkpoint quota, authentication, model-access, and ambiguous completion failures without unbounded retries.
-- Respect user cancellation; reconcile saved completion evidence without launching another call.
-- Keep unadmitted clinical artifacts outside submission bundles.
+- Use `ontology/snomed/` for RF2 import, local terminology search, vocabulary expansion and freeze, deterministic disease-target projection, NOVA requests, whole-packet validation, and preview Turtle export.
+- Keep the earlier guideline schemas, prompts, validated candidates, approvals, responses, and pilot outputs intact as historical preparation artifacts; do not automatically resume them.
+- Treat the approved 510 English terms as initial seeds for seven object kinds, not as a closed enum or size cap. Keep the selected SNOMED registry separate from the legacy extraction vocabulary and runtime Turtle.
+- Read a manually supplied International Edition Snapshot from `assets/snomed/`; never download or modify RF2. Reject non-International modules, mixed/future releases, same-version component conflicts, missing module dependencies, and missing selected English language refsets.
+- Preserve SCTIDs as text, full RF2 component rows, source-file hashes, release metadata, language refsets, and module dependency versions in the SQLite dataset under `data/preparation/snomed/`.
+- Keep the seven Ontoward object kinds and 13 finding attributes. Use exact unique seed matches deterministically, offer local SCTID candidates for ambiguous mappings, and require evidence-grounded map, decompose, or exclude outcomes for every packet.
+- Decompose compound findings into a reviewed base target and explicit qualifiers; never register a qualified finding as a plain synonym or infer a qualifier from general clinical knowledge.
+- Require human selection or exclusion of every vocabulary item before freezing the versioned registry used by stage two.
+- Generate Pattern packets only from exact `due_to`, exact `associated_with`, or subtype-intersection RF2 paths. Preserve direct versus descendant scope, the source disease concept, relationship identifiers, and hierarchy paths.
+- Derive Feature candidates only from the target-finding source concept's actual relationships and descriptions. Preserve concrete values without categorical conversion and exclude any required condition that cannot be represented without broadening its meaning.
+- Merge compatible source features by Disease–Target, preserve incompatible or explicitly distinct profiles as deterministic variants, and leave unresolved groupings out of preview. Set Pattern characteristic only under the selected `due_to` policy; never infer Feature `clinicalRole`.
+- Keep imported datasets, registries, packets, call ledgers, raw responses, review records, and preview assets in the data-owned preparation directory; keep disposable fixtures and verification reports in `Tmp/snomed/`.
+- Use the `ontology-extraction` Compose service with RF2 and the hash-pinned NOVA SDK mounted read-only, source schema and submission reader mounted read-only, and only declared preparation/output mounts writable.
+- Use `openai/gpt-6.1-sol`, medium reasoning, a 4,000-token output cap, batches of at most five packets, and no temperature. NOVA is sessionless; require `NOVA_DEV_KEY` and `NOVA_API_BASE` only for an explicit `--live` run.
+- Default extraction to dry-run. For live execution require both a per-run call cap and the caller-declared team daily remaining quota, bounded by 100 KST calls across both stages. Use one locked local ledger; never retry, switch models, repair responses, resume after an unknown outcome, or schedule future calls.
+- Record request identity and input before transmission, persist raw responses and usage before validation, and block replays for cached failures or unknown outcomes. Cache by dataset, input, frozen registry, prompt, schema, and model settings.
+- Generate JSON Schema from the SNOMED Pydantic models. Reject the complete response on any structural, packet, registry, source ID, exact quote span, or allowed-combination mismatch; require a disposition for every packet.
+- Keep numeric conditions and unreviewed ExamFinding metadata in preparation records. Preview only valid registry concepts and patterns; never admit or copy preview Turtle into `submission/` automatically.
+- Use root `Tmp/codex/` for legacy guideline validation, `Tmp/snomed/` for synthetic SNOMED verification, and `Tmp/packaging/` for generated archives.
 
 ## Verification and Handoff
 
-- Apply structural, vocabulary, exact-quote, hash, linkage, user-review, and separate RDF/submission admission checks under D09.
-- Exclude a separate agent source-meaning audit from candidate acceptance.
-- Preserve document-specific patterns and feature ownership when merging common concept URIs.
-- Extract source-supported alternative symptom-targeted patterns independently without converting tentative patient interpretations into disease facts.
-- Omit conditions or concepts that cannot be safely represented without weakening a retained relation.
-- Define the later bounded pilot inputs and execution contract before model calls; define resume and Turtle checks only when that work is selected.
+- Run `python -m Dev.ontology.snomed verify` in the project extraction container for the full synthetic RF2 path, NOVA test doubles, preview loader, reverse Target query, and scoring check.
+- Run the retained legacy vocabulary and guideline-candidate verifier when changing shared preparation contracts; report it separately from SNOMED verification.
+- Require full packet disposition, exact source evidence, registry selection, graph cardinality, and preview-only validation before handing off generated results.
+- Keep synthetic fixtures, actual RF2 coverage, model-call quality, clinician review, and submission admission as distinct evidence classes.
 - Report only performed checks and distinguish documentation completion from installed tools, authenticated calls, extraction quality, and submission readiness.

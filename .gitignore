@@ -17,6 +17,9 @@ __pycache__/
 /Tmp/*
 !/Tmp/AGENTS.md
 !/Tmp/README.md
+!/Tmp/snomed/
+/Tmp/snomed/*
+!/Tmp/snomed/README.md
 
 # Preserve organizer originals locally; version curated reference and contracts.
 /assets/*
@@ -27,6 +30,9 @@ __pycache__/
 !/assets/guidelines/
 !/assets/nova-benchmarks-2026/
 !/assets/nova-samples-2026/
+!/assets/snomed/
+!/assets/snomed/AGENTS.md
+!/assets/snomed/README.md
 /assets/guidelines/**
 !/assets/guidelines/**/
 !/assets/guidelines/**/AGENTS.md
@@ -36,4 +42,10 @@ __pycache__/
 /assets/nova-samples-2026/**
 !/assets/nova-samples-2026/**/
 !/assets/nova-samples-2026/**/AGENTS.md
+/assets/snomed/**
+!/assets/snomed/AGENTS.md
+!/assets/snomed/README.md
+/assets/bodhi/**
+!/assets/bodhi/AGENTS.md
+!/assets/bodhi/README.md
 

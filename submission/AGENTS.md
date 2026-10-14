@@ -87,7 +87,7 @@
 - Exclude the data-owned natural-language vocabulary candidates from runtime knowledge until clinician review and separate admission.
 - Treat NOVA_GUIDELINES_DIR as a preparation source-location contract rather than a consultation retrieval dependency.
 - Load the D08 schema and vocabulary with all manifest-declared clinical bundles into one RDFLib Graph during case-independent prepare().
-- Query the prepared Graph without guideline-text retrieval, extraction, or patient writes during consultation.
+- Query the prepared Graph without RF2 or source-document retrieval, extraction, or patient writes during consultation.
 - Keep the Graph outside CaseState and preserve patient observations only in case-owned state.
 - Use fixed readers for concept candidates, symptom attributes, disease candidates, patterns, supporting contexts, exam methods, and SOAP test plans.
 - Follow ../data/ontology/AGENTS.md for single-target pattern ownership, optional feature status and role, categorical pairing, and partial matching.

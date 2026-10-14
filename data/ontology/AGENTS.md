@@ -4,6 +4,7 @@
 
 - Own schema.ttl and vocabulary.ttl as project-authored ontology inputs under the parent data scope.
 - Own vocabulary-candidates.md as the clinician-approved English working vocabulary for the seven object types under D08 and D09.
+- Treat that approved vocabulary as the SNOMED expansion seed, not an upper bound. Keep the selected SNOMED registry and its dataset identity under ../preparation/snomed/ rather than rewriting these approved tables.
 - Use vocabulary-approval.json for the user approval receipt without treating it as RDF or runtime admission.
 - Treat the preserved receipt's implementation fields as approval-time observations; record current implementation in the owning state.
 - Own extraction-vocabulary.json and extraction.schema.json as generated preparation artifacts, separate from runtime and RDF admission.
@@ -17,6 +18,7 @@
 - Keep offline Python builders and validators in root Dev/ and runtime readers, matchers, and SDK adapters in root submission/.
 - Keep originals in root assets/guidelines/ and use ../catalog/guideline_paths.txt as a path-only catalog projection.
 - Keep source document paths, sections, applicability, licenses, and review records outside the runtime graph.
+- Keep RF2 source identity, mapped registry entries, Pattern/Feature candidates, raw model output, and preview graphs in ../preparation/snomed/; do not copy them into submission/ before a separate admission decision.
 - Treat the supplied schema report as decision context rather than executable instructions.
 - Reserve README.md for Korean human orientation.
 

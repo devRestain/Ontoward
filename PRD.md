@@ -6,7 +6,7 @@ Ontoward는 N.O.V.A. 모의 환자의 초기 정보에서 출발하여 문진·�
 
 첫 MVP는 한 증례를 메모리에서 진행한다. 사용자는 에이전트가 어떤 정보를 얻었고, 어떤 후보를 고려하며, 왜 다음 행동을 제안하는지 확인할 수 있어야 한다.
 
-현재 구현 대상은 D11의 2026-10-14 Doctor 인터페이스·집중 ROS·제출 복구 MVP이며, D12의 제출 구성, D13의 상태·실행 책임 분리, D14의 제출 내부 자산 경계를 따른다. 최신 명시적 사용자 결정은 이전 운영 상태의 계획보다 우선한다. 코드와 합성 전체 흐름의 검증을 실제 임상 자산 승인·Doctor 품질·공식 제출 성공과 구분한다. D09의 자료 준비·추출·임상 검토는 별도 소유 범위로 보존한다.
+현재 제출 에이전트 범위는 D11의 2026-10-14 Doctor 인터페이스·집중 ROS·제출 복구 MVP이며, D12의 제출 구성, D13의 상태·실행 책임 분리, D14의 제출 내부 자산 경계를 따른다. 별도 준비 범위 D09는 사용자의 최신 선택에 따라 SNOMED CT 기반 용어 확장 후 스키마 변환을 기본 경로로 삼는다. 코드와 합성 전체 흐름의 검증을 실제 임상 자산 승인·Doctor 품질·공식 제출 성공과 구분한다.
 
 공식 요구사항 확인일은 **2026-10-14 KST**이다. [개발 가이드](https://nova.snubhai.org/docs/), [참가 규칙](https://nova.snubhai.org/rules/), [평가](https://nova.snubhai.org/evaluation/)와 [10월 13일 공지](https://nova.snubhai.org/qna/)를 보존 SDK 1.0.1 및 기존 참고 문서와 대조했다. 현재 적용 변경은 [10월 14일 규칙 업데이트](assets/nova-competition-2026/CHANGES_2026-10-14.md)에 기록한다. 두 제공 PPTX의 변환과 [10월 12일 비교](assets/nova-competition-2026/CHANGES_2026-10-12.md)는 당시 자료로 유지한다. 홈페이지의 정확한 수정 시각과 새 시작 패키지의 실제 SDK 버전·바이트는 확인하지 않았다.
 
@@ -18,17 +18,17 @@ Ontoward는 N.O.V.A. 모의 환자의 초기 정보에서 출발하여 문진·�
 | LangGraph | 한 증례의 단계와 조건부 이동 |
 | Pydantic | 관찰·세션·행동·SOAP·진단의 구조와 경계 검증 |
 | N.O.V.A. SDK | 지정 Doctor 호출, 세션 확인, 행동 실행과 최종 제출 |
-| 제공 진료지침 | 제출 전에 추출·검토할 임상 관계와 검사·처치·추적·교육 계획의 근거 원본 |
-| Codex CLI | 사용자 어휘 검증 이후 SNU Edu ChatGPT 인증으로 교과서 관계 추출; gpt-6-luna·medium reasoning·Standard |
+| 제공 진료지침 | 기존 입력과 승인·응답·준비 결과를 보존하며, 현재 기본 추출 경로로 자동 재개하지 않음 |
+| SNOMED CT International Edition | 현재 기본 준비 원천; RF2 어휘 확장 뒤 기존 스키마에 관계와 Feature를 투영 |
+| NOVA 개발 API | 명시적으로 실행한 준비 단계에서만 세션 없는 `openai/gpt-6.1-sol` 사용; 기본은 dry-run |
 | RDFLib | RDF 생성·로드·조회; 진료 중 준비된 임상 그래프 검색 |
 | Turtle | 문서별 추출 결과와 출처별 제출 지식 묶음의 저장 형식 |
-| SNOMED CT | 후속 단계의 임상 개념 식별, 동의어, 상하위 관계 |
 | BODHI-S | 후속 단계의 질환과 증상 변형 사이의 출처가 있는 연관 근거 |
 | Docker | Python 실행과 의존성 설치 환경 |
 
 JEV, Laya, HPOA는 사용하지 않는다. 이번 MVP는 대표 합성 사례의 전체 실행을 검증하며 배포·호환성 매트릭스는 도입하지 않는다.
 
-첫 경로는 공식 샘플 API와 지정 `openai/gpt-6-luna` Doctor 모델이며, 한국어 증례·환자 대화·제출 기록을 처리한다. 2026-10-13 시행된 모델 변경을 사용자가 10월 14일 확인했으며 D01의 선택에 반영한다. 제공 지침에서 임상 그래프를 먼저 준비하고 SNOMED CT·BODHI-S를 단계적으로 보강한다. 선택과 적용 범위의 기록은 [결정 상태](DECISION_STATE.md)의 D01·D03·D04·D05·D06·D07·D08·D09·D10·D11·D12가 소유한다. SNOMED 판본과 확보 경로는 D02를 참조하며, 첫 지침 기반 그래프의 선행 조건으로 두지 않는다. 진료 중 지침 원문 검색은 사용하지 않는다.
+첫 경로는 공식 샘플 API와 지정 `openai/gpt-6-luna` Doctor 모델이며, 한국어 증례·환자 대화·제출 기록을 처리한다. 2026-10-13 시행된 모델 변경을 사용자가 10월 14일 확인했으며 D01의 선택에 반영한다. 사전 준비는 허가된 International Edition SNOMED CT에서 어휘를 확장하고 그 다음 Disease–ClinicalPattern–ClinicalFeature 변환을 수행한다. 준비 호출은 세션 없는 NOVA 개발 API에서 `openai/gpt-6.1-sol`을 사용하며 Doctor의 Luna 설정과 분리한다. 선택과 적용 범위는 [결정 상태](DECISION_STATE.md)의 D01·D02·D03·D04·D05·D06·D07·D08·D09·D10·D11·D12가 소유한다. 진료 중 SNOMED 원본이나 지침 문서 검색은 사용하지 않는다.
 
 ## 사용자가 경험할 흐름
 
@@ -89,7 +89,7 @@ Doctor는 `client.chat()`에서 model을 생략해도 현재 지정 모델로 �
 
 최신 가이드는 제공자 응답 시작 한도를 180초, 새 SDK 기본 대기 시간을 240초로 설명하며 `REQUEST_PENDING`(HTTP 503/409)과 `PROVIDER_UNAVAILABLE`에는 같은 request_id를 유지한 재요청을 안내한다. 보존 SDK 1.0.1의 기본 120초는 수정하지 않는다. 애플리케이션 전송 경계가 최대 240초와 남은 시간·제출 여유로 호출 대기를 제한하고 원래 timeout을 복원한다. 재전송은 같은 요청으로 기록하여 턴·호출·사용량을 중복 계산하지 않는다. 합성 복구와 실제 서버 복구는 별도 검증이다. [요청 대기·문제 해결](https://nova.snubhai.org/docs/)
 
-개발용 create_sample은 팀당 KST 하루 100개, 제출 후 샘플 검증은 별도로 하루 10회, 공식 평가는 팀·단계별 하루 1회다. 세션 종료·만료로 생성 횟수가 돌아오지 않는다. 세션 밖 성공한 gpt-6-luna 호출은 model 생략 여부를 포함해 하루 1,000회로 합산하고 gpt-6.1-sol은 100회다. 증례 안 Doctor 호출은 이 일일 호출 한도와 별도로 증례별 한도를 적용한다. 대회 개발 크레딧은 D09의 SNU Edu CLI 인증·준비 호출과 구분한다. [개발 한도](https://nova.snubhai.org/docs/)
+개발용 create_sample은 팀당 KST 하루 100개, 제출 후 샘플 검증은 별도로 하루 10회, 공식 평가는 팀·단계별 하루 1회다. 세션 종료·만료로 생성 횟수가 돌아오지 않는다. 세션 밖 성공한 gpt-6-luna 호출은 model 생략 여부를 포함해 하루 1,000회로 합산하고 gpt-6.1-sol은 100회다. 증례 안 Doctor 호출은 이 일일 호출 한도와 별도로 증례별 한도를 적용한다. SNOMED 준비의 두 단계는 팀 일일 호출 한도를 공유하며 다른 팀원의 사용량은 자동 조회할 수 없으므로 실행자가 잔여량을 선언한다. [개발 한도](https://nova.snubhai.org/docs/)
 
 ## 최소 데이터·입출력 계약
 
@@ -133,41 +133,37 @@ InteractionState는 증례별 실제 전달 문장·환자 답·턴·요청 ID·
 
 자료 준비는 제공 원본에서 임상 관계와 계획 근거를 추출·검토하여 RDF 지식으로 만드는 후속 작업이다. 제공받은 원본 패키지는 assets/에 보존하며 D12의 수정 없는 SDK 실행 사본만 복제를 허용한다. `Dev/`는 제출 전 추출·후보 검증·RDF 생성·묶음 구성 코드와 프롬프트를, `submission/`는 제출 에이전트와 실행 그래프 조회를, `data/`는 출처·판본·라이선스와 지속 응답·검토·준비 결과·생성 산출물을 맡는다. `Tmp/`는 삭제 가능한 실행 입력·초안이다. Dev·Tmp는 루트 상태에 기록하며 운영 상태는 루트·submission·data 세 범위만 유지한다.
 
-### 제출 전 준비: 제공 지침에서 임상 지식 추출
+### 1단계: SNOMED CT에서 어휘집 확장
 
-제공 원본 위치는 공식·샘플 환경의 `NOVA_GUIDELINES_DIR`과 `/opt/nova/guidelines`, 로컬 프로젝트 컨테이너의 `/workspace/assets/guidelines`로 설명한다. 이 원본 경로는 제출 전 준비에 사용하는 계약이며 진료 중 원문 검색의 필수 의존성이 아니다. 전체 지침이나 문서별 추출 중간 결과를 코드 ZIP에 넣지 않고, 실행 중 인터넷에서 원문을 받지 않는다.
+입력은 허가받은 International Edition RF2 Snapshot을 수동으로 보관한 `assets/snomed/`이다. 자동 다운로드를 하지 않는다. Concept, Description, inferred Relationship, English Language Refset, Module Dependency Refset을 준비용 SQLite에 적재하고 SCTID를 문자열로 유지한다. 같은 구성요소의 최신 행을 먼저 선택한 뒤 활성 여부를 적용한다. 같은 ID·유효 날짜의 충돌, 혼합 판본, 미래 행, 누락된 의존 모듈은 거부한다. 릴리스 날짜·모듈 의존성·언어 refset과 각 파일의 SHA-256을 기록한다. Concrete Values가 있으면 정확한 출처 행으로 보존하되 범주형 Feature로 바꾸지 않는다.
 
-제출 전에 원문 근거·임상 관계·적용 조건을 검토하여 필요한 지식을 준비한다. 문서·절의 맥락과 원본 식별을 유지하며 진료 중 추출을 반복하거나 새 문헌을 검색하지 않는다. D09의 준비 스키마와 오프라인 후보 검증을 사용하고 실제 모델 파일럿·임상 검토·RDF 수용은 후속 계약으로 진행한다. 첫 준비 구현에 직접 API 호출이나 OpenAI Python SDK를 추가하지 않는다.
+기존 일곱 객체 유형과 2026-10-12 승인한 510개 영어 어휘는 시드로 사용하며 확장 상한으로 삼지 않는다. 로컬 정확 일치와 계층 근거를 우선하고, 모호한 어휘나 새 후보에만 모델을 쓴다. 모델은 제공된 SCTID 후보를 선택하거나 미연결·제외로 처리할 수 있고 새로운 SCTID를 작성하지 않는다. Symptom과 ExamFinding, Test와 ExamMethod는 semantic tag나 계층만으로 자동 판정하지 않는다. 복합 소견은 기본 Target과 실제 근거가 있는 수식 정보로 분해한다. 신규 어휘 URI는 검증된 SCTID에서 결정론적으로 만들며 기존 승인 URI는 보존한다. 버전·해시 기반 registry를 만들고 사람이 모든 항목을 선택·제외한 뒤 2단계 입력으로 고정한다.
 
-입력은 `assets/guidelines/catalog.csv`의 임상 문서 경로로 선택하며 안내용 Markdown과 공모전 참고 문서를 제외한다. 카탈로그와 원문 머리의 제목, 발행기관, 연도, 언어, 출처 URL, 라이선스와 원문 위치를 data의 외부 준비·검토 기록에 보존한다. 문서 유형·적용 대상·절별 맥락·변환 품질을 확인한다. 자료실의 질환 개요·근거 리뷰·일반인 자료·예방 권고를 모두 같은 수준의 진료지침으로 취급하지 않는다. 서로 다른 권고와 적용 조건은 구분하여 남긴다.
+### 2단계: SNOMED 표현을 Ontoward 스키마로 변환
 
-D09의 2단계 워크플로우는 카탈로그 유형이 질환 개요(교과서) 또는 진료지침인 자료 중 질환 중심 문서·독립된 질환 장으로 한정한다. 제목만으로 자동 선정하지 않고 승인 Disease 용어, 주제 근거 인용, 검토자·선정 이유·대상 인구·판본·변환 품질·이용 조건을 갖춘 선정 기록을 요구한다. 판본이 제공되지 않은 경우 null로 보존한다. 선정 기록은 출처의 사용 범위 검토이며 임상 관계나 제출용 변환 자료의 승인이 아니다.
+Python은 `M is-a* T`와 `M due-to D`, `M associated-with D`, 또는 `M is-a* D` 및 `M is-a* T`의 세 경로로 Pattern 후보를 찾는다. 직접 관계 ID와 다단계 계층 경로를 유지하고 질환 하위 유형 근거를 상위 질환의 직접 근거로 승격하지 않는다. `due_to`는 선택한 변환 정책에 따라 Pattern에 `importance="characteristic"`을 부여하며 RF2 `characteristicTypeId`는 사용하지 않는다.
 
-선정 기록은 복수의 승인 질환을 topic_diseases로 지정한다. 공유 질환군 주어를 해석할 때는 group_context에 원문 용어·승인 구성 질환·정확한 정의 인용을 기록하고 추출 본문·같은 절의 보조 문단과 구분하여 두 단계 모두 전달한다. 원문이 공유 질환군에 기술한 가능한 연관은 명시한 구성 질환별 원자 문장과 단일 Disease Pattern으로 표현하며 본문과 정의를 함께 인용한다. 질환·하위유형별 제한을 다른 구성원으로 넓히지 않는다. 질환 목록만으로 공유 관계를 확장하지 않으며 정의만으로 새 진단 관계를 만들지 않는다. 그룹은 준비 메타데이터로 유지하고 기존 최종 ExtractionResult와 온톨로지 클래스는 유지한다.
+모델은 제시된 Disease·Target·원천 명칭·Relationship ID·Description ID와 고정 registry 안에서 Feature를 대응한다. Feature는 Target을 표현하는 원천 개념 `M`의 관계와 명칭에서만 얻는다. 질환의 위치·경과·중증도를 모든 Target에 복사하지 않는다. 각 출력은 실제 source ID와 관계 또는 정확한 Description 부분 문자열·문자 위치로 검증한다. 모든 입력 packet에 처리나 제외 결과를 요구하며 응답 일부를 삭제해 통과시키지 않는다.
 
-Dev/ontology/workflow.py는 원본 줄 번호를 유지한 문단·도입문 포함 목록·제목과 주석 포함 표를 추출 단위로 만들고 같은 절의 앞뒤 문단을 보조 문맥으로 구분한다. 손상된 표·변환 문자·코드 단위는 제외 사유를 기록하며, 보조 문맥만으로 새 주장을 만들지 않는다. 첫 단계는 승인 어휘와 기존 표현 범위 안의 영어 원자적 문장·유형별 개념·원문 인용을 만들고 두 번째 단계는 문장과 같은 원문을 재대조하여 기존 네 후보 배열로 변환한다. 추가 모델 프레임워크나 자동 호출·재시도·재개 실행기는 만들지 않는다.
+같은 Disease–Target의 호환 가능한 Feature를 기본 Pattern에 병합하고 근거 ID를 모두 보존한다. 서로 상충하거나 명시적으로 다른 profile은 결정론적 variant Pattern으로 분리하고, 불명확한 경우 미해결로 남긴다. 생성된 Feature의 `clinicalRole`은 자동 부여하지 않는다. 숫자·단위·비교 연산자는 준비 자료에 보존하고 현재 범주형 RDF로 임의 변환하지 않는다. 표현할 수 없는 필수 조건을 버리면 의미가 넓어지는 전체 관계는 제외한다. ExamFinding은 검토된 `detectedBy`와 유효한 `examRequestText`가 확보되지 않으면 preview에서 제외한다.
 
-명시적인 증상·진찰 소견의 감별 목록은 가능한 질환–Target 연관으로 취급한다. 원자적 문장에는 source_basis=differential을 남기고 최종 Pattern은 Feature 없이 표현하며 expectedStatus·중요도·역할·확률을 추론하지 않는다. 단독 질환명·동시 출현·질환 자체의 감별 목록을 임의의 증상 관계로 바꾸지 않는다. 부정·가능성·필수 적용 조건과 실제 주체를 보존하며 필수 조건을 표현할 수 없으면 종속 관계 전체를 제외한다.
+### 준비용 모델 실행과 산출물 경계
 
-중간 출력과 변환 출력은 별도 생성 스키마로 검증한다. 최종 ExtractionResult의 네 배열과 스키마는 유지하고 claim_id 연결·변환 제외 이유는 준비 기록에 둔다. 모든 후보는 같은 유형과 개념 쌍을 가진 원자적 문장에 연결되어야 하며 인용은 해당 문장의 근거 안에 포함되어야 한다. 사람은 문장·원문을 포함한 전체 검토 패킷의 해시에 묶어 각 후보를 승인하거나 거부한다. 한 후보라도 거부하면 전체 응답을 거부 상태로 보존하며 일부를 삭제해 통과시키지 않는다. 후보 수용은 사용자 검토로 결정하며 별도 에이전트 원문 의미 감사를 수용 차단 단계로 사용하지 않는다. 자동 검증은 형식·승인 어휘·정확한 인용·해시·연결을 확인하고, 사용자 검토 기록도 별도 RDF 수용·제출 승인을 대신하지 않는다.
+도구는 `Dev/ontology/snomed/`의 import, vocabulary expansion/freeze, projection, extract, validate, preview export 및 verify 명령으로 구성한다. NOVA 호출은 기본 dry-run이며 `--live` 실행에만 세션 없는 Client, `NOVA_DEV_KEY`, 명시적인 일일 상한과 팀 잔여량을 사용한다. 모델은 `openai/gpt-6.1-sol`, medium, 4,000 출력 토큰, 최대 5 packet/호출이다. 가이드라인·Doctor 모델의 `gpt-6-luna`와 별도 역할이다. 실행 간 KST 호출 장부·입력 해시 캐시·요청 ID·원응답·사용량을 보존한다. 자동 재시도, 모델 전환, 응답 수정, 자동 재개는 하지 않는다. timeout 등 완료가 불명확하면 중단한다.
 
-### SNU Edu 기반 자료 준비
+SQLite, registry, packets, 요청·원응답, 검토와 preview Turtle·manifest는 `data/preparation/snomed/`에 보존한다. preview 검증은 기존 `ClinicalKnowledge.validate_graph()`와 역방향 Target 조회를 사용한다. preview는 임상 승인이나 제출 knowledge admission이 아니며 `submission/`으로 자동 복사하지 않는다. 현재 작업 완료 범위는 도구·실행기·dry-run·합성 RF2 오프라인 검증까지다. 실제 RF2 커버리지, NOVA 응답 품질, 실제 모델 호출과 임상 및 제출 수용은 확인되지 않았다.
 
-Dev/codex/의 최소 CLI 환경을 사용한다. SNU ChatGPT Workspace의 Edu 로그인, gpt-6-luna·medium·Standard와 실제 워크스페이스 UUID 제한을 유지한다. 인증은 전용 프로젝트 Docker volume에 두고 작업 임시 파일은 Tmp/codex/에 둔다.
+### 보존된 기존 가이드라인 준비 결과
 
-자료 준비 순서는 영어 자연어 어휘 생성 → 의료인 사용자 승인 → 승인된 어휘에 기반한 Pydantic 스키마·준비 계약 제작 → gpt-6-luna·medium 추출 파일럿 검증이다. 사용자는 2026-10-12 [영어 어휘 목록](data/ontology/vocabulary-candidates.md)의 Disease 100개·Symptom 100개·ExamFinding 60개·AttributeValue 100개·ContextFactor 60개·Test 40개·ExamMethod 50개를 후속 작업 기준으로 승인했다. [승인 기록](data/ontology/vocabulary-approval.json)은 승인 시점과 파일 SHA-256을 보존한다. 설명은 한국어, 용어는 영어로 유지하며 이 510개 자연어 항목의 승인은 문헌 관계나 RDF 수용의 승인과 별도다.
-
-AttributeValue의 첫 77개와 ExamMethod의 첫 24개는 기존 기초 어휘의 영어 명칭을 유지한다. 속성 적용 범위와 contextType 분류는 사용자 검토용 제안이다. 목록 확장으로 Turtle·위치 계층·수치 임계값·새 examRequestText·detectedBy·질환별 관계를 추가하지 않는다. 실제 수치·단위·시점·환자 또는 가족이라는 대상은 환자 상태에 보존하며, Test는 P.tests 계획 대상으로 유지한다.
-
-승인된 어휘에 기반한 스키마·후보 출력 형식·오프라인 검증·영어 프롬프트는 D09의 구현 범위다. 사용자가 지정한 문헌 파일럿은 별도의 제한된 CLI 호출로 수행하고 입력·원응답·실행·검증·검토를 data/preparation/에 보존한다. 각 파일럿의 문헌 선택·호출 한도·중단 기준은 중앙 결정에서 정하며 배치·자동 재개 실행기는 별도다. 기존 의료 어휘 자원의 확장은 가능성과 방향만 검토하며 추가 용어를 자동 수용하지 않는다. 임상 Turtle과 제출용 지식 manifest는 없으며 파일럿 완료를 임상 지식 완성으로 취급하지 않는다.
+가이드라인 기반 후보·승인 기록·원응답·파일럿 결과는 기존 source identity와 그대로 보존한다. 해당 추출 경로는 새로운 기본 작업이 아니며 자동으로 재개하지 않는다. SNOMED 결과를 보고 가이드라인 보완이 필요하다고 판단되면 별도 요청의 입력·목표·호출 한도를 먼저 정한다.
 
 ### 기본 온톨로지와 임상 지식 모델
 
-준비용 [Pydantic 모델](Dev/ontology/models.py)은 승인된 일곱 객체의 영어 명칭만 선택하는 공유 Enum을 사용한다. [기계용 어휘](data/ontology/extraction-vocabulary.json)는 승인 원본·현재 문서·어휘 내용·영수증·온톨로지 입력 해시를 구분하고, [출력 JSON Schema](data/ontology/extraction.schema.json)는 Python 모델에서 생성한다. 모델 응답은 patterns·supporting_contexts·finding_methods·planned_tests 네 배열이며 Feature는 단일 Target Pattern 안에 중첩한다. 기존 속성 이름과 present/absent는 구조 요소이고 원문 인용에는 510개 제한을 적용하지 않는다.
+기존 문헌 준비 모델인 [Pydantic 모델](Dev/ontology/models.py)과 [기계용 어휘](data/ontology/extraction-vocabulary.json)는 보존된 가이드라인 작업물로 유지하며 SNOMED의 어휘 확장 상한이나 registry로 사용하지 않는다. 새 RF2 근거·용어 후보·패턴 후보용 별도 Pydantic 모델과 JSON Schema는 `Dev/ontology/snomed/`에서 만들고, 데이터셋별 해시와 결과는 `data/preparation/snomed/`에 둔다. 두 준비 경로 모두 기존 v4.2 runtime RDF 계약을 따른다.
 
 [오프라인 도구](Dev/ontology/tools.py)는 카탈로그 상대 문서 경로·파일 SHA-256·허용 줄 범위로 프롬프트를 만들거나 응답을 검증한다. 관계·Feature별 정확한 인용과 절 맥락을 연결하고, 구조·어휘·근거 실패 시 전체 응답을 거부한다. 새로운 대상·속성·승인 값 조합은 문헌 근거가 있는 후보로 허용하지만 candidate_validated는 형식과 인용 검증만 의미한다. 임상 정합성·동의어 대응·필수 적용 조건·RDF 수용은 별도 검토가 필요하다.
 
-[영어 추출 지침](Dev/ontology/extraction_prompt.md)은 미승인 개념·미표현 정보를 결과에서 제외하고 보류 목록을 만들지 않도록 한다. 필수 조건을 제거하면 의미가 넓어지는 관계는 전체를 제외하며 수치 범주화·위치 계층·복합 조건의 독립 관계 변환을 하지 않는다. 임상 중요도·계통·맥락 분류 확정·진찰 요청문은 모델 출력에서 제외한다. 준비 스키마와 프롬프트를 Codex CLI의 --output-schema에 전달하며 실제 호출은 명시적으로 요청한 파일럿 범위에서만 수행한다. 빈 출력의 형식 통과와 실제 관계·인용·필수 조건 보존을 평가한 비어 있지 않은 추출 품질을 구분한다.
+[기존 영어 추출 지침](Dev/ontology/extraction_prompt.md)은 저장된 문헌 후보 검증의 일부로만 유지한다. SNOMED 신규 prompt는 실제 RF2 packet과 고정 registry 밖의 개념이나 관계를 추론하지 않으며 근거가 없는 정보·표현 불가능한 필수 조건을 제외한다. 준비 JSON 검증은 임상 정합성·검토·RDF admission을 대신하지 않는다.
 
 | 개념 또는 관계 | 의미 |
 |---|---|
@@ -251,9 +247,9 @@ HPI 이후의 후보 우선순위·다음 행동·최종 진단은 실제 관찰
 
 지침별 출처·라이선스를 유지하고 대회 목적의 비상업적 이용 조건을 따른다. Turtle로 표현한 관계·계획 근거·발췌·번역 등 파생 자료를 제출물에 포함할 때 문서별 조건을 먼저 확인한다. CC BY-ND·BY-NC-ND·공공누리 제4유형 등 변경본 배포가 금지된 자료의 변환본은 제출물에 넣지 않는다. RDF 형식으로 바꾸는 것이 이용 조건을 없애지 않는다. 원본 ZIP의 공식 SHA-256을 압축 해제 폴더의 검증 결과로 대신하지 않는다. [제공 자료의 조건](assets/guidelines/README.md)
 
-### 후속 단계: SNOMED CT·BODHI-S
+### 후속 단계: BODHI-S와 선택적 출처 보강
 
-SNOMED 판본 선택과 원본 확보는 후속 개념 연결 단계에 필요하며 첫 지침 기반 구현을 막지 않는다. 개념 연결이 없어도 환자 원문과 검색·추론 후보를 유지한다.
+SNOMED CT International Edition 직접 추출이 현재 준비의 기본 경로다. 개념 연결이 실패해도 환자 원문과 현재 런타임의 검색 후보 계약을 유지한다. BODHI-S는 별도 사용자 선택에 따른 후속 입력이며 SNOMED registry 확장이나 검증을 대체하지 않는다.
 
 BODHI를 도입할 때의 첫 범위는 다음 세 BODHI-S CSV다.
 
@@ -263,11 +259,11 @@ BODHI를 도입할 때의 첫 범위는 다음 세 BODHI-S CSV다.
 
 BODHI의 증상 변형은 동일한 SNOMED 루트 개념을 공유할 수 있다. UUID, 개별 SNOMED 표기 값, 루트 개념, 기간·위치 등의 수식 정보를 보존한다. 원본의 SNOMED 표기 값은 비어 있거나 검증되지 않았을 수 있으므로, 채택한 SNOMED 판본과 대조한 개념 연결과 구분한다. Condition 유형을 확인하여 가족력·생활습관 같은 항목을 무조건 최종 질환으로 취급하지 않는다. [BODHI 원본과 스키마](https://github.com/eka-care/BODHI)
 
-SNOMED CT의 동의어와 계층은 개념을 식별하고 검색을 확장하는 데 사용한다. 질환의 하위 개념을 그 질환에서 나타날 수 있는 증상 목록으로 해석하지 않는다. 먼저 제공 지침에서 검토한 질환–소견 근거를 사용하고, 후속 BODHI 연결은 출처가 구분되는 추가 연관 근거로 보강한다. [SNOMED 지식 표현 범위](https://docs.snomed.org/snomed-ct-specifications/snomed-ct-editorial-guide/readme/snomed-ct-introduction/knowledge-representation)
+SNOMED CT의 동의어와 계층은 개념을 식별하고 확장 범위를 정하는 데 사용한다. 질환의 모든 하위 개념을 그 질환의 증상 목록으로 해석하지 않으며 Disease–Target 연결은 위의 명시된 관계·계층 경로에서만 생성한다. 이후 BODHI 연결은 별도 원천으로 구분하고 해당 원천에 있는 relation scope만 보강한다. [SNOMED 지식 표현 범위](https://docs.snomed.org/snomed-ct-specifications/snomed-ct-editorial-guide/readme/snomed-ct-introduction/knowledge-representation)
 
 후속 보강 흐름은 `환자 표현 → 용어 후보 → 검증된 개념 연결 또는 미연결 원문 → BODHI 연관 조회 → 감별 후보와 미확인 항목`이다. 개념 연결이 실패해도 원문과 추론 후보를 보존한다. 자료에 없는 연결을 질환 배제 근거로 사용하지 않는다.
 
-후속 자료도 공통 개념 URI와 원본 식별·검증된 연결을 구분하여 RDF 지식에 반영한다. 진료 중 조회 경로는 RDFLib로 유지하며 지침 원문 검색을 추가하지 않는다. 환자 입력 언어와 자료 연결 순서는 D04·D05, 지식 표현·검색·산출물 구조는 D07을 참조한다.
+후속 자료도 공통 개념 URI와 원본 식별·검증된 연결을 구분하여 RDF 지식에 반영한다. 진료 중 조회 경로는 RDFLib로 유지하며 SNOMED RF2나 문헌 원문을 런타임 검색하지 않는다. 환자 입력 언어, 현재 SNOMED 기본 경로, 지식 표현·검색·산출물 구조는 D04·D05·D07을 참조한다.
 
 ## 제공 샘플·벤치마크의 역할
 

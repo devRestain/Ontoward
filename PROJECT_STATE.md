@@ -1,8 +1,10 @@
 /state version=1
 /project id=ontoward
-/status value=complete
-/checkpoint revision=185d6ab27f575ca205a0fa00a909688ad5ff178b dirty=true updated=2026-10-14T15:06:23+09:00
-/goal phase=current id=ROOT.REFACTOR14 state=complete action="Reconcile workflow contracts maintained tests packaging and scoped state"
+/status value=blocked
+/checkpoint revision=185d6ab27f575ca205a0fa00a909688ad5ff178b dirty=true updated=2026-10-14T17:30:00+09:00
+/goal phase=current id=ROOT.SNOMED01 state=complete action="Implement and verify the SNOMED-first vocabulary and schema projection preparation pipeline"
+/goal phase=next id=ROOT.SNOMEDPILOT01 state=blocked action="Run a bounded stage-one vocabulary pilot after an International RF2 Snapshot is present and the call allowance is declared"
+/goal phase=history id=ROOT.REFACTOR14 state=complete action="Reconcile workflow contracts maintained tests packaging and scoped state"
 /goal phase=history id=ROOT.WORKFLOW14 state=complete action="Integrate the approved Doctor interface ROS and recovery revision with the submission white paper and isolated packaging"
 /goal phase=history id=ROOT.MULTIDISEASE01 state=complete action="Implement approved disease group context and execute the bounded IBD two-stage pilot"
 /goal phase=history id=ROOT.RULES14 state=complete action="Reconcile current NOVA rules the confirmed Doctor selection and all maintained project states"
@@ -274,4 +276,17 @@
 /evidence id=ROOT.REFACTOR14.E6 class=runtime result=not_run source=Tmp/workflow-refactor-2026-10-14/artifacts.json observed="Leave Mermaid visual rendering unrun because the project dev container has no renderer Node or browser"
 /evidence id=ROOT.REFACTOR14.E7 class=external_service result=not_run source=Tmp/workflow-refactor-2026-10-14/review.md observed="Leave real model calls official API submission evaluation further extraction corpus expansion publication commits and deployment unperformed"
 /scope id=ROOT.REFACTOR14.S1 state=in action="Own D13 document integration maintained Dev verification tooling package allowlists disposable evidence and cross-scope reconciliation"
-/handoff state=blocked action="Use APP.REFACTOR14 in submission state for completed runtime acceptance and retain data-owned review and runtime-asset admission as the next bounded dependency"
+/scope id=ROOT.SNOMED01.S1 state=in action="Own the D09 SNOMED requirements Dev preparation pipeline Compose integration and coordination of root data and submission state"
+/scope id=ROOT.SNOMED01.S2 state=out action="Exclude real RF2 ingestion live NOVA calls clinical approval submission asset admission guideline job resumption commits and publication"
+/accept id=ROOT.SNOMED01.A1 state=pass action="Implement RF2 import vocabulary expansion and human-reviewed registry freezing followed by deterministic SNOMED projection" evidence=ROOT.SNOMED01.E1,ROOT.SNOMED01.E4
+/accept id=ROOT.SNOMED01.A2 state=pass action="Implement bounded sessionless NOVA execution with dry-run default explicit quotas request custody cache and no retry" evidence=ROOT.SNOMED01.E2,ROOT.SNOMED01.E3
+/accept id=ROOT.SNOMED01.A3 state=pass action="Verify the complete synthetic CLI flow and align requirements contracts and all maintained owner states" evidence=ROOT.SNOMED01.E1,ROOT.SNOMED01.E5,ROOT.SNOMED01.E6
+/evidence id=ROOT.SNOMED01.E1 class=runtime result=pass source=Tmp/snomed/verification.json observed="Run synthetic RF2 import vocabulary expansion review freeze all three linkage routes variants preview export ClinicalKnowledge validation reverse target lookup and ClinicalReasoner scoring through the CLI"
+/evidence id=ROOT.SNOMED01.E2 class=runtime result=pass source=Tmp/snomed/verification.json observed="Verify dry-run defaults five-packet batches pinned sessionless SDK configuration request IDs cache replay declared quota limits malformed JSON quota errors and unknown completion without network calls"
+/evidence id=ROOT.SNOMED01.E3 class=external_service result=not_run source=Dev/ontology/snomed/extractor.py observed="Leave authenticated NOVA requests and model response quality unrun"
+/evidence id=ROOT.SNOMED01.E4 class=static result=pass source=Dev/ontology/snomed/README.md observed="Expose import expand-vocabulary freeze-vocabulary project extract validate export-preview and verify commands with explicit workspace data boundaries"
+/evidence id=ROOT.SNOMED01.E5 class=semantic result=pass source=PRD.md observed="Adopt SNOMED as the preparation default while preserving earlier guideline outputs without automatic resumption and keeping preview admission separate"
+/evidence id=ROOT.SNOMED01.E6 class=semantic result=pass source=AGENTS.md observed="Align root Dev data assets ontology and submission contracts and review all three operational states against D09"
+/evidence id=ROOT.SNOMED01.E7 class=artifact result=unconfigured source=assets/snomed observed="Leave a real release database registry model-response ledger and preview absent because no RF2 release is present"
+/blocker id=ROOT.SNOMEDPILOT01.B1 state=open action="Place the authorized International RF2 Snapshot under assets/snomed and explicitly declare the per-run cap and remaining team allowance before a live pilot" source=assets/snomed/AGENTS.md
+/handoff state=blocked action="After the real International RF2 Snapshot is placed and the daily allowance is declared, run only the bounded Stage 1 vocabulary pilot; keep guideline jobs inactive and submission admission separate"

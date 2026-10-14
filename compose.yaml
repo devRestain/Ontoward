@@ -45,6 +45,8 @@ services:
     working_dir: /workspace
     environment:
       CODEX_HOME: /opt/ontology/codex-state
+      NOVA_API_BASE: ${NOVA_API_BASE:-https://nova.snubhai.org}
+      NOVA_DEV_KEY: ${NOVA_DEV_KEY:-}
     networks:
       - ontology-extraction
     volumes:
@@ -61,12 +63,30 @@ services:
         target: /workspace/assets/guidelines
         read_only: true
       - type: bind
+        source: ./assets/snomed
+        target: /workspace/assets/snomed
+        read_only: true
+      - type: bind
+        source: ./assets/nova-starter/nova_sdk.py
+        target: /opt/ontoward-sdk/nova_sdk.py
+        read_only: true
+      - type: bind
         source: ./data/ontology
         target: /workspace/data/ontology
         read_only: true
       - type: bind
+        source: ./submission
+        target: /workspace/submission
+        read_only: true
+      - type: bind
         source: ./Tmp/codex
         target: /workspace/Tmp/codex
+      - type: bind
+        source: ./Tmp/snomed
+        target: /workspace/Tmp/snomed
+      - type: bind
+        source: ./data/preparation/snomed
+        target: /workspace/data/preparation/snomed
       - type: volume
         source: ontology-codex-state
         target: /opt/ontology/codex-state

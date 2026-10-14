@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-app
 /status value=blocked
-/checkpoint revision=185d6ab27f575ca205a0fa00a909688ad5ff178b dirty=true updated=2026-10-14T15:06:23+09:00
-/goal phase=current id=APP.REFACTOR14 state=complete action="Refactor workflow ownership rules and names while preserving behavior"
+/checkpoint revision=185d6ab27f575ca205a0fa00a909688ad5ff178b dirty=true updated=2026-10-14T17:30:00+09:00
+/goal phase=current id=APP.SNOMED01 state=complete action="Validate the unchanged runtime Graph reader against a synthetic SNOMED preview without admitting assets"
+/goal phase=history id=APP.REFACTOR14 state=complete action="Refactor workflow ownership rules and names while preserving behavior"
 /goal phase=history id=APP.WORKFLOW14 state=complete action="Implement and accept the approved Doctor dialogue ROS and diagnosis-recovery workflow with the Korean submission white paper"
 /goal phase=history id=APP.RULES14 state=complete action="Reconcile the confirmed Doctor selection and current transport requirements with application readiness"
 /goal phase=history id=APP.MVP01 state=complete action="Implement D11 five-session MVP and environment-selected prompts with offline full-flow verification"
@@ -135,3 +136,7 @@
 /evidence id=APP.REFACTOR14.E9 class=runtime result=pass source=Tmp/workflow-refactor-2026-10-14/baseline/verification.json observed="Reproduce all forty original behavioral cases from the separately preserved pre-refactor checkout without overwriting the earlier revision evidence"
 /scope id=APP.REFACTOR14.S1 state=in action="Own workflow runtime responsibility refactoring behavior preservation and offline artifact execution while root owns maintained verification tools and data owns clinical admission"
 /handoff state=blocked action="Continue only the existing APP.ASSETS01 after data-owner admission of reviewed runtime knowledge and prepared clinical text then separately authorize real Luna and official API acceptance"
+/accept id=APP.SNOMED01.A1 state=pass action="Load the synthetic preview with the existing ClinicalKnowledge validator and reverse Target reader" evidence=APP.SNOMED01.E1
+/accept id=APP.SNOMED01.A2 state=pass action="Keep all generated preview assets outside submission knowledge pending separate data-owner admission" evidence=APP.SNOMED01.E2
+/evidence id=APP.SNOMED01.E1 class=runtime result=pass source=Tmp/snomed/verification.json observed="Validate the generated preview through ClinicalKnowledge.validate_graph and reverse target lookup then exercise characteristic scoring without changing submission files"
+/evidence id=APP.SNOMED01.E2 class=artifact result=unconfigured source=submission/knowledge observed="Leave production manifest Turtle questions and plans absent; no SNOMED preview was admitted"
