@@ -1,17 +1,12 @@
 # SNOMED CT Source Contract
 
-## Ownership and Source Boundary
-
-- This directory is the local input location for an authorized International Edition RF2 release.
-- Add licensed RF2 files here manually; preparation commands never download terminology data.
-- Keep the supplied release files byte-for-byte unchanged and preserve the distributor's release notes and license notices alongside them.
-- Do not place a Korean Edition or other extension here for this pipeline; the initial extraction uses International Edition clinical concepts and relationships.
-- The preparation container mounts this directory read-only. Derived SQLite, mapping, response, review, and preview artifacts belong in `data/preparation/snomed/`.
-- Keep licensing and distribution conditions with the release and review them before moving derived artifacts outside the project.
-
-## Accepted Input
-
-- Provide a single RF2 Snapshot directory tree with Concept, Description, inferred Relationship, English Language Refset, and Module Dependency Refset files.
-- Concrete Values files are optional and are retained as source evidence without conversion to categorical runtime features.
-- Provide the release date and English language refset SCTIDs explicitly to the import command. The release date is not hard-coded in this contract.
-- The importer records file hashes and module dependency metadata and rejects mixed, future-dated, conflicting, or non-International rows.
+- Preserve the manually supplied International 2026-05-01 and Korean 2026-06-15 RF2 packages byte-for-byte with their license and release metadata.
+- Keep source packages read-only; never download or rewrite RF2 from preparation.
+- Compose the extension with the exact base module versions declared by active Module Dependency rows.
+- Read Snapshot Concept, Description, inferred Relationship, optional Concrete Values, Language Refset, and Module Dependency files.
+- Select the latest effectiveTime for a component across supplied snapshots before active filtering; reject conflicting same-version rows and unsatisfied dependencies.
+- Preserve SCTIDs as strings, component modules and dates, relationship groups, language expressions, and file hashes.
+- Link Korean descriptions to the same SCTID and preserve Korean-specific module origin.
+- Keep preparation code in Dev/ontology/source_projection.py and derivative evidence in data/preparation/v5/ under D09.
+- Treat identifier presence, taxonomy role, semantic mapping review, and runtime admission as distinct checks.
+- Keep source identities and module versions in preparation manifests; exclude original RF2 from submission archives.

@@ -74,8 +74,8 @@ def validate_facts(raw, state, knowledge, text):
                 raise ValueError("Attribute is not applicable")
             if not set(value.values) <= set(knowledge.get_attribute_values(value.attribute_id)):
                 raise ValueError("Categorical values are not admitted")
-        elif value.values:
-            raise ValueError("Categorical values require an attribute")
+        elif value.values or value.measurement:
+            raise ValueError("Typed values require an attribute")
         if value.kind == "context" and value.concept_ids:
             context = value.concept_ids[0]
             context_type = knowledge.get_context_type(context)

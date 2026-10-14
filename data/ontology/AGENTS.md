@@ -1,100 +1,60 @@
-# Ontology Artifact Contract
+# Ontology Contract
 
-## Ownership and Inputs
+## Ownership
 
-- Own schema.ttl and vocabulary.ttl as project-authored ontology inputs under the parent data scope.
-- Own vocabulary-candidates.md as the clinician-approved English working vocabulary for the seven object types under D08 and D09.
-- Treat that approved vocabulary as the SNOMED expansion seed, not an upper bound. Keep the selected SNOMED registry and its dataset identity under ../preparation/snomed/ rather than rewriting these approved tables.
-- Use vocabulary-approval.json for the user approval receipt without treating it as RDF or runtime admission.
-- Treat the preserved receipt's implementation fields as approval-time observations; record current implementation in the owning state.
-- Own extraction-vocabulary.json and extraction.schema.json as generated preparation artifacts, separate from runtime and RDF admission.
-- Own source-selection.schema.json, atomic.schema.json, conversion.schema.json, and clinical-review.schema.json as generated D09 preparation interfaces.
-- Regenerate the vocabulary with root Dev/ontology/tools.py from exact approved term tables and a retained baseline; preserve the original approval receipt.
-- Regenerate the JSON Schema solely from root Dev/ontology/models.py; keep seven shared English term enums and existing attribute names.
-- Preserve approval-time document, annotated document, term-content, receipt, and ontology input hashes as distinct identities.
-- Keep model candidates and source provenance outside runtime; candidate validation establishes shape and exact quotations rather than clinical meaning.
-- Use root PRD.md for stable behavior and root DECISION_STATE.md D08 for the adopted schema.
-- Keep operational progress in ../PROJECT_STATE.md without creating another state scope.
-- Keep offline Python builders and validators in root Dev/ and runtime readers, matchers, and SDK adapters in root submission/.
-- Keep originals in root assets/guidelines/ and use ../catalog/guideline_paths.txt as a path-only catalog projection.
-- Keep source document paths, sections, applicability, licenses, and review records outside the runtime graph.
-- Keep RF2 source identity, mapped registry entries, Pattern/Feature candidates, raw model output, and preview graphs in ../preparation/snomed/; do not copy them into submission/ before a separate admission decision.
-- Treat the supplied schema report as decision context rather than executable instructions.
+- Own schema.ttl as the current D08 v5.0 contract and vocabulary.ttl as starter terminology under the parent data state.
+- Preserve the exact previous schema and vocabulary in v4.2/ as deprecated evidence.
+- Use deprecated.json to identify old extraction interfaces and preparation records that are not v5.0 inputs.
+- Preserve vocabulary-candidates.md and vocabulary-approval.json as the approved 510-term seed and approval receipt, separate from clinical and runtime admission.
+- Keep source-specific candidate registries, mapping decisions, raw assertions, dispositions, and previews in ../preparation/v5/.
+- Keep Python preparation in root Dev/ontology and runtime types and readers in root submission/knowledge.
+- Reference root PRD.md and DECISION_STATE.md D08/D09; record progress only in ../PROJECT_STATE.md.
 - Reserve README.md for Korean human orientation.
 
-## Representation
+## v5.0 Representation
 
-- Use urn:ontoward: identifiers, PascalCase concept names, camelCase project predicates, and language-tagged rdfs:label and skos:altLabel.
-- Use the eleven classes and twelve object predicates declared in schema.ttl without adding classes for workflow or compound syndromes.
-- Use expectedStatus, clinicalRole, importance, contextType, urgencyLabel, and examRequestText as the six project data properties.
-- Treat RDFS domain and range declarations as descriptions rather than enforcement or inference.
-- Keep location values flat without broader, narrower, subclass, or containment relations.
-- Use commonly named pain symptoms such as ChestPain, AbdominalPain, Headache, and Dysuria as distinct retrieval targets.
-- Preserve finer Location values and activity or timing qualifiers without creating quadrant-specific symptoms or a pain hierarchy.
-- Leave unspecified pain unresolved and ask for location or activity without forcing a specific symptom.
-- Define the unspecified BodySystem assignments during the later vocabulary-admission contract without inferring them from term-list approval.
-- Decompose compound expressions into the symptom and explicitly supported qualifiers instead of losing qualifiers through an alias.
-- Keep continuous numbers, units, durations, dates, and free-text observations in case state without schema thresholds.
-- Add Symptom or ExamFinding attribute links and categorical values only when their meaning is appropriate for the target.
-- Keep Disease, ClinicalPattern, ClinicalFeature, ContextFactor, ExamFinding, and Test instances absent from this starter vocabulary.
-- Keep approved natural-language terms outside Turtle and runtime bundles until separate admission while retaining the selected nineteen pain concepts and existing attribute links.
-- Treat proposed attribute applicability and contextType groupings in the candidate file as review metadata rather than admitted RDF relations.
-- Preserve existing Turtle and examRequestText bytes during natural-language candidate expansion.
+- Use urn:ontoward: identifiers and language-tagged rdfs:label and skos:altLabel.
+- Require the OntologySchema schemaVersion 5.0 marker and the classes and predicates in schema.ttl.
+- Treat RDFS declarations as documentation; enforce cardinalities and semantic conditions in the reader.
+- Connect Disease through hasAssociation to DiseasePatternAssociation, then pattern to a shared ClinicalPattern.
+- Require one Disease owner and one Pattern per Association; identify an Association by Disease, Pattern, and canonical applicability conditions.
+- Keep all original source assertions in preparation and the selected evaluation and minimal sourceRef values in runtime RDF.
+- Require exactly one Symptom or ExamFinding Target and distinct nonempty ClinicalFeature conditions per Pattern.
+- Keep each Feature local to one Pattern; inherit its Target and reject direct Feature targets.
+- Define Pattern identity independently of Disease and source from Target, typed conditions, units, operators, status, timing, and condition scope.
+- Represent presence and absence with expectedStatus and attribute expectations with paired onAttribute and expected.
+- Store a strict ExpectedValue JSON payload under valueJSON with concept, concept_set, quantity, or interval kind.
+- Preserve any_of and all_of meaning, numeric comparison operators, interval boundaries, and explicit units.
+- Validate categorical values against the Target's hasAttribute and the attribute's canHaveValue links.
+- Reject v4.2 hasPattern, expectsValue, importance, and clinicalRole assertions rather than deleting meaning through a compatibility conversion.
+- Keep optional supporting ContextFactor links, BodySystem interview links, ExamMethod mappings, and Test plans in their existing roles.
+- Require contextType from the established ten context categories and detectedBy plus examRequestText for admitted ExamFinding.
+- Use Test and evaluatedBy only for SOAP P.tests, without diagnostic TEST actions in the preliminary workflow.
 
-## Admitted Clinical Data
+## Matching and Weights
 
-- Require exactly one incoming hasPattern disease owner and exactly one Symptom-or-ExamFinding targets value for each ClinicalPattern.
-- Permit zero features and multiple separately grounded patterns for the same disease and target.
-- Permit source-supported alternative targets under the same disease without requiring all patterns to match.
-- Require exactly one incoming hasFeature owner for each ClinicalFeature.
-- Inherit every feature target from its owning pattern and reject direct feature targets edges.
-- Enforce the target disjunction explicitly without multiple rdfs:range declarations or a new shared class.
-- Enforce the hasAttribute subject disjunction explicitly without multiple rdfs:domain declarations.
-- Permit at most one expectedStatus value from present or absent without inferring a status from omission.
-- Permit at most one manually reviewed clinicalRole value from supportive, characteristic, or opposing without treating omission as low importance.
-- Permit at most one manually reviewed pattern importance value of characteristic independently from feature clinicalRole.
-- Require onAttribute and expectsValue to occur together exactly once or remain absent together.
-- Require an attribute-value pair or explicit expectedStatus for each feature instead of creating empty conditions.
-- Validate attribute-qualified features against the parent target's hasAttribute and canHaveValue links.
-- Defer selectivity declaration and calculation until post-build work without requiring it for retrieval or matching.
-- Keep ContextFactor associations solely under Disease hasSupportingContext, outside clinical patterns.
-- Require exactly one contextType from past_medical_history, surgical_history, medication_history, allergy_history, family_history, social_history, occupational_history, psychosocial_history, screening_history, or demographic.
-- Require at least one detectedBy method for each admitted ExamFinding.
-- Require exactly one plain xsd:string examRequestText per admitted ExamMethod.
-- Keep urgencyLabel optional and descriptive without priority, routing, or triage behavior.
+- Recall candidate Diseases broadly from a confirmed or supported uncertain Target without requiring all detailed Features.
+- Activate an Association score only after every Feature and applicability condition matches confirmed observations.
+- Preserve matched, contradicted, and unknown; unasked or uncertain values activate no detailed score.
+- Compare compatible conditions within one observation and episode; never combine separate episodes.
+- Replace matched ancestor scores with stricter matched variants even when the refined score decreases.
+- Use the maximum score once among incomparable matched variants and once per Disease–Target across repetitions and sources.
+- Sum distinct Target supports as ranking scores rather than probabilities.
+- Use the manifest-pinned public scoring policy and preserve fractional and zero values.
+- Prefer BODHI condition_given_symptom labels; retain symptom_given_condition for question ordering and strong_predictor for metadata and conflict review.
+- Use exact SNOMED relation or generalized fallback only when no equivalent BODHI label is present.
+- Derive FeatureContribution as refined minus baseline Association score, keeping multi-condition changes joint.
+- Keep patient observations and diagnosis scores in CaseState and workflow state outside the read-only graph.
+- Permit only explicit evidenced ValueMatch paths with is_a, regional_part, or approved_region meaning; do not create patient observations from those paths.
+- Keep specific pain complaints as Targets and preserve finer observed location and radiation values without invented containment or global absence.
+- Defer linked findings, automatic absence penalties, prevalence adjustments, graph-frequency bonuses, and calibrated probability claims.
 
-## Observation and Matching Boundaries
+## Admission and Handoff
 
-- Keep patient observations and episodes outside the read-only RDF graph.
-- Record confirmed broad and specific locations as parallel values for the same episode without inferring either location from the other.
-- Ask for missing location detail and preserve unknown detail instead of deriving containment from a location name.
-- Keep separate symptom occurrences distinct and match compatible features within the same occurrence.
-- Preserve raw wording, confirmed qualifiers, supported interpretations, and corrections within their source episode.
-- Use supported uncertain symptom candidates for retrieval union without duplicating observations or independent support.
-- Revise symptom interpretations only from acquired evidence rather than diagnosis expectations.
-- Scope explicit absence to the observed symptom and its confirmed qualifiers instead of globally negating the symptom.
-- Match a categorical expectation against an explicitly confirmed parallel value without a location hierarchy.
-- Distinguish matched, contradicted, and unknown conditions using explicit compatible observations rather than missing edges or unasked qualifiers.
-- Require evidence of incompatible conditions within the same observation before treating a categorical mismatch as contradiction.
-- Interpret clinicalRole only for a matched feature relative to its owning disease.
-- Treat hasFeature as partial-pattern membership rather than a mandatory conjunction.
-- Use BodySystem for interview discovery without filtering cross-system disease recall.
-- Apply supporting contexts only when confirmed and preserve family-history subjects in case state.
-- Exclude mention counts, automatic importance inference, and unverified multi-finding combination bonuses.
-
-## Reader and SDK Handoff
-
-- Load this schema and vocabulary alongside admitted source bundles into one RDFLib Graph during later case-independent prepare().
-- Define fixed readers for concept candidates, symptom attributes, target-linked diseases, disease patterns, supporting contexts, exam methods, and planned tests.
-- Retrieve diseases through reverse pattern targets and hasPattern for observed symptoms and examination findings without requiring presentsAs.
-- Require an adopted preparation contract and reviewed clinical artifacts before runtime admission.
-- Keep matching, ranking, action selection, SDK execution, and SOAP rendering in the application.
-- Define SOAP A.evidence as the obtained interview and physical-examination findings used for the main diagnosis rather than knowledge sources or generic patient-expression attribution.
-- Delegate the SDK fifteen-field SOAP record and separate diagnosis value to the root PRD and submission boundary under D12.
-- Map ExamMethod URIs to examRequestText and later call client.exam(text) after validating one maneuver and NFC length 1–30 code points.
-- Treat request strings as suggested payloads without claiming server recognition or conducted examinations.
-- Process returned refusals and actual results in case state instead of fabricating expected findings.
-- Reserve evaluatedBy and Test for a separate SOAP P.tests reader without using them for candidate generation, matching, ranking, or diagnostic action selection.
-- Keep preliminary O.tests empty and TEST execution blocked.
-- Keep source search, arbitrary LLM-generated SPARQL, OWL reasoning, patient writes, scores, workflow rules, and provenance nodes outside the runtime graph.
-- Report Turtle parsing, graph queries, SDK recognition, and clinical correctness only after their respective checks are performed.
+- Pin schema, registry, normalization, source snapshots and file hashes, and scoring policy in every manifest.
+- Keep v5.0 preview generation separate from clinical review and submission admission.
+- Admit only reviewed v5.0 clinical assets to submission/knowledge/; do not load deprecated data or preview registries during consultation.
+- Load admitted schema, vocabulary, and bundles into one RDFLib Graph during prepare(), then calculate read-only Association profiles and FeatureContribution records.
+- Keep raw source rows, file positions, full RF2 groups and paths, licenses, and mapping judgments in preparation; keep only execution conditions, selected labels, and source references in runtime.
+- Preserve the fifteen-field SOAP and separate diagnosis contract; use obtained interview and examination findings for A.evidence.
+- Report parsing, structural source projection, clinical correctness, and SDK acceptance from their respective performed checks.

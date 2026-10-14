@@ -57,7 +57,7 @@
 - Implement the authorized offline MVP and leave actual clinical admission and authenticated SDK acceptance explicitly unverified.
 - Keep unasked and unanswered items distinct from uncertain, present, and explicitly absent observations.
 - Keep separate occurrences of the same symptom distinct and preserve confirmed broad and specific locations as parallel values within one occurrence.
-- Link common site- or activity-qualified complaints to specific symptom concepts and retain finer qualifiers without location containment or global absence.
+- Link common site- or activity-qualified complaints to specific symptom concepts and retain finer qualifiers, evidenced matching paths, and episode-specific absence.
 - Preserve raw reports, evidence-supported symptom interpretations, corrections, and uncertainty within the same observation and episode.
 - Leave unspecified pain unresolved until location or activity supports a specific symptom.
 - Update interpretations from acquired evidence without relabeling symptoms to fit a diagnosis.
@@ -90,13 +90,18 @@
 - Query the prepared Graph without RF2 or source-document retrieval, extraction, or patient writes during consultation.
 - Keep the Graph outside CaseState and preserve patient observations only in case-owned state.
 - Use fixed readers for concept candidates, symptom attributes, disease candidates, patterns, supporting contexts, exam methods, and SOAP test plans.
-- Follow ../data/ontology/AGENTS.md for single-target pattern ownership, optional feature status and role, categorical pairing, and partial matching.
-- Retrieve candidates from observed symptoms and ExamFinding through reverse targets and hasPattern traversal without requiring presentsAs.
+- Follow ../data/ontology/AGENTS.md for D08 v5.0 shared Patterns, pattern-local Features, typed expectations, and DiseasePatternAssociation conditions.
+- Retrieve candidates from observed Targets through Pattern, Association, and Disease without requiring detailed Feature matches.
 - Union independent alternative-pattern retrieval paths without a BodySystem filter or mandatory co-occurrence.
 - Use supported uncertain concept candidates for recall without treating them as multiple confirmed findings or duplicate support.
-- Keep manually reviewed pattern importance independent from feature clinicalRole and leave selectivity optional for later post-build work.
+- Activate support only when all variant Features and applicability conditions match within one observation and episode.
+- Replace matched ancestors with stricter matching variants even when their score is lower; use the maximum once among incomparable variants and once per Target.
+- Derive read-only conditional FeatureContribution deltas during prepare and keep multi-condition deltas joint.
+- Load the hash-pinned public scoring policy and preserve fractional scores, valid zero labels, and contribution evidence in workflow state.
+- Use BODHI directional likelihoods before equivalent SNOMED fallback and typicality for question ordering; add no strong_predictor bonus or automatic absence penalty.
+- Reject v4.2 artifacts without a compatibility conversion; permit hierarchy matching only through explicit evidenced ValueMatch paths.
 - Use predefined queries when needed without accepting LLM-generated SPARQL.
-- Preserve common concept URIs while leaving relation-level source paths, sections, applicability, and review records in data-owned preparation records outside the runtime graph.
+- Preserve common concept URIs and execution applicability in the graph while keeping full source paths, rows, and review records in data-owned preparation.
 - Preserve unmapped source text and concept-link uncertainty without creating an unsupported clinical relation.
 - Keep review-only scripts, examination tables, and reference answers outside clinical knowledge and patient inputs.
 - Reserve evaluatedBy and Test for a separate P.tests reader without using them for diagnostic candidate generation, matching, ranking, or action selection.

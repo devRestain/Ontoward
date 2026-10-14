@@ -1,0 +1,192 @@
+{
+  "bundles": [
+    {
+      "path": "knowledge/clinical.ttl",
+      "sha256": "0ced5289ee74709fb7d73c8cd08c91d690942798768aaffbd6ddb11ea3f4970c"
+    }
+  ],
+  "normalization_version": "v5.0.1",
+  "preparation_status": "preview_only",
+  "registry_version": "2df86202b40ec26c4ad1d76115f6166cd56801da3f6ba1f27a2ce1881c05126e",
+  "schema": {
+    "path": "knowledge/schema.ttl",
+    "sha256": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89"
+  },
+  "schema_version": "5.0",
+  "scoring_policy": {
+    "path": "knowledge/scoring_policy.json",
+    "sha256": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea"
+  },
+  "scoring_policy_version": "v5.0.1",
+  "source_snapshots": [
+    {
+      "dataset": "SNOMED_CT",
+      "dataset_id": "ce40d210ef2aee5e9eb84b57369d0284257330e9ff3fa41b3dd95ec553d9d521",
+      "dependencies": [
+        {
+          "active": "1",
+          "effectiveTime": "20260501",
+          "id": "f6431457-161b-5b46-9217-573c20c00070",
+          "moduleId": "449080006",
+          "referencedComponentId": "900000000000012004",
+          "refsetId": "900000000000534007",
+          "sourceEffectiveTime": "20260501",
+          "targetEffectiveTime": "20260501"
+        },
+        {
+          "active": "1",
+          "effectiveTime": "20260501",
+          "id": "1244116f-fdb5-5645-afcc-5281288409da",
+          "moduleId": "900000000000207008",
+          "referencedComponentId": "900000000000012004",
+          "refsetId": "900000000000534007",
+          "sourceEffectiveTime": "20260501",
+          "targetEffectiveTime": "20260501"
+        },
+        {
+          "active": "1",
+          "effectiveTime": "20260501",
+          "id": "686fe392-d2f7-586d-98aa-078aba426832",
+          "moduleId": "449080006",
+          "referencedComponentId": "900000000000207008",
+          "refsetId": "900000000000534007",
+          "sourceEffectiveTime": "20260501",
+          "targetEffectiveTime": "20260501"
+        },
+        {
+          "active": "1",
+          "effectiveTime": "20260615",
+          "id": "cabcff5e-a620-4394-933e-f6939a1e36d8",
+          "moduleId": "11000267109",
+          "referencedComponentId": "900000000000012004",
+          "refsetId": "900000000000534007",
+          "sourceEffectiveTime": "20260615",
+          "targetEffectiveTime": "20260501"
+        },
+        {
+          "active": "1",
+          "effectiveTime": "20260615",
+          "id": "f5286d65-39d1-43c1-9d9b-d1fb6557bc18",
+          "moduleId": "11000267109",
+          "referencedComponentId": "900000000000207008",
+          "refsetId": "900000000000534007",
+          "sourceEffectiveTime": "20260615",
+          "targetEffectiveTime": "20260501"
+        }
+      ],
+      "files": [
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Language/der2_cRefset_LanguageSnapshot-en_INT_20260501.txt",
+          "release_date": "20260501",
+          "sha256": "0f9bdf9a2a21fc279db54e4c66f971630e40ef7ae4b25d4630f894a1762c0f08"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Metadata/der2_ssRefset_ModuleDependencySnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "sha256": "a274c88a7e7613c9df473c06b15bfbf94a03eb99cff39f13568497a0eaa1269d"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_Concept_Snapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "sha256": "3437888cffdf15c043f5543c25009e5ae97d6dd94bfa0c0fc9d9f27ef3b43b90"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_Description_Snapshot-en_INT_20260501.txt",
+          "release_date": "20260501",
+          "sha256": "0d69e3b69b3ed52168fa726a4b9b2f7b949561b09bc7775dfb2ef65eadb80109"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_RelationshipConcreteValues_Snapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "sha256": "9a2df3a64488b618285c3b662f2e9a1e259e1be0c5a316bbe5dfe4c251fe4e91"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_Relationship_Snapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "sha256": "3a64b1ce4f9b5e0f7df5122abe35564a1b268330b4dd8db211839e84b9ff32e7"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/release_package_information.json",
+          "release_date": "20260501",
+          "sha256": "79c4e26d97c812996b8b9322c32857aa012746842e14b027a11122f5fb22000c"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Language/der2_cRefset_LanguageSnapshot-en_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "sha256": "20b77486c3c18760963e11de4c7ee05058d43808539e74881b1d3c003dff0ae6"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Language/der2_cRefset_LanguageSnapshot-ko_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "sha256": "8ebf5786bcd55598e49f315dda10c3199bb193d784d2d59c6872670113a57b0b"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Metadata/der2_ssRefset_ModuleDependencySnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "sha256": "8bf033aba635d7e08507c30faa4ec00ddeaa9cc34beb10f9bedf647784fef3aa"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_Concept_Snapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "sha256": "0c8f04986cb0385a319d6213c72b7bb41b20d390bf0a5f7a386ab206165a8fd6"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_Description_Snapshot-en_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "sha256": "5ee4b7e98b6c2acd131712a11afb34fd975036e14abcd085da5c3f3e1e4de22f"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_Description_Snapshot-ko_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "sha256": "8e8ea34f05ed36525b9944bc736c78aa180c03e0a45bb8bf76768b0abe481d97"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_RelationshipConcreteValues_Snapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "sha256": "edcda1815eaa885ff3afbfd2c0b588383e7ceafc9786906edf644af88d1168a0"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_Relationship_Snapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "sha256": "e4c6501952ceb52c505363989b395559d347a37e22468a2e744f729940083601"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/release_package_information.json",
+          "release_date": "20260615",
+          "sha256": "6fe12e1befe9b33e812f957e5b871d449d7d6a5c998bb7b9b9aee241b336c0c9"
+        }
+      ],
+      "module_versions": {
+        "11000267109": "20260615",
+        "449080006": "20260501",
+        "900000000000012004": "20260501",
+        "900000000000207008": "20260501"
+      }
+    },
+    {
+      "dataset": "bodhi-s",
+      "dataset_id": "82076e806e7a49c12c3efbec16d9d7bd31c8f2b511f92499803523cd38827bc8",
+      "files": [
+        {
+          "path": "assets/bodhi/bodhi-s/csv/nodes_condition.csv",
+          "rows": 779,
+          "sha256": "d13ce34e76eb48b8615eea843b83b41e319acd1418b2922930a3aa98174b2cb5"
+        },
+        {
+          "path": "assets/bodhi/bodhi-s/csv/nodes_symptom.csv",
+          "rows": 4037,
+          "sha256": "0960fc4a41bb2bd3b318c5201ee0b0fb0f029621793e07d4af3eafc783e9e4ee"
+        },
+        {
+          "path": "assets/bodhi/bodhi-s/csv/edges_present_in.csv",
+          "rows": 10352,
+          "sha256": "6a3247f6ad74c91ab1ff1a0a6101dc21fadfa0f4fed1e744554be8f2501cd377"
+        }
+      ]
+    }
+  ],
+  "vocabulary": {
+    "path": "knowledge/vocabulary.ttl",
+    "sha256": "0d4ff4bfe9350c7ca221dc8c0d5df6ea3970bd5bf6a5eae4789f0525af78b3dc"
+  }
+}

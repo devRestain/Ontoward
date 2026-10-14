@@ -59,12 +59,12 @@ services:
         target: /workspace/Dev/ontology
         read_only: true
       - type: bind
-        source: ./assets/guidelines
-        target: /workspace/assets/guidelines
-        read_only: true
-      - type: bind
         source: ./assets/snomed
         target: /workspace/assets/snomed
+        read_only: true
+      - type: bind
+        source: ./assets/bodhi
+        target: /workspace/assets/bodhi
         read_only: true
       - type: bind
         source: ./assets/nova-starter/nova_sdk.py
@@ -82,11 +82,11 @@ services:
         source: ./Tmp/codex
         target: /workspace/Tmp/codex
       - type: bind
-        source: ./Tmp/snomed
-        target: /workspace/Tmp/snomed
+        source: ./Tmp/ontology-v5
+        target: /workspace/Tmp/ontology-v5
       - type: bind
-        source: ./data/preparation/snomed
-        target: /workspace/data/preparation/snomed
+        source: ./data/preparation/v5
+        target: /workspace/data/preparation/v5
       - type: volume
         source: ontology-codex-state
         target: /opt/ontology/codex-state

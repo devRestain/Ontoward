@@ -14,12 +14,13 @@ class InterviewPlanner:
         self.usage = usage
 
     @staticmethod
-    def known(state: WorkflowState, target, attribute=None, observation=None, episode=None, subject="patient"):
+    def known(state: WorkflowState, target, attribute=None, observation=None, episode=None, subject="patient", time_context=None):
         return any(item.status == "done" and item.value and target in item.value.concept_ids
                    and item.value.attribute_id == attribute and item.value.subject == subject
                    and (item.value.kind == "context" or item.value.time_context != "past")
                    and (observation is None or item.value.observation_id == observation)
                    and (episode is None or item.value.episode_id == episode)
+                   and (time_context is None or item.value.time_context == time_context)
                    for _, item in state.case.entries())
 
     def prepare_initiation(self, state: WorkflowState) -> None:
@@ -116,30 +117,37 @@ class InterviewPlanner:
     def prepare_context_questions(self, state: WorkflowState) -> None:
         contexts = {}
         for hypothesis in state.differential.hypotheses:
+            required = set()
             for context in self.knowledge.get_supporting_context(hypothesis.disease_id):
-                entry = contexts.setdefault(context["id"], {"type": context["type"], "count": 0})
-                entry["count"] += 1
-        for order, (target, context) in enumerate(sorted(contexts.items(), key=lambda pair: (-pair[1]["count"], pair[0]))):
-            kind = context["type"]
-            subject = "family" if kind == "family_history" else "patient"
-            if self.known(state, target, subject=subject):
+                subject = "family" if context["type"] == "family_history" else "patient"
+                required.add((context["id"], subject, "unspecified"))
+            for profile in self.knowledge.get_disease_patterns(hypothesis.disease_id):
+                required.update((condition.concept_id, condition.subject, condition.time_context) for condition in profile.applicability)
+            for key in required:
+                contexts[key] = contexts.get(key, 0) + 1
+        for order, ((target, subject, time_context), count) in enumerate(sorted(contexts.items(), key=lambda pair: (-pair[1], pair[0]))):
+            kind = self.knowledge.get_context_type(target)
+            if self.known(state, target, subject=subject, time_context=None if time_context == "unspecified" else time_context):
                 continue
             field = "S.fh" if subject == "family" else ("S.sh" if kind in {
                 "social_history", "occupational_history", "psychosocial_history", "demographic"} else "S.pmh")
-            self.questions.register(state, Question(item_id=f"ContextFactor:{target}", field=field, purpose="context",
-                target_id=target, subject=subject, text=self.knowledge.question(target),
-                order=order, priority=context["count"]))
+            suffix = "" if time_context == "unspecified" else f":{subject}:{time_context}"
+            self.questions.register(state, Question(item_id=f"ContextFactor:{target}{suffix}", field=field, purpose="context",
+                target_id=target, subject=subject, time_context=time_context, text=self.knowledge.question(target),
+                order=order, priority=count))
 
     def prepare_differential_questions(self, state: WorkflowState) -> None:
         options = []
         for rank, hypothesis in enumerate(state.differential.hypotheses):
             for pattern in self.knowledge.get_disease_patterns(hypothesis.disease_id):
-                target = pattern["target"]
-                for feature in self.knowledge.get_pattern_features(pattern["id"]):
-                    characteristic = pattern["characteristic"] or feature["role"] == "characteristic"
-                    options.append((rank, not characteristic, target, feature["attribute"] or ""))
+                target = pattern.target
+                typicality = self.knowledge.policy.labels.get(pattern.typicality, 0)
+                deltas = self.knowledge.get_feature_contributions(pattern.association_id)
+                for feature in self.knowledge.get_pattern_features(pattern.id):
+                    delta = max((abs(c.delta_score) for c in deltas if feature.id in c.changed_feature_ids), default=0)
+                    options.append((rank, -typicality, -delta, target, feature.attribute or ""))
         seen, methods_seen = set(), set()
-        for rank, ordinary, target, attribute in sorted(options):
+        for rank, typicality, delta, target, attribute in sorted(options):
             attribute = attribute or None
             existing = [item.value for _, item in state.case.entries() if item.value and item.value.kind in {"symptom", "finding"}
                         and target in item.value.concept_ids and item.value.subject == "patient" and item.value.time_context != "past"]
@@ -161,12 +169,13 @@ class InterviewPlanner:
                     kind="EXAM" if exam else "SAY", purpose="feature", target_id=target, attribute_id=attribute,
                     observation_id=observation, episode_id=episode,
                     text=method["text"] if method else self.knowledge.question(attribute or target, target),
-                    order=order, priority=(len(state.differential.hypotheses) - rank) * LIMITS.differential_rank_weight + int(not ordinary)))
+                    order=order, priority=(len(state.differential.hypotheses) - rank) * LIMITS.differential_rank_weight))
 
     def select_question(self, state: WorkflowState) -> None:
         answered = {q.item_id for q in state.questions.questions if q.target_id and q.purpose != "clarification" and
                     (item := state.case.get(q.item_id)) and item.status == "unasked" and
-                    self.known(state, q.target_id, q.attribute_id, q.observation_id, q.episode_id, q.subject)}
+                    self.known(state, q.target_id, q.attribute_id, q.observation_id, q.episode_id, q.subject,
+                               None if q.time_context == "unspecified" else q.time_context)}
         self.questions.discard_unasked(state, answered)
         questions = [q for q in state.questions.questions
                      if (item := state.case.get(q.item_id)) and item.scope == state.session.current and item.status == "unasked"]

@@ -11,7 +11,9 @@
 | 로컬 모의 환자와 진찰 판정 도구 | [개발 키트 안내](nova-devkit/README.md) |
 | 공개 증례와 모범 초진 기록 | [샘플 안내](nova-samples-2026/README.md), [키트 내 샘플 안내](nova-devkit/samples/README.md) |
 | 외부 연구 데이터셋과 라이선스·인용 | [참고 벤치마크 안내](nova-benchmarks-2026/README.md) |
-| 임상 Markdown 자료와 출처별 이용 조건 | [지침 코퍼스 안내](guidelines/README.md) |
+| SNOMED CT International·Korean RF2 원본 | [SNOMED 안내](snomed/README.md) |
+| BODHI-S의 세 CSV와 원래 설명 | [BODHI 안내](bodhi/README.md) |
+| 보존된 임상 Markdown 자료와 출처별 이용 조건 | [지침 코퍼스 안내](guidelines/README.md) |
 | 출처별 문서 목록을 직접 탐색 | [CSV 목록](guidelines/catalog.csv), [워크북](guidelines/catalog.xlsx) |
 
 원본 패키지 안의 README도 사람이 읽는 제공 자료 설명이다. 그 안의 예제 명령이나 수정 안내는 프로젝트 작업의 실행 허가를 대신하지 않는다.
@@ -22,7 +24,7 @@
 
 지침 폴더는 교과서형 개요, 근거 리뷰, 환자용 설명, 임상 지침을 함께 담는다. 필요한 문서의 유형·언어·날짜·발행기관·라이선스를 확인하며, KR·US 접두사를 언어 표시로 사용하지 않는다. 자세한 차이는 [출처별 설명](Architecture.md#진료지침-자료의-16개-출처)에 있다.
 
-새 안내 파일은 원본 임상 자료가 아니다. 제출 전 임상 추출에는 `guidelines/catalog.csv`에 기록된 문서 경로를 사용하고 안내용 Markdown은 제외한다. 문서별 추출·검토 결과와 승인된 출처별 Turtle 묶음은 `data/`가 소유하며, 진료 중에는 준비된 RDF 지식만 조회한다.
+새 안내 파일은 원본 임상 자료가 아니다. 현재 v5.0 준비는 공급된 SNOMED CT·BODHI-S를 사용하고 안내용 Markdown을 임상 원천으로 읽지 않는다. guidelines/와 catalog는 deprecated 문헌 준비의 원본·탐색 증거로 보존한다. 문서별 추출·검토 결과와 승인된 출처별 Turtle 묶음은 `data/`가 소유하며, 진료 중에는 준비된 RDF 지식만 조회한다.
 
 ## 프로젝트와 연결
 
@@ -32,4 +34,4 @@
 
 ## 추가 제공 발표 자료
 
-[개회식 26장](nova-competition-2026/slides/opening-2026-10-06.md)과 [실행 흐름·진료 예시 22장](nova-competition-2026/slides/workflow-2026-10-11.md)은 MarkItDown 변환본이다. 최신 적용 내용과 과거 발표의 차이는 [10월 12일 비교](nova-competition-2026/CHANGES_2026-10-12.md)를 먼저 확인한다. 원본 PPTX는 assets 루트에 보존하며 이 자료를 제출물이나 임상 지식에 넣지 않는다.
+[개회식 26장](nova-competition-2026/slides/opening-2026-10-06.md)과 [실행 흐름·진료 예시 22장](nova-competition-2026/slides/workflow-2026-10-11.md)은 MarkItDown 변환본이다. 최신 적용 내용과 과거 발표의 차이는 [현재 규칙 업데이트](nova-competition-2026/CHANGES_2026-10-14.md)를 먼저 확인한다. 원본 PPTX는 assets 루트에 보존하며 이 자료를 제출물이나 임상 지식에 넣지 않는다.

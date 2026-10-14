@@ -1,0 +1,42 @@
+{
+  "associations": 670,
+  "bodhi_projected_variants": 81,
+  "bodhi_selected_variants": 93,
+  "bodhi_variant_dispositions": {
+    "accepted_preview": 81,
+    "characteristic_meaning_unresolved": 6,
+    "frequency_window_unresolved": 2,
+    "linked_finding_deferred": 1,
+    "severity_conditions_or_units_unresolved": 3
+  },
+  "clinical_review": "not_run",
+  "condition_dispositions": {
+    "context_or_non_disease_entity": 189,
+    "identifier_not_in_supplied_releases": 27,
+    "inactive_snomed_identifier": 9
+  },
+  "exceptions": [],
+  "features": 153,
+  "model_calls": 0,
+  "normalization_version": "v5.0.1",
+  "patterns": 72,
+  "registry_version": "2df86202b40ec26c4ad1d76115f6166cd56801da3f6ba1f27a2ce1881c05126e",
+  "runtime_admission": "not_run",
+  "schema_version": "5.0",
+  "snomed_dispositions": {
+    "accepted_preview": 3,
+    "unresolved": 92
+  },
+  "snomed_packets": 95,
+  "source_counts": {
+    "edges_present_in.csv": 10352,
+    "nodes_condition.csv": 779,
+    "nodes_symptom.csv": 4037
+  },
+  "status": "preview_only",
+  "targets": {
+    "21522001": "AbdominalPain",
+    "386661006": "Fever",
+    "49727002": "Cough"
+  }
+}

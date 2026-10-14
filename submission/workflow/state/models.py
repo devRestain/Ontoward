@@ -6,6 +6,8 @@ from typing import Literal
 from nova_sdk import RECORD_FIELDS
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from knowledge.conditions import ExpectedValue, FeatureContribution
+
 from ..rules.limits import LIMITS, SESSION_ORDER, SessionName
 SOAPField = Literal[
     "S.cc", "S.hpi", "S.pmh", "S.fh", "S.sh", "S.ros", "O.exam", "O.tests",
@@ -26,8 +28,17 @@ class ClinicalValue(Model):
     episode_id: str | None = None
     attribute_id: str | None = None
     values: list[str] = Field(default_factory=list)
+    measurement: ExpectedValue | None = None
     subject: Literal["patient", "family"] = "patient"
     time_context: Literal["current", "past", "unspecified"] = "unspecified"
+
+    @model_validator(mode="after")
+    def validate_measurement(self):
+        if self.measurement is not None and (self.kind != "attribute" or not self.attribute_id or self.values
+                or self.measurement.kind not in {"quantity", "interval"}
+                or (self.measurement.kind == "quantity" and self.measurement.operator != "eq")):
+            raise ValueError("Observed measurement requires a numeric attribute value")
+        return self
 
 
 class RecordItem(Model):
@@ -128,6 +139,15 @@ class SessionContext(Model):
     models_available: bool = True
     clarifications: int = Field(default=0, ge=0, le=LIMITS.clarifications)
 
+class ScoreContribution(Model):
+    association_id: str
+    pattern_id: str
+    target_id: str
+    score: float = Field(ge=0, allow_inf_nan=False)
+    evidence_ids: list[str]
+    weight_basis: str
+    policy_version: str
+    feature_deltas: list[FeatureContribution] = Field(default_factory=list)
 
 
 class Hypothesis(Model):
@@ -135,12 +155,13 @@ class Hypothesis(Model):
     pattern_ids: list[str] = Field(default_factory=list)
     feature_ids: list[str] = Field(default_factory=list)
     evidence_ids: list[str] = Field(default_factory=list)
-    opposing_ids: list[str] = Field(default_factory=list)
-    evidence_score: int = 0
+    association_ids: list[str] = Field(default_factory=list)
+    contributions: list[ScoreContribution] = Field(default_factory=list)
+    evidence_score: float = Field(default=0, allow_inf_nan=False)
     context_bonus: int | None = None
 
     @property
-    def score(self) -> int:
+    def score(self) -> float:
         return self.evidence_score + (self.context_bonus or 0)
 
 

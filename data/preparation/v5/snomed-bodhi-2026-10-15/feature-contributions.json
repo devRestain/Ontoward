@@ -1,0 +1,4836 @@
+[
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature75c095c268e4cd19f75633b7"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation00382236abef880ec9056ad8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4fff95ee601057cd23db0fc5",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature021dff62a5317ceee77f5e57"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation02522c51a757876981beb92c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationae7b7bb974741957cdf4141e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature254f055d748d3d766d2edb11",
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation027b1e13c1d1830c8004db01"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationdc2c94d3ceea537ae0493691",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation027b1e13c1d1830c8004db01"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6bfe156594957b12c27f35e2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee05151af172f6ff9cc2a9c1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0298f075d2ff1024617d9162"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0b22766f71edbfa9885fae47",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation02b373d731e28a9ccf85330c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3f2d664613d10cd9e94afefc",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecb047b73a7ecc24266ee655c"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation035a2bd7fd30c494c95b637b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation887aa90fa747b1925fb1b214",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation03b0c6e645a1b115e25914cd"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation64755cfb1d97f156395302df",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturedd89b9d8d9505311c34c7bbb",
+      "urn:ontoward:ClinicalFeaturee8b38760683dab24a5748116"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation03cf8451278a362b8cc091c5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione28d5f3f674f9dc129542c4a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee8b38760683dab24a5748116"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation03cf8451278a362b8cc091c5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3def849cc96d5133c9d38876",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation043db8b710450f29eb328bc0"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb1213fbbe37fcfc2bac3fb29",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation05c6d2b5a42033e0abc25fe8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation24a152e5d2479aad8a267b79",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation068eaa6a1104e20a6298de4c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4fff95ee601057cd23db0fc5",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation06b6676ee6b09e242c73afa3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb857da9e61377b65529f119a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation06ba7807718f36bab24749f4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation05b7a7781d36994ae0ded71b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature35052dab4567d8308466a1dc",
+      "urn:ontoward:ClinicalFeaturea64f1b56ba9564deee57c8f0"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0724526310441fb8ca86c77b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation638119fc8d65cda8fbd20a11",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature35052dab4567d8308466a1dc"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0724526310441fb8ca86c77b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation323912a9568c8c6bc1411f87",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature75c095c268e4cd19f75633b7"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation075595ecdf97ed4b78708d2f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation22357424915ce58be86f7299",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8b2042479f7d48d491a71941"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation07c8e3f94398bb41e272c1f7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3fdc5c16edb035e53a614598",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation07d2d0641cf7aafca148ef40"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4fff95ee601057cd23db0fc5",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecc1eee9624da150dfb5bfff6"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation09059e2a95b9e9b0c8527c98"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf25ecd08faf7ff8a2bb308fa",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature04ca737dff1e4d33118954ee"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0a20059748a59abda41fc20a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation75a50bcb1beaa88463b0e151",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0a2348038d7db820c46eff6d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature25e7a42cd9949c96fcf13f1e"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0ad408398482472a3e7fa0d7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationbabf19ed5379e0dcda4bf841",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7b1221ec80db7de317d4375c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0aec21d40d32cacaa3c4e9ca"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturef037ca0347c996fec1b8eb7d"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0b92d6c4c3b38a4177030652"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationde099f12452b88b2f320a0c7",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0bebdca3d31ef2966003ce5b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfd42a21fbc642f0d7eef5218",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3b24c7094defa0ec9d518fd4"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0d1d9cc69eaac34524e17bae"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationac101a697ffe22b08cd3f35b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 3.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0d6d72f63cfba727930e3516"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf25ecd08faf7ff8a2bb308fa",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation0df563849892846f5e7a5098"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf4eba5b3cce68f64d8cd9ac0",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1061798b3043b9859d604e15"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation112cdfc70d8af24c26e0860c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation5cc7b8fe9b56903f0225a035",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb1e304e1ff7a7eea0cf95646"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1160134de0f2f3cb7eb6bcda"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation23491b79f1d9d83516ae2846",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee4cab6f167b6461a578b7f95"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation125258df93f0ae0baa2763d4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione756e3e9b85a1f72589c6d5a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturef037ca0347c996fec1b8eb7d"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1431a3896987885992349eaa"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc218357a88ac4bb655b3acf9",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation16645f85d154402416f7ba44"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature254f055d748d3d766d2edb11",
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation16645f85d154402416f7ba44"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation33b062db76298d29536cfa06",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation16e7b507e36258f28e57830b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione756e3e9b85a1f72589c6d5a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb1e304e1ff7a7eea0cf95646"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation16f305ca9f98dd50cb400c09"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfd076c22c8e8f9c35a519a4a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3b24c7094defa0ec9d518fd4"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1728c0174303fb7fd68864dc"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3bc14aab81afb25fd553770c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature49a62ca6c4e6d40d2f30ec91"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation179e74ce430890d380bdf16e"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86b209169d9418ada791841b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation18be361a82bc43cc058aeb60"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation436c0c2cea617a84e007aeb8",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation190ee09f41524586c913c843"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0fda641e017f5aaac1ad7b11",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0814fcb2ca529cc1c5bd09f2",
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1a3d58bc40a57d7d466d06fb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb0cd3f3be12ab2120c44cd28",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1a3d58bc40a57d7d466d06fb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf1a1eef0ab881e87f4f6c2de",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb1e304e1ff7a7eea0cf95646"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1b02d3998092b7e82d07bad6"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature39e8f076061600946588282f"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1b872b5f43745d435d31bd58"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation47ec5c115df5e99b1b158738",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturea3e1bd8207c3d330b81b2752"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1b8d49d4b08b72e645202b24"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation64755cfb1d97f156395302df",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature25133faddd46d3cc442f1d3c"
+    ],
+    "delta_score": 3.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1beba41f707b3d529d361ff7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione09384e3c713067fde014f9f",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1c0aea039a150a39e6a12bcb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3bc14aab81afb25fd553770c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature04ca737dff1e4d33118954ee"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1c23f2e33a69fb7a2b02ca89"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6a6bf7e20e35ebb6400491a9",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1cc33cee8bb7e0f36438f928"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation67db9e896605e1113ccb3d16",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature03229fbdc19ec5deb077e605",
+      "urn:ontoward:ClinicalFeature88ae1847a61277757bba438e"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1cd11a70edec04f13ed1966f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6b4243a6de9e79679eb48615",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature03229fbdc19ec5deb077e605"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1cd11a70edec04f13ed1966f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation436c0c2cea617a84e007aeb8",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature83b07788a9c76e066f1f48a0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1d58c44decbfc90583a7fd3d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation24a152e5d2479aad8a267b79",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec766101e1ab0864a294ab2fc",
+      "urn:ontoward:ClinicalFeatureefbf555ffe51faff0b4cdcaa"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1d74d9daafb4e1c8a8516d9f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione9f4647d94ad1efe4779ce04",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec766101e1ab0864a294ab2fc"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1d74d9daafb4e1c8a8516d9f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione0ae3cbefa09fbd4e48406be",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1d8a3899a1d124c9732452e5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb1213fbbe37fcfc2bac3fb29",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1decfa7b9fbd0765b201b584"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation808a9c5f743a8931c60dd70e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1e3f79097879925115ad83ea"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation323912a9568c8c6bc1411f87",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1e454f8f49fa60f88bffd574"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation323912a9568c8c6bc1411f87",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature75a9fb23a5db0a2f00714c98"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1ed08de71acc6d9580f885fb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3826536e37d8189226763180",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1ed4cc3dd8208f8ecbb02c52"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3def849cc96d5133c9d38876",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature04ca737dff1e4d33118954ee"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1f1d863df4f69565016eb69a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione3177d5e3bb6fb9300b321ac",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1fb3c33006d199919ddf5417"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation23937bedbc0b8ab5d2f37533",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature83b07788a9c76e066f1f48a0"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation1fd32766a7fa0d58945e3093"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation29fe7edef999c1a9a3bfcbee",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature21bc9a3fff338ef1b68715d9"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation201384609153c2ba472fbfa4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation91cf5aa96c80670bee75636c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation202a03e7d87e4dc60fa6737b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation75a50bcb1beaa88463b0e151",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation205e1d43745b5814e3e25fc3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation70a61b8e9a84fbf2b3efe21a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature48b0a66bd9dc0a953ffa23c0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation20e83aa2371750a127e4d620"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation70a61b8e9a84fbf2b3efe21a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecc1eee9624da150dfb5bfff6"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation215f7c6972f1463b224a6bcb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3def849cc96d5133c9d38876",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7b1221ec80db7de317d4375c"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation21a109d4d89bb3f3dabee2cf"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0e9cc8d882c30a20d8ffd647",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature002930a142d5018c5f2afacf"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation22ca6c39ef0deff9450ad3e8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf9215b6feffa7907ffd19d63",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee4cab6f167b6461a578b7f95"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation237f1a9034c4fa39aea5a0de"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation22538222ba5563231d4f8c35",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature002930a142d5018c5f2afacf"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation24946e24bab36ef09ee281a9"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation23491b79f1d9d83516ae2846",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature254f055d748d3d766d2edb11",
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation24a812c795c0335b4046b0ea"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationcdf57e1a101952526919af62",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation24a812c795c0335b4046b0ea"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation47ec5c115df5e99b1b158738",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature897bcadcb1a9861e4078b5cc"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2637c626f6ccfa08d1f017d5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature897bcadcb1a9861e4078b5cc"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation27e1c820519e32ddf05d416b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation5c986d24dec51565830b0649",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature83b07788a9c76e066f1f48a0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation28b7d060ec02c5d7a8c72b75"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0e9cc8d882c30a20d8ffd647",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0814fcb2ca529cc1c5bd09f2",
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation28e91f0348658ceb3f32b99c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa2f0ddaeeed55d85f5391da7",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation28e91f0348658ceb3f32b99c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation5335cdbbb0a24f1f48e4fe5d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1",
+      "urn:ontoward:ClinicalFeaturef635e7a17f330b1cb79b6f5a"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2963897cc3944d33fdc3c0e8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6a0923117729fb782e174227",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2963897cc3944d33fdc3c0e8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc5ba81bcbc9082e287f0d5b6",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation29cdc46a75b300c6788bee5e"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4b731139f7c163aa97621113",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation29f4d289eb9f03ad1604acd4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc213fc22ea0ce79c2f6fac7d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8b2042479f7d48d491a71941"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2bde1f0c1152870cb351fd81"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2c4fde64e2b05ae28e4f8d42"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation8994d44eaac5aff518a544d2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturea3e1bd8207c3d330b81b2752"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2c528836c84a2a13cec93241"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6e2c70b963558dc9c7e92120",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2c6006b4329b117df370fb36"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione756e3e9b85a1f72589c6d5a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2c86c0ce7b5c6f5e123268ef"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation465a6767b9bf2834bb25abe5",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8b2042479f7d48d491a71941"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2caac00fbe9c017cfec69440"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione756e3e9b85a1f72589c6d5a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2d6a8140eab7e2844f1f5940"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0d6d72f63cfba727930e3516",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": -2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2d70ba7708838fca84cf0e08"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationac101a697ffe22b08cd3f35b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2d70ba7708838fca84cf0e08"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6a6bf7e20e35ebb6400491a9",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2d7801fc975173220dc194a7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation70a61b8e9a84fbf2b3efe21a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebd0d0e1978eda3885558f1db"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2dc7efc8bfdcebeb22271a4d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4fff95ee601057cd23db0fc5",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2e42aeefe8317fbd1e54ff21"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf9215b6feffa7907ffd19d63",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8478078a303a9793766758ee"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation2fba70d82e16c08a16fd5794"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb857da9e61377b65529f119a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3b24c7094defa0ec9d518fd4"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation3099c3d7e90a77fabacedb5c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86b209169d9418ada791841b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecc1eee9624da150dfb5bfff6"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation3141fe2a15bee23e2747823e"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4672ede950ae917a12f382f0",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature75a9fb23a5db0a2f00714c98"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation31ac9af4ee774e80b322a079"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf6f5d48f0ab621f88a61a2a6",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb1e304e1ff7a7eea0cf95646"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation32d393fe9079ff4ab20d4ef2"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6bfe156594957b12c27f35e2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7d7e1ee7855da2c09bc9ff76"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation33cdd2fad427838ba043bbbd"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationdbb7b3792ffcd0fdce18b985",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3dd39aaab24f76fe6d8e40da"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation3434325707d392abe41b56df"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation7bc679d102de1873d9d3473f",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation3450faaadd06537d929a4646"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation67db9e896605e1113ccb3d16",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation34b2055c5e8fe31ae30f3879"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6b4243a6de9e79679eb48615",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation34b2055c5e8fe31ae30f3879"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation391cc004a09fcd934a16c7b2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec3d0d463ace1d7eaf82c9ba9"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation36ccb4ef7632fbf750427f59"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature59be57a1c6f6ebc02d0e9d74"
+    ],
+    "delta_score": 3.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation372eca4fe5571bdd0e11a502"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfb3c967b6a9a5f6853407ed3",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation37c24d39e92b26162326ff14"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation5c986d24dec51565830b0649",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation381098e26e9945a03fe0554c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation61f225dee0dd988279cccab1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature897bcadcb1a9861e4078b5cc"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation38a7e02f6adae09aa455f43a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation2d6a8140eab7e2844f1f5940",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature757a3e54c797133e9b462f36"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation38ae4050160f064d174eca57"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione756e3e9b85a1f72589c6d5a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature757a3e54c797133e9b462f36",
+      "urn:ontoward:ClinicalFeature7aa7ec60aaf610ba49ab07dc"
+    ],
+    "delta_score": -1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation38ae4050160f064d174eca57"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation32dfdb052b38a104b81f4b6a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0678682a6927a6fc778332e0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation3a87d3f73907acb33e82695f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86b209169d9418ada791841b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturea3e1bd8207c3d330b81b2752"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation3bb37716e88d99a8de03f307"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6bfe156594957b12c27f35e2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation3c2350304c0edd16ec0b5862"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation7ee8b8e5fb72faa5f114eb52",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation3c904ca50612e573aa16fb88"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfbc113956facd108c21d277f",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature63cae3d976dd2db258070cc0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation3ca3264baab4c6dd33a8fbcb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf25ecd08faf7ff8a2bb308fa",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7b1221ec80db7de317d4375c"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation3db3422343deb9a4bf90aeb4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation70a61b8e9a84fbf2b3efe21a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5fef175a80a9264adb444b94"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation40c547fc11b5a60e4765fadb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb522345e613f96d86c1bac9e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation412cf9e74755ec9a9f9a37b9"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation05b7a7781d36994ae0ded71b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureec4c2152c794c20005894bca"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation41a93924925ce65bd6726bb0"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb1e304e1ff7a7eea0cf95646"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation42242001c843a7f27b3bb30a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation91acf7f389d22c1421253431",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec766101e1ab0864a294ab2fc"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation4273681f302af5512517b23f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec766101e1ab0864a294ab2fc",
+      "urn:ontoward:ClinicalFeatureefbf555ffe51faff0b4cdcaa"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation4273681f302af5512517b23f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation67db9e896605e1113ccb3d16",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec3d0d463ace1d7eaf82c9ba9"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation43a6f441452e6ed3339bef27"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation61f225dee0dd988279cccab1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation447bc04d92ab626ae2f97945"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb857da9e61377b65529f119a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation45eb397ad44777df3f6541ec"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione3177d5e3bb6fb9300b321ac",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation463dc9ac9aebc7d9543cec76"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6bfe156594957b12c27f35e2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation46eef810da1101f267f96066"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0c7ff3005ea1f4bd71f56226",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8b2042479f7d48d491a71941"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation476b2912f7e5e15bba200457"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation24a152e5d2479aad8a267b79",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature59be57a1c6f6ebc02d0e9d74"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation47a51dc74b9ee0e89e8e7d22"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation1d8a3899a1d124c9732452e5",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation47e562de24a11f42ab96693f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione0ae3cbefa09fbd4e48406be",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1",
+      "urn:ontoward:ClinicalFeaturef635e7a17f330b1cb79b6f5a"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation47e562de24a11f42ab96693f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3def849cc96d5133c9d38876",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation49653ba5165a8bd050b0d7e4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationaf0a4f8a1ff791cd74195579",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7d7e1ee7855da2c09bc9ff76"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation4a195dd377be7c06952a3e5a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation327f69533c4d4e37a3f2c4cb",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb7ecd01c11260861f56dc034"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation4a84a1762543cc4b6d6deb85"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4672ede950ae917a12f382f0",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation4a84a2ad5a9d3dc24cb9b51f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfd076c22c8e8f9c35a519a4a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebf33a13bbe8b78943ee85640"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation4ab94a24564d1a94277140cc"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation1e3f79097879925115ad83ea",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation4ef7de4cb98e6bbb58348e28"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation808a9c5f743a8931c60dd70e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": 3.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation4ef7de4cb98e6bbb58348e28"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation67db9e896605e1113ccb3d16",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0814fcb2ca529cc1c5bd09f2",
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation512451082884ddd732613dee"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6b4243a6de9e79679eb48615",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation512451082884ddd732613dee"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa156975f0f6861f7ebe030ee",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation51d81a8ca885338aef85476e"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3bc14aab81afb25fd553770c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7b1221ec80db7de317d4375c"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation52cc4aa515d474138f6ec5e4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation45aadf688fd766a14b030f7a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation53197dbe85ddf9ca0cd18d78"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature31f34e447e2897ff7a4b30d0"
+    ],
+    "delta_score": 3.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation53c259ec6e19d917463593b7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation327f69533c4d4e37a3f2c4cb",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation55d977dc72dc42e2dfc436bc"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione498cb667db691ec45b8cbd4",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation560ccce2abc5d62df7315ac1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf9215b6feffa7907ffd19d63",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecb047b73a7ecc24266ee655c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5614347c10dfa0f6efce863d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc82599d5125d3504c84e9f6d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5fef175a80a9264adb444b94"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5661986c93ae9db0de856750"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc6abbd0462187a4142675771",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1",
+      "urn:ontoward:ClinicalFeaturef635e7a17f330b1cb79b6f5a"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation573df056595f90bbad3350d5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationdb35c5eec46694bd17191e33",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation573df056595f90bbad3350d5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation35467490fb978618336be663",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation576236f1d6c33c211c797e6c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature4241213a374b6ea528b40d02"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation578af021a424e55e3a541bdc"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation389cdae575a531383e996a89",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation57e009f6c6b1253747cdf816"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation381e376b1ea81698917b81d7",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec3d0d463ace1d7eaf82c9ba9"
+    ],
+    "delta_score": 0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5810870de83e4e5e452b83bb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation887aa90fa747b1925fb1b214",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5855d3ed515d8107e10998f8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation46ecf7613ca00c47e4a1a711",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation59189d15afac1a5de169e639"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation7ea814cf8bf148dfa59cb598",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5929e8f2feedd8b25b5619d8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation887aa90fa747b1925fb1b214",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3b24c7094defa0ec9d518fd4"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation597798b3231e832d4f45bdb7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6ec9f20ee72c3aad3260b116",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5a798c94d97c8e61933a3b35"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation327f69533c4d4e37a3f2c4cb",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0814fcb2ca529cc1c5bd09f2",
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5ac6eae68f950d943b91eeb0"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation55d977dc72dc42e2dfc436bc",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5ac6eae68f950d943b91eeb0"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation64755cfb1d97f156395302df",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature06118da5b12712f48f6bbc2d",
+      "urn:ontoward:ClinicalFeaturec67e0c84f166efa02547f47e"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5b0540bfc97d22aafef491d2"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione28d5f3f674f9dc129542c4a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec67e0c84f166efa02547f47e"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5b0540bfc97d22aafef491d2"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3fd612de49154c39c4e50ece",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5cc22d6421206dc20a09689e"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationccbb23ad7f6f2dcf950f9fb8",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5cc22d6421206dc20a09689e"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf9215b6feffa7907ffd19d63",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature39e8f076061600946588282f"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5de63bb1c766835df94f1771"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation04c147e45f6d818639e09b49",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8478078a303a9793766758ee"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation5edede429e830953e4ebabd1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4b731139f7c163aa97621113",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb1e304e1ff7a7eea0cf95646"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation601a1571923b4a59154d0f81"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb857da9e61377b65529f119a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation60b8599b58a8d1109eab8e02"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3bc14aab81afb25fd553770c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation60db389f1c34abc13dfb8140"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfae2ff8687127b7cba5c134b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatured8d317f2d66c8ef2e0f39661"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation62009ca9b4904f590dc56bfa"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation70a61b8e9a84fbf2b3efe21a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee4cab6f167b6461a578b7f95"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation624d561b8660322a09468ec4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation00bad27cab28be12b8bf41bf",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation628e9fdc62cdb41b2c87326c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation05b7a7781d36994ae0ded71b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation638119fc8d65cda8fbd20a11"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0b3096c0b6ad497c693896e3",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0814fcb2ca529cc1c5bd09f2",
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation64821a8cfbc6085c2f6dcbd4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation839cdc75f94747c3191c7076",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation64821a8cfbc6085c2f6dcbd4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4672ede950ae917a12f382f0",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebd0d0e1978eda3885558f1db"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation65cd971c9c6beff794a725f5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation70a61b8e9a84fbf2b3efe21a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6628f2e9bc123d650833c00c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation944c1e8a2f759db00383e917",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6628f2e9bc123d650833c00c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation760d315625c5dfc9abdd7c85",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3b24c7094defa0ec9d518fd4"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation66376b22f21246806802d4a8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation47ec5c115df5e99b1b158738",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturef037ca0347c996fec1b8eb7d"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation66bdfcc773a3bed67eddb866"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfb3f09519d243e9bc0a7c901",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation66fdfb240ee64df75f433544"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation1fb3c33006d199919ddf5417",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation673240fad75c7161ef687f66"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione3177d5e3bb6fb9300b321ac",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1",
+      "urn:ontoward:ClinicalFeaturef635e7a17f330b1cb79b6f5a"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation673240fad75c7161ef687f66"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation90016ef200322fc24943acda",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature83b07788a9c76e066f1f48a0"
+    ],
+    "delta_score": -2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation67865ad8dbe0964189c7ab05"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation45aadf688fd766a14b030f7a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8b2042479f7d48d491a71941"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation67cef963879d09497041db65"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6d6f8ed25be953269db9e378",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec766101e1ab0864a294ab2fc"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6804f888f18d25971c9d98d7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec766101e1ab0864a294ab2fc",
+      "urn:ontoward:ClinicalFeatureefbf555ffe51faff0b4cdcaa"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6804f888f18d25971c9d98d7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0b3096c0b6ad497c693896e3",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature002930a142d5018c5f2afacf"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation680579423fb703b2caa02f9e"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation04c147e45f6d818639e09b49",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7d7e1ee7855da2c09bc9ff76"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation68878900f0152f005cc54512"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation62e0a3153462a09d7f2f9411",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0678682a6927a6fc778332e0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation68998cd1378cd6790f0a1bb6"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation5335cdbbb0a24f1f48e4fe5d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6a0923117729fb782e174227"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3f2d664613d10cd9e94afefc",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature9a699aed45f13c6ff01394de"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6a16cb08b72cf467679f65f3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation67db9e896605e1113ccb3d16",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6b4243a6de9e79679eb48615"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation323912a9568c8c6bc1411f87",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturea3e1bd8207c3d330b81b2752"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6be6c3944743381671e7e5fa"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb480ebcd54b4ffa67fd9d421",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature75a9fb23a5db0a2f00714c98"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6bf21bc1752675ba739aab71"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation1061798b3043b9859d604e15",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6c626dd39944285d58acbd1d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf4eba5b3cce68f64d8cd9ac0",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1",
+      "urn:ontoward:ClinicalFeaturef635e7a17f330b1cb79b6f5a"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6c626dd39944285d58acbd1d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation47ec5c115df5e99b1b158738",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature63cae3d976dd2db258070cc0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6c6f1539136e9057c570c8a3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation288b05474f2c4da94c5bcef5",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6c94213b26200e25a56da69a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature9a699aed45f13c6ff01394de"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6d6f8ed25be953269db9e378"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationde099f12452b88b2f320a0c7",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureafe3bbf3ed43be486a61d9db"
+    ],
+    "delta_score": 0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6dccfc6bac4299857d8994ab"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation517b10ab68936ca0a2a7e78e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatured8d317f2d66c8ef2e0f39661"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6eab6239f0d482c6fc209dba"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb0f4c13dcd33aeae02068e3d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation6ef071eca0bdf3afac75ac32"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationbf60ce207ffd998b3d0930d2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3b24c7094defa0ec9d518fd4"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation709284761d4b21628873a3f2"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3f2d664613d10cd9e94afefc",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation70a5f147cc043145f19740be"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation61f225dee0dd988279cccab1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation719042fc95f504fb5691c54d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa4155923ffcf4cb74885c1c2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb1e304e1ff7a7eea0cf95646"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation72382f03d85499cb19d49529"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa8bb01230e933b445fbbb74e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7d7e1ee7855da2c09bc9ff76"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7291f6a4603b093ccf8bf2c5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6ef071eca0bdf3afac75ac32",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation735dd5c3c117ef7458cdcd24"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb0f4c13dcd33aeae02068e3d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0814fcb2ca529cc1c5bd09f2",
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation735dd5c3c117ef7458cdcd24"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa8bb01230e933b445fbbb74e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation73e955d51b5c738081b0f41d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation61f225dee0dd988279cccab1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7d7e1ee7855da2c09bc9ff76"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7464f52ae524748a0815db27"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation560ccce2abc5d62df7315ac1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation752faa3ce894daeccf3a7c2d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione498cb667db691ec45b8cbd4",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0814fcb2ca529cc1c5bd09f2",
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation752faa3ce894daeccf3a7c2d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationac101a697ffe22b08cd3f35b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature002930a142d5018c5f2afacf"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation759bb81b1053490be2530aaf"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation46eef810da1101f267f96066",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature757a3e54c797133e9b462f36"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7854101b213d5aae08454b8c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6bfe156594957b12c27f35e2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature757a3e54c797133e9b462f36",
+      "urn:ontoward:ClinicalFeature7aa7ec60aaf610ba49ab07dc"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7854101b213d5aae08454b8c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationca2e5bb38a604cc1c8b7c9fb",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7859f0cb79ccdcba986b693f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationeebe107021922f3758cac709",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1",
+      "urn:ontoward:ClinicalFeaturef635e7a17f330b1cb79b6f5a"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7859f0cb79ccdcba986b693f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationaf0a4f8a1ff791cd74195579",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecc1eee9624da150dfb5bfff6"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation78a7de26e9ce60b0c72c9961"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation06f8a96d3526ce8107b550f3",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7953fbe748b1cba545a51278"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation61f225dee0dd988279cccab1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature75c095c268e4cd19f75633b7"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7a22f8d9c24abed3aa3d307f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationde099f12452b88b2f320a0c7",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturea3e1bd8207c3d330b81b2752"
+    ],
+    "delta_score": 0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7b64e3a7cc374fa36b380f3f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation61f225dee0dd988279cccab1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturef037ca0347c996fec1b8eb7d"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7b824fa5f617fa9790d7adde"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0b3096c0b6ad497c693896e3",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7c61467e24aa5ca77eefc426"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation839cdc75f94747c3191c7076",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7c61467e24aa5ca77eefc426"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation8994d44eaac5aff518a544d2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7c80221704774c461069eb3c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa156975f0f6861f7ebe030ee",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3a23d9b70b3cbb5c5c812dfd"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7da772ae347842e193a81fba"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec8b4da31dd9c7460819f00fc"
+    ],
+    "delta_score": 3.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7db006176bc0018dcc9ab34e"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecc1eee9624da150dfb5bfff6"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7e7bd63c09bdc60ee3ac2f54"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation391cc004a09fcd934a16c7b2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatured8d317f2d66c8ef2e0f39661"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7ef97f455fdc60ddd38fdead"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation06f8a96d3526ce8107b550f3",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7f5be384ffbe8db20f48af8a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation7953fbe748b1cba545a51278",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation7f5be384ffbe8db20f48af8a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6e2c70b963558dc9c7e92120",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature83b07788a9c76e066f1f48a0"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation814c9d65a6a315382c3b300c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0b3096c0b6ad497c693896e3",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation839cdc75f94747c3191c7076"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature75a9fb23a5db0a2f00714c98"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation83a8ec14e7e99c62fff772be"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation23491b79f1d9d83516ae2846",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature63cae3d976dd2db258070cc0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation83aafcd7d53f6fa1d57dd7fd"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation30b5e525423ddca50f491816",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation83f376f9da0447024224bc60"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation323912a9568c8c6bc1411f87",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee4cab6f167b6461a578b7f95"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation85831c8d3f6760677efffbf3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationd4159896952bb0b6e08b6465",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation85c2903daf04b94a664d966d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc82599d5125d3504c84e9f6d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee4cab6f167b6461a578b7f95"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8692e69389b19f514105b151"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationed09136197a2dfede30c9b8d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec67e0c84f166efa02547f47e"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation86ae91b157831454a2a40d35"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationeebe107021922f3758cac709",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature06118da5b12712f48f6bbc2d",
+      "urn:ontoward:ClinicalFeaturec67e0c84f166efa02547f47e"
+    ],
+    "delta_score": -1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation86ae91b157831454a2a40d35"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation760d315625c5dfc9abdd7c85",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation87f2c16e091fe238d74edd3a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation1f4eeaaa5e427a9f92ffca2f",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature83b07788a9c76e066f1f48a0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation880cfc5ec7ff7055988cec1b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86b209169d9418ada791841b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee4cab6f167b6461a578b7f95"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation892805a3398712a7a8852caf"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation05b7a7781d36994ae0ded71b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb7ecd01c11260861f56dc034"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation89762891a70278123897d72b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation04c147e45f6d818639e09b49",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature75a9fb23a5db0a2f00714c98"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation89e86794e576c81a9e5eab93"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0b3096c0b6ad497c693896e3",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature03229fbdc19ec5deb077e605",
+      "urn:ontoward:ClinicalFeature88ae1847a61277757bba438e"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8b567151bfe8cffe9ce638c4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation839cdc75f94747c3191c7076",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature03229fbdc19ec5deb077e605"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8b567151bfe8cffe9ce638c4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationed09136197a2dfede30c9b8d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee8b38760683dab24a5748116"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8b6c528f7c4b39f062517766"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationeebe107021922f3758cac709",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturedd89b9d8d9505311c34c7bbb",
+      "urn:ontoward:ClinicalFeaturee8b38760683dab24a5748116"
+    ],
+    "delta_score": -1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8b6c528f7c4b39f062517766"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation138696c4952031bfd50fa1cb",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8b2042479f7d48d491a71941"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8bb83f377f8a611ff6930316"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation51d81a8ca885338aef85476e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": -2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8ca5fa78fac9097d2a1823e8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa156975f0f6861f7ebe030ee",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0814fcb2ca529cc1c5bd09f2",
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8ca5fa78fac9097d2a1823e8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation287860d28a60ea75df767c92",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8cc1b8f4456df2ca8475f791"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb24e993fe0deb9bb3b121701",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8dd1fe3cacc2d86bfeaa14ed"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation04c147e45f6d818639e09b49",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature254f055d748d3d766d2edb11",
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": -1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8e44ea8483bd04190047ea31"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc15f7903d2a094bce4230da1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation8e44ea8483bd04190047ea31"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationd4159896952bb0b6e08b6465",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation90e3d6d66b3b5e17bbb9643a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation436c0c2cea617a84e007aeb8",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature002930a142d5018c5f2afacf"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation91349793fdbd9d9fe3698fc8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationdbb7b3792ffcd0fdce18b985",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec7bcdb1c3b6d18078f31fa4b"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation91378b9e1a2d6a2a4ec7cba9"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ce4cf8ae4e7cb83e0a7bed",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation91379356f874e79ab1bef098"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature9a699aed45f13c6ff01394de"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation91acf7f389d22c1421253431"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0c7ff3005ea1f4bd71f56226",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation91f791160ff6f85e206df1e5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation05b7a7781d36994ae0ded71b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatured8d317f2d66c8ef2e0f39661"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation92fb3e49f8eec19ba7b52b21"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation5a798c94d97c8e61933a3b35",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation92fd741b8d077a13fc1c1d97"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6ec9f20ee72c3aad3260b116",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1",
+      "urn:ontoward:ClinicalFeaturef635e7a17f330b1cb79b6f5a"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation92fd741b8d077a13fc1c1d97"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation40c7129caf18247ec6ebe605",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7b1221ec80db7de317d4375c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9308d7c9ad879866424c30e9"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation70a61b8e9a84fbf2b3efe21a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation944c1e8a2f759db00383e917"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationcd4c0008a6b5c9d2962b7920",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation978b8a80e730f5094e715543"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation51d81a8ca885338aef85476e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation97fc5ca4346147bc6e73d8b3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa156975f0f6861f7ebe030ee",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation97fc5ca4346147bc6e73d8b3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationab48e44aae8d864afa43231d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9822f0b069491778ae8d9f71"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione498cb667db691ec45b8cbd4",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature002930a142d5018c5f2afacf"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9850844eb8cb5777d31e293f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb5eee2237ac66eb1fdd71ae1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation986c39f79ecd07e7aa423fff"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc5ba81bcbc9082e287f0d5b6",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation992e9257adacb3c1d98c662a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation72dc76740ee8de18585ab512",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation99556969987396024ee57932"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationdbb7b3792ffcd0fdce18b985",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec3d0d463ace1d7eaf82c9ba9"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9b9a607afa25c81c3a371508"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation24a152e5d2479aad8a267b79",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature79d6d15dd16779a04930e8dd"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9b9e28a2441b5b4bcf273fdb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation29fe7edef999c1a9a3bfcbee",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": -0.5,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9bf13456f1b5cdd27cc0bd4f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationdc3e389704e531b161a8d3f6",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9bf13456f1b5cdd27cc0bd4f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature63cae3d976dd2db258070cc0"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9c758ee9c4cc69b6ad22eac1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3f2d664613d10cd9e94afefc",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec766101e1ab0864a294ab2fc",
+      "urn:ontoward:ClinicalFeatureefbf555ffe51faff0b4cdcaa"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9d13010eb12e528277f31d5b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6a16cb08b72cf467679f65f3",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec766101e1ab0864a294ab2fc"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9d13010eb12e528277f31d5b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation697ee9ff4cd6410d548d2d1d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb7ecd01c11260861f56dc034"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9d1c895b98daf97669321053"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb480ebcd54b4ffa67fd9d421",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature63cae3d976dd2db258070cc0"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9d59a47dc3bc2ae9e9722b79"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0d6d72f63cfba727930e3516",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": -2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9db0d623c75190b3ce1b5234"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationac101a697ffe22b08cd3f35b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0814fcb2ca529cc1c5bd09f2",
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9db0d623c75190b3ce1b5234"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation67db9e896605e1113ccb3d16",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb7ecd01c11260861f56dc034"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9ec695d055297f953e788636"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationdcda461b0d768e194930f279",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9ecb94a6b238db730f3f0d2c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione4ce23979f6d799da8119155",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9ecb94a6b238db730f3f0d2c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf9215b6feffa7907ffd19d63",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9f86ddad98bc7626976b3e17"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa4d1982a72e21ad6e6603b31",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3b24c7094defa0ec9d518fd4"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociation9ff34db073cc2d8d344f16dd"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfbc113956facd108c21d277f",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa2198a2c3d8f5f19cf94bc7c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation1114adadfc086a744c5f1c0c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0678682a6927a6fc778332e0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa2a3dc0fc2eeba8c26852106"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0e9cc8d882c30a20d8ffd647",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa2f0ddaeeed55d85f5391da7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation47ec5c115df5e99b1b158738",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature47d331c17762dbce48e5b2b5"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa606222ec846de05a540a8e1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb522345e613f96d86c1bac9e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa71fab545eb7146dbfbad927"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation24a152e5d2479aad8a267b79",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecc1eee9624da150dfb5bfff6"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa7b981391730739b48a1884d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6bfe156594957b12c27f35e2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature25e7a42cd9949c96fcf13f1e"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa7f9b1db022c2cca22bb81fd"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb1213fbbe37fcfc2bac3fb29",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3b24c7094defa0ec9d518fd4"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa80841d1aec0777b3cee95e3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation323912a9568c8c6bc1411f87",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb1e304e1ff7a7eea0cf95646"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa81cf072ebc80e31d2f03014"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation112cdfc70d8af24c26e0860c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3aadea89be2516043590a96d"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa97a5b18ef6d67d872788aad"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3aadea89be2516043590a96d",
+      "urn:ontoward:ClinicalFeaturee68fb0fbcabfaa8868054aec"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa97a5b18ef6d67d872788aad"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa92a4c03e76568a88d2d5962",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature002930a142d5018c5f2afacf"
+    ],
+    "delta_score": 0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationa98bc07cf194ff23b608def7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf9215b6feffa7907ffd19d63",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature021dff62a5317ceee77f5e57"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationaa3ea49d1eb2c2fb652fbcf4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation64755cfb1d97f156395302df",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7d7e1ee7855da2c09bc9ff76"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationab33d2548bf0abf540bf954c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6bfe156594957b12c27f35e2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturef037ca0347c996fec1b8eb7d"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationab4c58f49569cf7fac8f2d7c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf1a1eef0ab881e87f4f6c2de",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature48b0a66bd9dc0a953ffa23c0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationac2334f233be7c8d6870f8ce"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation025cb8c426a222042d45ddfd",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1",
+      "urn:ontoward:ClinicalFeaturef635e7a17f330b1cb79b6f5a"
+    ],
+    "delta_score": -0.5,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationadb5210c589ed922f4556836"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb984fd312757674f7c275e0a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationadb5210c589ed922f4556836"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation61f225dee0dd988279cccab1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature25e7a42cd9949c96fcf13f1e"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationae002970dcda9120be5aa007"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation1ed4cc3dd8208f8ecbb02c52",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationae73d12e0bf51331337de8d1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3826536e37d8189226763180",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0814fcb2ca529cc1c5bd09f2",
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": -1.5,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationae73d12e0bf51331337de8d1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0bebdca3d31ef2966003ce5b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef"
+    ],
+    "delta_score": 1.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationaeff4a5be87c7248eae48a7f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationde099f12452b88b2f320a0c7",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": 1.5,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationaeff4a5be87c7248eae48a7f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation91acf7f389d22c1421253431",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee8b38760683dab24a5748116"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb071ec354124ce71b61dd4a3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturedd89b9d8d9505311c34c7bbb",
+      "urn:ontoward:ClinicalFeaturee8b38760683dab24a5748116"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb071ec354124ce71b61dd4a3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0fda641e017f5aaac1ad7b11",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb0cd3f3be12ab2120c44cd28"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecb047b73a7ecc24266ee655c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb14152dc9da46858715c1db4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86b209169d9418ada791841b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature63cae3d976dd2db258070cc0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb182cc53a73d1ac635081b15"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf25ecd08faf7ff8a2bb308fa",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb18c8be8f239cf9eb27903bf"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation468ef79cab56fa98c90cfcaa",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature83b07788a9c76e066f1f48a0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb1a5676f2459ea4f3a277c91"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationaf0a4f8a1ff791cd74195579",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb295c7c628401bf034513877"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation72dc76740ee8de18585ab512",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb37f79ccd6a61d9de771afa7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation04c147e45f6d818639e09b49",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb5587e9d1548eadf1fe2b660"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc15f7903d2a094bce4230da1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef"
+    ],
+    "delta_score": 3.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb5587e9d1548eadf1fe2b660"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0b3096c0b6ad497c693896e3",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature49318c7adbee5717da33361d"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb6bfb0e1a485285aad675f07"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation30b5e525423ddca50f491816",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3b24c7094defa0ec9d518fd4"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb72b97bb4c63b5fdb197076a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation025cb8c426a222042d45ddfd",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationb984fd312757674f7c275e0a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc82599d5125d3504c84e9f6d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebd0d0e1978eda3885558f1db"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationba218c77a94431750e56b1ed"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb522345e613f96d86c1bac9e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0678682a6927a6fc778332e0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationba64fa05bb7db827ccec1abb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation560ccce2abc5d62df7315ac1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature35052dab4567d8308466a1dc"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationba665bd62953c87c184152bf"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione498cb667db691ec45b8cbd4",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature35052dab4567d8308466a1dc",
+      "urn:ontoward:ClinicalFeaturea64f1b56ba9564deee57c8f0"
+    ],
+    "delta_score": -1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationba665bd62953c87c184152bf"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation7ea814cf8bf148dfa59cb598",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7b1221ec80db7de317d4375c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationbad66e6d284f06731956ffd9"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature31f34e447e2897ff7a4b30d0"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationbb4fbd51c8f0b97f87bd58bc"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation32dfdb052b38a104b81f4b6a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature49a62ca6c4e6d40d2f30ec91"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationbb70e117ade5f2f267bd232d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0e9cc8d882c30a20d8ffd647",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature35052dab4567d8308466a1dc",
+      "urn:ontoward:ClinicalFeaturea64f1b56ba9564deee57c8f0"
+    ],
+    "delta_score": -1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationbb90c744c0fc5e01ac2e9652"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa2f0ddaeeed55d85f5391da7",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature35052dab4567d8308466a1dc"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationbb90c744c0fc5e01ac2e9652"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation13e0da2c614193f4a169621b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationbc182b656ab121ccf596b3b4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf9215b6feffa7907ffd19d63",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureccb587417bb5d5f94e4d26fc"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationbca9f190ecdb88b02118b47d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation47ec5c115df5e99b1b158738",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7d7e1ee7855da2c09bc9ff76"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationbdec7ce4a39f553d2ebba3c6"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3f2d664613d10cd9e94afefc",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature021dff62a5317ceee77f5e57"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationbefb9c8f362de92a32082ad5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation46ecf7613ca00c47e4a1a711",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationbf824a8bc3e61cf7b78cdca2"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation45aadf688fd766a14b030f7a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc0fb32dc5c47c7eb61335777"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation04c147e45f6d818639e09b49",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc15f7903d2a094bce4230da1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationcb792988594102f092d2defc",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec7bcdb1c3b6d18078f31fa4b"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc17aea63b1594c44268716be"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc218357a88ac4bb655b3acf9"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3bc14aab81afb25fd553770c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc29c9200c85c673680ab3322"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation51d81a8ca885338aef85476e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature03229fbdc19ec5deb077e605"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc2b2e92ff6f71fad42e3cdbb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa156975f0f6861f7ebe030ee",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature03229fbdc19ec5deb077e605",
+      "urn:ontoward:ClinicalFeature88ae1847a61277757bba438e"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc2b2e92ff6f71fad42e3cdbb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6bfe156594957b12c27f35e2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature897bcadcb1a9861e4078b5cc"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc3009b867162c709a8a4d136"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfb3f09519d243e9bc0a7c901",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0678682a6927a6fc778332e0"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc32cc8e6e35dcdf9fb51bf0a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3534348a4b12b5c7350e70a1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature83b07788a9c76e066f1f48a0"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc45bb73cb4b7b0a9c5f60c2f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationeebe107021922f3758cac709",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7d7e1ee7855da2c09bc9ff76"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc4c48a81bdf8fb8df2f58764"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation365dd5dc467d655b30ed8daf",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0678682a6927a6fc778332e0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc8151a2376a510f1bbcabaf1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc82599d5125d3504c84e9f6d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureafe3bbf3ed43be486a61d9db"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc8335362d819779f20eb00b3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation560ccce2abc5d62df7315ac1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature03229fbdc19ec5deb077e605"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc8f747cc4871f347c419b4c6"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione498cb667db691ec45b8cbd4",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature03229fbdc19ec5deb077e605",
+      "urn:ontoward:ClinicalFeature88ae1847a61277757bba438e"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc8f747cc4871f347c419b4c6"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation04c147e45f6d818639e09b49",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturef037ca0347c996fec1b8eb7d"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationc9a6959875bc3f23128477ae"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationeebe107021922f3758cac709",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationca2e5bb38a604cc1c8b7c9fb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation138696c4952031bfd50fa1cb",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationcadd76bbf8518263b36f45fb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation365dd5dc467d655b30ed8daf",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7b1221ec80db7de317d4375c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationcc5b9b817e7b01b9ff0a7673"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3fd612de49154c39c4e50ece",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationccbb23ad7f6f2dcf950f9fb8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa81be89e090354c29ccb2e55",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationcd12997ede3a2e7c08d59d7c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf25ecd08faf7ff8a2bb308fa",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature49a62ca6c4e6d40d2f30ec91"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationcd222656502a63f67b3a8a67"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation23491b79f1d9d83516ae2846",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationcdf57e1a101952526919af62"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation50422fa7d4dc2f6b6b476a50",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationce02f8ef704f29a2c7eaa0c4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation24a152e5d2479aad8a267b79",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature021dff62a5317ceee77f5e57"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationcedebbe9dddd17b221e04980"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6ef071eca0bdf3afac75ac32",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationcf0e86d605160798ef4d45ed"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb0f4c13dcd33aeae02068e3d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationcf0e86d605160798ef4d45ed"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa209b563ba6a3409e6853e71",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationcf5d7e0c9d70fc8c2a6b0aa1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation808a9c5f743a8931c60dd70e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationcf6298888de0cad992cee3f5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation138696c4952031bfd50fa1cb",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature04ca737dff1e4d33118954ee"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationcfa084001fdda2ea8e3fd7d8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation645d02448fca160aafab69bd",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature49318c7adbee5717da33361d"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd11f1211ab8034ad5832bca5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation32dfdb052b38a104b81f4b6a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature04ca737dff1e4d33118954ee"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd14d1a46c861681b9e6a7e81"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation05b7a7781d36994ae0ded71b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature002930a142d5018c5f2afacf"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd175a0082d951de9044e66d0"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation129397e4c1a5c8819bb6851e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd2f3853e69dde3f4be947e14"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation30b5e525423ddca50f491816",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureda7d555df6a7c36e5a290815"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd38cc8e381b437621301c4d6"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation72dc76740ee8de18585ab512",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": -0.5,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd48be37be3e2ca283f392efc"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb37f79ccd6a61d9de771afa7",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd48be37be3e2ca283f392efc"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation75a50bcb1beaa88463b0e151",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee0d7c3e158813d9005922c45"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd4996dfaea7a04f5182781c5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation129397e4c1a5c8819bb6851e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1",
+      "urn:ontoward:ClinicalFeaturef635e7a17f330b1cb79b6f5a"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd49f779b50b0fcba2b108ed8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationd2f3853e69dde3f4be947e14",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd49f779b50b0fcba2b108ed8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfae2ff8687127b7cba5c134b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd5dd45451d739127034158f8"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation900fface3c6915fd62f52e29",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebd0d0e1978eda3885558f1db"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd62c7ed177b17f2106f58a69"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation90b8fbcbd124e3ccaa9a0a98",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb9907a308c95887fe4b85587"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd6678aedb43518d487ce2a84"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation7ee8b8e5fb72faa5f114eb52",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd6c1a9abcd37be4d50d12b9f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4672ede950ae917a12f382f0",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd6cf9e70ca96a10463535cc6"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4a84a2ad5a9d3dc24cb9b51f",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd6cf9e70ca96a10463535cc6"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf1a1eef0ab881e87f4f6c2de",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7d7e1ee7855da2c09bc9ff76"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd89a846513f097f22c73e4eb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation0e9cc8d882c30a20d8ffd647",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd9398452448597f1b1998dc4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa2f0ddaeeed55d85f5391da7",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationd9398452448597f1b1998dc4"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3def849cc96d5133c9d38876",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature49a62ca6c4e6d40d2f30ec91"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationda16491d025336ed3c4c12a1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb309a9ed75d75b8e8d1565b1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdb30c519024caaa40c535f45"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc6abbd0462187a4142675771",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdb35c5eec46694bd17191e33"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation33b062db76298d29536cfa06",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdb3fee8bc0d4ddb99ca21da9"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationae7b7bb974741957cdf4141e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdc2c94d3ceea537ae0493691"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc397b367c3afb9bc7198e2b9",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturee3ec006f1b3e19a821cb885e"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdc38f83098d65fea3ecd0b33"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation29fe7edef999c1a9a3bfcbee",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdc3e389704e531b161a8d3f6"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation23937bedbc0b8ab5d2f37533",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdc5fddb74762be54677681e2"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione4ce23979f6d799da8119155",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdcda461b0d768e194930f279"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation37c24d39e92b26162326ff14",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdd3ccf3492d85f4f41a825de"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfb3c967b6a9a5f6853407ed3",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdd3ccf3492d85f4f41a825de"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6bfe156594957b12c27f35e2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature63cae3d976dd2db258070cc0"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdd4a476fdb59256139d1cceb"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation07b33405e1fad213311dd6f1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdd7c05e69910b6eac5707a05"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa92a4c03e76568a88d2d5962",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationddcb337acd4491ca3ebc7c4c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation13e0da2c614193f4a169621b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0814fcb2ca529cc1c5bd09f2",
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationde881b73fe1ce23772bb6972"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationbc182b656ab121ccf596b3b4",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature54dd7e89397906c1a053ee1c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationde881b73fe1ce23772bb6972"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc82599d5125d3504c84e9f6d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturea3e1bd8207c3d330b81b2752"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationde89d4b8d76742a0dcd00ef0"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4672ede950ae917a12f382f0",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature254f055d748d3d766d2edb11",
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdf080002afcf84748d514a90"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation4a84a2ad5a9d3dc24cb9b51f",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdf080002afcf84748d514a90"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec8b4da31dd9c7460819f00fc"
+    ],
+    "delta_score": 3.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdf7ee7a03b7a0a4b5ffc4578"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation6bfe156594957b12c27f35e2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature75a9fb23a5db0a2f00714c98"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdf8217202435252e9e71a29c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation5c986d24dec51565830b0649",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature21bc9a3fff338ef1b68715d9"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationdfadf77a164eadcea70d5f7e"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation48f95f5bef4a9e1a40caecf1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione00e129246a5ae893f2d4fca"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc6abbd0462187a4142675771",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6f2780a34590dd2a6aa7e47d"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione0c61d15c2da16a40cb978a2"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation64755cfb1d97f156395302df",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature9a699aed45f13c6ff01394de"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione28d5f3f674f9dc129542c4a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationac101a697ffe22b08cd3f35b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3a23d9b70b3cbb5c5c812dfd"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione3747b45e0f6394c39d106a2"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation900fface3c6915fd62f52e29",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecc1eee9624da150dfb5bfff6"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione49d25bc2a0ea650224a831a"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3f2d664613d10cd9e94afefc",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature254f055d748d3d766d2edb11",
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione4c422c24313406f4e5ea077"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation70a5f147cc043145f19740be",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione4c422c24313406f4e5ea077"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation560ccce2abc5d62df7315ac1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione52618dfb42d619f8e65fd77"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione498cb667db691ec45b8cbd4",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione52618dfb42d619f8e65fd77"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation323912a9568c8c6bc1411f87",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature63cae3d976dd2db258070cc0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione548830c3c8e6f9800760e25"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa8bb01230e933b445fbbb74e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef",
+      "urn:ontoward:ClinicalFeatureae2a0e30c8c2f628909485d3"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione578899e77b16cb4395bdad5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationeeacff439b9ee7613a174996",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature66f866ef2ec4235222e767ef"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione578899e77b16cb4395bdad5"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationebf3de24420960a8a8077f52",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0678682a6927a6fc778332e0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione5bf43b8894ee482707dae13"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3826536e37d8189226763180",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature83b07788a9c76e066f1f48a0"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione5ff3e9ccbc65aec402448e0"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa92a4c03e76568a88d2d5962",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.5,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione68f043d2b6a727fa843e0ef"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationddcb337acd4491ca3ebc7c4c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione68f043d2b6a727fa843e0ef"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation391cc004a09fcd934a16c7b2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature21bc9a3fff338ef1b68715d9"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione6d64a4aecc95954f4beb154"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation81d7144c4ddba7640da6d290",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature75a9fb23a5db0a2f00714c98"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione93b1c74cf275caf16cf7a55"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation7ee8b8e5fb72faa5f114eb52",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature49a62ca6c4e6d40d2f30ec91"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione9cf8a3291c75b4974759ea1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation24a152e5d2479aad8a267b79",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature9a699aed45f13c6ff01394de"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociatione9f4647d94ad1efe4779ce04"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation9f86ddad98bc7626976b3e17",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationeb42d4ec9153404e44d652c1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf9215b6feffa7907ffd19d63",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature254f055d748d3d766d2edb11",
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationeb42d4ec9153404e44d652c1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf9215b6feffa7907ffd19d63",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb8a918eb1f8e06ac326af9a4"
+    ],
+    "delta_score": 2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationec4bf327ce4d820f31ad68e3"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation112cdfc70d8af24c26e0860c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationec5617d68c18438d9fb3e45c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation86ca390dd1e3e058086a6a48",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature254f055d748d3d766d2edb11",
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationec5617d68c18438d9fb3e45c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationeebe107021922f3758cac709",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature9a699aed45f13c6ff01394de"
+    ],
+    "delta_score": -1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationed09136197a2dfede30c9b8d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociatione756e3e9b85a1f72589c6d5a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7d7e1ee7855da2c09bc9ff76"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationed3d6b704e9595e77c221e66"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationa8bb01230e933b445fbbb74e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationeeacff439b9ee7613a174996"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation391cc004a09fcd934a16c7b2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature5ab9ee9199b014a4a1a45420"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationef2e02f98c9bee3c92d129e1"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation7c80221704774c461069eb3c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3aadea89be2516043590a96d"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf12097387329ad3b2ae57495"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation8994d44eaac5aff518a544d2",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3aadea89be2516043590a96d",
+      "urn:ontoward:ClinicalFeaturee68fb0fbcabfaa8868054aec"
+    ],
+    "delta_score": 0.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf12097387329ad3b2ae57495"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation05b7a7781d36994ae0ded71b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf136c6a3bea1c438193a1212"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation638119fc8d65cda8fbd20a11",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf136c6a3bea1c438193a1212"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation978b8a80e730f5094e715543",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf1e89cd19339c4b4d79ca72f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationcd4c0008a6b5c9d2962b7920",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature6e9a21f3bbdd34b6b83282d1",
+      "urn:ontoward:ClinicalFeaturef635e7a17f330b1cb79b6f5a"
+    ],
+    "delta_score": 2.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf1e89cd19339c4b4d79ca72f"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3f2d664613d10cd9e94afefc",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature79d6d15dd16779a04930e8dd"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf20376a47596b816b9839f94"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf135d5785c43c8a31905235a",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature75a9fb23a5db0a2f00714c98"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf417225b56792a017f2b796c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationd5dd45451d739127034158f8",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf4c120341883532d7096360c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfae2ff8687127b7cba5c134b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature8daee7cd4e9c88e5c7b9e59d",
+      "urn:ontoward:ClinicalFeaturece617cc7f07f2f9f833d576f"
+    ],
+    "delta_score": -1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf4c120341883532d7096360c"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationc213fc22ea0ce79c2f6fac7d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf5e083c60ecbceb2df3a3244"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation436c0c2cea617a84e007aeb8",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatured8d317f2d66c8ef2e0f39661"
+    ],
+    "delta_score": -0.5,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf7438170eea4798f4093cab0"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3b9ac447b249c2de6d186013",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature0c3fcc46bb59b3f4c0a80d39"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf7cc1f79384a4131c9c8133b"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation323912a9568c8c6bc1411f87",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecc1eee9624da150dfb5bfff6"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf8fcf44f893d36d55d18fd12"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation61f225dee0dd988279cccab1",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb1e304e1ff7a7eea0cf95646"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationf900a90f4a05641d6a63554d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation24a152e5d2479aad8a267b79",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturecb047b73a7ecc24266ee655c"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationfb00593ed7a72c3125ef77e7"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfd00dbb3571902386cfc940d",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature25133faddd46d3cc442f1d3c"
+    ],
+    "delta_score": 1.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationfb8fcdee51272e265b69a9a0"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationfa70301d50528fb67865d96c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebb2641dbb4357faaf95ddac5"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationfbe2476894179f2a0d931e92"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation91cf5aa96c80670bee75636c",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeatureb3fbe504a4ea95db76db1190"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationfe5a888555e96059513a89a9"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation3b9ac447b249c2de6d186013",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature254f055d748d3d766d2edb11",
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 1.0,
+    "kind": "joint",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationfe6995e60b6908db939d2994"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf7cc1f79384a4131c9c8133b",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature7570d1b7820e577498d64566"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationfe6995e60b6908db939d2994"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationb6d33d21c0ca1f3dffdfcf6e",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturec3d0d463ace1d7eaf82c9ba9"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationfeb20102787acf9929434f6d"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociationf9215b6feffa7907ffd19d63",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature48b0a66bd9dc0a953ffa23c0"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationfed75f0ac15ca5f2aa4e7694"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation23937bedbc0b8ab5d2f37533",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeature3a23d9b70b3cbb5c5c812dfd"
+    ],
+    "delta_score": -2.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationfefb1ddc565139fc8cfa08ff"
+  },
+  {
+    "baseline_association": "urn:ontoward:DiseasePatternAssociation323912a9568c8c6bc1411f87",
+    "changed_feature_ids": [
+      "urn:ontoward:ClinicalFeaturebd0d0e1978eda3885558f1db"
+    ],
+    "delta_score": 0.0,
+    "kind": "atomic",
+    "policy_version": "v5.0.1",
+    "refined_association": "urn:ontoward:DiseasePatternAssociationffc5097159fd4e0f560dd4af"
+  }
+]

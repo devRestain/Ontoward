@@ -1,2 +1,0 @@
-pydantic==2.14.0
-rdflib==7.6.0

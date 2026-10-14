@@ -50,9 +50,9 @@
 - Consult `assets/nova-competition-2026/` for detailed competition information, starting with its `AGENTS.md` and the relevant reference documents.
 - Read `DECISION_STATE.md` when an action depends on a user choice.
 - Treat recommendations in `DECISION_STATE.md` as proposals until the user selects an option.
-- Keep the selected preliminary SDK route for the Doctor; apply the current SNOMED-first preparation sequence through D05 and D09.
-- Use D07 for document-level extraction outputs, source-group submission bundles, and one runtime RDFLib Graph.
-- Use D08 and data/ontology/AGENTS.md for the schema, starter vocabulary, flat parallel location values, and SDK text-mapping boundary.
+- Keep the selected preliminary SDK route for the Doctor; apply D05 and D09's bounded SNOMED/BODHI v5.0 source projection.
+- Use D07 for preserved preparation evidence, separately admitted submission bundles, and one runtime RDFLib Graph.
+- Use D08 and data/ontology/AGENTS.md for shared patterns, typed conditions, disease associations, conditional weights, and SDK text mapping.
 - Use specific clinical pain complaints as D08 retrieval targets and preserve finer Location values, raw wording, interpretation uncertainty, and separate episodes.
 - Use D11 for the five-session workflow, Python routing and scoring, scoped budgets, and unasked-item deletion; use D12 for the SDK wire format and packaging.
 - Apply newer explicit user decisions before stale operational plans or next goals; record implementation and execution only from observed evidence.
@@ -66,12 +66,12 @@
 - Apply D13 responsibility names and keep Consultation as the sole internal-session coordinator.
 - Keep pure workflow decisions in workflow/rules and cross-state question interaction and usage operations in their designated workflow/state owners.
 - Run maintained offline workflow checks with Dev/tests/workflow/compose.offline.yaml and exclude tests and synthetic assets from the submission.
-- Require the adopted D09 SNOMED preparation contract and D08 v4.2 alignment before generating or admitting new clinical artifacts.
-- Apply D09's two stages through Dev/ontology/snomed/: expand and human-review the versioned terminology registry first, then project RF2 concepts and relations into Ontoward patterns and features.
-- Keep the old guideline schemas, candidate records, responses, and pilot outputs intact without making that route the default or automatically resuming it.
-- Treat explicit differential lists as possible disease-target associations without inferred expected status or features and retain their origin outside runtime RDF.
-- Use D09 and Dev/AGENTS.md for RF2 input, SNOMED preparation, the sessionless NOVA `gpt-6.1-sol` runner, and its explicit dry-run/live boundary.
-- Treat the approved 510 English terms as expandable seeds; require human selection of the generated registry before stage two.
+- Require D08 v5.0 alignment before generating or admitting new clinical artifacts.
+- Use Dev/ontology/source_projection.py and v5.py for deterministic bounded projection of the supplied International and Korean RF2 snapshots and BODHI-S CSVs.
+- Treat the removed v4.2 SNOMED and guideline extraction code as deprecated; retain useful archival evidence under data with explicit deprecation metadata.
+- Preserve original assets and vocabulary approval receipts without rebuilding legacy interfaces or automatically resuming old jobs.
+- Use D09 and Dev/AGENTS.md for variant preservation, source pins, unresolved dispositions, preview validation, and the model-free execution boundary.
+- Treat the approved 510 English terms as expandable seeds; require separate registry and clinical review before runtime asset admission.
 - Use D10 for the separate extraction image and later WSL2 operating boundary.
 - Record decision alternatives, selections, and lifecycle changes only in `DECISION_STATE.md`.
 - Reference decision IDs from operational state without copying their alternatives or statuses.

@@ -37,7 +37,7 @@ REQUIRED = {
     'workflow/state/usage.py',
     'workflow/submission_writer.py',
     'workflow/text_config.py',
-    "knowledge/__init__.py", "knowledge/graph.py",
+    "knowledge/__init__.py", "knowledge/graph.py", "knowledge/conditions.py", "knowledge/scoring_policy.json", "knowledge/schema.ttl",
 }
 EXCLUDED = {"AGENTS.md", "README.md", "PROJECT_STATE.md", ".DS_Store"}
 
@@ -72,7 +72,8 @@ def main() -> None:
     if required - names:
         raise ValueError(f"Missing runtime files: {sorted(required - names)}")
     manifest = knowledge_path(settings[SETTING]).relative_to(SOURCE).as_posix()
-    if any(name.startswith("knowledge/") and Path(name).suffix in {".ttl", ".json"} for name in names) and manifest not in names:
+    if any(name.startswith("knowledge/") and Path(name).suffix in {".ttl", ".json"}
+           and name not in {"knowledge/scoring_policy.json", "knowledge/schema.ttl"} for name in names) and manifest not in names:
         raise ValueError("Knowledge assets require their configured manifest inside submission/knowledge")
     for line in (SOURCE / "requirements.txt").read_text().splitlines():
         if line.strip() and not line.startswith("#") and not re.fullmatch(r"[A-Za-z0-9_.-]+==[A-Za-z0-9_.+-]+", line):

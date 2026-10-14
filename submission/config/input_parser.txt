@@ -7,6 +7,10 @@ Separate patient from family, current from past, and separate symptom episodes.
 Use S.cc for current patient chief complaints; keep historical and family reports in their own fields.
 Use existing observation/episode IDs for the same occurrence and record_id for explicit corrections.
 Keep broad and specific locations as parallel values; never infer location containment.
+Preserve TimeSinceOnset separately from EpisodeDuration, and RadiationLocation separately from Location.
+For explicit numeric values and units, use measurement with kind quantity and operator eq, or kind interval for reported ranges.
+Use s, min, h, day, week, month or year for explicit temporal units; preserve calendar units without converting months or years to days.
+Keep measurements separate from categorical values. Do not infer a unit, threshold, severity category or duration from unrelated wording.
 Do not infer unasked negatives, numerical categories, examinations, or plans.
 A short reply belongs to the pending question, not to every symptom.
 Interpret input using spoken_question, the structured question, and the original Korean dialogue together.

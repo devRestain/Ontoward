@@ -2,7 +2,7 @@
 
 Ontoward는 N.O.V.A. 예선의 모의 환자와 한국어로 문진하고, 실제로 받은 진찰 결과를 정리하여 **SOAP 초진 기록과 주진단 하나를 제출하는 에이전트**다. 이 디렉터리는 제출 실행 코드의 단일 원본이다. `run.py`가 `workflow/runtime.py`의 `prepare()`와 `consult()`를 SDK에 전달한다.
 
-이 백서는 2026-10-14 개정 구현을 처음 읽는 사람을 위한 안내다. 실행 코드와 합성 증례 검증을 설명한다. 현재 실제 승인 임상 RDF·질문·계획·manifest가 없으므로, 공식 환자를 대상으로 바로 실행할 준비가 완료된 상태는 아니다. 코드 검증, 임상 자료 승인, 실제 모델 품질, 공식 제출 성공은 각각 확인해야 한다.
+이 백서는 D08 v5.0과 2026-10-14 D11 개정 구현을 처음 읽는 사람을 위한 안내다. 실행 코드와 합성 증례 검증을 설명한다. 현재 실제 승인 임상 RDF·질문·계획·manifest가 없으므로, 공식 환자를 대상으로 바로 실행할 준비가 완료된 상태는 아니다. 코드 검증, 임상 자료 승인, 실제 모델 품질, 공식 제출 성공은 각각 확인해야 한다.
 
 ## 1. 무엇을 모델이 하고, 무엇을 Python이 하는가
 
@@ -26,7 +26,7 @@ Doctor와 Gateway는 모두 공식 경로의 `openai/gpt-6-luna`를 사용한다
 2. **인사:** `consult()`가 새 상태를 만들고 초기 정보·활력징후를 보존한다. 초기 정보에 증상이 있어도 첫 환자 행동은 인사와 주호소 유도다. 준비 문구는 “안녕하세요. 무엇이 어떻게 불편하세요?”다.
 3. **HPI:** “가상증상이 있어요”라는 답을 Gateway가 허용된 개념에 연결한다. `InterviewPlanner.prepare_chief_complaint()`가 위치·양상 등 적용 가능한 질문을 준비한다. 초기 정보나 한 답변에서 이미 확인한 속성은 반복해서 묻지 않는다.
 4. **Open Inquiry와 집중 ROS:** 유지된 HPI 다음 다른 불편함을 자유롭게 말할 기회를 한 번 준다. 이어 주호소 계통의 다른 증상을 최대 6개 확인한다. 계통 연결이 없으면 집중 ROS를 만들지 않는다.
-5. **후보와 Context:** 주호소·추가 증상에서 질환 후보를 합집합으로 찾는다. 가상질환A/B와 연결된 병력이 있으면 질문하며, 없다는 답도 그대로 보존한다.
+5. **후보와 Context:** 주호소·추가 증상에서 질환 후보를 합집합으로 찾는다. 지지 맥락과 Association 필수 적용 조건을 주체·시간에 맞춰 질문하며, 없다는 답도 그대로 보존한다. 과거의 확인으로 현재 조건 질문을 건너뛰지 않는다.
 6. **감별:** 후보 순위와 특징에 따라 질문·진찰을 실행한다. 합성 정상 증례에서는 실제 반환된 가상 진찰 소견이 B를 선두로 바꾼다. 단독 선두라도 질문이 남으면 감별을 계속한다.
 7. **교육:** `InterviewPlanner.prepare_education()`이 B의 준비 계획·교육을 선택하고 Doctor가 표현한다. 환자가 새 사실을 말하면 후보를 다시 계산하고 아직 전달하지 않은 설명만 수정한다.
 8. **제출:** 마지막 답까지 반영하여 SOAP 15개 문자열과 별도 주진단을 만든다. `DIAGNOSE`의 `completed` 응답을 확인한 뒤에만 정상 종료한다.
@@ -86,22 +86,22 @@ flowchart TD
 | [`frame_action`, `validate_action`, `execute_action`](workflow/doctor.py) | 선택 의도 → 표현 → 검증 → 환자/진찰 응답 | 환자와 맞닿는 Doctor 경계 |
 | [`complete`](workflow/io/model_client.py) | 역할·프롬프트 → 모델 응답 | doctor/gateway 태그와 공유 예산 유지 |
 | [`execute`](workflow/io/request_executor.py) | 동일 요청 → 응답 또는 오류 | ID·payload 보존, 제한 재시도, timeout 복원 |
-| [`refresh_hypotheses`, `select_diagnosis`](workflow/clinical_reasoner.py) | 관찰 → 후보·점수·진단 | 기존 임상 알고리즘 보존 |
+| [`refresh_hypotheses`, `select_diagnosis`](workflow/clinical_reasoner.py) | 관찰 → 후보·점수·진단 | v5.0 완전 조건 매칭·정교화 대체·Target별 중복 제거 |
 | [`refresh_after_input`, `check_budget`, `finalize`, `repair_submission`](workflow/consultation.py) | 현재 상태 → 임상 갱신·최종화 | 진단 선택→계획 준비→SOAP 작성 순서 유지 |
 | [`build_soap`, `validate_submission`, `begin_repair`, `submit_diagnosis`, `confirm_submission`](workflow/submission_writer.py) | 사실·진단 → SOAP·제출 결과 | 수리 상태 초기화와 completed 확인 책임 |
 | [`build_graph`, `run_node`, `finish`, `abort`](workflow/graph.py) | 상태·협력 객체 → LangGraph | 모델 없는 분기와 노드 검증; 외부 실행 자동 재생 없음 |
 | [`load`, `get_symptom_systems`, `get_system_symptoms`](knowledge/graph.py) | manifest → 지식; 증상/계통 URI → URI 목록 | 해시 검증과 집중 ROS 범위 조회 |
-| [`get_patterns_by_target`, `get_disease_patterns`, `get_pattern_features`](knowledge/graph.py) | 증상·질환·Pattern → 관계 | 계통 제한 없는 합집합 검색과 근거 평가 |
+| [`get_patterns_by_target`, `get_disease_patterns`, `get_pattern_features`, `get_feature_contributions`](knowledge/graph.py) | Target·질환·Pattern·Association → 표현·평가·조건부 기여 | 공유 Pattern·타입 조건·공개 정책 |
 
 ## 4. 다섯 상태 객체와 원문 대화 기억
 
-상태는 [`workflow/state/models.py`](workflow/state/models.py)에 모여 있다. 기존 다섯 상태 객체와 직렬화 필드·값을 유지한다. 상태를 바꾸는 책임은 별도 객체로 구분하며 외부 기억 저장소는 없다.
+상태는 [`workflow/state/models.py`](workflow/state/models.py)에 모여 있다. 다섯 상태 객체를 유지하며 v5.0 타입 관찰과 Association·점수 기여 필드를 포함한다. 상태를 바꾸는 책임은 별도 객체로 구분하며 외부 기억 저장소는 없다.
 
 | 객체 | 소유 정보 | 구분해야 할 점 |
 |---|---|---|
 | CaseState | S/O/A/P, 진단, diagnosis_kind, 진단 근거 ID | source_refs는 실제 입력, context_refs는 참고 대화 |
 | SessionContext | current 내부 세션, 행동·모델·토큰·시간 예산, 명료화 횟수 | 각 RecordItem의 scope는 기록을 만든 내부 세션; 공식 세션 ID는 session_id |
-| DifferentialState | 질환 후보·Pattern/Feature·점수·선택 ID | 증상 진단을 가짜 Disease 후보로 넣지 않음 |
+| DifferentialState | 질환 후보·Pattern/Association/Feature·실수 점수·기여·선택 ID | 증상 진단을 가짜 Disease 후보로 넣지 않음 |
 | QuestionPlan | 대상·속성·목적·문구·순서·우선순위 | 선택 의도이며 실제 발화는 별도 |
 | InteractionState | 요청·응답·턴·전달 여부, 역할별 모델 기록, 제출 결과 | 실패한 생성·미전송 문구·오류 로그는 환자 대화에서 제외 |
 
@@ -198,7 +198,13 @@ ChiefComplaint 20턴 배분은 **Open Inquiry → 집중 ROS → HPI** 순으로
 
 질환 검색은 모든 확보된 현재 증상·진찰 소견의 Target에서 Pattern을 역조회한 합집합이다. **BodySystem으로 질환 후보를 제한하지 않는다.** 불확실한 개념은 검색에 사용할 수 있지만 여러 확정 소견으로 중복 가산하지 않는다. 속성은 같은 관찰·에피소드 안에서만 결합한다.
 
-점수는 검토된 특징 지지 +2, 일반 지지 +1, 명시적 반대·모순 −1이며 관련 Context는 후보당 최대 +1이다. 음성 Context 때문에 감점하지 않는다. 동률은 질환 URI 순이다. 이는 정렬용 규칙이며 질환 확률이나 검증된 임상 정확도를 의미하지 않는다.
+v5.0에서는 Disease → Association → 공유 ClinicalPattern → ClinicalFeature 경로를 사용한다. 후보 검색은 Target만으로 넓게 하고 전체 Feature와 Association 적용 조건이 맞을 때만 점수를 활성화한다. Feature는 존재/부재 또는 concept·concept_set·quantity·interval 기대 값이다. CaseState의 measurement도 같은 타입을 사용하며 TimeSinceOnset과 EpisodeDuration을 분리하고 달력 단위를 일수로 바꾸지 않는다.
+
+[공개 점수 정책](knowledge/scoring_policy.json)의 BODHI 예측도 zero/rare/low/medium/high/very_high는 0/0.5/1/2/3/4다. 동일 BODHI 평가가 없으면 정확한 due_to=2, associated_with=1, 조건을 보존한 일반화=0.5를 사용한다. zero를 누락으로 바꾸거나 strong_predictor를 추가 가산하지 않는다. 원천 typicality와 조건부 점수 변화는 감별 문진 정렬에 사용한다.
+
+더 구체적인 표현은 점수가 낮아져도 조상을 대체한다. 복통의 일반형 2점 → 상복부 1점 → 상복부·우상복부 4점처럼 갱신하며 2+1+4로 합산하지 않는다. 비교 불가능한 변형은 최대값 한 번, 동일 Disease–Target은 반복·출처·에피소드 수와 관계없이 한 번 집계한다. 서로 다른 Target만 합산한다.
+
+FeatureContribution은 정교화 점수에서 기준 점수를 뺀 조건부 변화다. 한 조건은 atomic, 여러 조건은 joint로 보존하며 임의 배분하지 않는다. 미확인·불일치 조건에서 추가 점수나 자동 감점을 만들지 않는다. 확인된 Context는 후보당 최대 +1, 그 외 0을 유지하며 후보를 새로 만들지 않는다. 동률은 질환 URI 순이다. 이 점수는 정렬 정책이며 확률이나 검증된 임상 성능이 아니다.
 
 SOAP는 다음 **15개 문자열 칸**을 정확히 만든다. 주진단은 note 밖의 별도 diagnosis다.
 
@@ -233,7 +239,7 @@ docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --
 
 두 번째 명령은 저장소에 유지되는 행동 검증을 실행한다. 네트워크·개발 키를 끄고 Tmp/workflow-tests 아래 매 실행마다 새 제출 복사본과 합성 RDF·문구·SDK 대역을 만든다. verification.json과 synthetic-full-flow.json, synthetic-sdk-wire.json에서 결과를 확인한다. ONTOWARD_TEST_OUTPUT으로 증거 디렉터리를 선택할 수 있다. 테스트와 합성 자산은 제출 ZIP에 포함하지 않는다.
 
-이번 리팩토링은 기존 40개 사례에 질문 폐기 원자성·반복 호출·준비 재개·전송 직전 시간 변화·노드 검증 후 외부 실행 재생 금지·제출 수리 한도를 더한 행동 검증을 사용한다. 전후 비교 도구 [compare_traces.py](../Dev/tests/workflow/compare_traces.py)는 보존한 이전 소스를 별도 프로세스로 실행하여 고정 시간·ID·응답에서 상태 스키마, 각 노드 상태, 모델/SDK 요청·응답과 지연을 비교한다. 최신 실행 결과는 [제출 상태](PROJECT_STATE.md)가 소유한다.
+유지 중인 52개 행동 검증은 전체 상담 흐름·복구·예산·SOAP와 v5.0 공유 Pattern·2→1→4 대체·타입 기간·적용 조건·zero/소수 정책·제한적 경로를 확인한다. 보존된 D13 전후 비교 도구 [compare_traces.py](../Dev/tests/workflow/compare_traces.py)는 당시 책임 리팩토링의 동작 보존 증거를 확인하는 도구다. v5.0은 승인된 표현·점수 변경을 현재 행동 검증으로 확인한다. 최신 실행 결과는 [제출 상태](PROJECT_STATE.md)가 소유한다.
 
 규칙은 [workflow/rules](workflow/rules/limits.py)에 모여 있으며 [규칙 색인](../Dev/architecture/WORKFLOW_RULES.md)에서 담당 객체·함수·검증을 찾을 수 있다. 질문 폐기는 QuestionLifecycle, 행동과 전달은 InteractionLifecycle, 사용량은 UsageAccounting이 함께 바꿔야 할 상태를 묶어 처리한다. 예산 정책의 판단과 실제 상태 반영은 구분한다.
 
@@ -246,6 +252,6 @@ docker compose run --rm -T package
 
 실제 승인 manifest가 없으므로 production prepare()는 파일 오류로 멈춘다. 빈 그래프로 넘어가지 않는다. ZIP 생성은 임상 실행 준비 완료를 뜻하지 않는다. 실제 Luna의 문장·한국어 해석 품질, 임상 자산 수용, 공식 API 복구·제출·평가는 합성 검증에 포함되지 않는다.
 
-Mermaid 세 도식은 구현의 함수·분기와 대조했다. 프로젝트 dev 컨테이너에 Mermaid 렌더러·Node·브라우저가 없어 **시각 렌더링은 not_run**이다. 원문 검토를 렌더링 성공으로 표현하지 않는다. 최종 관측 결과는 [제출 상태](PROJECT_STATE.md)와 [검증 기록](../Tmp/workflow-refactor-2026-10-14/review.md)을 기준으로 확인한다.
+Mermaid 세 도식은 구현의 함수·분기와 대조했다. 프로젝트 dev 컨테이너에 Mermaid 렌더러·Node·브라우저가 없어 **시각 렌더링은 not_run**이다. 원문 검토를 렌더링 성공으로 표현하지 않는다. 최종 관측 결과는 [제출 상태](PROJECT_STATE.md), [워크플로우 검증](../Tmp/workflow-tests/verification.json), [ZIP 실행 검증](../Tmp/ontology-v5/archive-verification.json)을 기준으로 확인한다.
 
-요구사항은 [PRD](../PRD.md), 선택은 [D01·D11·D12·D13·D14](../DECISION_STATE.md), 자료 승인·준비·검토는 [data 상태](../data/PROJECT_STATE.md)가 관리한다.
+요구사항은 [PRD](../PRD.md), 선택은 [D01·D08·D09·D11·D12·D13·D14](../DECISION_STATE.md), 자료 승인·준비·검토는 [data 상태](../data/PROJECT_STATE.md)가 관리한다.

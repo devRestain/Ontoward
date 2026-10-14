@@ -1,7 +1,7 @@
 # 임시 출력
 
-`codex/`는 현재 Codex 작업의 임시 출력, `packaging/`는 생성 ZIP의 출력 디렉터리다. 두 디렉터리는 현재 비어 있다.
+codex/는 보존된 CLI 작업 scratch, workflow-tests/는 매 실행의 임시 제출 복사본·합성 RDF·SDK 결과, ontology-v5/는 v5.0의 임시 검증·ZIP 실행 증거, packaging/는 생성 ZIP을 담는다.
 
-작업이 끝난 임시 파일과 압축물은 제거한다. 과거 소스 사본·계약·실행 이력의 보관소로 사용하지 않는다. 인증은 이 디렉터리 밖의 전용 Docker volume에 둔다.
+현재 원천 preview와 지속 검토 기록은 data/preparation/v5/가 소유한다. 여기의 scratch를 임상 자산으로 수용하거나 제출하지 않는다. 인증은 전용 프로젝트 Docker volume에 유지한다.
 
-도구는 [Dev](../Dev/README.md), 입력 자료는 [data](../data/README.md), 현재 운영 사실은 [루트 상태](../PROJECT_STATE.md)가 관리한다.
+snomed/의 예전 합성 RF2 검증은 deprecated 증거이며 삭제된 v4.2 도구를 재개하는 경로가 아니다. 운영 사실은 [루트 상태](../PROJECT_STATE.md)에 기록한다.

@@ -1,3 +1,5 @@
-# SNOMED CT 임시 검증
+# Deprecated SNOMED 검증 증거
 
-합성 RF2 기반 오프라인 검증은 이 디렉터리에서 실행합니다. `verification.json`은 마지막 검증 결과를 요약하고, 각 실행의 합성 RF2와 중간 그래프는 일회용 하위 디렉터리에서 정리합니다. 이 자료는 실제 SNOMED 릴리스나 임상 커버리지의 근거가 아닙니다.
+이 디렉터리는 삭제된 v4.2 SNOMED 파이프라인의 과거 합성 검증 자료다. 현재 실행 경로나 실제 RF2 커버리지의 증거로 사용하지 않는다.
+
+v5.0의 유지 중인 도구와 검증은 [Dev 안내](../../Dev/ontology/README.md)를, 현재 실제 원천 preview는 data/preparation/v5/를 따른다.

@@ -20,24 +20,24 @@
 - Apply the SNOMED-first preparation sequence from root decisions D05 and D09; retain earlier guideline-derived records without automatically resuming their workflow.
 - Apply the ontology model and consumption boundaries from D08.
 - Keep source-supported alternative disease presentations distinct from corrections of patient wording without creating unsupported clinical relations.
-- Keep the D09 SNOMED preparation outputs in preparation/snomed/ and require separate review and runtime admission before placing any resulting assets in submission/.
+- Keep D09 v5.0 source previews in preparation/v5/ and require separate registry and clinical review plus runtime admission before placing clinical assets in submission/.
 - Keep generated guideline schemas, source selections, unit inputs, atomic statements, candidate links, and review records in their existing locations as preserved prior-work artifacts.
-- Use International Edition RF2 metadata and module dependency records to identify the pinned release; do not infer a version from a filename or an expected month.
-- Keep one preparation dataset's SQLite import, source manifest, vocabulary candidates, human review, frozen registry, projection packets, raw NOVA responses, call ledger, reports, and preview assets under preparation/snomed/.
-- Preserve the approved 510-term English vocabulary as seed input only. Keep the expanded, versioned SNOMED registry separate from ontology/extraction-vocabulary.json and the authored runtime vocabulary.
-- Require a human selection or exclusion decision for every vocabulary item before stage two consumes the registry.
+- Use International and Korean RF2 metadata and exact module dependencies to pin the supplied composition; do not infer versions from expected months.
+- Keep source file hashes, raw assertions, candidate registries, variant dispositions, conditional contributions, reports, and preview assets together under preparation/v5/.
+- Preserve the approved 510-term English vocabulary as seeds and keep v5.0 registries separate from deprecated extraction-vocabulary.json and authored starter terminology.
+- Keep automated preview generation distinct from human registry review, clinical review, and runtime admission.
 - Preserve source SCTIDs, Description and Relationship identifiers, exact quotations and spans, relationship groups, direct versus descendant scope, source variants, and file hashes in preparation records.
 - Do not admit inferred clinical links from model knowledge. Keep SNOMED, feature, terminology review, and RDF submission admission as distinct evidence.
 - Record multiple approved disease topics and exact source group-definition evidence as preparation metadata; preserve single-disease candidate ownership and member-specific conditions.
 - Preserve differential-list provenance without treating a possible association as expected presence or clinical importance.
-- Keep Disease, Symptom, ExamFinding, AttributeValue, ContextFactor, Test, and ExamMethod candidates in English until human selection freezes the D09 registry; keep runtime admission separate.
+- Link English and supplied Korean names to verified SCTIDs while keeping mappings as candidates until review; keep runtime admission separate.
 - Apply source acquisition choices from root decision D02 only when preparing SNOMED CT.
 - Apply language-dependent source choices from root decision D04 when relevant.
 - Limit BODHI source preparation to the three BODHI-S CSV files defined by the root PRD.
 - Preserve source version, origin, license, and attribution with admitted assets.
 - Preserve guideline locations, titles, organizations, years, languages, source URLs, and document licenses.
 - Select source documents through the guideline catalog and exclude project guidance and review-only case answers.
-- Do not start new guideline model extraction under the replaced D09 path unless a later explicit user request selects new inputs and a call budget.
+- Treat guideline and v4.2 SNOMED tools and schemas as deprecated under ontology/deprecated.json; do not restore their jobs or schedule live pilots.
 - Preserve common concept URIs and keep relation-level source paths, sections, applicability, and review records outside the runtime graph.
 - Keep catalog/guideline_paths.txt as a path-only projection of the catalog with project-root-relative assets/guidelines/ paths.
 - Treat the path index as original-document navigation rather than extraction, source admission, or provenance review.
@@ -53,7 +53,7 @@
 
 - Record source admission, review, extraction, and bundle preparation results in `data/PROJECT_STATE.md`.
 - Retain document-level extraction outputs and failed, pending-review, excluded, or approved preparation records outside submission bundles.
-- Keep durable SNOMED request/response, checkpoint, mapping, review, call-ledger, and preview records under preparation/snomed/, not disposable Tmp/.
+- Preserve prior request/response, checkpoint, approval, and preparation evidence as archival data; keep new v5.0 source records in preparation/v5/.
 - Distinguish automated validation, complete pilot review, sampled batch review, quality admission, and submission admission.
 - Record explicit user candidate acceptance without an additional agent source-meaning audit gate.
 - Bundle only quality-admitted and submission-admitted outputs by existing source group.

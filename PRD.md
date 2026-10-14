@@ -6,7 +6,7 @@ Ontoward는 N.O.V.A. 모의 환자의 초기 정보에서 출발하여 문진·�
 
 첫 MVP는 한 증례를 메모리에서 진행한다. 사용자는 에이전트가 어떤 정보를 얻었고, 어떤 후보를 고려하며, 왜 다음 행동을 제안하는지 확인할 수 있어야 한다.
 
-현재 제출 에이전트 범위는 D11의 2026-10-14 Doctor 인터페이스·집중 ROS·제출 복구 MVP이며, D12의 제출 구성, D13의 상태·실행 책임 분리, D14의 제출 내부 자산 경계를 따른다. 별도 준비 범위 D09는 사용자의 최신 선택에 따라 SNOMED CT 기반 용어 확장 후 스키마 변환을 기본 경로로 삼는다. 코드와 합성 전체 흐름의 검증을 실제 임상 자산 승인·Doctor 품질·공식 제출 성공과 구분한다.
+현재 제출 에이전트 범위는 D11의 2026-10-14 Doctor 인터페이스·집중 ROS·제출 복구 MVP이며, D12의 제출 구성, D13의 상태·실행 책임 분리, D14의 제출 내부 자산 경계를 따른다. 별도 준비 범위 D08/D09는 공급된 SNOMED CT·BODHI-S의 v5.0 투영과 자동 점수 계산을 기본 경로로 삼는다. 코드와 합성 전체 흐름의 검증을 실제 임상 자산 승인·Doctor 품질·공식 제출 성공과 구분한다.
 
 공식 요구사항 확인일은 **2026-10-14 KST**이다. [개발 가이드](https://nova.snubhai.org/docs/), [참가 규칙](https://nova.snubhai.org/rules/), [평가](https://nova.snubhai.org/evaluation/)와 [10월 13일 공지](https://nova.snubhai.org/qna/)를 보존 SDK 1.0.1 및 기존 참고 문서와 대조했다. 현재 적용 변경은 [10월 14일 규칙 업데이트](assets/nova-competition-2026/CHANGES_2026-10-14.md)에 기록한다. 두 제공 PPTX의 변환과 [10월 12일 비교](assets/nova-competition-2026/CHANGES_2026-10-12.md)는 당시 자료로 유지한다. 홈페이지의 정확한 수정 시각과 새 시작 패키지의 실제 SDK 버전·바이트는 확인하지 않았다.
 
@@ -19,16 +19,15 @@ Ontoward는 N.O.V.A. 모의 환자의 초기 정보에서 출발하여 문진·�
 | Pydantic | 관찰·세션·행동·SOAP·진단의 구조와 경계 검증 |
 | N.O.V.A. SDK | 지정 Doctor 호출, 세션 확인, 행동 실행과 최종 제출 |
 | 제공 진료지침 | 기존 입력과 승인·응답·준비 결과를 보존하며, 현재 기본 추출 경로로 자동 재개하지 않음 |
-| SNOMED CT International Edition | 현재 기본 준비 원천; RF2 어휘 확장 뒤 기존 스키마에 관계와 Feature를 투영 |
-| NOVA 개발 API | 명시적으로 실행한 준비 단계에서만 세션 없는 `openai/gpt-6.1-sol` 사용; 기본은 dry-run |
+| SNOMED CT International·Korean | 판본·모듈 의존성을 고정한 개념·명칭·계층·관계 원천 |
 | RDFLib | RDF 생성·로드·조회; 진료 중 준비된 임상 그래프 검색 |
 | Turtle | 문서별 추출 결과와 출처별 제출 지식 묶음의 저장 형식 |
-| BODHI-S | 후속 단계의 질환과 증상 변형 사이의 출처가 있는 연관 근거 |
+| BODHI-S | 현재 변형 정의·질환 연관과 두 방향 likelihood 원천 |
 | Docker | Python 실행과 의존성 설치 환경 |
 
 JEV, Laya, HPOA는 사용하지 않는다. 이번 MVP는 대표 합성 사례의 전체 실행을 검증하며 배포·호환성 매트릭스는 도입하지 않는다.
 
-첫 경로는 공식 샘플 API와 지정 `openai/gpt-6-luna` Doctor 모델이며, 한국어 증례·환자 대화·제출 기록을 처리한다. 2026-10-13 시행된 모델 변경을 사용자가 10월 14일 확인했으며 D01의 선택에 반영한다. 사전 준비는 허가된 International Edition SNOMED CT에서 어휘를 확장하고 그 다음 Disease–ClinicalPattern–ClinicalFeature 변환을 수행한다. 준비 호출은 세션 없는 NOVA 개발 API에서 `openai/gpt-6.1-sol`을 사용하며 Doctor의 Luna 설정과 분리한다. 선택과 적용 범위는 [결정 상태](DECISION_STATE.md)의 D01·D02·D03·D04·D05·D06·D07·D08·D09·D10·D11·D12가 소유한다. 진료 중 SNOMED 원본이나 지침 문서 검색은 사용하지 않는다.
+첫 경로는 공식 샘플 API와 지정 `openai/gpt-6-luna` Doctor 모델이며, 한국어 증례·환자 대화·제출 기록을 처리한다. 2026-10-13 시행된 모델 변경을 사용자가 10월 14일 확인했으며 D01의 선택에 반영한다. 사전 준비는 공급된 International·Korean RF2와 BODHI-S를 모델 호출 없이 v5.0에 투영한다. 선택과 적용 범위는 [결정 상태](DECISION_STATE.md)의 D01·D02·D03·D04·D05·D06·D07·D08·D09·D10·D11·D12가 소유한다. 진료 중 SNOMED 원본이나 지침 문서 검색은 사용하지 않는다.
 
 ## 사용자가 경험할 흐름
 
@@ -49,9 +48,9 @@ JEV, Laya, HPOA는 사용하지 않는다. 이번 MVP는 대표 합성 사례의
 
 집중 ROS는 확인된 주호소의 기존 `inSystem`과 `BodySystem` 관계를 사용한다. 계통들의 증상을 합집합으로 모아 주호소 자체·기확인·중복을 제외하고 URI 순으로 최대 6개 준비한다. HPI 준비 시 목록을 고정하며 Open Inquiry에서 확인한 항목은 실행 전에 건너뛴다. 새 ROS 증상으로 다른 계통을 확장하거나 연결이 없는 계통을 추정하지 않는다. 보존 우선순위는 Open Inquiry, ROS, HPI이며 실행 순서는 HPI, Open Inquiry, ROS다. ChiefComplaint 20턴 안에서 뒤쪽 HPI를 줄여 Open 1턴·가능한 ROS 6턴을 확보한다. BodySystem은 질환 후보 검색을 제한하지 않는다.
 
-Context 질문은 연결 후보 수, 감별 질문은 후보 순위와 검토된 characteristic 표시로 정렬한다. 단독 선두라도 남은 감별을 계속한다. 새로운 관찰·정정·교육 응답이 들어오면 현재 사실에서 후보와 점수를 다시 계산한다. 교육 중 진단이 바뀌면 아직 전달하지 않은 부적합한 설명만 남은 예산 안에서 교체하며 앞 세션으로 돌아가지 않는다. SubmissionWriter는 최종 기록·검증·제출만 담당한다.
+Context 질문은 지지 맥락과 Association의 필수 적용 조건을 대상·주체·시간에 맞춰 준비하고 연결 후보 수로 정렬한다. 감별 질문은 후보 순위·원천 typicality·조건부 Feature 점수 변화로 정렬한다. 단독 선두라도 남은 감별을 계속한다. 새로운 관찰·정정·교육 응답이 들어오면 현재 사실에서 후보와 점수를 다시 계산한다. 교육 중 진단이 바뀌면 아직 전달하지 않은 부적합한 설명만 남은 예산 안에서 교체하며 앞 세션으로 돌아가지 않는다. SubmissionWriter는 최종 기록·검증·제출만 담당한다.
 
-점수는 characteristic 지지 +2, 일반 지지 +1, 명시적 반대·모순 −1이다. 확인된 관련 Context는 후보당 최대 +1이고 그 외 0이다. 같은 원관찰·조건을 대안 Pattern이나 출처 수만큼 가산하지 않으며 불확실한 개념 대안·다른 에피소드를 합치지 않는다. 최종 동률은 질환 URI 순이다. 별도 ClinicalSynthesis는 없다.
+점수는 D08 v5.0의 원천 likelihood·SNOMED 기본값과 완전 조건 매칭·정교화 대체 정책을 따른다. 상세 불일치나 부재에서 자동 감점을 만들지 않는다. 확인된 관련 Context는 후보당 최대 +1이고 그 외 0이다. 같은 원관찰·조건을 대안 Pattern이나 출처 수만큼 가산하지 않으며 불확실한 개념 대안·다른 에피소드를 합치지 않는다. 최종 동률은 질환 URI 순이다. 별도 ClinicalSynthesis는 없다.
 
 | 복구 상황 | 처리 |
 |---|---|
@@ -89,7 +88,7 @@ Doctor는 `client.chat()`에서 model을 생략해도 현재 지정 모델로 �
 
 최신 가이드는 제공자 응답 시작 한도를 180초, 새 SDK 기본 대기 시간을 240초로 설명하며 `REQUEST_PENDING`(HTTP 503/409)과 `PROVIDER_UNAVAILABLE`에는 같은 request_id를 유지한 재요청을 안내한다. 보존 SDK 1.0.1의 기본 120초는 수정하지 않는다. 애플리케이션 전송 경계가 최대 240초와 남은 시간·제출 여유로 호출 대기를 제한하고 원래 timeout을 복원한다. 재전송은 같은 요청으로 기록하여 턴·호출·사용량을 중복 계산하지 않는다. 합성 복구와 실제 서버 복구는 별도 검증이다. [요청 대기·문제 해결](https://nova.snubhai.org/docs/)
 
-개발용 create_sample은 팀당 KST 하루 100개, 제출 후 샘플 검증은 별도로 하루 10회, 공식 평가는 팀·단계별 하루 1회다. 세션 종료·만료로 생성 횟수가 돌아오지 않는다. 세션 밖 성공한 gpt-6-luna 호출은 model 생략 여부를 포함해 하루 1,000회로 합산하고 gpt-6.1-sol은 100회다. 증례 안 Doctor 호출은 이 일일 호출 한도와 별도로 증례별 한도를 적용한다. SNOMED 준비의 두 단계는 팀 일일 호출 한도를 공유하며 다른 팀원의 사용량은 자동 조회할 수 없으므로 실행자가 잔여량을 선언한다. [개발 한도](https://nova.snubhai.org/docs/)
+개발용 create_sample은 팀당 KST 하루 100개, 제출 후 샘플 검증은 별도로 하루 10회, 공식 평가는 팀·단계별 하루 1회다. 세션 종료·만료로 생성 횟수가 돌아오지 않는다. 세션 밖 성공한 gpt-6-luna 호출은 model 생략 여부를 포함해 하루 1,000회로 합산하고 gpt-6.1-sol은 100회다. 증례 안 Doctor 호출은 이 일일 호출 한도와 별도로 증례별 한도를 적용한다. 현재 v5.0 준비는 모델 호출을 하지 않는다. [개발 한도](https://nova.snubhai.org/docs/)
 
 ## 최소 데이터·입출력 계약
 
@@ -97,11 +96,11 @@ Doctor는 `client.chat()`에서 model을 생략해도 현재 지정 모델로 �
 |---|---|
 | CaseState | 구조화된 S/O/A/P, diagnosis, 질환/증상 종류와 근거 ID |
 | SessionContext | 현재 내부 세션, 초기화 여부, 세션별·전역 예산과 마감 |
-| DifferentialState | 후보·Pattern·Feature 연결, 점수·순위와 기록 참조 |
+| DifferentialState | 후보·Pattern·Association·Feature 연결, 실수 점수·조건부 기여·기록 참조 |
 | QuestionPlan | 기록 참조, 행동 종류, 실행 순서·삭제 우선순위·준비 문구 |
 | InteractionState | 전체 원문 대화·역할별 모델 기록·대기 행동·전달 이력·복구·제출 결과 |
 
-SOAP 항목은 id·scope·status·value·출처 참조를 가진다. status는 unasked/done으로 처리 여부만 나타내며, value의 present/absent/uncertain/unknown은 임상 의미를 구분한다. 모른다는 답도 done으로 닫을 수 있으나 음성으로 바꾸지 않는다. 대상·현재/과거·가족력·관찰·에피소드와 정정을 보존한다. 수치·단위·시간은 원문에 남기며 근거 없는 범주를 추정하지 않는다.
+SOAP 항목은 id·scope·status·value·출처 참조를 가진다. status는 unasked/done으로 처리 여부만 나타내며, value의 present/absent/uncertain/unknown은 임상 의미를 구분한다. 모른다는 답도 done으로 닫을 수 있으나 음성으로 바꾸지 않는다. 대상·현재/과거·가족력·관찰·에피소드와 정정을 보존한다. 수치·단위·시간은 원문과 타입 measurement에 보존하며 근거 없는 범주를 추정하지 않는다.
 
 InputInterpreter는 현재 응답, 실제 전달된 문장, InterviewPlanner의 구조화된 질문 의도, 전체 한국어 대화, 기존 관찰과 허용 용어를 함께 읽는다. 정확한 현재 답변 인용과 유효한 대화 context_refs를 검증한다. Doctor의 말·교육을 환자의 양성 소견으로 바꾸지 않는다. Doctor가 표현한 질문의 짧은 답은 원래 템플릿으로 자동 분류하지 않는다. Python 단축 처리는 긍정형 존재 질문으로 명시된 준비 문구와 모름·교육 확인에만 적용한다. 해석 실패는 원문·문제를 보존하고 제한된 명료화를 허용한다. 실제 EXAM 없이 O.exam 소견을 만들지 않는다.
 
@@ -129,141 +128,100 @@ InteractionState는 증례별 실제 전달 문장·환자 답·턴·요청 ID·
 
 교육 계획을 기록하는 것과 환자에게 실제 설명하는 것을 구분한다. 필요한 설명·공감·추적 및 경고 증상 안내는 종료 전에 SAY로 전달하고, 전달 내용과 응답을 증례 상태에 남긴다. 시간·턴 부족으로 설명하지 못한 내용을 설명 완료로 기록하지 않는다. 설명 행동을 더 실행할 수 없으면 준비된 교육 계획과 이미 전달한 이력을 보존하고 미질문 항목은 예산 정책에 따라 삭제한 뒤 기록·진단 제출을 마친다.
 
-## 지식 준비와 검색
+## v5.0 지식 준비와 검색
 
-자료 준비는 제공 원본에서 임상 관계와 계획 근거를 추출·검토하여 RDF 지식으로 만드는 후속 작업이다. 제공받은 원본 패키지는 assets/에 보존하며 D12의 수정 없는 SDK 실행 사본만 복제를 허용한다. `Dev/`는 제출 전 추출·후보 검증·RDF 생성·묶음 구성 코드와 프롬프트를, `submission/`는 제출 에이전트와 실행 그래프 조회를, `data/`는 출처·판본·라이선스와 지속 응답·검토·준비 결과·생성 산출물을 맡는다. `Tmp/`는 삭제 가능한 실행 입력·초안이다. Dev·Tmp는 루트 상태에 기록하며 운영 상태는 루트·submission·data 세 범위만 유지한다.
+자료 준비와 실행 소비를 구분한다. 원본 RF2·BODHI는 assets/에 보존한다. Dev/ontology/source_projection.py와 v5.py는 제출 전 정규화·RDF 생성·검증을, data/preparation/v5/는 출처·매핑·검토·preview를, submission/knowledge/는 실행 스키마·정책·reader와 별도 수용된 임상 자산을 소유한다. 운영 상태는 root·submission·data 세 범위만 유지한다.
 
-### 1단계: SNOMED CT에서 어휘집 확장
+### 핵심 표현
 
-입력은 허가받은 International Edition RF2 Snapshot을 수동으로 보관한 `assets/snomed/`이다. 자동 다운로드를 하지 않는다. Concept, Description, inferred Relationship, English Language Refset, Module Dependency Refset을 준비용 SQLite에 적재하고 SCTID를 문자열로 유지한다. 같은 구성요소의 최신 행을 먼저 선택한 뒤 활성 여부를 적용한다. 같은 ID·유효 날짜의 충돌, 혼합 판본, 미래 행, 누락된 의존 모듈은 거부한다. 릴리스 날짜·모듈 의존성·언어 refset과 각 파일의 SHA-256을 기록한다. Concrete Values가 있으면 정확한 출처 행으로 보존하되 범주형 Feature로 바꾸지 않는다.
+유지할 책임은 Disease → ClinicalPattern → ClinicalFeature, Pattern 기반 감별 후보 검색, Feature 기반 점수 갱신이다. 저장 구조는 질환별 의미를 DiseasePatternAssociation으로 분리한다.
 
-기존 일곱 객체 유형과 2026-10-12 승인한 510개 영어 어휘는 시드로 사용하며 확장 상한으로 삼지 않는다. 로컬 정확 일치와 계층 근거를 우선하고, 모호한 어휘나 새 후보에만 모델을 쓴다. 모델은 제공된 SCTID 후보를 선택하거나 미연결·제외로 처리할 수 있고 새로운 SCTID를 작성하지 않는다. Symptom과 ExamFinding, Test와 ExamMethod는 semantic tag나 계층만으로 자동 판정하지 않는다. 복합 소견은 기본 Target과 실제 근거가 있는 수식 정보로 분해한다. 신규 어휘 URI는 검증된 SCTID에서 결정론적으로 만들며 기존 승인 URI는 보존한다. 버전·해시 기반 registry를 만들고 사람이 모든 항목을 선택·제외한 뒤 2단계 입력으로 고정한다.
+```mermaid
+flowchart LR
+    D[Disease] -->|hasAssociation| A[DiseasePatternAssociation]
+    A -->|pattern| P[ClinicalPattern]
+    P -->|targets| T[Symptom / ExamFinding]
+    P -->|hasFeature| F[ClinicalFeature]
+    F -->|expected| V[ExpectedValue]
+```
 
-### 2단계: SNOMED 표현을 Ontoward 스키마로 변환
-
-Python은 `M is-a* T`와 `M due-to D`, `M associated-with D`, 또는 `M is-a* D` 및 `M is-a* T`의 세 경로로 Pattern 후보를 찾는다. 직접 관계 ID와 다단계 계층 경로를 유지하고 질환 하위 유형 근거를 상위 질환의 직접 근거로 승격하지 않는다. `due_to`는 선택한 변환 정책에 따라 Pattern에 `importance="characteristic"`을 부여하며 RF2 `characteristicTypeId`는 사용하지 않는다.
-
-모델은 제시된 Disease·Target·원천 명칭·Relationship ID·Description ID와 고정 registry 안에서 Feature를 대응한다. Feature는 Target을 표현하는 원천 개념 `M`의 관계와 명칭에서만 얻는다. 질환의 위치·경과·중증도를 모든 Target에 복사하지 않는다. 각 출력은 실제 source ID와 관계 또는 정확한 Description 부분 문자열·문자 위치로 검증한다. 모든 입력 packet에 처리나 제외 결과를 요구하며 응답 일부를 삭제해 통과시키지 않는다.
-
-같은 Disease–Target의 호환 가능한 Feature를 기본 Pattern에 병합하고 근거 ID를 모두 보존한다. 서로 상충하거나 명시적으로 다른 profile은 결정론적 variant Pattern으로 분리하고, 불명확한 경우 미해결로 남긴다. 생성된 Feature의 `clinicalRole`은 자동 부여하지 않는다. 숫자·단위·비교 연산자는 준비 자료에 보존하고 현재 범주형 RDF로 임의 변환하지 않는다. 표현할 수 없는 필수 조건을 버리면 의미가 넓어지는 전체 관계는 제외한다. ExamFinding은 검토된 `detectedBy`와 유효한 `examRequestText`가 확보되지 않으면 preview에서 제외한다.
-
-### 준비용 모델 실행과 산출물 경계
-
-도구는 `Dev/ontology/snomed/`의 import, vocabulary expansion/freeze, projection, extract, validate, preview export 및 verify 명령으로 구성한다. NOVA 호출은 기본 dry-run이며 `--live` 실행에만 세션 없는 Client, `NOVA_DEV_KEY`, 명시적인 일일 상한과 팀 잔여량을 사용한다. 모델은 `openai/gpt-6.1-sol`, medium, 4,000 출력 토큰, 최대 5 packet/호출이다. 가이드라인·Doctor 모델의 `gpt-6-luna`와 별도 역할이다. 실행 간 KST 호출 장부·입력 해시 캐시·요청 ID·원응답·사용량을 보존한다. 자동 재시도, 모델 전환, 응답 수정, 자동 재개는 하지 않는다. timeout 등 완료가 불명확하면 중단한다.
-
-SQLite, registry, packets, 요청·원응답, 검토와 preview Turtle·manifest는 `data/preparation/snomed/`에 보존한다. preview 검증은 기존 `ClinicalKnowledge.validate_graph()`와 역방향 Target 조회를 사용한다. preview는 임상 승인이나 제출 knowledge admission이 아니며 `submission/`으로 자동 복사하지 않는다. 현재 작업 완료 범위는 도구·실행기·dry-run·합성 RF2 오프라인 검증까지다. 실제 RF2 커버리지, NOVA 응답 품질, 실제 모델 호출과 임상 및 제출 수용은 확인되지 않았다.
-
-### 보존된 기존 가이드라인 준비 결과
-
-가이드라인 기반 후보·승인 기록·원응답·파일럿 결과는 기존 source identity와 그대로 보존한다. 해당 추출 경로는 새로운 기본 작업이 아니며 자동으로 재개하지 않는다. SNOMED 결과를 보고 가이드라인 보완이 필요하다고 판단되면 별도 요청의 입력·목표·호출 한도를 먼저 정한다.
-
-### 기본 온톨로지와 임상 지식 모델
-
-기존 문헌 준비 모델인 [Pydantic 모델](Dev/ontology/models.py)과 [기계용 어휘](data/ontology/extraction-vocabulary.json)는 보존된 가이드라인 작업물로 유지하며 SNOMED의 어휘 확장 상한이나 registry로 사용하지 않는다. 새 RF2 근거·용어 후보·패턴 후보용 별도 Pydantic 모델과 JSON Schema는 `Dev/ontology/snomed/`에서 만들고, 데이터셋별 해시와 결과는 `data/preparation/snomed/`에 둔다. 두 준비 경로 모두 기존 v4.2 runtime RDF 계약을 따른다.
-
-[오프라인 도구](Dev/ontology/tools.py)는 카탈로그 상대 문서 경로·파일 SHA-256·허용 줄 범위로 프롬프트를 만들거나 응답을 검증한다. 관계·Feature별 정확한 인용과 절 맥락을 연결하고, 구조·어휘·근거 실패 시 전체 응답을 거부한다. 새로운 대상·속성·승인 값 조합은 문헌 근거가 있는 후보로 허용하지만 candidate_validated는 형식과 인용 검증만 의미한다. 임상 정합성·동의어 대응·필수 적용 조건·RDF 수용은 별도 검토가 필요하다.
-
-[기존 영어 추출 지침](Dev/ontology/extraction_prompt.md)은 저장된 문헌 후보 검증의 일부로만 유지한다. SNOMED 신규 prompt는 실제 RF2 packet과 고정 registry 밖의 개념이나 관계를 추론하지 않으며 근거가 없는 정보·표현 불가능한 필수 조건을 제외한다. 준비 JSON 검증은 임상 정합성·검토·RDF admission을 대신하지 않는다.
-
-| 개념 또는 관계 | 의미 |
+| 객체 | 의미 |
 |---|---|
-| `Disease` | 진단 후보로 다룰 질환 |
-| `Symptom` | 환자가 진술할 수 있는 구체적인 임상 주호소; 통증은 ChestPain·AbdominalPain·Dysuria 등으로 구분 |
-| `FindingAttribute`·`AttributeValue` | 증상 속성과 재사용하는 범주형 값; 위치는 평면 구조 |
-| `BodySystem` | 비배타적 문진 분류; 질환 후보 필터로 사용하지 않음 |
-| `ContextFactor` | 과거력·노출·가족력 등의 맥락; 분류는 contextType 문자열 |
-| `ExamFinding`·`ExamMethod` | 신체진찰 소견과 구체적 동작; detectedBy와 examRequestText로 연결 |
-| `ClinicalPattern`·`ClinicalFeature` | 질환별 단일 Target 프로필과 그 관찰의 원자적 속성·상태 조건 |
-| `Test` | SOAP P.tests의 검사 계획 대상; 현재 진단 추론에서는 사용하지 않음 |
-| `hasPattern`·`hasFeature` | 질환의 Pattern과 0개 이상의 부분 매칭 Feature; 자동 AND 규칙이 아님 |
-| `presentsAs` | 유지하는 선택적 관계; v4.2 후보 검색의 필수 경로가 아님 |
-| `targets`·`onAttribute`·`expectsValue` | Pattern의 단일 Symptom/ExamFinding Target과 Feature의 속성·기대 값 |
-| `importance`·`clinicalRole` | 독립적으로 사람이 검토하는 Pattern 중요도와 Feature 역할 |
-| `hasSupportingContext` | 패턴 밖의 지지 맥락; 부재를 반대 근거로 사용하지 않음 |
-| `evaluatedBy` | SOAP Plan 전용 질환–검사 관계 |
-| 명칭·동의어 | 언어를 보존한 표현과 공통 개념 URI |
+| Disease | 현재 진단 후보로 사용할 확인된 질환 개념 |
+| ClinicalPattern | 하나의 Target과 함께 관찰되는 표현 정의; 여러 질환이 공유 |
+| ClinicalFeature | Pattern에 귀속되는 원자적 속성·상태 조건 |
+| ExpectedValue | concept, concept_set, quantity, interval의 타입 값과 비교 의미 |
+| DiseasePatternAssociation | Disease·Pattern·적용 조건, 선택한 원천 라벨·관계 범위·출처 참조 |
+| FeatureContribution | 기준과 정교화 Association 사이의 조건부 점수 차이; Python 파생 레코드 |
+| BodySystem·ContextFactor | 기존 문진 계통과 확인된 지지 맥락 |
+| ExamFinding·ExamMethod | 실제 진찰 소견과 detectedBy·검토된 examRequestText |
+| Test | evaluatedBy로 연결한 SOAP P.tests 전용 계획 |
 
-기본 구조는 [스키마](data/ontology/schema.ttl)와 [기초 어휘](data/ontology/vocabulary.ttl)에 작성한다. v4.2는 클래스 11개, 객체 관계 12개, 데이터 속성 6개를 사용하며 URI는 `urn:ontoward:`로 통일한다. 질환·패턴·특징·맥락 요인·진찰 소견·검사 인스턴스의 제출 임상 관계는 후속 추출·검토로 채운다. 전체 규칙은 [온톨로지 계약](data/ontology/AGENTS.md)과 D08을 따른다. RDFS 선언 자체는 cardinality나 선택 타입을 강제하지 않는다.
+Pattern 동일성은 Target, 조건, 연산·단위, 부정·시간, AND/OR 및 수식 범위로 정하며 Disease·출처에 의존하지 않는다. Association 동일성은 Disease + Pattern + 적용 조건이다. 여러 원천 주장은 각각 보존하고 실행 평가를 선택한다. Feature에는 질환별 중요도를 넣지 않으며 기존 importance·clinicalRole은 v5.0의 입력이 아니다.
 
-통증은 ChestPain·AbdominalPain·Headache·BackPain·Dysuria 등 일반적인 임상 주호소 단위의 구체적인 Symptom으로 구분한다. RightLowerQuadrantPain 같은 세분 노드는 추가하지 않으며 우하복부 통증은 AbdominalPain과 확인한 Location=RightLowerQuadrant로 표현한다. 위치는 평면 구조이고 확인되지 않은 Abdomen을 자동 추가하지 않는다. 같은 에피소드에서 넓은 위치와 세부 위치를 각각 확인했다면 출처와 함께 병렬 보존한다. 양상·시간·유발·악화 요인은 기존 속성을 사용하고 별개 에피소드의 정보를 합치지 않는다. ChestPain의 음성은 AbdominalPain 등 다른 증상의 음성으로 확장하지 않는다.
+Pattern은 정확히 하나의 Symptom 또는 ExamFinding을 Target으로 하고 비어 있지 않은 조건들을 갖는다. 기본 증상의 존재도 expectedStatus Feature로 표현한다. onAttribute와 expected는 유효한 쌍이며 expected의 valueJSON은 엄격한 타입 JSON이다. 실제 그래프 cardinality와 조건은 Python이 검증한다.
 
-Dysuria·Odynophagia·Dyspareunia·Dysmenorrhea는 각각 독립적인 Symptom으로 두고 명칭에 담긴 발생 상황과 추가 확인한 속성을 보존한다. 기초 어휘에는 선택한 통증 개념 19개와 기존 통증 속성 13개 연결을 유지한다. 승인된 목록에 새 BodySystem 값이 지정되어 있지 않으므로 해당 분류는 후속 어휘 수용 계약에서 정한다. 일반 Pain이나 Urination 값은 기초 어휘에 두지 않는다. 승인된 나머지 항목의 Turtle 반영은 별도 수용 작업으로 진행한다.
+### 값·관찰·개념 비교
 
-환자 원문, 확인한 위치·상황, 정규화한 증상과 그 불확실성을 같은 observation·episode의 출처와 함께 보존한다. 문진·진찰 근거로 해석을 갱신하고 정정 전 원문을 유지하며, 진단 후보에 맞춰 증상을 바꾸지 않는다. 미특정 통증은 미해결 원문으로 남겨 부위·상황을 확인한다. 근거가 있는 복수의 미확정 증상 해석은 후보 검색 합집합에 사용할 수 있지만 같은 관찰을 여러 확정 증상이나 독립 지지 근거로 중복 계산하지 않는다. 예산이 부족하면 기존의 근거 제한 최종화 경계를 따른다.
-
-한 질환은 문헌이 각각 뒷받침하는 여러 증상 Target의 대안 Pattern을 소유할 수 있다. 예를 들어 StableAngina_ChestPainPattern은 ChestPain을, StableAngina_AbdominalPainPattern은 AbdominalPain을 Target으로 하는 구조를 사용할 수 있다. 이 예시는 구조 설명이며 현재 임상 지식으로 생성하지 않는다. 각 Target에서 독립적으로 질환 후보를 조회하고 모든 Pattern의 동시 일치를 요구하지 않는다. BodySystem으로 질환 후보를 제한하지 않는다. 문헌상 대안적인 질환 표현과 환자 표현의 정정을 구분하며 표현 오류를 보완하려고 근거 없는 질환–증상 관계를 추가하지 않는다.
-
-각 Pattern은 질환 하나와 정확히 하나의 Symptom 또는 ExamFinding Target을 가진다. Feature는 0개 이상이며 각 Feature는 Pattern 하나에서 Target을 상속하고 직접 targets를 갖지 않는다. 속성 조건은 onAttribute·expectsValue를 유효한 쌍으로 두며, 상태 조건은 선택적 expectedStatus=present/absent로 표현한다. 값 쌍이나 상태 조건이 없는 빈 Feature를 만들지 않는다. Test·ContextFactor는 Pattern Target이 아니다. 정확한 수치·기간·시점은 환자 상태에서 관리하고 수치 임계값은 추가하지 않는다.
-
-Pattern의 선택적 importance=characteristic과 Feature의 선택적 clinicalRole=supportive/characteristic/opposing은 사람이 검토하여 독립적으로 부여한다. 미지정은 낮은 중요도가 아니며 기대 부재와 반대 역할을 혼동하지 않는다. 문헌 언급 횟수·자동 중요도·검증되지 않은 복합 증상 가산점은 사용하지 않는다. Selectivity는 완성된 그래프의 Target별 질환 연결 분포에 기반한 후속 기능이며, 현재 스키마 선언·수식·자료형·반영 비율을 정하거나 초기 실행 조건으로 삼지 않는다.
-
-후속 조회는 관찰한 증상·진찰 소견에서 Pattern targets와 hasPattern을 역방향으로 따라 질환을 찾고, 동일 에피소드의 관찰과 Feature를 비교한다. 결과는 matched·contradicted·unknown을 구분한다. 미확인·관계 부재는 unknown이며 범주 값이 다르다는 이유만으로 반대 근거를 만들지 않는다. contradicted는 같은 관찰에서 명시적으로 양립할 수 없는 조건이 확인된 경우에만 사용한다. 역할은 실제 매칭된 조건을 기준으로 해석하며 매칭·순위·다음 행동은 앱의 책임이다.
-
-관계별 원본 경로·절·적용 조건·출처 메타데이터·상충 내용·검토 기록은 data의 준비 자료에서 보존하며 실행 그래프에 출처 노드를 넣지 않는다. 원본은 `assets/guidelines/`에 유지하고 [경로 목록](data/catalog/guideline_paths.txt)은 원본 확인을 위한 경로만 담는다. 파일명이나 이 목록만으로 provenance 검토를 완료했다고 판단하지 않는다. Source·ClinicalClaim·Evidence·SUPPORTED_BY와 환자 상태·SOAP·점수·워크플로 노드는 도입하지 않는다. SOAP A.evidence는 주진단 판단에 사용한 실제 문진·신체진찰 소견 목록이다. 검사 외 치료·처치 결정·추적·교육 계획의 구성은 후속 프로그램 책임이며 이를 위한 새 온톨로지 노드를 이번에 추가하지 않는다.
-
-ExamMethod는 방법 URI를 내부 식별자로, `examRequestText`를 실제 요청 문장으로 사용한다. 후속 앱은 `ExamFinding → detectedBy → ExamMethod → examRequestText`를 조회하고 단일 동작·NFC 1–30 코드 포인트 조건을 검증한 뒤 `client.exam(text)`로 실행한다. SDK에는 공식 진찰 코드 목록이 없으며 요청 문장의 존재는 서버 인식이나 실제 결과를 뜻하지 않는다. examAction 코드를 선언하지 않고 실제 거절·결과를 앱에서 처리한다.
-
-### 문서별 결과와 출처별 제출 묶음
-
-확인한 코퍼스는 16개 출처 그룹의 임상 Markdown 15,904개, 597,185,304바이트다. 이는 원본 규모이며 RDF의 크기·triple 수나 실행 메모리의 측정값이 아니다. 문서별 결과를 유지하면 실패·검토·수정 범위를 구분할 수 있고, 출처별 묶음은 제출 파일 수를 줄인다. 단일 최종 파일로 전체 결과를 고정하지 않는다.
-
-현재 data/ontology/의 스키마·기초 어휘, data/catalog/의 원본 경로 목록과 data/provenance/의 출처 식별을 유지한다. 새로운 문서별 결과·검토·지식 묶음의 개발 경로와 형식은 준비 계약을 채택할 때 정한다. 현재 준비 산출물 디렉터리나 빈 지식 묶음을 만들지 않는다.
-
-| 위치 | 역할 | 제출 포함 |
-|---|---|---|
-| Dev/codex/ | Codex CLI 설정·인증 준비 | 제외 |
-| Dev/packaging/ | 독립 압축 도구 | 제외 |
-| Tmp/codex/ | 현재 작업의 임시 출력 | 제외 |
-| Tmp/packaging/ | 생성 ZIP | 제외 |
-| data/ontology/ | 준비용 스키마·기초 어휘 | 직접 포함하지 않음 |
-| data/ontology/vocabulary-candidates.md | 사용자 검토용 영어 Disease·Symptom 자연어 후보 | 제외 |
-| data/catalog/·data/provenance/ | 원본 탐색·출처 식별 | 제외 |
-| `submission/knowledge/*.ttl` | 완성된 실행 스키마·어휘·임상 관계 묶음 | 포함 |
-| `submission/knowledge/manifest.json` | 제출 내부 자산의 상대 경로 목록 | 포함 |
-| 필요한 `submission/knowledge/schema.json` | JSON 구조 검증용 스키마 | 포함 |
-
-승인된 결과가 있는 기존 출처 그룹별로 묶음을 만든다. 새로운 진료과 분류 체계는 도입하지 않는다. 문서별 실패·검토 대기·제외·승인 상태와 원본 식별은 데이터 준비 기록이 관리한다. 추가 분할은 실제 산출물 규모를 측정한 뒤 별도 작업에서 판단한다. 운영 상태는 기존 세 범위에만 유지한다. 준비 산출물 형식이 정해지기 전 실행 자산을 임의로 생성하지 않는다.
-
-### 대회 실행: 준비된 그래프만 조회
-
-`prepare()`는 manifest에 명시할 스키마·기초 어휘와 제출 임상 묶음 전체를 하나의 RDFLib `Graph`에 로드한다. 증례 접근이나 원문 추출 없이 준비 알림 전에 실행 자원을 구성하고, `consult(client, resources)`에서 출처 그룹을 가로질러 임상 관계를 조회한다. data의 원본 경로 목록과 준비·검토 기록은 실행 그래프의 입력이 아니다. 여러 파일을 모두 로드하므로 파일 분할 자체를 메모리 절감의 근거로 취급하지 않는다. 첫 MVP에서는 선택적·지연 로딩, Dataset·Named Graph, OWL 추론, 임베딩·벡터 검색이나 별도 그래프 서버를 도입하지 않는다.
-
-검색 계층의 최소 인터페이스 책임은 다음과 같다. 후속 코드의 구체적인 자료형은 `submission/`가 구현한다.
-
-| 조회 기능 | 반환할 내용과 경계 |
+| 값 종류 | 비교 의미 |
 |---|---|
-| 개념 후보 연결 | URI·명칭 후보와 연결 불확실성; 복합 표현의 증상·속성을 보존하고 미연결 원문 유지 |
-| 증상 속성 조회 | 증상에 연결된 속성과 적합한 범주 값; 연속 값은 환자 상태에 유지 |
-| 계통과 증상 조회 | 기존 inSystem·BodySystem으로 주호소 계통의 ROS 범위를 정하며 질환 후보에는 계통 필터를 적용하지 않음 |
-| 질환 후보 조회 | 관찰한 Target에서 Pattern과 Disease를 역방향 조회한 합집합; presentsAs 의존·확진·확률·계통 필터 없음 |
-| 패턴·감별 특징 조회 | Pattern의 단일 대상·수동 중요도와 Feature의 선택적 상태·역할·속성 값; 부분 매칭하며 다른 에피소드를 합치지 않음 |
-| 지지 맥락 조회 | 질환에 직접 연결된 ContextFactor; 부재를 반대 근거로 사용하지 않음 |
-| 진찰 방법 조회 | detectedBy로 연결된 방법 URI와 examRequestText; 자동 실행·실제 결과가 아님 |
-| 검사 계획 조회 | evaluatedBy와 Test를 SOAP P.tests에서만 조회; 진단 추론·다음 진단 행동에서는 사용하지 않음 |
+| concept | 정확 일치 또는 승인된 제한적 ValueMatch |
+| concept_set | any_of 또는 all_of 조건 |
+| quantity | 값·명시 단위·eq/lt/le/gt/ge 연산 |
+| interval | 상·하한·명시 단위·경계 포함 여부 |
 
-고정된 조회 함수와 필요시 사전 정의한 질의를 사용하며 LLM이 임의 SPARQL을 생성하게 하지 않는다. 한국어 원문과 번역·개념 연결의 불확실성을 유지한다. 중요한 새 관찰이나 후보 변화가 있을 때 조회와 후보 판단을 갱신한다. 조회된 연관·특징 표시는 확률이 아니며 관계의 부재를 질환 배제나 음성 소견으로 해석하지 않는다. 임상 출처별 상충 내용과 적용 조건은 제출 전 data의 외부 준비 기록에서 검토한다.
+BODHI location과 laterality, radiating, onset, duration_since, duration_lasts, temporal_pattern, severity, pain_type, aggravated, relieved를 각각 Location, Laterality, RadiationLocation, Onset, TimeSinceOnset, EpisodeDuration, TemporalPattern, Severity, PainQuality, AggravatingFactor, RelievingFactor에 대응한다. characteristic는 실제 양상·색·내용물 등을 의미에 따라 분해하며 진단적 characteristic 역할을 부여하지 않는다. 선택 형식 메타데이터로 AND/OR를 추정하지 않는다.
 
-HPI 이후의 후보 우선순위·다음 행동·최종 진단은 실제 관찰과 세션 예산을 함께 검토하는 앱의 책임이다. 근거가 있는 감별 가치, 미확인 여부, 이미 받은 답변·거절 이력, 남은 턴·시간을 고려해 행동 하나를 선택한다. HPI에는 고정 슬롯 정책을 적용한다. 그래프에 연결되었다는 이유만으로 질문·진찰·검사를 자동 실행하지 않는다.
+원천 숫자·연산·단위·기간은 보존하고 없는 단위나 임계값을 생성하지 않는다. 월·년은 달력 단위이며 고정 일수로 바꾸지 않는다. TimeSinceOnset은 발생 이후 경과시간이고 EpisodeDuration은 한 번의 지속시간이다. 다른 소견을 요구하거나 단위·수식 범위를 해결하지 못한 필수 조건은 전체 의존 변형을 unresolved로 보류한다.
 
-지침별 출처·라이선스를 유지하고 대회 목적의 비상업적 이용 조건을 따른다. Turtle로 표현한 관계·계획 근거·발췌·번역 등 파생 자료를 제출물에 포함할 때 문서별 조건을 먼저 확인한다. CC BY-ND·BY-NC-ND·공공누리 제4유형 등 변경본 배포가 금지된 자료의 변환본은 제출물에 넣지 않는다. RDF 형식으로 바꾸는 것이 이용 조건을 없애지 않는다. 원본 ZIP의 공식 SHA-256을 압축 해제 폴더의 검증 결과로 대신하지 않는다. [제공 자료의 조건](assets/guidelines/README.md)
+구체적인 통증 주호소를 Target으로 유지하고 확인한 부위·방사·양상·시점은 같은 observation/episode 안에 보존한다. 환자 원문·불확실한 개념 해석·정정 전 원문을 유지하며 후보에 맞춰 관찰을 바꾸지 않는다. 지원된 불확실 개념은 검색 합집합에 사용할 수 있지만 독립 확정 근거로 중복 계산하지 않는다.
 
-### 후속 단계: BODHI-S와 선택적 출처 보강
+ValueMatch는 관찰 개념과 기대 개념 사이의 검증된 제한 경로를 기록한다. is_a, regional_part, approved_region을 구분하고 sourceRef를 보존한다. 경로는 환자가 말하지 않은 넓은 위치를 실제 관찰로 생성하지 않는다. BodySystem은 문진 범위만 정하며 질환 검색을 제한하지 않는다.
 
-SNOMED CT International Edition 직접 추출이 현재 준비의 기본 경로다. 개념 연결이 실패해도 환자 원문과 현재 런타임의 검색 후보 계약을 유지한다. BODHI-S는 별도 사용자 선택에 따른 후속 입력이며 SNOMED registry 확장이나 검증을 대체하지 않는다.
+### 실제 원천의 제한된 투영
 
-BODHI를 도입할 때의 첫 범위는 다음 세 BODHI-S CSV다.
+공급된 International 2026-05-01 기반과 Korean 2026-06-15 확장을 정확한 Module Dependency 버전으로 결합한다. 최신 effectiveTime 행 선택 후 활성 여부를 적용하고 동일 버전 충돌·미래 행·누락된 의존성을 거부한다. 영어와 한국어 명칭을 동일 SCTID의 표현으로 연결하고 Korean 고유 개념의 모듈 출처를 보존한다. 다운로드하거나 원본을 수정하지 않는다.
 
-- `nodes_condition.csv`: 원본 질환·임상 항목과 유형.
-- `nodes_symptom.csv`: UUID로 식별하는 증상 변형과 수식 정보.
-- `edges_present_in.csv`: 증상 UUID와 원본 condition 식별자를 잇는 연관 근거.
+BODHI의 첫 입력은 nodes_condition.csv, nodes_symptom.csv, edges_present_in.csv다. UUID와 자체 SCTID·루트 SCTID·nullable 원값을 분리한다. snomed_id라는 이름만으로 검증된 SCTID나 의미상 올바른 매핑을 주장하지 않는다. Condition이 활성 disorder인지와 현재 실행 역할을 함께 확인하며 과거력·가족력·검사 소견·미확인 ID는 지정된 제외/보류 결과를 갖는다.
 
-BODHI의 증상 변형은 동일한 SNOMED 루트 개념을 공유할 수 있다. UUID, 개별 SNOMED 표기 값, 루트 개념, 기간·위치 등의 수식 정보를 보존한다. 원본의 SNOMED 표기 값은 비어 있거나 검증되지 않았을 수 있으므로, 채택한 SNOMED 판본과 대조한 개념 연결과 구분한다. Condition 유형을 확인하여 가족력·생활습관 같은 항목을 무조건 최종 질환으로 취급하지 않는다. [BODHI 원본과 스키마](https://github.com/eka-care/BODHI)
+첫 구축 범위는 Abdominal pain, Cough, Fever이다. 원천 변형의 조건 묶음을 유지하며 같은 Disease와 Target이라는 이유로 여러 변형을 합치지 않는다. SNOMED는 실제 due_to·associated_with·subtype-intersection 경로를 사용하고 관계 ID·그룹·모듈·버전·원천 개념·계층 경로를 보존한다. 필수 조건이나 그룹 수식 범위를 해결하지 못하면 해당 표현 전체를 보류한다.
 
-SNOMED CT의 동의어와 계층은 개념을 식별하고 확장 범위를 정하는 데 사용한다. 질환의 모든 하위 개념을 그 질환의 증상 목록으로 해석하지 않으며 Disease–Target 연결은 위의 명시된 관계·계층 경로에서만 생성한다. 이후 BODHI 연결은 별도 원천으로 구분하고 해당 원천에 있는 relation scope만 보강한다. [SNOMED 지식 표현 범위](https://docs.snomed.org/snomed-ct-specifications/snomed-ct-editorial-guide/readme/snomed-ct-introduction/knowledge-representation)
+준비 기록은 source row·파일 위치·UUID·원값·파일 해시·매핑 판단·후보 registry와 모든 원천 주장을 보존한다. 실행 Graph는 선택된 Pattern·Feature·Association, 적용 조건·라벨·관계 범위와 최소 출처 참조만 보유한다. registry candidate와 preview_only는 사람 검토·임상 승인·제출 admission과 별개이며 자동 수용하지 않는다.
 
-후속 보강 흐름은 `환자 표현 → 용어 후보 → 검증된 개념 연결 또는 미연결 원문 → BODHI 연관 조회 → 감별 후보와 미확인 항목`이다. 개념 연결이 실패해도 원문과 추론 후보를 보존한다. 자료에 없는 연결을 질환 배제 근거로 사용하지 않는다.
+### 자동 점수와 정교화
 
-후속 자료도 공통 개념 URI와 원본 식별·검증된 연결을 구분하여 RDF 지식에 반영한다. 진료 중 조회 경로는 RDFLib로 유지하며 SNOMED RF2나 문헌 원문을 런타임 검색하지 않는다. 환자 입력 언어, 현재 SNOMED 기본 경로, 지식 표현·검색·산출물 구조는 D04·D05·D07을 참조한다.
+공개 submission/knowledge/scoring_policy.json을 버전·해시로 manifest에 고정한다. BODHI condition_given_symptom을 질환 지지에 사용하고 symptom_given_condition은 해당 질환의 문진 정렬에 사용한다. strong_predictor는 추가 가산 없이 보조 정보와 충돌 검토에 둔다.
+
+| BODHI 라벨 | zero | rare | low | medium | high | very_high |
+|---|---:|---:|---:|---:|---:|---:|
+| 정책 점수 | 0 | 0.5 | 1 | 2 | 3 | 4 |
+
+동일 질환·완전한 표현·범위에 BODHI 평가가 없으면 직접 due_to=2, associated_with=1, subtype-intersection 또는 조건을 보존한 일반화=0.5를 사용한다. 유효한 zero는 대체하지 않는다. 이 수치는 Ontoward의 정렬 정책이며 보정된 확률이나 likelihood ratio가 아니다.
+
+FeatureContribution은 W(D,P') − W(D,P)이다. 한 조건 추가·정교화면 atomic, 여러 조건이 함께 바뀌면 joint로 유지한다. joint 점수를 개별 Feature에 나누지 않는다. 기준이 없는 상세 표현은 전체 점수를 쓰고 개별 기여는 미식별이다. 음수 차분은 기존 지지의 조정이며 자동 임상 반대 근거로 해석하지 않는다.
+
+후보는 Target만으로 넓게 검색한다. 점수는 해당 표현의 모든 Feature와 적용 조건이 확인돼 일치할 때만 활성화한다. 더 구체적인 일치 변형은 점수가 내려가도 조상을 대체한다. 비교 불가능한 일치 변형은 최대값 한 번, 동일 Disease–Target은 반복·출처·에피소드와 관계없이 한 번 집계한다. 서로 다른 Target 지지는 합산한다.
+
+다른 에피소드의 위치·기간·양상을 합쳐 표현을 충족시키지 않는다. 미질문·불확실한 조건은 추가 점수를 활성화하지 않고 상세 변형 불일치에서 자동 감점을 만들지 않는다. 자동 부재 감점·유병률·집단 보정·그래프 빈도 가산은 첫 정책에서 보류한다. D11의 확인된 Context 최대 +1은 유지하며 Context만으로 후보를 만들지 않는다.
+
+### 실행 인터페이스와 수용
+
+| 조회 | 반환 |
+|---|---|
+| get_patterns_by_target(target_id) | Disease·Pattern·Association ID와 적용 조건·선택 평가 |
+| get_disease_patterns(disease_id) | 공유 Pattern과 질환별 Association |
+| get_pattern_features(pattern_id) | 타입 Feature 조건 |
+| get_feature_contributions(association_id) | 기준·정교화 연관과 atomic/joint 차분 |
+| get_supporting_context·get_exam_methods·get_planned_tests | 기존 Context, EXAM, SOAP P.tests 경계 |
+
+prepare()는 manifest의 v5.0 스키마·어휘·임상 묶음을 하나의 RDFLib Graph에 로드하고 공개 점수 정책에서 Association 점수와 FeatureContribution을 계산한다. 진료 중 Graph는 읽기 전용이다. 관찰·에피소드·점수·근거는 CaseState 및 workflow state에 유지하고 소수 점수를 보존한다. Gateway는 같은 타입 값 계약을 사용한다.
+
+모든 빌드는 schema_version, registry_version, normalization_version, source_snapshots와 파일 해시, scoring_policy_version과 정책 해시를 고정한다. v5.0 reader가 v5.0 빌드만 소비하며 의미를 삭제하는 v4.2 호환 변환을 만들지 않는다. 임상 자산이 수용되기 전 실제 prepare를 빈 그래프로 우회하지 않는다.
+
+현재 Dev의 v4.2 SNOMED·가이드라인 추출 코드와 prompt는 제거한다. data/ontology/v4.2/의 원래 schema·vocabulary, data/ontology/deprecated.json의 예전 JSON 인터페이스·준비 결과, 기존 승인 receipt는 보존한다. 해당 기록은 v5.0 입력이나 재개할 작업이 아니다.
+
+첫 수용은 공유 Pattern의 질환별 점수, 복통 2→1→4 대체, joint 차분, 두 기간 축, unknown/applicability 비활성, 에피소드·출처 중복 제거, 원천 제외/보류, 조회부터 SOAP·진단 제출·확인 종료까지의 오프라인 흐름이다. 사람의 임상 검토·실제 진단 성능·공식 SDK 수락·제출은 별도 증거이며 자동 preview 완료로 주장하지 않는다.
+
 
 ## 제공 샘플·벤치마크의 역할
 
@@ -327,7 +285,7 @@ HPI는 고정된 정보 슬롯을 처리하고, 그 이후에는 현재 후보 �
 - 동일 요청 ID·payload·턴·사용량 보존, 공유 모델 예산과 응답 처리 여유, 교육 중 새 사실, SOAP 1회 재구성.
 - 초기화 전 빈 목록·대기 응답·현재 scope 완료·Context 0점·후보 없음·질문이 남은 선두 후보의 Python 분기와 분기용 LLM 0회.
 - CaseState와 QuestionPlan 동시 삭제, Open Inquiry 보존, 삭제 재생성 방지, 확인 사실·대기 행동·교육 계획 보존.
-- 중복 가산 방지·정정 재계산·에피소드 분리·Context 음성/미확인·characteristic 가중치·URI 동률·마지막 특징에 따른 순위 변경.
+- 중복 가산 방지·정정 재계산·에피소드 분리·Context 음성/미확인·원천 점수와 정교화 대체·URI 동률·마지막 특징에 따른 순위 변경.
 - 엄격한 답과 복합 자유서술, 잘못된 모델 출력, NFC 30/31자, 진찰 거절, TEST 차단, 만료·닫힘·결과 불명, 50번째 응답 뒤 제출.
 - 정확한 SOAP 15개 문자열 필드·별도 진단·UTF-8 한도·Doctor 최소 호출·교육 계획과 실제 전달 구분.
 - 외부 경로 폴백 차단·누락 manifest 오류·준비 문구 누락·환경값에 따른 문구 변경·SDK 원본과 패키징 경계.

@@ -41,8 +41,9 @@ from settings import knowledge_manifest, knowledge_path
 
 TTL = '''@prefix ow: <urn:ontoward:> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-ow:Alpha a ow:Disease; rdfs:label "가상질환A"@ko; ow:hasPattern ow:alphaX; ow:hasSupportingContext ow:Context .
-ow:Beta a ow:Disease; rdfs:label "가상질환B"@ko; ow:hasPattern ow:betaX, ow:betaExam; ow:evaluatedBy ow:TestX .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+ow:Alpha a ow:Disease; rdfs:label "가상질환A"@ko; ow:hasAssociation ow:alphaBase, ow:alphaLocation; ow:hasSupportingContext ow:Context .
+ow:Beta a ow:Disease; rdfs:label "가상질환B"@ko; ow:hasAssociation ow:betaBase, ow:betaLocation, ow:betaExamAssociation; ow:evaluatedBy ow:TestX .
 ow:Complaint a ow:Symptom; rdfs:label "가상증상"@ko; ow:hasAttribute ow:Location, ow:Quality .
 ow:Other a ow:Symptom; rdfs:label "별도증상"@ko .
 ow:Location a ow:FindingAttribute; rdfs:label "위치"@ko; ow:canHaveValue ow:Here, ow:Elsewhere .
@@ -50,12 +51,19 @@ ow:Quality a ow:FindingAttribute; rdfs:label "양상"@ko; ow:canHaveValue ow:Dul
 ow:Here a ow:AttributeValue; rdfs:label "가상부위"@ko .
 ow:Elsewhere a ow:AttributeValue; rdfs:label "다른부위"@ko .
 ow:Dull a ow:AttributeValue; rdfs:label "둔함"@ko .
-ow:alphaX a ow:ClinicalPattern; ow:targets ow:Complaint; ow:hasFeature ow:alphaLocation .
-ow:betaX a ow:ClinicalPattern; ow:targets ow:Complaint; ow:hasFeature ow:betaLocation .
-ow:alphaLocation a ow:ClinicalFeature; ow:onAttribute ow:Location; ow:expectsValue ow:Here .
-ow:betaLocation a ow:ClinicalFeature; ow:onAttribute ow:Location; ow:expectsValue ow:Here .
+ow:baseX a ow:ClinicalPattern; ow:targets ow:Complaint; ow:hasFeature ow:basePresent .
+ow:basePresent a ow:ClinicalFeature; ow:expectedStatus "present" .
+ow:locationX a ow:ClinicalPattern; ow:targets ow:Complaint; ow:hasFeature ow:locationPresent, ow:locationFeature; ow:refinesPattern ow:baseX .
+ow:locationPresent a ow:ClinicalFeature; ow:expectedStatus "present" .
+ow:locationFeature a ow:ClinicalFeature; ow:onAttribute ow:Location; ow:expected ow:hereExpected .
+ow:hereExpected a ow:ExpectedValue; ow:valueJSON '{"kind":"concept","concept":"urn:ontoward:Here"}'^^rdf:JSON .
+ow:alphaBase a ow:DiseasePatternAssociation; ow:pattern ow:baseX; ow:relationBasis "bodhi_present_in"; ow:predictiveness "low"; ow:typicality "high"; ow:sourceRef "synthetic:alpha:base" .
+ow:betaBase a ow:DiseasePatternAssociation; ow:pattern ow:baseX; ow:relationBasis "bodhi_present_in"; ow:predictiveness "low"; ow:typicality "high"; ow:sourceRef "synthetic:beta:base" .
+ow:alphaLocation a ow:DiseasePatternAssociation; ow:pattern ow:locationX; ow:relationBasis "bodhi_present_in"; ow:predictiveness "medium"; ow:typicality "high"; ow:sourceRef "synthetic:alpha:location" .
+ow:betaLocation a ow:DiseasePatternAssociation; ow:pattern ow:locationX; ow:relationBasis "bodhi_present_in"; ow:predictiveness "medium"; ow:typicality "high"; ow:sourceRef "synthetic:beta:location" .
 ow:betaExam a ow:ClinicalPattern; ow:targets ow:ExamX; ow:hasFeature ow:examPresent .
-ow:examPresent a ow:ClinicalFeature; ow:expectedStatus "present"; ow:clinicalRole "characteristic" .
+ow:examPresent a ow:ClinicalFeature; ow:expectedStatus "present" .
+ow:betaExamAssociation a ow:DiseasePatternAssociation; ow:pattern ow:betaExam; ow:relationBasis "due_to"; ow:sourceRef "synthetic:beta:exam" .
 ow:ExamX a ow:ExamFinding; rdfs:label "가상소견"@ko; ow:detectedBy ow:MethodX .
 ow:MethodX a ow:ExamMethod; ow:examRequestText "가상 진찰을 하겠습니다" .
 ow:Context a ow:ContextFactor; rdfs:label "가상병력"@ko; ow:contextType "past_medical_history" .
@@ -67,14 +75,18 @@ PLANS = {str(OW.Alpha): {"education": ["가상 A 안내입니다."]}, str(OW.Bet
 
 
 def write_assets():
-    files = {"schema.ttl": "", "vocabulary.ttl": "", "clinical.ttl": TTL,
+    files = {"schema.ttl": (SOURCE / "knowledge/schema.ttl").read_text(encoding="utf-8"), "vocabulary.ttl": "", "clinical.ttl": TTL,
+             "scoring_policy.json": (SOURCE / "knowledge/scoring_policy.json").read_text(encoding="utf-8"),
              "questions.json": json.dumps(QUESTIONS, ensure_ascii=False), "plans.json": json.dumps(PLANS, ensure_ascii=False)}
     entries = {}
     for name, text in files.items():
         path = COPY / "knowledge" / name
         path.write_text(text, encoding="utf-8")
         entries[name] = {"path": "knowledge/" + name, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
-    manifest = {"schema": entries["schema.ttl"], "vocabulary": entries["vocabulary.ttl"],
+    manifest = {"schema_version": "5.0", "registry_version": "synthetic-v5", "normalization_version": "v5.0.1",
+                "source_snapshots": [{"dataset": "synthetic", "sha256": hashlib.sha256(TTL.encode()).hexdigest()}],
+                "scoring_policy_version": "v5.0.1", "scoring_policy": entries["scoring_policy.json"],
+                "schema": entries["schema.ttl"], "vocabulary": entries["vocabulary.ttl"],
                 "bundles": [entries["clinical.ttl"]], "questions": entries["questions.json"], "plans": entries["plans.json"]}
     (COPY / "knowledge/manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
 
@@ -123,6 +135,34 @@ def record(s, ident="chief", target=OW.Complaint, kind="symptom", status="presen
         value=ClinicalValue(kind=kind, text="synthetic observation", status=status, concept_ids=[str(target)],
             observation_id="obs1", episode_id=episode, attribute_id=str(attribute) if attribute else None,
             values=[str(v) for v in values or []], time_context="current")))
+
+
+def add_v5_pattern(k, name, target, expectations, *, disease=OW.Alpha, label="very_high", applicability=None):
+    pattern, association = OW[name], OW[name + "Association"]
+    k._graph.add((disease, OW.hasAssociation, association))
+    for predicate, value in ((RDF.type, OW.DiseasePatternAssociation), (OW.pattern, pattern),
+                             (OW.relationBasis, Literal("bodhi_present_in")), (OW.predictiveness, Literal(label)),
+                             (OW.sourceRef, Literal("synthetic:" + name))):
+        k._graph.add((association, predicate, value))
+    if applicability:
+        k._graph.add((association, OW.applicability, Literal(json.dumps(applicability), datatype=RDF.JSON)))
+    k._graph.add((pattern, RDF.type, OW.ClinicalPattern))
+    k._graph.add((pattern, OW.targets, target))
+    feature = OW[name + "Presence"]
+    k._graph.add((pattern, OW.hasFeature, feature))
+    k._graph.add((feature, RDF.type, OW.ClinicalFeature))
+    k._graph.add((feature, OW.expectedStatus, Literal("present")))
+    for index, (attribute, expected) in enumerate(expectations):
+        k._graph.add((target, OW.hasAttribute, attribute))
+        k._graph.add((attribute, RDF.type, OW.FindingAttribute))
+        feature, node = OW[name + f"Feature{index}"], OW[name + f"Expected{index}"]
+        for predicate, value in ((RDF.type, OW.ClinicalFeature), (OW.onAttribute, attribute), (OW.expected, node)):
+            k._graph.add((feature, predicate, value))
+        k._graph.add((pattern, OW.hasFeature, feature))
+        k._graph.add((node, RDF.type, OW.ExpectedValue))
+        k._graph.add((node, OW.valueJSON, Literal(json.dumps(expected), datatype=RDF.JSON)))
+    k.validate_graph()
+    return association, pattern
 
 
 def question(s, ident="q", purpose="feature", target=OW.Other, attribute=None, text="別の症状はありますか？", order=0, priority=0, field="S.ros", kind="SAY"):
@@ -337,6 +377,147 @@ class Verification(unittest.TestCase):
             writer.begin_repair(s)
         self.assertEqual(before, s.model_dump())
 
+    def test_v5_shared_patterns_refinement_replacement_and_joint_deltas(self):
+        k = knowledge()
+        k._graph.set((OW.alphaBase, OW.predictiveness, Literal("medium")))
+        k._graph.set((OW.alphaLocation, OW.predictiveness, Literal("low")))
+        association, pattern = add_v5_pattern(k, "jointVariant", OW.Complaint, [
+            (OW.Location, {"kind": "concept", "concept": str(OW.Here)}),
+            (OW.Quality, {"kind": "concept", "concept": str(OW.Dull)})])
+        s = state("DifferentialDiagnosis", True)
+        record(s)
+        reasoner = ClinicalReasoner(k)
+        reasoner.retrieve_candidates(s)
+        scores = lambda: {h.disease_id: h.evidence_score for h in s.differential.hypotheses}
+        self.assertEqual(scores()[str(OW.Alpha)], 2)
+        record(s, "location", kind="attribute", field="S.hpi", attribute=OW.Location, values=[OW.Here])
+        reasoner.refresh_hypotheses(s)
+        self.assertEqual(scores()[str(OW.Alpha)], 1)
+        self.assertEqual(scores()[str(OW.Beta)], 2)
+        shared = {profile.association_id: profile.id for disease in (OW.Alpha, OW.Beta)
+                  for profile in k.get_disease_patterns(str(disease))}
+        self.assertEqual(shared[str(OW.alphaLocation)], shared[str(OW.betaLocation)])
+        joint = [c for c in k.get_feature_contributions(str(association)) if c.baseline_association == str(OW.alphaBase)]
+        self.assertEqual([(c.kind, c.delta_score, len(c.changed_feature_ids)) for c in joint], [("joint", 2, 2)])
+        record(s, "quality", kind="attribute", field="S.hpi", attribute=OW.Quality, values=[OW.Dull])
+        reasoner.refresh_hypotheses(s)
+        self.assertEqual(scores()[str(OW.Alpha)], 4)
+        self.assertEqual(scores()[str(OW.Beta)], 2)
+        s.case.get("quality").value.episode_id = "another-episode"
+        reasoner.refresh_hypotheses(s)
+        self.assertEqual(scores()[str(OW.Alpha)], 1)
+        k._graph.set((OW.alphaLocation, OW.predictiveness, Literal("zero")))
+        k.validate_graph()
+        reasoner.refresh_hypotheses(s)
+        self.assertEqual(scores()[str(OW.Alpha)], 0)
+
+    def test_v5_typed_time_bases_units_and_episode_boundaries(self):
+        from knowledge.conditions import ExpectedValue, numeric_match
+        k = knowledge()
+        add_v5_pattern(k, "elapsedVariant", OW.Complaint, [(OW.TimeSinceOnset,
+            {"kind": "interval", "lower": 5, "upper": 14, "unit": "day"})])
+        s = state("DifferentialDiagnosis", True)
+        record(s)
+        record(s, "duration", kind="attribute", field="S.hpi", attribute=OW.EpisodeDuration)
+        s.case.get("duration").value.measurement = ExpectedValue(kind="quantity", value=7, unit="day")
+        reasoner = ClinicalReasoner(k)
+        reasoner.retrieve_candidates(s)
+        alpha = lambda: next(h for h in s.differential.hypotheses if h.disease_id == str(OW.Alpha))
+        self.assertEqual(alpha().evidence_score, 1)
+        record(s, "elapsed", kind="attribute", field="S.hpi", attribute=OW.TimeSinceOnset)
+        s.case.get("elapsed").value.measurement = ExpectedValue(kind="quantity", value=168, unit="h")
+        reasoner.refresh_hypotheses(s)
+        self.assertEqual(alpha().evidence_score, 4)
+        s.case.get("elapsed").value.episode_id = "another-episode"
+        reasoner.refresh_hypotheses(s)
+        self.assertEqual(alpha().evidence_score, 1)
+        self.assertEqual(numeric_match(ExpectedValue(kind="quantity", value=1, unit="month"),
+                                      ExpectedValue(kind="quantity", value=30, unit="day")), "unknown")
+        with self.assertRaises(ValueError):
+            ClinicalValue(kind="attribute", text="7 days", attribute_id=str(OW.TimeSinceOnset),
+                measurement={"kind": "quantity", "value": True, "unit": "day"})
+        with self.assertRaises(ValueError):
+            ExpectedValue(kind="quantity", value=3, unit="day", lower=2)
+
+    def test_v5_applicability_is_required_and_unknown_is_not_support(self):
+        k = knowledge()
+        k._graph.remove((OW.Alpha, OW.hasSupportingContext, OW.Context))
+        k._graph.set((OW.alphaLocation, OW.applicability, Literal(json.dumps([{
+            "concept_id": str(OW.Context), "status": "present", "subject": "patient", "time_context": "current"}]), datatype=RDF.JSON)))
+        k.validate_graph()
+        s = state("ContextFactor", True)
+        record(s)
+        record(s, "location", kind="attribute", field="S.hpi", attribute=OW.Location, values=[OW.Here])
+        reasoner = ClinicalReasoner(k)
+        reasoner.retrieve_candidates(s)
+        alpha = lambda: next(h for h in s.differential.hypotheses if h.disease_id == str(OW.Alpha))
+        self.assertEqual(alpha().evidence_score, 1)
+        make_planner(k, CONFIG).prepare_context_questions(s)
+        required_question = next(q for q in s.questions.questions if q.target_id == str(OW.Context))
+        self.assertEqual((required_question.subject, required_question.time_context), ("patient", "current"))
+        record(s, "old-context", OW.Context, "context", "present", "S.pmh")
+        s.case.get("old-context").value.time_context = "past"
+        make_planner(k, CONFIG).select_question(s)
+        self.assertEqual(s.interaction.selected.question.item_id, required_question.item_id)
+        s.case.remove({"old-context"})
+        record(s, "context", OW.Context, "context", "unknown", "S.pmh")
+        reasoner.refresh_hypotheses(s)
+        self.assertEqual(alpha().evidence_score, 1)
+        s.case.get("context").value.status = "present"
+        reasoner.refresh_hypotheses(s)
+        self.assertEqual(alpha().evidence_score, 2)
+        self.assertIn("context", alpha().evidence_ids)
+        s.case.get("context").value.subject = "family"
+        reasoner.refresh_hypotheses(s)
+        self.assertEqual(alpha().evidence_score, 1)
+
+    def test_v5_verified_value_path_does_not_create_patient_observations(self):
+        from knowledge.conditions import ExpectedValue, FeatureCondition
+        k = knowledge()
+        k._graph.set((OW.hereExpected, OW.valueJSON, Literal(json.dumps({
+            "kind": "concept", "concept": str(OW.Here), "match": "subsumption"}), datatype=RDF.JSON)))
+        for predicate, value in ((RDF.type, OW.ValueMatch), (OW.observedConcept, OW.Elsewhere),
+                                 (OW.expectedConcept, OW.Here), (OW.relationKind, Literal("approved_region")),
+                                 (OW.sourceRef, Literal("synthetic:reviewed-region-path"))):
+            k._graph.add((OW.locationPath, predicate, value))
+        k.validate_graph()
+        s = state("DifferentialDiagnosis", True)
+        record(s)
+        record(s, "location", kind="attribute", field="S.hpi", attribute=OW.Location, values=[OW.Elsewhere])
+        ClinicalReasoner(k).retrieve_candidates(s)
+        self.assertEqual([h.evidence_score for h in s.differential.hypotheses], [2, 2])
+        self.assertEqual(s.case.get("location").value.values, [str(OW.Elsewhere)])
+        exact = FeatureCondition(id="exact", attribute=str(OW.Location), expected=ExpectedValue(kind="concept", concept=str(OW.Here)))
+        broad = next(feature for feature in k.get_pattern_features(str(OW.locationX)) if feature.expected)
+        self.assertTrue(k.feature_refines(exact, broad))
+        self.assertFalse(k.feature_refines(broad, exact))
+
+    def test_v5_policy_fraction_zero_and_manifest_version(self):
+        from knowledge.conditions import ScoringPolicy
+        k = knowledge()
+        k._graph.set((OW.alphaBase, OW.predictiveness, Literal("rare")))
+        k.validate_graph()
+        s = state("DifferentialDiagnosis", True)
+        record(s)
+        ClinicalReasoner(k).retrieve_candidates(s)
+        alpha = next(h for h in s.differential.hypotheses if h.disease_id == str(OW.Alpha))
+        self.assertEqual(alpha.evidence_score, 0.5)
+        self.assertEqual(WorkflowState.model_validate_json(s.model_dump_json()).differential.hypotheses[-1].score, 0.5)
+        self.assertEqual(k.policy.weight("zero", "due_to", "exact"), (0, "bodhi_ordinal"))
+        self.assertEqual(k.policy.weight(None, "due_to", "descendant"), (0.5, "snomed_generalized"))
+        with self.assertRaises(ValueError):
+            ScoringPolicy.model_validate({**k.policy.model_dump(), "labels": {"high": 3}})
+        manifest = COPY / "knowledge/manifest.json"
+        previous = manifest.read_text()
+        try:
+            raw = json.loads(previous)
+            raw["schema_version"] = "4.2"
+            manifest.write_text(json.dumps(raw))
+            with self.assertRaises(ValueError):
+                knowledge()
+        finally:
+            manifest.write_text(previous)
+
     def setUp(self):
         self.sleep = patch("workflow.io.request_executor.time.sleep")
         self.sleep.start()
@@ -449,12 +630,8 @@ class Verification(unittest.TestCase):
 
     def test_score_dedup_correction_episodes_and_context(self):
         k = knowledge()
-        k._graph.add((OW.Alpha, OW.hasPattern, OW.duplicate))
-        k._graph.add((OW.duplicate, RDF.type, OW.ClinicalPattern))
-        k._graph.add((OW.duplicate, OW.targets, OW.Complaint))
-        k._graph.add((OW.duplicate, OW.hasFeature, OW.duplicateFeature))
-        for predicate, value in ((RDF.type, OW.ClinicalFeature), (OW.onAttribute, OW.Location), (OW.expectsValue, OW.Here)):
-            k._graph.add((OW.duplicateFeature, predicate, value))
+        k._graph.add((OW.alphaLocation, OW.sourceRef, Literal("synthetic:second-source")))
+        k.validate_graph()
         s = state("DifferentialDiagnosis", True)
         record(s)
         record(s, "location", kind="attribute", field="S.hpi", attribute=OW.Location, values=[OW.Here])
@@ -465,7 +642,7 @@ class Verification(unittest.TestCase):
         self.assertEqual(s.differential.hypotheses[0].score, 2)
         s.case.get("location").value.status = "absent"
         r.refresh_hypotheses(s)
-        self.assertEqual(s.differential.hypotheses[0].score, 0)
+        self.assertEqual(s.differential.hypotheses[0].score, 1)
         s.case.get("location").value.episode_id = "other-episode"
         r.refresh_hypotheses(s)
         self.assertEqual(s.differential.hypotheses[0].score, 1)
@@ -476,7 +653,7 @@ class Verification(unittest.TestCase):
             alpha = next(h for h in s.differential.hypotheses if h.disease_id == str(OW.Alpha))
             self.assertEqual(alpha.context_bonus, int(status == "present"))
 
-    def test_characteristic_weight_and_ambiguous_recall(self):
+    def test_relation_weight_and_ambiguous_recall(self):
         s = state("DifferentialDiagnosis", True)
         record(s)
         record(s, "exam", OW.ExamX, "finding", field="O.exam")
@@ -839,8 +1016,17 @@ class Verification(unittest.TestCase):
         self.assertEqual(s.interaction.selected.question.target_id, str(OW.Ros2))
         # A disease associated with a ROS target remains retrievable even without its own system link.
         k._graph.add((OW.Cross, RDF.type, OW.Disease))
-        k._graph.add((OW.Cross, OW.hasPattern, OW.crossPattern))
+        k._graph.add((OW.Cross, OW.hasAssociation, OW.crossAssociation))
+        k._graph.add((OW.crossAssociation, RDF.type, OW.DiseasePatternAssociation))
+        k._graph.add((OW.crossAssociation, OW.pattern, OW.crossPattern))
+        k._graph.add((OW.crossAssociation, OW.relationBasis, Literal("associated_with")))
+        k._graph.add((OW.crossAssociation, OW.sourceRef, Literal("synthetic:cross")))
+        k._graph.add((OW.crossPattern, RDF.type, OW.ClinicalPattern))
         k._graph.add((OW.crossPattern, OW.targets, OW.Ros1))
+        k._graph.add((OW.crossPattern, OW.hasFeature, OW.crossPresence))
+        k._graph.add((OW.crossPresence, RDF.type, OW.ClinicalFeature))
+        k._graph.add((OW.crossPresence, OW.expectedStatus, Literal("present")))
+        k.validate_graph()
         ClinicalReasoner(k).retrieve_candidates(s)
         self.assertIn(str(OW.Cross), [h.disease_id for h in s.differential.hypotheses])
         other = state("ChiefComplaint", True)
@@ -1034,13 +1220,17 @@ class Verification(unittest.TestCase):
         k = knowledge()
         k._graph.parse(data='''@prefix ow: <urn:ontoward:> .
           @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-          ow:Gamma a ow:Disease; rdfs:label "가상질환C"@ko; ow:hasPattern ow:g1, ow:g2, ow:g3 .
-          ow:g1 ow:targets ow:Complaint; ow:hasFeature ow:g1f .
-          ow:g2 ow:targets ow:ExamX; ow:hasFeature ow:g2f .
-          ow:g3 ow:targets ow:Other; ow:hasFeature ow:g3f .
-          ow:g1f ow:expectedStatus "present"; ow:clinicalRole "characteristic" .
-          ow:g2f ow:expectedStatus "present"; ow:clinicalRole "characteristic" .
-          ow:g3f ow:expectedStatus "present"; ow:clinicalRole "characteristic" .''', format="turtle")
+          ow:Gamma a ow:Disease; rdfs:label "가상질환C"@ko; ow:hasAssociation ow:ga1, ow:ga2, ow:ga3 .
+          ow:ga1 a ow:DiseasePatternAssociation; ow:pattern ow:g1; ow:relationBasis "due_to"; ow:sourceRef "synthetic:g1" .
+          ow:ga2 a ow:DiseasePatternAssociation; ow:pattern ow:g2; ow:relationBasis "due_to"; ow:sourceRef "synthetic:g2" .
+          ow:ga3 a ow:DiseasePatternAssociation; ow:pattern ow:g3; ow:relationBasis "due_to"; ow:sourceRef "synthetic:g3" .
+          ow:g1 a ow:ClinicalPattern; ow:targets ow:Complaint; ow:hasFeature ow:g1f .
+          ow:g2 a ow:ClinicalPattern; ow:targets ow:ExamX; ow:hasFeature ow:g2f .
+          ow:g3 a ow:ClinicalPattern; ow:targets ow:Other; ow:hasFeature ow:g3f .
+          ow:g1f a ow:ClinicalFeature; ow:expectedStatus "present" .
+          ow:g2f a ow:ClinicalFeature; ow:expectedStatus "present" .
+          ow:g3f a ow:ClinicalFeature; ow:expectedStatus "present" .''', format="turtle")
+        k.validate_graph()
         k.plans[str(OW.Gamma)] = Plan(treatment="가상 C 계획", education=["가상 C 안내입니다."])
         client = FakeSDK()
         original_chat, original_reply = client.chat, client._reply
