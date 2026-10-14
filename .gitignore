@@ -33,6 +33,9 @@ __pycache__/
 !/assets/snomed/
 !/assets/snomed/AGENTS.md
 !/assets/snomed/README.md
+!/assets/bodhi/
+!/assets/bodhi/AGENTS.md
+!/assets/bodhi/README.md
 /assets/guidelines/**
 !/assets/guidelines/**/
 !/assets/guidelines/**/AGENTS.md
