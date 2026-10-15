@@ -1,6 +1,6 @@
 # BODHI-S 원본
 
-bodhi-s/는 공급된 upstream 데이터이고 original_readme.md는 원래 설명이다. 원본은 변경하지 않는다. 현재 v5.0 준비는 csv/nodes_condition.csv, nodes_symptom.csv, edges_present_in.csv 세 파일을 읽는다.
+bodhi-s/는 공급된 upstream 데이터이고 original_readme.md는 원래 설명이다. 원본은 변경하지 않는다. 현재 v5.0 준비는 8개 CSV를 모두 SQLite에 수집하며 PRESENT_IN의 완전한 진단 표현을 실행 후보로 투영한다. 다른 관계 종류는 원천 의미와 미투영 사유를 보존한다.
 
 증상 변형은 UUID로 식별하고 자체 SCTID·루트 SCTID·nullable 원값을 분리한다. Condition은 실제 실행 역할과 공급된 RF2 대조 결과를 확인하며 모두 Disease로 등록하지 않는다.
 

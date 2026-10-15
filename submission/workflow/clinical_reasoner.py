@@ -130,12 +130,16 @@ class ClinicalReasoner:
             return "unknown", []
         return ("contradicted" if "contradicted" in checks else "matched"), refs
 
+    @staticmethod
+    def supported_hypotheses(state: WorkflowState):
+        return [hypothesis for hypothesis in state.differential.hypotheses if hypothesis.evidence_score > 0]
+
     def select_diagnosis(self, state: WorkflowState) -> None:
         state.differential.initialized = True
         self.refresh_hypotheses(state, score_context=True)
         if state.interaction.termination:
             return
-        supported = [h for h in state.differential.hypotheses if h.evidence_score > 0]
+        supported = self.supported_hypotheses(state)
         if not supported:
             state.differential.selected_id = None
             chiefs = state.case.chief_complaints(confirmed=True)

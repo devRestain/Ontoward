@@ -26,6 +26,11 @@ class Limits:
     ros_priority: int = 900000
     clarification_priority: int = 2000000
     differential_rank_weight: int = 10
+    differential_display: int = 5
+    parser_concepts: int = 256
+    parser_vocabulary_bytes: int = 32768
+    expanded_parser_concepts: int = 1024
+    expanded_parser_vocabulary_bytes: int = 131072
     content_codepoints: int = 30
     diagnosis_bytes: int = 500
     record_bytes: int = 100000

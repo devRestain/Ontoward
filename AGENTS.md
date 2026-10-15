@@ -50,11 +50,12 @@
 - Consult `assets/nova-competition-2026/` for detailed competition information, starting with its `AGENTS.md` and the relevant reference documents.
 - Read `DECISION_STATE.md` when an action depends on a user choice.
 - Treat recommendations in `DECISION_STATE.md` as proposals until the user selects an option.
-- Keep the selected preliminary SDK route for the Doctor; apply D05 and D09's bounded SNOMED/BODHI v5.0 source projection.
+- Keep the selected preliminary SDK route for the Doctor; apply D05 and D09's full Snapshot/BODHI-S preparation database and separately approved v5.0 runtime exports.
 - Use D07 for preserved preparation evidence, separately admitted submission bundles, and one runtime RDFLib Graph.
 - Use D08 and data/ontology/AGENTS.md for shared patterns, typed conditions, disease associations, conditional weights, and SDK text mapping.
 - Use specific clinical pain complaints as D08 retrieval targets and preserve finer Location values, raw wording, interpretation uncertainty, and separate episodes.
 - Use D11 for the five-session workflow, Python routing and scoring, scoped budgets, and unasked-item deletion; use D12 for the SDK wire format and packaging.
+- Apply D15 for the approved full v5.0 batch, information-preserving SOAP, bounded Gateway vocabulary, and minimal Korean interview assets.
 - Apply newer explicit user decisions before stale operational plans or next goals; record implementation and execution only from observed evidence.
 - Isolate runtime LLM instructions and editable clinical text in submission/config with public environment-selected paths; keep machine field names and decision codes in Python.
 - Package only submission runtime Python, pinned requirements, public .env, config prompts and text, and knowledge assets through the package Compose service under D14.
@@ -67,11 +68,12 @@
 - Keep pure workflow decisions in workflow/rules and cross-state question interaction and usage operations in their designated workflow/state owners.
 - Run maintained offline workflow checks with Dev/tests/workflow/compose.offline.yaml and exclude tests and synthetic assets from the submission.
 - Require D08 v5.0 alignment before generating or admitting new clinical artifacts.
-- Use Dev/ontology/source_projection.py and v5.py for deterministic bounded projection of the supplied International and Korean RF2 snapshots and BODHI-S CSVs.
+- Use Dev/ontology/source_projection.py build/export/admit, database.py, model_normalization.py, admission.py, and v5.py for full source ingestion, candidate projection, and pinned batch admission.
 - Treat the removed v4.2 SNOMED and guideline extraction code as deprecated; retain useful archival evidence under data with explicit deprecation metadata.
 - Preserve original assets and vocabulary approval receipts without rebuilding legacy interfaces or automatically resuming old jobs.
-- Use D09 and Dev/AGENTS.md for variant preservation, source pins, unresolved dispositions, preview validation, and the model-free execution boundary.
-- Treat the approved 510 English terms as expandable seeds; require separate registry and clinical review before runtime asset admission.
+- Use D09 and Dev/AGENTS.md for source custody, whole-variant dispositions, source-grounded optional Sol normalization, conservative KST quotas, and explicit batch admission.
+- Treat the approved 510 English terms as expandable seeds and apply D09/D15 explicit candidate acceptance without claiming independent clinical validation.
+- Preserve D15 user candidate acceptance separately from independent clinical validation and retain the original preview review material.
 - Use D10 for the separate extraction image and later WSL2 operating boundary.
 - Record decision alternatives, selections, and lifecycle changes only in `DECISION_STATE.md`.
 - Reference decision IDs from operational state without copying their alternatives or statuses.

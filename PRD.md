@@ -8,6 +8,8 @@ Ontoward는 N.O.V.A. 모의 환자의 초기 정보에서 출발하여 문진·�
 
 현재 제출 에이전트 범위는 D11의 2026-10-14 Doctor 인터페이스·집중 ROS·제출 복구 MVP이며, D12의 제출 구성, D13의 상태·실행 책임 분리, D14의 제출 내부 자산 경계를 따른다. 별도 준비 범위 D08/D09는 공급된 SNOMED CT·BODHI-S의 v5.0 투영과 자동 점수 계산을 기본 경로로 삼는다. 코드와 합성 전체 흐름의 검증을 실제 임상 자산 승인·Doctor 품질·공식 제출 성공과 구분한다.
 
+D15는 전체 v5.0 후보 배치의 사용자 사용 승인, 최소 한국어 질문·표시 이름, 입력 어휘 제한과 정보 보존 수정을 채택한다. 사용자 후보 수용과 제출 자산 통합을 독립 임상 검증·실제 Luna 품질·공식 제출 성공과 구분한다. D11의 세션·예산·표현 역할과 D08 점수 정책은 유지한다.
+
 공식 요구사항 확인일은 **2026-10-14 KST**이다. [개발 가이드](https://nova.snubhai.org/docs/), [참가 규칙](https://nova.snubhai.org/rules/), [평가](https://nova.snubhai.org/evaluation/)와 [10월 13일 공지](https://nova.snubhai.org/qna/)를 보존 SDK 1.0.1 및 기존 참고 문서와 대조했다. 현재 적용 변경은 [10월 14일 규칙 업데이트](assets/nova-competition-2026/CHANGES_2026-10-14.md)에 기록한다. 두 제공 PPTX의 변환과 [10월 12일 비교](assets/nova-competition-2026/CHANGES_2026-10-12.md)는 당시 자료로 유지한다. 홈페이지의 정확한 수정 시각과 새 시작 패키지의 실제 SDK 버전·바이트는 확인하지 않았다.
 
 ## 채택한 기술과 역할
@@ -27,7 +29,7 @@ Ontoward는 N.O.V.A. 모의 환자의 초기 정보에서 출발하여 문진·�
 
 JEV, Laya, HPOA는 사용하지 않는다. 이번 MVP는 대표 합성 사례의 전체 실행을 검증하며 배포·호환성 매트릭스는 도입하지 않는다.
 
-첫 경로는 공식 샘플 API와 지정 `openai/gpt-6-luna` Doctor 모델이며, 한국어 증례·환자 대화·제출 기록을 처리한다. 2026-10-13 시행된 모델 변경을 사용자가 10월 14일 확인했으며 D01의 선택에 반영한다. 사전 준비는 공급된 International·Korean RF2와 BODHI-S를 모델 호출 없이 v5.0에 투영한다. 선택과 적용 범위는 [결정 상태](DECISION_STATE.md)의 D01·D02·D03·D04·D05·D06·D07·D08·D09·D10·D11·D12가 소유한다. 진료 중 SNOMED 원본이나 지침 문서 검색은 사용하지 않는다.
+첫 경로는 공식 샘플 API와 지정 `openai/gpt-6-luna` Doctor 모델이며, 한국어 증례·환자 대화·제출 기록을 처리한다. 2026-10-13 시행된 모델 변경을 사용자가 10월 14일 확인했으며 D01의 선택에 반영한다. 사전 준비는 공급된 전체 International·Korean Snapshot과 BODHI-S를 결정론적으로 적재·투영하고 필요한 정규화 후보에만 D09의 제한된 Sol 호출을 허용한다. 선택과 적용 범위는 [결정 상태](DECISION_STATE.md)의 D01·D02·D03·D04·D05·D06·D07·D08·D09·D10·D11·D12가 소유한다. 진료 중 SNOMED 원본이나 지침 문서 검색은 사용하지 않는다.
 
 ## 사용자가 경험할 흐름
 
@@ -46,11 +48,15 @@ JEV, Laya, HPOA는 사용하지 않는다. 이번 MVP는 대표 합성 사례의
 
 현재 scope 질문은 한 번 준비한다. 대기 응답을 먼저 처리하고 예산에 맞춰 낮은 우선순위 unasked와 QuestionPlan 참조를 함께 삭제한다. 삭제 항목을 다시 만들거나 deferred 큐에 넣지 않는다. 원문·확보 사실·대기 행동·전달 이력·계획은 보존한다. 명료화는 아래의 증례별 한도 안에서 추가하는 별도 질문이다.
 
+D15에서 이미 물었다는 판단은 실제 전달 이력의 `was_asked`, 해결된 정보의 판단은 출처와 확정 값이 있는 `has_resolved_evidence`로 분리한다. 처리 완료라도 unknown·uncertain이나 값 없는 속성은 확보된 사실이 아니다. 일반 질문의 반복은 막으면서 현재 후보의 미해결 조건은 기존 최대 2회 명료화에서 확인한다.
+
 집중 ROS는 확인된 주호소의 기존 `inSystem`과 `BodySystem` 관계를 사용한다. 계통들의 증상을 합집합으로 모아 주호소 자체·기확인·중복을 제외하고 URI 순으로 최대 6개 준비한다. HPI 준비 시 목록을 고정하며 Open Inquiry에서 확인한 항목은 실행 전에 건너뛴다. 새 ROS 증상으로 다른 계통을 확장하거나 연결이 없는 계통을 추정하지 않는다. 보존 우선순위는 Open Inquiry, ROS, HPI이며 실행 순서는 HPI, Open Inquiry, ROS다. ChiefComplaint 20턴 안에서 뒤쪽 HPI를 줄여 Open 1턴·가능한 ROS 6턴을 확보한다. BodySystem은 질환 후보 검색을 제한하지 않는다.
 
 Context 질문은 지지 맥락과 Association의 필수 적용 조건을 대상·주체·시간에 맞춰 준비하고 연결 후보 수로 정렬한다. 감별 질문은 후보 순위·원천 typicality·조건부 Feature 점수 변화로 정렬한다. 단독 선두라도 남은 감별을 계속한다. 새로운 관찰·정정·교육 응답이 들어오면 현재 사실에서 후보와 점수를 다시 계산한다. 교육 중 진단이 바뀌면 아직 전달하지 않은 부적합한 설명만 남은 예산 안에서 교체하며 앞 세션으로 돌아가지 않는다. SubmissionWriter는 최종 기록·검증·제출만 담당한다.
 
 점수는 D08 v5.0의 원천 likelihood·SNOMED 기본값과 완전 조건 매칭·정교화 대체 정책을 따른다. 상세 불일치나 부재에서 자동 감점을 만들지 않는다. 확인된 관련 Context는 후보당 최대 +1이고 그 외 0이다. 같은 원관찰·조건을 대안 Pattern이나 출처 수만큼 가산하지 않으며 불확실한 개념 대안·다른 에피소드를 합치지 않는다. 최종 동률은 질환 URI 순이다. 별도 ClinicalSynthesis는 없다.
+
+주진단과 감별목록은 `evidence_score > 0`인 후보를 공유한다. 감별에는 선택 질환 ID를 제외한 최대 5개만 표시하고 Context 가점만 있는 후보는 넣지 않는다. 증상 수준 잠정진단과 기존 동률 정책은 유지한다.
 
 | 복구 상황 | 처리 |
 |---|---|
@@ -65,6 +71,8 @@ Context 질문은 지지 맥락과 Association의 필수 적용 조건을 대상
 | SOAP 형식 오류 | 보존 사실에서 한 번 재구성하고 재검증 |
 
 Doctor·Gateway·재생성은 증례 전체 200회·입력 500,000·출력 100,000토큰을 공유한다. 이전 파싱 전용 scope 호출 상한은 사용하지 않는다. 행동 상한은 세션 간 차용하지 않으며 실제 서버 제약을 우선한다. 질문 계획에 표현·응답 처리 호출을 함께 계산하고 Doctor 생성·재생성에서 Gateway 한 호출과 최대 2,048 출력토큰을 남긴다. 입력 토큰은 실제 usage를 누적하며 서버 제한 오류 시 새 수집을 멈춘다. 최종 제출에 120초를 남기고 graph-step 상한은 SDK 턴과 구분한다. 정상 finish는 해당 DIAGNOSE의 completed를 확인한 경우뿐이며 만료·폐쇄·복구 소진 후 결과 불명은 명시적 비정상 종료다.
+
+Gateway의 기본 어휘는 최대 256개·32 KiB, 확장 어휘는 최대 1,024개·128 KiB다. 현재 질문의 대상·속성·허용 값을 먼저 보존하고 원문 라벨·별칭, 기존 관찰, 상위 5개 후보 주변 개념, 남은 일반 검색 개념을 순서대로 채운다. 유효 파싱의 미연결 증상·소견에만 예산 내 확장 1회를 허용한다. 확장은 기존 사실을 유지하고 미연결 사실의 concept_ids만 바꾸며 실패·예산 부족 시 원문과 최초 결과를 보존한다. 잘못된 JSON·진찰 거절에는 확장하지 않는다. 전체 실제 대화와 관찰은 유지하며 어휘·payload의 UTF-8 바이트와 실제 사용 토큰을 구분해 기록한다.
 
 ## 공식 세션·실행 계약
 
@@ -88,7 +96,7 @@ Doctor는 `client.chat()`에서 model을 생략해도 현재 지정 모델로 �
 
 최신 가이드는 제공자 응답 시작 한도를 180초, 새 SDK 기본 대기 시간을 240초로 설명하며 `REQUEST_PENDING`(HTTP 503/409)과 `PROVIDER_UNAVAILABLE`에는 같은 request_id를 유지한 재요청을 안내한다. 보존 SDK 1.0.1의 기본 120초는 수정하지 않는다. 애플리케이션 전송 경계가 최대 240초와 남은 시간·제출 여유로 호출 대기를 제한하고 원래 timeout을 복원한다. 재전송은 같은 요청으로 기록하여 턴·호출·사용량을 중복 계산하지 않는다. 합성 복구와 실제 서버 복구는 별도 검증이다. [요청 대기·문제 해결](https://nova.snubhai.org/docs/)
 
-개발용 create_sample은 팀당 KST 하루 100개, 제출 후 샘플 검증은 별도로 하루 10회, 공식 평가는 팀·단계별 하루 1회다. 세션 종료·만료로 생성 횟수가 돌아오지 않는다. 세션 밖 성공한 gpt-6-luna 호출은 model 생략 여부를 포함해 하루 1,000회로 합산하고 gpt-6.1-sol은 100회다. 증례 안 Doctor 호출은 이 일일 호출 한도와 별도로 증례별 한도를 적용한다. 현재 v5.0 준비는 모델 호출을 하지 않는다. [개발 한도](https://nova.snubhai.org/docs/)
+개발용 create_sample은 팀당 KST 하루 100개, 제출 후 샘플 검증은 별도로 하루 10회, 공식 평가는 팀·단계별 하루 1회다. 세션 종료·만료로 생성 횟수가 돌아오지 않는다. 세션 밖 성공한 gpt-6-luna 호출은 model 생략 여부를 포함해 하루 1,000회로 합산하고 gpt-6.1-sol은 100회다. 증례 안 Doctor 호출은 이 일일 호출 한도와 별도로 증례별 한도를 적용한다. D09 준비의 공유 대장은 실패·불명 요청도 보수적으로 포함하고 날짜별 명시적 잔여 예산 안에서 최대 100회로 제한한다. [개발 한도](https://nova.snubhai.org/docs/)
 
 ## 최소 데이터·입출력 계약
 
@@ -119,6 +127,8 @@ InteractionState는 증례별 실제 전달 문장·환자 답·턴·요청 ID·
 | 별도 값 | `diagnosis` | CaseState.diagnosis의 비어 있지 않은 주진단 하나 |
 
 모든 SOAP 칸은 문자열이고 내용이 없는 칸은 빈 문자열로 둔다. 단, 기록 전체를 빈 문자열로만 채우지 않는다. 주진단은 CaseState.diagnosis에 유지하고 별도 diagnosis 인자로 비어 있지 않은 문자열 하나를 보낸다. note.A에는 evidence·differential만 넣는다. 누락·추가 필드와 잘못된 자료형은 제출 전에 거절한다. A.evidence에는 실제로 확보하고 판단에 사용한 문진·신체진찰 소견을 간결하게 목록화하며, 지식 출처나 내부 사고 과정으로 대신하지 않는다. 미확인·미시행 항목은 근거로 채우지 않고 원문·획득 턴은 InteractionState에서 추적하고 CaseState는 출처 ID를 참조한다.
+
+D15의 결정론적 렌더러는 주체·현재/과거·발현 번호·속성 값·수치·단위·구간 경계를 보존한다. 짧은 “네”도 해당 구조화 사실과 함께 읽을 수 있게 하고 내부 URI·요청 ID·에피소드 ID는 노출하지 않는다. 한 번의 지속시간과 발생 후 경과시간을 구분하며 월·년을 임의로 일수로 환산하지 않는다.
 
 공식 안내 표와 제출 예제는 주진단을 별도 diagnosis 값으로 보내도록 안내한다. 사용자는 D12에서 SDK 전송 형식을 선택했다. SDK를 수정하지 않으며 note.A.diagnosis를 추가하지 않는다. 문서·코드의 일치는 공식 서버 수락을 검증한 결과와 구분한다.
 
@@ -178,15 +188,15 @@ BODHI location과 laterality, radiating, onset, duration_since, duration_lasts, 
 
 ValueMatch는 관찰 개념과 기대 개념 사이의 검증된 제한 경로를 기록한다. is_a, regional_part, approved_region을 구분하고 sourceRef를 보존한다. 경로는 환자가 말하지 않은 넓은 위치를 실제 관찰로 생성하지 않는다. BodySystem은 문진 범위만 정하며 질환 검색을 제한하지 않는다.
 
-### 실제 원천의 제한된 투영
+### 전체 원천 수집과 v5.0 투영
 
 공급된 International 2026-05-01 기반과 Korean 2026-06-15 확장을 정확한 Module Dependency 버전으로 결합한다. 최신 effectiveTime 행 선택 후 활성 여부를 적용하고 동일 버전 충돌·미래 행·누락된 의존성을 거부한다. 영어와 한국어 명칭을 동일 SCTID의 표현으로 연결하고 Korean 고유 개념의 모듈 출처를 보존한다. 다운로드하거나 원본을 수정하지 않는다.
 
 BODHI의 첫 입력은 nodes_condition.csv, nodes_symptom.csv, edges_present_in.csv다. UUID와 자체 SCTID·루트 SCTID·nullable 원값을 분리한다. snomed_id라는 이름만으로 검증된 SCTID나 의미상 올바른 매핑을 주장하지 않는다. Condition이 활성 disorder인지와 현재 실행 역할을 함께 확인하며 과거력·가족력·검사 소견·미확인 ID는 지정된 제외/보류 결과를 갖는다.
 
-첫 구축 범위는 Abdominal pain, Cough, Fever이다. 원천 변형의 조건 묶음을 유지하며 같은 Disease와 Target이라는 이유로 여러 변형을 합치지 않는다. SNOMED는 실제 due_to·associated_with·subtype-intersection 경로를 사용하고 관계 ID·그룹·모듈·버전·원천 개념·계층 경로를 보존한다. 필수 조건이나 그룹 수식 범위를 해결하지 못하면 해당 표현 전체를 보류한다.
+2026-10-15 선택한 현재 구축 범위는 공급된 International·Korean 전체 Snapshot과 BODHI-S 전체 8개 CSV다. SQLite는 원천·최신 컴포넌트·정규화·registry·판단·승인 기록을 소유하고 실행 RDF는 v5.0으로 의미를 보존할 수 있는 승인 관계만 담는다. 원천 변형 조건을 유지하며 같은 Disease와 Target이라는 이유로 합치지 않는다. 실제 due_to·associated_with·subtype-intersection 경로의 관계 ID·그룹·모듈·버전·개념·계층 경로를 보존한다. 필수 조건·실행 역할·그룹 범위를 해결하지 못하면 전체 의존 표현을 보류한다.
 
-준비 기록은 source row·파일 위치·UUID·원값·파일 해시·매핑 판단·후보 registry와 모든 원천 주장을 보존한다. 실행 Graph는 선택된 Pattern·Feature·Association, 적용 조건·라벨·관계 범위와 최소 출처 참조만 보유한다. registry candidate와 preview_only는 사람 검토·임상 승인·제출 admission과 별개이며 자동 수용하지 않는다.
+준비 기록은 모든 입력 행과 위치·UUID·원값·파일 해시·매핑·후보 registry·원천 주장을 보존한다. build/export/admit가 적재·정규화·검토 자료·승인 통합을 자동화한다. 결정론적 규칙으로 해결되지 않은 원천 표현은 선택적으로 NOVA_DEV_KEY의 세션 밖 openai/gpt-6.1-sol로 정규화 후보를 만든다. 현재 날짜의 명시적 잔여 예산과 공유 KST 대장에서 실패·불명 요청을 포함한 최대 100회를 적용하며 자동 재시도·다음 날 재개는 없다. 실행 Graph는 선택된 Pattern·Feature·Association, 적용 조건·라벨·범위와 최소 sourceRef만 담는다. candidate와 preview_only는 승인으로 대체하지 않으며 빌드·후보 해시에 고정된 명시적 배치 승인 후 통합한다. 신규 임상 문구는 별도 작업이다.
 
 ### 자동 점수와 정교화
 
@@ -250,7 +260,7 @@ submission/을 런타임 코드의 단일 원본으로 사용한다. 공개 설�
 
 공개 설정 submission/.env는 ONTOWARD_KNOWLEDGE_MANIFEST, ONTOWARD_DOCTOR_PROMPT, ONTOWARD_PARSER_PROMPT, ONTOWARD_TEXTS를 선언한다. 기본값은 각각 knowledge/manifest.json, config/doctor.txt, config/input_parser.txt, config/texts.ko.json이다. 실행 환경의 같은 변수값이 우선하며 모두 submission 기준 상대 경로다. settings.py는 manifest/지식은 knowledge 내부, 프롬프트/문구는 config 내부로 제한하고 외부 경로·심볼릭 링크 탈출·상위 디렉터리 폴백을 차단한다. config의 JSON은 고정 질문, 엄격한 답변 어휘, 임상 상태 표시, SOAP 문자열 형식을 담는다. SDK 필드명·상태 코드·RDF URI는 기계 계약으로 Python에 남긴다. 환경값을 적용하려면 prepare()를 다시 실행한다.
 
-지식 manifest는 schema·vocabulary·하나 이상의 bundles와 선택적 questions·plans를 선언하고 각 항목은 submission 기준 상대 path와 SHA-256을 가진다. questions JSON은 속성/대상 URI를 질문 문자열로 매핑하며 {symptom} 자리만 치환한다. plans JSON은 질환 URI별 tests·treatment·disposition·follow_up 문자열과 education 문자열 목록을 담는다. EXAM 문구는 RDF ExamMethod.examRequestText를 사용한다. 없는 질문·임상 관계·계획은 생성하지 않는다. 실제 자산은 제출 내부에 있어야 하며 root data로 폴백하지 않는다. 개발 자격증명은 root .env, 공식 토큰·세션은 실행기 소유이며 공개 문구 설정이 덮어쓰지 않는다.
+지식 manifest는 schema·vocabulary·하나 이상의 bundles와 선택적 labels·questions·plans를 선언하고 각 항목은 submission 기준 상대 path와 SHA-256을 가진다. labels JSON은 기존 개념 URI를 한국어 표시 이름에 연결하며 임상 RDF를 바꾸지 않는다. questions JSON은 속성/대상 URI를 질문 문자열로 매핑하며 {symptom} 자리만 치환한다. 대상 URI|속성 URI 키가 공통 속성 질문보다 우선한다. 모든 실제 치환 문구를 prepare에서 NFC 1–30자로 검증한다. plans JSON은 질환 URI별 tests·treatment·disposition·follow_up 문자열과 education 문자열 목록을 담는다. EXAM 문구는 RDF ExamMethod.examRequestText를 사용한다. 승인 자산 밖의 질문·임상 관계·계획은 생성하지 않는다. 실제 자산은 제출 내부에 있어야 하며 root data로 폴백하지 않는다. 개발 자격증명은 root .env, 공식 토큰·세션은 실행기 소유이며 공개 문구 설정이 덮어쓰지 않는다.
 
 문서별 추출 파일은 제출에서 제외하고 승인된 지식 묶음과 manifest만 필요한 코드와 함께 구성한다. 원본 약 597.2 MB를 RDF 크기로 간주하지 않으며, 제출 묶음의 실제 압축·해제 크기와 코드 전체 파일 수를 확인한다. 준비 10분과 예선 RAM 8GB 제한은 전체 실행 자원에 적용한다. 대표 추출에서 문서 길이·유형을 나누어 triple 수, Turtle 크기, 전체 로딩 시간, 최대 메모리와 주요 조회 시간을 측정한다. 후속 대표 추출의 수치는 data 준비 기록에 남기며 전체 제출 그래프나 진료 실행 환경의 수용 증거로 일반화하지 않는다.
 
@@ -291,4 +301,4 @@ HPI는 고정된 정보 슬롯을 처리하고, 그 이후에는 현재 후보 �
 - 외부 경로 폴백 차단·누락 manifest 오류·준비 문구 누락·환경값에 따른 문구 변경·SDK 원본과 패키징 경계.
 - 최신 D11과 루트·submission·data 상태의 정합화, 병행 추출 결과와 임상 검토 차단 사유 보존.
 
-승인된 임상 실행 묶음과 치료·교육 자산은 아직 준비되지 않았다. 합성 검증은 자산 소비 코드와 전체 흐름을 검증하며 실제 Doctor 품질·임상 정확성·공식 SDK 수락·제출·평가는 별도 미검증으로 남긴다. 추출 재개·코퍼스 확대·외부 호출·커밋·배포를 포함하지 않는다. 구현·검증 관측값은 [제출 상태](submission/PROJECT_STATE.md), 준비 결과는 [데이터 상태](data/PROJECT_STATE.md), 교차 범위 조정은 [루트 상태](PROJECT_STATE.md)에 기록한다.
+치료·교육 자산과 실제 임상 성능 검증은 별도 준비를 요구한다. D15는 고정된 D09 전체 후보 배치와 최소 한국어 질문·표시 이름의 사용을 승인하며 원래 검토 자료와 보류·제외 행을 보존한다. 증상 490개·속성 16개의 질문을 준비하되 실제 배치에 없는 진찰·Context나 질환 계획을 확보한 것으로 취급하지 않는다. 합성 검증은 자산 소비 코드와 전체 흐름을 확인하며 실제 Doctor 품질·임상 정확성·공식 SDK 수락·제출·평가는 별도 증거로 남긴다. 이전 추출 작업 재개·새 원천 확보·커밋·배포는 포함하지 않는다. 구현·검증 관측값은 [제출 상태](submission/PROJECT_STATE.md), 준비 결과는 [데이터 상태](data/PROJECT_STATE.md), 교차 범위 조정은 [루트 상태](PROJECT_STATE.md)에 기록한다.

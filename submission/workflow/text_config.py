@@ -22,6 +22,14 @@ class Texts(BaseModel):
     absent_replies: list[str]
     reply_trailing_punctuation: str
     status_labels: dict[str, str]
+    subject_labels: dict[str, str]
+    time_labels: dict[str, str]
+    unit_labels: dict[str, str]
+    operator_labels: dict[str, str]
+    episode_format: str
+    clinical_context_format: str
+    measurement_format: str
+    interval_format: str
     education_format: str
     plan_format: str
     finding_format: str
@@ -45,6 +53,9 @@ class TextConfig(BaseModel):
         texts = Texts.model_validate_json(configured_path("ONTOWARD_TEXTS", "config").read_text(encoding="utf-8"))
         if not prompt or not doctor or set(texts.status_labels) != {"present", "absent", "uncertain", "unknown"}:
             raise ValueError("Missing parser prompt or clinical status labels")
+        if (set(texts.subject_labels) != {"patient", "family"} or set(texts.time_labels) != {"current", "past", "unspecified"}
+                or set(texts.operator_labels) != {"eq", "lt", "le", "gt", "ge"}):
+            raise ValueError("Missing clinical context or numeric labels")
         reply_groups = [set(texts.unknown_replies), set(texts.present_replies), set(texts.absent_replies)]
         if any(not value.strip() for group in reply_groups for value in group) or any(
             left & right for i, left in enumerate(reply_groups) for right in reply_groups[i + 1:]
@@ -52,7 +63,10 @@ class TextConfig(BaseModel):
             raise ValueError("Fixed clinical replies must be nonempty and unambiguous")
         for name, expected in {"ros_question": {"symptom"}, "exam_turn_format": {"text", "turn"},
                                "initial_exam_format": {"text"}, "education_format": {"text"}, "plan_format": {"text"},
-                               "finding_format": {"labels", "status", "text"}, "unlinked_format": {"text", "status"}}.items():
+                               "finding_format": {"labels", "status", "text"}, "unlinked_format": {"text", "status"},
+                               "episode_format": {"number"}, "clinical_context_format": {"subject", "time", "episode"},
+                               "measurement_format": {"operator", "value", "unit"},
+                               "interval_format": {"lower_bound", "lower", "upper", "upper_bound"}}.items():
             parts = list(Formatter().parse(getattr(texts, name)))
             fields = {field for _, field, _, _ in parts if field is not None}
             if fields != expected:

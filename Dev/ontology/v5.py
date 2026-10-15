@@ -11,7 +11,7 @@ from submission.knowledge.conditions import ExpectedValue, ScoringPolicy
 ROOT = Path(__file__).resolve().parents[2]
 
 OW = Namespace("urn:ontoward:")
-NORMALIZATION_VERSION = "v5.0.1"
+NORMALIZATION_VERSION = "v5.0.2"
 
 
 def digest(value):
@@ -30,7 +30,29 @@ def write(path, value):
     path = workspace_path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(path.name + ".tmp")
-    temporary.write_text(json.dumps(value, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
+    with temporary.open("w", encoding="utf-8") as stream:
+        for chunk in json.JSONEncoder(indent=2, ensure_ascii=False, sort_keys=True).iterencode(value):
+            stream.write(chunk)
+        stream.write("\n")
+    temporary.replace(path)
+
+
+def write_sources(path, assertions, dispositions):
+    temporary = path.with_name(path.name + ".tmp")
+    with temporary.open("w", encoding="utf-8") as stream:
+        stream.write('{"assertions":{')
+        separator = ""
+        for key in sorted(assertions):
+            stream.write(separator + json.dumps(key) + ":")
+            for chunk in json.JSONEncoder(ensure_ascii=False, sort_keys=True).iterencode(assertions[key]):
+                stream.write(chunk)
+            separator = ","
+        stream.write('},"dispositions":[')
+        separator = ""
+        for record in dispositions:
+            stream.write(separator + json.dumps(record, ensure_ascii=False, sort_keys=True))
+            separator = ","
+        stream.write("]}\n")
     temporary.replace(path)
 
 
@@ -55,8 +77,14 @@ class PreviewBuilder:
             self.vocabulary.add((node, RDFS.label, Literal(korean, lang="ko")))
         for alias in aliases:
             self.vocabulary.add((node, SKOS.altLabel, Literal(alias, lang="en")))
-        self.registry[uri] = {"uri": uri, "kind": kind, "label": label, "snomed_id": snomed_id,
-                              "source_refs": list(source_refs), "review_status": "candidate"}
+        previous = self.registry.get(uri, {})
+        if previous and (previous["kind"] != kind or
+                         previous.get("snomed_id") not in {None, snomed_id}):
+            raise ValueError("Conflicting concept role or SNOMED mapping")
+        self.registry[uri] = {**previous, "uri": uri, "kind": kind, "label": label,
+                              "snomed_id": snomed_id or previous.get("snomed_id"),
+                              "source_refs": sorted(set(source_refs) | set(previous.get("source_refs", []))),
+                              "review_status": "candidate"}
         return node
 
     def feature(self, pattern, payload):
@@ -185,29 +213,28 @@ class PreviewBuilder:
         for pattern in patterns:
             by_target.setdefault(str(self.graph.value(pattern, OW.targets)), []).append(pattern)
         for members in by_target.values():
-            for child in members:
-                for parent in members:
-                    if knowledge.pattern_refines(str(child), str(parent)):
-                        self.graph.add((child, OW.refinesPattern, parent))
+            for child, parent in knowledge._refinement_edges([str(node) for node in members]):
+                self.graph.add((URIRef(child), OW.refinesPattern, URIRef(parent)))
         (output / "schema.ttl").write_bytes((ROOT / "data/ontology/schema.ttl").read_bytes())
         (output / "scoring_policy.json").write_bytes((ROOT / "submission/knowledge/scoring_policy.json").read_bytes())
         for name, graph in (("vocabulary.ttl", self.vocabulary), ("clinical.ttl", self.graph)):
             (output / name).write_text("".join(sorted(f"{s.n3()} {p.n3()} {o.n3()} .\n" for s, p, o in graph)), encoding="utf-8")
         assets = {name: {"path": "knowledge/" + name, "sha256": digest((output / name).read_bytes())}
                   for name in ("schema.ttl", "vocabulary.ttl", "clinical.ttl", "scoring_policy.json")}
+        self.registry = dict(sorted(self.registry.items()))
         registry_version = digest(self.registry)
         manifest = {"schema_version": "5.0", "registry_version": registry_version,
                     "normalization_version": NORMALIZATION_VERSION, "source_snapshots": source_snapshots,
                     "scoring_policy_version": ScoringPolicy.load_default().version, "scoring_policy": assets["scoring_policy.json"],
                     "schema": assets["schema.ttl"], "vocabulary": assets["vocabulary.ttl"], "bundles": [assets["clinical.ttl"]],
-                    "preparation_status": "preview_only"}
+                    "preparation_status": "preview_only", "build_id": report.get("build_id")}
         report = {**report, "status": "preview_only", "schema_version": "5.0", "patterns": len(patterns),
                   "associations": len(set(self.graph.subjects(RDF.type, OW.DiseasePatternAssociation))),
                   "features": len(set(self.graph.subjects(RDF.type, OW.ClinicalFeature))), "registry_version": registry_version,
-                  "model_calls": 0, "clinical_review": "not_run", "runtime_admission": "not_run"}
+                  "model_calls": report.get("model_calls", 0), "clinical_review": "not_run", "runtime_admission": "not_run"}
         write(output / "manifest.json", manifest)
         write(output / "registry.json", {"version": registry_version, "entries": list(self.registry.values()), "review_status": "candidate"})
-        write(output / "sources.json", {"assertions": self.assertions, "dispositions": dispositions})
+        write_sources(output / "sources.json", self.assertions, dispositions)
         write(output / "report.json", report)
         write(output / "feature-contributions.json", [c.model_dump() for key in sorted(knowledge._contributions)
                                                       for c in knowledge.get_feature_contributions(key)])

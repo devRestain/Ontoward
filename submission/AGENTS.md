@@ -26,6 +26,8 @@
 - Freeze focused ROS in sorted URI order using existing inSystem and BodySystem links; deduplicate and skip known symptoms without expanding into newly reported systems.
 - Return every SAY and EXAM response through one InputInterpreter, including education responses.
 - Use unasked and done for record processing; preserve present, absent, uncertain, and unknown within values.
+- Separate delivered-question history from resolved sourced evidence through was_asked and has_resolved_evidence under D15.
+- Keep unresolved values available to the existing bounded clarification route without repeating ordinary delivered questions.
 - Initialize each scope once and finish only after pending replies are handled and the current scope has no unasked records.
 - Delete low-priority unasked records and question references together; do not retain deferred queues or recreate deleted questions.
 - Preserve acquired facts, pending actions, prepared plans, and delivered explanations.
@@ -54,7 +56,7 @@
 - Assign prepared education selection to InterviewPlanner and final record validation and submission to SubmissionWriter.
 - Reconstruct an invalid SOAP record once; enter finish only after the submitted DIAGNOSE request returns completed and use abort for explicit unsuccessful outcomes.
 - Separate confirmed submission, failure, unknown outcome, closed session, and expiry.
-- Implement the authorized offline MVP and leave actual clinical admission and authenticated SDK acceptance explicitly unverified.
+- Distinguish D15 user-approved runtime admission from independent clinical validation and authenticated SDK acceptance.
 - Keep unasked and unanswered items distinct from uncertain, present, and explicitly absent observations.
 - Keep separate occurrences of the same symptom distinct and preserve confirmed broad and specific locations as parallel values within one occurrence.
 - Link common site- or activity-qualified complaints to specific symptom concepts and retain finer qualifiers, evidenced matching paths, and episode-specific absence.
@@ -76,6 +78,8 @@
 - Distinguish pre-transmission validation from server-side invalid SAY or EXAM requests that consume one turn.
 - Write A.evidence as a concise list of obtained interview and physical-examination findings used to judge the main diagnosis.
 - Name the supporting findings directly instead of stating their source or saying that the diagnosis is based on patient expressions.
+- Render subject, time, episode, categorical values, quantities, units, and interval bounds in SOAP without exposing internal identifiers.
+- Share positive-evidence eligibility between primary diagnosis and at most five alternatives while excluding the selected disease ID.
 - Keep acquisition turns and raw provenance in InteractionState with references from CaseState; exclude unasked or unperformed findings from A.evidence.
 - Separate education plans from explanations actually delivered through SAY.
 - Keep patient-reported answers separate from examination and investigation findings.
@@ -84,6 +88,13 @@
 
 - Leave pre-submission extraction, candidate validation, RDF generation, and bundle assembly to root Dev/ under D09.
 - Consume data-owned submission-admitted bundles without depending on Dev tools or extraction CLI authentication.
+- Reject manifest-declared preview_only assets; consume only batches placed here through explicit data-owned admission while preserving optional clinical-text availability.
+- Cache validated profiles, features, labels, and refinement results for full-source scale without changing retrieval or scoring semantics.
+- Load optional manifest-pinned display labels and target-specific question overrides without changing RDF relations or source identities.
+- Bound primary Gateway vocabulary to 256 concepts and 32 KiB and expanded vocabulary to 1024 concepts and 128 KiB.
+- Prioritize current-question identifiers and values before optional lexical, observation, hypothesis, and general recall concepts.
+- Permit one budgeted expansion only for valid unlinked symptom or finding facts and preserve all first-pass facts if expansion fails.
+- Limit expansion changes to concept_ids while preserving exact quotes, field, status, subject, episode, and correction references.
 - Exclude the data-owned natural-language vocabulary candidates from runtime knowledge until clinician review and separate admission.
 - Treat NOVA_GUIDELINES_DIR as a preparation source-location contract rather than a consultation retrieval dependency.
 - Load the D08 schema and vocabulary with all manifest-declared clinical bundles into one RDFLib Graph during case-independent prepare().
@@ -121,7 +132,8 @@
 - Run the package Compose service to archive only this directory's runtime files and knowledge assets.
 - Keep Turtle, required JSON schemas, and the runtime manifest in knowledge/ without parent-project fallbacks in execution or tests.
 - Run Dev/tests/workflow/test_workflow.py in the project dev container with Dev/tests/workflow/compose.offline.yaml.
+- Run Dev/tests/workflow/test_admitted.py with explicit submission and output paths for admitted RDF and independently extracted archives.
 - Keep generated full-flow assets inside a temporary submission copy under Tmp and exclude fixtures from the real archive.
 - Use Dev/architecture/WORKFLOW_RULES.md to locate each rule owner and behavioral test without duplicating executable rules.
-- Reference D01, D03, D04, D05, D06, D07, D08, D09, D11, D12, D13, and D14 in `../DECISION_STATE.md` without duplicating options or decision statuses.
+- Reference D01, D03, D04, D05, D06, D07, D08, D09, D11, D12, D13, D14, and D15 in `../DECISION_STATE.md` without duplicating options or decision statuses.
 - Leave source admission and preparation-result records to `../data/PROJECT_STATE.md`.

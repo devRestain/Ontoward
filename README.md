@@ -1,6 +1,6 @@
 # Ontoward
 
-Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단을 제출하는 에이전트 프로젝트다. D08 v5.0의 원천 투영·타입 조건·자동 점수와 D11의 합성 전체 진료 검증을 구현했으며 실제 임상 자산 승인·Luna 품질·공식 제출은 별도 검증 대상이다. 처음 읽는 분은 [워크플로우 백서](submission/README.md)에서 인사부터 진단 제출까지와 각 함수의 책임을 따라갈 수 있다.
+Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단을 제출하는 에이전트 프로젝트다. D15에서 사용자 승인 v5.0 지식과 최소 한국어 질문을 수용하고 정보 보존·파서 어휘 제한을 반영했다. 독립 임상 검증·실제 Luna 품질·공식 제출은 별도 검증 대상이다. 처음 읽는 분은 [워크플로우 백서](submission/README.md)에서 인사부터 진단 제출까지와 각 함수의 책임을 따라갈 수 있다.
 
 [PRD](PRD.md)는 동작 요구사항, [결정 문서](DECISION_STATE.md)는 사용자 선택, 각 범위의 PROJECT_STATE.md는 관측된 진행과 다음 작업을 관리한다. 공모전 규칙은 [공모전 참고 자료](assets/nova-competition-2026/README.md)와 [현재 규칙 업데이트](assets/nova-competition-2026/CHANGES_2026-10-14.md)에서 확인한다.
 
@@ -25,7 +25,7 @@ Ontoward/
 │   └── packaging/  # 제출 ZIP 구성 도구
 ├── data/
 │   ├── ontology/   # v5.0 구조·기초 어휘·deprecated v4.2
-│   ├── preparation/v5/ # 실제 원천의 제한된 preview
+│   ├── preparation/v5/ # 전체 원천 SQLite·후보 RDF·검토 자료
 │   ├── catalog/    # 원본 경로 목록
 │   └── provenance/ # 출처 식별
 ├── assets/         # 주최자 원본과 공모전 참고 문서
@@ -60,7 +60,7 @@ docker compose build dev
 docker compose run --rm dev
 ```
 
-Dockerfile은 submission/requirements.txt의 고정 버전을 PyPI 휠로 설치한다. 별도 ontology-extraction 서비스는 gpt-6-luna·medium 설정의 최소 Codex 환경과 전용 인증 volume을 소유한다. 현재 D09의 v5.0 준비는 기존 dev 이미지에서 공급된 RF2·BODHI를 모델 호출 없이 처리한다. Dev/ontology와 data가 준비·검토를, submission/knowledge가 별도 수용한 임상 실행 자산을 관리한다. extraction 이미지와 인증 volume은 보존한다.
+Dockerfile은 submission/requirements.txt의 고정 버전을 PyPI 휠로 설치한다. 별도 ontology-extraction 서비스와 인증 volume은 보존한다. 현재 D09는 기존 dev 이미지의 SQLite·Pydantic·RDFLib로 전체 RF2 Snapshot·BODHI-S를 준비한다. 결정론적 처리가 기본이며 필요한 원천 정규화만 명시적 KST 예산 안에서 개발 Sol을 호출한다. Dev/ontology와 data가 준비·검토를, submission/knowledge가 명시적 승인 후 수용한 실행 자산을 관리한다.
 
 ## ZIP 만들기
 
@@ -75,7 +75,7 @@ docker compose run --rm -T package
 
 수동으로 압축할 때도 **submission 폴더 자체가 아니라 필요한 내부 파일**을 선택하고 안내·상태 문서를 제외한다. .env가 숨김 파일이므로 위 명령 사용을 권장한다. .gitignore는 ZIP 구성 규칙을 대신하지 않는다.
 
-현재 ZIP은 구현된 실행 코드를 포함한다. 지식 로더·문진·검색·복구·SOAP·제출 경계는 합성 자료로 검증하지만 승인된 실제 임상 묶음과 manifest는 없다. 따라서 production prepare()는 파일 오류로 멈추며 빈 그래프로 우회하지 않는다.
+현재 ZIP은 승인된 실제 RDF·manifest, 증상 490개와 속성 16개의 질문, 257개 한국어 표시 이름을 포함한다. 독립 추출 환경에서 실제 자산의 prepare와 합성 환자·모델 응답을 사용한 전체 흐름을 검증했다. 실제 배치에는 진찰·Context 개념과 질환별 계획이 없으므로 해당 기능의 임상 자산까지 준비됐다는 뜻은 아니다.
 
 ## 자료와 Git 관리
 
@@ -83,6 +83,6 @@ docker compose run --rm -T package
 
 Git에는 코드·계약·상태·PPTX 변환 Markdown·간결한 출처와 검토 요약·공개 실행 설정을 남긴다. 대용량 원본, 생성 추출 결과, 임시 작업, 캐시와 로컬 비밀값은 .gitignore로 제외한다. 실제 파일을 삭제하거나 Git 저장소를 초기화하는 규칙은 아니다.
 
-현재 첫 source preview는 Abdominal pain·Cough·Fever에 제한한다. [투영 도구](Dev/ontology/README.md)와 [준비 결과](data/preparation/v5/README.md)에서 입력·manifest·제외/보류·검증을 확인할 수 있다. 기존 Dev/ontology/snomed/와 문헌 추출 코드는 제거했으며 보존할 과거 자료는 [deprecated 목록](data/ontology/deprecated.json)에 구분한다.
+현재 준비는 전체 International·Korean Snapshot과 BODHI-S 8개 CSV를 수집하는 SQLite DB와 v5.0 후보 RDF다. [구축 도구](Dev/ontology/README.md)와 [준비 결과](data/preparation/v5/README.md)에서 입력·manifest·제외/보류·배치 검토·검증을 확인한다. 앞선 세 Target preview와 [deprecated 자료](data/ontology/deprecated.json)는 보존하며 구형 작업을 재개하지 않는다.
 
-다음 애플리케이션 경계는 검토·승인된 v5.0 실행 지식과 준비 문구의 수용이다. 준비 작업의 별도 검토와 실제 모델·공식 실행 여부는 각 소유 상태에서 확인한다.
+다음 단일 작업은 사실별 입력 검증과 질문 목적에 맞는 복구 설계다. [분석 보고서의 채택·보류 근거](Dev/architecture/NOVA_REVIEW_2026-10-15.md)를 프로젝트 자료로 남겼다. 질환별 치료·추적·교육 문구와 실제 모델·공식 실행 여부는 각 소유 상태에서 확인한다.

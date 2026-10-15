@@ -3,6 +3,8 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import unicodedata
+from string import Formatter
 
 from pydantic import BaseModel, ConfigDict, Field
 from rdflib import Graph, Namespace, RDF, RDFS, SKOS, URIRef
@@ -35,6 +37,7 @@ class Manifest(BaseModel):
     vocabulary: Asset
     bundles: list[Asset] = Field(min_length=1)
     questions: Asset | None = None
+    labels: Asset | None = None
     plans: Asset | None = None
 
 
@@ -49,17 +52,30 @@ class Plan(BaseModel):
 
 class ClinicalKnowledge:
     def __init__(self, graph: Graph, questions: dict[str, str] | None = None, plans: dict[str, Plan] | None = None,
-                 policy: ScoringPolicy | None = None):
+                 policy: ScoringPolicy | None = None, labels: dict[str, str] | None = None):
         self._graph = graph
         self.questions = questions or {}
         self.plans = plans or {}
         self.policy = policy or ScoringPolicy.load_default()
+        self.labels = labels or {}
         self._contributions: dict[str, list[FeatureContribution]] = {}
+        self._feature_cache = {}
+        self._profile_cache = {}
+        self._refinement_cache = {}
+        self._target_profiles = None
+        self._disease_profiles = None
+        self._label_index = None
+        self._labels = {}
+        self._concept_cache = None
+        self._target_values = {}
+        self._types = None
 
     @classmethod
     def load(cls, manifest_path: Path) -> ClinicalKnowledge:
         manifest_path = knowledge_path(manifest_path.relative_to(ROOT).as_posix())
         manifest = Manifest.model_validate_json(manifest_path.read_text(encoding="utf-8"))
+        if getattr(manifest, "preparation_status", None) == "preview_only":
+            raise ValueError("Preview knowledge requires explicit batch admission")
 
         def read(asset: Asset, suffix: str) -> bytes:
             path = knowledge_path(asset.path)
@@ -76,34 +92,65 @@ class ClinicalKnowledge:
         questions = json.loads(read(manifest.questions, ".json")) if manifest.questions else {}
         if not isinstance(questions, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in questions.items()):
             raise ValueError("Question assets must map identifiers to template strings")
+        labels = json.loads(read(manifest.labels, ".json")) if manifest.labels else {}
+        if not isinstance(labels, dict) or any(not isinstance(k, str) or not isinstance(v, str) or not v.strip()
+                or unicodedata.normalize("NFC", v) != v or not list(graph.objects(URIRef(k), RDF.type))
+                for k, v in labels.items()):
+            raise ValueError("Display labels require admitted identifiers and nonempty NFC text")
         raw_plans = json.loads(read(manifest.plans, ".json")) if manifest.plans else {}
         if not isinstance(raw_plans, dict):
             raise ValueError("Plan assets must map disease URIs to plans")
         policy = ScoringPolicy.model_validate_json(read(manifest.scoring_policy, ".json"))
         if policy.version != manifest.scoring_policy_version:
             raise ValueError("Scoring policy version differs from the manifest")
-        knowledge = cls(graph, questions, {key: Plan.model_validate(value) for key, value in raw_plans.items()}, policy)
+        knowledge = cls(graph, questions, {key: Plan.model_validate(value) for key, value in raw_plans.items()}, policy, labels)
         knowledge.validate_graph()
+        knowledge.validate_question_assets()
         return knowledge
 
     def label(self, concept_id: str) -> str:
+        if concept_id in self._labels:
+            return self._labels[concept_id]
         labels = list(self._graph.objects(URIRef(concept_id), RDFS.label))
-        return str(next((label for label in labels if label.language == "ko"),
+        value = self.labels.get(concept_id) or str(next((label for label in labels if label.language == "ko"),
                         next((label for label in labels if label.language == "en"), concept_id)))
+        self._labels[concept_id] = value
+        return value
 
     def has_type(self, concept_id: str, kind: str) -> bool:
+        if self._types is not None and concept_id in self._types:
+            return str(OW[kind]) in self._types.get(concept_id, set())
         return (URIRef(concept_id), RDF.type, OW[kind]) in self._graph
 
     def resolve_concept(self, text: str) -> list[str]:
         normalized = text.strip().casefold()
-        return sorted({str(subject) for predicate in (RDFS.label, SKOS.altLabel)
-                       for subject, label in self._graph.subject_objects(predicate)
-                       if str(label).strip().casefold() == normalized})
+        if self._label_index is None:
+            self._label_index = {}
+            for predicate in (RDFS.label, SKOS.altLabel):
+                for subject, label in self._graph.subject_objects(predicate):
+                    self._label_index.setdefault(str(label).strip().casefold(), set()).add(str(subject))
+            for subject, label in self.labels.items():
+                self._label_index.setdefault(label.casefold(), set()).add(subject)
+        return sorted(self._label_index.get(normalized, set()))
 
-    def concepts(self) -> list[dict[str, str]]:
-        return [{"id": str(subject), "label": self.label(str(subject)), "kind": kind}
+    def concepts(self, ids=None) -> list[dict[str, str]]:
+        if self._concept_cache is None:
+            self._concept_cache = {str(subject): {"id": str(subject), "label": self.label(str(subject)), "kind": kind}
                 for kind in ("Symptom", "ExamFinding", "ContextFactor", "AttributeValue", "FindingAttribute")
-                for subject in sorted(set(self._graph.subjects(RDF.type, OW[kind])), key=str)]
+                for subject in sorted(set(self._graph.subjects(RDF.type, OW[kind])), key=str)}
+        selected = self._concept_cache if ids is None else dict.fromkeys(ids)
+        return [dict(self._concept_cache[key]) for key in selected if key in self._concept_cache]
+
+    def search_concepts(self, text: str) -> list[str]:
+        self.resolve_concept("")
+        normalized = unicodedata.normalize("NFC", text).casefold()
+        matches = [(len(label), subject) for label, subjects in self._label_index.items()
+                   if label and label in normalized for subject in subjects]
+        return list(dict.fromkeys(subject for _, subject in sorted(matches, key=lambda pair: (-pair[0], pair[1]))))
+
+    def get_target_values(self, target_id: str, attribute_id: str) -> list[str]:
+        values = self._target_values.get((target_id, attribute_id))
+        return list(values) if values is not None else self.get_attribute_values(attribute_id)
 
     def get_symptom_attributes(self, symptom_id: str) -> list[str]:
         values = {str(value) for value in self._graph.objects(URIRef(symptom_id), OW.hasAttribute)}
@@ -121,6 +168,9 @@ class ClinicalKnowledge:
         return sorted(str(value) for value in self._graph.objects(URIRef(attribute_id), OW.canHaveValue))
 
     def _profile(self, association) -> AssociationProfile:
+        association = URIRef(association)
+        if str(association) in self._profile_cache:
+            return self._profile_cache[str(association)]
         owners = set(self._graph.subjects(OW.hasAssociation, association))
         if len(owners) != 1:
             raise ValueError("Association requires exactly one disease")
@@ -132,29 +182,38 @@ class ClinicalKnowledge:
         strong = self._optional(association, OW.strongPredictor)
         if strong not in {None, "true", "false"}:
             raise ValueError("Strong predictor must be true, false or absent")
-        return AssociationProfile(id=str(pattern), association_id=str(association), disease_id=str(next(iter(owners))),
+        profile = AssociationProfile(id=str(pattern), association_id=str(association), disease_id=str(next(iter(owners))),
             target=str(self._one(pattern, OW.targets)),
             applicability=[Applicability.model_validate(item) for item in sorted(json.loads(self._optional(association, OW.applicability) or "[]"), key=lambda item: json.dumps(item, sort_keys=True))],
             predictiveness=prediction, typicality=self._optional(association, OW.typicality),
             strong_predictor=None if strong is None else strong == "true", relation_basis=basis, derivation_scope=scope,
             source_refs=sorted(str(ref) for ref in self._graph.objects(association, OW.sourceRef)), score=score, weight_basis=weight_basis)
+        self._profile_cache[str(association)] = profile
+        return profile
 
     def get_patterns_by_target(self, finding_id: str) -> list[AssociationProfile]:
+        if self._target_profiles is not None:
+            return list(self._target_profiles.get(finding_id, []))
         return [self._profile(association)
                 for pattern in sorted(self._graph.subjects(OW.targets, URIRef(finding_id)), key=str)
                 for association in sorted(self._graph.subjects(OW.pattern, pattern), key=str)]
 
     def get_disease_patterns(self, disease_id: str) -> list[AssociationProfile]:
+        if self._disease_profiles is not None:
+            return list(self._disease_profiles.get(disease_id, []))
         return [self._profile(association) for association in sorted(self._graph.objects(URIRef(disease_id), OW.hasAssociation), key=str)]
 
     def get_pattern_features(self, pattern_id: str) -> list[FeatureCondition]:
+        if pattern_id in self._feature_cache:
+            return list(self._feature_cache[pattern_id])
         features = []
         for feature in sorted(self._graph.objects(URIRef(pattern_id), OW.hasFeature), key=str):
             node = self._one(feature, OW.expected, required=False)
             expected = ExpectedValue.model_validate_json(str(self._one(node, OW.valueJSON))) if node is not None else None
             features.append(FeatureCondition(id=str(feature), attribute=self._optional(feature, OW.onAttribute),
                                               expected=expected, status=self._optional(feature, OW.expectedStatus)))
-        return features
+        self._feature_cache[pattern_id] = features
+        return list(features)
 
     def get_feature_contributions(self, association_id: str) -> list[FeatureContribution]:
         return list(self._contributions.get(association_id, []))
@@ -194,11 +253,50 @@ class ClinicalKnowledge:
         return False
 
     def pattern_refines(self, child_id: str, parent_id: str) -> bool:
+        key = (child_id, parent_id)
+        if key in self._refinement_cache:
+            return self._refinement_cache[key]
         child, parent = self.get_pattern_features(child_id), self.get_pattern_features(parent_id)
         if self._one(URIRef(child_id), OW.targets) != self._one(URIRef(parent_id), OW.targets):
             return False
-        return (all(any(self.feature_refines(c, p) for c in child) for p in parent)
-                and not all(any(self.feature_refines(p, c) for p in parent) for c in child))
+        result = (all(any(self.feature_refines(c, p) for c in child) for p in parent)
+                  and not all(any(self.feature_refines(p, c) for p in parent) for c in child))
+        if result:
+            self._refinement_cache[key] = result
+        return result
+
+    def _refinement_edges(self, pattern_ids):
+        exact, by_attribute, special, features, signatures = {}, {}, {}, {}, {}
+        for pattern in pattern_ids:
+            features[pattern] = self.get_pattern_features(pattern)
+            signatures[pattern] = {f.signature() for f in features[pattern]}
+            for feature in features[pattern]:
+                signature = feature.signature()
+                exact.setdefault(signature, set()).add(pattern)
+                by_attribute.setdefault(feature.attribute, []).append((pattern, feature, signature))
+                if feature.expected is not None and (feature.expected.kind != "concept" or feature.expected.match != "exact"):
+                    special.setdefault(feature.attribute, []).append((pattern, feature, signature))
+        for child in pattern_ids:
+            supported = {}
+            for feature in features[child]:
+                attribute, expected, status = feature.signature()
+                for parent_status in {None, status}:
+                    signature = (attribute, expected, parent_status or "")
+                    for parent in exact.get(signature, set()):
+                        supported.setdefault(parent, set()).add(signature)
+                if feature.expected is None:
+                    continue
+                complex_child = feature.expected.kind != "concept" or feature.expected.match != "exact"
+                pool = by_attribute if complex_child else special
+                for parent, condition, signature in pool.get(feature.attribute, []):
+                    if condition.expected is None:
+                        continue
+                    complex_parent = condition.expected.kind != "concept" or condition.expected.match != "exact"
+                    if (complex_child or complex_parent) and self.feature_refines(feature, condition):
+                        supported.setdefault(parent, set()).add(signature)
+            for parent, matched in supported.items():
+                if child != parent and signatures[parent] <= matched and self.pattern_refines(child, parent):
+                    yield child, parent
 
     def get_supporting_context(self, disease_id: str) -> list[dict[str, str]]:
         return [{"id": str(context), "type": str(self._one(context, OW.contextType))}
@@ -215,8 +313,29 @@ class ClinicalKnowledge:
         return [self.label(str(test)) for test in sorted(self._graph.objects(URIRef(disease_id), OW.evaluatedBy), key=str)]
 
     def question(self, key: str, target_id: str | None = None) -> str:
-        text = self.questions.get(key, "")
+        text = self.questions.get(f"{target_id}|{key}", self.questions.get(key, ""))
         return text.replace("{symptom}", self.label(target_id)) if target_id else text
+
+    def validate_question_assets(self):
+        for key, template in self.questions.items():
+            for _, field, spec, conversion in Formatter().parse(template):
+                if field not in {None, "symptom"} or spec or conversion:
+                    raise ValueError("Questions allow only the symptom placeholder")
+            if "|" in key:
+                target, attribute = key.split("|", 1)
+                if attribute not in self.get_symptom_attributes(target):
+                    raise ValueError("Question override requires an admitted target attribute")
+                pairs = [(attribute, target)]
+            elif self.has_type(key, "FindingAttribute"):
+                pairs = [(key, str(target)) for target in self._graph.subjects(OW.hasAttribute, URIRef(key))]
+            elif any(self.has_type(key, kind) for kind in ("Symptom", "ExamFinding", "ContextFactor")):
+                pairs = [(key, key)]
+            else:
+                raise ValueError("Question identifier is not an admitted interview concept")
+            for attribute, target in pairs:
+                text = self.question(attribute, target)
+                if unicodedata.normalize("NFC", text) != text or not 1 <= len(text) <= 30:
+                    raise ValueError("Prepared question must contain 1 to 30 NFC codepoints")
 
     def _one(self, subject, predicate, required=True):
         values = list(self._graph.objects(subject, predicate))
@@ -229,6 +348,14 @@ class ClinicalKnowledge:
         return str(value) if value is not None else None
 
     def validate_graph(self) -> None:
+        self._feature_cache.clear()
+        self._profile_cache.clear()
+        self._refinement_cache.clear()
+        self._target_profiles = self._disease_profiles = self._label_index = None
+        self._labels.clear()
+        self._concept_cache = None
+        self._target_values = {}
+        self._types = None
         if self._optional(OW.OntologySchema, OW.schemaVersion) != "5.0":
             raise ValueError("Knowledge graph requires schema version 5.0")
         if any(list(self._graph.subject_objects(predicate)) for predicate in (OW.hasPattern, OW.expectsValue, OW.clinicalRole, OW.importance)):
@@ -286,19 +413,37 @@ class ClinicalKnowledge:
                 raise ValueError("Duplicate disease-pattern-applicability association")
             identities.add(identity)
             profiles.append(profile)
+        self._target_profiles, self._disease_profiles = {}, {}
+        for profile in sorted(profiles, key=lambda p: (p.id, p.association_id)):
+            self._target_profiles.setdefault(profile.target, []).append(profile)
+        for profile in sorted(profiles, key=lambda p: p.association_id):
+            self._disease_profiles.setdefault(profile.disease_id, []).append(profile)
+        target_values = {}
+        for target, members in self._target_profiles.items():
+            for pattern_id in {p.id for p in members}:
+                for feature in self.get_pattern_features(pattern_id):
+                    if feature.expected:
+                        values = [feature.expected.concept] if feature.expected.kind == "concept" else feature.expected.concepts
+                        target_values.setdefault((target, feature.attribute), set()).update(values)
+        self._target_values = {key: sorted(values) for key, values in target_values.items()}
         self._contributions = {}
         grouped = {}
+        targets = {}
         for profile in profiles:
             key = (profile.disease_id, profile.target, tuple(c.model_dump_json() for c in profile.applicability))
             grouped.setdefault(key, []).append(profile)
+            targets.setdefault(profile.target, set()).add(profile.id)
+        parents = {}
+        for patterns in targets.values():
+            for child, parent in self._refinement_edges(sorted(patterns)):
+                parents.setdefault(child, set()).add(parent)
+        grouped = {key: {p.id:p for p in values} for key,values in grouped.items()}
         for child in profiles:
             child_features = self.get_pattern_features(child.id)
             contributions = []
             key = (child.disease_id, child.target, tuple(c.model_dump_json() for c in child.applicability))
-            for parent in grouped[key]:
-                if (parent.disease_id != child.disease_id or parent.applicability != child.applicability
-                        or not self.pattern_refines(child.id, parent.id)):
-                    continue
+            for parent_id in parents.get(child.id, set()) & grouped[key].keys():
+                parent = grouped[key][parent_id]
                 signatures = {f.signature() for f in self.get_pattern_features(parent.id)}
                 changed = [f.id for f in child_features if f.signature() not in signatures]
                 contributions.append(FeatureContribution(baseline_association=parent.association_id,
@@ -314,3 +459,8 @@ class ClinicalKnowledge:
         for finding in self._graph.subjects(RDF.type, OW.ExamFinding):
             if not self.get_exam_methods(str(finding)):
                 raise ValueError("ExamFinding requires a detection method")
+        self.concepts()
+        self.resolve_concept("")
+        self._types = {}
+        for subject, kind in self._graph.subject_objects(RDF.type):
+            self._types.setdefault(str(subject), set()).add(str(kind))

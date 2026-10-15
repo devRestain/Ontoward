@@ -10,6 +10,9 @@ __pycache__/
 .ruff_cache/
 .venv/
 .DS_Store
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
 *.log
 *.zip
 
@@ -51,4 +54,20 @@ __pycache__/
 /assets/bodhi/**
 !/assets/bodhi/AGENTS.md
 !/assets/bodhi/README.md
+
+# Retain full source builds locally; version compact review and verification evidence.
+/data/preparation/v5/full-*/**
+!/data/preparation/v5/full-*/
+!/data/preparation/v5/full-*/report.json
+!/data/preparation/v5/full-*/verification.json
+!/data/preparation/v5/full-*/artifact-verification.json
+!/data/preparation/v5/full-*/admission.json
+!/data/preparation/v5/full-*/review-approved.json
+!/data/preparation/v5/full-*/texts/
+!/data/preparation/v5/full-*/texts/*.json
+!/data/preparation/v5/full-*/preview/
+!/data/preparation/v5/full-*/preview/manifest.json
+!/data/preparation/v5/full-*/preview/review.md
+!/data/preparation/v5/full-*/preview/review-batch.json
+!/data/preparation/v5/full-*/preview/disease-target-coverage.csv
 

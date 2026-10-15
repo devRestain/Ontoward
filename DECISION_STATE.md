@@ -4,7 +4,7 @@
 
 운영 상태 문서는 결정 ID를 참조한다. 선택지·장단점·선택 결과를 하위 상태 문서에 복사하지 않는다. 접속 정보나 자료 위치가 필요할 때는 비밀 값을 문서에 적지 않고, 필요한 정보의 종류와 확보 여부만 기록한다.
 
-D08/D09의 v5.0 개정과 2026-10-14 D11이 현재 지식 및 실행 계약을 정합니다. 최신 명시적 사용자 결정은 이전 운영 상태의 계획·다음 목표보다 우선합니다. D12의 SDK 전송·제출 구성, D13의 책임 분리, D14의 제출 내부 자산 경계는 최신 D11과 문구 분리 요청에 맞춰 적용합니다. 구현·검증 사실은 해당 운영 상태의 관측 증거로만 판단합니다.
+D08/D09의 v5.0 개정과 D11의 실행 계약에 2026-10-15 D15의 배치 수용·정보 보존·어휘 제한·최소 질문을 적용합니다. 최신 명시적 사용자 결정은 이전 운영 상태의 계획·다음 목표보다 우선합니다. D12의 SDK 전송·제출 구성, D13의 책임 분리, D14의 제출 내부 자산 경계는 유지합니다. 구현·검증 사실은 해당 운영 상태의 관측 증거로만 판단합니다.
 
 2026-10-14 공식 사이트 재확인과 사용자의 명시적 확인에 따라 현재 예선 Doctor 선택은 `openai/gpt-6-luna`입니다. 10월 13일 시행된 모델·운영 변경은 D01·D12에 반영하며 별도의 미결 선택으로 만들지 않습니다. [현재 규칙 업데이트](assets/nova-competition-2026/CHANGES_2026-10-14.md)를 참조합니다.
 
@@ -77,7 +77,8 @@ D08/D09의 v5.0 개정과 2026-10-14 D11이 현재 지식 및 실행 계약을 �
 - **상태:** 결정 완료.
 - **사용자 선택:** 실제 SNOMED CT와 BODHI-S를 보존하면서 v5.0에 투영합니다. Disease → ClinicalPattern → ClinicalFeature, Pattern 기반 후보 검색, Feature 기반 점수 계산을 유지하고 공유 Pattern·질환별 Association·타입 값·자동 점수 정책을 채택합니다.
 - **원천 역할:** SNOMED는 식별·명칭·계층·관계 구조를, BODHI는 변형 묶음과 두 방향 likelihood를 제공합니다. 기존 510개 승인 용어는 시드이며 표현 상한이 아닙니다.
-- **첫 범위:** Abdominal pain, Cough, Fever의 제한된 원천 투영과 소비부 통합·오프라인 전체 흐름 검증입니다. 준비는 모델 호출 없이 결정론적으로 수행합니다.
+- **현재 범위:** 2026-10-15 사용자가 전체 International Snapshot·Korean 확장·BODHI-S 수집, SQLite 준비 DB와 v5.0 RDF export, 명시적 배치 승인 후 지식 자산 통합을 선택했습니다. 기존 세 Target preview와 승인 영수증은 보존합니다.
+- **모델 사용:** 결정론적 처리가 우선입니다. 원천에 명시된 의미의 미해결 정규화·역할 후보에만 NOVA_DEV_KEY의 세션 밖 openai/gpt-6.1-sol을 사용하며, 공유 KST 대장에서 실패·불명 요청도 포함해 일일 최대 100회로 제한합니다. 사용자가 확인한 100회 잔여 예산은 2026-10-15 KST에만 적용합니다.
 - **수용:** 자동 preview와 후보 registry를 먼저 검증하고 사람의 매핑·임상 검토 및 제출 자산 수용은 별도로 진행합니다.
 - **레거시:** 사용자가 삭제를 허용한 v4.2 SNOMED 및 가이드라인 Dev 파이프라인은 제거합니다. 원본·승인 영수증·유용한 준비 결과는 deprecated로 구분하여 보존하며 자동 재개하지 않습니다.
 
@@ -102,7 +103,7 @@ D08/D09의 v5.0 개정과 2026-10-14 D11이 현재 지식 및 실행 계약을 �
 
 - **상태:** 결정 완료.
 - **사용자 선택:** 준비된 v5.0 Turtle과 공개 JSON 점수 정책을 하나의 RDFLib Graph와 Python 계산 구조로 사용합니다.
-- **준비:** data/preparation/v5/에 원천 Snapshot·파일 해시·행과 위치·모듈·관계 그룹·UUID·원값·매핑 판단·정규화 규칙·registry·preview를 보존합니다. 기존 문헌 준비 기록은 deprecated evidence입니다.
+- **준비:** data/preparation/v5/의 SQLite에 전체 원천 행·위치·모듈·관계 그룹·UUID·원값·매핑·정규화·보류·승인 기록을 저장하고 RDF preview와 검토 자료를 생성합니다. 원천·스키마·정규화 해시가 같은 현재 빌드만 명시적으로 재개합니다. 기존 문헌 준비 기록은 deprecated evidence입니다.
 - **실행:** submission/knowledge/의 manifest에 고정된 스키마·어휘·임상 묶음을 prepare()에서 전부 로드합니다. 선택된 표현·Association 적용 조건·라벨·관계 범위·최소 sourceRef만 실행 그래프에 유지하고 환자 관찰·진단 점수는 CaseState와 워크플로 상태에 둡니다.
 - **경계:** 진료 중 RF2·원문 검색, 임의 SPARQL, OWL 추론, Named Graph나 별도 그래프 서버는 사용하지 않습니다. 준비 preview의 자동 복사와 runtime admission은 별개입니다.
 - **버전:** schema_version, registry_version, normalization_version, source_snapshots 및 파일 해시, scoring_policy_version과 정책 파일 해시를 모두 고정합니다. 파일 분할은 메모리 절감의 증거가 아닙니다.
@@ -130,23 +131,23 @@ D08/D09의 v5.0 개정과 2026-10-14 D11이 현재 지식 및 실행 계약을 �
 ## D09. 실제 원천의 v5.0 투영
 
 - **상태:** 결정 완료.
-- **구현 방향:** Dev/ontology/source_projection.py와 v5.py가 공급된 RF2 Snapshot 및 BODHI-S의 nodes_condition.csv, nodes_symptom.csv, edges_present_in.csv를 읽어 제한된 preview를 생성합니다. 기존 Dev/ontology/snomed/와 문헌 추출 코드는 deprecated 후 제거하며 호환 계층을 유지하지 않습니다.
-- **첫 실행 범위:** Abdominal pain(21522001), Cough(49727002), Fever(386661006)입니다. 원본을 변경·다운로드하지 않고 명칭·관계·언어 refset·정확한 모듈 의존성·해시를 기록합니다.
+- **구현 방향:** Dev/ontology/source_projection.py의 build/export/admit와 책임별 SQLite·정규화·승인 helper가 전체 원천 DB와 v5.0 실행 후보를 구성합니다. 제거된 구형 파이프라인과 호환 계층은 복원하지 않습니다.
+- **전체 입력:** International 20260501과 Korean 20260615의 모든 Snapshot TXT·release metadata, BODHI-S 8개 CSV와 보존 라이선스·원천 설명입니다. Full 과거 이력, 다운로드와 원본 수정은 제외합니다. 모든 입력 행의 수집·투영·제외·보류·미투영 결과를 기록합니다.
 - **표현:** 원천 변형 경계를 유지합니다. UUID와 자체 SCTID·루트 SCTID를 분리하고 단위·기간·양상·위치·방사를 D08 타입으로 보존합니다. 승인되지 않은 연결이나 필수 조건의 의미를 생성하지 않습니다.
 - **SNOMED 경로:** 실제 due_to, associated_with, subtype-intersection 경로만 사용하며 직접 관계 ID, 계층 경로, 원천 개념과 그룹·모듈·버전을 보존합니다. 표현 불가능한 필수 관계가 있으면 해당 전체 변형은 unresolved입니다.
 - **분류:** 확인된 활성 disorder와 BODHI 실행 역할을 함께 확인합니다. 원천 ID 미확인·비활성·과거력·가족력·검사 소견·지원하지 않는 동반 소견은 지정된 제외/보류 사유와 원값을 남깁니다.
 - **자동 계산:** BODHI 두 방향 라벨을 분리하고 동일 Association의 여러 출처는 주장별 보존 후 평가를 선택합니다. 충돌은 검토 목록에 두고 조건부 atomic/joint 차분을 준비합니다.
-- **산출물:** data/preparation/v5/에 schema, vocabulary, clinical Turtle, 점수 정책, manifest, registry, sources/dispositions, report, feature-contributions를 보존합니다. registry는 candidate, 자산은 preview_only입니다.
+- **산출물:** data/preparation/v5/에 ontology.sqlite3, schema·vocabulary·clinical Turtle, 정책·manifest·registry·sources·report·feature-contributions, 전체 Target 역할과 배치 검토 자료를 보존합니다. 승인 전 registry는 candidate이고 RDF는 preview_only입니다.
 - **검증:** 유지 중인 Dev/tests/workflow의 Docker 전체 흐름과 Dev/tests/ontology/verify_v5.py의 실제 원천 검증을 사용합니다. 가중치 2→1→4, 공유 표현·질환별 점수, 에피소드·출처 중복, 타입 기간, 적용 조건 미확인 및 보류 결과를 확인합니다.
-- **권한과 수용:** 준비 모델·API 호출·자동 재개는 없습니다. 임상 검토, 실제 진단 성능, 제출 임상 자산 admission, 공식 API 제출은 별도이며 코드·preview 검증 완료로 주장하지 않습니다.
+- **권한과 수용:** 사용자가 선택한 배치 승인 기록은 빌드·후보 집합 해시, 승인 Association·필수 매핑과 검토 규칙을 고정합니다. 모델 판단과 자동 검증은 승인으로 대체하지 않습니다. 승인 후 지식 자산만 통합하며 신규 문진·진찰 요청·치료·교육 문구는 별도입니다. Sol 외 외부 호출·공식 제출·진단 성능은 포함하지 않습니다.
 
 <a id="D10"></a>
 ## D10. 준비 컨테이너와 실행 경계
 
 - **상태:** 결정 완료.
-- **환경:** 프로젝트의 기존 dev 이미지에서 현재 Pydantic·RDFLib를 사용해 offline Compose override로 v5.0 투영과 검증을 수행합니다. 호스트 의존성 설치와 네트워크 다운로드를 하지 않습니다.
+- **환경:** 기존 dev 이미지의 표준 SQLite·Pydantic·RDFLib를 사용합니다. 전체 build는 읽기 전용 원천과 두 CPU·8 GB override로 실행하고 offline 검증에서는 네트워크·개발 키를 차단합니다. 호스트 의존성 설치와 다운로드는 하지 않습니다.
 - **별도 준비 서비스:** ontology-extraction 이미지·인증 volume·기존 컨테이너는 보존합니다. Compose의 RF2·BODHI·Dev·스키마·submission 입력은 읽기 전용이며 새 준비 출력은 data/preparation/v5/, 임시 출력은 Tmp/ontology-v5/입니다. 변경된 mount를 사용한 기존 컨테이너 재생성은 관측 증거 없이 실행된 것으로 기록하지 않습니다.
-- **인증:** v5.0의 현재 준비 경로는 Codex나 NOVA 인증을 사용하지 않습니다. 이전 CLI 인증·workspace pin 기록은 과거 환경 증거이며 새 호출 권한이 아닙니다.
+- **인증:** 전체 build의 선택적 정규화만 root 개발 키로 공식 NOVA origin의 세션 없는 Sol을 호출합니다. --llm, 현재 KST allowance date, max-calls, daily-remaining을 요구하며 순차 최대 20 packet·medium·8192 tokens로 호출합니다. 자동 재시도·다음 날 대기·이전 작업 재개는 하지 않습니다. Codex 인증 volume은 사용하지 않습니다.
 - **배포:** Colima와 Docker context는 고정 인프라입니다. WSL2·다른 컴퓨터·배포·자동 시작·연속 배치는 별도 요청 없이 수행하지 않습니다.
 
 <a id="D11"></a>
@@ -218,6 +219,18 @@ D08/D09의 v5.0 개정과 2026-10-14 D11이 현재 지식 및 실행 계약을 �
 - **압축 이미지:** root Dockerfile의 package target과 Compose package 서비스를 사용합니다. submission/만 /submission에 읽기 전용으로, 전용 결과 디렉터리 Tmp/packaging/만 /output에 연결합니다. 네트워크를 끄고 외부 Dev·data·assets와 root .env를 연결하지 않습니다. 압축 도구는 이미지에 포함되며 입력은 /submission으로 고정합니다.
 - **결과:** ZIP 루트와 workflow/·knowledge/ 패키지 경로를 유지하고 .env와 지정 config 파일, 필요한 knowledge의 .ttl·.json을 포함합니다. 이전 agents/·문서·캐시·개발 파일·유지 테스트·합성 자산은 제외합니다. 실제 출력은 Tmp/packaging/ontoward-submission.zip입니다.
 - **수용 범위:** 설정·경로·압축 입력 격리와 실제 ZIP 검증을 완료합니다. D11이 RDF 로더·조회 구현을 포함하며 임상 지식 완성과 공식 대회 호출·제출은 별도입니다.
+
+<a id="D15"></a>
+## D15. 전체 v5.0 배치 수용과 정보 보존 (2026-10-15)
+
+- **상태:** 결정 완료. 사용자가 이 세션의 계획 전체 구현을 명시적으로 요청했습니다.
+- **배치:** 빌드 `b4954e33d5c04f4d76949149d9bf6affec1d2ab8c4b34fa99085003933d346aa`, 후보 집합 `b03983497c4ed8246ff16d61de6bb8f9f4cb4bdd34c5c9b3694e2b2910c74151`의 Association 9,400개와 registry 1,701개를 사용 승인합니다. 기존 미승인 검토 자료는 보존하고 `data/preparation/v5/full-snomed-bodhi-2026-10-15/review-approved.json`에 사용자 후보 수용과 독립 임상 검증 미실행을 구분합니다.
+- **최소 문구:** 증상 490개의 존재 질문과 속성 16개 질문을 준비하고 누락된 한국어 표시 이름을 별도 labels JSON으로 보완합니다. 원천 URI·관계·조건·가중치는 유지하며 모든 실제 질문을 NFC 1–30자로 검증합니다. manifest의 선택 labels/questions와 해시를 승인 영수증에 고정합니다. 질환별 치료·추적·교육 계획은 포함하지 않습니다.
+- **정보 보존:** 실제 전달 질문인 was_asked와 근거가 해결된 has_resolved_evidence를 분리합니다. unknown/uncertain을 확정 관찰로 취급하지 않고 기존 2회 명료화 안에서 미해결 조건을 확인합니다. SOAP에 주체·시간·발현·값·단위·범위를 결정론적으로 보존합니다. 주진단과 감별은 evidence_score>0을 공유하고 선택 질환을 제외한 감별 최대 5개를 표시합니다.
+- **Gateway:** 기본 어휘 256개·32 KiB, 확장 1,024개·128 KiB입니다. 현재 질문의 필수 어휘를 우선 보존합니다. 유효 응답의 미연결 증상에만 기존 공유 예산 안에서 확장 1회를 허용하고 최초 유효 사실을 보존합니다. 잘못된 JSON·진찰 거절에는 확장하지 않습니다. 전체 실제 대화와 관찰은 보존합니다.
+- **보존:** D08 점수·정교화·에피소드·중복 제거, D11 다섯 세션·상한·Doctor/Gateway 표현 정책, D12 SDK·SOAP, D13 책임 분리와 D14 독립 제출 경계를 유지합니다. D11/D13의 과거 동작 보존 중 이번에 명시한 정보 보존 오류와 어휘 전송만 변경합니다.
+- **검증:** 실제 지식 로드와 기존 52개 시나리오 및 추가 회귀, 전체 원천/승인 검증, 실제 RDF와 합성 환자의 전체 흐름, 독립 ZIP 실행을 오프라인 프로젝트 컨테이너에서 확인합니다. 사용 승인·기술 검증을 임상 정확성이나 실제 Luna·공식 서버 수락으로 승격하지 않습니다.
+- **후속:** 다음 단일 작업은 사실별 입력 검증과 질문 목적별 복구입니다. 질문 재계획·턴 재배분·설명 의무·준비 문구 우선 비교·모델 판단 확대는 보류합니다. 외부 호출·공식 제출·평가·커밋·배포·코퍼스 확대는 포함하지 않습니다.
 
 ## 결정 기록 방법
 

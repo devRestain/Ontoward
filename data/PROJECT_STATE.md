@@ -1,9 +1,30 @@
 /state version=1
 /project id=ontoward-data
 /status value=complete
-/checkpoint revision=f06b8cb2360b7edddf87553fe015a003f06bc69d dirty=true updated=2026-10-14T16:58:21+00:00
-/goal phase=current id=DATA.V501 state=complete action="Preserve required archival evidence and prepare the bounded real-source v5.0 preview"
-/goal phase=next id=DATA.V5REVIEW01 state=blocked action="Review the v5.0 registry source mappings variants and unresolved conditions before runtime admission"
+/checkpoint revision=ba824e46be7e20a8ac42853635513de5b4096681 dirty=true updated=2026-10-15T01:06:56+00:00
+/goal phase=current id=DATA.ADMISSION15 state=complete action="Admit the D15 user-approved batch and pinned minimal Korean text assets"
+/goal phase=history id=DATA.FULLV501 state=complete action="Preserve complete full-source SQLite custody and candidate verification"
+/goal phase=history id=DATA.V501 state=complete action="Preserve the three-Target preview and archival source evidence"
+/accept id=DATA.ADMISSION15.A1 state=pass action="Record explicit user acceptance of exact association and mapping dependencies" evidence=DATA.ADMISSION15.E1
+/accept id=DATA.ADMISSION15.A2 state=pass action="Verify source custody and unchanged candidate and preview identity" evidence=DATA.ADMISSION15.E2,DATA.ADMISSION15.E5
+/accept id=DATA.ADMISSION15.A3 state=pass action="Admit RDF and pinned minimal Korean text through staged prepare" evidence=DATA.ADMISSION15.E3,DATA.ADMISSION15.E4
+/evidence id=DATA.ADMISSION15.E1 class=artifact result=pass source=data/preparation/v5/full-snomed-bodhi-2026-10-15/review-approved.json observed="Record user candidate acceptance of 9400 associations and 1701 registry entries with independent clinical validation not_run"
+/evidence id=DATA.ADMISSION15.E2 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/full-source.json observed="Pass 354 checks across 109 source files and 12586084 rows with unchanged v5.0 weights typed values and episode semantics"
+/evidence id=DATA.ADMISSION15.E3 class=artifact result=pass source=data/preparation/v5/full-snomed-bodhi-2026-10-15/admission.json observed="Admit 9400 associations and 96017 triples with receipt SHA-256 5b45f46d2f2db935ac1290c77834e0568447df422d121ccc84f7ae62163c0dd8 after staged prepare"
+/evidence id=DATA.ADMISSION15.E4 class=artifact result=pass source=data/preparation/v5/full-snomed-bodhi-2026-10-15/texts/preparation.json observed="Prepare 490 symptom questions 16 attribute templates 257 Korean display labels and two reviewed length overrides with pinned file hashes"
+/evidence id=DATA.ADMISSION15.E5 class=artifact result=pass source=Tmp/v5-admission-2026-10-15/preservation.json observed="Preserve all 13 original preview files and candidate-set SHA-256 b03983497c4ed8246ff16d61de6bb8f9f4cb4bdd34c5c9b3694e2b2910c74151 while adding one review receipt"
+/evidence id=DATA.ADMISSION15.E6 class=external_service result=not_run source=DECISION_STATE.md observed="Make no actual model or API calls and leave independent clinical validation diagnostic performance and publication unrun"
+/accept id=DATA.FULLV501.A1 state=pass action="Retain every supplied Snapshot and BODHI-S input row" evidence=DATA.FULLV501.E1
+/accept id=DATA.FULLV501.A2 state=pass action="Verify complete candidate RDF coverage source pins scoring and resource limits" evidence=DATA.FULLV501.E4,DATA.FULLV501.E5
+/accept id=DATA.FULLV501.A3 state=pass action="Generate the immutable review set and explained unresolved dispositions" evidence=DATA.FULLV501.E6
+/evidence id=DATA.FULLV501.E1 class=artifact result=pass source=data/preparation/v5/full-snomed-bodhi-2026-10-15/report.json observed="Retain 12586084 rows from all 109 inputs and export 1796 used Patterns 9400 Associations and 3282 Features with 2698 of 4037 BODHI variants projected"
+/evidence id=DATA.FULLV501.E2 class=external_service result=pass source=data/preparation/v5/llm-ledger.sqlite3 observed="Receive one authenticated sessionless Sol response for 20 packets at 3870 total tokens and reserve the attempted call without retry"
+/evidence id=DATA.FULLV501.E3 class=runtime result=fail source=Tmp/ontology-full-build-2026-10-15/build-resumed.log observed="Observe exit 137 after source ingestion and 401865 committed dispositions without confirming the signal cause"
+/evidence id=DATA.FULLV501.E4 class=runtime result=pass source=data/preparation/v5/full-snomed-bodhi-2026-10-15/verification.json observed="Pass 354 full-source checks and load 96017 triples in 2.047 seconds at 208224 KiB peak memory under two CPUs and eight GB"
+/evidence id=DATA.FULLV501.E5 class=artifact result=pass source=data/preparation/v5/full-snomed-bodhi-2026-10-15/artifact-verification.json observed="Verify candidate archive source assets hashes SDK bytes exclusion boundaries and submission size limits without clinical admission"
+/evidence id=DATA.FULLV501.E6 class=artifact result=pass source=data/preparation/v5/full-snomed-bodhi-2026-10-15/preview/review-batch.json observed="Pin build b4954e33d5c04f4d76949149d9bf6affec1d2ab8c4b34fa99085003933d346aa and candidate set with false approval plus disease Target coverage and full source dispositions"
+/evidence id=DATA.FULLV501.E7 class=semantic result=fail source=data/preparation/v5/full-snomed-bodhi-2026-10-15/report.json observed="Reject the complete 20-packet model response for dropping a required source qualifier and complete the resumed build offline without replay"
+/evidence id=DATA.FULLV501.E8 class=semantic result=not_run source=DECISION_STATE.md observed="Preserve historical pre-D15 candidate generation without claiming independent clinical validation or overriding current admission"
 /accept id=DATA.V501.A1 state=pass action="Generate a pinned v5.0 preview from supplied RF2 and BODHI sources for the three selected Targets" evidence=DATA.V501.E1,DATA.V501.E2
 /accept id=DATA.V501.A2 state=pass action="Verify real-source score replacement sharing typed values source boundaries and required-condition dispositions" evidence=DATA.V501.E2,DATA.V501.E3
 /accept id=DATA.V501.A3 state=pass action="Preserve source and prior preparation identity while clearly deprecating old interfaces" evidence=DATA.V501.E2,DATA.V501.E4,DATA.V501.E5
@@ -18,8 +39,9 @@
 /evidence id=DATA.V501.E8 class=artifact result=pass source=data/ontology/vocabulary-approval.json observed="Preserve the approved 510-term receipt and prior explicit candidate approvals as archival evidence without automatic v5.0 conversion"
 /evidence id=DATA.V501.E9 class=semantic result=not_run source=data/preparation/v5/snomed-bodhi-2026-10-15/registry.json observed="Leave candidate mapping clinical correctness unresolved-variant review diagnostic performance and runtime admission unrun"
 /evidence id=DATA.V501.E10 class=external_service result=not_run source=Dev/ontology/source_projection.py observed="Make zero real model or API calls and leave official evaluation publication and new source acquisition unrun"
-/blocker id=DATA.V5REVIEW01.B1 state=open action="Obtain clinician review of candidate registry mappings complete variant meaning and unresolved source conditions" source=data/preparation/v5/snomed-bodhi-2026-10-15/registry.json
-/blocker id=DATA.V5REVIEW01.B2 state=open action="Select separately reviewed execution assets and prepared clinical questions and plans before runtime admission" source=DECISION_STATE.md
+/blocker id=DATA.FULLV5REVIEW01.B1 state=resolved action="Apply explicit D15 user acceptance without asserting independent clinical validation" source=DECISION_STATE.md
 /scope id=DATA.V501.S1 state=in action="Own source provenance version pins schema registry mappings variant dispositions derived contributions and durable preview verification"
-/scope id=DATA.V501.S2 state=out action="Exclude patient state corpus expansion automatic clinical admission old job resumption and source publication"
-/handoff state=blocked action="Keep the three-Target preview candidate-only and await clinician review before handing assets to APP.ASSETS01"
+/scope id=DATA.FULLV501.S1 state=in action="Own full source provenance SQLite records normalization judgments candidate export and pinned review receipts"
+/scope id=DATA.ADMISSION15.S1 state=in action="Own pinned user acceptance minimal Korean wording source preservation and data-owned runtime admission receipts"
+/scope id=DATA.FULLV501.S2 state=out action="Exclude automatic admission of other batches invented source facts disease plans and publication"
+/handoff state=ready action="Preserve admitted D15 assets and coordinate the next root-owned parser design without resuming preparation jobs"

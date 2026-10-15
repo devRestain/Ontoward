@@ -21,6 +21,8 @@ HERE.mkdir(parents=True, exist_ok=True)
 RUN = Path(tempfile.mkdtemp(prefix="run-", dir=HERE))
 COPY = RUN / "submission"
 SOURCE = Path(os.environ.get("ONTOWARD_TEST_SUBMISSION", PROJECT / "submission"))
+SOURCE_MANIFEST = SOURCE / "knowledge/manifest.json"
+SOURCE_MANIFEST_HASH = hashlib.sha256(SOURCE_MANIFEST.read_bytes()).hexdigest() if SOURCE_MANIFEST.exists() else None
 shutil.copytree(SOURCE, COPY, ignore=shutil.ignore_patterns("__pycache__"))
 sys.path.insert(0, str(COPY))
 
@@ -36,6 +38,7 @@ from workflow.rules.input import fixed_reply
 from workflow.runtime import PreparedResources, assemble_consultation, prepare, consult
 from workflow.state.models import ActionSpec, ClinicalValue, Fact, Hypothesis, InteractionEntry, ParsedInput, Question, RecordItem, SessionContext, WorkflowState
 from knowledge.graph import ClinicalKnowledge, OW, Plan
+from knowledge.conditions import ExpectedValue
 from nova_sdk import Client, NovaError, RECORD_FIELDS
 from settings import knowledge_manifest, knowledge_path
 
@@ -741,7 +744,14 @@ class Verification(unittest.TestCase):
                 self.assertIn("config/doctor.txt", archive.namelist())
                 self.assertIn("config/texts.ko.json", archive.namelist())
                 self.assertFalse(any("README" in n or "PROJECT_STATE" in n or "AGENTS" in n or "__pycache__" in n for n in archive.namelist()))
-                self.assertFalse(any("fixture" in n or "clinical.ttl" in n for n in archive.namelist()))
+                self.assertFalse(any("fixture" in n for n in archive.namelist()))
+                if SOURCE_MANIFEST.exists():
+                    manifest = json.loads(archive.read("knowledge/manifest.json"))
+                    for asset in manifest["bundles"]:
+                        self.assertEqual(hashlib.sha256(archive.read(asset["path"])).hexdigest(), asset["sha256"])
+                        self.assertNotEqual(archive.read(asset["path"]).decode(), TTL)
+                else:
+                    self.assertFalse(any("clinical.ttl" in n for n in archive.namelist()))
             (package_copy / "config/input_parser.txt").rename(package_copy / "config/custom-parser.txt")
             public = package_copy / ".env"
             public.write_text(public.read_text().replace("config/input_parser.txt", "config/custom-parser.txt"))
@@ -769,7 +779,9 @@ class Verification(unittest.TestCase):
         s, client = self.run_flow(FakeSDK(refusal=True))
         self.assertEqual(s.interaction.termination, "submitted")
         self.assertEqual(sum(a["kind"] == "EXAM" for a in client.actions), 1)
-        self.assertIn("가상소견: 미확인", client.submissions[0]["note"]["O"]["exam"])
+        refused = client.submissions[0]["note"]["O"]["exam"]
+        self.assertIn("가상소견", refused)
+        self.assertIn(": 미확인", refused)
         self.assertNotIn("가상소견", client.submissions[0]["note"]["A"]["evidence"])
         self.assertFalse(any(item.value.kind == "finding" and str(OW.ExamX) in item.value.concept_ids
                              for _, item in s.case.entries() if item.value))
@@ -876,7 +888,7 @@ class Verification(unittest.TestCase):
         s = state()
         record(s)
         s.case.get("chief").value.time_context = "past"
-        self.assertFalse(InterviewPlanner.known(s, str(OW.Complaint)))
+        self.assertFalse(InterviewPlanner.has_resolved_evidence(s, str(OW.Complaint)))
 
     def test_knowledge_paths_hashes_and_missing_manifest(self):
         for path in ("../data/schema.ttl", "/tmp/external.ttl", "config/texts.ko.json"):
@@ -895,7 +907,8 @@ class Verification(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "digest mismatch"): knowledge()
         finally:
             asset.write_bytes(old)
-        self.assertFalse((SOURCE / "knowledge/manifest.json").exists())
+        self.assertEqual(hashlib.sha256(SOURCE_MANIFEST.read_bytes()).hexdigest() if SOURCE_MANIFEST.exists() else None,
+                         SOURCE_MANIFEST_HASH)
 
     def test_doctor_regeneration_fallback_and_no_draft_delivery(self):
         for outputs, expected, source in ((["가" * 31, "", "무엇이 불편하세요?"], "무엇이 불편하세요?", "doctor"),
@@ -1331,6 +1344,181 @@ class Verification(unittest.TestCase):
         self.assertEqual(sum(len(section) for section in actions[-1]["note"].values()), 15)
         self.assertTrue(all(len(a["content"]) <= 30 for a in actions[:-1]))
         (HERE / "synthetic-sdk-wire.json").write_text(json.dumps(wire, ensure_ascii=False, indent=2))
+
+
+    def test_asked_history_does_not_resolve_unknown_or_empty_attribute(self):
+        s = state("DifferentialDiagnosis", True)
+        record(s)
+        q = question(s, purpose="hpi", target=OW.Complaint, attribute=OW.Location, field="S.hpi")
+        q.observation_id, q.episode_id = "obs1", "episode1"
+        pending(s, q)
+        s.interaction.history.append(InteractionEntry(id="request-1", kind="SAY", question=q, delivered=True))
+        planner = make_planner(knowledge(), CONFIG)
+        planner.questions.complete_unresolved(s, s.interaction.pending, "모르겠어요", "request-1")
+        planner.interactions.consume_input(s)
+        args = (s, str(OW.Complaint), str(OW.Location), "obs1", "episode1")
+        self.assertTrue(planner.was_asked(*args))
+        self.assertFalse(planner.has_resolved_evidence(*args))
+        ClinicalReasoner(knowledge()).retrieve_candidates(s)
+        planner.prepare_differential_questions(s)
+        self.assertTrue(any(item.purpose == "clarification" for item in s.questions.questions))
+        record(s, ident="clarified", field="S.hpi", kind="attribute", attribute=OW.Location, values=[OW.Here])
+        self.assertTrue(planner.has_resolved_evidence(*args))
+        s.case.get("clarified").value.values = []
+        self.assertFalse(planner.has_resolved_evidence(*args))
+        self.assertFalse(planner.was_asked(s, str(OW.Other)))
+        ros = Question(item_id="ros-unknown", field="S.ros", purpose="ros", target_id=str(OW.Other), text="별도증상 있나요?", order=0, priority=1)
+        s.interaction.history.append(InteractionEntry(id="ros-request", kind="SAY", question=ros, delivered=True))
+        record(s, ident="ros-fact", target=OW.Other, status="uncertain", episode="new-episode", field="S.ros")
+        s.case.get("ros-fact").source_refs = ["ros-request"]
+        self.assertTrue(planner.was_asked(s, str(OW.Other), observation="obs1", episode="new-episode"))
+        self.assertFalse(planner.was_asked(s, str(OW.Other), observation="obs1", episode="separate-episode"))
+        self.assertFalse(planner.has_resolved_evidence(s, str(OW.Other)))
+
+    def test_soap_preserves_subject_time_episode_values_and_calendar_units(self):
+        k = knowledge()
+        from rdflib import RDFS
+        for key, label in ((OW.Left, "왼쪽"), (OW.Right, "오른쪽"), (OW.Laterality, "좌우"),
+                           (OW.EpisodeDuration, "한 번의 지속시간")):
+            k._graph.add((key, RDFS.label, Literal(label, lang="ko")))
+        writer = make_writer(FakeSDK(), k, CONFIG)
+        item = RecordItem(id="private-request", scope="ChiefComplaint", status="done", source_refs=["source"],
+            value=ClinicalValue(kind="attribute", text="네", status="present", concept_ids=[str(OW.Complaint)],
+                attribute_id=str(OW.Laterality), values=[str(OW.Left)], subject="patient", time_context="current",
+                observation_id="private-observation", episode_id="private-episode"))
+        left = writer._describe_record(item)
+        changed = item.model_copy(deep=True)
+        changed.value.values = [str(OW.Right)]
+        self.assertNotEqual(left, writer._describe_record(changed))
+        changed.value.time_context, changed.value.subject = "past", "family"
+        self.assertIn("가족 · 과거", writer._describe_record(changed))
+        self.assertNotIn("private-", left)
+        measured = item.model_copy(deep=True)
+        measured.value.values, measured.value.attribute_id = [], str(OW.EpisodeDuration)
+        measured.value.measurement = ExpectedValue(kind="interval", lower=1.0, upper=2.0, unit="month", upper_unit="year", upper_inclusive=False)
+        self.assertIn("[1 개월, 2 년)", writer._describe_record(measured))
+        s = state("Education", True)
+        s.case.put("S.hpi", item)
+        measured.id, measured.value.episode_id = "another-record", "another-private-episode"
+        s.case.put("S.hpi", measured)
+        writer.build_soap(s)
+        rendered = s.interaction.submission_payload["note"]["S"]["hpi"]
+        self.assertIn("발현 1", rendered)
+        self.assertIn("발현 2", rendered)
+
+    def test_differential_shares_support_policy_and_excludes_primary(self):
+        s, k = state("Education", True), knowledge()
+        s.case.diagnosis, s.case.diagnosis_kind = k.label(str(OW.Beta)), "disease"
+        s.differential.selected_id = str(OW.Beta)
+        s.differential.hypotheses = [Hypothesis(disease_id=str(OW.Alpha), evidence_score=0, context_bonus=1),
+                                     Hypothesis(disease_id=str(OW.Beta), evidence_score=0.5, context_bonus=0)]
+        writer = make_writer(FakeSDK(), k, CONFIG)
+        writer.build_soap(s)
+        self.assertEqual(s.interaction.submission_payload["note"]["A"]["differential"], "")
+        from rdflib import RDFS
+        for i in range(7):
+            ident = str(OW[f"Alternative{i}"])
+            k._graph.add((URIRef(ident), RDFS.label, Literal(f"대안{i}", lang="ko")))
+            s.differential.hypotheses.append(Hypothesis(disease_id=ident, evidence_score=0.25))
+        writer.build_soap(s)
+        self.assertEqual(s.interaction.submission_payload["note"]["A"]["differential"].splitlines(), [f"대안{i}" for i in range(5)])
+
+    def test_parser_vocabulary_bounds_and_required_question_values(self):
+        k, s = knowledge(), state("ChiefComplaint", True)
+        from rdflib import RDFS
+        for i in range(600):
+            node = OW[f"Added{i:04d}"]
+            k._graph.add((node, RDF.type, OW.Symptom))
+            k._graph.add((node, RDFS.label, Literal(f"extra symptom {i}", lang="en")))
+        for i in range(207):
+            node = OW[f"Place{i:04d}"]
+            k._graph.add((node, RDF.type, OW.AttributeValue))
+            k._graph.add((node, RDFS.label, Literal(f"부위{i}", lang="ko")))
+            k._graph.add((OW.Location, OW.canHaveValue, node))
+        k.validate_graph()
+        q = question(s, target=OW.Complaint, attribute=OW.Location, purpose="hpi", field="S.hpi")
+        pending(s, q)
+        interpreter = make_interpreter(CONFIG)
+        vocabulary, size = interpreter._vocabulary(s, k, "부위206")
+        ids = {entry["id"] for entry in vocabulary}
+        self.assertLessEqual(len(vocabulary), 256)
+        self.assertLessEqual(size, 32768)
+        self.assertEqual(size, len(json.dumps(vocabulary, ensure_ascii=False, separators=(",", ":")).encode()))
+        self.assertTrue(set(k.get_attribute_values(str(OW.Location))) <= ids)
+        self.assertTrue({str(OW.Complaint), str(OW.Location)} <= ids)
+        expanded, expanded_size = interpreter._vocabulary(s, k, "부위206", expanded=True)
+        self.assertLessEqual(len(expanded), 1024)
+        self.assertLessEqual(expanded_size, 131072)
+        self.assertGreater(len(expanded), len(vocabulary))
+
+    def test_parser_expands_once_and_preserves_first_valid_facts(self):
+        for mode in ("resolve", "malformed", "mutate_frozen", "budget"):
+            with self.subTest(mode=mode):
+                k, s, client = knowledge(), state("ChiefComplaint", True), FakeSDK()
+                from rdflib import RDFS
+                for i in range(300):
+                    node = OW[f"Added{i:04d}"]
+                    k._graph.add((node, RDF.type, OW.Symptom))
+                    k._graph.add((node, RDFS.label, Literal(f"unused label {i}", lang="en")))
+                far = str(OW.ZzzUnlinked)
+                k._graph.add((URIRef(far), RDF.type, OW.Symptom))
+                k._graph.add((URIRef(far), RDFS.label, Literal("unseen terminology", lang="en")))
+                k.validate_graph()
+                q = question(s, purpose="open_inquiry", target=None)
+                pending(s, q)
+                s.interaction.incoming = {"content": "가상증상과 별도 보고"}
+                first = fact("S.ros", "symptom", OW.Complaint, "가상증상")
+                unlinked = fact("S.ros", "symptom", OW.Other, "별도 보고")
+                unlinked["value"].update(concept_ids=[], observation_id="other-observation", episode_id="other-episode")
+                payloads = []
+                def chat(messages, **kwargs):
+                    payload = json.loads(messages[1]["content"])
+                    payloads.append(payload)
+                    if payload["parser_pass"] == "primary":
+                        self.assertNotIn(far, {entry["id"] for entry in payload["vocabulary"]})
+                        return client.completion(json.dumps({"facts": [first, unlinked]}, ensure_ascii=False))
+                    if mode == "malformed":
+                        return client.completion("{invalid")
+                    replacement = copy.deepcopy(payload["unlinked_facts"][0])
+                    replacement["value"]["concept_ids"] = [far]
+                    if mode == "mutate_frozen":
+                        replacement = copy.deepcopy(first)
+                        replacement["value"]["status"] = "absent"
+                    return client.completion(json.dumps({"facts": [replacement]}, ensure_ascii=False))
+                client.chat = chat
+                if mode == "budget":
+                    s.session.call_limit = 1
+                make_interpreter(CONFIG).process_input(s, k, client)
+                records = [item for _, item in s.case.entries() if item.value and item.value.kind == "symptom"]
+                linked = next(item for item in records if item.value.text == "가상증상")
+                other = next(item for item in records if item.value.text == "별도 보고")
+                self.assertEqual(linked.value.status, "present")
+                self.assertEqual(linked.value.concept_ids, [str(OW.Complaint)])
+                self.assertEqual(other.value.concept_ids, [far] if mode == "resolve" else [])
+                self.assertEqual(len(payloads), 1 if mode == "budget" else 2)
+                self.assertTrue(all("parser_payload" in entry for entry in s.interaction.model_history))
+                self.assertEqual(s.session.doctor_calls, len(payloads))
+
+    def test_display_label_asset_is_hash_pinned_without_graph_mutation(self):
+        manifest_path = COPY / "knowledge/manifest.json"
+        original = manifest_path.read_bytes()
+        path = COPY / "knowledge/display-labels.json"
+        try:
+            path.write_text(json.dumps({str(OW.Complaint): "검토한 가상증상"}, ensure_ascii=False))
+            manifest = json.loads(original)
+            manifest["labels"] = {"path": "knowledge/display-labels.json", "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+            manifest_path.write_text(json.dumps(manifest))
+            k = knowledge()
+            before = set(k._graph)
+            self.assertEqual(k.label(str(OW.Complaint)), "검토한 가상증상")
+            self.assertIn(str(OW.Complaint), k.search_concepts("검토한 가상증상이 있어요"))
+            self.assertEqual(set(k._graph), before)
+            path.write_text("{}")
+            with self.assertRaisesRegex(ValueError, "digest mismatch"):
+                knowledge()
+        finally:
+            manifest_path.write_bytes(original)
+            path.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

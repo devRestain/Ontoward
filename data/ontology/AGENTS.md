@@ -7,6 +7,7 @@
 - Use deprecated.json to identify old extraction interfaces and preparation records that are not v5.0 inputs.
 - Preserve vocabulary-candidates.md and vocabulary-approval.json as the approved 510-term seed and approval receipt, separate from clinical and runtime admission.
 - Keep source-specific candidate registries, mapping decisions, raw assertions, dispositions, and previews in ../preparation/v5/.
+- Keep full-source SQLite custody and pinned batch receipts in ../preparation/v5/; do not treat model normalization, structural verification, or export as human approval.
 - Keep Python preparation in root Dev/ontology and runtime types and readers in root submission/knowledge.
 - Reference root PRD.md and DECISION_STATE.md D08/D09; record progress only in ../PROJECT_STATE.md.
 - Reserve README.md for Korean human orientation.
@@ -57,4 +58,5 @@
 - Load admitted schema, vocabulary, and bundles into one RDFLib Graph during prepare(), then calculate read-only Association profiles and FeatureContribution records.
 - Keep raw source rows, file positions, full RF2 groups and paths, licenses, and mapping judgments in preparation; keep only execution conditions, selected labels, and source references in runtime.
 - Preserve the fifteen-field SOAP and separate diagnosis contract; use obtained interview and examination findings for A.evidence.
+- Apply D15 manifest-pinned Korean display labels and question assets without modifying the pinned v5.0 RDF representation or scoring policy.
 - Report parsing, structural source projection, clinical correctness, and SDK acceptance from their respective performed checks.

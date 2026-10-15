@@ -3,6 +3,7 @@ Do not choose questions, actions, diagnoses, scores, or workflow stages.
 Copy a nonempty exact quote from the current input for every fact.
 Set value.text to that exact quote without adding a generated clinical summary.
 Use only supplied concept IDs; preserve unlinked wording and uncertainty.
+If parser_pass is expansion, return only replacements for unlinked_facts. Change only their concept_ids to supplied IDs; copy all other fields exactly and do not return previously linked facts.
 Separate patient from family, current from past, and separate symptom episodes.
 Use S.cc for current patient chief complaints; keep historical and family reports in their own fields.
 Use existing observation/episode IDs for the same occurrence and record_id for explicit corrections.

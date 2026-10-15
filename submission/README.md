@@ -2,7 +2,7 @@
 
 Ontoward는 N.O.V.A. 예선의 모의 환자와 한국어로 문진하고, 실제로 받은 진찰 결과를 정리하여 **SOAP 초진 기록과 주진단 하나를 제출하는 에이전트**다. 이 디렉터리는 제출 실행 코드의 단일 원본이다. `run.py`가 `workflow/runtime.py`의 `prepare()`와 `consult()`를 SDK에 전달한다.
 
-이 백서는 D08 v5.0과 2026-10-14 D11 개정 구현을 처음 읽는 사람을 위한 안내다. 실행 코드와 합성 증례 검증을 설명한다. 현재 실제 승인 임상 RDF·질문·계획·manifest가 없으므로, 공식 환자를 대상으로 바로 실행할 준비가 완료된 상태는 아니다. 코드 검증, 임상 자료 승인, 실제 모델 품질, 공식 제출 성공은 각각 확인해야 한다.
+이 백서는 D08 v5.0, D11의 다섯 세션과 D15의 지식 수용·정보 보존 구현을 처음 읽는 사람을 위한 안내다. 사용자 승인 RDF·manifest와 최소 한국어 질문을 포함하며 실제 자산과 합성 환자를 연결한 전체 흐름을 설명한다. 독립 임상 검증, 실제 Luna 품질, 공식 제출 성공은 별도다. 현재 배치에는 진찰·Context 개념과 질환별 치료·추적·교육 계획이 없다.
 
 ## 1. 무엇을 모델이 하고, 무엇을 Python이 하는가
 
@@ -75,10 +75,11 @@ flowchart TD
 |---|---|---|
 | [`prepare`, `assemble_consultation`, `consult`](workflow/runtime.py) | 설정·지식 → PreparedResources; client → 증례별 객체와 상태 | 자원에는 환자 기억을 담지 않음 |
 | [`initialize_case`, `apply_snapshot`, `refresh_snapshot`](workflow/io/nova_session.py) | 공식 세션 → 상태와 서버 제약 | NOVA 조회와 검증; 예산 반영은 UsageAccounting |
-| [`process_input`, `_parse_text`, `_validate_facts`, `_apply_facts`](workflow/input_interpreter.py) | 현재 원문·문맥 → 검증된 관찰 | 임상 사실과 출처·정정의 단독 반영 경로 |
+| [`process_input`, `_parse_text`, `_vocabulary`, `_request_parse`, `_validate_facts`, `_apply_facts`](workflow/input_interpreter.py) | 현재 원문·문맥 → 검증된 관찰 | 제한된 어휘와 확장 1회; 최초 유효 사실 보존 |
 | [`enter_session`, `prepare_session`, `advance_session`](workflow/consultation.py) | 현재 내부 세션 → 준비·전환 | initialized와 questions_prepared를 따로 유지 |
 | [`prepare_initiation`, `prepare_chief_complaint`, `prepare_context_factors`, `prepare_differential_diagnosis`, `prepare_education`](workflow/consultation.py) | 다섯 세션 → 명시적인 역할 호출 순서 | 세션별 객체나 상속 없이 조정 |
 | [`prepare_chief_complaint`, `prepare_context_questions`, `prepare_differential_questions`, `prepare_clarification`, `select_question`, `prepare_education`](workflow/interview_planner.py) | 사실·지식 → 질문과 교육 계획 | 질문 선택과 전달을 분리 |
+| [`was_asked`, `has_resolved_evidence`](workflow/interview_planner.py) | 전달 이력·관찰 → 별개의 판정 | 물었지만 모르는 값과 확보한 사실을 구분 |
 | [`evaluate`, `can_frame`, `can_clarify`, `model_allowance`](workflow/rules/budget.py) | 현재 예산 → 허용·폐기·최종화 판단 | 상태를 수정하지 않음 |
 | [`register`, `discard_unasked`, `complete_unresolved`](workflow/state/questions.py) | 질문 연산 → C/Q 일관성 | pending/완료 충돌 전체 사전 확인과 반복 폐기 no-op |
 | [`select_question`, `begin_action`, `record_delivery`, `consume_input`](workflow/state/interactions.py) | 행동 → selected/pending/incoming과 전달 이력 | SDK 응답 확인에서 교육 전달 확정 |
@@ -86,9 +87,9 @@ flowchart TD
 | [`frame_action`, `validate_action`, `execute_action`](workflow/doctor.py) | 선택 의도 → 표현 → 검증 → 환자/진찰 응답 | 환자와 맞닿는 Doctor 경계 |
 | [`complete`](workflow/io/model_client.py) | 역할·프롬프트 → 모델 응답 | doctor/gateway 태그와 공유 예산 유지 |
 | [`execute`](workflow/io/request_executor.py) | 동일 요청 → 응답 또는 오류 | ID·payload 보존, 제한 재시도, timeout 복원 |
-| [`refresh_hypotheses`, `select_diagnosis`](workflow/clinical_reasoner.py) | 관찰 → 후보·점수·진단 | v5.0 완전 조건 매칭·정교화 대체·Target별 중복 제거 |
+| [`refresh_hypotheses`, `supported_hypotheses`, `select_diagnosis`](workflow/clinical_reasoner.py) | 관찰 → 후보·점수·진단 | v5.0 조건·정교화·중복 제거와 주진단/감별 적격성 공유 |
 | [`refresh_after_input`, `check_budget`, `finalize`, `repair_submission`](workflow/consultation.py) | 현재 상태 → 임상 갱신·최종화 | 진단 선택→계획 준비→SOAP 작성 순서 유지 |
-| [`build_soap`, `validate_submission`, `begin_repair`, `submit_diagnosis`, `confirm_submission`](workflow/submission_writer.py) | 사실·진단 → SOAP·제출 결과 | 수리 상태 초기화와 completed 확인 책임 |
+| [`_describe_record`, `build_soap`, `validate_submission`, `begin_repair`, `submit_diagnosis`, `confirm_submission`](workflow/submission_writer.py) | 사실·진단 → SOAP·제출 결과 | 구조화 의미 보존·수리 상태 초기화·completed 확인 |
 | [`build_graph`, `run_node`, `finish`, `abort`](workflow/graph.py) | 상태·협력 객체 → LangGraph | 모델 없는 분기와 노드 검증; 외부 실행 자동 재생 없음 |
 | [`load`, `get_symptom_systems`, `get_system_symptoms`](knowledge/graph.py) | manifest → 지식; 증상/계통 URI → URI 목록 | 해시 검증과 집중 ROS 범위 조회 |
 | [`get_patterns_by_target`, `get_disease_patterns`, `get_pattern_features`, `get_feature_contributions`](knowledge/graph.py) | Target·질환·Pattern·Association → 표현·평가·조건부 기여 | 공유 Pattern·타입 조건·공개 정책 |
@@ -106,6 +107,10 @@ flowchart TD
 | InteractionState | 요청·응답·턴·전달 여부, 역할별 모델 기록, 제출 결과 | 실패한 생성·미전송 문구·오류 로그는 환자 대화에서 제외 |
 
 `RecordItem.status`의 `unasked/done`은 처리 상태다. `ClinicalValue.status`의 `present/absent/uncertain/unknown`은 임상 의미다. “모르겠어요”를 처리 완료로 표시해도 음성으로 바꾸지 않는다. 예산 때문에 보내지 못한 질문은 제거하며, 물었지만 해석하지 못한 답은 원문과 미확인 상태로 남긴다.
+
+`was_asked()`는 실제 전달 이력으로 일반 질문 반복을 막는다. `has_resolved_evidence()`는 출처와 확정 값·측정값을 확인하므로 미확인·불확실이나 값 없는 속성을 해결된 정보로 취급하지 않는다. 답을 받은 뒤 생긴 관찰·에피소드 ID도 해당 전달 이력과 연결한다. 현재 후보의 미해결 조건은 기존 2회 명료화 안에서 확인할 수 있다.
+
+Gateway는 현재 질문의 필수 용어를 먼저 보존하고 원문 라벨·별칭, 기존 관찰, 상위 후보 주변 개념을 포함한 기본 어휘 최대 256개·32 KiB를 받는다. 유효 결과의 미연결 증상·소견에만 기존 예산 안에서 확장 최대 1회·1,024개·128 KiB를 허용한다. 확장은 concept_ids만 보완하며 실패하면 최초 사실과 원문을 보존한다. 전체 실제 대화는 줄이지 않고 전송 바이트와 실제 토큰 사용량을 구분해 기록한다.
 
 `InteractionState.dialogue()`는 전체 증례에서 전달된 SAY의 **실제 한국어 문장과 환자 답**을 투영한다. 요청 ID·턴·질문 ID를 붙인다. 초기 opening은 SAY와 구별한 초기 입력으로 포함한다. EXAM·DIAGNOSE·미전송 초안은 섞지 않는다. Doctor와 Gateway가 같은 함수를 사용하되 Gateway 호출 시에는 방금 받은 턴이 추가되어 있다. 새 증례는 새 기억으로 시작하며 공유 PreparedResources에 대화를 쌓지 않는다.
 
@@ -239,7 +244,7 @@ docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --
 
 두 번째 명령은 저장소에 유지되는 행동 검증을 실행한다. 네트워크·개발 키를 끄고 Tmp/workflow-tests 아래 매 실행마다 새 제출 복사본과 합성 RDF·문구·SDK 대역을 만든다. verification.json과 synthetic-full-flow.json, synthetic-sdk-wire.json에서 결과를 확인한다. ONTOWARD_TEST_OUTPUT으로 증거 디렉터리를 선택할 수 있다. 테스트와 합성 자산은 제출 ZIP에 포함하지 않는다.
 
-유지 중인 52개 행동 검증은 전체 상담 흐름·복구·예산·SOAP와 v5.0 공유 Pattern·2→1→4 대체·타입 기간·적용 조건·zero/소수 정책·제한적 경로를 확인한다. 보존된 D13 전후 비교 도구 [compare_traces.py](../Dev/tests/workflow/compare_traces.py)는 당시 책임 리팩토링의 동작 보존 증거를 확인하는 도구다. v5.0은 승인된 표현·점수 변경을 현재 행동 검증으로 확인한다. 최신 실행 결과는 [제출 상태](PROJECT_STATE.md)가 소유한다.
+유지 중인 58개 행동 검증은 기존 52개 시나리오와 정보 상태 분리, SOAP의 주체·시간·발현·좌우·단위·범위, 주진단/감별 일관성, 어휘 제한과 확장 실패 보존, 표시 이름 해시를 확인한다. [test_admitted.py](../Dev/tests/workflow/test_admitted.py)는 실제 수용 RDF에서 질환·수치·증상 수준 진단의 세 전체 흐름을 합성 응답으로 실행하며 독립 ZIP에도 같은 검증을 적용한다. 보존된 [compare_traces.py](../Dev/tests/workflow/compare_traces.py)는 D13 당시 구조 리팩토링의 동등성 증거를 확인하는 도구다. 최신 실행 결과는 [제출 상태](PROJECT_STATE.md)가 소유한다.
 
 규칙은 [workflow/rules](workflow/rules/limits.py)에 모여 있으며 [규칙 색인](../Dev/architecture/WORKFLOW_RULES.md)에서 담당 객체·함수·검증을 찾을 수 있다. 질문 폐기는 QuestionLifecycle, 행동과 전달은 InteractionLifecycle, 사용량은 UsageAccounting이 함께 바꿔야 할 상태를 묶어 처리한다. 예산 정책의 판단과 실제 상태 반영은 구분한다.
 
@@ -250,8 +255,8 @@ docker compose run --rm -T package
 
 결과는 Tmp/packaging/ontoward-submission.zip이다. ZIP 루트에 run.py·nova_sdk.py·requirements.txt·settings.py·공개 .env를 놓고 workflow/·knowledge/·지정 config/ 경로를 유지한다. package 서비스는 submission을 읽기 전용으로 연결하고 전용 출력만 쓴다. README·AGENTS·PROJECT_STATE·캐시·개발 키·임시 자산은 제외한다. SDK 1.0.1 사본의 SHA-256은 `c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d`이며 변경하지 않는다.
 
-실제 승인 manifest가 없으므로 production prepare()는 파일 오류로 멈춘다. 빈 그래프로 넘어가지 않는다. ZIP 생성은 임상 실행 준비 완료를 뜻하지 않는다. 실제 Luna의 문장·한국어 해석 품질, 임상 자산 수용, 공식 API 복구·제출·평가는 합성 검증에 포함되지 않는다.
+현재 manifest는 사용자 승인 Association 9,400개·96,017 triple과 질문·표시 이름을 로드한다. 선택 labels JSON은 기존 URI의 한국어 이름만 보완하고 RDF를 바꾸지 않는다. questions의 대상 URI|속성 URI 예외가 공통 속성 문구보다 우선하며 모든 실제 문구를 prepare에서 NFC 1–30자로 검증한다. SOAP에는 구조화된 주체·시간·발현·값·단위를 보존하고 내부 식별자는 노출하지 않는다. 감별에는 근거 점수가 양수인 후보 중 주진단을 제외한 최대 5개만 표시한다. 실제 Luna의 문장·한국어 해석 품질, 독립 임상 검증, 공식 API 복구·제출·평가는 합성 검증에 포함되지 않는다.
 
-Mermaid 세 도식은 구현의 함수·분기와 대조했다. 프로젝트 dev 컨테이너에 Mermaid 렌더러·Node·브라우저가 없어 **시각 렌더링은 not_run**이다. 원문 검토를 렌더링 성공으로 표현하지 않는다. 최종 관측 결과는 [제출 상태](PROJECT_STATE.md), [워크플로우 검증](../Tmp/workflow-tests/verification.json), [ZIP 실행 검증](../Tmp/ontology-v5/archive-verification.json)을 기준으로 확인한다.
+Mermaid 세 도식은 구현의 함수·분기와 대조했으며 **시각 렌더링은 not_run**이다. 원문 검토를 렌더링 성공으로 표현하지 않는다. 최종 관측 결과는 [제출 상태](PROJECT_STATE.md), [워크플로우 검증](../Tmp/v5-admission-2026-10-15/workflow-accepted/verification.json), [ZIP 워크플로우](../Tmp/v5-admission-2026-10-15/isolated/workflow/verification.json), [ZIP 실제 지식 실행](../Tmp/v5-admission-2026-10-15/isolated/admitted/verification.json)을 기준으로 확인한다.
 
-요구사항은 [PRD](../PRD.md), 선택은 [D01·D08·D09·D11·D12·D13·D14](../DECISION_STATE.md), 자료 승인·준비·검토는 [data 상태](../data/PROJECT_STATE.md)가 관리한다.
+요구사항은 [PRD](../PRD.md), 선택은 [D01·D08·D09·D11·D12·D13·D14·D15](../DECISION_STATE.md), 자료 승인·준비·검토는 [data 상태](../data/PROJECT_STATE.md)가 관리한다. [분석 보고서 채택 문서](../Dev/architecture/NOVA_REVIEW_2026-10-15.md)에 이번 반영과 후속 정책 검토를 구분했다.

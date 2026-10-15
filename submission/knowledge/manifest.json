@@ -1,0 +1,792 @@
+{
+  "approval_basis": "explicit_user_candidate_acceptance",
+  "build_id": "b4954e33d5c04f4d76949149d9bf6affec1d2ab8c4b34fa99085003933d346aa",
+  "bundles": [
+    {
+      "path": "knowledge/5b45f46d2f2db935-clinical.ttl",
+      "sha256": "d5e10911907b1e5c828b5c0f7045d5a97fb4d0bbec792b8fc2f9c4d42c5fc0e0"
+    }
+  ],
+  "clinical_text_status": "minimal_questions_prepared",
+  "independent_clinical_validation": "not_run",
+  "labels": {
+    "path": "knowledge/5b45f46d2f2db935-labels.ko.json",
+    "sha256": "dd78a19a34897196c35ad4590226c9a05b98d496c675bae609cae7f3118d3efc"
+  },
+  "normalization_version": "v5.0.2",
+  "preparation_status": "admitted",
+  "questions": {
+    "path": "knowledge/5b45f46d2f2db935-questions.ko.json",
+    "sha256": "f9d2c959df735efbd366f41333ffb63df1a61728defd047ac3ba1301d5d817c5"
+  },
+  "registry_version": "1aaddeddf716ce9539d363871b55197aec9188070c862a850d6c8f11edb25f30",
+  "review_receipt_sha256": "5b45f46d2f2db935ac1290c77834e0568447df422d121ccc84f7ae62163c0dd8",
+  "schema": {
+    "path": "knowledge/schema.ttl",
+    "sha256": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89"
+  },
+  "schema_version": "5.0",
+  "scoring_policy": {
+    "path": "knowledge/scoring_policy.json",
+    "sha256": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea"
+  },
+  "scoring_policy_version": "v5.0.1",
+  "source_snapshots": [
+    {
+      "dataset": "SNOMED_CT",
+      "dataset_id": "073a31914e44bc7dd89f4348bfad4f6da48422f5c058bfe175b812c9361cddd2",
+      "dependencies": [
+        {
+          "active": "1",
+          "effectiveTime": "20260501",
+          "id": "f6431457-161b-5b46-9217-573c20c00070",
+          "moduleId": "449080006",
+          "referencedComponentId": "900000000000012004",
+          "refsetId": "900000000000534007",
+          "sourceEffectiveTime": "20260501",
+          "targetEffectiveTime": "20260501"
+        },
+        {
+          "active": "1",
+          "effectiveTime": "20260501",
+          "id": "1244116f-fdb5-5645-afcc-5281288409da",
+          "moduleId": "900000000000207008",
+          "referencedComponentId": "900000000000012004",
+          "refsetId": "900000000000534007",
+          "sourceEffectiveTime": "20260501",
+          "targetEffectiveTime": "20260501"
+        },
+        {
+          "active": "1",
+          "effectiveTime": "20260501",
+          "id": "686fe392-d2f7-586d-98aa-078aba426832",
+          "moduleId": "449080006",
+          "referencedComponentId": "900000000000207008",
+          "refsetId": "900000000000534007",
+          "sourceEffectiveTime": "20260501",
+          "targetEffectiveTime": "20260501"
+        },
+        {
+          "active": "1",
+          "effectiveTime": "20260615",
+          "id": "cabcff5e-a620-4394-933e-f6939a1e36d8",
+          "moduleId": "11000267109",
+          "referencedComponentId": "900000000000012004",
+          "refsetId": "900000000000534007",
+          "sourceEffectiveTime": "20260615",
+          "targetEffectiveTime": "20260501"
+        },
+        {
+          "active": "1",
+          "effectiveTime": "20260615",
+          "id": "f5286d65-39d1-43c1-9d9b-d1fb6557bc18",
+          "moduleId": "11000267109",
+          "referencedComponentId": "900000000000207008",
+          "refsetId": "900000000000534007",
+          "sourceEffectiveTime": "20260615",
+          "targetEffectiveTime": "20260501"
+        }
+      ],
+      "files": [
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Content/der2_Refset_SimpleSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 22570,
+          "sha256": "f75a4d920c1de5812614146c61c005ebf9ae32f46c3b8ea07c0937d7ca933ac0"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Content/der2_cRefset_AssociationSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 225522,
+          "sha256": "896f84e640eeb420f004edb6065af990b7092f0c7526622ef28bf5c95f4ffb2d"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Content/der2_cRefset_AttributeValueSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 739505,
+          "sha256": "571e8fa2db96a8714b2de3d1cb18349aa2b8590fdb27916664213d2c20bd9ce7"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Language/der2_cRefset_LanguageSnapshot-en_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 3337412,
+          "sha256": "0f9bdf9a2a21fc279db54e4c66f971630e40ef7ae4b25d4630f894a1762c0f08"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Map/der2_iisssccRefset_ExtendedMapSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 216605,
+          "sha256": "0d7f3e85c69f71795147f1590763fa2a70a10bc5395236a5287957f1c0bcf73f"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Map/der2_sRefset_SimpleMapSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 559164,
+          "sha256": "d35e7892954c8c39f2d0511ba394fa02a1b4ef92cd1742e8b5311af8de904b60"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Metadata/der2_cRefset_MRCMModuleScopeSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 3,
+          "sha256": "b9db85b2644b2ef9515adf2b572d15159e60ff2f5fb432a99ddaef15de0e3ee5"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Metadata/der2_cciRefset_RefsetDescriptorSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 207,
+          "sha256": "bf5fc1d1162660f73251bc9043d330f65b938023f6dc842307f9c994d5541811"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Metadata/der2_ciRefset_DescriptionTypeSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 3,
+          "sha256": "d3a28af12709a07675b59b15d365005c6428d5952314d55f03091ac7906a6532"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Metadata/der2_cissccRefset_MRCMAttributeDomainSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 175,
+          "sha256": "14f39ee8c744028853447e7202c5d3e9772307403b143d41330d473430daf91f"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Metadata/der2_scsRefset_ComponentAnnotationStringValueSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 5630,
+          "sha256": "53ac6dff97a2ed37e7e25142e12c81ec96e3bd061db375dbae78aeddace902c6"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Metadata/der2_ssRefset_ModuleDependencySnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 3,
+          "sha256": "a274c88a7e7613c9df473c06b15bfbf94a03eb99cff39f13568497a0eaa1269d"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Metadata/der2_ssccRefset_MRCMAttributeRangeSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 153,
+          "sha256": "141f1cbbc573f70fcdc10e9c770cbfbe1a68fc926fa9883e1d96544e72fa31e2"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Metadata/der2_sscsRefset_MemberAnnotationStringValueSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 0,
+          "sha256": "248765c3035da04e5f1351c4e8224e12f30f5c66f3702d4cf4dfe015a36a8a74"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Refset/Metadata/der2_sssssssRefset_MRCMDomainSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 23,
+          "sha256": "6e31fa52205fb9482ee8a9fdce4b29a03232e0862cd5ca097db07adbc20c0742"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_Concept_Snapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 531997,
+          "sha256": "3437888cffdf15c043f5543c25009e5ae97d6dd94bfa0c0fc9d9f27ef3b43b90"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_Description_Snapshot-en_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 1704584,
+          "sha256": "0d69e3b69b3ed52168fa726a4b9b2f7b949561b09bc7775dfb2ef65eadb80109"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_Identifier_Snapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 0,
+          "sha256": "4ba4e6562a3a51bd9f7a77ea86810abee3b6ce7c9ab803779fb2a0d0c146d44c"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_RelationshipConcreteValues_Snapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 37481,
+          "sha256": "9a2df3a64488b618285c3b662f2e9a1e259e1be0c5a316bbe5dfe4c251fe4e91"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_Relationship_Snapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 3564963,
+          "sha256": "3a64b1ce4f9b5e0f7df5122abe35564a1b268330b4dd8db211839e84b9ff32e7"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_StatedRelationship_Snapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 1024719,
+          "sha256": "f7380093a4e1a4d7cdbcf603804d4ab6f3dc1b67e7eb29a1bd33696bb3772a4d"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_TextDefinition_Snapshot-en_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 19044,
+          "sha256": "4f71c883b5d80219698d5322db8fed7579b42e97400c009ab9917165a57e2837"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_sRefset_OWLExpressionSnapshot_INT_20260501.txt",
+          "release_date": "20260501",
+          "rows": 414249,
+          "sha256": "f2fab7a50e2fca44c3beb80e494b81fe7c52ead758c94e6c6f4208187966d65d"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/release_package_information.json",
+          "release_date": null,
+          "rows": 1,
+          "sha256": "79c4e26d97c812996b8b9322c32857aa012746842e14b027a11122f5fb22000c"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123451000267106SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 150,
+          "sha256": "e622e20f70d7f0d8675402e2e85fa1efb0f5c5cdb255f39fd8bdb643a2135e90"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123471000267104SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 112,
+          "sha256": "d3dfc0a98837130ce253a05cc13b874e4bc77d1a1cab4b81d24f8185301dfbe9"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123481000267101SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 131,
+          "sha256": "e19219d24e2bd5b89d3a6066d0286456ca8e44d51d3ef5fcf1fd664a77dc8a0f"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123491000267103SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 209,
+          "sha256": "e2c8e3d8c4db20ad43878f2f4bb251be998d5c9466c1e8f1229ac63b5a28643a"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123501000267108SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 16532,
+          "sha256": "21acb4b2abb0669d749a5b76297701ea2fe367256b0cbf4a822cd6177f622be2"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123511000267106SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 164,
+          "sha256": "c57bfa16bf23d3688253b8d098166700dc3615801b4232f929716457f63ca1f7"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123531000267103SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 71,
+          "sha256": "c3cf702bd73ecf35f8692af482ffe39dddbda4dba951f81228c58b394996decc"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123541000267105SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 75,
+          "sha256": "799132aac255375d4a4e9d08463e66c527f9f9343b325f41f29dd16607fa3b2e"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123551000267107SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 338,
+          "sha256": "f549ac699aeb5dc748f757b8800ee0ad89f71ad6f357b37c7a7f9ebc5cfc308a"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123561000267109SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 122,
+          "sha256": "aa5170052f16d416707b12d99021eb91e290ca99c754ba43d5207d978a2bb9af"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123571000267100SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 117,
+          "sha256": "fb0f2ade590a271eb704896a7b0e141b6dd97af35ba4ea6e60701676e1fb31da"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123581000267102SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 119,
+          "sha256": "d92cafd58fa6c6a61504b8d3d4a50030daf46c89a177a7af96216d9fc7bb3c94"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123591000267104SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 159,
+          "sha256": "e2c13213abdeaae0f2ba669362a59e74c9d5bd9ee8661ce895dce66ecfd66654"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123601000267109SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 201,
+          "sha256": "91d3f86c6a9cd82c9279ce8c967505d674959371a5a3ad06558821014d659b3b"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123631000267104SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 132,
+          "sha256": "12223466850952d4204d37b51bb936750ae1b59d9963e44e91ce1b1f27071b72"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123641000267106SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 145,
+          "sha256": "cde0f73113ce9bc651784c203e4140d1b602b86bcfc3a6e3f1926193e998962c"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123651000267108SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 90,
+          "sha256": "c42ecbfc15661b8a0263fd2461bb7223f10def48414e6f6239179e7c17aa0bf3"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123661000267105SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 215,
+          "sha256": "91e3358fe6ce896c5099706354621b0229a2c456b1e43cd28f6639c6cc5188d9"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123671000267101SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 143,
+          "sha256": "d540d613978d755c66b231448c1869039fc862ca17ae0f6eac18ed6796ed541b"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123681000267103SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 370,
+          "sha256": "14da45a547674fe55e0d910c5c602b4063da99979ac14987f146506cd67dd69f"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123691000267100SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 59,
+          "sha256": "7a437d4340420d8d670d0a61d95c8074dcde2d037afd3ae76dda0c23177f2661"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_123701000267100SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 101,
+          "sha256": "2d4bd7b63adcae130c3f7f2b30c4f91f1362fff7a8c2f3f6b53a67521f74ad4a"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_133321000267105SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 159,
+          "sha256": "0ef3aaac9b825de34e016368c4cc23c5a721496aed4ae93128c48a14ed2eff5c"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_133331000267108SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 170,
+          "sha256": "e24309f063e52e8e46c0ff2973303b645103a103b735aea7270cd14a504d8897"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_133341000267101SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 272,
+          "sha256": "e4224694d527fc119812958797989d97b62fa1340b7f2f015fe83e7380d2f2a7"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_143331000267109SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 62,
+          "sha256": "d077ce659676aed4ae06433e4a270b2a969068a0d31b8ace07715aaf3a688691"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_163351000267107SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 257,
+          "sha256": "86ca0abd40e5497183b5b5499e4e9f5ce8a1c0bcd83fcd86b2d2cd07b14dd216"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_163361000267109SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 151,
+          "sha256": "34db8754eb7c881965e0c78ac4d0190ca2ecd30c0ec756ca6c38226c4c1cf11c"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_163371000267100SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 86,
+          "sha256": "4282dbc2e7076264cc4659298b838036201f5a7bfe083d1b5f36b71ee4662df9"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_163381000267102SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 63,
+          "sha256": "7d5ce24ca67979e49a459d6d816a95612246480b473a4092fda81e8c98c94f20"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245351000267103SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 4,
+          "sha256": "19c1ad5505404eaabeea0b05891e270c04f04341506a65fd5e23314d781562bb"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245361000267101SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 6,
+          "sha256": "237418aca6e5d7f9668e00af2547c9d98deb01d545be3abe0f8189fe1012223a"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245371000267105SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 5,
+          "sha256": "26c3af589eb37eb68d386ea9678a50615155256db185729421536bb06b48b3e0"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245381000267108SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 5,
+          "sha256": "458fc22e132ac137068344246133cbb45df2ef054fb37d208bd00caa760be2a5"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245391000267106SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 4,
+          "sha256": "ad97f11414bf163e51e215fe7b97d8debafd08f94d287d41547b27019b325c1d"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245401000267108SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 6,
+          "sha256": "8fecce930fce8342b10c39d18cf3cef8aff7c07113465396d1fc06101db9b48c"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245411000267106SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 10,
+          "sha256": "1c152ed2e005f0adefcb960432cb6f1caab229fe3f42829bc71a27ae476ebe2b"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245421000267101SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 11,
+          "sha256": "3341218dc0632e2ad3bb8a1267b2cb432dbfa9ff00375e6b1c8ebbd352517ec8"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245431000267103SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 4,
+          "sha256": "0ade7d6a0de7705fc7973b734393eadf3d4a53f3d44060bea20f546ef20c5472"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245441000267105SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 8,
+          "sha256": "1122514e6a60519528d21b2d1daadfc8a5766b2df185d1748fa90c292bb4d2e4"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245451000267107SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 3,
+          "sha256": "3ff2cdcef9e8982efe15d9825cc481f4e6989417231fee2c0a65b38e38b2974f"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245461000267109SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 6,
+          "sha256": "01540f8d821c04ff9de03f9b3f3eeeb031db5e9b84dbede90268d92a9e3781af"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245471000267100SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 6,
+          "sha256": "b3ded3d27462cda70943d6648811a045683da414e34542e837eeb41a71c7fc17"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_245481000267102SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 8,
+          "sha256": "d9af3a1e4ebead2df238ea151f239c8b8ace9d774ffeea9b0d50b3acc7ee6a73"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_336541000267106SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 72,
+          "sha256": "1aa388760729045707ef20824a2522adc26efff410748378806da0aaf851499a"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_336561000267105SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 52,
+          "sha256": "1cb54bd3cd2af9af4ee19a1ee4204bab307d960073876c80eef10a03367693db"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_336571000267101SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 15,
+          "sha256": "c68e951104f8cf0f41c5aa4613e98fa7d6e09cccf256be080dc056ca0e7b8874"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_336581000267103SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 11,
+          "sha256": "98a84457ab46ab63be387ad7bd7e2d9f46f62a93730049db2f18348d93c99bc8"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_336861000267107SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 14,
+          "sha256": "72d1ef6b54ba5bf40c06daa24b8cbb50826a03fd0dfda606df201622d599dcf8"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_337021000267109SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 4,
+          "sha256": "cfcc11cfc0f4c22c8bde3c7bfb071719ef113e403d9fc090bb98b96bde1f6736"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_337031000267107SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 18,
+          "sha256": "754a276de1c06be7983d848d7901d6f551600e43c6997621003613f957384cc3"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_366811000267103SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 4,
+          "sha256": "f0276add836bcbc92ba5388246a09e25c3c70d3f0d0a1ac83e2d8b276f6c5547"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_376561000267108SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 49,
+          "sha256": "d589c9b2382909692dadd0050e167bdb4d124864d61c2b174c1e6bffb5610a7b"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_376581000267101SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 41,
+          "sha256": "3d90ed22f03018621970042754355e2e294da57a40d847698d957615a5952c28"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_Refset_387131000267102SimpleRefsetSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 167,
+          "sha256": "b6951e0ac18aa291ab4ca21629c67f3cd1a4b72383be4a2e12128f00457f13f5"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_cRefset_AssociationSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 25,
+          "sha256": "e60aba712021e2d1c5b08aca409fc2bd067af3fe768e927e056113572253d748"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Content/der2_cRefset_AttributeValueSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 2005,
+          "sha256": "45c7c96400ce01089bc3459a03312db0658c17347a3b72d5c050926be853cea1"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Language/der2_cRefset_LanguageSnapshot-en_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 5261,
+          "sha256": "20b77486c3c18760963e11de4c7ee05058d43808539e74881b1d3c003dff0ae6"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Language/der2_cRefset_LanguageSnapshot-ko_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 57591,
+          "sha256": "8ebf5786bcd55598e49f315dda10c3199bb193d784d2d59c6872670113a57b0b"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Metadata/der2_cciRefset_RefsetDescriptorSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 61,
+          "sha256": "7d896288265117388761b7f50766f6413298922bda8fc18245891d045a979a92"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Metadata/der2_ciRefset_DescriptionTypeSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 0,
+          "sha256": "2845ff268d2d56b8ae73ebd4d90ac080a2b49d053d8a4bba55f573063963d047"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Metadata/der2_scsRefset_ComponentAnnotationStringValueSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 0,
+          "sha256": "abee77d03962369a45daeb7511e93879afd5939d5d0320524460b301de0f9d18"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Metadata/der2_ssRefset_ModuleDependencySnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 2,
+          "sha256": "8bf033aba635d7e08507c30faa4ec00ddeaa9cc34beb10f9bedf647784fef3aa"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Refset/Metadata/der2_sscsRefset_MemberAnnotationStringValueSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 0,
+          "sha256": "248765c3035da04e5f1351c4e8224e12f30f5c66f3702d4cf4dfe015a36a8a74"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_Concept_Snapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 2007,
+          "sha256": "0c8f04986cb0385a319d6213c72b7bb41b20d390bf0a5f7a386ab206165a8fd6"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_Description_Snapshot-en_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 5258,
+          "sha256": "5ee4b7e98b6c2acd131712a11afb34fd975036e14abcd085da5c3f3e1e4de22f"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_Description_Snapshot-ko_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 57555,
+          "sha256": "8e8ea34f05ed36525b9944bc736c78aa180c03e0a45bb8bf76768b0abe481d97"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_Identifier_Snapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 0,
+          "sha256": "4ba4e6562a3a51bd9f7a77ea86810abee3b6ce7c9ab803779fb2a0d0c146d44c"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_RelationshipConcreteValues_Snapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 3,
+          "sha256": "edcda1815eaa885ff3afbfd2c0b588383e7ceafc9786906edf644af88d1168a0"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_Relationship_Snapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 10684,
+          "sha256": "e4c6501952ceb52c505363989b395559d347a37e22468a2e744f729940083601"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_StatedRelationship_Snapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 0,
+          "sha256": "3a5abe709b396a3f6002e9af539313835cdb50676f8c357fff8b424c8a730a2e"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_TextDefinition_Snapshot-en_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 3,
+          "sha256": "894980dca37da46908186301db174079808a057496db3af9c862752b54597341"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_TextDefinition_Snapshot-ko_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 35,
+          "sha256": "4316675fd08f465f7628f78e27852751b4acabb6b40d455253aac84112440bd8"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_sRefset_OWLExpressionSnapshot_KR1000267_20260615.txt",
+          "release_date": "20260615",
+          "rows": 2011,
+          "sha256": "4eed1a4cb9e6fe2165ebb7291769a96ee96740bef01b391943df3bc8a7d3cc79"
+        },
+        {
+          "path": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/release_package_information.json",
+          "release_date": null,
+          "rows": 1,
+          "sha256": "6fe12e1befe9b33e812f957e5b871d449d7d6a5c998bb7b9b9aee241b336c0c9"
+        }
+      ],
+      "module_versions": {
+        "11000267109": "20260615",
+        "449080006": "20260501",
+        "900000000000012004": "20260501",
+        "900000000000207008": "20260501"
+      },
+      "packages": [
+        {
+          "directory": "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z",
+          "effective_time": "20260501",
+          "language_refsets": [
+            {
+              "id": "900000000000508004",
+              "term": "Great Britain English language reference set"
+            },
+            {
+              "id": "900000000000509007",
+              "term": "United States of America English language reference set"
+            }
+          ],
+          "license": "© 2026 International Health Terminology Standards Development Organisation 2002-2026.  All rights reserved.  SNOMED CT® was originally created by the College of American Pathologists.  'SNOMED' and 'SNOMED CT' are registered trademarks of International Health Terminology Standards Development Organisation, trading as SNOMED International.  SNOMED CT has been created by combining SNOMED RT and a computer based nomenclature and classification known as Clinical Terms Version 3, formerly known as Read Codes Version 3, which was created on behalf of the UK Department of Health and is Crown copyright.  This document forms part of the International Edition release of SNOMED CT® distributed by SNOMED International, which is subject to the SNOMED CT® Affiliate License, details of which may be found at  https://www.snomed.org/snomed-ct/get-snomed."
+        },
+        {
+          "directory": "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z",
+          "effective_time": "20260615",
+          "language_refsets": [
+            {
+              "id": "900000000000508004",
+              "term": "GB English"
+            },
+            {
+              "id": "900000000000509007",
+              "term": "US English"
+            },
+            {
+              "id": "21000267104",
+              "term": "KO Korean"
+            }
+          ],
+          "license": "© International Health Terminology Standards Development Organisation 2002-2026.  All rights reserved.  SNOMED CT® was originally created by the College of American Pathologists.  \"SNOMED\" and \"SNOMED CT\" are registered trademarks of International Health Terminology Standards Development Organisation, trading as SNOMED International.  SNOMED CT has been created by combining SNOMED RT and a computer based nomenclature and classification known as Clinical Terms Version 3, formerly known as Read Codes Version 3, which was created on behalf of the UK Department of Health and is Crown copyright.  This document forms part of the SNOMED CT® Korea Extension release distributed by SNOMED International, which is subject to SNOMED International's SNOMED CT® Affiliate License, details of which may be found at https://www.snomed.org/snomed-ct/get-snomed."
+        }
+      ]
+    },
+    {
+      "attribution": "Eka Care",
+      "dataset": "bodhi-s",
+      "dataset_id": "99c44d6ea29ba5605199830ebe46d2a9f6c5ec4744ea1b069896d1621e7fef53",
+      "files": [
+        {
+          "path": "assets/bodhi/LICENSE",
+          "rows": 1,
+          "sha256": "41bfa0924a9f70045f671c7e4021b5b79865139097964ce08b6363ef8cc03511"
+        },
+        {
+          "path": "assets/bodhi/bodhi-s/csv/edges_has_prerequisite.csv",
+          "rows": 53,
+          "sha256": "477a29792bc6970c9132a251d8a0e1770827da53f745dee3ad7609de2504d682"
+        },
+        {
+          "path": "assets/bodhi/bodhi-s/csv/edges_is_influenced_by.csv",
+          "rows": 1020,
+          "sha256": "c30452b77b13078994d10e1609754316308286c40769262d2e3e718f8b3256b2"
+        },
+        {
+          "path": "assets/bodhi/bodhi-s/csv/edges_present_in.csv",
+          "rows": 10352,
+          "sha256": "6a3247f6ad74c91ab1ff1a0a6101dc21fadfa0f4fed1e744554be8f2501cd377"
+        },
+        {
+          "path": "assets/bodhi/bodhi-s/csv/edges_related_to.csv",
+          "rows": 221,
+          "sha256": "0b65741603c4f5a340cf8e1d25a66ebc62298599157f91bc15d9c5aef3100f4b"
+        },
+        {
+          "path": "assets/bodhi/bodhi-s/csv/edges_treated_by.csv",
+          "rows": 1558,
+          "sha256": "9e628c2f5a0008e185c0b1ea7f503334c24dd4dee9eb0eed24d62acb197ed0c8"
+        },
+        {
+          "path": "assets/bodhi/bodhi-s/csv/nodes_condition.csv",
+          "rows": 779,
+          "sha256": "d13ce34e76eb48b8615eea843b83b41e319acd1418b2922930a3aa98174b2cb5"
+        },
+        {
+          "path": "assets/bodhi/bodhi-s/csv/nodes_speciality.csv",
+          "rows": 39,
+          "sha256": "0927a181d713304dd33f04e6054fc9d7f023639cb1e44bb172af61456d69ca47"
+        },
+        {
+          "path": "assets/bodhi/bodhi-s/csv/nodes_symptom.csv",
+          "rows": 4037,
+          "sha256": "0960fc4a41bb2bd3b318c5201ee0b0fb0f029621793e07d4af3eafc783e9e4ee"
+        },
+        {
+          "path": "assets/bodhi/original_readme.md",
+          "rows": 1,
+          "sha256": "bfb5fcb83efa5a15befcd7bbe8fed3f59f6688787bf79af463316f0c8247115d"
+        }
+      ],
+      "license": "CC BY-NC 4.0"
+    }
+  ],
+  "vocabulary": {
+    "path": "knowledge/5b45f46d2f2db935-vocabulary.ttl",
+    "sha256": "e01cb7a29d117c1733bc50c2580ebd0de050f3fc9d1125de5c59836210fef928"
+  }
+}

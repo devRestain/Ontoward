@@ -1,0 +1,15 @@
+services:
+  dev:
+    cpus: 2.0
+    mem_limit: 8g
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace
+        read_only: true
+      - type: bind
+        source: ./data/preparation/v5
+        target: /workspace/data/preparation/v5
+      - type: bind
+        source: ./Tmp
+        target: /workspace/Tmp

@@ -33,7 +33,9 @@
 - Link English and supplied Korean names to verified SCTIDs while keeping mappings as candidates until review; keep runtime admission separate.
 - Apply source acquisition choices from root decision D02 only when preparing SNOMED CT.
 - Apply language-dependent source choices from root decision D04 when relevant.
-- Limit BODHI source preparation to the three BODHI-S CSV files defined by the root PRD.
+- Ingest all eight BODHI-S CSVs under the 2026-10-15 request; project only source relations whose complete meaning fits v5.0 and retain explicit dispositions for other source roles.
+- Keep full source SQLite databases, normalization candidates, quota reservations, preview RDF, review batches, and admission receipts in preparation/v5/.
+- Admit only explicitly approved pinned batches with complete mapping dependencies; keep unreviewed clinical text and exam methods outside runtime assets.
 - Preserve source version, origin, license, and attribution with admitted assets.
 - Preserve guideline locations, titles, organizations, years, languages, source URLs, and document licenses.
 - Select source documents through the guideline catalog and exclude project guidance and review-only case answers.
@@ -56,6 +58,9 @@
 - Preserve prior request/response, checkpoint, approval, and preparation evidence as archival data; keep new v5.0 source records in preparation/v5/.
 - Distinguish automated validation, complete pilot review, sampled batch review, quality admission, and submission admission.
 - Record explicit user candidate acceptance without an additional agent source-meaning audit gate.
+- Preserve D15 approval basis, exact batch dependencies, text hashes, and independent clinical validation status in the separate approved receipt.
+- Keep original candidate review material and source dispositions unchanged after admission.
+- Own authored Korean wording and its prepared labels and questions without treating display translations as new clinical assertions.
 - Bundle only quality-admitted and submission-admitted outputs by existing source group.
 - Preserve bundle file lists, versions, source identity, triple counts, and preparation-result links in the submission manifest.
 - Distinguish source inspection from generated Turtle and manifest evidence.

@@ -1,9 +1,22 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=f06b8cb2360b7edddf87553fe015a003f06bc69d dirty=true updated=2026-10-14T16:58:21+00:00
-/goal phase=current id=APP.V501 state=complete action="Integrate shared patterns typed observations and v5.0 association scoring"
-/goal phase=next id=APP.ASSETS01 state=blocked action="Integrate reviewed v5.0 runtime RDF questions and plans after data-owner admission"
+/checkpoint revision=ba824e46be7e20a8ac42853635513de5b4096681 dirty=true updated=2026-10-15T01:06:56+00:00
+/goal phase=current id=APP.FULLV501 state=complete action="Complete D15 admitted knowledge bounded parsing Korean questions and information preservation"
+/goal phase=next id=APP.PARSER16 state=planned action="Design fact-level validation and question-specific recovery"
+/goal phase=history id=APP.V501 state=complete action="Preserve the completed v5.0 workflow integration and synthetic acceptance"
+/accept id=APP.FULLV501.A1 state=pass action="Preserve consultation behavior after reader indexing" evidence=APP.FULLV501.E1
+/accept id=APP.FULLV501.A2 state=pass action="Validate isolated admission text pins and failure rollback" evidence=APP.FULLV501.E2
+/accept id=APP.FULLV501.A3 state=pass action="Load and package the explicitly approved full clinical batch" evidence=APP.FULLV501.E4,APP.FULLV501.E6
+/accept id=APP.FULLV501.A4 state=pass action="Preserve structured information and bound parser vocabulary and expansion" evidence=APP.FULLV501.E1
+/accept id=APP.FULLV501.A5 state=pass action="Verify independent archive workflow and actual knowledge consultation" evidence=APP.FULLV501.E5,APP.FULLV501.E6
+/evidence id=APP.FULLV501.E1 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/workflow-accepted/verification.json observed="Pass 58 offline checks including delivered versus resolved evidence SOAP context numeric units primary exclusion and bounded fact-preserving expansion"
+/evidence id=APP.FULLV501.E2 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/database/verification.json observed="Pass 31 source and admission checks including pinned labels questions isolated prepare and unchanged manifest after rejected text"
+/evidence id=APP.FULLV501.E3 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/full-source.json observed="Pass 354 source checks with 2 to 1 to 4 refinement episode isolation typed values and graph immutability"
+/evidence id=APP.FULLV501.E4 class=artifact result=pass source=knowledge/manifest.json observed="Load D15 admitted RDF and optional pinned labels and questions from submission-local paths"
+/evidence id=APP.FULLV501.E5 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/isolated/workflow/verification.json observed="Pass all 58 workflow checks from the extracted archive without a parent workspace mount"
+/evidence id=APP.FULLV501.E6 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/isolated/admitted/verification.json observed="Pass three actual-RDF scripted consultations with confirmed termination and prepare 2.295 seconds at 262792 KiB peak memory"
+/evidence id=APP.FULLV501.E7 class=semantic result=not_run source=knowledge/manifest.json observed="Leave independent clinical validation actual Luna diagnostic performance and disease-plan preparation unrun"
 /accept id=APP.V501.A1 state=pass action="Implement shared Association readers typed matching conditional contributions and public policy loading" evidence=APP.V501.E1,APP.V501.E2
 /accept id=APP.V501.A2 state=pass action="Verify score replacement complete conditions episode isolation source deduplication and applicability questions" evidence=APP.V501.E2
 /accept id=APP.V501.A3 state=pass action="Preserve the five-session flow through response handling SOAP diagnosis submission and confirmed termination" evidence=APP.V501.E2,APP.V501.E3
@@ -13,10 +26,11 @@
 /evidence id=APP.V501.E3 class=runtime result=pass source=Tmp/ontology-v5/archive-verification.json observed="Pass all 52 maintained checks from the isolated ZIP runtime with synthetic knowledge and SDK responses without parent data fallback"
 /evidence id=APP.V501.E4 class=semantic result=pass source=AGENTS.md observed="Align the runtime contract and Korean workflow white paper with v5.0 while retaining D11 D12 D13 D14 session budget transport and submission responsibilities"
 /evidence id=APP.V501.E5 class=artifact result=pass source=Tmp/ontology-v5/archive-verification.json observed="Preserve the SDK digest and current source bytes in the 38-file ZIP with SHA-256 b9f09785db856e5ae399fbba70a0677989b5107e7d7c68af355bdd4a75d26686"
-/evidence id=APP.V501.E6 class=runtime result=not_run source=knowledge/manifest.json observed="Leave production prepare unrun because actual clinical bundles questions plans and their admitted manifest are absent"
+/evidence id=APP.V501.E6 class=runtime result=not_run source=Tmp/ontology-v5/archive-verification.json observed="Preserve the historical pre-D15 absence of production clinical assets without overriding current admission evidence"
 /evidence id=APP.V501.E7 class=external_service result=not_run source=workflow/runtime.py observed="Leave real Luna parsing framing official API recovery submission and evaluation unverified"
 /evidence id=APP.V501.E8 class=runtime result=not_run source=README.md observed="Leave Mermaid visual rendering unrun"
-/blocker id=APP.ASSETS01.B1 state=open action="Obtain data-owner review and admission of v5.0 clinical assets and prepared text before production prepare can succeed" source=data/PROJECT_STATE.md
+/blocker id=APP.FULLV501.B1 state=resolved action="Apply D15 approval and the data-owned pinned receipt" source=data/PROJECT_STATE.md
 /scope id=APP.V501.S1 state=in action="Own typed observations graph readers scoring contribution evidence applicability questions and complete offline consultation acceptance"
-/scope id=APP.V501.S2 state=out action="Exclude source projection clinical admission v4.2 compatibility conversions real API execution and deployment"
-/handoff state=blocked action="Keep v5.0 structural schema policy and runtime code ready and await reviewed manifest RDF questions and plans"
+/scope id=APP.FULLV501.S1 state=in action="Own D15 indexed knowledge resolved evidence structured SOAP bounded parsing and minimal Korean asset consumption"
+/scope id=APP.FULLV501.S2 state=out action="Exclude disease plans dynamic replanning turn redistribution actual model calls official evaluation and deployment"
+/handoff state=ready action="Design fact-level validation and question-specific recovery as APP.PARSER16"

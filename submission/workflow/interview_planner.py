@@ -14,14 +14,41 @@ class InterviewPlanner:
         self.usage = usage
 
     @staticmethod
-    def known(state: WorkflowState, target, attribute=None, observation=None, episode=None, subject="patient", time_context=None):
-        return any(item.status == "done" and item.value and target in item.value.concept_ids
-                   and item.value.attribute_id == attribute and item.value.subject == subject
-                   and (item.value.kind == "context" or item.value.time_context != "past")
-                   and (observation is None or item.value.observation_id == observation)
-                   and (episode is None or item.value.episode_id == episode)
-                   and (time_context is None or item.value.time_context == time_context)
-                   for _, item in state.case.entries())
+    def has_resolved_evidence(state: WorkflowState, target, attribute=None, observation=None, episode=None,
+                              subject="patient", time_context=None):
+        values = [item.value for _, item in state.case.entries() if item.status == "done" and item.source_refs
+                  and item.value and target in item.value.concept_ids and item.value.attribute_id == attribute
+                  and item.value.subject == subject
+                  and (time_context is not None or item.value.kind == "context" or item.value.time_context != "past")
+                  and (observation is None or item.value.observation_id == observation)
+                  and (episode is None or item.value.episode_id == episode)
+                  and (time_context is None or item.value.time_context == time_context)]
+        values = [value for value in values if value.status in {"present", "absent"}]
+        if not values:
+            return False
+        return len({value.status for value in values}) == 1 and all(
+            len(value.concept_ids) == 1 and (attribute is None or value.values or value.measurement)
+            and value.kind in {"symptom", "finding", "context", "attribute"} for value in values)
+
+    @staticmethod
+    def was_asked(state: WorkflowState, target, attribute=None, observation=None, episode=None,
+                  subject="patient", time_context=None):
+        for entry in state.interaction.history:
+            q = entry.question
+            if not entry.delivered or not q or (q.target_id, q.attribute_id, q.subject) != (target, attribute, subject):
+                continue
+            contexts = [(q.observation_id, q.episode_id, q.time_context)]
+            contexts.extend((value.observation_id, value.episode_id, value.time_context)
+                            for _, item in state.case.entries() if entry.id in item.source_refs and (value := item.value)
+                            and target in value.concept_ids and value.attribute_id == attribute and value.subject == subject)
+            if any((observation is None or observed == observation) and (episode is None or occurrence == episode)
+                   and (time_context is None or timing == time_context) for observed, occurrence, timing in contexts):
+                return True
+        return False
+
+    @classmethod
+    def _covered(cls, state, *args, **kwargs):
+        return cls.has_resolved_evidence(state, *args, **kwargs) or cls.was_asked(state, *args, **kwargs)
 
     def prepare_initiation(self, state: WorkflowState) -> None:
         self.questions.register(state, Question(item_id="Initiation:chief", field="S.cc", purpose="chief",
@@ -42,7 +69,7 @@ class InterviewPlanner:
                 order += 1
             for attribute in attributes:
                 target = next(concept for concept in concepts if attribute in self.knowledge.get_symptom_attributes(concept))
-                if self.known(state, target, attribute, value.observation_id, value.episode_id):
+                if self._covered(state, target, attribute, value.observation_id, value.episode_id):
                     continue
                 self.questions.register(state, Question(item_id=f"ChiefComplaint:{chief.id}:{attribute}", field="S.hpi",
                     purpose="hpi", target_id=target, attribute_id=attribute, observation_id=value.observation_id,
@@ -60,7 +87,7 @@ class InterviewPlanner:
         targets = {target for item in state.case.chief_complaints(confirmed=True) for target in item.value.concept_ids}
         systems = {system for target in targets for system in self.knowledge.get_symptom_systems(target)}
         related = {target for system in systems for target in self.knowledge.get_system_symptoms(system)}
-        unasked = [target for target in sorted(related - targets) if not self.known(state, target)]
+        unasked = [target for target in sorted(related - targets) if not self._covered(state, target)]
         for index, target in enumerate(unasked[:LIMITS.focused_ros]):
             self.questions.register(state, Question(item_id=f"ChiefComplaint:ros:{target}", field="S.ros", purpose="ros",
                 target_id=target, text=self.config.texts.ros_question.format(symptom=self.knowledge.label(target)),
@@ -127,7 +154,7 @@ class InterviewPlanner:
                 contexts[key] = contexts.get(key, 0) + 1
         for order, ((target, subject, time_context), count) in enumerate(sorted(contexts.items(), key=lambda pair: (-pair[1], pair[0]))):
             kind = self.knowledge.get_context_type(target)
-            if self.known(state, target, subject=subject, time_context=None if time_context == "unspecified" else time_context):
+            if self._covered(state, target, subject=subject, time_context=None if time_context == "unspecified" else time_context):
                 continue
             field = "S.fh" if subject == "family" else ("S.sh" if kind in {
                 "social_history", "occupational_history", "psychosocial_history", "demographic"} else "S.pmh")
@@ -154,9 +181,19 @@ class InterviewPlanner:
             occurrences = [(value.observation_id, value.episode_id) for value in existing] or [(None, None)]
             for observation, episode in occurrences:
                 key = (target, attribute, observation, episode)
-                if key in seen or self.known(state, target, attribute, observation, episode):
+                if key in seen or self.has_resolved_evidence(state, target, attribute, observation, episode):
                     continue
                 seen.add(key)
+                if self.was_asked(state, target, attribute, observation, episode):
+                    previous = [entry.question for entry in state.interaction.history if entry.delivered and entry.question
+                                and entry.question.target_id == target and entry.question.attribute_id == attribute
+                                and ((entry.question.observation_id == observation and entry.question.episode_id == episode) or any(
+                                    entry.id in item.source_refs and item.value and item.value.observation_id == observation
+                                    and item.value.episode_id == episode for _, item in state.case.entries()))]
+                    if previous and not any(q.purpose == "clarification" for q in previous):
+                        original = previous[-1].model_copy(update={"observation_id": observation, "episode_id": episode})
+                        self.prepare_clarification(state, original)
+                    continue
                 exam = self.knowledge.has_type(target, "ExamFinding")
                 methods = self.knowledge.get_exam_methods(target) if exam else []
                 method = methods[0] if methods else None
@@ -174,7 +211,7 @@ class InterviewPlanner:
     def select_question(self, state: WorkflowState) -> None:
         answered = {q.item_id for q in state.questions.questions if q.target_id and q.purpose != "clarification" and
                     (item := state.case.get(q.item_id)) and item.status == "unasked" and
-                    self.known(state, q.target_id, q.attribute_id, q.observation_id, q.episode_id, q.subject,
+                    self.has_resolved_evidence(state, q.target_id, q.attribute_id, q.observation_id, q.episode_id, q.subject,
                                None if q.time_context == "unspecified" else q.time_context)}
         self.questions.discard_unasked(state, answered)
         questions = [q for q in state.questions.questions
