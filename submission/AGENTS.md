@@ -97,6 +97,7 @@
 - Limit expansion changes to concept_ids while preserving exact quotes, field, status, subject, episode, and correction references.
 - Exclude the data-owned natural-language vocabulary candidates from runtime knowledge until clinician review and separate admission.
 - Treat NOVA_GUIDELINES_DIR as a preparation source-location contract rather than a consultation retrieval dependency.
+- Keep D16 education excerpt drafts outside runtime plans and knowledge admission until a separate accepted integration slice.
 - Load the D08 schema and vocabulary with all manifest-declared clinical bundles into one RDFLib Graph during case-independent prepare().
 - Query the prepared Graph without RF2 or source-document retrieval, extraction, or patient writes during consultation.
 - Keep the Graph outside CaseState and preserve patient observations only in case-owned state.

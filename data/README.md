@@ -6,6 +6,7 @@ data/는 원천 식별·판본·파일 해시·매핑·검토와 지속 준비 �
 |---|---|
 | [ontology/](ontology/README.md) | 현재 v5.0 schema, starter vocabulary, 승인 용어 영수증 |
 | [preparation/v5/](preparation/v5/README.md) | 전체 원천 SQLite·후보 RDF·검토 자료와 보존된 앞선 preview |
+| [preparation/education/](preparation/education/runtime842-2026-10-15/review.md) | D16 질환·원천 목록, 명시적 구간 매핑, 원문 발췌와 검토 초안 |
 | [ontology/v4.2/](ontology/v4.2/schema.ttl) | 정확히 보존한 deprecated schema와 vocabulary |
 | [ontology/deprecated.json](ontology/deprecated.json) | 이전 추출 인터페이스·도구·준비 자료의 deprecation 목록 |
 | catalog/·provenance/ | 보존된 원본 탐색·공모전 출처 식별 |
@@ -20,5 +21,7 @@ BODHI의 두 방향 likelihood는 구분하고 원래의 zero와 소수 점수�
 preview_only와 registry candidate는 사람의 매핑·임상 검토와 제출 자산 수용 이전 상태다. 필요한 실행 자산을 별도 수용한 뒤 submission/knowledge/에 배치한다. 런타임과 그 테스트는 이 data/ 디렉터리에 의존하지 않는다.
 
 D15의 [별도 승인 영수증](preparation/v5/full-snomed-bodhi-2026-10-15/review-approved.json)은 전체 후보 사용에 대한 사용자 수용을 기록한다. [admission.json](preparation/v5/full-snomed-bodhi-2026-10-15/admission.json)은 제출 지식 수용 결과이며 원래 preview와 미승인 검토 양식은 보존한다. [최소 한국어 문구](preparation/v5/full-snomed-bodhi-2026-10-15/texts/preparation.json)는 라벨·질문 해시를 같은 승인에 고정한다. 독립 임상 검증·질환별 계획·실제 모델 성능과 구분한다.
+
+D16의 교육 원문은 사용자 검토 전 초안으로 보관한다. 질환별 구간을 지정한 초안과 아직 확인하지 않은 후보를 구분하며 출처·조건·원문 언어를 보존한다. [도구 설명](../Dev/education/README.md)에서 매핑 수정과 재검증 방법을 확인할 수 있다. 원문 준비와 독립 임상 검증·한국어 교육 문구·제출 편입은 각각 별도다.
 
 승인된 510개 영어 용어 목록과 영수증은 유지한다. 이전 문헌 파일럿의 원응답·승인도 보존하며 새 데이터로 자동 변환하거나 작업을 재개하지 않는다. 계약은 [D08/D09](../DECISION_STATE.md#D08), 도구는 [Dev 안내](../Dev/ontology/README.md), 운영 기록은 [PROJECT_STATE](PROJECT_STATE.md)를 따른다.

@@ -1,9 +1,10 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=ba824e46be7e20a8ac42853635513de5b4096681 dirty=true updated=2026-10-15T01:06:56+00:00
-/goal phase=current id=ROOT.FULLV501 state=complete action="Complete D15 approved knowledge admission information preservation and isolated acceptance"
+/checkpoint revision=48be55b730020ea23ac9b432025002aa1e95d6ed dirty=true updated=2026-10-15T02:08:43+00:00
+/goal phase=current id=ROOT.EDUCATION16 state=complete action="Complete D16 offline fixed-source education excerpt preparation and review handoff"
 /goal phase=next id=ROOT.PARSER16 state=planned action="Design fact-level validation and question-specific recovery"
+/goal phase=history id=ROOT.FULLV501 state=complete action="Preserve D15 approved knowledge admission information preservation and isolated acceptance"
 /goal phase=history id=ROOT.V501 state=complete action="Preserve the completed v5.0 preview and offline workflow acceptance"
 /accept id=ROOT.FULLV501.A1 state=pass action="Implement source custody approval and quota behavior" evidence=ROOT.FULLV501.E1
 /accept id=ROOT.FULLV501.A2 state=pass action="Preserve the complete offline consultation workflow" evidence=ROOT.FULLV501.E2
@@ -39,4 +40,14 @@
 /scope id=ROOT.V501.S1 state=in action="Own root requirements Compose preparation tooling maintained verification packaging and cross-scope handoff"
 /scope id=ROOT.FULLV501.S1 state=in action="Own D15 preparation helpers maintained verification packaging report adoption and cross-scope reconciliation"
 /scope id=ROOT.FULLV501.S2 state=out action="Exclude disease plans source downloads old jobs actual model calls remote writes commits and infrastructure changes"
-/handoff state=ready action="Design fact-level validation and question-specific recovery as ROOT.PARSER16 without implementing deferred policies"
+/accept id=ROOT.EDUCATION16.A1 state=pass action="Implement pinned inventory exact excerpt extraction and offline behavior checks" evidence=ROOT.EDUCATION16.E1,ROOT.EDUCATION16.E2
+/accept id=ROOT.EDUCATION16.A2 state=pass action="Complete the data-owned runtime Disease review batch" evidence=ROOT.EDUCATION16.E3,ROOT.EDUCATION16.E4
+/accept id=ROOT.EDUCATION16.A3 state=pass action="Reconcile D16 requirements contracts and all maintained state scopes" evidence=ROOT.EDUCATION16.E5
+/evidence id=ROOT.EDUCATION16.E1 class=runtime result=pass source=Tmp/education-2026-10-15/tests.json observed="Pass 14 offline education inventory extraction boundary mutation and draft-only behavior checks"
+/evidence id=ROOT.EDUCATION16.E2 class=runtime result=pass source=Tmp/education-2026-10-15/workflow.json observed="Pass all 58 existing synthetic workflow checks through SOAP submission and confirmed termination"
+/evidence id=ROOT.EDUCATION16.E3 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference DATA.EDUCATION16 fixed-source draft coverage and explicit unresolved dispositions without claiming user approval or clinical validation"
+/evidence id=ROOT.EDUCATION16.E4 class=artifact result=pass source=Tmp/education-2026-10-15/preservation.json observed="Verify all 43 submission runtime files retain their pre-D16 bytes while keeping education drafts outside submission"
+/evidence id=ROOT.EDUCATION16.E5 class=semantic result=pass source=Tmp/education-2026-10-15/handoff-review.json observed="Reconcile D16 decisions requirements source contracts human orientation and root data and submission handoffs"
+/evidence id=ROOT.EDUCATION16.E6 class=external_service result=not_run source=DECISION_STATE.md observed="Leave new downloads model calls independent clinical validation official evaluation commits and publication unrun"
+/scope id=ROOT.EDUCATION16.S1 state=in action="Own education preparation tooling maintained checks and cross-scope review handoff under D16"
+/handoff state=ready action="Present the data-owned D16 draft review batch and retain ROOT.PARSER16 as the next implementation design"

@@ -5,8 +5,10 @@
 | 경로 | 현재 역할 |
 |---|---|
 | [ontology/](ontology/README.md) | SNOMED CT·BODHI-S의 결정론적 v5.0 투영 |
+| [education/](education/README.md) | D16 질환별 고정 원문 매핑·발췌·검토 초안 |
 | tests/workflow/ | 합성 SDK를 사용하는 전체 상담 행동 검증 |
 | tests/ontology/ | 실제 원천 preview·해시·제외 사유·점수 검증 |
+| tests/education/ | 원문·줄바꿈·구간·입력 해시·전체 질환 처리 행동 검증 |
 | [architecture/WORKFLOW_RULES.md](architecture/WORKFLOW_RULES.md) | 실행 규칙·소유 객체·행동 테스트 색인 |
 | [architecture/NOVA_REVIEW_2026-10-15.md](architecture/NOVA_REVIEW_2026-10-15.md) | D15 분석 보고서 채택과 후속 검토 조건 |
 | packaging/ | submission/만 읽는 독립 ZIP 구성 |

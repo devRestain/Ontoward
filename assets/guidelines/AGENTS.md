@@ -13,12 +13,14 @@
 - Resolve source filenames relative to this directory and preserve the original source-folder identity.
 - Preserve `title`, `organization`, `year`, `language`, `source_url`, and `license` from each document's YAML metadata.
 - Select clinical Markdown from catalog entries rather than a broad glob that would ingest local `AGENTS.md` files.
-- Apply the guideline-derived graph sequence from root decision D05 and the artifact structure from D07.
-- Keep extraction, validation, RDF generation, and bundle code in root `Dev/`, runtime retrieval code in root `app/`, and derived artifacts and preparation records in root `data/`.
-- Use D09 and root Dev/AGENTS.md for the replacement textbook preparation contract.
+- Apply D16 for the separately requested fixed original education excerpts and keep retired guideline relation-extraction jobs archived.
+- Keep education preparation in root Dev/education/, durable drafts in root data/preparation/education/, and runtime readers in root submission/.
+- Use D09 for ontology preparation without treating D16 education excerpts as RDF relationships or runtime plans.
 - Use `NOVA_GUIDELINES_DIR` as a provided source-location contract without requiring guideline-text retrieval during consultation.
 - Extract and review clinical relations before submission rather than during case-independent prepare() or consultation.
 - Preserve source document and section references and applicability with every extracted clinical relation.
+- Pin exact source hashes heading paths and inclusive line ranges for education excerpts and retain complete selected section subtrees.
+- Treat catalog document types as navigation metadata and verify the actual clinical role population and converted body before selecting a source section.
 - Distinguish general clinical knowledge from observations about the active patient.
 - Check document type, population, date, section context, and conversion quality before admitting an extracted relation.
 

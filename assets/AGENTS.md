@@ -22,6 +22,7 @@
 - Use snomed/ for the supplied authorized International and Korean RF2 snapshots composed by exact module dependencies under D02/D09; preserve release files unchanged.
 - Use bodhi/ for the BODHI-S source CSVs and preserved upstream descriptions under its nested contract; record derivative evidence in data/preparation/v5/.
 - Preserve `guidelines/` and its catalog as the source corpus and evidence for earlier preparation work; it is no longer the default extraction path and must not be resumed automatically.
+- Use guidelines/ and its catalog for the explicitly requested D16 offline education excerpt preparation while preserving the original documents.
 - Use `nova-guidelines-catalog.xlsx` as the separately downloaded human browsing catalog corresponding to `guidelines/catalog.xlsx`.
 - Ignore `.DS_Store` as filesystem metadata without treating it as a source asset.
 

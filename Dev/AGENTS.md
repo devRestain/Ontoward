@@ -37,6 +37,17 @@
 - Use ontology/clinical_texts.py with data-owned authored wording to prepare D15 minimal Korean labels and questions without new source relations or disease plans.
 - Pin labels and questions in the same admission receipt and verify their bytes and rendered question lengths before manifest publication.
 
+## Education Excerpt Preparation
+
+- Use education/prepare.py inventory/build/verify under D16 without restoring the retired guideline relation-extraction tools.
+- Derive the complete Disease inventory from the admitted runtime manifest and pin every catalog document before selecting excerpts.
+- Use catalog title and alias matches only for navigation and record explicit source-body selections or concrete review reasons for every Disease.
+- Prefer applicable clinical guidance and retain clinician textbook chapters when suitable guidance sections have not been selected.
+- Preserve source metadata hashes heading paths inclusive line ranges and complete selected section context without translation or truncation.
+- Keep authored mappings generated excerpts and human review material in data/preparation/education/ with draft_pending_user_review status.
+- Run python -B Dev/tests/education/test_prepare.py and the education verify command in the offline project dev container.
+- Leave Korean rendering Doctor integration plans admission and new source acquisition outside D16.
+
 ## Containers and Verification
 
 - Use the proven project dev container with tests/workflow/compose.offline.yaml for current projection and checks; keep dependencies off the host.

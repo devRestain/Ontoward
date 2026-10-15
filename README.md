@@ -21,11 +21,13 @@ Ontoward/
 ├── Dev/
 │   ├── codex/      # 최소 CLI 환경·인증 설정
 │   ├── ontology/   # 현재 v5.0 원천 투영
+│   ├── education/  # 질환별 고정 원문 교육 전처리
 │   ├── tests/      # 워크플로우·원천 행동 검증
 │   └── packaging/  # 제출 ZIP 구성 도구
 ├── data/
 │   ├── ontology/   # v5.0 구조·기초 어휘·deprecated v4.2
 │   ├── preparation/v5/ # 전체 원천 SQLite·후보 RDF·검토 자료
+│   ├── preparation/education/ # 원문 교육 매핑·발췌·검토 초안
 │   ├── catalog/    # 원본 경로 목록
 │   └── provenance/ # 출처 식별
 ├── assets/         # 주최자 원본과 공모전 참고 문서
@@ -85,4 +87,6 @@ Git에는 코드·계약·상태·PPTX 변환 Markdown·간결한 출처와 검�
 
 현재 준비는 전체 International·Korean Snapshot과 BODHI-S 8개 CSV를 수집하는 SQLite DB와 v5.0 후보 RDF다. [구축 도구](Dev/ontology/README.md)와 [준비 결과](data/preparation/v5/README.md)에서 입력·manifest·제외/보류·배치 검토·검증을 확인한다. 앞선 세 Target preview와 [deprecated 자료](data/ontology/deprecated.json)는 보존하며 구형 작업을 재개하지 않는다.
 
-다음 단일 작업은 사실별 입력 검증과 질문 목적에 맞는 복구 설계다. [분석 보고서의 채택·보류 근거](Dev/architecture/NOVA_REVIEW_2026-10-15.md)를 프로젝트 자료로 남겼다. 질환별 치료·추적·교육 문구와 실제 모델·공식 실행 여부는 각 소유 상태에서 확인한다.
+D16의 [교육 원문 전처리](Dev/education/README.md)는 현재 런타임 질환을 기존 지침·교과서의 특정 원문 구간에 직접 연결한다. [검토 초안](data/preparation/education/runtime842-2026-10-15/review.md)에서 출처·줄 범위·선정 이유·미해결 사유를 확인할 수 있다. 원문 준비와 한국어 문구 작성·Doctor 연결·제출 편입은 별도다.
+
+사실별 입력 검증과 질문 목적별 복구 설계의 배경은 [분석 보고서의 채택·보류 근거](Dev/architecture/NOVA_REVIEW_2026-10-15.md)에 남긴다. 작업 순서와 실제 실행 여부는 각 소유 상태에서 확인한다.

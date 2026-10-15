@@ -61,6 +61,10 @@
 - Preserve D15 approval basis, exact batch dependencies, text hashes, and independent clinical validation status in the separate approved receipt.
 - Keep original candidate review material and source dispositions unchanged after admission.
 - Own authored Korean wording and its prepared labels and questions without treating display translations as new clinical assertions.
+- Own D16 pinned Disease inventories explicit source-section mappings verbatim excerpts and review reports in preparation/education/.
+- Preserve draft_pending_user_review status and separate mapped drafts from unresolved navigation candidates for every runtime Disease.
+- Keep source-specific scope restrictions original language attribution and redistribution conditions attached to each education excerpt.
+- Require separate selection for education runtime admission without reusing D15 approval for these source excerpts.
 - Bundle only quality-admitted and submission-admitted outputs by existing source group.
 - Preserve bundle file lists, versions, source identity, triple counts, and preparation-result links in the submission manifest.
 - Distinguish source inspection from generated Turtle and manifest evidence.

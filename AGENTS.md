@@ -56,6 +56,8 @@
 - Use specific clinical pain complaints as D08 retrieval targets and preserve finer Location values, raw wording, interpretation uncertainty, and separate episodes.
 - Use D11 for the five-session workflow, Python routing and scoring, scoped budgets, and unasked-item deletion; use D12 for the SDK wire format and packaging.
 - Apply D15 for the approved full v5.0 batch, information-preserving SOAP, bounded Gateway vocabulary, and minimal Korean interview assets.
+- Apply D16 for offline Disease-to-document education excerpt preparation in Dev/education/ and data/preparation/education/.
+- Keep D16 source excerpts and review drafts outside runtime knowledge until separately selected for admission.
 - Apply newer explicit user decisions before stale operational plans or next goals; record implementation and execution only from observed evidence.
 - Isolate runtime LLM instructions and editable clinical text in submission/config with public environment-selected paths; keep machine field names and decision codes in Python.
 - Package only submission runtime Python, pinned requirements, public .env, config prompts and text, and knowledge assets through the package Compose service under D14.

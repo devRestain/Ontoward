@@ -1,7 +1,7 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=ba824e46be7e20a8ac42853635513de5b4096681 dirty=true updated=2026-10-15T01:06:56+00:00
+/checkpoint revision=48be55b730020ea23ac9b432025002aa1e95d6ed dirty=true updated=2026-10-15T02:08:43+00:00
 /goal phase=current id=APP.FULLV501 state=complete action="Complete D15 admitted knowledge bounded parsing Korean questions and information preservation"
 /goal phase=next id=APP.PARSER16 state=planned action="Design fact-level validation and question-specific recovery"
 /goal phase=history id=APP.V501 state=complete action="Preserve the completed v5.0 workflow integration and synthetic acceptance"
@@ -33,4 +33,7 @@
 /scope id=APP.V501.S1 state=in action="Own typed observations graph readers scoring contribution evidence applicability questions and complete offline consultation acceptance"
 /scope id=APP.FULLV501.S1 state=in action="Own D15 indexed knowledge resolved evidence structured SOAP bounded parsing and minimal Korean asset consumption"
 /scope id=APP.FULLV501.S2 state=out action="Exclude disease plans dynamic replanning turn redistribution actual model calls official evaluation and deployment"
-/handoff state=ready action="Design fact-level validation and question-specific recovery as APP.PARSER16"
+/evidence id=APP.EDUCATION16.E1 class=artifact result=pass source=Tmp/education-2026-10-15/preservation.json observed="Verify all 43 runtime code configuration SDK and knowledge files retain their pre-D16 bytes"
+/evidence id=APP.EDUCATION16.E2 class=runtime result=pass source=Tmp/education-2026-10-15/workflow.json observed="Pass all 58 existing synthetic workflow checks while leaving D16 excerpts outside runtime knowledge"
+/scope id=APP.EDUCATION16.S1 state=out action="Exclude D16 preparation drafts from runtime education plans pending separate user selection and integration"
+/handoff state=ready action="Preserve D15 runtime admission during data-owned D16 review and design fact-level validation as APP.PARSER16"
