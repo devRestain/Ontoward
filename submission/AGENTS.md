@@ -6,6 +6,7 @@
 - Keep run.py limited to SDK callbacks from workflow/runtime.py.
 - Assemble immutable knowledge and configuration in PreparedResources and initialize case-owned collaborators and WorkflowState for each consult call.
 - Keep Consultation as the sole coordinator for Initiation, ChiefComplaint, ContextFactor, DifferentialDiagnosis, Education, and finalization.
+- Apply D26 ONTOWARD_EDUCATION_ENABLED=false by default; pass Education without actions or reserved turns and leave P.education empty while preserving other admitted plan fields.
 - Keep graph.py limited to assembly, pure routing, and the existing deep-copy/Pydantic boundary.
 - Assign prepared SAY validation and SAY/EXAM execution to Doctor, response interpretation and facts to InputInterpreter, questions and education to InterviewPlanner, Pattern evaluation and diagnosis to ClinicalReasoner, and SOAP/submission to SubmissionWriter.
 - Assign question registration/discard to QuestionLifecycle, transcript/projection/delivery to InteractionLifecycle, and counters to UsageAccounting.
@@ -29,6 +30,7 @@
 - Require confirmed Target presence in the same observation/episode before asking SAY attributes; retain EXAM as a separate acquisition action.
 - Use stable semantic question keys and preserve delivered history and pending actions.
 - Replan undelivered questions after new clinical evidence; permit reconsideration of low-priority undelivered questions only after a new evidence revision.
+- Account for the capped supporting-Context bonus in question utility, drop exhausted Context utility, and advance to diagnostic acquisition when its utility is greater.
 - Never ordinarily repeat a delivered question; keep clarification case-wide at two and preserve unresolved values.
 - Remove unasked placeholders and references together and retain completed facts, delivered explanations, and plans.
 
@@ -44,6 +46,7 @@
 - Require nonempty exact current quotations for every accepted fact; never turn Doctor speech into patient findings.
 - Separate accepted facts, rejected facts, and unresolved links; quarantine invalid observation dependencies and conflicting corrections without discarding independent valid facts.
 - Allow one combined context/link/fact recovery call per reply and retain first-pass valid facts if recovery fails.
+- Include malformed or empty Gateway JSON in that same one-call recovery allowance without admitting ungrounded facts.
 - Use fixed parsing only for complete replies matching an explicit prepared answer contract; send compound, temporal, and subject-changing replies to Gateway.
 - Bound primary vocabulary to 256 concepts/32 KiB and expansion to 1024 concepts/128 KiB.
 - Require only question Target/Attribute identifiers, prefer Target-specific values and current wording, and stop candidate construction at the count limit.
@@ -71,7 +74,7 @@
 
 ## Budgets, Recovery, and Submission
 
-- Use a common 50-turn action pool rather than per-session caps and preserve two education/understanding turns plus one correction opportunity.
+- Use a common 50-turn action pool rather than per-session caps; reserve education/understanding/correction turns only when Education is explicitly enabled.
 - Reserve one Gateway call/output allowance, 120 seconds for reply processing, and 120 seconds for finalization before new actions.
 - Process received pending replies before finalization and let response processing consume its reserved window.
 - Share 200 model calls, 500000 input tokens, and 100000 output tokens case-wide; count unique requests and successful actions once.
@@ -83,6 +86,7 @@
 - Use only admitted plans and prepared common provisional wording; keep missing disease plans visible and apply D18's deletion of prior education drafts.
 - Serialize exactly fifteen SOAP string fields plus separate diagnosis, keep O.tests empty, and retain acquisition provenance and meaningful clinical context.
 - Keep A.evidence limited to actual obtained findings used in diagnosis and exclude unasked/unperformed findings and internal identifiers.
+- Preserve acquired negative findings used by diagnosis penalties and include obtained supporting findings beside each differential diagnosis.
 - Reconstruct an invalid SOAP record once and finish only after the submitted DIAGNOSE returns completed.
 - Distinguish failed, unknown, closed, expired, and confirmed submitted outcomes.
 

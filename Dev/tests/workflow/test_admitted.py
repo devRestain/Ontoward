@@ -171,7 +171,10 @@ def verify(submission, output, candidate=None):
             assert any(issue.startswith("missing_plan:") for issue in state.interaction.issues)
         else:
             assert state.case.diagnosis_kind == "symptom"
-            assert any(action["question"]["purpose"] == "education" for action in client.actions)
+        assert state.session.usage["Education"].actions == 0
+        assert state.session.usage["Education"].calls == 0
+        assert not any(action["question"]["purpose"] == "education" for action in client.actions)
+        assert state.interaction.submission_payload["note"]["P"]["education"] == ""
         if numeric:
             hpi = state.interaction.submission_payload["note"]["S"]["hpi"]
             assert "2 개월" in hpi

@@ -209,10 +209,10 @@ class InputInterpreter:
                 dialogue_ids={turn["id"] for turn in context["dialogue"]},
                 supplied_records={item["id"] for item in context["records"]},
                 allowed={concept["id"] for concept in vocabulary})
-            return parsed
+            return parsed if parsed is not None else ParseResult(needs_context=True)
         except (TypeError, ValueError):
             state.interaction.issues.append("invalid_gateway_output")
-            return None
+            return ParseResult(needs_context=True)
 
     def _validate_facts(self, raw, state, knowledge, text, **kwargs):
         try:

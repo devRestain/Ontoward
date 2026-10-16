@@ -44,6 +44,7 @@
 - Apply D21 patient-action-only Korean generation with independent NFC 1-30 validation; prioritize the explicitly requested NOVA development-key route and retain SNU workspace Codex CLI as the alternative.
 - Apply newer D22 NOVA-only continuation and explicitly authorized failure resumption within the frozen same-day ceiling; retain every rejected request and stop on completion or request/service limits.
 - Apply D23 competition acceptance to complete source-backed candidates and D22 patient actions without another clinical or user approval gate; preserve technical exclusions and exact runtime pins.
+- Apply D26 with Education disabled in the packaged public setting; skip its actions and turn reserve and leave P.education empty while completing diagnosis submission.
 - Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep maintained workflow tests in Dev/tests/workflow and generated synthetic assets and evidence in Tmp.
 
 ## Working Order

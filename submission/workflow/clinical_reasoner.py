@@ -215,7 +215,7 @@ class ClinicalReasoner:
 
     @staticmethod
     def supported_hypotheses(state):
-        return [h for h in state.differential.hypotheses if h.evidence_score > 0 and h.score > 0 and h.chief_coverage > 0]
+        return [h for h in state.differential.hypotheses if h.evidence_score > 0 and h.score > 0 and h.chief_coverage == 1]
 
     def select_diagnosis(self, state):
         state.differential.initialized = True
@@ -242,4 +242,4 @@ class ClinicalReasoner:
         state.differential.selected_id = chosen.disease_id
         state.case.diagnosis = self.knowledge.label(chosen.disease_id)
         state.case.diagnosis_kind = "disease"
-        state.case.diagnosis_evidence = chosen.evidence_ids
+        state.case.diagnosis_evidence = sorted(set(chosen.evidence_ids + chosen.contradiction_ids))

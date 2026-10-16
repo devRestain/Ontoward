@@ -73,8 +73,18 @@ class SubmissionWriter:
         evidence_text = texts.record_separator.join(self._describe_record(item, episodes) for item in evidence)
         if state.case.diagnosis_kind == "symptom":
             evidence_text = texts.record_separator.join(filter(None, (evidence_text, texts.symptom_assessment)))
-        alternatives = [self.knowledge.label(item.disease_id) for item in ClinicalReasoner.supported_hypotheses(state)
-                        if item.disease_id != state.differential.selected_id]
+        alternatives = []
+        for hypothesis in ClinicalReasoner.supported_hypotheses(state):
+            if hypothesis.disease_id == state.differential.selected_id:
+                continue
+            findings = [state.case.get(ident) for ident in hypothesis.evidence_ids + hypothesis.contradiction_ids]
+            findings = [item for item in findings if item and item.source_refs and item.value
+                        and item.value.status in {"present", "absent"}]
+            support = texts.label_separator.join(self._describe_record(item, episodes) for item in findings)
+            diagnosis = self.knowledge.label(hypothesis.disease_id)
+            alternatives.append(texts.differential_format.format(diagnosis=diagnosis, evidence=support) if support else diagnosis)
+            if len(alternatives) == LIMITS.differential_display:
+                break
         summaries = {"evidence": evidence_text, "differential": texts.record_separator.join(alternatives[:LIMITS.differential_display])}
         for field, text in summaries.items():
             state.case.put(f"A.{field}", RecordItem(id=f"assessment:{field}", scope="Education", status="done",

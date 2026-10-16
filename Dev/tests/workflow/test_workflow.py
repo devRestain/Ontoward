@@ -306,7 +306,7 @@ class Verification(unittest.TestCase):
         w = make_consultation()
         record(s)
         w.planner.prepare_chief_complaint(s)
-        s.session.turns_remaining = 5
+        s.session.turns_remaining = 2
         before = s.model_dump()
         decision = w.budget.evaluate(s)
         self.assertEqual(before, s.model_dump())
@@ -700,7 +700,7 @@ class Verification(unittest.TestCase):
         make_interpreter(CONFIG).process_input(s, knowledge(), client)
         self.assertFalse(s.case.S["cc"])
         self.assertEqual(s.interaction.history[0].response["opening"], "가상증상이 있어요")
-        self.assertEqual(len(client.calls), 1)
+        self.assertEqual(len(client.calls), 2)
         self.assertIn("invalid_gateway_output", s.interaction.issues)
 
     def test_fact_grounding_and_correction_boundary(self):
@@ -871,7 +871,7 @@ class Verification(unittest.TestCase):
     def test_education_revision_preserves_delivered_and_budget(self):
         s = state("Education", True)
         s.differential.selected_id = str(OW.Beta)
-        agent = make_planner(knowledge(), CONFIG)
+        agent = make_planner(knowledge(), CONFIG.model_copy(update={"education_enabled": True}))
         s.case.diagnosis_kind = "disease"
         agent.prepare_education(s)
         delivered = s.questions.questions[0]
@@ -1228,7 +1228,7 @@ class Verification(unittest.TestCase):
                 return client.completion(json.dumps({"facts": [fact("S.ros", "symptom", OW.Other, payload["input"])]}, ensure_ascii=False))
             return original_chat(messages, **kwargs)
         client._reply, client.chat = reply, chat
-        s, client = self.run_flow(client, resources(k))
+        s, client = self.run_flow(client, resources(k, CONFIG.model_copy(update={"education_enabled": True})))
         self.assertEqual(s.interaction.termination, "submitted")
         self.assertEqual(s.case.diagnosis, "가상질환C")
         delivered = [a["content"] for a in client.actions]
@@ -1259,6 +1259,12 @@ class Verification(unittest.TestCase):
             payload = json.loads(messages[1]["content"])
             if messages[0]["content"] == CONFIG.parser_prompt and payload["question"] and payload["question"]["purpose"] == "clarification":
                 client.no_candidate = False
+                original(messages, **kwargs)
+                corrections = [fact("S.cc", "symptom", OW.Complaint, payload["input"],
+                    q={**payload["question"], "item_id": item["id"],
+                       "observation_id": item["value"]["observation_id"], "episode_id": item["value"]["episode_id"]})
+                    for item in payload["records"] if item["value"] and item["value"]["concept_ids"] == [str(OW.Other)]]
+                return client.completion(json.dumps({"facts": corrections}, ensure_ascii=False))
             return original(messages, **kwargs)
         client.chat = chat
         s, client = self.run_flow(client)
@@ -1598,7 +1604,8 @@ class Verification(unittest.TestCase):
         self.assertFalse(w.budget.evaluate(s).finalize)
         self.assertNotIn(q.item_id, w.budget.evaluate(s).discard)
         s.session.turns_remaining = 3
-        self.assertIn(q.item_id, w.budget.evaluate(s).discard)
+        self.assertNotIn(q.item_id, w.budget.evaluate(s).discard)
+        self.assertIn(q.item_id, BudgetPolicy(education_enabled=True).evaluate(s).discard)
         s.session.current = "Education"
         self.assertEqual(w.budget.action_capacity(s), 3)
         now = datetime.now(timezone.utc)
@@ -1684,7 +1691,7 @@ class Verification(unittest.TestCase):
         client.remaining = 3
         s.case.diagnosis_kind = "disease"
         s.differential.selected_id = str(OW.Beta)
-        w = make_consultation(client)
+        w = make_consultation(client, resources(config=CONFIG.model_copy(update={"education_enabled": True})))
         w.planner.prepare_education(s)
         for _ in range(2):
             w.planner.select_question(s)
@@ -1703,6 +1710,123 @@ class Verification(unittest.TestCase):
         self.assertEqual(client.actions[-1]["content"], CONFIG.texts.correction_education)
         self.assertEqual(s.session.turns_remaining, 0)
         self.assertFalse(s.interaction.correction_required)
+
+    def test_education_pass_keeps_full_diagnostic_budget_and_empty_education(self):
+        self.assertFalse(prepare().config.education_enabled)
+        for client in (FakeSDK(), FakeSDK(no_candidate=True)):
+            result, client = self.run_flow(client)
+            self.assertEqual(result.interaction.termination, "submitted")
+            self.assertEqual(result.session.usage["Education"].actions, 0)
+            self.assertEqual(result.session.usage["Education"].calls, 0)
+            self.assertIn("education_skipped", result.interaction.issues)
+            self.assertFalse(any(entry.question and entry.question.purpose == "education"
+                                 for entry in result.interaction.history))
+            self.assertEqual(client.submissions[0]["note"]["P"]["education"], "")
+            self.assertFalse(any(item.value and item.value.kind == "education" for _, item in result.case.entries()))
+        s = state("DifferentialDiagnosis", True, turns=1)
+        self.assertEqual(BudgetPolicy().action_capacity(s), 1)
+        with patch.dict(os.environ, {"ONTOWARD_EDUCATION_ENABLED": "true"}):
+            self.assertTrue(TextConfig.load().education_enabled)
+        with patch.dict(os.environ, {"ONTOWARD_EDUCATION_ENABLED": "invalid"}):
+            with self.assertRaises(ValueError):
+                TextConfig.load()
+
+    def test_gateway_recovers_malformed_first_response_once(self):
+        for first in ("{invalid", "", None, '{"facts":"invalid"}'):
+            with self.subTest(first=first):
+                client = FakeSDK()
+                original = client.chat
+                responses = [first]
+                def chat(messages, **kwargs):
+                    if responses:
+                        client.calls.append({"messages": messages, **kwargs})
+                        return client.completion(responses.pop())
+                    return original(messages, **kwargs)
+                client.chat = chat
+                result, client = self.run_flow(client)
+                self.assertEqual(result.interaction.termination, "submitted")
+                self.assertEqual(result.case.diagnosis_kind, "disease")
+                self.assertEqual([e["parser_payload"]["pass"] for e in result.interaction.model_history[:2]],
+                                 ["primary", "expansion"])
+                self.assertEqual(result.session.doctor_calls, len(client.calls))
+        s, client = state(), FakeSDK()
+        client.chat = Mock(return_value=client.completion("{invalid"))
+        s.interaction.incoming = {"initial": {"opening": "가상증상이 있어요"}}
+        make_interpreter(CONFIG).process_input(s, knowledge(), client)
+        self.assertEqual(client.chat.call_count, 2)
+        self.assertFalse(s.case.chief_complaints())
+        self.assertTrue(s.interaction.needs_clarification)
+
+    def test_context_cannot_starve_more_valuable_diagnostic_acquisition(self):
+        k, s = knowledge(), state("ContextFactor", True, turns=4)
+        record(s)
+        for i in range(40):
+            target = OW[f"Context{i}"]
+            k._graph.add((target, RDF.type, OW.ContextFactor))
+            k._graph.add((target, OW.contextType, Literal("past_medical_history")))
+            for disease in (OW.Alpha, OW.Beta):
+                k._graph.add((disease, OW.hasSupportingContext, target))
+            k.questions[str(target)] = QuestionTemplate(text=f"가상 병력 {i}이 있나요?", answer_type="presence", affirmative=True)
+        k.validate_graph()
+        w = make_consultation(prepared=resources(k))
+        w.reasoner.retrieve_candidates(s)
+        w.prepare_session(s)
+        self.assertFalse(s.case.unasked("ContextFactor"))
+        w.advance_session(s)
+        w.enter_session(s)
+        w.planner.select_question(s)
+        self.assertEqual(s.interaction.selected.question.kind, "EXAM")
+        self.assertEqual(s.interaction.selected.question.target_id, str(OW.ExamX))
+
+    def test_saturated_supporting_context_has_no_remaining_bonus_utility(self):
+        k, s = knowledge(), state("DifferentialDiagnosis", True)
+        record(s)
+        record(s, "history", OW.Context, kind="context", field="S.pmh")
+        k._graph.add((OW.MoreContext, RDF.type, OW.ContextFactor))
+        k._graph.add((OW.MoreContext, OW.contextType, Literal("past_medical_history")))
+        k._graph.add((OW.Alpha, OW.hasSupportingContext, OW.MoreContext))
+        k.questions[str(OW.MoreContext)] = QuestionTemplate(text="다른 병력이 있나요?", answer_type="presence", affirmative=True)
+        k.validate_graph()
+        w = make_consultation(prepared=resources(k))
+        w.reasoner.retrieve_candidates(s)
+        w.planner.replan(s)
+        self.assertFalse(any(q.target_id == str(OW.MoreContext) for q in s.questions.questions))
+
+    def test_primary_and_differential_require_all_confirmed_chief_targets(self):
+        s, k = state("Education", True), knowledge()
+        record(s)
+        record(s, "second-chief", OW.Other, episode="episode2")
+        reasoner = ClinicalReasoner(k)
+        reasoner.select_diagnosis(s)
+        self.assertTrue(any(0 < h.chief_coverage < 1 and h.evidence_score > 0 for h in s.differential.hypotheses))
+        self.assertEqual(s.case.diagnosis_kind, "symptom")
+        self.assertFalse(reasoner.supported_hypotheses(s))
+        make_writer(FakeSDK(), k, CONFIG).build_soap(s)
+        self.assertEqual(s.interaction.submission_payload["note"]["A"]["differential"], "")
+        self.assertIn(k.label(str(OW.Other)), s.interaction.submission_payload["note"]["S"]["cc"])
+
+    def test_assessment_includes_acquired_positive_and_negative_reasoning_evidence(self):
+        k, s = knowledge(), state("Education", True)
+        record(s)
+        record(s, "negative", OW.Other, field="S.ros", status="absent")
+        reasoner = ClinicalReasoner(k)
+        reasoner.select_diagnosis(s)
+        chosen = s.differential.selected_id
+        selected = next(h for h in s.differential.hypotheses if h.disease_id == chosen)
+        selected.contradiction_ids = ["negative"]
+        with patch.object(reasoner, "refresh_hypotheses"):
+            reasoner.select_diagnosis(s)
+        self.assertIn("negative", s.case.diagnosis_evidence)
+        alternative = next(h for h in s.differential.hypotheses if h.disease_id != chosen)
+        alternative.contradiction_ids = ["negative"]
+        make_writer(FakeSDK(), k, CONFIG).build_soap(s)
+        assessment = s.interaction.submission_payload["note"]["A"]
+        self.assertIn("별도증상 / 환자", assessment["evidence"])
+        self.assertIn(": 없음;", assessment["evidence"])
+        self.assertIn("근거:", assessment["differential"])
+        self.assertIn("별도증상 / 환자", assessment["differential"])
+        self.assertIn(": 없음;", assessment["differential"])
+        self.assertNotIn("urn:", json.dumps(assessment))
 
 
 if __name__ == "__main__":

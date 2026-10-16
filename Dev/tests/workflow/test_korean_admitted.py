@@ -132,13 +132,18 @@ def verify(submission, output):
         contexts = [entry for entry in delivered if entry.question.purpose == 'context']
         require(outcome.interaction.termination == 'submitted' and len(client.submissions) == 1,
                 'confirmed_submission:' + context_status)
+        require(outcome.session.usage['Education'].actions == 0 and outcome.session.usage['Education'].calls == 0
+                and not any(entry.question.purpose == 'education' for entry in delivered)
+                and client.submissions[0]['note']['P']['education'] == '', 'education_pass:' + context_status)
+        require(any(entry.question.purpose == 'feature' for entry in delivered),
+                'context_reaches_diagnostic_questions:' + context_status)
         require(client.actions[0]['content'] == config.texts.chief_question and
                 any(entry.question.purpose == 'hpi' for entry in delivered) and
                 any(entry.question.purpose == 'open_inquiry' for entry in delivered), 'greeting_hpi_and_open_inquiry:' + context_status)
-        require(0 < len(ros) <= 6 and bool(contexts), 'bounded_ros_and_context:' + context_status)
+        require(0 < len(ros) <= 6, 'bounded_ros:' + context_status)
         require(not any(entry.question.target_id in blocked for entry in delivered), 'exclude_noninterviewable_targets:' + context_status)
         require(all(h.context_bonus in {0, 1} for h in outcome.differential.hypotheses), 'context_bonus_cap:' + context_status)
-        require(any(h.context_bonus == 1 for h in outcome.differential.hypotheses) if context_status == 'present' else
+        require(any(h.context_bonus == 1 for h in outcome.differential.hypotheses) if context_status == 'present' and contexts else
                 all(h.context_bonus == 0 for h in outcome.differential.hypotheses), 'context_polarity_semantics:' + context_status)
         require(all(exchange['role'] == 'gateway' for exchange in outcome.interaction.model_history)
                 and outcome.session.doctor_successes > 0, 'gateway_only_model_use:' + context_status)
@@ -151,6 +156,42 @@ def verify(submission, output):
         cases.append({'context_status':context_status, 'termination':outcome.interaction.termination,
             'diagnosis_kind':outcome.case.diagnosis_kind, 'actions':len(client.actions), 'ros_actions':len(ros),
             'context_actions':len(contexts), 'scripted_gateway_calls':outcome.session.doctor_calls})
+
+    context_cases = []
+    for context_status in ('present', 'absent', 'unknown'):
+        client = ScriptedSDK(context_status)
+        consultation = assemble_consultation(client, resources)
+        state = consultation.nova_session.initialize_case(client)
+        consultation.interpreter.process_input(state, knowledge, client)
+        state.session.current = 'ContextFactor'
+        state.session.initialized = True
+        consultation.reasoner.retrieve_candidates(state)
+        context = next(c for h in state.differential.hypotheses for c in knowledge.get_supporting_context(h.disease_id)
+                       if knowledge.questions[c['id']].interviewable)
+        subject = 'family' if context['type'] == 'family_history' else 'patient'
+        field = 'S.fh' if subject == 'family' else 'S.sh' if context['type'] in {
+            'social_history', 'occupational_history', 'psychosocial_history', 'demographic'} else 'S.pmh'
+        spec = consultation.planner._spec(state, context['id'], purpose='context', field=field,
+                                          subject=subject, time_context='unspecified')
+        consultation.planner._register(state, spec, 0, 1)
+        consultation.planner.select_question(state)
+        consultation.doctor.validate_action(state)
+        consultation.doctor.execute_action(state, client)
+        consultation.interpreter.process_input(state, knowledge, client)
+        consultation.finalize(state)
+        consultation.writer.submit_diagnosis(state)
+        consultation.writer.confirm_submission(state)
+        require(state.interaction.termination == 'submitted' and len(client.submissions) == 1,
+                'selected_context_confirmed_submission:' + context_status)
+        require(any(item.value and item.value.status == context_status and context['id'] in item.value.concept_ids
+                    and item.source_refs for _, item in state.case.entries()), 'selected_context_polarity:' + context_status)
+        require(any(h.context_bonus == 1 for h in state.differential.hypotheses) if context_status == 'present' else
+                all(h.context_bonus == 0 for h in state.differential.hypotheses), 'selected_context_bonus:' + context_status)
+        section, name = field.split('.')
+        require(client.submissions[0]['note'][section][name] and client.submissions[0]['note']['P']['education'] == '',
+                'selected_context_soap_and_education_pass:' + context_status)
+        (output / ('case-selected-context-' + context_status + '.json')).write_text(state.model_dump_json(indent=2))
+        context_cases.append({'status':context_status, 'target':context['id'], 'field':field, 'termination':state.interaction.termination})
 
     client = ScriptedSDK('examination')
     consultation = assemble_consultation(client, resources)
@@ -173,7 +214,7 @@ def verify(submission, output):
     require('다리 혈관에서 잡음이 들립니다' in client.submissions[0]['note']['O']['exam'], 'exam_wording_and_result_reach_soap')
     require(frozenset(knowledge._graph) == original, 'shared_admitted_graph_remains_readonly')
     (output / 'case-examination.json').write_text(state.model_dump_json(indent=2))
-    report = {'status':'pass', 'check_count':len(checks), 'checks':checks, 'cases':cases,
+    report = {'status':'pass', 'check_count':len(checks), 'checks':checks, 'cases':cases, 'selected_context_cases':context_cases,
         'examination':{'status':'pass', 'target':exam_target, 'scope':'separate selected-action acquisition through SOAP and confirmed submission'},
         'prepare_seconds':elapsed, 'peak_rss_kib':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
         'graph_triples':len(original), 'associations':len(knowledge._profile_cache),

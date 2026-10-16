@@ -159,11 +159,21 @@ class InterviewPlanner:
                   and item.value.subject == "patient" and item.value.time_context != "past"]
         return list({(v.observation_id, v.episode_id, v.status, len(v.concept_ids)) for v in values})
 
-    def _value(self, state, spec, match_index):
+    def _value(self, state, spec, match_index, supporting):
         target, attribute = spec["target_id"], spec["attribute_id"]
         current = {h.disease_id: h for h in state.differential.hypotheses}
         outcomes, unlock, typicality = {}, 0, 0
         leading = next(iter(current), None)
+        if spec["purpose"] == "context":
+            present = {(concept, item.value.subject) for _, item in state.case.entries()
+                       if item.status == "done" and item.source_refs and item.value
+                       and item.value.kind == "context" and item.value.status == "present"
+                       for concept in item.value.concept_ids}
+            for disease, contexts in supporting.items():
+                keys = {(c["id"], "family" if c["type"] == "family_history" else "patient") for c in contexts}
+                if (target, spec["subject"]) in keys and not keys & present:
+                    outcomes.setdefault("supporting_context", {})[disease] = [1]
+                    unlock = 1
         profiles = self.knowledge.get_patterns_by_target(target)
         if spec["purpose"] == "context":
             profiles = [p for disease in current for p in self.knowledge.get_disease_patterns(disease)
@@ -216,7 +226,7 @@ class InterviewPlanner:
                        for o, e, status, n in self._occurrences(state, target))
         return True
 
-    def _adaptive_options(self, state):
+    def _adaptive_options(self, state, supporting):
         options = {}
         chiefs = state.case.chief_complaints(confirmed=True)
         episode = chiefs[0].value.episode_id if len(chiefs) == 1 else None
@@ -233,13 +243,12 @@ class InterviewPlanner:
         else:
             contexts = {}
             for hypothesis in hypotheses:
-                for context in self.knowledge.get_supporting_context(hypothesis.disease_id):
+                for context in supporting[hypothesis.disease_id]:
                     contexts[(context["id"], "family" if context["type"] == "family_history" else "patient", "unspecified")] = True
                 for profile in self.knowledge.get_disease_patterns(hypothesis.disease_id):
                     for condition in profile.applicability:
                         contexts[(condition.concept_id, condition.subject, condition.time_context)] = True
-                    if state.session.current == "DifferentialDiagnosis":
-                        targets[profile.target] = "feature"
+                    targets[profile.target] = "feature"
             for (target, subject, timing) in contexts:
                 kind = self.knowledge.get_context_type(target)
                 field = "S.fh" if subject == "family" else "S.sh" if kind in {
@@ -282,13 +291,16 @@ class InterviewPlanner:
         discard = {q.item_id for q in state.questions.questions if q.purpose != "clarification"
                    and (item := state.case.get(q.item_id)) and item.status == "unasked"}
         self.questions.discard_unasked(state, discard)
-        raw_options = self._adaptive_options(state)
+        supporting = {h.disease_id: self.knowledge.get_supporting_context(h.disease_id)
+                      for h in state.differential.hypotheses}
+        raw_options = self._adaptive_options(state, supporting)
         options = [spec for spec in raw_options if self._eligible(state, spec)]
         match_index = {}
         for match in state.differential.pattern_matches.values():
             match_index.setdefault(match.pattern_id, []).append(match)
         for spec in options:
-            spec["value"] = self._value(state, spec, match_index)
+            spec["value"] = self._value(state, spec, match_index, supporting)
+        options = [spec for spec in options if spec["purpose"] != "context" or any(spec["value"][:3])]
         if state.session.current == "DifferentialDiagnosis":
             for spec in raw_options:
                 args = (state, spec["target_id"], spec["attribute_id"], spec["observation_id"], spec["episode_id"], spec["subject"])
@@ -301,7 +313,11 @@ class InterviewPlanner:
                     if previous and not any(q.purpose == "clarification" for q in previous):
                         self.prepare_clarification(state, previous[-1])
                         break
-        options.sort(key=lambda spec: (*(-n for n in spec["value"]), self._key(spec)))
+        options.sort(key=lambda spec: (*(-n for n in spec["value"]), spec["purpose"] == "context", self._key(spec)))
+        if mode == "ContextFactor":
+            # Continue with diagnostic acquisition as soon as it has greater utility.
+            next_feature = next((i for i, spec in enumerate(options) if spec["purpose"] != "context"), len(options))
+            options = options[:next_feature]
         capacity = min(self.budget.action_capacity(state), self.budget.calls_left(state.session))
         if mode == "ChiefComplaint":
             ros_left = LIMITS.focused_ros - sum(e.delivered and e.question is not None and e.question.purpose == "ros" for e in state.interaction.history)
@@ -325,6 +341,8 @@ class InterviewPlanner:
         self.replan(state, force=True)
 
     def prepare_education(self, state, *, replace=False, create_questions=True):
+        if not self.config.education_enabled and "education_skipped" not in state.interaction.issues:
+            state.interaction.issues.append("education_skipped")
         remaining = {q.item_id for q in state.questions.questions if q.purpose == "education"
                      and (item := state.case.get(q.item_id)) and item.status == "unasked"}
         if replace:
@@ -344,13 +362,13 @@ class InterviewPlanner:
             if field == "tests" and not text and selected:
                 text = self.config.texts.test_separator.join(self.knowledge.get_planned_tests(selected))
             elif field == "education":
-                text = self.config.texts.record_separator.join(text)
+                text = self.config.texts.record_separator.join(text) if self.config.education_enabled else ""
             item_id = f"plan:{field}"
             state.case.remove({item_id})
             if text:
                 state.case.put(f"P.{field}", RecordItem(id=item_id, scope="Education", status="done",
                     value=ClinicalValue(kind="plan", text=text, status="present", concept_ids=[selected] if selected else [])))
-        if not create_questions:
+        if not create_questions or not self.config.education_enabled:
             return
         texts = list(plan.education) or [self.config.texts.provisional_education]
         delivered = {entry.request.get("content") for entry in state.interaction.history

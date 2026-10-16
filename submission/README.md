@@ -4,7 +4,9 @@
 
 에이전트는 준비된 한국어로 문진하고 환자의 자유로운 응답을 지정 모델로 해석한다. 임상 추론과 다음 질문 선택은 Python이 수행하며, 진료 중에는 승인된 읽기 전용 RDF만 사용한다. 실행·검증 결과는 [제출 상태](PROJECT_STATE.md), 사용자 선택은 [결정 문서](../DECISION_STATE.md)가 소유한다.
 
-**실행 전제:** D23에서 D20 그래프와 D22의 한국어 환자 행동을 함께 실행 수용했다. 현재 [지식 manifest](knowledge/manifest.json)는 `admitted`이며 `prepare()`가 문진·진찰 문구까지 검증한다. 문구와 완전한 원천 기반 후보의 공모전용 사용은 추가 승인 대기 없이 가능하다. 한국어 합성 환자·스크립트 Gateway로 Context 양성·음성·미확인 전체 상담과 별도 진찰 획득, SOAP·확인 종료를 검증했고, 같은 검증을 부모 data/assets 없는 독립 ZIP에서도 통과했다. [수용 결과](../data/preparation/v5/runtime-text-2026-10-16/README.md)가 정확한 영수증과 증빙을 연결한다. 실제 모델·공식 환경 E2E는 실행하지 않았다. 아래 도식은 이 실행 구조를 설명한다.
+**현재 제출 설정(D26):** `ONTOWARD_EDUCATION_ENABLED=false`로 Education을 pass한다. 교육·이해 확인·정정 행동과 보호 턴은 0이고 `P.education`은 빈 문자열이다. 나머지 문진·진찰·해석·진단·SOAP·확인 종료를 수행한다. 아래 교육 설명은 명시적으로 활성화했을 때의 보존된 경로이며 교육 검색 구현이나 공식 채점 통과를 뜻하지 않는다.
+
+**실행 전제:** D23에서 D20 그래프와 D22의 한국어 환자 행동을 함께 실행 수용했다. 현재 [지식 manifest](knowledge/manifest.json)는 `admitted`이며 `prepare()`가 문진·진찰 문구까지 검증한다. 문구와 완전한 원천 기반 후보의 공모전용 사용은 추가 승인 대기 없이 가능하다. D26에서는 실제 수용 RDF의 한국어 전체 상담, 별도 선택한 Context의 양성·음성·미확인 획득, 별도 진찰 획득과 SOAP·확인 종료를 검증했다. 같은 검증을 부모 data/assets 없는 독립 ZIP에서도 수행했다. [제출 준비도 증빙](../data/provenance/submission-readiness-2026-10-16.json)은 현재 코드·ZIP·한계를, [수용 결과](../data/preparation/v5/runtime-text-2026-10-16/README.md)는 원래 영수증을 연결한다. 실제 모델·공식 환경 E2E는 실행하지 않았다. 현재 배치에는 질환별 계획 자산이 없어 다른 P 필드도 비어 있을 수 있으며, 형식 검증이 해당 항목의 점수 확보를 뜻하지 않는다.
 
 원하는 관점부터 읽어도 된다.
 
@@ -26,7 +28,7 @@
 | ChiefComplaint | 최소 핵심 HPI, Open Inquiry 한 번, 주호소 계통의 집중 ROS와 나머지 속성 |
 | ContextFactor | 현재 후보의 관련 병력·적용 조건을 확인 |
 | DifferentialDiagnosis | 현재 근거에서 가치 있는 특징·진찰을 선택하고 새 답에 따라 재계획 |
-| Education | 준비 설명과 이해 확인, 판단이 바뀌면 정정 설명 |
+| Education | D26 기본 pass; 명시적 활성화 때만 준비 설명·이해 확인·정정 |
 | 최종화 | 확보 사실로 SOAP를 만들고 DIAGNOSE의 completed를 확인 |
 
 ### 현재 LangGraph의 노드와 분기
@@ -177,11 +179,14 @@ SAY로 속성을 물으려면 같은 관찰·에피소드에서 해당 증상이
 
 Pattern은 관찰·에피소드별로 매칭하고, 질환별 Association의 적용 조건과 원천 가중치를 적용한다. 점수는 후보의 적합도이며 진단 확률이 아니다. 현재 단계의 질문과 대기 응답이 정리되면 Education으로 이동한다. 이후 교육 응답에서 새 사실을 얻어도 앞 세션으로 자동 회귀하지 않고 현재 상태에서 추론을 갱신한다.
 
-### 2.5 Education — 설명, 이해 확인, 필요한 정정
+### 2.5 Education — 기본 pass, 활성화한 경우의 설명과 정정
 
 ```mermaid
 flowchart TD
-    E0["자격 있는 질환 또는 확인된 주호소의 잠정진단 선택"] --> E1["승인된 계획과 준비 설명 선택"]
+    E0["자격 있는 질환 또는 확인된 주호소의 잠정진단 선택"] --> Enabled{"Education 활성화"}
+    Enabled -->|기본 false| Skip["교육 행동·보호 턴 없이 P.education 비움"]
+    Skip --> E10["최종화"]
+    Enabled -->|true| E1["승인된 계획과 준비 설명 선택"]
     E1 --> E2["공통 실행 루프로 설명과 이해 확인 전달"]
     E2 --> E3["교육 응답도 InputInterpreter로 처리"]
     E3 --> E4{"새 사실로 진단 종류 또는 진단이 바뀜"}
@@ -198,9 +203,9 @@ flowchart TD
 
 Education에 들어오면 현재 확보한 사실에서 진단을 선택한다. 양성 지지·양수 적합도·현재 주호소를 완전 매칭으로 설명하는 지지가 있는 질환이 대상이며, 적격 질환이 없으면 확인된 주호소의 증상 수준 잠정진단을 사용한다. 그 주호소조차 뒷받침되지 않으면 명시적으로 실패한다.
 
-설명은 승인된 계획과 준비 문구에서 가져온다. 질환별 계획이 없으면 이를 누락으로 남기고 공통 잠정 안내를 사용한다. “원인을 아직 확정하지 못했다”는 설명이 특정 질환의 치료·추적 계획을 대신 생성하는 근거가 되지는 않는다. 문진 단계에서는 설명·이해 확인 두 턴과 정정 여유 한 턴을 보호한다.
+기본 설정에서는 교육 질문을 등록하지 않고 `P.education`을 비운다. 다른 P 필드에는 실제 수용된 계획·검사 연결만 반영한다. 교육을 활성화한 경우 설명은 승인된 계획과 준비 문구에서 가져온다. 질환별 계획이 없으면 이를 누락으로 남기고 공통 잠정 안내를 사용한다. “원인을 아직 확정하지 못했다”는 설명이 특정 질환의 치료·추적 계획을 대신 생성하는 근거가 되지는 않는다. 설명·이해 확인 두 턴과 정정 여유 한 턴은 활성화한 경우에만 보호한다.
 
-환자가 “이해했어요. 그런데 아까 말씀드린 것과 달라요”처럼 답할 수도 있으므로 교육 응답도 입력 처리 대상으로 삼는다. 이미 설명한 뒤 진단이 바뀌면 `correction_required`를 설정하고 “새 답변으로 판단이 바뀌었습니다.”라는 준비 문구를 우선 전달한다. 이후 바뀐 판단에 맞는 승인 설명과 이해 확인을 준비한다. 턴·시간이 없으면 정정을 완료했다고 표시하지 않는다. 실제 전달 이력은 뒤의 파싱 실패나 재계획으로 지워지지 않는다.
+교육을 활성화한 경우 환자가 “이해했어요. 그런데 아까 말씀드린 것과 달라요”처럼 답할 수도 있으므로 교육 응답도 입력 처리 대상으로 삼는다. 이미 설명한 뒤 진단이 바뀌면 `correction_required`를 설정하고 “새 답변으로 판단이 바뀌었습니다.”라는 준비 문구를 우선 전달한다. 이후 바뀐 판단에 맞는 승인 설명과 이해 확인을 준비한다. 턴·시간이 없으면 정정을 완료했다고 표시하지 않는다. 실제 전달 이력은 뒤의 파싱 실패나 재계획으로 지워지지 않는다.
 
 ### 2.6 최종화 — 확보한 사실을 제출하고 결과 확인
 
@@ -306,7 +311,7 @@ PatternMatch는 관찰·에피소드별로 일치/반증/미확인 조건과 근
 
 D17 적합도는 원천 지지 + Context 가점 − 제한 반증이다. 적용 조건이 확인된 기본 존재 Pattern에서 같은 활성 주호소 에피소드의 명시적 부재만 typicality high=0.5, very_high=1로 반영한다. Target당 최대 1, 질환당 최대 2다. unknown·미질문·상세 불일치·다른 에피소드 부재는 감점하지 않는다. 원래 scoring_policy와 별도 reasoning_policy는 각각 manifest에 고정한다.
 
-정렬은 적합도, 현재 주호소 설명 비율, 명시적 충돌 수, URI 순이다. 진단에는 양성 지지·양수 적합도·현재 주호소를 설명하는 완전 매칭이 필요하다. 자격이 없으면 확인된 주호소의 증상 수준 잠정진단을 사용한다. 지지와 적합도는 확률이 아니다.
+정렬은 적합도, 현재 주호소 설명 비율, 명시적 충돌 수, URI 순이다. 주진단과 감별 질환에는 양성 지지·양수 적합도·확인된 현재 주호소 전체를 설명하는 완전 매칭이 필요하다. 자격이 없으면 확인된 주호소의 증상 수준 잠정진단을 사용한다. 지지와 적합도는 확률이 아니다.
 
 공개 Target/Pattern/Association/Feature·별칭·refinement 색인은 지식 자원에 둔다. 환자 검색과 매칭은 증례 상태에만 둔다. 정정·관찰·에피소드·Context 모드 변화에 맞춰 재평가하며 임상 사실이 그대로인 교육 확인에서 전체 점수를 다시 계산하지 않는다.
 
@@ -314,21 +319,24 @@ D17 적합도는 원천 지지 + Context 가점 − 제한 반증이다. 적용 
 
 핵심 HPI와 Open Inquiry 뒤에는 새 근거에 따라 미전송 질문을 재계획한다. 가능한 답의 순위 변경, 후보 간 점수 변화의 차이, 공동 조건의 남은 질문 비용, 주호소 관련성과 typicality를 비교한다. 이는 결정론적 선택 휴리스틱이며 확률 기반 정보이득이 아니다.
 
+Context의 양성 가점 상한이 이미 충족되었고 적용 조건에도 영향을 주지 않는 질문은 제외한다. 더 유용한 소견 질문·진찰이 있으면 ContextFactor에서 DifferentialDiagnosis로 진행하고 남은 Context도 같은 가치 순서에서 선택한다. Context 질문이 감별 단계의 행동 풀을 먼저 소진하지 않도록 한다.
+
 질문 의미 키는 행동·Target·Attribute·주체·시간·관찰·에피소드다. 저우선순위로 제외한 미전송 질문은 새 임상 개정에서 돌아올 수 있다. 전달한 일반 질문은 반복하지 않는다. 부재 증상의 속성을 묻지 않으며 명료화는 증례 전체 최대 두 번이다.
 
-행동은 공통 50턴 안에서 사용한다. 이전 1/20/10/14/5 상한은 없다. 교육·이해 확인 두 턴과 정정 한 턴을 보호하고 사용하지 않은 진료 턴을 다른 단계에서 쓸 수 있다. 턴을 모두 쓰는 것을 목표로 삼지 않는다.
+행동은 공통 50턴 안에서 사용한다. 이전 1/20/10/14/5 상한은 없다. D26 기본 설정에서는 교육 보호 턴이 없고 전체 풀을 수집에 사용할 수 있다. 교육을 명시적으로 활성화한 경우에만 설명·이해 확인 두 턴과 정정 한 턴을 보호한다. 턴을 모두 쓰는 것을 목표로 삼지 않는다.
 
 새 행동 전 Gateway 한 호출과 출력 여유, 응답 처리 120초, 최종화 120초를 남긴다. 이미 받은 답은 응답 여유로 처리한다. 모델 한도는 증례 전체 200회·입력 500,000·출력 100,000토큰이며 실제 usage와 서버 제한을 반영한다.
 
 ## 설명·복구·제출
 
-교육 계획은 전달 사실과 다르다. Doctor의 실제 정상 응답에서만 전달을 기록하며 이후 Gateway 실패로 지우지 않는다. 교육 중 판단이 바뀌면 correction_required를 설정하고 준비된 정정 문구를 먼저 전달한다. 여유가 없으면 미이행 상태를 남긴다.
+기본 설정에서는 교육 계획·전달을 주장하지 않고 Education을 pass한다. 교육을 활성화한 경우에도 계획과 전달 사실은 다르다. Doctor의 실제 정상 응답에서만 전달을 기록하며 이후 Gateway 실패로 지우지 않는다. 교육 중 판단이 바뀌면 correction_required를 설정하고 준비된 정정 문구를 먼저 전달한다. 여유가 없으면 미이행 상태를 남긴다.
 
 D18에서 이전 임상 배치와 지침 기반 교육 초안을 삭제했다. D20은 새 그래프의 typed Context·ROS·필수 조건과 선택한 직접 진찰 경로를 수용한다. 질환별 계획과 행동 문구는 실제 수용한 자산만 사용하며, 공통 잠정 안내와 이해 확인은 config에 준비되어 있다. 그래프 승인과 문구 준비를 구분하고 누락 문구를 임의 생성하여 진료를 시작하지 않는다.
 
 | 상황 | 처리 |
 |---|---|
 | 미해결 입력 | 유효 사실과 원문 보존, 필요한 의미에 제한적 명료화 |
+| Gateway JSON 오류·빈 출력 | 문맥·연결 복구와 공유하는 추가 한 호출로 재해석, 재실패 시 원문·미해결 보존 |
 | 일시 전송 오류 | 동일 요청 ID·payload를 2초·5초 뒤 최대 두 번 재전송 |
 | 명시적 환자/진찰 응답 형식 오류 | 새 요청 ID로 한 번 재시도 |
 | EXAM 거절 | 획득 소견으로 만들지 않음 |
@@ -344,15 +352,17 @@ SDK 1.0.1 원본은 바꾸지 않는다. SOAP는 정확히 15개 문자열 필�
 ONTOWARD_KNOWLEDGE_MANIFEST=knowledge/manifest.json
 ONTOWARD_PARSER_PROMPT=config/input_parser.txt
 ONTOWARD_TEXTS=config/texts.ko.json
+ONTOWARD_EDUCATION_ENABLED=false
 ```
 
 공개 .env는 ZIP에 포함한다. 같은 환경변수가 우선하며 manifest는 knowledge, 프롬프트·문구는 config 안의 상대 경로여야 한다. 개발 키가 있는 root .env와 준비 data/assets는 런타임 입력이 아니다.
 
-아래 명령은 오프라인 검증·패키징 절차다. 합성 워크플로우와 D20 실제 그래프의 영어 테스트 문구 기반 상담은 별도로 검증한다. `test_admitted.py`의 준비 자산 상담은 한국어 행동 문구까지 수용한 뒤 실행한다. 현재 그래프 전용 ZIP은 독립 추출·그래프 로드와 문구 미완료의 명시적 거부를 확인한다.
+아래 명령은 오프라인 검증·패키징 절차다. 합성 워크플로우, 실제 수용 RDF의 준비 문구 상담, 한국어 대화·Context 극성·별도 진찰 획득을 각각 검증한다. `test_admitted.py`와 `test_korean_admitted.py`는 엄격한 prepare를 사용하고 Education pass와 SOAP·completed 확인까지 검사한다. 독립 ZIP에서도 부모 data/assets 없이 같은 검증을 수행한다.
 
 ```sh
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_workflow.py
-docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/ontology/verify_connections.py /workspace/data/preparation/v5/competition-graph-2026-10-16
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_admitted.py --submission /workspace/submission --output /workspace/Tmp/admitted-verification
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_korean_admitted.py --submission /workspace/submission --output /workspace/Tmp/korean-verification
 docker compose build package
 docker compose run --rm -T package
 ```
@@ -490,6 +500,8 @@ sequenceDiagram
     end
     Note over N,C: Context와 감별도 필요한 동안 공통 루프를 반복
     C->>C: Education 진입·진단과 승인 계획 선택
+    Note over N,C: 기본 false에서는 교육 대화 없이 P.education을 비우고 최종화
+    opt ONTOWARD_EDUCATION_ENABLED=true
     C->>D: 승인 교육 또는 공통 잠정 안내
     D->>N: SAY 준비된 설명
     N-->>D: 설명에 대한 환자 응답
@@ -510,6 +522,7 @@ sequenceDiagram
     D-->>C: 실제 응답
     C->>I: 마지막 응답까지 처리
     I-->>C: 최종 사실·필요 시 추가 정정 여부
+    end
     C->>C: 대기 응답 해소·진단 재선택·SOAP 구성과 검증
     C->>N: 세션 재확인 후 DIAGNOSE
     N-->>C: 제출 결과
@@ -539,7 +552,7 @@ ContextFactor와 DifferentialDiagnosis는 새로운 공식 세션을 만드는 �
 | 핵심 HPI | 주호소 수, 적용 가능한 미해결 슬롯 | 관찰·발현별 속성과 원문 |
 | Open Inquiry·집중 ROS | Open Inquiry 한 번, 현재 가치에 따른 ROS 총 여섯 번 이내 | 추가 증상·명시적 부재·미해결 정보 |
 | Context·감별 | 승인 질문·진찰 연결, 현재 질문 가치와 남은 예산 | 적용 조건·실제 소견·진단 근거 |
-| 설명·이해·정정 | 승인 설명, 환자의 새 사실, 보호한 턴과 남은 시간 | 실제 전달·이해 확인·정정 이행 상태 |
+| 설명·이해·정정 | 기본 0회; 명시적 활성화 때만 승인 설명과 남은 시간 | 기본 P.education 빈 문자열; 활성화 때만 실제 전달 이력 |
 | SOAP·DIAGNOSE | 검증 결과와 전체 한 번의 재구성 한도 | 서버 결과와 확인된 종료 상태 |
 
 루프 안에서 실행한 SAY·EXAM의 서버 턴 변화가 실제 행동 사용량이다. 공통 상한 50턴 안에서 서버가 알려 준 남은 턴을 따르며, 예를 들어 “10번째 대화부터 ContextFactor”처럼 세션 경계를 고정하지 않는다. 그래프 노드 수, SAY·EXAM 행동 수, Gateway 호출 수는 각각 구분하고 DIAGNOSE는 환자에게 질문하는 행동과 별도로 처리한다. 마지막 행동 응답까지 처리한 뒤 마감 전에 제출한다.

@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SETTING = "ONTOWARD_KNOWLEDGE_MANIFEST"
-SETTINGS = {SETTING, "ONTOWARD_PARSER_PROMPT", "ONTOWARD_TEXTS"}
+SETTINGS = {SETTING, "ONTOWARD_PARSER_PROMPT", "ONTOWARD_TEXTS", "ONTOWARD_EDUCATION_ENABLED"}
 
 
 def packaged_settings() -> dict[str, str]:
@@ -44,3 +44,10 @@ def configured_path(key: str, directory: str) -> Path:
 
 def knowledge_manifest() -> Path:
     return configured_path(SETTING, "knowledge")
+
+
+def education_enabled() -> bool:
+    value = os.environ.get("ONTOWARD_EDUCATION_ENABLED", packaged_settings()["ONTOWARD_EDUCATION_ENABLED"])
+    if value not in {"true", "false"}:
+        raise ValueError("ONTOWARD_EDUCATION_ENABLED must be true or false")
+    return value == "true"

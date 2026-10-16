@@ -36,6 +36,8 @@ class ModelClient:
             self.usage.record_tokens(state, amounts)
             usage_accounted = True
             content = completion["choices"][0]["message"]["content"]
+            if content is None:
+                content = ""
             if not isinstance(content, str):
                 raise ValueError("Invalid model content")
             if content.strip():

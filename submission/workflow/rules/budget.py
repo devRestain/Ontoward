@@ -16,8 +16,9 @@ class BudgetDecision:
 
 
 class BudgetPolicy:
-    def __init__(self, now=utc_now):
+    def __init__(self, now=utc_now, *, education_enabled=False):
         self.now = now
+        self.education_enabled = education_enabled
 
     def seconds_left(self, session):
         return (session.deadline - self.now()).total_seconds()
@@ -29,7 +30,7 @@ class BudgetPolicy:
         return max(0, session.call_limit - session.doctor_calls)
 
     def action_capacity(self, state):
-        protected = 0 if state.session.current == "Education" else LIMITS.education_turns
+        protected = LIMITS.education_turns if self.education_enabled and state.session.current != "Education" else 0
         return max(0, state.session.turns_remaining - protected)
 
     def can_clarify(self, state):

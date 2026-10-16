@@ -1,7 +1,7 @@
 from string import Formatter
 
 from pydantic import BaseModel, ConfigDict
-from settings import configured_path
+from settings import configured_path, education_enabled
 from .rules.action import content_error
 
 
@@ -37,6 +37,7 @@ class Texts(BaseModel):
     education_format: str
     plan_format: str
     finding_format: str
+    differential_format: str
     unlinked_format: str
     exam_turn_format: str
     initial_exam_format: str
@@ -48,6 +49,7 @@ class Texts(BaseModel):
 class TextConfig(BaseModel):
     parser_prompt: str
     texts: Texts
+    education_enabled: bool = False
 
     @classmethod
     def load(cls):
@@ -66,6 +68,7 @@ class TextConfig(BaseModel):
         for name, expected in {"exam_turn_format": {"text", "turn"},
                                "initial_exam_format": {"text"}, "education_format": {"text"}, "plan_format": {"text"},
                                "finding_format": {"labels", "status", "text"}, "unlinked_format": {"text", "status"},
+                               "differential_format": {"diagnosis", "evidence"},
                                "episode_format": {"number"}, "clinical_context_format": {"subject", "time", "episode"},
                                "measurement_format": {"operator", "value", "unit"},
                                "interval_format": {"lower_bound", "lower", "upper", "upper_bound"}}.items():
@@ -81,4 +84,4 @@ class TextConfig(BaseModel):
                 raise ValueError(f"Invalid prepared utterance: {name}")
         if any(content_error(text) for text in texts.clarification_questions.values()):
             raise ValueError("Invalid prepared clarification")
-        return cls(parser_prompt=prompt, texts=texts)
+        return cls(parser_prompt=prompt, texts=texts, education_enabled=education_enabled())

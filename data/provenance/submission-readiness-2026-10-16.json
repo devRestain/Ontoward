@@ -1,0 +1,496 @@
+{
+  "decision": "D26",
+  "status": "complete",
+  "observed_at": "2026-10-16T14:11:24.460024+00:00",
+  "scope": "Offline submission code and artifact readiness with Education passed",
+  "readiness": {
+    "offline_execution_and_submission_flow": "pass",
+    "runtime_archive": "pass",
+    "clinical_plan_coverage": "incomplete",
+    "live_gateway_quality": "unknown",
+    "official_server_acceptance": "not_run"
+  },
+  "review_findings": [
+    {
+      "finding": "Education used actions and protected three turns despite deferred retrieval",
+      "resolution": "Package false setting; zero Education actions and calls; empty P.education"
+    },
+    {
+      "finding": "Context-only selection could exhaust collection before diagnostic acquisition",
+      "baseline": {
+        "prepare_seconds": 2.2925612519611605,
+        "triples": 99105,
+        "associations": 9401,
+        "plans": 0,
+        "hypotheses": 105,
+        "context_candidates": 37,
+        "context_values": {
+          "(0.0, 2.0, 2.0, 0.0, 4.0)": 3,
+          "(0.0, 2.0, 2.0, 0.0, 2.0)": 1,
+          "(0.0, 1.0, 1.0, 0.0, 3.0)": 1,
+          "(0.0, 0.0, 1.0, 0.0, 4.0)": 2,
+          "(0.0, 0.0, 0.0, 0.0, 0.0)": 30
+        }
+      },
+      "resolution": "Value capped support correctly, remove zero remaining Context utility, and advance to more valuable diagnostic acquisition"
+    },
+    {
+      "finding": "Malformed or empty Gateway response skipped combined recovery",
+      "resolution": "One bounded recovery for invalid JSON, empty string or null content; preserve grounded facts and transcript"
+    },
+    {
+      "finding": "Partial chief coverage qualified a Disease for primary or differential",
+      "resolution": "Require full confirmed chief coverage and retain symptom fallback"
+    },
+    {
+      "finding": "Assessment omitted acquired contradiction findings and differential supporting findings",
+      "resolution": "Include actual obtained positive and negative findings without internal identifiers"
+    }
+  ],
+  "artifact": {
+    "status": "pass",
+    "archive": "Tmp/packaging/ontoward-submission.zip",
+    "sha256": "ca4bbf0f6c2fbe9ea2a533e40dce3fbc03e3d38b18efc9c6941b860a9ec55142",
+    "file_count": 42,
+    "compressed_bytes": 1362759,
+    "expanded_bytes": 13633299,
+    "all_archive_members_match_source": true,
+    "education_default": "pass",
+    "unchanged_knowledge_and_sdk_pins": {
+      "submission/nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "submission/knowledge/5b44871b970f5e98-vocabulary.ttl": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88",
+      "submission/knowledge/reasoning_policy.json": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc",
+      "submission/knowledge/graph.py": "2358ac1b20c011948e2fd58c21d6ac1180b14c0612e48998ae727e5f9e223dd1",
+      "submission/knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+      "submission/knowledge/5b44871b970f5e98-questions.ko.json": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687",
+      "submission/knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "submission/knowledge/README.md": "6be1c09c8b787f0884fbcf3370a2b1ca29e7d96b746f2805b7620b333ed9770a",
+      "submission/knowledge/conditions.py": "bce35e863d6a53e448ec36d752f6d11abc1f4ba36c7c551f2ce8ada777306eb6",
+      "submission/knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "submission/knowledge/manifest.json": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61",
+      "submission/knowledge/5b44871b970f5e98-reasoning_policy.json": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc",
+      "submission/knowledge/5b44871b970f5e98-clinical.ttl": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a"
+    },
+    "unchanged_organizer_sdk": true,
+    "runtime_hashes": {
+      ".env": "4573177a2f0b44518cf6bb9a1ef0140772fccad3ee42ac00263edc85f100e808",
+      "config/input_parser.txt": "b813bdf644d0fb9b49de250264657782e08c46b8d712a1a64af116be65d9ff48",
+      "config/texts.ko.json": "bde4044afa22e355f32ec0a3fc1057730c1a64909ab404355195e671d10bcffd",
+      "knowledge/5b44871b970f5e98-clinical.ttl": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a",
+      "knowledge/5b44871b970f5e98-questions.ko.json": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687",
+      "knowledge/5b44871b970f5e98-reasoning_policy.json": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc",
+      "knowledge/5b44871b970f5e98-vocabulary.ttl": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88",
+      "knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "knowledge/conditions.py": "bce35e863d6a53e448ec36d752f6d11abc1f4ba36c7c551f2ce8ada777306eb6",
+      "knowledge/graph.py": "2358ac1b20c011948e2fd58c21d6ac1180b14c0612e48998ae727e5f9e223dd1",
+      "knowledge/manifest.json": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61",
+      "knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+      "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+      "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+      "settings.py": "a57a980c77a7e50e3528ebeaed3b1c5fe866a7d2898e5350488d4ef2451985db",
+      "workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/clinical_reasoner.py": "485fdd6c4c2bd6a29ce7c81c57557870e3cb54c0b9ac2724f334ddfd68ea1f54",
+      "workflow/consultation.py": "18dd1702c3f231e49e52b9a5b7874a14b3518824ee1ab9197c5a3082096cce4b",
+      "workflow/doctor.py": "fc386d980520d6423093ac2e154b9b80148394f1a559dbfa35c98d50c2c841ae",
+      "workflow/graph.py": "a4e5c6ac1c960cd913ae27295769132c46068c7a67b090b68e9bea7fa71430e4",
+      "workflow/input_interpreter.py": "60482e973c59c33e49697566956e98af7e5fbb3322bd186f84e652dfb326a6f4",
+      "workflow/interview_planner.py": "c331b4a018416434b1920b052bc5b8d9e9768e4bc9bda6fb1d61828e60253c8d",
+      "workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/io/model_client.py": "42fbbca18c67bd150ed36fb14f7ec797f6b03aa4d639951cecbe40ea5f8a786b",
+      "workflow/io/nova_session.py": "fac9fda2db826d001cfa8c8a307084981848d9f0581eab9b40ff0a5bfd54158c",
+      "workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+      "workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/rules/action.py": "8c0607c389057c9299e6046974b42e3e713a82246f2f70e4318f2dd3f5bc3942",
+      "workflow/rules/budget.py": "c4bddf97bf1b928cab581821a0762371369d1b1c321a414ec1234ffe59e214c8",
+      "workflow/rules/input.py": "5c08a0103dc5d269ac6599ef0c394cbc5616da00d181d206548bbecbe9887212",
+      "workflow/rules/limits.py": "f6aa4336107e4c46ed365c2066d4497a4e440354f9424cc73e20bee7447d0370",
+      "workflow/rules/submission.py": "ce004712cd7d06e5a9fa3789ab5338c6cd1e73a970ba3048f6be624cebeba91f",
+      "workflow/runtime.py": "c729ccb4742608c3a5b6b12dcd9cbcdc60f181e35d4bb381a0f312139583d586",
+      "workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/state/interactions.py": "63953fdc176918822f95331e77d778925e07e6a490e241ead8c5a4661bad0f31",
+      "workflow/state/models.py": "7d455eaa2654f2937eb277018b1ab18e9d055e6304751a3aff0253960a55d4bf",
+      "workflow/state/questions.py": "c8e246cf7aba746da59d626f3c5bbe66c51ac7b8ca662d5f54b4f92291ebbe80",
+      "workflow/state/usage.py": "ed68c2d9903a41724d5b258d4f4d7bc6e9bc1f6417b14245c1d36a244fc16b1a",
+      "workflow/submission_writer.py": "2939bd9cafa32ddfa096a3c89e52dbcd61f82b67c4764d14c70dac892a012dc0",
+      "workflow/text_config.py": "fac113881ca925cc67a83cb273a177a7de96b6ad789251ecdcb42093dbb422f1"
+    }
+  },
+  "evidence": {
+    "final": {
+      "workflow": {
+        "tests": 75,
+        "failures": [],
+        "errors": [],
+        "successful": true,
+        "dependencies": {
+          "langgraph": "1.2.13",
+          "pydantic": "2.14.0",
+          "rdflib": "7.6.0"
+        },
+        "network": "none",
+        "real_doctor": "not_run",
+        "official_sdk": "not_run"
+      },
+      "admitted": {
+        "status": "pass",
+        "cases": [
+          {
+            "target": "urn:ontoward:SymptomSnomedCT21522001",
+            "numeric": false,
+            "actions": 50,
+            "model_calls": 3,
+            "diagnosis_kind": "disease",
+            "termination": "submitted",
+            "unresolved_records": 48,
+            "scripted_consult_seconds": 7.011215363978408,
+            "question_generation_calls": 0,
+            "gateway_payload_bytes": 85426,
+            "max_context_bytes": 1288,
+            "pattern_evaluations": 45,
+            "scoring_refreshes": 2
+          },
+          {
+            "target": "urn:ontoward:SymptomSnomedCT21522001",
+            "numeric": true,
+            "actions": 50,
+            "model_calls": 4,
+            "diagnosis_kind": "disease",
+            "termination": "submitted",
+            "unresolved_records": 47,
+            "scripted_consult_seconds": 7.093012357014231,
+            "question_generation_calls": 0,
+            "gateway_payload_bytes": 115880,
+            "max_context_bytes": 2819,
+            "pattern_evaluations": 45,
+            "scoring_refreshes": 2
+          },
+          {
+            "target": "urn:ontoward:SymptomSnomedCT1003721002",
+            "numeric": false,
+            "actions": 50,
+            "model_calls": 2,
+            "diagnosis_kind": "symptom",
+            "termination": "submitted",
+            "unresolved_records": 49,
+            "scripted_consult_seconds": 2.1369688939885236,
+            "question_generation_calls": 0,
+            "gateway_payload_bytes": 56253,
+            "max_context_bytes": 997,
+            "pattern_evaluations": 3,
+            "scoring_refreshes": 2
+          }
+        ],
+        "prepare_seconds": 2.39844689698657,
+        "peak_rss_kib": 274024,
+        "graph_triples": 99105,
+        "associations": 9401,
+        "symptom_questions": 490,
+        "blocked_targets": 15,
+        "display_labels": 0,
+        "manifest_sha256": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61",
+        "runtime_root": "/workspace/submission",
+        "network": "none",
+        "patient_data": "synthetic",
+        "model_responses": "scripted",
+        "actual_luna": "not_run",
+        "authenticated_sdk": "not_run",
+        "diagnostic_performance": "not_run"
+      },
+      "korean": {
+        "status": "pass",
+        "check_count": 655,
+        "cases": [
+          {
+            "context_status": "present",
+            "termination": "submitted",
+            "diagnosis_kind": "disease",
+            "actions": 50,
+            "ros_actions": 6,
+            "context_actions": 0,
+            "scripted_gateway_calls": 42
+          },
+          {
+            "context_status": "absent",
+            "termination": "submitted",
+            "diagnosis_kind": "disease",
+            "actions": 50,
+            "ros_actions": 6,
+            "context_actions": 0,
+            "scripted_gateway_calls": 42
+          },
+          {
+            "context_status": "unknown",
+            "termination": "submitted",
+            "diagnosis_kind": "disease",
+            "actions": 50,
+            "ros_actions": 6,
+            "context_actions": 0,
+            "scripted_gateway_calls": 42
+          }
+        ],
+        "selected_context_cases": [
+          {
+            "status": "present",
+            "target": "urn:ontoward:BodhiContext219006",
+            "field": "S.sh",
+            "termination": "submitted"
+          },
+          {
+            "status": "absent",
+            "target": "urn:ontoward:BodhiContext219006",
+            "field": "S.sh",
+            "termination": "submitted"
+          },
+          {
+            "status": "unknown",
+            "target": "urn:ontoward:BodhiContext219006",
+            "field": "S.sh",
+            "termination": "submitted"
+          }
+        ],
+        "examination": {
+          "status": "pass",
+          "target": "urn:ontoward:ExamFindingSnomedCT414069003",
+          "scope": "separate selected-action acquisition through SOAP and confirmed submission"
+        },
+        "prepare_seconds": 2.183996682986617,
+        "peak_rss_kib": 282288,
+        "graph_triples": 99105,
+        "associations": 9401,
+        "prepared_say_questions": 1308,
+        "blocked_targets": 15,
+        "manifest_sha256": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61",
+        "patient_data": "synthetic Korean",
+        "model_responses": "scripted",
+        "network": "none",
+        "actual_luna": "not_run",
+        "authenticated_sdk": "not_run",
+        "official_submission": "not_run"
+      }
+    },
+    "isolated": {
+      "workflow": {
+        "tests": 75,
+        "failures": [],
+        "errors": [],
+        "successful": true,
+        "dependencies": {
+          "langgraph": "1.2.13",
+          "pydantic": "2.14.0",
+          "rdflib": "7.6.0"
+        },
+        "network": "none",
+        "real_doctor": "not_run",
+        "official_sdk": "not_run"
+      },
+      "admitted": {
+        "status": "pass",
+        "cases": [
+          {
+            "target": "urn:ontoward:SymptomSnomedCT21522001",
+            "numeric": false,
+            "actions": 50,
+            "model_calls": 3,
+            "diagnosis_kind": "disease",
+            "termination": "submitted",
+            "unresolved_records": 48,
+            "scripted_consult_seconds": 7.239624140027445,
+            "question_generation_calls": 0,
+            "gateway_payload_bytes": 85426,
+            "max_context_bytes": 1288,
+            "pattern_evaluations": 45,
+            "scoring_refreshes": 2
+          },
+          {
+            "target": "urn:ontoward:SymptomSnomedCT21522001",
+            "numeric": true,
+            "actions": 50,
+            "model_calls": 4,
+            "diagnosis_kind": "disease",
+            "termination": "submitted",
+            "unresolved_records": 47,
+            "scripted_consult_seconds": 7.14646942995023,
+            "question_generation_calls": 0,
+            "gateway_payload_bytes": 115880,
+            "max_context_bytes": 2819,
+            "pattern_evaluations": 45,
+            "scoring_refreshes": 2
+          },
+          {
+            "target": "urn:ontoward:SymptomSnomedCT1003721002",
+            "numeric": false,
+            "actions": 50,
+            "model_calls": 2,
+            "diagnosis_kind": "symptom",
+            "termination": "submitted",
+            "unresolved_records": 49,
+            "scripted_consult_seconds": 2.096170741948299,
+            "question_generation_calls": 0,
+            "gateway_payload_bytes": 56253,
+            "max_context_bytes": 997,
+            "pattern_evaluations": 3,
+            "scoring_refreshes": 2
+          }
+        ],
+        "prepare_seconds": 2.5985603959998116,
+        "peak_rss_kib": 273612,
+        "graph_triples": 99105,
+        "associations": 9401,
+        "symptom_questions": 490,
+        "blocked_targets": 15,
+        "display_labels": 0,
+        "manifest_sha256": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61",
+        "runtime_root": "/submission",
+        "network": "none",
+        "patient_data": "synthetic",
+        "model_responses": "scripted",
+        "actual_luna": "not_run",
+        "authenticated_sdk": "not_run",
+        "diagnostic_performance": "not_run"
+      },
+      "korean": {
+        "status": "pass",
+        "check_count": 655,
+        "cases": [
+          {
+            "context_status": "present",
+            "termination": "submitted",
+            "diagnosis_kind": "disease",
+            "actions": 50,
+            "ros_actions": 6,
+            "context_actions": 0,
+            "scripted_gateway_calls": 42
+          },
+          {
+            "context_status": "absent",
+            "termination": "submitted",
+            "diagnosis_kind": "disease",
+            "actions": 50,
+            "ros_actions": 6,
+            "context_actions": 0,
+            "scripted_gateway_calls": 42
+          },
+          {
+            "context_status": "unknown",
+            "termination": "submitted",
+            "diagnosis_kind": "disease",
+            "actions": 50,
+            "ros_actions": 6,
+            "context_actions": 0,
+            "scripted_gateway_calls": 42
+          }
+        ],
+        "selected_context_cases": [
+          {
+            "status": "present",
+            "target": "urn:ontoward:BodhiContext219006",
+            "field": "S.sh",
+            "termination": "submitted"
+          },
+          {
+            "status": "absent",
+            "target": "urn:ontoward:BodhiContext219006",
+            "field": "S.sh",
+            "termination": "submitted"
+          },
+          {
+            "status": "unknown",
+            "target": "urn:ontoward:BodhiContext219006",
+            "field": "S.sh",
+            "termination": "submitted"
+          }
+        ],
+        "examination": {
+          "status": "pass",
+          "target": "urn:ontoward:ExamFindingSnomedCT414069003",
+          "scope": "separate selected-action acquisition through SOAP and confirmed submission"
+        },
+        "prepare_seconds": 2.2255245879641734,
+        "peak_rss_kib": 282256,
+        "graph_triples": 99105,
+        "associations": 9401,
+        "prepared_say_questions": 1308,
+        "blocked_targets": 15,
+        "manifest_sha256": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61",
+        "patient_data": "synthetic Korean",
+        "model_responses": "scripted",
+        "network": "none",
+        "actual_luna": "not_run",
+        "authenticated_sdk": "not_run",
+        "official_submission": "not_run"
+      }
+    }
+  },
+  "isolation": {
+    "image": "sha256:261d00d1b7779ebbf28aeb0ca58b0bf04792e5059a22a10278397cc63261ef25",
+    "network": "none",
+    "cpus": 2,
+    "memory_bytes": 8589934592,
+    "read_only_runtime": true,
+    "tmpfs_bytes": 536870912,
+    "parent_data_and_assets": "not_mounted",
+    "credentials": "not_mounted"
+  },
+  "admitted_assets": {
+    "triples": 99105,
+    "associations": 9401,
+    "prepared_say": 1308,
+    "prepared_exam": 1,
+    "knowledge_and_sdk_unchanged": true,
+    "disease_plan_assets": 0
+  },
+  "representative_final_plan_fields": {
+    "tests": "",
+    "treatment": "",
+    "disposition": "",
+    "follow_up": "",
+    "education": ""
+  },
+  "limitations": {
+    "actual_luna": "not_run",
+    "authenticated_sdk": "not_run",
+    "uploaded_sample_validation": "not_run",
+    "official_submission": "not_run",
+    "official_scoring": "not_run",
+    "independent_clinical_validation": "not_run",
+    "dependency_rebuild_on_organizer": "not_run",
+    "education_retrieval": "deferred",
+    "missing_plan_fields": "Leave empty when no admitted plan or test linkage exists; no tests/follow-up/safety/communication score guarantee"
+  },
+  "commands": [
+    "docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Tmp/readiness26/verify.py",
+    "docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T -e ONTOWARD_TEST_OUTPUT=/workspace/Tmp/readiness26/final/workflow dev python -B Dev/tests/workflow/test_workflow.py",
+    "DOCKER_BUILDKIT=0 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml build --pull=false package",
+    "docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T package",
+    "docker compose -f compose.yaml -f Tmp/readiness26/compose.archive.yaml run --name ontoward-readiness26-archive --rm --no-deps --pull never -T archive python -B /verify.py"
+  ],
+  "sources": {
+    "observed_date_kst": "2026-10-16",
+    "access": "Public web pages only; no account or competition API",
+    "urls": [
+      "https://nova.snubhai.org/docs/",
+      "https://nova.snubhai.org/rules/",
+      "https://nova.snubhai.org/evaluation/"
+    ],
+    "applied_constraints": {
+      "soap_string_fields": 15,
+      "separate_diagnosis": true,
+      "empty_unused_fields_allowed": true,
+      "turns": 50,
+      "content_nfc_codepoints": [
+        1,
+        30
+      ],
+      "designated_model": "openai/gpt-6-luna",
+      "minimum_model_calls": 1,
+      "maximum_model_calls": 200,
+      "record_utf8_bytes": 100000,
+      "diagnosis_utf8_bytes": 500,
+      "zip_compressed_bytes": 50000000,
+      "zip_expanded_bytes": 500000000,
+      "zip_file_count": 5000
+    }
+  }
+}

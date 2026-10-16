@@ -4,6 +4,8 @@ Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수�
 
 [PRD](PRD.md)는 동작 요구사항, [결정 문서](DECISION_STATE.md)는 사용자 선택, 각 범위의 PROJECT_STATE.md는 관측된 진행과 다음 작업을 관리한다. 공모전 규칙은 [공모전 참고 자료](assets/nova-competition-2026/README.md)와 [현재 규칙 업데이트](assets/nova-competition-2026/CHANGES_2026-10-14.md)에서 확인한다.
 
+D26의 현재 제출 설정은 Education을 pass한다. 교육 행동과 보호 턴을 사용하지 않고 `P.education`을 비운 채 문진·진찰·해석·진단·SOAP·DIAGNOSE 확인까지 진행한다. 교육 검색은 후속 범위이며, 공식 서버 수락과 실제 점수는 별도 검증 대상이다.
+
 ## 구조
 
 ```text
@@ -49,6 +51,7 @@ submission/.env는 **ZIP에 포함하는 공개 실행 설정**이다. 현재 �
 ONTOWARD_KNOWLEDGE_MANIFEST=knowledge/manifest.json
 ONTOWARD_PARSER_PROMPT=config/input_parser.txt
 ONTOWARD_TEXTS=config/texts.ko.json
+ONTOWARD_EDUCATION_ENABLED=false
 ```
 
 공통 설정을 중복하지 않도록 .env와 settings.py를 유지한다. settings.py가 prepare()에서 이 파일을 읽으며 파일 경로는 settings.py 위치를 기준으로 결정한다. 실행 위치가 바뀌어도 같은 submission/knowledge를 참조한다. 같은 이름의 환경변수가 있으면 그것이 우선하며 manifest 경로는 submission/knowledge, 프롬프트·문구는 submission/config 내부 상대 경로여야 한다. 단순 KEY=VALUE 형식으로 공백 행과 주석을 허용하고 셸 확장·따옴표 처리는 하지 않는다. 공식 토큰·세션은 실행기가 제공하며 이 파일에 넣지 않는다. 새로운 설정을 추가할 때는 코드의 허용 항목과 실제 소비 위치도 함께 추가한다.

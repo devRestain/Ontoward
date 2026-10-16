@@ -1,8 +1,10 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=3848087d4c6ecf97a35014e8cdbf3b441df5132a dirty=true updated=2026-10-16T13:42:16+00:00
-/goal phase=current id=APP.STORAGE24 state=complete action="Remove superseded runtime copies and verify unchanged admitted consultation and standalone archive behavior under D24"
+/checkpoint revision=50395467f7f7234fa830a5a0b4d42548e6731b99 dirty=true updated=2026-10-16T14:12:16+00:00
+/goal phase=current id=APP.READINESS26 state=complete action="Pass Education and complete diagnostic acquisition Gateway recovery assessment and confirmed submission under D26"
+/goal phase=next id=APP.OFFICIAL26 state=deferred action="Verify one explicitly authorized official sample using the pinned D26 runtime archive"
+/goal phase=history id=APP.STORAGE24 state=complete action="Remove superseded runtime copies and verify unchanged admitted consultation and standalone archive behavior under D24"
 /goal phase=history id=APP.TEXT20 state=complete action="Admit completed D22 patient actions against D20 graph pins and verify Korean consultations under D23"
 /goal phase=history id=APP.GRAPH20 state=complete action="Consume D20 graph relations and verify full offline consultations with separate text readiness"
 /goal phase=history id=APP.SOURCE18 state=complete action="Verify D17 consultation behavior and D18 withdrawal at the source-reset checkpoint"
@@ -44,4 +46,13 @@
 /evidence id=APP.STORAGE24.E2 class=runtime result=pass source=data/provenance/storage-cleanup-2026-10-16.json observed="Pass 69 maintained workflow tests and 577 Korean checks in the workspace then pass 69 workflow tests three admitted-RDF cases and 577 Korean checks against the isolated ZIP with two CPUs eight GB and no parent data assets or network; retain real models authenticated SDK and official submission as not_run"
 /scope id=APP.STORAGE24.S1 state=in action="Own D24 active asset preservation duplicate removal and offline runtime archive verification"
 /evidence id=APP.STORAGE24.E3 class=artifact result=pass source=data/provenance/github-publication-2026-10-16.json observed="Verify all 42 runtime archive files unchanged in published main 3848087 with the public submission environment included and root credentials excluded; retain prior offline workflow evidence without repeating tests"
-/handoff state=ready action="Use the unchanged verified runtime from D25 published main and retain real models and official competition submission as not_run"
+/accept id=APP.READINESS26.A1 state=pass action="Verify Education pass diagnostic utility grounded recovery and complete chief coverage" evidence=APP.READINESS26.E1
+/accept id=APP.READINESS26.A2 state=pass action="Verify acquired SOAP evidence Korean delivery Context polarity and examination through confirmed submission" evidence=APP.READINESS26.E2
+/accept id=APP.READINESS26.A3 state=pass action="Execute the independent runtime archive without parent data assets credentials or network" evidence=APP.READINESS26.E3
+/evidence id=APP.READINESS26.E1 class=runtime result=pass source=Tmp/readiness26/final/workflow/verification.json observed="Pass 75 maintained tests including empty and null Gateway recovery Education pass Context utility complete chief coverage and acquired assessment evidence"
+/evidence id=APP.READINESS26.E2 class=runtime result=pass source=data/provenance/submission-readiness-2026-10-16.json observed="Pass three admitted-RDF cases and 655 Korean checks covering three automatic consultations three selected Context polarity acquisitions and one selected EXAM path through SOAP and completed DIAGNOSE"
+/evidence id=APP.READINESS26.E3 class=runtime result=pass source=Tmp/readiness26/isolated/verification.json observed="Pass the same 75 tests three admitted-RDF cases and 655 Korean checks against the independent read-only archive with two CPUs eight GB no credentials no parent data assets and no network"
+/evidence id=APP.READINESS26.E4 class=semantic result=pass source=data/provenance/submission-readiness-2026-10-16.json observed="Record zero admitted disease-plan assets and empty representative P fields without claiming treatment follow-up safety communication scores or independent clinical validation"
+/evidence id=APP.READINESS26.E5 class=external_service result=not_run source=data/provenance/submission-readiness-2026-10-16.json observed="Leave actual Luna authenticated SDK official server acceptance uploaded validation and scoring unrun"
+/scope id=APP.READINESS26.S1 state=in action="Own D26 runtime changes maintained behavioral tests and isolated consultation acceptance"
+/handoff state=blocked action="Obtain exact authorization for the pinned ZIP official sample validation and retain clinical plan coverage as incomplete"

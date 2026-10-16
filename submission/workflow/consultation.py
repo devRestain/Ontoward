@@ -77,7 +77,7 @@ class Consultation:
         if state.session.current != "Initiation" and interaction.needs_clarification:
             self.planner.prepare_clarification(state, interaction.clarification_target)
             self.interactions.consume_clarification(state)
-        if state.session.current == "Education" and state.session.initialized:
+        if self.planner.config.education_enabled and state.session.current == "Education" and state.session.initialized:
             self.reasoner.select_diagnosis(state)
             if not interaction.termination and previous != (state.case.diagnosis_kind, state.case.diagnosis):
                 interaction.diagnosis_revision += 1

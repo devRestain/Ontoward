@@ -1,8 +1,10 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=3848087d4c6ecf97a35014e8cdbf3b441df5132a dirty=true updated=2026-10-16T13:42:16+00:00
-/goal phase=current id=ROOT.GIT25 state=complete action="Preserve original work on a backup branch and publish the compact verified main to origin under D25"
+/checkpoint revision=50395467f7f7234fa830a5a0b4d42548e6731b99 dirty=true updated=2026-10-16T14:12:16+00:00
+/goal phase=current id=ROOT.READINESS26 state=complete action="Complete D26 submission readiness with Education pass offline verification and an independent runtime ZIP"
+/goal phase=next id=ROOT.OFFICIAL26 state=deferred action="Coordinate one explicitly authorized official sample validation of the pinned D26 ZIP"
+/goal phase=history id=ROOT.GIT25 state=complete action="Preserve original work on a backup branch and publish the compact verified main to origin under D25"
 /goal phase=history id=ROOT.STORAGE24 state=complete action="Reclaim disposable project storage and prepare a compact source snapshot while preserving the admitted competition runtime"
 /goal phase=history id=ROOT.TEXT22 state=complete action="Coordinate APP.TEXT20 runtime text admission Korean consultation verification and D23 competition acceptance"
 /goal phase=history id=ROOT.KOREAN21 state=complete action="Complete patient-only Korean generation and D22 NOVA continuation verification"
@@ -78,4 +80,13 @@
 /evidence id=ROOT.GIT25.E3 class=external_service result=pass source=data/provenance/github-publication-2026-10-16.json observed="Push compact main to devRestain/Ontoward with ordinary fast-forward and read the remote main and default HEAD at 3848087; verify 42 runtime files equal the previously tested ZIP"
 /scope id=ROOT.GIT25.S1 state=in action="Own D25 local backup branch main commit origin fetch and push object verification and publication handoff"
 /scope id=ROOT.GIT25.S2 state=out action="Exclude backup-branch publication remote settings changes source deletion dependency downloads models and official competition submission"
-/handoff state=ready action="Use published origin main and preserve codex/pre-cleanup-20261016 plus local source custody as the recovery boundary"
+/accept id=ROOT.READINESS26.A1 state=pass action="Reconcile D26 requirements contracts decisions and all maintained state scopes" evidence=ROOT.READINESS26.E1
+/accept id=ROOT.READINESS26.A2 state=pass action="Complete the canonical offline workflow and admitted asset consultations" evidence=ROOT.READINESS26.E2
+/accept id=ROOT.READINESS26.A3 state=pass action="Package and independently execute the runtime ZIP under competition resource limits" evidence=ROOT.READINESS26.E3
+/evidence id=ROOT.READINESS26.E1 class=semantic result=pass source=DECISION_STATE.md observed="Apply D26 Education pass and reconcile PRD contracts human orientation and all three state scopes while preserving plan-coverage limits"
+/evidence id=ROOT.READINESS26.E2 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.READINESS26 canonical behavior actual admitted-RDF consultations Korean acquisition SOAP and confirmed termination evidence"
+/evidence id=ROOT.READINESS26.E3 class=artifact result=pass source=data/provenance/submission-readiness-2026-10-16.json observed="Build and extract the 42-file 1362759-byte ZIP with SHA256 ca4bbf0f6c2fbe9ea2a533e40dce3fbc03e3d38b18efc9c6941b860a9ec55142 and verify source identity and two-CPU eight-GB read-only network-none isolation"
+/evidence id=ROOT.READINESS26.E4 class=external_service result=not_run source=data/provenance/submission-readiness-2026-10-16.json observed="Leave actual Luna authenticated SDK upload official sample validation and scoring unrun and record incomplete clinical plan coverage"
+/scope id=ROOT.READINESS26.S1 state=in action="Own D26 cross-scope coordination public rule inspection offline acceptance and local packaging"
+/scope id=ROOT.READINESS26.S2 state=out action="Exclude Education retrieval new data or model generation authenticated services upload evaluation commits and deployment"
+/handoff state=blocked action="Obtain exact authorization for official sample validation of the pinned D26 Education-pass ZIP"

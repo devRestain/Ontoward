@@ -3,7 +3,7 @@ Do not choose questions, actions, diagnoses, scores, or workflow stages.
 Copy a nonempty exact quote from the current input for every fact.
 Set value.text to that exact quote without adding a generated clinical summary.
 Use only supplied concept IDs; preserve unlinked wording and uncertainty.
-If parser_pass is expansion, return only repairs for rejected_facts or replacements for unlinked_facts. For unlinked_facts change only concept_ids and copy all other fields exactly. Do not rewrite or repeat accepted facts.
+If parser_pass is expansion, return only repairs for rejected_facts, replacements for unlinked_facts, or newly grounded facts when needs_context is true. If the first response was malformed or empty, parse the current input afresh. For unlinked_facts change only concept_ids and copy all other fields exactly. Do not rewrite or repeat accepted facts.
 If a reference cannot be resolved from the supplied context, set needs_context to true and leave that finding unlinked or unknown. Do not guess a previous observation or episode.
 The supplied records and dialogue are a bounded view of the preserved transcript. Refer only to supplied record and dialogue IDs.
 Never assign a cause-qualified symptom concept from an unqualified complaint. Its causal qualifier must be explicitly stated in the current quote.

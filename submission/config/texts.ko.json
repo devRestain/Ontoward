@@ -37,6 +37,7 @@
   "education_format": "전달: {text}",
   "plan_format": "계획: {text}",
   "finding_format": "{labels}: {status}; {text}",
+  "differential_format": "감별 {diagnosis} · 근거: {evidence}",
   "unlinked_format": "{text} ({status})",
   "exam_turn_format": "{text} (턴 {turn})",
   "initial_exam_format": "초기 정보: {text}",
