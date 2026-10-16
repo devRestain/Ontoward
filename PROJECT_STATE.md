@@ -1,8 +1,8 @@
 /state version=1
 /project id=ontoward
-/status value=active
-/checkpoint revision=a0c7d3a02ef8215b6ff5f6bc65a425da59881067 dirty=true updated=2026-10-16T13:38:41+00:00
-/goal phase=current id=ROOT.GIT25 state=active action="Preserve original work on a backup branch and publish the compact verified main to origin under D25"
+/status value=complete
+/checkpoint revision=3848087d4c6ecf97a35014e8cdbf3b441df5132a dirty=true updated=2026-10-16T13:42:16+00:00
+/goal phase=current id=ROOT.GIT25 state=complete action="Preserve original work on a backup branch and publish the compact verified main to origin under D25"
 /goal phase=history id=ROOT.STORAGE24 state=complete action="Reclaim disposable project storage and prepare a compact source snapshot while preserving the admitted competition runtime"
 /goal phase=history id=ROOT.TEXT22 state=complete action="Coordinate APP.TEXT20 runtime text admission Korean consultation verification and D23 competition acceptance"
 /goal phase=history id=ROOT.KOREAN21 state=complete action="Complete patient-only Korean generation and D22 NOVA continuation verification"
@@ -71,11 +71,11 @@
 /scope id=ROOT.STORAGE24.S1 state=in action="Own D24 project-only cleanup Docker ownership checks ignore rules source snapshot offline acceptance and cross-scope handoff"
 /scope id=ROOT.STORAGE24.S2 state=out action="Exclude commits history rewriting remote refresh push downloads official services and Colima changes"
 /accept id=ROOT.GIT25.A1 state=pass action="Preserve the latest original local main and verify current runtime identity" evidence=ROOT.GIT25.E1
-/accept id=ROOT.GIT25.A2 state=not_run action="Create compact main history without the oversized local ancestors" evidence=ROOT.GIT25.E2
-/accept id=ROOT.GIT25.A3 state=not_run action="Publish main to the authorized origin and verify remote identity" evidence=ROOT.GIT25.E3
+/accept id=ROOT.GIT25.A2 state=pass action="Create compact main history without the oversized local ancestors" evidence=ROOT.GIT25.E2
+/accept id=ROOT.GIT25.A3 state=pass action="Publish main to the authorized origin and verify remote identity" evidence=ROOT.GIT25.E3
 /evidence id=ROOT.GIT25.E1 class=artifact result=pass source=data/provenance/github-publication-2026-10-16.json observed="Create codex/pre-cleanup-20261016 at a0c7d3a and verify all 259 source files and 42 runtime files against the prepared archives"
-/evidence id=ROOT.GIT25.E2 class=artifact result=not_run source=data/provenance/github-publication-2026-10-16.json observed="Prepare compact main creation from fetched origin main 2650f45 while preserving the current tree and excluding a local catalog dictionary"
-/evidence id=ROOT.GIT25.E3 class=external_service result=not_run source=data/provenance/github-publication-2026-10-16.json observed="Authorize ordinary main push to devRestain/Ontoward after outbound object verification"
+/evidence id=ROOT.GIT25.E2 class=artifact result=pass source=data/provenance/github-publication-2026-10-16.json observed="Create main source commit 3848087 directly after origin base 2650f45 excluding the three original local ancestors and all oversized outbound blobs; retain every local preparation file"
+/evidence id=ROOT.GIT25.E3 class=external_service result=pass source=data/provenance/github-publication-2026-10-16.json observed="Push compact main to devRestain/Ontoward with ordinary fast-forward and read the remote main and default HEAD at 3848087; verify 42 runtime files equal the previously tested ZIP"
 /scope id=ROOT.GIT25.S1 state=in action="Own D25 local backup branch main commit origin fetch and push object verification and publication handoff"
 /scope id=ROOT.GIT25.S2 state=out action="Exclude backup-branch publication remote settings changes source deletion dependency downloads models and official competition submission"
-/handoff state=incomplete action="Create and publish compact main then record verified remote identity"
+/handoff state=ready action="Use published origin main and preserve codex/pre-cleanup-20261016 plus local source custody as the recovery boundary"

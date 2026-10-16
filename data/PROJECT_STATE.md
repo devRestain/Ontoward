@@ -1,7 +1,7 @@
 /state version=1
 /project id=ontoward-data
 /status value=complete
-/checkpoint revision=fac0c639c00202230a8066568649a54f68be9839 dirty=true updated=2026-10-16T13:21:27+00:00
+/checkpoint revision=3848087d4c6ecf97a35014e8cdbf3b441df5132a dirty=true updated=2026-10-16T13:42:16+00:00
 /goal phase=current id=DATA.STORAGE24 state=complete action="Archive historical preparation snapshots and preserve live source custody receipts and request records under D24"
 /goal phase=history id=DATA.TEXT23 state=complete action="Pin D23 competition acceptance and D22 text provenance for APP.TEXT20 runtime admission"
 /goal phase=history id=DATA.KOREAN21 state=complete action="Complete patient-only Korean generation and D22 NOVA continuation verification"
@@ -59,4 +59,5 @@
 /evidence id=DATA.STORAGE24.E1 class=artifact result=pass source=data/provenance/storage-cleanup-2026-10-16-archives.json observed="Preserve D18 source-only and build SQLite snapshots in their archives directories with original byte counts SHA256 and verified full decompression; require restoration only for those historical DB paths"
 /evidence id=DATA.STORAGE24.E2 class=runtime result=pass source=data/provenance/storage-cleanup-2026-10-16.json observed="Open the unchanged D20 derived batch and D19 shared custody at original paths and verify 109 files 12586084 rows and all 16280 asset file hashes; retain local catalogs ledgers D20-D23 receipts and technical exclusions after 59 Git tracking removals"
 /scope id=DATA.STORAGE24.S1 state=in action="Own D24 archive restoration receipts source preservation local preparation retention and compact versioned evidence"
-/handoff state=ready action="Use the active D19 source custody for current preparation and restore archived D18 snapshots only when a historical DB check is explicitly needed"
+/evidence id=DATA.STORAGE24.E3 class=artifact result=pass source=data/provenance/github-publication-2026-10-16.json observed="Preserve the additional 11822682-byte catalog evidence dictionary locally while excluding it from published main and retain D24 archives request ledgers and D20-D23 receipts"
+/handoff state=ready action="Use the local shared source custody and D25 published main while restoring D18 archives only for historical DB checks"

@@ -7,18 +7,47 @@
   "current_source_files_equal_verified_snapshot": 259,
   "runtime_files_equal_verified_archive": 42,
   "runtime_archive_sha256": "0c49a38e601c0acddd551863b674a03f36078485a61b0ac8ad74b14a552e66c1",
-  "new_runtime_tests": "not_run_no_runtime_changes",
+  "new_runtime_tests": "not_run_unchanged_runtime_bytes",
   "format": "ontoward-github-publication-v1",
-  "phase": "prepared",
+  "phase": "published",
   "origin": "https://github.com/devRestain/Ontoward.git",
   "remote_ref": "refs/heads/main",
   "backup_scope": "local_only",
-  "publication": "not_run",
+  "publication": "pass",
   "excluded_local_dictionary": {
     "path": "data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/catalog/evidence.json",
     "bytes": 11822682,
     "local_file": "preserved"
   },
   "remote_base_fetch": "pass",
-  "authorization": "2026-10-16 user approved commits and requested existing work on a new branch with cleaned main published to origin"
+  "authorization": "2026-10-16 user approved commits and requested existing work on a new branch with cleaned main published to origin",
+  "source_commit": "3848087d4c6ecf97a35014e8cdbf3b441df5132a",
+  "source_tree": "cb1ddb9af9acf7c71a76e812d72ebbea94543616",
+  "remote_main_verified": "3848087d4c6ecf97a35014e8cdbf3b441df5132a",
+  "remote_default_branch": "main",
+  "remote_main_matches_local": true,
+  "push_mode": "ordinary_fast_forward",
+  "verified_at": "2026-10-16T13:42:16+00:00",
+  "published_tree": {
+    "status": "pass",
+    "runtime_files_equal_verified_zip": 42,
+    "source_files": 259,
+    "expanded_source_bytes": 23286541,
+    "largest_source_bytes": 12209058,
+    "root_credentials": "excluded",
+    "runtime_public_env": "included",
+    "bulk_preparation": "excluded",
+    "local_catalog_dictionary": "preserved_and_not_published",
+    "runtime_code_changes": false,
+    "runtime_tests": "not_repeated_unchanged_bytes"
+  },
+  "outbound_object_limit_bytes": 52428800,
+  "largest_outbound_blob_bytes": 12209058,
+  "old_local_ancestors_excluded": [
+    "f04d554",
+    "fac0c63",
+    "a0c7d3a"
+  ],
+  "official_competition_submission": "not_run",
+  "record_boundary": "Record successful source publication and remote identity before the documentation-only closeout commit"
 }

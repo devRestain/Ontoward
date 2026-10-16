@@ -258,16 +258,10 @@
       "blob e8b75c4d7009035bb4df999581ed52a5189f60f1 1099176699 data/preparation/v5/source-only-2026-10-16/build/interrupted-preview-1e837763-4fe3-4e38-ab6e-9405c809cfeb/sources.json",
       "blob eaba04e0d81a88cf961dc6cb345b967f970d791d 1099176699 data/preparation/v5/source-only-2026-10-16/build/preview/sources.json"
     ],
-    "rewrite": "not_run_requires_explicit_authorization",
     "remote_refresh": "not_run",
-    "push": "not_run",
-    "proposed_next_action": {
-      "branch": "codex/storage-cleanup-20261016",
-      "base": "2650f45",
-      "action": "Create one clean source commit while preserving the existing branch and uncommitted work",
-      "authorization": "required",
-      "remote_write": "excluded"
-    }
+    "rewrite_at_D24_checkpoint": "not_run_requires_explicit_authorization",
+    "push_at_D24_checkpoint": "not_run",
+    "resolved_by_D25": "data/provenance/github-publication-2026-10-16.json"
   },
   "official_submission": "not_run",
   "real_model": "not_run",
@@ -333,7 +327,9 @@
     "report": "Tmp/packaging/ontoward-github-source.json",
     "file_selection": "git ls-files -co --exclude-standard; omit ignored local preparation outputs",
     "commit": "not_run",
-    "push": "not_run"
+    "push": "not_run",
+    "checkpoint": "D24 before user-approved Git publication",
+    "current_publication": "data/provenance/github-publication-2026-10-16.json"
   },
   "workspace_size": {
     "method": "du -k -d 1; shared APFS extents may be counted more than once",

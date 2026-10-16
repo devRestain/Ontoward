@@ -85,7 +85,9 @@ Git에는 코드·계약·상태·PPTX 변환 Markdown·간결한 출처와 검�
 
 현재 상담은 `submission/` 내부 자산만 읽는다. `data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/ontology.sqlite3`는 준비용 공유 원천 DB로 원래 경로를 유지한다. 과거 D18의 두 DB 확장본은 각 `archives/ontology.sqlite3.gz`에 바이트 단위로 보관했으며 [복원 해시와 영수증](data/provenance/storage-cleanup-2026-10-16-archives.json)을 확인한 뒤 필요할 때만 원래 경로에 복원한다. 과거 스냅샷 복원은 현재 상담 실행에 필요하지 않다.
 
-저장 공간 정리의 범위와 검증은 [정리 영수증](data/provenance/storage-cleanup-2026-10-16.json), [Docker 정리 기록](data/provenance/storage-cleanup-2026-10-16-docker.json), [D24](DECISION_STATE.md#D24)를 참고한다. `.dockerignore`는 의존성·패키징 도구만 빌드 컨텍스트에 허용하므로 로컬 DB나 원본 자료를 이미지에 복사하지 않는다. 현재 파일 목록의 독립 GitHub 소스 ZIP은 `Tmp/packaging/ontoward-github-source.zip`으로 만든다. 기존 두 로컬 커밋에 남은 대용량 blob은 `.gitignore`만으로 사라지지 않으며, 새 정리 브랜치·커밋 작성과 원격 게시에는 별도 명시적 승인이 필요하다.
+저장 공간 정리의 범위와 검증은 [정리 영수증](data/provenance/storage-cleanup-2026-10-16.json), [Docker 정리 기록](data/provenance/storage-cleanup-2026-10-16-docker.json), [D24](DECISION_STATE.md#D24)를 참고한다. `.dockerignore`는 의존성·패키징 도구만 빌드 컨텍스트에 허용하므로 로컬 DB나 원본 자료를 이미지에 복사하지 않는다. 현재 파일 목록의 독립 GitHub 소스 ZIP은 `Tmp/packaging/ontoward-github-source.zip`으로 만든다.
+
+[D25](DECISION_STATE.md#D25)에 따라 기존 로컬 main의 작업과 기록은 `codex/pre-cleanup-20261016` 브랜치에 보존하고 정리된 소스와 실행 자산을 새 main과 origin/main에 반영했다. 기존 대용량 blob을 가진 세 로컬 커밋은 보존 브랜치에 남아 있으며 새 main은 확인한 원격 main에서 이어진다. main의 원격 반영에는 일반 push를 사용했고 보존 브랜치는 로컬에 유지한다. [게시 검증 기록](data/provenance/github-publication-2026-10-16.json)에서 원격 대상·확인한 기준 커밋·실행 파일 동일성·객체 크기 검사를 확인할 수 있다. 원천 DB·카탈로그 근거 사전·요청 대장과 보관본은 로컬 준비 경로에 유지한다.
 
 현재 준비는 전체 International·Korean Snapshot과 BODHI-S 8개 CSV를 보존한 SQLite와 원천 전용 v5.0 후보다. [구축 도구](Dev/ontology/README.md)와 [준비 결과](data/preparation/v5/source-only-2026-10-16/README.md)에서 깨끗한 베이스·삭제 영수증·14개 클래스 추출·한국어 작업·생성 증빙을 확인한다. pre-v5 파생 자료, 이전 seed·임상 배치·번역·승인·지침 교육 초안과 그 임시 사본을 삭제했으며 원본 assets는 보존한다.
 

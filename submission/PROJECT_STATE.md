@@ -1,7 +1,7 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=fac0c639c00202230a8066568649a54f68be9839 dirty=true updated=2026-10-16T13:21:27+00:00
+/checkpoint revision=3848087d4c6ecf97a35014e8cdbf3b441df5132a dirty=true updated=2026-10-16T13:42:16+00:00
 /goal phase=current id=APP.STORAGE24 state=complete action="Remove superseded runtime copies and verify unchanged admitted consultation and standalone archive behavior under D24"
 /goal phase=history id=APP.TEXT20 state=complete action="Admit completed D22 patient actions against D20 graph pins and verify Korean consultations under D23"
 /goal phase=history id=APP.GRAPH20 state=complete action="Consume D20 graph relations and verify full offline consultations with separate text readiness"
@@ -43,4 +43,5 @@
 /evidence id=APP.STORAGE24.E1 class=artifact result=pass source=data/provenance/storage-cleanup-2026-10-16.json observed="Hash-verify 43 retained runtime files and remove three superseded D20 files only after matching their preserved data preview bytes; retain manifest f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61 and the 42-file 1361955-byte runtime ZIP"
 /evidence id=APP.STORAGE24.E2 class=runtime result=pass source=data/provenance/storage-cleanup-2026-10-16.json observed="Pass 69 maintained workflow tests and 577 Korean checks in the workspace then pass 69 workflow tests three admitted-RDF cases and 577 Korean checks against the isolated ZIP with two CPUs eight GB and no parent data assets or network; retain real models authenticated SDK and official submission as not_run"
 /scope id=APP.STORAGE24.S1 state=in action="Own D24 active asset preservation duplicate removal and offline runtime archive verification"
-/handoff state=ready action="Use the verified unchanged runtime ZIP and keep Git branch commit authorization in the root scope"
+/evidence id=APP.STORAGE24.E3 class=artifact result=pass source=data/provenance/github-publication-2026-10-16.json observed="Verify all 42 runtime archive files unchanged in published main 3848087 with the public submission environment included and root credentials excluded; retain prior offline workflow evidence without repeating tests"
+/handoff state=ready action="Use the unchanged verified runtime from D25 published main and retain real models and official competition submission as not_run"
