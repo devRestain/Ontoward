@@ -10,9 +10,9 @@ class RequestExecutor:
         self.budget = budget
         self.sleep = sleep if sleep is not None else time.sleep
 
-    def execute(self, state, client, call, payload, attempts, *, final=False):
+    def execute(self, state, client, call, payload, attempts, *, final=False, action=False):
         original_timeout = getattr(client, "timeout", None)
-        reserve = 0 if final else state.session.reserve_seconds
+        reserve = 0 if final else state.session.reserve_seconds + (LIMITS.response_seconds if action else 0)
         try:
             for attempt in range(len(LIMITS.retry_delays) + 1):
                 remaining = self.budget.seconds_left(state.session) - reserve

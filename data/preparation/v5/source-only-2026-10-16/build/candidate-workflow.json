@@ -1,0 +1,8 @@
+{
+  "status": "not_run",
+  "reason": "complete_reviewed_korean_assets_required",
+  "korean_failure": "Codex process failed; inspect the request-specific audit and do not retry automatically",
+  "runtime_admission": "not_run",
+  "actual_luna": "not_run",
+  "authenticated_sdk": "not_run"
+}

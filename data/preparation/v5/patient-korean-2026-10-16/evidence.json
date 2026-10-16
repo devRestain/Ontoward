@@ -1,0 +1,11 @@
+{
+  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+  "bytes": 6017676,
+  "files": 820,
+  "path": "data/preparation/v5/patient-korean-2026-10-16/generation-evidence.zip",
+  "raw_source_packages": "excluded",
+  "runtime_submission": "not_created",
+  "sha256": "6b55051c1730f8554c94be21c7fb72e0e01708ed428cb1b9daa51e405cd6f19a",
+  "status": "pass",
+  "verification": "extracted_file_set_and_all_sha256"
+}

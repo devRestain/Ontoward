@@ -1,0 +1,21 @@
+{
+  "build_id": "3ee766032ca36e3e77c21b6bc6e7d284a0eae78c0c0617bee24c456b5f3bc492",
+  "codex_cli": "deferred",
+  "commands": [
+    "cp -c data/preparation/v5/source-only-2026-10-16/ontology.sqlite3 data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/ontology.sqlite3",
+    "python -B -m Dev.ontology.source_projection build --international assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z --korean assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z --bodhi assets/bodhi/bodhi-s/csv --output data/preparation/v5/source-only-2026-10-16/findings-2026-10-16 --resume",
+    "python -B -m Dev.ontology.source_projection korean-freeze --catalog data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/catalog --output data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/korean-workset.json"
+  ],
+  "compose_project": "ontoward",
+  "cpus": 2,
+  "image": "sha256:261d00d1b7779ebbf28aeb0ca58b0bf04792e5059a22a10278397cc63261ef25",
+  "memory_bytes": 8589934592,
+  "network": "none",
+  "pydantic": "2.14.0",
+  "python": "3.12.15",
+  "rdflib": "7.6.0",
+  "real_model_calls": 0,
+  "service": "dev",
+  "source_ingestion_reuse": "APFS copy of the unchanged saved source-only base; build --resume",
+  "sqlite": "3.40.1"
+}

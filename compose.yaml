@@ -43,10 +43,10 @@ services:
       context: .
       dockerfile: Dev/codex/Dockerfile
     working_dir: /workspace
+    cpus: 2.0
+    mem_limit: 8g
     environment:
       CODEX_HOME: /opt/ontology/codex-state
-      NOVA_API_BASE: ${NOVA_API_BASE:-https://nova.snubhai.org}
-      NOVA_DEV_KEY: ${NOVA_DEV_KEY:-}
     networks:
       - ontology-extraction
     volumes:

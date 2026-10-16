@@ -1,0 +1,58 @@
+{
+  "approval_receipt": {
+    "path": "data/preparation/v5/runtime-text-2026-10-16/review-approved.json",
+    "sha256": "97d395a23a8aed7f468b77dd96ab90633d20dbf5eb1d06644e1e43ab45d9bf43"
+  },
+  "approved_decisions": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06",
+    "D07",
+    "D08",
+    "D09",
+    "D10",
+    "D11",
+    "D12",
+    "D13",
+    "D14",
+    "D15",
+    "D17",
+    "D18",
+    "D19",
+    "D20",
+    "D21",
+    "D22",
+    "D23"
+  ],
+  "approved_runtime_associations": 9401,
+  "approved_runtime_registry": 1979,
+  "decision": "D23",
+  "decisions_waiting_for_user": [],
+  "effective_registry_status": "apply_D20_and_D23_receipts_to_resolve_semantic_review_pending_labels_without_rewriting_frozen_source_records",
+  "frozen_registry_labels": {
+    "identifier_verified_semantic_review_pending": 1432,
+    "source_identity_not_equated_to_sctid": 243,
+    "source_role_record": 304
+  },
+  "network": "none",
+  "new_model_calls": 0,
+  "patient_actions_approved": 1309,
+  "source_catalog": {
+    "approval": "complete_source_backed_candidates_accepted_for_competition_project_use",
+    "finding_projection": {
+      "path": "data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/catalog/source-findings.ttl",
+      "sha256": "f47524cae79ad114f5123d8209b3edc8ffb4cf4b8d23a2d589efddc918ac12b5"
+    },
+    "manifest": {
+      "path": "data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/catalog/manifest.json",
+      "sha256": "0615ad56e713ce8dcc9c431d88d2b6e34224f14496e61bdc17dacd76f09e3b88"
+    },
+    "runtime_scope": "preserve_the_D20_executable_subset_in_this_slice"
+  },
+  "status": "approved_for_competition",
+  "technical_exclusion_policy": "exclude_incomplete_meaning_units_group_scope_acquisition_and_noninterviewable_targets_without_a_user_decision_gate",
+  "technical_exclusions": 15
+}

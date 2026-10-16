@@ -1,0 +1,79 @@
+{
+  "accepted_jobs": 1309,
+  "all_texts_nfc": true,
+  "authorized_failure_resumptions": 41,
+  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+  "by_purpose": {
+    "attribute": 590,
+    "context": 243,
+    "examination": 1,
+    "presence": 475
+  },
+  "excluded_targets": 15,
+  "failed_requests_preserved": 45,
+  "finished_at": "2026-10-16T11:55:24.227062+00:00",
+  "independent_clinical_validation": "not_run",
+  "label_jobs": 0,
+  "maximum_codepoints": 30,
+  "minimum_codepoints": 7,
+  "model": "openai/gpt-6-luna",
+  "provider": "nova_dev_key",
+  "reasoning_effort": "medium",
+  "remaining_jobs": 0,
+  "reported_token_usage": {
+    "completion_tokens": 353253,
+    "prompt_tokens": 1066658,
+    "total_tokens": 1419911
+  },
+  "request_ceiling": 1000,
+  "runs": [
+    {
+      "failure_resumptions": 0,
+      "new_accepted_jobs": 0,
+      "requests": 1,
+      "status": "blocked",
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/workset.json"
+    },
+    {
+      "failure_resumptions": 0,
+      "new_accepted_jobs": 20,
+      "requests": 4,
+      "status": "blocked",
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/nova-8000/workset.json"
+    },
+    {
+      "failure_resumptions": 0,
+      "new_accepted_jobs": 20,
+      "requests": 4,
+      "status": "blocked",
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/remaining-1289/workset.json"
+    },
+    {
+      "failure_resumptions": 26,
+      "new_accepted_jobs": 1120,
+      "requests": 164,
+      "status": "blocked",
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/nova-persistent/workset.json"
+    },
+    {
+      "failure_resumptions": 8,
+      "new_accepted_jobs": 0,
+      "requests": 16,
+      "status": "blocked",
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/nova-final/workset.json"
+    },
+    {
+      "failure_resumptions": 7,
+      "new_accepted_jobs": 149,
+      "requests": 30,
+      "status": "complete",
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/nova-context-final/workset.json"
+    }
+  ],
+  "runtime_admission": "not_run",
+  "service_limit_reached": false,
+  "status": "complete",
+  "stop_reason": "selected_workset_complete",
+  "successful_validation_stages": 174,
+  "total_requests": 219
+}

@@ -1,0 +1,804 @@
+{
+  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+  "conditioned_associations": 523,
+  "context_types": {
+    "allergy_history": 2,
+    "demographic": 10,
+    "family_history": 34,
+    "medication_history": 8,
+    "occupational_history": 5,
+    "past_medical_history": 98,
+    "psychosocial_history": 2,
+    "screening_history": 1,
+    "social_history": 71,
+    "surgical_history": 12
+  },
+  "contexts": 243,
+  "exam_pattern_exclusions": {
+    "physical_method_missing": 64,
+    "same_sctid_patient_report_already_scored": 562
+  },
+  "excluded_context_edges": [
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 28,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12584815
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 118,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12584905
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 120,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12584907
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 126,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12584913
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 128,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12584915
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 136,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12584923
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 171,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12584958
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 194,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12584981
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 199,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12584986
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 201,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12584988
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 240,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585027
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 279,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585066
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 288,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585075
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 303,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585090
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 304,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585091
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 315,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585102
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 322,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585109
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 331,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585118
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 336,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585123
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 344,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585131
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 345,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585132
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 346,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585133
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 347,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585134
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 348,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585135
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 349,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585136
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 350,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585137
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 351,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585138
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 370,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585157
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 377,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585164
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 389,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585176
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 390,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585177
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 391,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585178
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 392,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585179
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 410,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585197
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 411,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585198
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 412,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585199
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 413,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585200
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 414,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585201
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 415,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585202
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 457,
+      "reason": "negative_polarity_not_positive_support",
+      "source_row_id": 12585244
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 460,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585247
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 461,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585248
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 462,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585249
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 463,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585250
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 464,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585251
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 465,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585252
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 466,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585253
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 517,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585304
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 527,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585314
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 539,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585326
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 559,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585346
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 561,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585348
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 563,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585350
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 573,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585360
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 575,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585362
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 587,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585374
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 588,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585375
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 590,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585377
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 592,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585379
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 613,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585400
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 614,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585401
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 615,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585402
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 620,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585407
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 628,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585415
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 629,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585416
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 630,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585417
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 631,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585418
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 643,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585430
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 644,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585431
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 649,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585436
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 650,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585437
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 651,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585438
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 654,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585441
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 670,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585457
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 679,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585466
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 681,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585468
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 682,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585469
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 684,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585471
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 685,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585472
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 689,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585476
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 690,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585477
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 691,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585478
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 701,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585488
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 702,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585489
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 703,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585490
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 704,
+      "reason": "negative_polarity_not_positive_support",
+      "source_row_id": 12585491
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 712,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585499
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 723,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585510
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 724,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585511
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 728,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585515
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 742,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585529
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 759,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585546
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 781,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585568
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 786,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585573
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 803,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585590
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 804,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585591
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 808,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585595
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 809,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585596
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 810,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585597
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 811,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585598
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 812,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585599
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 813,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585600
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 814,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585601
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 815,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585602
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 816,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585603
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 819,
+      "reason": "zero_or_unknown_source_strength",
+      "source_row_id": 12585606
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 864,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585651
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 865,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585652
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 881,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585668
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 882,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585669
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 925,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585712
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 926,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585713
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 957,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585744
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 958,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585745
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 959,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585746
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 960,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585747
+    },
+    {
+      "file": "edges_is_influenced_by.csv",
+      "line": 1015,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12585802
+    },
+    {
+      "file": "edges_has_prerequisite.csv",
+      "line": 11,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12586039
+    },
+    {
+      "file": "edges_has_prerequisite.csv",
+      "line": 12,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12586040
+    },
+    {
+      "file": "edges_has_prerequisite.csv",
+      "line": 13,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12586041
+    },
+    {
+      "file": "edges_has_prerequisite.csv",
+      "line": 14,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12586042
+    },
+    {
+      "file": "edges_has_prerequisite.csv",
+      "line": 36,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12586064
+    },
+    {
+      "file": "edges_has_prerequisite.csv",
+      "line": 40,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12586068
+    },
+    {
+      "file": "edges_has_prerequisite.csv",
+      "line": 44,
+      "reason": "endpoint_outside_selected_diseases_or_source_contexts",
+      "source_row_id": 12586072
+    }
+  ],
+  "korean_generation": "not_run",
+  "parent_build_id": "3ee766032ca36e3e77c21b6bc6e7d284a0eae78c0c0617bee24c456b5f3bc492",
+  "policy": {
+    "contextType": "BODHI source role and explicit English wording -> existing history categories; source identity kept separate from SCTID identity",
+    "examination": "Only source-associated targets with explicit physical detection methods; preserve one acquisition role per SCTID",
+    "hasSupportingContext": "Directed positive nonzero BODHI influence -> confirmed-present Context support, capped at +1 per disease",
+    "inSystem": "RF2 finding site or complete Pattern Location value -> named organ-system is-a ancestry; interview grouping only",
+    "prerequisite": "Directed positive nonzero BODHI prerequisites -> joint Association applicability, never an unconditional bonus",
+    "unresolved": "Missing meaning, units, linked findings or acquisition remain technical exclusions, not pending user approval",
+    "version": "D20-competition-connections-1"
+  },
+  "prerequisite_diseases": 44,
+  "promoted_exam_targets": [
+    "urn:ontoward:ExamFindingSnomedCT414069003"
+  ],
+  "real_model_calls": 0,
+  "relations": {
+    "contextType": 243,
+    "detectedBy": 1,
+    "evaluatedBy": 0,
+    "hasSupportingContext": 903,
+    "inSystem": 290
+  },
+  "runtime_classes": {
+    "AttributeValue": 373,
+    "BodySystem": 12,
+    "ContextFactor": 243,
+    "Disease": 843,
+    "ExamFinding": 1,
+    "ExamMethod": 1,
+    "FindingAttribute": 16,
+    "Symptom": 490
+  },
+  "symptom_system_coverage": {
+    "mapped": 255,
+    "total": 490
+  }
+}

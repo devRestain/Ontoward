@@ -13,14 +13,14 @@ sys.path.insert(0,str(ROOT))
 sys.path.insert(0,str(ROOT/'submission'))
 
 from Dev.ontology.database import SourceDatabase,json_text,file_hash
-from Dev.ontology.source_projection import BODHI_FILES,build,export,temporal_value
+from Dev.ontology.source_projection import BODHI_FILES,build,export,temporal_value,target_uri
 from Dev.ontology.model_normalization import ModelNormalizer,kst_day
 from Dev.ontology.admission import admit,validated_selection,RULES
 from knowledge.conditions import ExpectedValue,numeric_match
 
 
 def run():
-    scratch=Path(os.environ.get('ONTOWARD_ONTOLOGY_TEST_OUTPUT',ROOT/'Tmp/ontology-database-tests'))
+    scratch=Path(os.environ.get('ONTOWARD_ONTOLOGY_TEST_OUTPUT',ROOT/'Tmp/d18-verification/tooling'))
     scratch.mkdir(parents=True,exist_ok=True)
     directory=Path(tempfile.mkdtemp(prefix='run-',dir=scratch))
     checks=[]
@@ -127,9 +127,9 @@ def run():
     require((exported/'clinical.ttl').read_bytes()==(output/'preview/clinical.ttl').read_bytes(),'deterministic_rdf_export')
     review_path=directory/'approved-synthetic.json'
     labels_path=directory/'labels.ko.json'
-    labels_path.write_text(json.dumps({'urn:ontoward:AbdominalPain':'합성 복통'},ensure_ascii=False))
+    labels_path.write_text(json.dumps({target_uri('21522001'):'합성 복통'},ensure_ascii=False))
     questions_path=directory/'questions.ko.json'
-    questions_path.write_text(json.dumps({'urn:ontoward:AbdominalPain':'합성 복통 있나요?'},ensure_ascii=False))
+    questions_path.write_text(json.dumps({target_uri('21522001'):{'text':'합성 복통 있나요?','answer_type':'presence','affirmative':True}},ensure_ascii=False))
     receipt['text_assets']={name:{'path':path.relative_to(ROOT).as_posix(),'sha256':file_hash(path)}
                             for name,path in [('labels',labels_path),('questions',questions_path)]}
     review_path.write_text(json.dumps(receipt))
@@ -231,6 +231,80 @@ def run():
         reserved=list(executor.map(reserve,[0,1]))
     require(sum(reserved)==1,'concurrent_day_reservations_never_exceed_100')
     fails(lambda:ModelNormalizer(directory/'wrong-day.sqlite3',max_calls=1,daily_remaining=1,day='2000-01-01',client=Fake()),'allowance_date_must_be_current_kst')
+    from Dev.ontology.korean import freeze,run as run_korean,validate
+    from Dev.ontology.source_catalog import clinical_question_status
+    require(clinical_question_status('Disease','Disease')=='not_applicable_Disease','disease_names_are_not_clinical_interview_questions')
+    require(clinical_question_status('Symptom','Pain due to disease').startswith('not_directly'),'diagnosis_qualified_target_cannot_be_shortened_into_presence')
+    workset_path=directory/'korean-workset.json'
+    # Isolated synthetic worksets remain under Tmp and never execute a live client.
+    from Dev.ontology.v5 import write
+    production_owned=ROOT/'data/preparation/v5'/('synthetic-korean-'+directory.name)
+    frozen=freeze(output/'catalog',production_owned/'workset.json')
+    frozen_path=ROOT/frozen['workset']
+    workset=json.loads(frozen_path.read_text())
+    require(frozen['max_calls']==2*((frozen['labels']+19)//20+(frozen['questions']+19)//20),'korean_budget_is_derived_from_the_complete_workset')
+    require(frozen['questions']>0 and frozen['labels']>0,'source_bound_label_and_clinical_question_jobs_are_separate')
+    require('source_refs' not in frozen_path.read_text() and all(job.get('evidence_ids') for job in workset['question_jobs']),
+            'compact_workset_pins_shared_proofs_instead_of_copying_attribute_evidence')
+    require(json.loads((output/'preview/sources.json').read_text())['format']=='sqlite-source-audit-v1',
+            'preview_preserves_a_canonical_database_audit_reference')
+    class KoreanFake:
+        def __init__(self,reject=False,long=False): self.count=0;self.reject=reject;self.long=long
+        def chat(self,messages,**settings):
+            self.count+=1
+            packets=json.loads(messages[-1]['content'])['items']
+            reviewing=settings['output_schema']['properties']['items']['items']['properties']['decision']['enum'][0]=='accept'
+            items=[]
+            for packet in packets:
+                item={'job_id':packet['job_id'],'decision':('reject' if self.reject else 'accept') if reviewing else 'candidate','reason':'synthetic-only'}
+                if not reviewing:
+                    item['text']=('가'*31 if self.long else '합성 증상은 어떤가요?') if packet['kind']=='question' else '합성용어'
+                items.append(item)
+            return {'choices':[{'message':{'content':json.dumps({'items':items},ensure_ascii=False)}}]}
+    fake_korean=KoreanFake()
+    korean_result=run_korean(frozen_path,production_owned/'accepted',client=fake_korean)
+    require(korean_result['status']=='complete' and fake_korean.count==frozen['max_calls'],'full_korean_workset_requires_generation_and_independent_comparison')
+    require((production_owned/'accepted/questions.ko.json').is_file(),'completed_korean_workset_exports_runtime_compatible_question_assets')
+    require(run_korean(frozen_path,production_owned/'accepted',resume=True,client=fake_korean)['calls_this_run']==0,'explicit_identical_korean_resume_reuses_completed_requests')
+    rejected=KoreanFake(reject=True)
+    rejection=run_korean(frozen_path,production_owned/'rejected',client=rejected)
+    require(rejection['status']=='blocked' and rejected.count==2 and not rejection['accepted_jobs'],'semantic_rejection_stops_the_entire_batch')
+    retry=run_korean(frozen_path,production_owned/'rejected',resume=True,client=rejected)
+    require(retry['status']=='blocked' and rejected.count==2,'rejected_request_is_never_automatically_retransmitted')
+    overlong=run_korean(frozen_path,production_owned/'overlong',client=KoreanFake(long=True))
+    require(overlong['status']=='blocked','overlong_clinical_question_stops_without_truncation')
+    question_job={'job_id':'q','kind':'question'}
+    fails(lambda:validate({'items':[]},[question_job]),'partial_korean_whole_response_is_rejected')
+    fails(lambda:validate({'items':[{'job_id':'q','decision':'candidate','text':'가'*31,'reason':'synthetic'}]},[question_job]),'question_length_is_checked_independently_of_the_model')
+    repeated={'job_id':'q','decision':'candidate','text':'합성 질문인가요?','reason':'synthetic'}
+    fails(lambda:validate({'items':[repeated,repeated]},[question_job]),'duplicate_korean_response_id_is_rejected')
+    fails(lambda:validate({'items':[{**repeated,'text':'가?'}]},[question_job]),'nfd_question_is_rejected_without_silent_normalization')
+    class UnknownKorean:
+        def __init__(self): self.count=0
+        def chat(self,*args,**kwargs):
+            self.count+=1
+            raise TimeoutError('synthetic unknown transport outcome')
+    unknown=UnknownKorean()
+    stopped=run_korean(frozen_path,production_owned/'unknown',client=unknown)
+    require(stopped['status']=='blocked' and stopped['calls_total']==1,'unknown_korean_request_is_reserved_and_preserved')
+    require(run_korean(frozen_path,production_owned/'unknown',resume=True,client=unknown)['calls_this_run']==0 and unknown.count==1,
+            'explicit_restart_cannot_retransmit_an_unknown_korean_request')
+    import shutil
+    exhausted=production_owned/'exhausted'
+    exhausted.mkdir()
+    with sqlite3.connect(exhausted/'requests.sqlite3') as ledger:
+        with sqlite3.connect(production_owned/'accepted/requests.sqlite3') as accepted_ledger:
+            accepted_ledger.backup(ledger)
+        ledger.execute('DELETE FROM results')
+        ledger.execute("UPDATE calls SET stage=stage||'_unrelated'")
+    untouched=KoreanFake()
+    exhausted_result=run_korean(frozen_path,exhausted,resume=True,client=untouched)
+    require(exhausted_result['status']=='blocked' and untouched.count==0 and 'budget exhausted' in exhausted_result['failure'],
+            'korean_budget_exhaustion_stops_before_transport')
+    require(report['catalog']['classes']['Disease']['nodes']>0 and report['catalog']['relations']>0,'source_catalog_integrates_with_disease_extraction')
+    require(all(json.loads(line)['evidence'] for line in (output/'catalog/nodes.jsonl').read_text().splitlines()),'every_catalog_node_retains_source_or_derivation_evidence')
+    import shutil
+    shutil.move(str(production_owned),str(directory/'korean-results'))
     result={'status':'pass','checks':checks,'check_count':len(checks),'network':'none','model_calls':0,
             'patient_data':'synthetic','output':str(directory.relative_to(ROOT))}
     (directory/'verification.json').write_text(json.dumps(result,indent=2)+'\n')

@@ -1,0 +1,357 @@
+{
+  "format": "ontoward-storage-cleanup-v1",
+  "status": "pass",
+  "archive_receipt": "data/provenance/storage-cleanup-2026-10-16-archives.json",
+  "docker_receipt": "data/provenance/storage-cleanup-2026-10-16-docker.json",
+  "preservation": {
+    "status": "pass",
+    "unchanged_runtime_files": 43,
+    "preserved_asset_files": 16280,
+    "source_files": 109,
+    "source_rows": 12586084,
+    "source_custody": {
+      "build_id": "3ee766032ca36e3e77c21b6bc6e7d284a0eae78c0c0617bee24c456b5f3bc492",
+      "path": "data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/ontology.sqlite3"
+    },
+    "git_files_over_50MiB": [],
+    "local_history_large_blobs": [
+      "blob 01858e7e2466c9893c51a4d55dd0e068257c6872 106177012 data/preparation/v5/source-only-2026-10-16/build/catalog/relations.jsonl",
+      "blob f82b6156f1257f8e0ea99ac825893d811f7410c0 188596975 data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/catalog/relations.jsonl",
+      "blob e8b75c4d7009035bb4df999581ed52a5189f60f1 1099176699 data/preparation/v5/source-only-2026-10-16/build/interrupted-preview-1e837763-4fe3-4e38-ab6e-9405c809cfeb/sources.json",
+      "blob eaba04e0d81a88cf961dc6cb345b967f970d791d 1099176699 data/preparation/v5/source-only-2026-10-16/build/preview/sources.json"
+    ],
+    "historical_database_restore": "required_only_for_archived_D18_snapshot_checks",
+    "official_submission": "not_run",
+    "real_model": "not_run"
+  },
+  "runtime_package": {
+    "source": "/submission",
+    "archive": "/output/ontoward-submission.zip",
+    "files": [
+      ".env",
+      "config/input_parser.txt",
+      "config/texts.ko.json",
+      "knowledge/5b44871b970f5e98-clinical.ttl",
+      "knowledge/5b44871b970f5e98-questions.ko.json",
+      "knowledge/5b44871b970f5e98-reasoning_policy.json",
+      "knowledge/5b44871b970f5e98-vocabulary.ttl",
+      "knowledge/__init__.py",
+      "knowledge/conditions.py",
+      "knowledge/graph.py",
+      "knowledge/manifest.json",
+      "knowledge/schema.ttl",
+      "knowledge/scoring_policy.json",
+      "nova_sdk.py",
+      "requirements.txt",
+      "run.py",
+      "settings.py",
+      "workflow/__init__.py",
+      "workflow/clinical_reasoner.py",
+      "workflow/consultation.py",
+      "workflow/doctor.py",
+      "workflow/graph.py",
+      "workflow/input_interpreter.py",
+      "workflow/interview_planner.py",
+      "workflow/io/__init__.py",
+      "workflow/io/model_client.py",
+      "workflow/io/nova_session.py",
+      "workflow/io/request_executor.py",
+      "workflow/rules/__init__.py",
+      "workflow/rules/action.py",
+      "workflow/rules/budget.py",
+      "workflow/rules/input.py",
+      "workflow/rules/limits.py",
+      "workflow/rules/submission.py",
+      "workflow/runtime.py",
+      "workflow/state/__init__.py",
+      "workflow/state/interactions.py",
+      "workflow/state/models.py",
+      "workflow/state/questions.py",
+      "workflow/state/usage.py",
+      "workflow/submission_writer.py",
+      "workflow/text_config.py"
+    ],
+    "file_count": 42,
+    "expanded_bytes": 13630005,
+    "compressed_bytes": 1361955,
+    "sha256": "0c49a38e601c0acddd551863b674a03f36078485a61b0ac8ad74b14a552e66c1",
+    "clinical_workflow": "not_run"
+  },
+  "workflow": {
+    "tests": 69,
+    "status": "pass",
+    "evidence": "Tmp/storage-cleanup-2026-10-16/workflow/verification.json"
+  },
+  "korean": {
+    "status": "pass",
+    "check_count": 577,
+    "cases": [
+      {
+        "context_status": "present",
+        "termination": "submitted",
+        "diagnosis_kind": "disease",
+        "actions": 49,
+        "ros_actions": 6,
+        "context_actions": 30,
+        "scripted_gateway_calls": 41
+      },
+      {
+        "context_status": "absent",
+        "termination": "submitted",
+        "diagnosis_kind": "disease",
+        "actions": 49,
+        "ros_actions": 6,
+        "context_actions": 30,
+        "scripted_gateway_calls": 41
+      },
+      {
+        "context_status": "unknown",
+        "termination": "submitted",
+        "diagnosis_kind": "disease",
+        "actions": 49,
+        "ros_actions": 6,
+        "context_actions": 30,
+        "scripted_gateway_calls": 11
+      }
+    ],
+    "examination": {
+      "status": "pass",
+      "target": "urn:ontoward:ExamFindingSnomedCT414069003",
+      "scope": "separate selected-action acquisition through SOAP and confirmed submission"
+    },
+    "prepare_seconds": 2.584487274987623,
+    "peak_rss_kib": 274840,
+    "graph_triples": 99105,
+    "associations": 9401,
+    "prepared_say_questions": 1308,
+    "blocked_targets": 15,
+    "manifest_sha256": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61",
+    "patient_data": "synthetic Korean",
+    "model_responses": "scripted",
+    "network": "none",
+    "actual_luna": "not_run",
+    "authenticated_sdk": "not_run",
+    "official_submission": "not_run"
+  },
+  "archive_isolation": {
+    "status": "pass",
+    "cpus": 2,
+    "memory_gib": 8,
+    "network": "none",
+    "parent_data_assets": "not_mounted",
+    "workflow_tests": 69,
+    "admitted_cases": 3,
+    "korean_checks": 577,
+    "evidence": "Tmp/storage-cleanup-2026-10-16/isolated",
+    "first_attempt": "failed_on_incorrect_test_mount_before_suite_execution",
+    "corrected_attempt": "pass"
+  },
+  "removed_scratch": [
+    {
+      "path": "Tmp/app-text20/archive/submission",
+      "files": 42,
+      "bytes": 13630005
+    },
+    {
+      "path": "Tmp/app-text20/isolation-output/workflow/run-m5evpji0/submission",
+      "files": 49,
+      "bytes": 13596966
+    },
+    {
+      "path": "Tmp/app-text20/workflow/run-brx7jdo5/submission",
+      "files": 57,
+      "bytes": 26753740
+    },
+    {
+      "path": "Tmp/d18-verification/workflow/run-3gn8vu0o/submission",
+      "files": 50,
+      "bytes": 276055
+    },
+    {
+      "path": "Tmp/d18-verification/workflow/run-4akzm_nr/submission",
+      "files": 50,
+      "bytes": 273967
+    },
+    {
+      "path": "Tmp/d18-verification/workflow/run-6f3m6aga/submission",
+      "files": 50,
+      "bytes": 274754
+    },
+    {
+      "path": "Tmp/d19-verification/workflow/run-xufs1z7a/submission",
+      "files": 50,
+      "bytes": 276765
+    },
+    {
+      "path": "Tmp/d20-final-build",
+      "files": 19,
+      "bytes": 94587132
+    },
+    {
+      "path": "Tmp/d20-initial-build",
+      "files": 18,
+      "bytes": 91804445
+    },
+    {
+      "path": "Tmp/d20-pinned-build",
+      "files": 19,
+      "bytes": 94521596
+    },
+    {
+      "path": "Tmp/d20-superseded-admission",
+      "files": 26,
+      "bytes": 102725887
+    },
+    {
+      "path": "Tmp/d20-verification/workflow/run-xli23h97/submission",
+      "files": 53,
+      "bytes": 13367636
+    },
+    {
+      "path": "Tmp/d20-verification/workflow-canonical/run-a4px9lg3/submission",
+      "files": 53,
+      "bytes": 13368482
+    },
+    {
+      "path": "Tmp/ontology-v5-admission",
+      "files": 1479,
+      "bytes": 239072007
+    }
+  ],
+  "retired_runtime": [
+    {
+      "path": "submission/knowledge/485b9e8a7399c47b-clinical.ttl",
+      "bytes": 12209058,
+      "sha256": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a",
+      "preserved": "data/preparation/v5/competition-graph-2026-10-16/preview/clinical.ttl"
+    },
+    {
+      "path": "submission/knowledge/485b9e8a7399c47b-vocabulary.ttl",
+      "bytes": 880624,
+      "sha256": "1f509473beb14a24924c04d2fe86a057469e39bcd32928ad1086db4a3cbf09d8",
+      "preserved": "data/preparation/v5/competition-graph-2026-10-16/preview/vocabulary.ttl"
+    },
+    {
+      "path": "submission/knowledge/485b9e8a7399c47b-reasoning_policy.json",
+      "bytes": 126,
+      "sha256": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc",
+      "preserved": "data/preparation/v5/competition-graph-2026-10-16/preview/reasoning_policy.json"
+    }
+  ],
+  "git_tracking": {
+    "untracked_generated_files": 59,
+    "local_copies_preserved": true,
+    "index_change": "staged_deletions_only",
+    "other_user_changes": "preserved",
+    "local_generated_bytes_preserved": 522673323
+  },
+  "git_history": {
+    "current_head": "fac0c639c00202230a8066568649a54f68be9839",
+    "recorded_origin_main": "2650f45",
+    "commits_after_recorded_origin": [
+      "f04d554",
+      "fac0c63"
+    ],
+    "oversized_blobs": [
+      "blob 01858e7e2466c9893c51a4d55dd0e068257c6872 106177012 data/preparation/v5/source-only-2026-10-16/build/catalog/relations.jsonl",
+      "blob f82b6156f1257f8e0ea99ac825893d811f7410c0 188596975 data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/catalog/relations.jsonl",
+      "blob e8b75c4d7009035bb4df999581ed52a5189f60f1 1099176699 data/preparation/v5/source-only-2026-10-16/build/interrupted-preview-1e837763-4fe3-4e38-ab6e-9405c809cfeb/sources.json",
+      "blob eaba04e0d81a88cf961dc6cb345b967f970d791d 1099176699 data/preparation/v5/source-only-2026-10-16/build/preview/sources.json"
+    ],
+    "rewrite": "not_run_requires_explicit_authorization",
+    "remote_refresh": "not_run",
+    "push": "not_run",
+    "proposed_next_action": {
+      "branch": "codex/storage-cleanup-20261016",
+      "base": "2650f45",
+      "action": "Create one clean source commit while preserving the existing branch and uncommitted work",
+      "authorization": "required",
+      "remote_write": "excluded"
+    }
+  },
+  "official_submission": "not_run",
+  "real_model": "not_run",
+  "host_dependencies_installed": false,
+  "final_scratch_removal": [
+    {
+      "path": "Tmp/app-text20/isolation-output/workflow/run-m5evpji0/packaging-copy",
+      "bytes": 13630025
+    },
+    {
+      "path": "Tmp/app-text20/workflow/run-brx7jdo5/packaging-copy",
+      "bytes": 26786925
+    },
+    {
+      "path": "Tmp/d18-verification/workflow/run-3gn8vu0o/packaging-copy",
+      "bytes": 262908
+    },
+    {
+      "path": "Tmp/d18-verification/workflow/run-4akzm_nr/packaging-copy",
+      "bytes": 263727
+    },
+    {
+      "path": "Tmp/d18-verification/workflow/run-6f3m6aga/packaging-copy",
+      "bytes": 261607
+    },
+    {
+      "path": "Tmp/d19-verification/workflow/run-xufs1z7a/packaging-copy",
+      "bytes": 263618
+    },
+    {
+      "path": "Tmp/d20-verification/workflow/run-xli23h97/packaging-copy",
+      "bytes": 13397752
+    },
+    {
+      "path": "Tmp/d20-verification/workflow-canonical/run-a4px9lg3/packaging-copy",
+      "bytes": 13398598
+    },
+    {
+      "path": "Tmp/storage-cleanup-2026-10-16/isolated/workflow/run-pck9l_x2/packaging-copy",
+      "bytes": 13630025
+    },
+    {
+      "path": "Tmp/storage-cleanup-2026-10-16/isolated/workflow/run-pck9l_x2/submission",
+      "bytes": 13596966
+    },
+    {
+      "path": "Tmp/storage-cleanup-2026-10-16/workflow/run-kleqew4m/packaging-copy",
+      "bytes": 13700050
+    },
+    {
+      "path": "Tmp/storage-cleanup-2026-10-16/workflow/run-kleqew4m/submission",
+      "bytes": 13666865
+    },
+    {
+      "path": "Tmp/storage-cleanup-2026-10-16/archive/submission",
+      "bytes": 13630005
+    }
+  ],
+  "github_snapshot": {
+    "status": "pass",
+    "archive": "Tmp/packaging/ontoward-github-source.zip",
+    "runtime_files_equal_to_verified_submission": 42,
+    "report": "Tmp/packaging/ontoward-github-source.json",
+    "file_selection": "git ls-files -co --exclude-standard; omit ignored local preparation outputs",
+    "commit": "not_run",
+    "push": "not_run"
+  },
+  "workspace_size": {
+    "method": "du -k -d 1; shared APFS extents may be counted more than once",
+    "before_bytes": 34631393280,
+    "after_bytes": 18510831616,
+    "reported_reduction_bytes": 16120561664
+  },
+  "host_space": {
+    "method": "df -k .; observed filesystem availability across the cleanup window",
+    "before": {
+      "used_bytes": 181694603264,
+      "available_bytes": 30627864576
+    },
+    "after": {
+      "used_bytes": 179057389568,
+      "available_bytes": 33265078272
+    },
+    "observed_available_increase_bytes": 2637213696,
+    "caution": "Do not add workspace or Docker accounting reductions to host free space; shared filesystem blocks and VM storage are different accounting surfaces"
+  }
+}

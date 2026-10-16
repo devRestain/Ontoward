@@ -1,0 +1,11 @@
+{
+  "build_id": "3ee766032ca36e3e77c21b6bc6e7d284a0eae78c0c0617bee24c456b5f3bc492",
+  "bytes": 435804,
+  "files": 99,
+  "path": "data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/generation-evidence.zip",
+  "raw_source_packages": "excluded",
+  "runtime_submission": "not_created",
+  "sha256": "0ceb5a1d9f96f26bb78168ca4c52ccd2d0cedc69c0a9b983aa36b9ada73b063b",
+  "status": "pass",
+  "verification": "extracted_file_set_and_all_sha256"
+}

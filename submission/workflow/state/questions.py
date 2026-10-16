@@ -34,6 +34,8 @@ class QuestionLifecycle:
         state.questions.questions = []
 
     def reject_action(self, state, action, error):
+        if action.question.semantic_key() not in state.questions.blocked_keys:
+            state.questions.blocked_keys.append(action.question.semantic_key())
         item = state.case.get(action.question.item_id)
         if item:
             item.status = "done"

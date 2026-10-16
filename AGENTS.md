@@ -35,11 +35,15 @@
 - Assign operational progress to the `PROJECT_STATE.md` in its owning scope.
 - Treat root, `submission/`, and `data/` as the three maintained state scopes.
 - Keep generated directories and upstream archive internals under their existing owner.
-- Apply the latest D11 five-session MVP contract and keep synthetic execution evidence separate from admitted clinical knowledge and authenticated SDK execution.
-- Apply D11 Doctor framing and Gateway parsing as separate designated-model roles; keep education selection in InterviewPlanner and final record submission in SubmissionWriter.
+- Apply D17 prepared interviews Pattern-first fit bounded parsing and adaptive budgets while preserving D11 session and submission boundaries.
+- Apply D17 prepared Doctor delivery and designated-model Gateway interpretation; keep selection in InterviewPlanner and submission in SubmissionWriter.
 - Maintain the implemented Korean workflow white paper in submission/README.md and keep root README as project orientation.
 - Do not resume cancelled model jobs or expand the corpus without a new user request.
-- Keep corpus expansion, submission publication, and WSL2 deployment outside the current offline MVP slice; preserve independent preparation jobs and their review blockers.
+- Apply D18's source-only reset; exclude source downloads, submission publication, and WSL2 deployment.
+- Apply D20's user-accepted competition graph connections and batch approval; leave Korean generation to its separate session.
+- Apply D21 patient-action-only Korean generation with independent NFC 1-30 validation; prioritize the explicitly requested NOVA development-key route and retain SNU workspace Codex CLI as the alternative.
+- Apply newer D22 NOVA-only continuation and explicitly authorized failure resumption within the frozen same-day ceiling; retain every rejected request and stop on completion or request/service limits.
+- Apply D23 competition acceptance to complete source-backed candidates and D22 patient actions without another clinical or user approval gate; preserve technical exclusions and exact runtime pins.
 - Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep maintained workflow tests in Dev/tests/workflow and generated synthetic assets and evidence in Tmp.
 
 ## Working Order
@@ -54,10 +58,8 @@
 - Use D07 for preserved preparation evidence, separately admitted submission bundles, and one runtime RDFLib Graph.
 - Use D08 and data/ontology/AGENTS.md for shared patterns, typed conditions, disease associations, conditional weights, and SDK text mapping.
 - Use specific clinical pain complaints as D08 retrieval targets and preserve finer Location values, raw wording, interpretation uncertainty, and separate episodes.
-- Use D11 for the five-session workflow, Python routing and scoring, scoped budgets, and unasked-item deletion; use D12 for the SDK wire format and packaging.
-- Apply D15 for the approved full v5.0 batch, information-preserving SOAP, bounded Gateway vocabulary, and minimal Korean interview assets.
-- Apply D16 for offline Disease-to-document education excerpt preparation in Dev/education/ and data/preparation/education/.
-- Keep D16 source excerpts and review drafts outside runtime knowledge until separately selected for admission.
+- Use D17 for the five-session adaptive workflow Python decisions common action budget and reconsideration of undelivered low-priority questions; use D12 for wire format and packaging.
+- Apply D15 for information-preserving SOAP and bounded Gateway vocabulary; use D18 for all knowledge and Korean text preparation.
 - Apply newer explicit user decisions before stale operational plans or next goals; record implementation and execution only from observed evidence.
 - Isolate runtime LLM instructions and editable clinical text in submission/config with public environment-selected paths; keep machine field names and decision codes in Python.
 - Package only submission runtime Python, pinned requirements, public .env, config prompts and text, and knowledge assets through the package Compose service under D14.
@@ -71,11 +73,17 @@
 - Run maintained offline workflow checks with Dev/tests/workflow/compose.offline.yaml and exclude tests and synthetic assets from the submission.
 - Require D08 v5.0 alignment before generating or admitting new clinical artifacts.
 - Use Dev/ontology/source_projection.py build/export/admit, database.py, model_normalization.py, admission.py, and v5.py for full source ingestion, candidate projection, and pinned batch admission.
-- Treat the removed v4.2 SNOMED and guideline extraction code as deprecated; retain useful archival evidence under data with explicit deprecation metadata.
-- Preserve original assets and vocabulary approval receipts without rebuilding legacy interfaces or automatically resuming old jobs.
-- Use D09 and Dev/AGENTS.md for source custody, whole-variant dispositions, source-grounded optional Sol normalization, conservative KST quotas, and explicit batch admission.
-- Treat the approved 510 English terms as expandable seeds and apply D09/D15 explicit candidate acceptance without claiming independent clinical validation.
-- Preserve D15 user candidate acceptance separately from independent clinical validation and retain the original preview review material.
+- Delete pre-v5 derived data, authored seed vocabularies, old clinical/text batches, guideline-derived outputs, and their obsolete approvals under D18.
+- Preserve supplied assets byte-for-byte and record the hash-verified source custody, deletion receipt, and clean empty v5 base.
+- Use source_catalog.py with source_projection.py for every schema class, complete source-edge custody, Korean coverage, and explicit unsupported runtime roles.
+- Use source_projection.py connections and connections.py for source-backed ROS, typed Context, prerequisite applicability, and the selected nonduplicate physical finding path.
+- Reuse the immutable source-custody database read-only for D20 projection batches; keep approvals pinned to the exact derived graph and transformation policy.
+- Treat graph_admitted_text_pending as approved graph data awaiting action text; require completed pinned wording before prepare allows consultation.
+- Admit D23 text with a new receipt referencing the D20 graph and D22 provenance; preserve the original graph receipt and admission report.
+- Apply D19 with findings.py for source acquisition roles, clinical Observable dimensions, exact grouped values, and specialty gaps; keep its source graph outside executable previews until reviewed.
+- Use shared evidence sets and the canonical SQLite audit; archive superseded large JSON losslessly instead of copying global attribute proofs or accumulating interrupted previews.
+- Use D22's NOVA-only route for current Korean wording and Docker Codex CLI only for separately authorized normalization or earlier worksets; preserve candidate provenance and never treat model translations as Korean RF2 terms.
+- Require new build-pinned admission after D18; do not reuse previous batch or vocabulary approvals.
 - Use D10 for the separate extraction image and later WSL2 operating boundary.
 - Record decision alternatives, selections, and lifecycle changes only in `DECISION_STATE.md`.
 - Reference decision IDs from operational state without copying their alternatives or statuses.

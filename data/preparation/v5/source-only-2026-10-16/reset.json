@@ -1,0 +1,8 @@
+{
+  "base_manifest_sha256": "3b8f791a116431eb58edcfdcb33152de6bfd39be7b9ebccb90bd724b3a420d02",
+  "removed_files": 5446,
+  "runtime_admission": "withdrawn_by_D18",
+  "source_files": 109,
+  "source_rows": 12586084,
+  "status": "clean_source_only_base"
+}

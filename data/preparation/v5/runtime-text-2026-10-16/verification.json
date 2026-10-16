@@ -1,0 +1,243 @@
+{
+  "accepted_patient_actions": 1309,
+  "actual_luna": "not_run",
+  "added_exam_text_triples": 1,
+  "approval_receipt": {
+    "path": "data/preparation/v5/runtime-text-2026-10-16/review-approved.json",
+    "sha256": "97d395a23a8aed7f468b77dd96ab90633d20dbf5eb1d06644e1e43ab45d9bf43"
+  },
+  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+  "decision": "D23",
+  "exam_requests": 1,
+  "graph_triples": 99105,
+  "manifest": {
+    "path": "submission/knowledge/manifest.json",
+    "sha256": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61"
+  },
+  "network": "none",
+  "new_model_calls": 0,
+  "official_environment_e2e": "not_run",
+  "official_submission": "not_run",
+  "original_graph_admission_report_preserved": {
+    "path": "data/preparation/v5/competition-graph-2026-10-16/admission.json",
+    "sha256": "8e366423cf46324674887490efb31e26da3fc5a92211eca9788be6939af1ad43"
+  },
+  "original_graph_triples": 99104,
+  "removed_or_changed_clinical_triples": 0,
+  "reports": {
+    "admitted": {
+      "cases": [
+        {
+          "actions": 49,
+          "diagnosis_kind": "disease",
+          "gateway_payload_bytes": 85426,
+          "max_context_bytes": 1288,
+          "model_calls": 3,
+          "numeric": false,
+          "pattern_evaluations": 45,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 2,
+          "scripted_consult_seconds": 8.793140033027157,
+          "target": "urn:ontoward:SymptomSnomedCT21522001",
+          "termination": "submitted",
+          "unresolved_records": 45
+        },
+        {
+          "actions": 49,
+          "diagnosis_kind": "disease",
+          "gateway_payload_bytes": 115880,
+          "max_context_bytes": 2819,
+          "model_calls": 4,
+          "numeric": true,
+          "pattern_evaluations": 45,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 2,
+          "scripted_consult_seconds": 8.080203058023471,
+          "target": "urn:ontoward:SymptomSnomedCT21522001",
+          "termination": "submitted",
+          "unresolved_records": 44
+        },
+        {
+          "actions": 49,
+          "diagnosis_kind": "symptom",
+          "gateway_payload_bytes": 56253,
+          "max_context_bytes": 997,
+          "model_calls": 2,
+          "numeric": false,
+          "pattern_evaluations": 3,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 2,
+          "scripted_consult_seconds": 2.24888386199018,
+          "target": "urn:ontoward:SymptomSnomedCT1003721002",
+          "termination": "submitted",
+          "unresolved_records": 46
+        }
+      ],
+      "path": "Tmp/app-text20/admitted/verification.json",
+      "peak_rss_kib": 273420,
+      "prepare_seconds": 4.175956456980202,
+      "sha256": "ca0a647aad3502be7de4d7f6342d50c7b63de6c6b0a5a6dfd0958416f51b5fe4",
+      "status": "pass"
+    },
+    "archive_admitted": {
+      "cases": [
+        {
+          "actions": 49,
+          "diagnosis_kind": "disease",
+          "gateway_payload_bytes": 85426,
+          "max_context_bytes": 1288,
+          "model_calls": 3,
+          "numeric": false,
+          "pattern_evaluations": 45,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 2,
+          "scripted_consult_seconds": 9.28404136095196,
+          "target": "urn:ontoward:SymptomSnomedCT21522001",
+          "termination": "submitted",
+          "unresolved_records": 45
+        },
+        {
+          "actions": 49,
+          "diagnosis_kind": "disease",
+          "gateway_payload_bytes": 115880,
+          "max_context_bytes": 2819,
+          "model_calls": 4,
+          "numeric": true,
+          "pattern_evaluations": 45,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 2,
+          "scripted_consult_seconds": 8.614800936018582,
+          "target": "urn:ontoward:SymptomSnomedCT21522001",
+          "termination": "submitted",
+          "unresolved_records": 44
+        },
+        {
+          "actions": 49,
+          "diagnosis_kind": "symptom",
+          "gateway_payload_bytes": 56253,
+          "max_context_bytes": 997,
+          "model_calls": 2,
+          "numeric": false,
+          "pattern_evaluations": 3,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 2,
+          "scripted_consult_seconds": 2.4588650910300203,
+          "target": "urn:ontoward:SymptomSnomedCT1003721002",
+          "termination": "submitted",
+          "unresolved_records": 46
+        }
+      ],
+      "path": "Tmp/app-text20/isolation-output/admitted/verification.json",
+      "peak_rss_kib": 273560,
+      "prepare_seconds": 3.883292395970784,
+      "sha256": "0a8473bdaa46178d92b6833732ec4e35dbfa5281fd2a79266d2d0ee9462c2d8a",
+      "status": "pass"
+    },
+    "archive_korean": {
+      "cases": [
+        {
+          "actions": 49,
+          "context_actions": 30,
+          "context_status": "present",
+          "diagnosis_kind": "disease",
+          "ros_actions": 6,
+          "scripted_gateway_calls": 41,
+          "termination": "submitted"
+        },
+        {
+          "actions": 49,
+          "context_actions": 30,
+          "context_status": "absent",
+          "diagnosis_kind": "disease",
+          "ros_actions": 6,
+          "scripted_gateway_calls": 41,
+          "termination": "submitted"
+        },
+        {
+          "actions": 49,
+          "context_actions": 30,
+          "context_status": "unknown",
+          "diagnosis_kind": "disease",
+          "ros_actions": 6,
+          "scripted_gateway_calls": 11,
+          "termination": "submitted"
+        }
+      ],
+      "check_count": 577,
+      "examination": {
+        "scope": "separate selected-action acquisition through SOAP and confirmed submission",
+        "status": "pass",
+        "target": "urn:ontoward:ExamFindingSnomedCT414069003"
+      },
+      "path": "Tmp/app-text20/isolation-output/korean/verification.json",
+      "peak_rss_kib": 275416,
+      "prepare_seconds": 3.9026244280394167,
+      "sha256": "09bae0017e26eae1c7a85b07d17d46602b1746d3411f64a0633a10b36def175d",
+      "status": "pass"
+    },
+    "archive_workflow": {
+      "path": "Tmp/app-text20/isolation-output/workflow/verification.json",
+      "sha256": "8d78543a59d7f5dbfabda3da4c833a018137bf2b54797edcd0bf035ad7603ef4",
+      "successful": true,
+      "tests": 69
+    },
+    "korean": {
+      "cases": [
+        {
+          "actions": 49,
+          "context_actions": 30,
+          "context_status": "present",
+          "diagnosis_kind": "disease",
+          "ros_actions": 6,
+          "scripted_gateway_calls": 41,
+          "termination": "submitted"
+        },
+        {
+          "actions": 49,
+          "context_actions": 30,
+          "context_status": "absent",
+          "diagnosis_kind": "disease",
+          "ros_actions": 6,
+          "scripted_gateway_calls": 41,
+          "termination": "submitted"
+        },
+        {
+          "actions": 49,
+          "context_actions": 30,
+          "context_status": "unknown",
+          "diagnosis_kind": "disease",
+          "ros_actions": 6,
+          "scripted_gateway_calls": 11,
+          "termination": "submitted"
+        }
+      ],
+      "check_count": 577,
+      "examination": {
+        "scope": "separate selected-action acquisition through SOAP and confirmed submission",
+        "status": "pass",
+        "target": "urn:ontoward:ExamFindingSnomedCT414069003"
+      },
+      "path": "Tmp/app-text20/korean/verification.json",
+      "peak_rss_kib": 275300,
+      "prepare_seconds": 2.4728457530145533,
+      "sha256": "b64fd03345832436f0acd9a6d3161808585b9dd46b610816c32c81801d7f4a78",
+      "status": "pass"
+    },
+    "tooling": {
+      "check_count": 52,
+      "path": "Tmp/app-text20/tooling/verification.json",
+      "sha256": "3ac2ecd45875c6caa49dbedc07531432e99c087faadcc97fd6a95069b5fe71ce",
+      "status": "pass"
+    },
+    "workflow": {
+      "path": "Tmp/app-text20/workflow/verification.json",
+      "sha256": "1f733ec851d0fcd1155bf27ee4bb77e6139bf43497a2409e3ded121229d59919",
+      "successful": true,
+      "tests": 69
+    }
+  },
+  "say_questions": 1308,
+  "source_and_policy_pins_preserved": true,
+  "status": "pass",
+  "verified_at": "2026-10-16T12:33:02.756439+00:00"
+}

@@ -1,27 +1,21 @@
-# 지식 준비 자료
+# 원천과 온톨로지 준비 자료
 
-data/는 원천 식별·판본·파일 해시·매핑·검토와 지속 준비 결과를 소유한다. 원본 RF2·BODHI·주최자 패키지는 assets/에 그대로 보존하며 환자 상태와 실제 실행은 submission/이 소유한다.
+data/는 공급된 원천의 식별·판본·파일 해시·매핑·지속 준비 결과를 소유한다. RF2·BODHI-S 원본과 주최자 패키지는 assets/에 그대로 보존하며 실제 상담과 환자 상태는 submission/이 소유한다.
 
 | 경로 | 역할 |
 |---|---|
-| [ontology/](ontology/README.md) | 현재 v5.0 schema, starter vocabulary, 승인 용어 영수증 |
-| [preparation/v5/](preparation/v5/README.md) | 전체 원천 SQLite·후보 RDF·검토 자료와 보존된 앞선 preview |
-| [preparation/education/](preparation/education/runtime842-2026-10-15/review.md) | D16 질환·원천 목록, 명시적 구간 매핑, 원문 발췌와 검토 초안 |
-| [ontology/v4.2/](ontology/v4.2/schema.ttl) | 정확히 보존한 deprecated schema와 vocabulary |
-| [ontology/deprecated.json](ontology/deprecated.json) | 이전 추출 인터페이스·도구·준비 자료의 deprecation 목록 |
-| catalog/·provenance/ | 보존된 원본 탐색·공모전 출처 식별 |
-| 이전 preparation/ 파일럿 | 원응답·검토·승인과 실행 증거; 현재 구축 입력과 분리 |
+| [ontology/](ontology/README.md) | v5.0 구조 계약과 원천 투영 의미 |
+| [preparation/v5/](preparation/v5/source-only-2026-10-16/README.md) | 원천 DB·깨끗한 베이스·삭제 영수증·새 후보·한국어 작업·증빙 |
+| catalog/·provenance/ | 원본 탐색과 공모전 출처 식별 |
 
-현재 준비는 공급된 International 2026-05-01 기반·Korean 2026-06-15 확장의 전체 Snapshot과 BODHI-S 8개 CSV를 수집한다. 원천·최신 행·정규화·RDF·주장·판단·승인은 SQLite가 보존하며 후보 RDF와 배치 검토 자료를 생성한다. 원천 기반 선택적 개발 Sol은 KST 예산과 공유 대장에서 제한한다. 실제 집계와 검증은 [데이터 상태](PROJECT_STATE.md)와 각 빌드의 report·verification에 기록한다.
+D18에 따라 pre-v5 파생 데이터, 수동 seed와 번역, 이전 임상 배치·승인·교육 초안과 임시 사본을 삭제했다. 이전 승인을 새 빌드에 적용하지 않는다. 삭제 검증과 현재 처리 결과는 [데이터 상태](PROJECT_STATE.md)가 관리한다.
 
-각 preview는 schema·registry·정규화·Snapshot·파일 해시·점수 정책 버전을 고정한다. sources.json에 raw UUID·식별자·원천 조건·행 위치와 제외/보류 이유를, registry.json에 식별자 확인과 의미상 검토 상태를 유지한다. 한국어 description은 같은 SCTID의 명칭으로 연결한다.
+전체 International 2026-05-01 기반·Korean 2026-06-15 확장 Snapshot과 BODHI-S 8개 CSV를 준비 DB에 보존한다. 공모전 어휘는 유효한 원천 표현과 필요한 의존 개념으로 선택한다. 모든 클래스의 역할·원천 근거·처리 수·미해결 이유를 기록하며 관련 없는 넓은 계층 전체를 한국어 번역 대상으로 삼지 않는다.
 
-BODHI의 두 방향 likelihood는 구분하고 원래의 zero와 소수 점수를 보존한다. strong_predictor를 추가 가산하거나 라벨을 확률로 해석하지 않는다. 원천의 조건 묶음을 합치거나 해결되지 않은 동반 소견을 삭제하지 않는다.
+Korean RF2 명칭은 같은 SCTID로 연결하고 Description ID·원천 행·판본을 유지한다. 모델 번역은 공식 용어와 구분한다. 관찰 가능한 대상의 임상 질문은 NFC 1–30자로 검증하고 생성과 별도 자동 의미 대조 결과를 함께 보존한다. 실행은 [생성 도구](../Dev/ontology/README.md)의 고정 작업 집합·계산된 유한 호출 상한·실패 시 중단 규칙을 따른다.
 
-preview_only와 registry candidate는 사람의 매핑·임상 검토와 제출 자산 수용 이전 상태다. 필요한 실행 자산을 별도 수용한 뒤 submission/knowledge/에 배치한다. 런타임과 그 테스트는 이 data/ 디렉터리에 의존하지 않는다.
+후보 RDF·원천 카탈로그·자동 의미 대조와 명시적 사용자 수용을 구분한다. D20은 [공모전 그래프](preparation/v5/competition-graph-2026-10-16/README.md)를 수용했고, D23은 완전한 원천 기반 후보·매핑과 D22의 한국어 환자 행동을 공모전용으로 승인한다. 추가 사용자·임상 승인 대기는 없으며 원천 의미·단위·획득 방식 누락은 기술적 제외로 구분한다. [런타임 수용 결과](preparation/v5/runtime-text-2026-10-16/README.md)는 새 영수증과 원래 그래프·문구 증빙을 연결한다. 원천 DB는 읽기 전용으로 공유하고 새 투영·승인·관계 근거만 별도 보존한다.
 
-D15의 [별도 승인 영수증](preparation/v5/full-snomed-bodhi-2026-10-15/review-approved.json)은 전체 후보 사용에 대한 사용자 수용을 기록한다. [admission.json](preparation/v5/full-snomed-bodhi-2026-10-15/admission.json)은 제출 지식 수용 결과이며 원래 preview와 미승인 검토 양식은 보존한다. [최소 한국어 문구](preparation/v5/full-snomed-bodhi-2026-10-15/texts/preparation.json)는 라벨·질문 해시를 같은 승인에 고정한다. 독립 임상 검증·질환별 계획·실제 모델 성능과 구분한다.
+D22는 내부 명칭의 전수 번역을 제외한 환자 행동 1,309개의 NOVA 생성과 별도 의미 대조를 완료했다. D23은 그 문구를 정확한 해시로 실행 수용하고 오프라인 한국어 상담과 독립 ZIP을 검증했다. 이전 Codex CLI 설정 오류와 미선택 전체 명칭 작업은 과거 준비 증빙으로 보존하며 현재 환자 행동의 실행을 차단하지 않는다.
 
-D16의 교육 원문은 사용자 검토 전 초안으로 보관한다. 질환별 구간을 지정한 초안과 아직 확인하지 않은 후보를 구분하며 출처·조건·원문 언어를 보존한다. [도구 설명](../Dev/education/README.md)에서 매핑 수정과 재검증 방법을 확인할 수 있다. 원문 준비와 독립 임상 검증·한국어 교육 문구·제출 편입은 각각 별도다.
-
-승인된 510개 영어 용어 목록과 영수증은 유지한다. 이전 문헌 파일럿의 원응답·승인도 보존하며 새 데이터로 자동 변환하거나 작업을 재개하지 않는다. 계약은 [D08/D09](../DECISION_STATE.md#D08), 도구는 [Dev 안내](../Dev/ontology/README.md), 운영 기록은 [PROJECT_STATE](PROJECT_STATE.md)를 따른다.
+D24는 준비 자료의 저장과 Git 추적을 분리한다. 현재 공유 원천 DB와 모든 요청·반려 기록은 로컬 원래 경로에 유지하고, 과거 D18의 원천 베이스·빌드 DB는 [해시를 검증한 gzip 보관본](provenance/storage-cleanup-2026-10-16-archives.json)으로 보존한다. 해당 과거 검사에만 확장본 복원이 필요하며 상담은 submission 내부 실행 자산을 사용한다. Git에는 승인·출처·검증 요약과 깨끗한 base를 남기고, 준비 카탈로그·작업 집합·요청 원문·DB·보관본은 포함하지 않는다. 로컬 파일 보존과 Git 추적 해제, 호스트 여유 공간과 디렉터리 크기를 [정리 영수증](provenance/storage-cleanup-2026-10-16.json)에서 구분한다.

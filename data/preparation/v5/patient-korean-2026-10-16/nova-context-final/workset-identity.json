@@ -1,0 +1,14 @@
+{
+  "by_purpose": {
+    "context": 148,
+    "examination": 1
+  },
+  "exclusions": 15,
+  "jobs": 149,
+  "label_jobs": 0,
+  "max_calls": 811,
+  "previously_accepted_jobs": 1160,
+  "provider": "nova_dev_key",
+  "status": "frozen",
+  "workset_sha256": "3673d6f3c2aa5f6b278470aa400f33d99e64e218aa725a95b5ef503b496c4982"
+}

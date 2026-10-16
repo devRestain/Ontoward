@@ -2,10 +2,8 @@
 
 ## Ownership
 
-- Own schema.ttl as the current D08 v5.0 contract and vocabulary.ttl as starter terminology under the parent data state.
-- Preserve the exact previous schema and vocabulary in v4.2/ as deprecated evidence.
-- Use deprecated.json to identify old extraction interfaces and preparation records that are not v5.0 inputs.
-- Preserve vocabulary-candidates.md and vocabulary-approval.json as the approved 510-term seed and approval receipt, separate from clinical and runtime admission.
+- Own schema.ttl as the D08 v5.0 structural contract; keep clinical vocabulary derived exclusively from source rows under D18.
+- Remove pre-v5 data, starter vocabulary, old extraction interfaces, manual translations, and obsolete approval receipts; preserve the clean empty base and deletion receipt in ../preparation/v5/.
 - Keep source-specific candidate registries, mapping decisions, raw assertions, dispositions, and previews in ../preparation/v5/.
 - Keep full-source SQLite custody and pinned batch receipts in ../preparation/v5/; do not treat model normalization, structural verification, or export as human approval.
 - Keep Python preparation in root Dev/ontology and runtime types and readers in root submission/knowledge.
@@ -40,7 +38,7 @@
 - Compare compatible conditions within one observation and episode; never combine separate episodes.
 - Replace matched ancestor scores with stricter matched variants even when the refined score decreases.
 - Use the maximum score once among incomparable matched variants and once per Disease–Target across repetitions and sources.
-- Sum distinct Target supports as ranking scores rather than probabilities.
+- Preserve distinct Target source support and apply the separately pinned D17 fit policy without treating scores as probabilities.
 - Use the manifest-pinned public scoring policy and preserve fractional and zero values.
 - Prefer BODHI condition_given_symptom labels; retain symptom_given_condition for question ordering and strong_predictor for metadata and conflict review.
 - Use exact SNOMED relation or generalized fallback only when no equivalent BODHI label is present.
@@ -48,15 +46,18 @@
 - Keep patient observations and diagnosis scores in CaseState and workflow state outside the read-only graph.
 - Permit only explicit evidenced ValueMatch paths with is_a, regional_part, or approved_region meaning; do not create patient observations from those paths.
 - Keep specific pain complaints as Targets and preserve finer observed location and radiation values without invented containment or global absence.
-- Defer linked findings, automatic absence penalties, prevalence adjustments, graph-frequency bonuses, and calibrated probability claims.
+- Defer linked findings prevalence adjustments graph-frequency bonuses and calibrated probabilities; apply only D17 bounded source-typicality absence penalties.
 
 ## Admission and Handoff
 
 - Pin schema, registry, normalization, source snapshots and file hashes, and scoring policy in every manifest.
 - Keep v5.0 preview generation separate from clinical review and submission admission.
+- Apply D20 competition candidate acceptance without requiring an additional clinical review decision; retain exact graph, source, and connection-policy pins.
+- Apply D23 user acceptance to complete source-backed competition expressions and mappings; classify incomplete roles or meanings as technical exclusions and preserve frozen preparation records.
+- Separate graph validation from examination request validation only for graph-only preparation and admission; keep consultation validation strict.
 - Admit only reviewed v5.0 clinical assets to submission/knowledge/; do not load deprecated data or preview registries during consultation.
 - Load admitted schema, vocabulary, and bundles into one RDFLib Graph during prepare(), then calculate read-only Association profiles and FeatureContribution records.
 - Keep raw source rows, file positions, full RF2 groups and paths, licenses, and mapping judgments in preparation; keep only execution conditions, selected labels, and source references in runtime.
 - Preserve the fifteen-field SOAP and separate diagnosis contract; use obtained interview and examination findings for A.evidence.
-- Apply D15 manifest-pinned Korean display labels and question assets without modifying the pinned v5.0 RDF representation or scoring policy.
+- Preserve the source scoring and D17 reasoning policies as project rules; require new D18 source pins, wording provenance, and explicit admission before runtime use.
 - Report parsing, structural source projection, clinical correctness, and SDK acceptance from their respective performed checks.

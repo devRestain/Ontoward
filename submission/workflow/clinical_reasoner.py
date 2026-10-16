@@ -1,7 +1,10 @@
+import hashlib
+import json
+
 from knowledge.conditions import numeric_match
 from knowledge.graph import ClinicalKnowledge
 
-from .state.models import Hypothesis, ScoreContribution, WorkflowState
+from .state.models import AssociationMatch, Hypothesis, PatternMatch, ScoreContribution, WorkflowState
 
 
 def observation_groups(state: WorkflowState):
@@ -18,83 +21,160 @@ def observation_groups(state: WorkflowState):
     return groups
 
 
+def fingerprint(items):
+    values = [(item.id, item.value.model_dump(exclude={"text"})) for item in sorted(items, key=lambda i: i.id)]
+    return hashlib.sha256(json.dumps(values, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
 class ClinicalReasoner:
     def __init__(self, knowledge: ClinicalKnowledge):
         self.knowledge = knowledge
 
-    def retrieve_candidates(self, state: WorkflowState) -> None:
+    def retrieve_candidates(self, state):
         state.differential.initialized = True
         self.refresh_hypotheses(state)
 
-    def refresh_hypotheses(self, state: WorkflowState, *, score_context=False) -> None:
-        if not state.differential.initialized:
+    def refresh_hypotheses(self, state, *, score_context=False, force=False):
+        differential = state.differential
+        if not differential.initialized:
             return
         groups = observation_groups(state)
-        diseases = {profile.disease_id for group in groups.values() for item in group["base"]
-                    if item.value.status in {"present", "uncertain"} for concept in item.value.concept_ids
-                    for profile in self.knowledge.get_patterns_by_target(concept)}
+        contexts = [item for _, item in state.case.entries() if item.status == "done" and item.source_refs
+                    and item.value and item.value.kind == "context"]
+        clinical = [item for group in groups.values() for items in group.values() for item in items] + contexts
+        signature = fingerprint(clinical) + ":" + ",".join(sorted(i.id for i in state.case.chief_complaints(confirmed=True)))
         score_context = score_context or state.session.current in {"DifferentialDiagnosis", "Education"}
+        if not force and signature == differential.last_fingerprint and score_context == differential.context_scored:
+            return
+        if signature != differential.last_fingerprint and differential.last_scored_revision == differential.clinical_revision:
+            differential.clinical_revision += 1
+        differential.refreshes += 1
+        previous = {} if force else differential.pattern_matches
+        evaluated, associations, by_disease, diseases = {}, [], {}, set()
+        present_targets = {c for group in groups.values() for item in group["base"]
+                           if item.value.status == "present" for c in item.value.concept_ids}
+        chiefs = {(item.value.observation_id or item.id, item.value.episode_id or item.id, c)
+                  for item in state.case.chief_complaints(confirmed=True) for c in item.value.concept_ids}
+        chief_episodes = {episode for _, episode, _ in chiefs}
+        context_index = {}
+        for item in contexts:
+            for concept in item.value.concept_ids:
+                key = (concept, item.value.subject, item.value.time_context)
+                context_index.setdefault(key, []).append(item)
+        applicability_cache = {}
+        for (observation, episode), group in groups.items():
+            targets = {c for item in group["base"] for c in item.value.concept_ids}
+            group_signature = fingerprint(group["base"] + group["attributes"])
+            for target in sorted(targets):
+                bases = [item for item in group["base"] if target in item.value.concept_ids]
+                if any(item.value.status in {"present", "uncertain"} for item in bases):
+                    diseases.update(p.disease_id for p in self.knowledge.get_patterns_by_target(target))
+                statuses = {item.value.status for item in bases}
+                resolved = [item for item in bases if len(item.value.concept_ids) == 1 and item.value.status in {"present", "absent"}]
+                if resolved:
+                    bases = resolved
+                    statuses = {item.value.status for item in bases}
+                status = next(iter(statuses)) if len(statuses) == 1 and all(len(item.value.concept_ids) == 1 for item in bases) else "uncertain"
+                for pattern in self.knowledge.get_target_patterns(target):
+                    key = json.dumps([pattern, observation, episode], separators=(",", ":"))
+                    result = previous.get(key)
+                    features = self.knowledge.get_pattern_features(pattern)
+                    if result is None or result.fingerprint != group_signature:
+                        checks = [(feature.id, *self._match(feature, target, status, bases, group["attributes"])) for feature in features]
+                        contradicted = [fid for fid, check, _ in checks if check == "contradicted"]
+                        unresolved = [fid for fid, check, _ in checks if check == "unknown"]
+                        result = PatternMatch(pattern_id=pattern, observation_id=observation, episode_id=episode,
+                            fingerprint=group_signature,
+                            status="contradicted" if contradicted else "incomplete" if unresolved else "matched",
+                            matched=[fid for fid, check, _ in checks if check == "matched"],
+                            contradicted=contradicted, unresolved=unresolved,
+                            evidence_ids=sorted({ref for _, _, refs in checks for ref in refs} | {i.id for i in bases}))
+                        differential.pattern_evaluations += 1
+                    evaluated[key] = result
+                    for profile in self.knowledge.get_pattern_associations(pattern):
+                        if profile.association_id not in applicability_cache:
+                            applicability_cache[profile.association_id] = self._applicability(profile.applicability, context_index)
+                        applies, refs = applicability_cache[profile.association_id]
+                        associations.append(AssociationMatch(association_id=profile.association_id, pattern_key=key,
+                                                            applicability=applies, evidence_ids=refs))
+                        by_disease.setdefault(profile.disease_id, []).append((profile, result, applies, refs, bases))
         hypotheses = []
         for disease in sorted(diseases):
-            patterns = self.knowledge.get_disease_patterns(disease)
-            contributions = {}
-            for group in groups.values():
-                matches = []
-                for profile in patterns:
-                    bases = [item for item in group["base"] if profile.target in item.value.concept_ids]
-                    if not bases or not all(len(item.value.concept_ids) == 1 for item in bases):
-                        continue
-                    statuses = {item.value.status for item in bases}
-                    status = next(iter(statuses)) if len(statuses) == 1 else "uncertain"
-                    features = self.knowledge.get_pattern_features(profile.id)
-                    checks = [self._match(f, profile.target, status, bases, group["attributes"]) for f in features]
-                    applies, context_refs = self._applies(profile.applicability, state)
-                    if not applies or not checks or any(result != "matched" for result, _ in checks):
-                        continue
-                    refs = sorted({ref for _, ids in checks for ref in ids} | set(context_refs) | {item.id for item in bases})
-                    matches.append((profile, refs, features))
-                # Refinement replaces its ancestor even when its source score is lower.
+            rows = by_disease.get(disease, [])
+            complete = {}
+            for profile, result, applies, refs, _ in rows:
+                if result.status == "matched" and applies == "matched":
+                    key = (result.observation_id, result.episode_id, profile.target,
+                           tuple(condition.model_dump_json() for condition in profile.applicability))
+                    complete.setdefault(key, []).append((profile, result, refs))
+            contributions, covered, incomparable = {}, set(), []
+            for (observation, episode, target, _), matches in complete.items():
                 maximal = [item for item in matches if not any(
-                    other[0].applicability == item[0].applicability
-                    and self.knowledge.pattern_refines(other[0].id, item[0].id) for other in matches)]
-                for profile, refs, features in sorted(maximal, key=lambda item: (-item[0].score, item[0].association_id)):
-                    if profile.target not in contributions or profile.score > contributions[profile.target].score:
+                    self.knowledge.pattern_refines(other[0].id, item[0].id) for other in matches)]
+                if len(maximal) > 1:
+                    incomparable.append(sorted(p.association_id for p, _, _ in maximal))
+                for profile, result, context_refs in sorted(maximal, key=lambda item: (-item[0].score, item[0].association_id)):
+                    if profile.score > 0 and (observation, episode, target) in chiefs:
+                        covered.add((observation, episode, target))
+                    if target not in contributions or profile.score > contributions[target].score:
                         matched_ids = {p.association_id for p, _, _ in matches}
-                        contributions[profile.target] = ScoreContribution(
-                            association_id=profile.association_id, pattern_id=profile.id, target_id=profile.target,
-                            score=profile.score, evidence_ids=refs, weight_basis=profile.weight_basis,
-                            policy_version=self.knowledge.policy.version,
+                        contributions[target] = ScoreContribution(
+                            association_id=profile.association_id, pattern_id=profile.id, target_id=target,
+                            score=profile.score, evidence_ids=sorted(set(result.evidence_ids) | set(context_refs)),
+                            weight_basis=profile.weight_basis, policy_version=self.knowledge.policy.version,
                             feature_deltas=[c for c in self.knowledge.get_feature_contributions(profile.association_id)
                                             if c.baseline_association in matched_ids])
+            penalties, negative_refs = {}, set()
+            for profile, result, applies, _, bases in rows:
+                features = self.knowledge.get_pattern_features(profile.id)
+                if (applies != "matched" or result.status != "contradicted" or profile.target in present_targets
+                        or result.episode_id not in chief_episodes or not all(f.status == "present" and not f.expected for f in features)
+                        or not bases or not all(i.value.status == "absent" and i.value.time_context == "current" for i in bases)):
+                    continue
+                penalty = self.knowledge.reasoning.absence_penalties.get(profile.typicality, 0)
+                if penalty:
+                    penalties[profile.target] = max(penalties.get(profile.target, 0), min(self.knowledge.reasoning.per_target_cap, penalty))
+                    negative_refs.update(i.id for i in bases)
             context_bonus, context_refs = None, []
             if score_context:
-                contexts = {item["id"]: item["type"] for item in self.knowledge.get_supporting_context(disease)}
-                context_refs = [item.id for _, item in state.case.entries() if
-                    item.status == "done" and item.source_refs and item.value and item.value.kind == "context"
-                    and item.value.status == "present" and any(
-                        concept in contexts and (contexts[concept] == "family_history") == (item.value.subject == "family")
-                        for concept in item.value.concept_ids)]
+                supporting = {item["id"]: item["type"] for item in self.knowledge.get_supporting_context(disease)}
+                context_refs = [item.id for item in contexts if item.value.status == "present" and any(
+                    concept in supporting and (supporting[concept] == "family_history") == (item.value.subject == "family")
+                    for concept in item.value.concept_ids)]
                 context_bonus = int(bool(context_refs))
             selected = list(contributions.values())
-            hypotheses.append(Hypothesis(
-                disease_id=disease, pattern_ids=sorted({p.id for p in patterns}),
-                association_ids=sorted({p.association_id for p in patterns}),
-                feature_ids=sorted({f.id for p in patterns for f in self.knowledge.get_pattern_features(p.id)}),
+            hypotheses.append(Hypothesis(disease_id=disease,
+                pattern_ids=sorted({p.id for p, *_ in rows}), association_ids=sorted({p.association_id for p, *_ in rows}),
+                feature_ids=sorted({f.id for p, *_ in rows for f in self.knowledge.get_pattern_features(p.id)}),
                 evidence_score=sum(c.score for c in selected), context_bonus=context_bonus, contributions=selected,
+                contradiction_penalty=min(self.knowledge.reasoning.total_cap, sum(penalties.values())),
+                contradiction_ids=sorted(negative_refs), chief_coverage=len(covered) / len(chiefs) if chiefs else 0,
+                unresolved_conditions=sorted({fid for _, result, _, _, _ in rows for fid in result.unresolved}
+                    | {condition.concept_id for p, _, applies, _, _ in rows if applies == "unknown" for condition in p.applicability}),
+                contradicted_conditions=sorted({fid for _, result, _, _, _ in rows for fid in result.contradicted}
+                    | {condition.concept_id for p, _, applies, _, _ in rows if applies == "contradicted" for condition in p.applicability}),
+                potential_patterns=sorted({p.id for p, r, a, _, _ in rows if r.status == "incomplete" or a == "unknown"}),
+                incomparable_matches=incomparable,
                 evidence_ids=sorted({ref for c in selected if c.score > 0 for ref in c.evidence_ids} | set(context_refs))))
-        state.differential.hypotheses = sorted(hypotheses, key=lambda item: (-item.score, item.disease_id))
+        differential.hypotheses = sorted(hypotheses, key=lambda h: (-h.score, -h.chief_coverage, len(h.contradicted_conditions), h.disease_id))
+        differential.pattern_matches = evaluated
+        differential.association_matches = associations
+        differential.last_fingerprint = signature
+        differential.last_scored_revision = differential.clinical_revision
+        differential.context_scored = score_context
 
     @staticmethod
-    def _applies(conditions, state):
-        refs = []
+    def _applicability(conditions, index):
+        refs, unknown = [], False
         for condition in conditions:
-            records = [item for _, item in state.case.entries() if item.status == "done" and item.source_refs
-                       and item.value and item.value.kind == "context" and condition.concept_id in item.value.concept_ids
-                       and item.value.subject == condition.subject and item.value.time_context == condition.time_context]
-            if {item.value.status for item in records} != {condition.status}:
-                return False, []
-            refs.extend(item.id for item in records)
-        return True, refs
+            records = index.get((condition.concept_id, condition.subject, condition.time_context), [])
+            statuses = {item.value.status for item in records}
+            if len(statuses) == 1 and statuses <= {"present", "absent"} and statuses != {condition.status}:
+                return "contradicted", [i.id for i in records]
+            if statuses != {condition.status}:
+                unknown = True
+            refs.extend(i.id for i in records)
+        return ("unknown" if unknown else "matched"), refs
 
     def _match(self, feature, target, status, bases, attributes):
         checks, refs = [], []
@@ -126,15 +206,18 @@ class ClinicalReasoner:
                 else:
                     result = "matched" if set(outcomes) == {"matched"} else "contradicted" if "contradicted" in outcomes else "unknown"
             checks.append(result)
+        if "contradicted" in checks:
+            return "contradicted", refs
         if not checks or "unknown" in checks:
             return "unknown", []
-        return ("contradicted" if "contradicted" in checks else "matched"), refs
+        return "matched", refs
+
 
     @staticmethod
-    def supported_hypotheses(state: WorkflowState):
-        return [hypothesis for hypothesis in state.differential.hypotheses if hypothesis.evidence_score > 0]
+    def supported_hypotheses(state):
+        return [h for h in state.differential.hypotheses if h.evidence_score > 0 and h.score > 0 and h.chief_coverage > 0]
 
-    def select_diagnosis(self, state: WorkflowState) -> None:
+    def select_diagnosis(self, state):
         state.differential.initialized = True
         self.refresh_hypotheses(state, score_context=True)
         if state.interaction.termination:
@@ -155,8 +238,8 @@ class ClinicalReasoner:
             state.case.diagnosis_kind = "symptom"
             state.case.diagnosis_evidence = [chief.id]
             return
-        selected = supported[0].disease_id
-        state.differential.selected_id = selected
-        state.case.diagnosis = self.knowledge.label(selected)
+        chosen = supported[0]
+        state.differential.selected_id = chosen.disease_id
+        state.case.diagnosis = self.knowledge.label(chosen.disease_id)
         state.case.diagnosis_kind = "disease"
-        state.case.diagnosis_evidence = list(supported[0].evidence_ids)
+        state.case.diagnosis_evidence = chosen.evidence_ids

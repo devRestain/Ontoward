@@ -1,0 +1,137 @@
+{
+  "check_count": 39,
+  "checks": [
+    "completed_source_build",
+    "all_fourteen_classes_have_explicit_coverage_and_rules",
+    "empty_classes_are_explained_without_fabricated_nodes",
+    "catalog_uses_explicit_source_roles_and_dependencies",
+    "catalog_pin:audit.json",
+    "catalog_pin:coverage.json",
+    "catalog_pin:evidence.json",
+    "catalog_pin:finding-bindings.json",
+    "catalog_pin:finding-coverage.json",
+    "catalog_pin:lexical.json",
+    "catalog_pin:nodes.jsonl",
+    "catalog_pin:observable-metadata.json",
+    "catalog_pin:relations.jsonl",
+    "catalog_pin:source-findings.ttl",
+    "catalog_pin:unresolved-finding-groups.json",
+    "generator_pin:admission.py",
+    "generator_pin:codex_cli.py",
+    "generator_pin:database.py",
+    "generator_pin:evidence.py",
+    "generator_pin:findings.py",
+    "generator_pin:korean.py",
+    "generator_pin:model_normalization.py",
+    "generator_pin:provenance.py",
+    "generator_pin:reset.py",
+    "generator_pin:source_catalog.py",
+    "generator_pin:source_projection.py",
+    "generator_pin:storage.py",
+    "generator_pin:v5.py",
+    "prompt_pin:korean-label.txt",
+    "prompt_pin:korean-question.txt",
+    "prompt_pin:korean-review.txt",
+    "all_distinct_shared_source_references_resolve",
+    "every_lexical_source_identifier_role_path_and_korean_description_checked",
+    "every_node_has_a_resolvable_source_or_derived_proof",
+    "rf2_edges_preserve_exact_component_group_type_endpoint_and_concrete_value",
+    "bodhi_edges_preserve_exact_original_payload",
+    "every_projected_edge_resolves_shared_source_proof",
+    "all_five_bodhi_edge_roles_are_retained_without_conversion",
+    "source_candidates_do_not_reactivate_old_runtime_admission"
+  ],
+  "classes": {
+    "AttributeValue": {
+      "korean_source_labels": 553,
+      "nodes": 1815,
+      "rule": "A categorical value explicitly used in a selected source condition",
+      "unresolved_reason": null
+    },
+    "BodySystem": {
+      "korean_source_labels": 9,
+      "nodes": 13,
+      "rule": "Named immediate body-system subtype on a selected anatomical value's source ancestry",
+      "unresolved_reason": null
+    },
+    "ClinicalFeature": {
+      "korean_source_labels": 0,
+      "nodes": 4260,
+      "rule": "Pattern-local source status or attribute condition",
+      "unresolved_reason": null
+    },
+    "ClinicalPattern": {
+      "korean_source_labels": 0,
+      "nodes": 2423,
+      "rule": "Complete source variant, independent of disease",
+      "unresolved_reason": null
+    },
+    "ContextFactor": {
+      "korean_source_labels": 0,
+      "nodes": 105,
+      "rule": "Explicit BODHI medical-history node; not unconditional disease support",
+      "unresolved_reason": null
+    },
+    "Disease": {
+      "korean_source_labels": 604,
+      "nodes": 879,
+      "rule": "Active disorder used by a complete source association",
+      "unresolved_reason": null
+    },
+    "DiseasePatternAssociation": {
+      "korean_source_labels": 0,
+      "nodes": 12134,
+      "rule": "Source disease-pattern-applicability assertion",
+      "unresolved_reason": null
+    },
+    "ExamFinding": {
+      "korean_source_labels": 1310,
+      "nodes": 14178,
+      "rule": "Active non-disorder finding with physical method clinical observable morphologic-site or Sign evidence; preserve uncertain acquisition roles",
+      "unresolved_reason": null
+    },
+    "ExamMethod": {
+      "korean_source_labels": 230,
+      "nodes": 1978,
+      "rule": "Physical-examination procedure explicitly adjacent to selected source concepts",
+      "unresolved_reason": null
+    },
+    "ExpectedValue": {
+      "korean_source_labels": 0,
+      "nodes": 408,
+      "rule": "Typed value of a selected source condition",
+      "unresolved_reason": null
+    },
+    "FindingAttribute": {
+      "korean_source_labels": 578,
+      "nodes": 6577,
+      "rule": "Source condition axis or clinical Observable comparison dimension; keep acquisition and Observable model metadata in their source roles",
+      "unresolved_reason": null
+    },
+    "Symptom": {
+      "korean_source_labels": 249,
+      "nodes": 490,
+      "rule": "Explicit active BODHI symptom root or non-disorder finding descendant; exclude physical signs and preserve the SNOMED taxonomy role separately",
+      "unresolved_reason": null
+    },
+    "Test": {
+      "korean_source_labels": 550,
+      "nodes": 4645,
+      "rule": "Laboratory or imaging procedure explicitly adjacent to selected source concepts",
+      "unresolved_reason": null
+    },
+    "ValueMatch": {
+      "korean_source_labels": 0,
+      "nodes": 1083,
+      "rule": "Exact RF2 is-a comparison between selected categorical concepts",
+      "unresolved_reason": null
+    }
+  },
+  "independent_clinical_validation": "not_run",
+  "lexical_entries": 30680,
+  "network": "none",
+  "nodes": 50988,
+  "relations": 506139,
+  "runtime_admission": "not_run",
+  "status": "pass"
+}

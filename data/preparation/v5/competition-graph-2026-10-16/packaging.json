@@ -1,0 +1,15 @@
+{
+  "archive": "Tmp/packaging/ontoward-submission.zip",
+  "compressed_bytes": 1339807,
+  "expanded_bytes": 13336964,
+  "file_count": 42,
+  "isolated_extracted_graph": {
+    "associations": 9401,
+    "prepare": "text_pending_as_declared",
+    "triples": 99104
+  },
+  "network": "none",
+  "official_submission": "not_run",
+  "sha256": "c2eb822bbc489160a13c82306815835341d3975ff749817571794c86455a61d9",
+  "status": "pass"
+}

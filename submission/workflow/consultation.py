@@ -70,6 +70,8 @@ class Consultation:
         if state.interaction.termination:
             return
         previous = (state.case.diagnosis_kind, state.case.diagnosis)
+        if state.session.current == "ChiefComplaint" and self.planner.open_done(state):
+            state.differential.initialized = True
         self.reasoner.refresh_hypotheses(state)
         interaction = state.interaction
         if state.session.current != "Initiation" and interaction.needs_clarification:
@@ -78,7 +80,12 @@ class Consultation:
         if state.session.current == "Education" and state.session.initialized:
             self.reasoner.select_diagnosis(state)
             if not interaction.termination and previous != (state.case.diagnosis_kind, state.case.diagnosis):
+                interaction.diagnosis_revision += 1
+                if interaction.explained_revision >= 0:
+                    interaction.correction_required = True
                 self.planner.prepare_education(state, replace=True)
+        else:
+            self.planner.replan(state)
 
     def check_budget(self, state: WorkflowState) -> None:
         decision = self.budget.evaluate(state)

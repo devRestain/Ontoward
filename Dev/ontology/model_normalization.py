@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 from .database import json_text
 from .v5 import digest, workspace_path
 
-MODEL = "openai/gpt-6.1-sol"
+MODEL = "gpt-6-luna"
 ATTRIBUTES = {"Quality", "Colour", "Shape", "Content", "Consistency", "Odour", "Sound",
               "Appearance", "Distribution", "SputumColour", "SputumContent", "CoughSound"}
 PROMPT = """Normalize only the supplied source expressions into Ontoward v5.0 candidates.
@@ -34,20 +34,12 @@ def kst_day():
 
 
 class ModelNormalizer:
-    def __init__(self, path, *, max_calls, daily_remaining, day=None, client=None, namespace=""):
+    def __init__(self, path, *, max_calls, daily_remaining, day=None, client=None, namespace="", prompt=None, validator=None):
         if not 0 <= max_calls <= 100 or not 0 <= daily_remaining <= 100:
             raise ValueError("Model budgets must be between zero and 100")
         if client is None:
-            import os
-            from submission.nova_sdk import Client
-            token = os.environ.get("NOVA_DEV_KEY", "")
-            if not token:
-                raise ValueError("NOVA_DEV_KEY is unavailable")
-            api_base = os.environ.get("NOVA_API_BASE", "https://nova.snubhai.org")
-            if api_base.rstrip("/") != "https://nova.snubhai.org":
-                raise ValueError("Preparation authorization is limited to the NOVA origin")
-            client = Client(api_base=api_base,token=token,timeout=240)
-            client.session_id = ""
+            from .codex_cli import CodexClient
+            client = CodexClient()
         path = workspace_path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         self.connection = sqlite3.connect(path, timeout=30)
@@ -67,7 +59,8 @@ class ModelNormalizer:
         used = self.connection.execute("SELECT COUNT(*) FROM calls WHERE day=?", (self.day,)).fetchone()[0]
         self.ceiling = min(100, used + daily_remaining)
         self.max_calls, self.calls, self.client = max_calls, 0, client
-        self.namespace = digest([namespace, MODEL, PROMPT, sorted(ATTRIBUTES)])
+        self.prompt, self.validator = prompt or PROMPT, validator or self.validate
+        self.namespace = digest([namespace, MODEL, self.prompt, sorted(ATTRIBUTES)])
         self.stopped = None
 
     def cache_key(self, packet):
@@ -176,7 +169,7 @@ class ModelNormalizer:
             request_id, batch = reserved
             try:
                 raw = self.client.chat([
-                    {"role":"system","content":PROMPT},
+                    {"role":"system","content":self.prompt},
                     {"role":"user","content":json_text({"attributes":sorted(ATTRIBUTES),"packets":batch})}],
                     model=MODEL,reasoning_effort="medium",max_tokens=8192,request_id=request_id)
                 self.connection.execute("UPDATE calls SET response=? WHERE request_id=?", (json_text(raw),request_id))
@@ -184,7 +177,7 @@ class ModelNormalizer:
                 choice = raw["choices"][0]
                 if choice.get("finish_reason") not in {None,"stop"}:
                     raise ValueError("Incomplete model response")
-                found = self.validate(json.loads(choice["message"]["content"]),batch)
+                found = self.validator(json.loads(choice["message"]["content"]),batch)
                 with self.connection:
                     for packet in batch:
                         result = found[packet["packet_id"]]

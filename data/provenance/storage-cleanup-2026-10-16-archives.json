@@ -1,0 +1,34 @@
+{
+  "format": "ontoward-lossless-sqlite-archives-v1",
+  "files": [
+    {
+      "original": "data/preparation/v5/source-only-2026-10-16/ontology.sqlite3",
+      "original_bytes": 8676225024,
+      "original_sha256": "b77de128c895003482b3c6a8eaf761a12cdfce235194d75d2912814334d5efba",
+      "stage": "source_only",
+      "archive": "data/preparation/v5/source-only-2026-10-16/archives/ontology.sqlite3.gz",
+      "archive_bytes": 1693525920,
+      "archive_sha256": "9a8280415e549e920ba597d7440702fd1841ecd5c6305140d72cec8eb9ebe26b",
+      "roundtrip": "pass",
+      "expanded_copy": "removed_after_roundtrip_verification",
+      "restore": "Decompress this archive to the original path and verify original_sha256 before historical preparation checks"
+    },
+    {
+      "original": "data/preparation/v5/source-only-2026-10-16/build/ontology.sqlite3",
+      "original_bytes": 10170753024,
+      "original_sha256": "5f216db0626fa5a99afb09cb2162566d1b9ca0b04e30c89427bb5a52cfb03ca0",
+      "stage": "complete",
+      "archive": "data/preparation/v5/source-only-2026-10-16/build/archives/ontology.sqlite3.gz",
+      "archive_bytes": 1806006750,
+      "archive_sha256": "8864bdc472cdefaa0a871c4bccc80f77b0c9868606a816cb7b360a06ee4789c6",
+      "roundtrip": "pass",
+      "expanded_copy": "removed_after_roundtrip_verification",
+      "restore": "Decompress this archive to the original path and verify original_sha256 before historical preparation checks"
+    }
+  ],
+  "active_source_custody": "preserved_at_original_path",
+  "runtime_assets": "unchanged",
+  "status": "pass",
+  "finished_at": "2026-10-16T13:09:50.937024+00:00",
+  "logical_bytes_saved": 15347445378
+}

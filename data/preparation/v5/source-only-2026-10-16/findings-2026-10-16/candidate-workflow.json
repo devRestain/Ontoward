@@ -1,0 +1,8 @@
+{
+  "status": "not_run",
+  "reason": "complete_reviewed_korean_assets_required",
+  "korean_failure": "user_deferred_codex_cli_transport_and_full_korean_execution",
+  "runtime_admission": "not_run",
+  "actual_luna": "not_run",
+  "authenticated_sdk": "not_run"
+}

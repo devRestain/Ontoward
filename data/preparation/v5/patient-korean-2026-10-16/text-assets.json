@@ -1,0 +1,17 @@
+{
+  "accepted_jobs": 1309,
+  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+  "independent_clinical_validation": "not_run",
+  "runtime_admission": "not_run",
+  "status": "generated_text_ready",
+  "text_assets": {
+    "exam_requests": {
+      "path": "data/preparation/v5/patient-korean-2026-10-16/exam-requests.ko.json",
+      "sha256": "90e6e3e04a70f6a7d259b00e685e608a7c72d72fc0cd43735a8b469f7f3ff53a"
+    },
+    "questions": {
+      "path": "data/preparation/v5/patient-korean-2026-10-16/questions.ko.json",
+      "sha256": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "status": "pass",
+  "existing_working_tree": "clean",
+  "backup_branch": "codex/pre-cleanup-20261016",
+  "backup_head": "a0c7d3a02ef8215b6ff5f6bc65a425da59881067",
+  "remote_base": "2650f454deb24390e4ec13ab686d079e921b494d",
+  "current_source_files_equal_verified_snapshot": 259,
+  "runtime_files_equal_verified_archive": 42,
+  "runtime_archive_sha256": "0c49a38e601c0acddd551863b674a03f36078485a61b0ac8ad74b14a552e66c1",
+  "new_runtime_tests": "not_run_no_runtime_changes",
+  "format": "ontoward-github-publication-v1",
+  "phase": "prepared",
+  "origin": "https://github.com/devRestain/Ontoward.git",
+  "remote_ref": "refs/heads/main",
+  "backup_scope": "local_only",
+  "publication": "not_run",
+  "excluded_local_dictionary": {
+    "path": "data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/catalog/evidence.json",
+    "bytes": 11822682,
+    "local_file": "preserved"
+  },
+  "remote_base_fetch": "pass",
+  "authorization": "2026-10-16 user approved commits and requested existing work on a new branch with cleaned main published to origin"
+}

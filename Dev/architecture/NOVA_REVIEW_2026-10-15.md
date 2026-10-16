@@ -1,5 +1,7 @@
 # NOVA review adoption under D15
 
+These are dated D15 dispositions. D17 now adopts prepared utterances, fact-level validation, bounded context, Pattern-first fit, dynamic replanning, shared turns, and correction obligations. Use [D17_REVIEW_ADOPTION.md](D17_REVIEW_ADOPTION.md) and the current decisions/contracts for implementation; keep D16 education draft review independent.
+
 Source: the body of [온워드 공모전 분석 보고서](chatgpt-conversation://6acfbec4-f800-8340-af7f-82c1ea6a4c31), retrieved in this Codex conversation. The report described repository commit ba824e46be7e20a8ac42853635513de5b4096681. Its sandbox-linked Markdown, HTML, ZIP, and reproduction files were not retrieved. Treat the report as review evidence; D15 and the explicit implementation request select the adopted behavior.
 
 The local review reproduced unresolved values being considered known, identical left/right and current/past rendering, and a selected primary disease reappearing in the differential list. The pre-change 52-case synthetic workflow suite passed; that baseline did not cover these conditions. Operational execution evidence belongs in the three PROJECT_STATE.md scopes.

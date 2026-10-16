@@ -1,4 +1,0 @@
-{"type":"thread.started","thread_id":"01a130d5-8e77-7511-bacd-2f181aca9391"}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"patterns\":[{\"disease\":\"Meningitis\",\"target\":{\"kind\":\"symptom\",\"term\":\"Tinnitus\"},\"features\":[],\"evidence\":[{\"start_line\":67,\"end_line\":73,\"quote\":\"Differential diagnosis for tinnitus includes:\\n\\n- Cytomegalovirus\\n- Hypercholesterolemia\\n- Lyme disease\\n- Measles\\n- Meningitis\"}]}],\"supporting_contexts\":[],\"finding_methods\":[],\"planned_tests\":[]}"}}
-{"type":"turn.completed","usage":{"input_tokens":18846,"cached_input_tokens":12032,"cache_write_input_tokens":0,"output_tokens":183,"reasoning_output_tokens":76}}

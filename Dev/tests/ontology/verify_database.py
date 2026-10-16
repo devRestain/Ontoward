@@ -42,6 +42,9 @@ def verify(directory,output=None):
         require(total==db.connection.execute('SELECT COUNT(*) FROM source_rows').fetchone()[0],'all_input_rows_accounted')
         require(db.connection.execute("SELECT COUNT(*) FROM source_rows WHERE disposition IS NULL OR reason IS NULL OR reason=''").fetchone()[0]==0,'every_row_has_explained_disposition')
         require(db.connection.execute('PRAGMA foreign_key_check').fetchone() is None,'source_and_projection_references_valid')
+        require(db.connection.execute('SELECT COUNT(*) FROM inactive_rf2_rows').fetchone()[0]==
+                db.connection.execute("SELECT COUNT(*) FROM rf2_components WHERE active='0'").fetchone()[0],
+                'inactive_component_classification_is_lossless_without_raw_source_rewrites')
         roles=db.meta('target_roles')
         require(len(roles)>3,'full_clinical_target_discovery')
         files={Path(s['path']).name:s['row_count'] for s in inventory}
@@ -71,7 +74,7 @@ def verify(directory,output=None):
         grouped={}
         for p in profiles: grouped.setdefault(p.id,[]).append(p)
         require(any(len({p.disease_id for p in group})>1 and len({p.score for p in group})>1 for group in grouped.values()),'shared_patterns_keep_disease_specific_scores')
-        disease,target=str(OW.SnomedCT65275009),str(OW.AbdominalPain)
+        disease,target=str(OW.SnomedCT65275009),str(OW.SymptomSnomedCT21522001)
         candidates=[p for p in knowledge.get_disease_patterns(disease) if p.target==target]
         features={p.association_id:knowledge.get_pattern_features(p.id) for p in candidates}
         baseline=next(p for p in candidates if all(f.expected is None for f in features[p.association_id]))

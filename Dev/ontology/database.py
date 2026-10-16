@@ -50,15 +50,15 @@ def component_kind(path, columns):
 
 class DispositionRecords:
     def __init__(self, database):
-        self.database, self.extra = database, []
+        self.database = database
 
     def append(self, record):
-        self.extra.append(record)
+        self.database.disposition(record)
+        self.database.connection.commit()
 
     def __iter__(self):
         for row in self.database.connection.execute("SELECT payload FROM dispositions ORDER BY id"):
             yield json.loads(row[0])
-        yield from self.extra
 
 
 class SourceDatabase:
@@ -114,10 +114,23 @@ class SourceDatabase:
                 CREATE TABLE IF NOT EXISTS dispositions(
                     id INTEGER PRIMARY KEY, row_id INTEGER REFERENCES source_rows(id),
                     decision TEXT NOT NULL, reason TEXT, payload TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS source_expressions(
+                    id TEXT PRIMARY KEY, payload TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS review_batches(
                     receipt_sha256 TEXT PRIMARY KEY, payload TEXT NOT NULL);
             """)
         self.connection.row_factory = sqlite3.Row
+        custody = self.meta("source_custody")
+        if custody:
+            source = workspace_path(ROOT / custody["path"])
+            if source == self.path:
+                raise ValueError("Source custody cannot reference itself")
+            self.connection.execute("ATTACH DATABASE ? AS custody", (source.as_uri() + "?mode=ro",))
+            row = self.connection.execute("SELECT value FROM custody.metadata WHERE key='build_id'").fetchone()
+            if row is None or json.loads(row[0]) != custody["build_id"]:
+                raise ValueError("Shared source custody build changed")
+            for table in ("source_files", "source_rows", "rf2_components", "source_expressions", "inactive_rf2_rows"):
+                self.connection.execute(f"CREATE TEMP VIEW {table} AS SELECT * FROM custody.{table}")
 
     def close(self):
         self.connection.close()
@@ -200,8 +213,9 @@ class SourceDatabase:
             CREATE INDEX IF NOT EXISTS source_entity ON source_rows(file_id,entity_id);
             CREATE INDEX IF NOT EXISTS pattern_target ON patterns(target);
             CREATE INDEX IF NOT EXISTS association_disease ON associations(disease);
-            UPDATE source_rows SET disposition='excluded',reason='inactive_latest_component'
-                WHERE id IN (SELECT row_id FROM rf2_components WHERE active='0');
+            CREATE VIEW IF NOT EXISTS inactive_rf2_rows AS
+                SELECT row_id,'excluded' AS disposition,'inactive_latest_component' AS reason
+                FROM rf2_components WHERE active='0';
         """)
         self.connection.commit()
 
@@ -219,6 +233,20 @@ class SourceDatabase:
             state = "projected" if decision == "accepted_preview" else decision
             self.connection.execute("""UPDATE source_rows SET disposition=?,reason=? WHERE id=?
                                        AND disposition<>'projected'""", (state, reason or "v5_source_projection", row_id))
+
+    def expression(self, payload):
+        key = digest(payload)
+        self.connection.execute('INSERT OR IGNORE INTO source_expressions VALUES(?,?)', (key,json_text(payload)))
+        return key
+
+    def audit_reference(self):
+        tables = {row[0] for row in self.connection.execute("SELECT name FROM sqlite_master WHERE type IN ('table','view')")}
+        return {"format":"sqlite-source-audit-v1", "database":self.path.relative_to(ROOT).as_posix(),
+            "source_custody":self.meta("source_custody"),
+            "build_id":self.meta('build_id'), "tables":{name:self.connection.execute('SELECT COUNT(*) FROM '+name).fetchone()[0]
+                for name in ('source_files','source_rows','source_expressions','source_assertions','dispositions',
+                             'catalog_assertions','schema_nodes','schema_edges','evidence_refs','evidence_sets','inactive_rf2_rows') if name in tables},
+            "source_snapshots":self.source_snapshots()}
 
     def source_snapshots(self):
         composition = self.meta("composition")

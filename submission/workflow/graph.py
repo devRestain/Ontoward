@@ -23,7 +23,7 @@ def route_validation(state: WorkflowState) -> str:
     action = state.interaction.selected
     if action is None:
         return "check_budget"
-    return "recheck_action_budget" if action.ready else "frame_action"
+    return "recheck_action_budget" if action.ready else "check_budget"
 
 
 def route_action_budget(state: WorkflowState) -> str:
@@ -74,7 +74,6 @@ def build_graph(consultation, knowledge):
         "refresh_after_input": consultation.refresh_after_input,
         "enter_session": consultation.enter_session, "check_budget": consultation.check_budget,
         "select_question": consultation.planner.select_question,
-        "frame_action": partial(consultation.doctor.frame_action, client=consultation.client),
         "validate_action": consultation.doctor.validate_action,
         "recheck_action_budget": consultation.check_budget,
         "execute_action": partial(consultation.doctor.execute_action, client=consultation.client),
@@ -92,9 +91,8 @@ def build_graph(consultation, knowledge):
     graph.add_edge("refresh_after_input", "check_budget")
     graph.add_edge("enter_session", "check_budget")
     graph.add_conditional_edges("check_budget", route_budget, {key: key for key in ("abort", "process_input", "build_soap", "enter_session", "select_question", "advance_session")})
-    graph.add_edge("select_question", "frame_action")
-    graph.add_edge("frame_action", "validate_action")
-    graph.add_conditional_edges("validate_action", route_validation, {key: key for key in ("abort", "frame_action", "check_budget", "recheck_action_budget")})
+    graph.add_edge("select_question", "validate_action")
+    graph.add_conditional_edges("validate_action", route_validation, {key: key for key in ("abort", "check_budget", "recheck_action_budget")})
     graph.add_conditional_edges("recheck_action_budget", route_action_budget,
                                 {key: key for key in ("abort", "process_input", "build_soap", "enter_session", "advance_session", "execute_action", "check_budget")})
     graph.add_edge("execute_action", "process_input")

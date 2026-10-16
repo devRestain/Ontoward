@@ -1,0 +1,216 @@
+{
+  "credentials_included": false,
+  "status": "pass",
+  "worksets": [
+    {
+      "files": [
+        {
+          "sha256": "87daa0c3a97647fb87f711e19b5dba05f03099e712d10da2fac0366244a0dc28",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/generator-snapshot/Dev/ontology/codex_cli.py",
+          "source": "Dev/ontology/codex_cli.py",
+          "verified": true
+        },
+        {
+          "sha256": "c1a215024c90611d5c8c428fa184332e70516494a91cd5587d6da3ef76d38d7c",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/generator-snapshot/Dev/ontology/korean.py",
+          "source": "Dev/ontology/korean.py",
+          "verified": true
+        },
+        {
+          "sha256": "22071eb01b124b61284fddfbdb1629abce16213bdabc343e19d823a02e58e49d",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/generator-snapshot/Dev/ontology/patient_text.py",
+          "source": "Dev/ontology/patient_text.py",
+          "verified": true
+        },
+        {
+          "sha256": "058d2f8e75d0e6a13de9215acc7d7d04688ab1389b2efbdf7c51fba0de2d69b9",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/generator-snapshot/Dev/ontology/prompts/patient-generation.txt",
+          "source": "Dev/ontology/prompts/patient-generation.txt",
+          "verified": true
+        },
+        {
+          "sha256": "a807dd00ca9be19810a1890429b403c1e22debc03b28da62649ef90bee65abed",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/generator-snapshot/Dev/ontology/prompts/patient-review.txt",
+          "source": "Dev/ontology/prompts/patient-review.txt",
+          "verified": true
+        }
+      ],
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/workset.json"
+    },
+    {
+      "files": [
+        {
+          "sha256": "87daa0c3a97647fb87f711e19b5dba05f03099e712d10da2fac0366244a0dc28",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-8000/generator-snapshot/Dev/ontology/codex_cli.py",
+          "source": "Dev/ontology/codex_cli.py",
+          "verified": true
+        },
+        {
+          "sha256": "c1a215024c90611d5c8c428fa184332e70516494a91cd5587d6da3ef76d38d7c",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-8000/generator-snapshot/Dev/ontology/korean.py",
+          "source": "Dev/ontology/korean.py",
+          "verified": true
+        },
+        {
+          "sha256": "1a9f741dc96e0d12867cb9dda03c4eda69f17f945e4ff402bd25f84ceeaed03a",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-8000/generator-snapshot/Dev/ontology/patient_text.py",
+          "source": "Dev/ontology/patient_text.py",
+          "verified": true
+        },
+        {
+          "sha256": "058d2f8e75d0e6a13de9215acc7d7d04688ab1389b2efbdf7c51fba0de2d69b9",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-8000/generator-snapshot/Dev/ontology/prompts/patient-generation.txt",
+          "source": "Dev/ontology/prompts/patient-generation.txt",
+          "verified": true
+        },
+        {
+          "sha256": "a807dd00ca9be19810a1890429b403c1e22debc03b28da62649ef90bee65abed",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-8000/generator-snapshot/Dev/ontology/prompts/patient-review.txt",
+          "source": "Dev/ontology/prompts/patient-review.txt",
+          "verified": true
+        }
+      ],
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/nova-8000/workset.json"
+    },
+    {
+      "files": [
+        {
+          "sha256": "87daa0c3a97647fb87f711e19b5dba05f03099e712d10da2fac0366244a0dc28",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/remaining-1289/generator-snapshot/Dev/ontology/codex_cli.py",
+          "source": "Dev/ontology/codex_cli.py",
+          "verified": true
+        },
+        {
+          "sha256": "c1a215024c90611d5c8c428fa184332e70516494a91cd5587d6da3ef76d38d7c",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/remaining-1289/generator-snapshot/Dev/ontology/korean.py",
+          "source": "Dev/ontology/korean.py",
+          "verified": true
+        },
+        {
+          "sha256": "48ef414dae3e67a9aa95508dc4ff1f0141d7abb850ad8e0b63852f474b41bb57",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/remaining-1289/generator-snapshot/Dev/ontology/patient_text.py",
+          "source": "Dev/ontology/patient_text.py",
+          "verified": true
+        },
+        {
+          "sha256": "ad02fd7e4cb53d497085df44d2c2dbbf2babdcb7df196526c7c6a97875d17922",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/remaining-1289/generator-snapshot/Dev/ontology/prompts/patient-generation.txt",
+          "source": "Dev/ontology/prompts/patient-generation.txt",
+          "verified": true
+        },
+        {
+          "sha256": "a807dd00ca9be19810a1890429b403c1e22debc03b28da62649ef90bee65abed",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/remaining-1289/generator-snapshot/Dev/ontology/prompts/patient-review.txt",
+          "source": "Dev/ontology/prompts/patient-review.txt",
+          "verified": true
+        }
+      ],
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/remaining-1289/workset.json"
+    },
+    {
+      "files": [
+        {
+          "sha256": "87daa0c3a97647fb87f711e19b5dba05f03099e712d10da2fac0366244a0dc28",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-persistent/generator-snapshot/Dev/ontology/codex_cli.py",
+          "source": "Dev/ontology/codex_cli.py",
+          "verified": true
+        },
+        {
+          "sha256": "c1a215024c90611d5c8c428fa184332e70516494a91cd5587d6da3ef76d38d7c",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-persistent/generator-snapshot/Dev/ontology/korean.py",
+          "source": "Dev/ontology/korean.py",
+          "verified": true
+        },
+        {
+          "sha256": "19e5a088d0db0f0185c5d8e20c2bec8c7013f5df8d3fc67a2d7911881e4a9258",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-persistent/generator-snapshot/Dev/ontology/patient_text.py",
+          "source": "Dev/ontology/patient_text.py",
+          "verified": true
+        },
+        {
+          "sha256": "f6011a530d847c0cbf8b1f767e1a29bd413596b4a0920010d922cec73d652280",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-persistent/generator-snapshot/Dev/ontology/prompts/patient-generation.txt",
+          "source": "Dev/ontology/prompts/patient-generation.txt",
+          "verified": true
+        },
+        {
+          "sha256": "a807dd00ca9be19810a1890429b403c1e22debc03b28da62649ef90bee65abed",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-persistent/generator-snapshot/Dev/ontology/prompts/patient-review.txt",
+          "source": "Dev/ontology/prompts/patient-review.txt",
+          "verified": true
+        }
+      ],
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/nova-persistent/workset.json"
+    },
+    {
+      "files": [
+        {
+          "sha256": "87daa0c3a97647fb87f711e19b5dba05f03099e712d10da2fac0366244a0dc28",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-final/generator-snapshot/Dev/ontology/codex_cli.py",
+          "source": "Dev/ontology/codex_cli.py",
+          "verified": true
+        },
+        {
+          "sha256": "c1a215024c90611d5c8c428fa184332e70516494a91cd5587d6da3ef76d38d7c",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-final/generator-snapshot/Dev/ontology/korean.py",
+          "source": "Dev/ontology/korean.py",
+          "verified": true
+        },
+        {
+          "sha256": "10af547d2996687787948220c645e8ef486ab7fe84a51cc5258314760b7e86a6",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-final/generator-snapshot/Dev/ontology/patient_text.py",
+          "source": "Dev/ontology/patient_text.py",
+          "verified": true
+        },
+        {
+          "sha256": "f6011a530d847c0cbf8b1f767e1a29bd413596b4a0920010d922cec73d652280",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-final/generator-snapshot/Dev/ontology/prompts/patient-generation.txt",
+          "source": "Dev/ontology/prompts/patient-generation.txt",
+          "verified": true
+        },
+        {
+          "sha256": "a807dd00ca9be19810a1890429b403c1e22debc03b28da62649ef90bee65abed",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-final/generator-snapshot/Dev/ontology/prompts/patient-review.txt",
+          "source": "Dev/ontology/prompts/patient-review.txt",
+          "verified": true
+        }
+      ],
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/nova-final/workset.json"
+    },
+    {
+      "files": [
+        {
+          "sha256": "87daa0c3a97647fb87f711e19b5dba05f03099e712d10da2fac0366244a0dc28",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-context-final/generator-snapshot/Dev/ontology/codex_cli.py",
+          "source": "Dev/ontology/codex_cli.py",
+          "verified": true
+        },
+        {
+          "sha256": "c1a215024c90611d5c8c428fa184332e70516494a91cd5587d6da3ef76d38d7c",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-context-final/generator-snapshot/Dev/ontology/korean.py",
+          "source": "Dev/ontology/korean.py",
+          "verified": true
+        },
+        {
+          "sha256": "10af547d2996687787948220c645e8ef486ab7fe84a51cc5258314760b7e86a6",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-context-final/generator-snapshot/Dev/ontology/patient_text.py",
+          "source": "Dev/ontology/patient_text.py",
+          "verified": true
+        },
+        {
+          "sha256": "0a73c447786c5f6c1d9f0b3de2ac460ce2c513bb482b21575b2b4c6d31b723d2",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-context-final/generator-snapshot/Dev/ontology/prompts/patient-generation.txt",
+          "source": "Dev/ontology/prompts/patient-generation.txt",
+          "verified": true
+        },
+        {
+          "sha256": "25cd7ecd00ce68c5d008962123bf5be45d6632ac8b7e9d4da63333e83c563d19",
+          "snapshot": "data/preparation/v5/patient-korean-2026-10-16/nova-context-final/generator-snapshot/Dev/ontology/prompts/patient-review.txt",
+          "source": "Dev/ontology/prompts/patient-review.txt",
+          "verified": true
+        }
+      ],
+      "workset": "data/preparation/v5/patient-korean-2026-10-16/nova-context-final/workset.json"
+    }
+  ]
+}

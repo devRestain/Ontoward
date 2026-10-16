@@ -11,15 +11,17 @@ class ModelClient:
         self.usage = usage
         self.new_request_id = new_request_id
 
-    def complete(self, state, client, *, role, messages, reserve_reply=False):
+    def complete(self, state, client, *, role, messages):
         session = state.session
-        allowance = self.budget.model_allowance(session, role, reserve_reply)
+        if role != "gateway":
+            raise ValueError("Only response interpretation uses the designated model")
+        allowance = self.budget.model_allowance(session)
         if not allowance:
             state.interaction.issues.append(f"{role}_budget_exhausted")
             return None
         request = {"messages": messages, "model": LIMITS.model, "request_id": self.new_request_id(),
                    "max_tokens": allowance,
-                   "reasoning_effort": LIMITS.doctor_reasoning if role == "doctor" else LIMITS.gateway_reasoning}
+                   "reasoning_effort": LIMITS.gateway_reasoning}
         exchange = {"role": role, "scope": session.current, "request": request, "attempts": []}
         state.interaction.model_history.append(exchange)
         self.usage.record_model_request(state)

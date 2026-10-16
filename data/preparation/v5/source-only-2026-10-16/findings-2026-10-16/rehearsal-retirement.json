@@ -1,0 +1,18 @@
+{
+  "files": 30,
+  "identical_source_inventory_sha256": "52400d97a8e34f2d7268002ea9f28cdc42ba593327886389f83bad9895ebab42",
+  "logical_bytes": 9501788511,
+  "model_calls": 0,
+  "old_build_id": "ecd2876c34465f88db53a5383532397fee4e222b53dfbdefb125ddce88e9c325",
+  "old_report_sha256": "7ff6958653d3e810018810b7066823ece059f379c1ccfb81174ddb92fc1e2cd6",
+  "physical_shared_blocks": "not_measured",
+  "preserved": [
+    "original_assets",
+    "saved_source_only_base",
+    "original_D18_build_and_request_ledger",
+    "verified_D19_build"
+  ],
+  "scope": "only_the_generated_D19_rehearsal_in_Tmp",
+  "selected_build_id": "3ee766032ca36e3e77c21b6bc6e7d284a0eae78c0c0617bee24c456b5f3bc492",
+  "status": "verified_superseded_rehearsal_removed"
+}

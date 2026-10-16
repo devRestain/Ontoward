@@ -1,0 +1,15 @@
+{
+  "accepted_jobs": {},
+  "build_id": "3ee766032ca36e3e77c21b6bc6e7d284a0eae78c0c0617bee24c456b5f3bc492",
+  "calls_total": 0,
+  "failure": "user_deferred_codex_cli_transport_and_full_korean_execution",
+  "independent_clinical_validation": "not_run",
+  "max_calls": 2764,
+  "model_translation_labels": 0,
+  "official_source_labels": 4083,
+  "runtime_admission": "not_run",
+  "status": "deferred",
+  "unresolved_lexical_labels": 26597,
+  "unresolved_question_jobs": 1170,
+  "workset_sha256": "ed0de25fc1fd01c86e73cab0e79117c18d219ded92ae4b81681534707a4f2345"
+}

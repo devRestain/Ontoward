@@ -15,7 +15,6 @@ from submission.knowledge.conditions import ScoringPolicy
 
 IS_A, DUE_TO, ASSOCIATED_WITH = "116680003", "42752001", "47429007"
 INFERRED, FSN, PREFERRED = "900000000000011006", "900000000000003001", "900000000000548007"
-LEGACY_TARGET_URIS = {"21522001":"AbdominalPain","49727002":"Cough","386661006":"Fever"}
 ATTRIBUTE_MAP = {"363698007":"Location","246112005":"Severity","263502005":"Course","272741003":"Laterality"}
 AXES = {"location":"Location","laterality":"Laterality","radiating":"RadiationLocation",
         "onset":"Onset","duration_since":"TimeSinceOnset","duration_lasts":"EpisodeDuration",
@@ -77,7 +76,6 @@ class SnapshotSources:
             parents.sort()
         self.diseases = self.descendants({"64572001"})
         self.findings = self.descendants({"404684003"})
-        self.symptoms = self.descendants({"19019007"}) if self.active("19019007") else set()
         self.signs = self.descendants({"72670004"}) if self.active("72670004") else set()
         self.fsns = {r["concept_id"]:r["term"] for r in self.connection.execute("""SELECT concept_id,term FROM rf2_components
             WHERE kind='description' AND active='1' AND language='en' AND type_id=? ORDER BY id""",(FSN,))}
@@ -125,14 +123,15 @@ class SnapshotSources:
                 priority = {"21000267104":0,"900000000000509007":0,"900000000000508004":1}.get(row["refset_id"],2)
                 preferred[row["source_id"]] = min(priority,preferred.get(row["source_id"],priority))
         for cid,members in descriptions.items():
-            labels = {}
+            labels, selected = {}, {}
             for language in ("en","ko"):
                 options = sorted((r for r in members if r["languageCode"]==language),
                     key=lambda r:(preferred.get(r["id"],3),r["typeId"]!=FSN,r["term"],r["id"]))
                 if options:
                     row = options[0]
                     labels[language] = re.sub(r"\s*\([^()]+\)$","",row["term"]) if row["typeId"]==FSN else row["term"]
-            output[cid] = {"labels":labels,"fsn":self.fsns.get(cid),"descriptions":sorted(members,key=lambda r:r["id"])}
+                    selected[language] = row
+            output[cid] = {"labels":labels,"selected":selected,"fsn":self.fsns.get(cid),"descriptions":sorted(members,key=lambda r:r["id"])}
         return output
 
     def relationships(self,wanted):
@@ -174,19 +173,17 @@ def temporal_value(raw):
 class Normalizer:
     def __init__(self,builder):
         self.builder = builder
-        self.existing = defaultdict(set)
-        graph = Graph().parse(ROOT/"data/ontology/vocabulary.ttl")
-        for subject,label in graph.subject_objects(RDFS.label):
-            if (subject,RDF.type,OW.AttributeValue) in graph:
-                self.existing[str(label).casefold()].add(str(subject))
+        self.source_refs = []
 
     def value(self,attribute,text,*,cid=None):
-        candidates = self.existing.get(text.casefold(),set())
-        uri = str(OW)+"SnomedCT"+cid if cid else (next(iter(candidates)) if len(candidates)==1 else str(OW)+"AttributeValue"+digest([attribute,text.casefold()])[:24])
-        self.builder.concept(uri,"AttributeValue",text,snomed_id=cid)
+        if not self.source_refs:
+            raise ValueError("A categorical value requires an exact source row")
+        uri = str(OW)+"SnomedCT"+cid if cid else str(OW)+"AttributeValue"+digest([attribute,text.casefold()])[:24]
+        self.builder.concept(uri,"AttributeValue",text,snomed_id=cid,source_refs=self.source_refs)
         return uri
 
     def categorical(self,attribute,text,*,cid=None):
+        self.builder.concept(str(OW[attribute]),"FindingAttribute",attribute,source_refs=self.source_refs)
         if " or " in text and " and " in text:
             raise ValueError("conjunction_scope_unresolved")
         separator = " or " if " or " in text else " and "
@@ -213,6 +210,7 @@ class Normalizer:
             raise ValueError("axis_unresolved")
         attribute = AXES[axis]
         if axis in {"duration_since","duration_lasts"}:
+            self.builder.concept(str(OW[attribute]),"FindingAttribute",axis,source_refs=self.source_refs)
             return {"attribute":str(OW[attribute]),"expected":temporal_value(text)}
         if axis=="severity" and text not in {"mild","moderate","severe"}:
             raise ValueError("severity_conditions_or_units_unresolved")
@@ -224,12 +222,13 @@ class Normalizer:
 
 
 def target_uri(cid):
-    return str(OW[LEGACY_TARGET_URIS[cid]]) if cid in LEGACY_TARGET_URIS else str(OW)+"SymptomSnomedCT"+cid
+    return str(OW)+"SymptomSnomedCT"+cid
 
 
 def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance_date=None):
     terminology = SnapshotSources(database)
-    builder,dispositions = PreviewBuilder(),[]
+    builder,dispositions = PreviewBuilder(),DispositionRecords(database)
+    variant_counts,condition_counts,snomed_counts = Counter(),Counter(),Counter()
     normalizer = Normalizer(builder)
     conditions = {r["snomed_id"]:(rid,line,r) for rid,line,r in database.bodhi_rows("nodes_condition.csv")}
     symptoms = {r["uuid"]:(rid,line,r) for rid,line,r in database.bodhi_rows("nodes_symptom.csv")}
@@ -242,11 +241,9 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
     for cid in sorted((terminology.findings-terminology.diseases)|roots):
         if not terminology.active(cid):
             continue
-        if cid in LEGACY_TARGET_URIS:
-            target_roles[cid] = ("Symptom","selected_v5_target_role")
-        elif cid in terminology.signs:
+        if cid in terminology.signs:
             target_roles[cid] = (None,"exam_method_not_reviewed")
-        elif cid in terminology.symptoms or cid in supported_symptoms:
+        elif cid in supported_symptoms:
             target_roles[cid] = ("Symptom","source_symptom_role_candidate")
         else:
             target_roles[cid] = (None,"target_role_unresolved")
@@ -263,6 +260,7 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
                 continue
             packet = {"kind":"qualifier","target_id":row["root_snomed_id"],"target_label":row["root_snomed_name"],"axis":axis,"text":raw}
             packet_id = digest(packet)
+            normalizer.source_refs = [f"source_row:{rid}:relation{n}_type:child{n}_name"]
             try:
                 feature = normalizer.qualifier(row["root_snomed_id"],axis,raw)
                 features.append(feature)
@@ -327,7 +325,7 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
             cid = packet["target_id"]
             target_roles[cid] = ("Symptom","llm_role_candidate") if result["role"]=="Symptom" else (None,"exam_method_not_reviewed")
     targets = {cid for cid,(role,_) in target_roles.items() if role=="Symptom"}
-    needed = set(terminology.diseases)|targets|roots
+    needed = targets|roots
     descendants = terminology.descendants(targets)
     supported_sources = {r[0] for r in database.connection.execute("""SELECT DISTINCT source_id FROM rf2_components
         WHERE kind='relationship' AND active='1' AND characteristic=? AND type_id IN (?,?)""",(INFERRED,DUE_TO,ASSOCIATED_WITH))}
@@ -338,7 +336,7 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
     descriptions = terminology.descriptions(needed)
     disease_uris,patterns = {},{}
     for cid in sorted(terminology.diseases):
-        if cid in descriptions and "en" in descriptions[cid]["labels"]:
+        if cid in terminology.fsns or "en" in descriptions.get(cid,{}).get("labels",{}):
             disease_uris[cid] = str(OW)+"SnomedCT"+cid
     valid_conditions = set()
     for cid,(rid,line,row) in conditions.items():
@@ -351,7 +349,7 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
             valid_conditions.add(cid)
         payload = {"dataset":"bodhi-s","source_file":"nodes_condition.csv","line":line,"source_id":cid,
                    "decision":"excluded" if reason else "accepted_preview","reason":reason,"raw":row}
-        dispositions.append(payload)
+        condition_counts[reason or "accepted_preview"] += 1
         database.disposition(payload,row_id=rid)
     for cid in sorted(targets):
         labels = descriptions.get(cid,{}).get("labels",{})
@@ -364,6 +362,8 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
     targets = {cid for cid in targets if target_roles[cid][0] is not None}
     def disease(cid):
         uri = disease_uris[cid]
+        if cid not in descriptions:
+            descriptions.update(terminology.descriptions({cid}))
         labels = descriptions[cid]["labels"]
         aliases = [conditions[cid][2]["name"]] if cid in conditions else []
         builder.concept(uri,"Disease",labels["en"],korean=labels.get("ko"),aliases=aliases,snomed_id=cid,
@@ -380,7 +380,9 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
             pid,failure = unresolved
             result = model_results.get(pid)
             if result and result["decision"]=="normalized":
+                normalizer.source_refs = [f"source_row:{rid}:codex_normalization:{pid}"]
                 for feature in result["features"]:
+                    builder.concept(str(OW[feature["attribute"]]),"FindingAttribute",feature["attribute"],source_refs=normalizer.source_refs)
                     values = [normalizer.value(feature["attribute"],v.casefold()) for v in feature["values"]]
                     expected = {"kind":"concept","concept":values[0]} if len(values)==1 else {
                         "kind":"concept_set","concepts":sorted(values),"selection":feature["selection"]}
@@ -392,7 +394,7 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
         payload = {"dataset":"bodhi-s","source_file":"nodes_symptom.csv","line":line,"source_id":uuid,
                    "decision":"unresolved" if reason else "accepted_preview","reason":reason,"raw":row,
                    "pattern_id":patterns.get(uuid),"verified_root_sctid":cid if terminology.active(cid) else None}
-        dispositions.append(payload)
+        variant_counts[reason or "accepted_preview"] += 1
         database.disposition(payload,row_id=rid)
     policy,conflicts = ScoringPolicy.load_default(),[]
     for rid,line,row in database.bodhi_rows("edges_present_in.csv"):
@@ -411,10 +413,9 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
             payload["association_id"] = builder.association(disease(cid),patterns[uuid],
                 source_ref=f"bodhi-s:{database.meta('build_id')}:edges_present_in.csv:{line}",relation_basis="bodhi_present_in",
                 predictiveness=prediction,typicality=typicality,strong_predictor=None if row["strong_predictor"]=="" else row["strong_predictor"]=="1",
-                raw={"edge":row,"symptom_uuid":uuid,"symptom_row":symptoms[uuid][2],"condition_row":conditions[cid][2]})
+                raw={"edge_row_id":rid,"symptom_uuid":uuid,"symptom_row_id":symptoms[uuid][0],"condition_row_id":conditions[cid][0]})
             if row["strong_predictor"]=="1" and prediction in {"zero","rare","low"}:
                 conflicts.append({"reason":"strong_predictor_likelihood_conflict","line":line,"raw":row})
-        dispositions.append(payload)
         database.disposition(payload,row_id=rid)
     packets = 0
     for cid,members in sorted(relations.items()):
@@ -427,6 +428,8 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
         if cid in terminology.diseases:
             links.extend((did,"subtype_intersection",None) for did in sorted(paths.keys() & disease_uris.keys()) if did!=cid)
         qualified = [r for r in members if r["typeId"] not in {IS_A,DUE_TO,ASSOCIATED_WITH}]
+        expression_id = database.expression({"source_concept_id":cid,
+            "relationship_ids":[r['id'] for r in members]})
         groups = {r["relationshipGroup"] for r in qualified if r["relationshipGroup"]!="0"}
         features,reasons = [],[]
         if len(groups)>1:
@@ -437,13 +440,16 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
             if not attribute or not value or not terminology.active(value) or not label:
                 reasons.append("required_rf2_condition_unresolved")
             else:
+                normalizer.source_refs = ["rf2:"+row["id"]]
+                builder.concept(str(OW[attribute]),"FindingAttribute",attribute,source_refs=normalizer.source_refs)
                 concept = normalizer.value(attribute,label,cid=value)
                 features.append({"attribute":str(OW[attribute]),"expected":{"kind":"concept","concept":concept}})
         for target,target_path in target_paths:
             for did,basis,link in links:
                 packet = {"dataset":"SNOMED_CT","source_concept_id":cid,"disease_id":did,"target_id":target,
                           "relation_basis":basis,"target_path":target_path,"disease_path":paths.get(did),
-                          "relationship":link,"qualifiers":qualified,"decision":"unresolved" if reasons else "accepted_preview",
+                          "expression_id":expression_id,"relationship_id":link['id'] if link else None,
+                          "decision":"unresolved" if reasons else "accepted_preview",
                           "reasons":sorted(set(reasons))}
                 if not reasons:
                     pattern = builder.pattern(target_uri(target),features)
@@ -451,9 +457,12 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
                     packet["association_id"] = builder.association(disease(did),pattern,
                         source_ref="rf2:"+(link["id"] if link else digest([cid,did,target,target_path,paths[did]])),
                         relation_basis=basis,derivation_scope="descendant" if basis=="subtype_intersection" else "exact",raw=packet.copy())
-                dispositions.append(packet)
+                snomed_counts[packet["decision"]] += 1
                 database.disposition(packet,row_id=link["row_id"] if link else None)
                 packets += 1
+                if packets % 10000 == 0:
+                    database.connection.commit()
+                    print(json_text({"stage":"rf2_projection","packets":packets}),flush=True)
     for entry in builder.registry.values():
         cid = entry["snomed_id"]
         if cid in terminology.concepts:
@@ -471,9 +480,9 @@ def projection(database, *, llm=False, max_calls=0, daily_remaining=0, allowance
               "targets":{cid:target_uri(cid) for cid in sorted(targets)},"discovered_target_roles":dict(Counter(reason for _,reason in target_roles.values())),
               "source_counts":{Path(f["path"]).name:f["row_count"] for f in database.inventory()},
               "bodhi_selected_variants":len(symptoms),"bodhi_projected_variants":len(patterns),
-              "bodhi_variant_dispositions":dict(Counter(d["reason"] or "accepted_preview" for d in dispositions if d.get("source_file")=="nodes_symptom.csv")),
-              "condition_dispositions":dict(Counter(d["reason"] or "accepted_preview" for d in dispositions if d.get("source_file")=="nodes_condition.csv")),
-              "snomed_packets":packets,"snomed_dispositions":dict(Counter(d["decision"] for d in dispositions if d.get("dataset")=="SNOMED_CT")),
+              "bodhi_variant_dispositions":dict(variant_counts),
+              "condition_dispositions":dict(condition_counts),
+              "snomed_packets":packets,"snomed_dispositions":dict(snomed_counts),
               "exceptions":conflicts,"model_calls":len(model_audit),"model_stage":model_stats,"model_audit":model_audit,
               "model_pending_packets":len(set(model_packets)-set(model_results)),"normalization_version":NORMALIZATION_VERSION}
     return builder,report,dispositions
@@ -494,7 +503,9 @@ def build(international,korean,bodhi,output,*,resume=False,llm=False,max_calls=0
     identity = {"inputs":[{"path":p.relative_to(ROOT).as_posix(),"sha256":file_hash(p)} for p,_,_ in inputs],
                 "schema":file_hash(ROOT/"data/ontology/schema.ttl"),"scoring_policy":file_hash(ROOT/"submission/knowledge/scoring_policy.json"),
                 "normalization_version":NORMALIZATION_VERSION,"normalization_policy":digest([AXES,ATTRIBUTE_MAP,inspect.getsource(Normalizer),inspect.getsource(temporal_value)]),
-                "schema_version":"5.0","composition":composed}
+                "schema_version":"5.0","composition":composed,
+                "generator_files":{p.name:file_hash(p) for p in sorted((ROOT/"Dev/ontology").glob("*.py"))},
+                "prompt_files":{p.name:file_hash(p) for p in sorted((ROOT/"Dev/ontology/prompts").glob("*.txt"))}}
     build_id = digest(identity)
     path = output/"ontology.sqlite3"
     if output.exists() and any(output.iterdir()) and not resume:
@@ -527,25 +538,32 @@ def build(international,korean,bodhi,output,*,resume=False,llm=False,max_calls=0
         dispositions = DispositionRecords(database)
         preview = output/"preview"
         if preview.exists() and any(preview.iterdir()):
-            from uuid import uuid4
-            archived = output/("interrupted-preview-"+str(uuid4()))
-            preview.rename(archived)
-            database.set_meta("preserved_interrupted_preview",archived.relative_to(ROOT).as_posix())
+            manifest = preview/'manifest.json'
+            if not manifest.is_file() or json.loads(manifest.read_text()).get('build_id') != build_id:
+                raise ValueError('Preserve an unrecognized preview; select a new build directory')
+            import shutil
+            shutil.rmtree(preview)
         result = builder.export(preview,source_snapshots=database.source_snapshots(),report=report,dispositions=dispositions)
         result["model_calls"] = report["model_calls"]
         write(preview/"report.json",result)
         database.save_builder(builder)
         database.set_meta("projection_conflicts",[])
         coverage = {"source_rows":database.connection.execute("SELECT COUNT(*) FROM source_rows").fetchone()[0],
-            "source_files":len(database.inventory()),"row_dispositions":{r[0]:r[1] for r in database.connection.execute("SELECT disposition,COUNT(*) FROM source_rows GROUP BY disposition")}}
+            "source_files":len(database.inventory()),"row_dispositions":{r[0]:r[1] for r in database.connection.execute("SELECT disposition,COUNT(*) FROM source_rows GROUP BY disposition")},
+            "inactive_latest_components":database.connection.execute('SELECT COUNT(*) FROM inactive_rf2_rows').fetchone()[0],
+            "inactive_classification":"read_only_view_without_raw_row_rewrites"}
         result["coverage"] = coverage
         write(output/"report.json",result)
         write(preview/"report.json",result)
         database.set_meta("report",result)
-        database.set_meta("stage","complete")
+        from .source_catalog import extract_catalog
+        result["catalog"] = extract_catalog(database, builder, output)
+        database.set_meta("report", result)
+        write(output/"report.json", result)
         database.connection.execute("PRAGMA wal_checkpoint(TRUNCATE)")
         from .admission import review_material
         review_material(database,preview)
+        database.set_meta("stage","complete")
         return result
     finally:
         database.close()
@@ -560,7 +578,8 @@ def export(database_path,output):
         if database.meta("stage")!="complete":
             raise ValueError("Export requires a completed build")
         dispositions = DispositionRecords(database)
-        result = database.builder().export(output,source_snapshots=database.source_snapshots(),report=database.meta("report"),dispositions=dispositions)
+        result = database.builder().export(output,source_snapshots=database.source_snapshots(),report=database.meta("report"),
+            dispositions=dispositions, require_action_assets=database.meta("admission_scope") != "graph")
         result["model_calls"] = database.meta("report")["model_calls"]
         write(workspace_path(output)/"report.json",result)
         from .admission import review_material
@@ -590,18 +609,38 @@ def main(argv=None):
             command.add_argument("--output",type=Path,required=True)
         else:
             command.add_argument("--review",type=Path,required=True)
+    connections = commands.add_parser("connections")
+    connections.add_argument("--database", type=Path, required=True)
+    connections.add_argument("--output", type=Path, required=True)
+    connections.add_argument("--accept-competition", action="store_true")
+    korean_plan = commands.add_parser("korean-freeze")
+    korean_plan.add_argument("--catalog", type=Path, required=True)
+    korean_plan.add_argument("--output", type=Path, required=True)
+    korean = commands.add_parser("korean")
+    korean.add_argument("--workset", type=Path, required=True)
+    korean.add_argument("--output", type=Path, required=True)
+    korean.add_argument("--resume", action="store_true")
     args = parser.parse_args(argv)
     if args.command=="build":
         if args.llm and (not args.allowance_date or args.max_calls<=0 or args.daily_remaining<=0):
             parser.error("Live normalization requires current --allowance-date and explicit positive budgets")
         result = build(args.international,args.korean,args.bodhi,args.output,resume=args.resume,llm=args.llm,
                        max_calls=args.max_calls,daily_remaining=args.daily_remaining,allowance_date=args.allowance_date)
+    elif args.command=="connections":
+        from .connections import build as build_connections
+        result = build_connections(args.database, args.output, accept_competition=args.accept_competition)
+    elif args.command=="korean-freeze":
+        from .korean import freeze
+        result = freeze(args.catalog,args.output)
+    elif args.command=="korean":
+        from .korean import run
+        result = run(args.workset,args.output,resume=args.resume)
     elif args.command=="export":
         result = export(args.database,args.output)
     else:
         from .admission import admit
         result = admit(args.database,args.review)
-    print(json.dumps({k:v for k,v in result.items() if k not in {"source_counts","targets","exceptions"}},indent=2,ensure_ascii=False))
+    print(json.dumps({k:v for k,v in result.items() if k not in {"source_counts","targets","exceptions","excluded_context_edges"}},indent=2,ensure_ascii=False))
     return 0
 
 

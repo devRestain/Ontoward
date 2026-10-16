@@ -1,26 +1,25 @@
-# v5.0 실행 지식
+# v5.0 실행 지식과 D23 한국어 수용
 
-[graph.py](graph.py)의 ClinicalKnowledge가 하나의 RDFLib Graph를 소유하고, [conditions.py](conditions.py)가 타입 값과 공개 점수 정책을 검증한다. 공유 Pattern·질환별 Association·Feature 조건·조건부 기여를 고정 인터페이스로 조회한다.
+ClinicalKnowledge는 하나의 읽기 전용 RDFLib Graph와 조회 색인을 소유한다. Disease→Association→공유 Pattern→Feature 표현은 v5.0이며 D17이 환자 관찰을 Pattern부터 평가한다.
 
-| 파일 | 역할 |
+D18의 이전 자산 삭제와 D20 그래프 수용 뒤 D23에서 D22의 검증된 문진·진찰 문구를 수용했다. 현재 manifest는 `admitted`이며 prepare는 모든 실행 문구를 검증한다. 9,401개 Association과 원래 임상 표현을 유지하고 진찰 요청 문구 한 triple만 추가했다. [새 수용 영수증과 결과](../../data/preparation/v5/runtime-text-2026-10-16/README.md)는 원래 그래프 승인과 한국어 생성 증빙을 그대로 참조한다. 추가 사용자·임상 승인 대기는 없다.
+
+| 현재 파일 | 역할 |
 |---|---|
-| schema.ttl | 현재 v5.0 구조; 준비용 schema와 같은 바이트 |
-| scoring_policy.json | 버전이 있는 공개 순서형 점수 정책 |
-| manifest.json | D15 수용 자산의 버전·경로·SHA-256과 승인 영수증 해시 |
-| vocabulary.ttl·임상 .ttl | 별도 수용한 어휘·표현·Association |
-| labels.ko.json·questions.ko.json | 해시 접두사가 붙은 한국어 표시 이름과 최소 질문 |
-| plans JSON | 선택적인 질환별 계획·교육; 현재 배치에는 없음 |
+| schema.ttl | v5.0 구조 계약 |
+| scoring_policy.json | 원천 지지 가중치 |
+| *-reasoning_policy.json | manifest에 고정한 D17 제한 반증과 상한 |
+| manifest.json | 그래프·정책·D23 승인 해시와 admitted 상태 |
+| *-vocabulary.ttl·*-clinical.ttl | 수용한 원천 표현·typed Context·ROS·필수 조건과 직접 진찰 경로 |
+| *-questions.ko.json | 증상 475개·속성 590개·Context 243개의 검증된 문진과 직접 문진 제외 15개 |
+| Python reader | 타입·조건·점수·문구 검증과 읽기 전용 조회 |
 
-manifest는 schema_version=5.0, registry_version, normalization_version, source_snapshots와 파일 해시, scoring_policy_version 및 정책 파일 해시를 고정한다. schema·vocabulary·하나 이상의 bundles와 선택 labels·questions·plans는 submission 기준 knowledge/ 내부 상대 경로만 사용한다.
+새 admission에서는 manifest가 schema·vocabulary·임상 bundle·정책과 선택 labels/questions/plans의 경로·SHA-256을 고정해야 한다. preview_only와 철회된 manifest를 거부하며 부모 data/assets나 빈 Graph로 우회하지 않는다. 실제 발화는 준비와 전달 양쪽에서 NFC 1–30자로 검증한다.
 
-prepare()는 모든 RDF 자산을 로드하고 타입·소유 관계·조건을 검증한 뒤 Association 점수와 atomic/joint FeatureContribution을 계산한다. 진료 중 환자 상태를 Graph에 쓰지 않는다. get_patterns_by_target와 get_disease_patterns는 Association ID와 적용 조건을, get_pattern_features는 타입 Feature를, get_feature_contributions는 기준·정교화 연관과 차분을 반환한다.
+D20의 그래프 전용 수용은 원천 의미·식별자·조건·관계 단말을 검증하고 문구 준비를 분리한다. 실제 prepare는 진찰 요청과 질문을 포함한 전체 검증을 사용한다. typed Context는 기존 SOAP 병력 필드와 양성 +1 상한으로 소비하고, inSystem은 주호소 계통을 고정하는 집중 ROS에만 사용한다. HAS_PREREQUISITE는 확인된 적용 조건으로 충족해야 원천 지지를 활성화한다.
 
-전체 원천 규모를 위해 검증된 profile·Feature·명칭·정교화 경로를 내부에서 인덱싱한다. 의미 없는 모든 조합의 비교 행렬은 유지하지 않으며 조회·점수 정책은 동일하다. preview_only manifest는 production reader가 거부하고 명시적 배치 승인을 거친 자산만 통합한다.
+현재 제출 ZIP은 manifest가 참조하는 지식 자산과 필수 실행 파일만 포함한다. D24에서 현재 manifest가 참조하지 않는 과거 D20 파일 세 개는 data의 원본과 해시가 같은 것을 확인한 뒤 실행 디렉터리에서 제거했다. 원래 그래프·승인 이력은 data 소유 경로에 보존한다. 한국어 문구는 생성 결과 그대로 전달하며 NFC 1–30자를 prepare와 전달 양쪽에서 확인한다.
 
-원천 변형은 모든 조건이 충족될 때 점수를 활성화한다. 더 구체적인 일치 표현은 점수가 낮아져도 기준 표현을 대체한다. 같은 Target은 한 번 집계하며 별개 에피소드를 섞지 않는다. zero·소수 값을 보존하고 source likelihood를 확률로 바꾸지 않는다.
+원천 지지는 완전한 Feature·적용 조건이 맞을 때 활성화한다. 구체적인 매칭은 낮은 점수여도 조상을 대체하고 같은 Disease–Target은 한 번 집계한다. 다른 에피소드를 합치지 않는다. 질문은 Target 또는 대상|속성 키로 연결하며 원인 진단을 전제한 대상은 직접 문진을 차단한다. 원인 조건을 삭제한 질문의 긍정으로 원래 개념을 확정하지 않는다.
 
-labels는 기존 URI→한국어 표시 이름이며 Graph를 수정하지 않는다. questions는 URI→문구 사전이며 {symptom} 자리표시자를 사용하고 대상 URI|속성 URI 예외가 우선한다. 모든 치환 결과를 NFC 1–30자로 검증한다. plans는 질환 URI별 tests·treatment·disposition·follow_up과 education 목록이다. 승인 자산 밖의 질문이나 계획은 생성하지 않는다.
-
-현재 사용자 승인 Association 9,400개와 96,017 triple, 증상 490개와 속성 16개의 질문, 257개 한국어 표시 이름을 수용했다. 원래 preview는 그대로 보존하며 실행이 부모 data/를 읽지 않는다. 실제 RDF와 합성 환자·모델 응답을 사용한 독립 ZIP 실행을 검증했다. ExamFinding·ContextFactor와 질환별 계획은 현재 배치에 없다. 사용자 수용을 독립 임상 검증이나 실제 Luna·공식 서버 수락으로 해석하지 않는다.
-
-이 README는 ZIP에서 제외하며 코드·스키마·공개 정책과 별도 수용한 지식만 포함한다. 옛 v4.2 그래프와 준비 인터페이스는 실행 입력이 아니다.
+새 후보의 자동 검사와 합성 상담 결과를 독립 임상 검증·실제 환자 성능·공식 서버 수락으로 일반화하지 않는다. 실행 승인 경계와 유지 중인 행동 검증은 [애플리케이션 상태](../PROJECT_STATE.md), 전체 생성 과정은 [생성 도구](../../Dev/ontology/README.md)가 기록한다.

@@ -1,39 +1,46 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=48be55b730020ea23ac9b432025002aa1e95d6ed dirty=true updated=2026-10-15T02:08:43+00:00
-/goal phase=current id=APP.FULLV501 state=complete action="Complete D15 admitted knowledge bounded parsing Korean questions and information preservation"
-/goal phase=next id=APP.PARSER16 state=planned action="Design fact-level validation and question-specific recovery"
-/goal phase=history id=APP.V501 state=complete action="Preserve the completed v5.0 workflow integration and synthetic acceptance"
-/accept id=APP.FULLV501.A1 state=pass action="Preserve consultation behavior after reader indexing" evidence=APP.FULLV501.E1
-/accept id=APP.FULLV501.A2 state=pass action="Validate isolated admission text pins and failure rollback" evidence=APP.FULLV501.E2
-/accept id=APP.FULLV501.A3 state=pass action="Load and package the explicitly approved full clinical batch" evidence=APP.FULLV501.E4,APP.FULLV501.E6
-/accept id=APP.FULLV501.A4 state=pass action="Preserve structured information and bound parser vocabulary and expansion" evidence=APP.FULLV501.E1
-/accept id=APP.FULLV501.A5 state=pass action="Verify independent archive workflow and actual knowledge consultation" evidence=APP.FULLV501.E5,APP.FULLV501.E6
-/evidence id=APP.FULLV501.E1 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/workflow-accepted/verification.json observed="Pass 58 offline checks including delivered versus resolved evidence SOAP context numeric units primary exclusion and bounded fact-preserving expansion"
-/evidence id=APP.FULLV501.E2 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/database/verification.json observed="Pass 31 source and admission checks including pinned labels questions isolated prepare and unchanged manifest after rejected text"
-/evidence id=APP.FULLV501.E3 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/full-source.json observed="Pass 354 source checks with 2 to 1 to 4 refinement episode isolation typed values and graph immutability"
-/evidence id=APP.FULLV501.E4 class=artifact result=pass source=knowledge/manifest.json observed="Load D15 admitted RDF and optional pinned labels and questions from submission-local paths"
-/evidence id=APP.FULLV501.E5 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/isolated/workflow/verification.json observed="Pass all 58 workflow checks from the extracted archive without a parent workspace mount"
-/evidence id=APP.FULLV501.E6 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/isolated/admitted/verification.json observed="Pass three actual-RDF scripted consultations with confirmed termination and prepare 2.295 seconds at 262792 KiB peak memory"
-/evidence id=APP.FULLV501.E7 class=semantic result=not_run source=knowledge/manifest.json observed="Leave independent clinical validation actual Luna diagnostic performance and disease-plan preparation unrun"
-/accept id=APP.V501.A1 state=pass action="Implement shared Association readers typed matching conditional contributions and public policy loading" evidence=APP.V501.E1,APP.V501.E2
-/accept id=APP.V501.A2 state=pass action="Verify score replacement complete conditions episode isolation source deduplication and applicability questions" evidence=APP.V501.E2
-/accept id=APP.V501.A3 state=pass action="Preserve the five-session flow through response handling SOAP diagnosis submission and confirmed termination" evidence=APP.V501.E2,APP.V501.E3
-/accept id=APP.V501.A4 state=pass action="Keep runtime paths self-contained and reconcile application contracts and handoff" evidence=APP.V501.E3,APP.V501.E4
-/evidence id=APP.V501.E1 class=semantic result=pass source=knowledge/graph.py observed="Consume schema version 5.0 shared Patterns typed Feature expectations and DiseasePatternAssociation profiles and reject deprecated graph predicates"
-/evidence id=APP.V501.E2 class=runtime result=pass source=Tmp/workflow-tests/verification.json observed="Pass all 52 network-disabled checks including 2 to 1 to 4 replacement atomic and joint deltas calendar units zero fractions required applicability and current-context question preservation"
-/evidence id=APP.V501.E3 class=runtime result=pass source=Tmp/ontology-v5/archive-verification.json observed="Pass all 52 maintained checks from the isolated ZIP runtime with synthetic knowledge and SDK responses without parent data fallback"
-/evidence id=APP.V501.E4 class=semantic result=pass source=AGENTS.md observed="Align the runtime contract and Korean workflow white paper with v5.0 while retaining D11 D12 D13 D14 session budget transport and submission responsibilities"
-/evidence id=APP.V501.E5 class=artifact result=pass source=Tmp/ontology-v5/archive-verification.json observed="Preserve the SDK digest and current source bytes in the 38-file ZIP with SHA-256 b9f09785db856e5ae399fbba70a0677989b5107e7d7c68af355bdd4a75d26686"
-/evidence id=APP.V501.E6 class=runtime result=not_run source=Tmp/ontology-v5/archive-verification.json observed="Preserve the historical pre-D15 absence of production clinical assets without overriding current admission evidence"
-/evidence id=APP.V501.E7 class=external_service result=not_run source=workflow/runtime.py observed="Leave real Luna parsing framing official API recovery submission and evaluation unverified"
-/evidence id=APP.V501.E8 class=runtime result=not_run source=README.md observed="Leave Mermaid visual rendering unrun"
-/blocker id=APP.FULLV501.B1 state=resolved action="Apply D15 approval and the data-owned pinned receipt" source=data/PROJECT_STATE.md
-/scope id=APP.V501.S1 state=in action="Own typed observations graph readers scoring contribution evidence applicability questions and complete offline consultation acceptance"
-/scope id=APP.FULLV501.S1 state=in action="Own D15 indexed knowledge resolved evidence structured SOAP bounded parsing and minimal Korean asset consumption"
-/scope id=APP.FULLV501.S2 state=out action="Exclude disease plans dynamic replanning turn redistribution actual model calls official evaluation and deployment"
-/evidence id=APP.EDUCATION16.E1 class=artifact result=pass source=Tmp/education-2026-10-15/preservation.json observed="Verify all 43 runtime code configuration SDK and knowledge files retain their pre-D16 bytes"
-/evidence id=APP.EDUCATION16.E2 class=runtime result=pass source=Tmp/education-2026-10-15/workflow.json observed="Pass all 58 existing synthetic workflow checks while leaving D16 excerpts outside runtime knowledge"
-/scope id=APP.EDUCATION16.S1 state=out action="Exclude D16 preparation drafts from runtime education plans pending separate user selection and integration"
-/handoff state=ready action="Preserve D15 runtime admission during data-owned D16 review and design fact-level validation as APP.PARSER16"
+/checkpoint revision=fac0c639c00202230a8066568649a54f68be9839 dirty=true updated=2026-10-16T13:21:27+00:00
+/goal phase=current id=APP.STORAGE24 state=complete action="Remove superseded runtime copies and verify unchanged admitted consultation and standalone archive behavior under D24"
+/goal phase=history id=APP.TEXT20 state=complete action="Admit completed D22 patient actions against D20 graph pins and verify Korean consultations under D23"
+/goal phase=history id=APP.GRAPH20 state=complete action="Consume D20 graph relations and verify full offline consultations with separate text readiness"
+/goal phase=history id=APP.SOURCE18 state=complete action="Verify D17 consultation behavior and D18 withdrawal at the source-reset checkpoint"
+/goal phase=history id=APP.WHITEPAPER01 state=complete action="Expand the Korean workflow white paper with Mermaid pipelines"
+/accept id=APP.SOURCE18.A1 state=pass action="Verify the D18 removal and withdrawn-manifest checkpoint" evidence=APP.SOURCE18.E1
+/accept id=APP.SOURCE18.A2 state=pass action="Verify maintained consultation scenarios without weakening the withdrawn admission boundary" evidence=APP.SOURCE18.E2
+/accept id=APP.WHITEPAPER01.A1 state=pass action="Match the documented graph and local references to current source" evidence=APP.WHITEPAPER01.E1
+/accept id=APP.WHITEPAPER01.A2 state=pass action="Explain five sessions startup and planned conversation behavior" evidence=APP.WHITEPAPER01.E2
+/evidence id=APP.SOURCE18.E1 class=runtime result=pass source=data/preparation/v5/source-only-2026-10-16/reset-verification.json observed="Verify the historical D18 reset checkpoint removed prior RDF labels questions and approvals and rejected its withdrawn manifest"
+/evidence id=APP.SOURCE18.E2 class=runtime result=pass source=Tmp/d19-verification/workflow/verification.json observed="Pass all 69 maintained consultation and packaging regression tests after D19 preparation changes with synthetic inputs scripted responses and no network"
+/evidence id=APP.TEXT20.E1 class=runtime result=pass source=data/preparation/v5/runtime-text-2026-10-16/admission.json observed="Execute strict prepare with the D23 receipt D20 graph and all 1309 D22 patient actions; retain 9401 Associations and add only one examination text triple for 99105 total triples"
+/evidence id=APP.GRAPH20.E3 class=external_service result=not_run source=knowledge/manifest.json observed="Leave real Gateway official environment E2E submission and evaluation unrun"
+/evidence id=APP.WHITEPAPER01.E1 class=static result=pass source=Tmp/codex/whitepaper-2026-10-16/verification.json observed="Match 18 graph vertices and 35 edges and check 12 Mermaid blocks and 17 local links or anchors plus the root decision reference"
+/evidence id=APP.WHITEPAPER01.E2 class=semantic result=pass source=Tmp/codex/whitepaper-2026-10-16/verification.json observed="Review session transitions pending replies replanning education correction startup order and the D18 withdrawal boundary"
+/evidence id=APP.WHITEPAPER01.E3 class=artifact result=not_run source=Tmp/codex/whitepaper-2026-10-16/verification.json observed="Leave visual Mermaid rendering unrun"
+/evidence id=APP.WHITEPAPER01.E4 class=runtime result=not_run source=Tmp/codex/whitepaper-2026-10-16/verification.json observed="Leave consultation execution model calls and official service verification outside this documentation slice"
+/accept id=APP.GRAPH20.A1 state=pass action="Preserve maintained consultation and packaging behavior" evidence=APP.GRAPH20.E1
+/accept id=APP.GRAPH20.A2 state=pass action="Verify actual graph ROS Context SOAP and confirmed termination" evidence=APP.GRAPH20.E2
+/accept id=APP.GRAPH20.A3 state=pass action="Verify independent graph archive and explicit text readiness" evidence=APP.GRAPH20.E4
+/evidence id=APP.GRAPH20.E1 class=runtime result=pass source=Tmp/d20-verification/workflow-canonical/verification.json observed="Pass 69 maintained workflow and packaging regressions after D20 graph admission"
+/evidence id=APP.GRAPH20.E2 class=runtime result=pass source=data/preparation/v5/competition-graph-2026-10-16/verification.json observed="Execute the admitted 99104-triple graph through three English-source-label scripted consultations with six ROS and thirty Context actions per case fifteen SOAP fields and one confirmed DIAGNOSE; keep real models and Korean generation unrun"
+/evidence id=APP.GRAPH20.E4 class=artifact result=pass source=data/preparation/v5/competition-graph-2026-10-16/packaging.json observed="Load all 9401 Associations from the independent 42-file ZIP without parent data and reject prepare with the declared D20 text-pending reason"
+/scope id=APP.GRAPH20.S1 state=in action="Own D20 relation consumers strict text readiness and scripted offline consultation evidence"
+/scope id=APP.GRAPH20.S2 state=out action="Exclude Korean generation real Gateway official environment E2E publication and deployment"
+/evidence id=APP.TEXT20.E2 class=artifact result=pass source=data/preparation/v5/runtime-text-2026-10-16/review-approved.json observed="Pin the D22 data-owned patient-action assets and exact review provenance to D23 while preserving the original graph manifest and receipt"
+/accept id=APP.TEXT20.A1 state=pass action="Prepare exact admitted graph and Korean action assets without bypasses" evidence=APP.TEXT20.E1,APP.TEXT20.E2
+/accept id=APP.TEXT20.A2 state=pass action="Verify Korean consultation SOAP submission termination and separate examination acquisition" evidence=APP.TEXT20.E3,APP.TEXT20.E4
+/accept id=APP.TEXT20.A3 state=pass action="Verify the independently extracted runtime archive without parent data or network" evidence=APP.TEXT20.E5,APP.TEXT20.E6
+/evidence id=APP.TEXT20.E3 class=runtime result=pass source=Tmp/app-text20/korean/verification.json observed="Pass 577 checks over three Korean present absent and unknown Context consultations with six ROS and fifteen SOAP fields per case plus separate prepared EXAM acquisition through O.exam SOAP and confirmed submission"
+/evidence id=APP.TEXT20.E4 class=runtime result=pass source=Tmp/app-text20/admitted/verification.json observed="Pass three actual admitted-RDF consultations covering source refinement calendar time and symptom fallback with zero question-generation calls and confirmed submission"
+/evidence id=APP.TEXT20.E5 class=artifact result=pass source=data/preparation/v5/runtime-text-2026-10-16/packaging.json observed="Extract the 42-file 1361955-byte ZIP with SHA256 0c49a38e601c0acddd551863b674a03f36078485a61b0ac8ad74b14a552e66c1 and exclude superseded unreferenced knowledge files"
+/evidence id=APP.TEXT20.E6 class=runtime result=pass source=Tmp/app-text20/isolation-output/korean/verification.json observed="Pass the same 577 Korean path checks plus 69 workflow tests and three admitted-RDF cases in the independent read-only two-CPU eight-GB archive container without parent data assets or network"
+/evidence id=APP.TEXT20.E7 class=external_service result=not_run source=data/preparation/v5/runtime-text-2026-10-16/verification.json observed="Leave actual Luna authenticated SDK official environment submission and evaluation unrun in this offline slice"
+/scope id=APP.TEXT20.S1 state=in action="Own strict Korean action consumption full scripted consultations separate examination acquisition and independent archive verification"
+/scope id=APP.TEXT20.S2 state=out action="Exclude new model calls official services submission evaluation and deployment"
+/accept id=APP.STORAGE24.A1 state=pass action="Preserve every active manifest pin and keep exact custody for removed D20 runtime duplicates" evidence=APP.STORAGE24.E1
+/accept id=APP.STORAGE24.A2 state=pass action="Verify complete consultation SOAP submission termination and independent archive isolation after cleanup" evidence=APP.STORAGE24.E2
+/evidence id=APP.STORAGE24.E1 class=artifact result=pass source=data/provenance/storage-cleanup-2026-10-16.json observed="Hash-verify 43 retained runtime files and remove three superseded D20 files only after matching their preserved data preview bytes; retain manifest f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61 and the 42-file 1361955-byte runtime ZIP"
+/evidence id=APP.STORAGE24.E2 class=runtime result=pass source=data/provenance/storage-cleanup-2026-10-16.json observed="Pass 69 maintained workflow tests and 577 Korean checks in the workspace then pass 69 workflow tests three admitted-RDF cases and 577 Korean checks against the isolated ZIP with two CPUs eight GB and no parent data assets or network; retain real models authenticated SDK and official submission as not_run"
+/scope id=APP.STORAGE24.S1 state=in action="Own D24 active asset preservation duplicate removal and offline runtime archive verification"
+/handoff state=ready action="Use the verified unchanged runtime ZIP and keep Git branch commit authorization in the root scope"

@@ -13,8 +13,18 @@ __pycache__/
 *.sqlite3
 *.sqlite3-wal
 *.sqlite3-shm
+*.sqlite3-journal
 *.log
 *.zip
+*.tar
+*.tar.gz
+*.tgz
+*.sqlite3.gz
+build/
+dist/
+*.egg-info/
+.coverage
+htmlcov/
 
 # Keep directory guidance while excluding disposable outputs.
 /Tmp/*
@@ -55,19 +65,42 @@ __pycache__/
 !/assets/bodhi/AGENTS.md
 !/assets/bodhi/README.md
 
-# Retain full source builds locally; version compact review and verification evidence.
-/data/preparation/v5/full-*/**
-!/data/preparation/v5/full-*/
-!/data/preparation/v5/full-*/report.json
-!/data/preparation/v5/full-*/verification.json
-!/data/preparation/v5/full-*/artifact-verification.json
-!/data/preparation/v5/full-*/admission.json
-!/data/preparation/v5/full-*/review-approved.json
-!/data/preparation/v5/full-*/texts/
-!/data/preparation/v5/full-*/texts/*.json
-!/data/preparation/v5/full-*/preview/
-!/data/preparation/v5/full-*/preview/manifest.json
-!/data/preparation/v5/full-*/preview/review.md
-!/data/preparation/v5/full-*/preview/review-batch.json
-!/data/preparation/v5/full-*/preview/disease-target-coverage.csv
+# Preparation databases, catalogs, worksets, request ledgers, and snapshots stay local.
+# Version compact custody, approval, and verification records beside their builds.
+/data/preparation/**
+!/data/preparation/**/
+!/data/preparation/**/README.md
+!/data/preparation/**/report.json
+!/data/preparation/**/*verification.json
+!/data/preparation/**/admission.json
+!/data/preparation/**/review-approved.json
+!/data/preparation/**/workset-identity.json
+!/data/preparation/**/evidence.json
+!/data/preparation/**/evidence-files.json
+!/data/preparation/**/code-custody.json
+!/data/preparation/**/execution-environment.json
+!/data/preparation/**/execution-summary.json
+!/data/preparation/**/handoff-verification.json
+!/data/preparation/**/storage-compaction.json
+!/data/preparation/**/rehearsal-retirement.json
+!/data/preparation/**/candidate-workflow.json
+!/data/preparation/**/reset.json
+!/data/preparation/**/deletion-receipt.json
+!/data/preparation/**/connections.json
+!/data/preparation/**/packaging.json
+!/data/preparation/**/text-assets.json
+!/data/preparation/**/competition-acceptance.json
+!/data/preparation/**/graph-manifest.json
+!/data/preparation/**/base/*.json
+!/data/preparation/**/base/*.ttl
+!/data/preparation/**/preview/manifest.json
+!/data/preparation/**/preview/review.md
+!/data/preparation/**/preview/review-batch.json
+
+# Interrupted snapshots stay local even when they contain ordinary report names.
+/data/preparation/**/interrupted-preview-*/**
+# Shared catalog evidence is preparation data rather than a compact receipt.
+/data/preparation/**/catalog/**
+
+# Runtime Turtle and Korean JSON under submission/knowledge remain versioned.
 

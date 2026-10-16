@@ -1,0 +1,16 @@
+{
+  "by_purpose": {
+    "attribute": 575,
+    "context": 243,
+    "examination": 1,
+    "presence": 470
+  },
+  "exclusions": 15,
+  "jobs": 1289,
+  "label_jobs": 0,
+  "max_calls": 130,
+  "previously_accepted_jobs": 20,
+  "provider": "nova_dev_key",
+  "status": "frozen",
+  "workset_sha256": "6b5535aff3189036eb32b3d09840fc93203d3f90ccf8c720d137a33ffbfdf744"
+}

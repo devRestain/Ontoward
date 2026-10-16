@@ -1,0 +1,125 @@
+{
+  "check_count": 27,
+  "checks": [
+    "completed_source_build",
+    "all_fourteen_classes_have_explicit_coverage_and_rules",
+    "empty_classes_are_explained_without_fabricated_nodes",
+    "catalog_excludes_unselected_broad_taxonomy",
+    "catalog_pin:coverage.json",
+    "catalog_pin:lexical.json",
+    "catalog_pin:nodes.jsonl",
+    "catalog_pin:relations.jsonl",
+    "generator_pin:admission.py",
+    "generator_pin:codex_cli.py",
+    "generator_pin:database.py",
+    "generator_pin:evidence.py",
+    "generator_pin:korean.py",
+    "generator_pin:model_normalization.py",
+    "generator_pin:reset.py",
+    "generator_pin:source_catalog.py",
+    "generator_pin:source_projection.py",
+    "generator_pin:v5.py",
+    "prompt_pin:korean-label.txt",
+    "prompt_pin:korean-question.txt",
+    "prompt_pin:korean-review.txt",
+    "every_lexical_source_identifier_role_path_and_korean_description_checked",
+    "every_node_has_a_resolvable_source_or_derived_proof",
+    "rf2_edges_preserve_exact_component_group_type_endpoint_and_concrete_value",
+    "bodhi_edges_preserve_exact_original_payload",
+    "all_five_bodhi_edge_roles_are_retained_without_conversion",
+    "source_candidates_do_not_reactivate_old_runtime_admission"
+  ],
+  "classes": {
+    "AttributeValue": {
+      "korean_source_labels": 49,
+      "nodes": 373,
+      "rule": "A categorical value explicitly used in a selected source condition",
+      "unresolved_reason": null
+    },
+    "BodySystem": {
+      "korean_source_labels": 7,
+      "nodes": 9,
+      "rule": "Named immediate body-system subtype on a selected anatomical value's source ancestry",
+      "unresolved_reason": null
+    },
+    "ClinicalFeature": {
+      "korean_source_labels": 0,
+      "nodes": 3282,
+      "rule": "Pattern-local source status or attribute condition",
+      "unresolved_reason": null
+    },
+    "ClinicalPattern": {
+      "korean_source_labels": 0,
+      "nodes": 1796,
+      "rule": "Complete source variant, independent of disease",
+      "unresolved_reason": null
+    },
+    "ContextFactor": {
+      "korean_source_labels": 0,
+      "nodes": 105,
+      "rule": "Explicit BODHI medical-history node; not unconditional disease support",
+      "unresolved_reason": null
+    },
+    "Disease": {
+      "korean_source_labels": 575,
+      "nodes": 842,
+      "rule": "Active disorder used by a complete source association",
+      "unresolved_reason": null
+    },
+    "DiseasePatternAssociation": {
+      "korean_source_labels": 0,
+      "nodes": 9400,
+      "rule": "Source disease-pattern-applicability assertion",
+      "unresolved_reason": null
+    },
+    "ExamFinding": {
+      "korean_source_labels": 1,
+      "nodes": 4,
+      "rule": "Selected BODHI finding in the physical-sign hierarchy; detection mapping remains required",
+      "unresolved_reason": null
+    },
+    "ExamMethod": {
+      "korean_source_labels": 116,
+      "nodes": 990,
+      "rule": "Physical-examination procedure explicitly adjacent to selected source concepts",
+      "unresolved_reason": null
+    },
+    "ExpectedValue": {
+      "korean_source_labels": 0,
+      "nodes": 408,
+      "rule": "Typed value of a selected source condition",
+      "unresolved_reason": null
+    },
+    "FindingAttribute": {
+      "korean_source_labels": 0,
+      "nodes": 16,
+      "rule": "An axis explicitly used in a selected source condition",
+      "unresolved_reason": null
+    },
+    "Symptom": {
+      "korean_source_labels": 249,
+      "nodes": 490,
+      "rule": "Explicit active BODHI symptom root or non-disorder finding descendant; exclude physical signs and preserve the SNOMED taxonomy role separately",
+      "unresolved_reason": null
+    },
+    "Test": {
+      "korean_source_labels": 107,
+      "nodes": 805,
+      "rule": "Laboratory or imaging procedure explicitly adjacent to selected source concepts",
+      "unresolved_reason": null
+    },
+    "ValueMatch": {
+      "korean_source_labels": 0,
+      "nodes": 28,
+      "rule": "Exact RF2 is-a comparison between selected categorical concepts",
+      "unresolved_reason": null
+    }
+  },
+  "independent_clinical_validation": "not_run",
+  "lexical_entries": 3634,
+  "network": "none",
+  "nodes": 18548,
+  "relations": 156922,
+  "runtime_admission": "not_run",
+  "status": "pass"
+}

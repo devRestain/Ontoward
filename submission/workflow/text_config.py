@@ -2,6 +2,7 @@ from string import Formatter
 
 from pydantic import BaseModel, ConfigDict
 from settings import configured_path
+from .rules.action import content_error
 
 
 class Texts(BaseModel):
@@ -9,10 +10,13 @@ class Texts(BaseModel):
     chief_question: str
     unmapped_question: str
     open_question: str
-    ros_question: str
     clarification_question: str
+    clarification_questions: dict[str, str]
     symptom_education: str
     symptom_assessment: str
+    provisional_education: str
+    understanding_question: str
+    correction_education: str
     unknown_text: str
     missing_question_text: str
     invalid_action_text: str
@@ -43,15 +47,13 @@ class Texts(BaseModel):
 
 class TextConfig(BaseModel):
     parser_prompt: str
-    doctor_prompt: str
     texts: Texts
 
     @classmethod
     def load(cls):
         prompt = configured_path("ONTOWARD_PARSER_PROMPT", "config").read_text(encoding="utf-8").strip()
-        doctor = configured_path("ONTOWARD_DOCTOR_PROMPT", "config").read_text(encoding="utf-8").strip()
         texts = Texts.model_validate_json(configured_path("ONTOWARD_TEXTS", "config").read_text(encoding="utf-8"))
-        if not prompt or not doctor or set(texts.status_labels) != {"present", "absent", "uncertain", "unknown"}:
+        if not prompt or set(texts.status_labels) != {"present", "absent", "uncertain", "unknown"}:
             raise ValueError("Missing parser prompt or clinical status labels")
         if (set(texts.subject_labels) != {"patient", "family"} or set(texts.time_labels) != {"current", "past", "unspecified"}
                 or set(texts.operator_labels) != {"eq", "lt", "le", "gt", "ge"}):
@@ -61,7 +63,7 @@ class TextConfig(BaseModel):
             left & right for i, left in enumerate(reply_groups) for right in reply_groups[i + 1:]
         ):
             raise ValueError("Fixed clinical replies must be nonempty and unambiguous")
-        for name, expected in {"ros_question": {"symptom"}, "exam_turn_format": {"text", "turn"},
+        for name, expected in {"exam_turn_format": {"text", "turn"},
                                "initial_exam_format": {"text"}, "education_format": {"text"}, "plan_format": {"text"},
                                "finding_format": {"labels", "status", "text"}, "unlinked_format": {"text", "status"},
                                "episode_format": {"number"}, "clinical_context_format": {"subject", "time", "episode"},
@@ -73,4 +75,10 @@ class TextConfig(BaseModel):
                 raise ValueError(f"Invalid text placeholders: {name}")
             if any(spec or conversion for _, _, spec, conversion in parts):
                 raise ValueError(f"Text placeholders do not support format conversions: {name}")
-        return cls(parser_prompt=prompt, doctor_prompt=doctor, texts=texts)
+        for name in ("chief_question", "unmapped_question", "open_question", "clarification_question",
+                     "symptom_education", "provisional_education", "understanding_question", "correction_education"):
+            if content_error(getattr(texts, name)):
+                raise ValueError(f"Invalid prepared utterance: {name}")
+        if any(content_error(text) for text in texts.clarification_questions.values()):
+            raise ValueError("Invalid prepared clarification")
+        return cls(parser_prompt=prompt, texts=texts)

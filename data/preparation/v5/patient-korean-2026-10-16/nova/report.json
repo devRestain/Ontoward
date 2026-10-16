@@ -1,0 +1,41 @@
+{
+  "accepted_jobs": 0,
+  "authentication": {
+    "mode": "nova_dev_key",
+    "origin": "https://nova.snubhai.org",
+    "session": "none"
+  },
+  "automatic_resume": false,
+  "automatic_retries": 0,
+  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+  "by_purpose": {
+    "attribute": 590,
+    "context": 243,
+    "examination": 1,
+    "presence": 475
+  },
+  "call_states": {
+    "failed_or_unknown": 1
+  },
+  "calls_total": 1,
+  "constraints": {
+    "count_spaces_and_punctuation": true,
+    "max_codepoints": 30,
+    "min_codepoints": 1,
+    "normalization": "NFC",
+    "truncate": false
+  },
+  "failure": "TOKEN_LIMIT_EXCEEDED",
+  "finished_at": "2026-10-16T10:25:02.968686+00:00",
+  "independent_clinical_validation": "not_run",
+  "jobs": 1309,
+  "label_jobs": 0,
+  "max_calls": 132,
+  "model": "gpt-6-luna",
+  "provider": "nova_dev_key",
+  "reasoning_effort": "medium",
+  "runtime_admission": "not_run",
+  "status": "blocked",
+  "unresolved_jobs": 1309,
+  "workset_sha256": "616fc240361ed15d0fde3563cfb832c07d0890fca2506c61f7e0f3e378bb546e"
+}

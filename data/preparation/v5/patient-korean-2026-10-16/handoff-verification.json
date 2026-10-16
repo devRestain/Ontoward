@@ -1,0 +1,13 @@
+{
+  "development_key_in_evidence": false,
+  "maintained_states": [
+    "PROJECT_STATE.md",
+    "data/PROJECT_STATE.md",
+    "submission/PROJECT_STATE.md",
+    "DECISION_STATE.md"
+  ],
+  "packaged_files_match_current_hashes": true,
+  "raw_source_packages_in_evidence": false,
+  "runtime_manifest_status": "graph_admitted_text_pending",
+  "status": "pass"
+}

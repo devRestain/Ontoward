@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Literal
 
 from nova_sdk import RECORD_FIELDS
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_validator
 
 from knowledge.conditions import ExpectedValue, FeatureContribution
 
@@ -58,6 +58,7 @@ class CaseState(Model):
     diagnosis: str | None = None
     diagnosis_kind: Literal["disease", "symptom"] | None = None
     diagnosis_evidence: list[str] = Field(default_factory=list)
+    _locations: dict[str, tuple[str, str]] = PrivateAttr(default_factory=dict)
 
     @model_validator(mode="after")
     def validate_sections(self):
@@ -72,6 +73,7 @@ class CaseState(Model):
                     ids.append(key)
         if len(ids) != len(set(ids)):
             raise ValueError("Record IDs must be unique")
+        self._locations = {item.id: tuple(field.split(".")) for field, item in self.entries()}
         return self
 
     def entries(self):
@@ -81,18 +83,20 @@ class CaseState(Model):
                     yield f"{section}.{field}", item
 
     def get(self, item_id: str) -> RecordItem | None:
-        return next((item for _, item in self.entries() if item.id == item_id), None)
+        location = self._locations.get(item_id)
+        return getattr(self, location[0])[location[1]].get(item_id) if location else None
 
     def put(self, field: SOAPField, item: RecordItem) -> None:
         self.remove({item.id})
         section, name = field.split(".")
         getattr(self, section)[name][item.id] = item
+        self._locations[item.id] = (section, name)
 
     def remove(self, ids: set[str]) -> None:
-        for section in RECORD_FIELDS:
-            for records in getattr(self, section).values():
-                for item_id in ids:
-                    records.pop(item_id, None)
+        for item_id in ids:
+            location = self._locations.pop(item_id, None)
+            if location:
+                getattr(self, location[0])[location[1]].pop(item_id, None)
 
     def unasked(self, scope: SessionName) -> list[RecordItem]:
         return [item for _, item in self.entries() if item.scope == scope and item.status == "unasked"]
@@ -102,14 +106,6 @@ class CaseState(Model):
         return [item for item in self.S["cc"].values() if item.status == "done" and item.source_refs
                 and item.value and item.value.kind == "symptom" and item.value.subject == "patient"
                 and item.value.time_context != "past" and item.value.status in statuses]
-
-
-class SessionLimit(Model):
-    actions: int = Field(ge=0)
-
-
-def default_limits() -> dict[SessionName, SessionLimit]:
-    return {scope: SessionLimit(actions=actions) for scope, actions in zip(SESSION_ORDER, LIMITS.session_actions)}
 
 
 class Usage(Model):
@@ -126,7 +122,6 @@ class SessionContext(Model):
     questions_prepared: bool = False
     finalizing: bool = False
     reserve_seconds: int = LIMITS.finalization_seconds
-    limits: dict[SessionName, SessionLimit] = Field(default_factory=default_limits)
     usage: dict[SessionName, Usage] = Field(default_factory=lambda: {scope: Usage() for scope in SESSION_ORDER})
     allowed_actions: list[str] = Field(default_factory=lambda: ["SAY", "EXAM", "DIAGNOSE"])
     doctor_calls: int = 0
@@ -159,16 +154,55 @@ class Hypothesis(Model):
     contributions: list[ScoreContribution] = Field(default_factory=list)
     evidence_score: float = Field(default=0, allow_inf_nan=False)
     context_bonus: int | None = None
+    contradiction_penalty: float = Field(default=0, ge=0, allow_inf_nan=False)
+    contradiction_ids: list[str] = Field(default_factory=list)
+    chief_coverage: float = Field(default=0, ge=0, le=1)
+    unresolved_conditions: list[str] = Field(default_factory=list)
+    contradicted_conditions: list[str] = Field(default_factory=list)
+    potential_patterns: list[str] = Field(default_factory=list)
+    incomparable_matches: list[list[str]] = Field(default_factory=list)
 
     @property
     def score(self) -> float:
-        return self.evidence_score + (self.context_bonus or 0)
+        return self.evidence_score + (self.context_bonus or 0) - self.contradiction_penalty
+
+    @property
+    def fit_score(self) -> float:
+        return self.score
+
+
+class PatternMatch(Model):
+    pattern_id: str
+    observation_id: str
+    episode_id: str
+    fingerprint: str
+    status: Literal["matched", "contradicted", "incomplete"]
+    matched: list[str] = Field(default_factory=list)
+    contradicted: list[str] = Field(default_factory=list)
+    unresolved: list[str] = Field(default_factory=list)
+    evidence_ids: list[str] = Field(default_factory=list)
+
+
+class AssociationMatch(Model):
+    association_id: str
+    pattern_key: str
+    applicability: Literal["matched", "contradicted", "unknown"]
+    evidence_ids: list[str] = Field(default_factory=list)
 
 
 class DifferentialState(Model):
     initialized: bool = False
     hypotheses: list[Hypothesis] = Field(default_factory=list)
     selected_id: str | None = None
+    clinical_revision: int = 0
+    last_scored_revision: int = -1
+    last_fingerprint: str = ""
+    context_scored: bool = False
+    pattern_matches: dict[str, PatternMatch] = Field(default_factory=dict)
+    association_matches: list[AssociationMatch] = Field(default_factory=list)
+    pattern_evaluations: int = 0
+    refreshes: int = 0
+    search_cache: dict[str, list[str]] = Field(default_factory=dict)
 
 
 class Question(Model):
@@ -185,22 +219,31 @@ class Question(Model):
     episode_id: str | None = None
     subject: Literal["patient", "family"] = "patient"
     time_context: Literal["current", "past", "unspecified"] = "unspecified"
-    parsing_required: bool = True
     affirmative_presence: bool = False
+    answer_type: Literal["presence", "category", "quantity", "duration", "free_text"] = "free_text"
+    selection_value: list[float] = Field(default_factory=list)
+
+    def semantic_key(self):
+        import json
+        return json.dumps([self.kind, self.target_id, self.attribute_id, self.subject, self.time_context,
+                           self.observation_id, self.episode_id], separators=(",", ":"))
 
 
 class QuestionPlan(Model):
     questions: list[Question] = Field(default_factory=list)
+    last_planned_revision: int = -1
+    last_planned_scope: str = ""
+    ros_targets: list[str] = Field(default_factory=list)
+    ros_initialized: bool = False
+    blocked_keys: list[str] = Field(default_factory=list)
 
 
 class ActionSpec(Model):
     question: Question
     content: str
     request_id: str
-    render_attempts: int = Field(default=0, ge=0, le=LIMITS.doctor_generations)
-    render_source: Literal["prepared", "doctor"] = "prepared"
+    render_source: Literal["prepared"] = "prepared"
     ready: bool = False
-    feedback: dict[str, object] | None = None
 
 
 class InteractionEntry(Model):
@@ -230,6 +273,11 @@ class InteractionState(Model):
     clarification_target: Question | None = None
     submission_repairs: int = Field(default=0, ge=0, le=LIMITS.submission_repairs)
     submission_error: str | None = None
+    parse_rejections: list[dict[str, object]] = Field(default_factory=list)
+    diagnosis_revision: int = 0
+    explained_revision: int = -1
+    correction_required: bool = False
+    correction_count: int = 0
 
     def dialogue(self) -> list[dict[str, object]]:
         turns = []
@@ -265,3 +313,11 @@ class Fact(Model):
 
 class ParsedInput(Model):
     facts: list[Fact] = Field(default_factory=list)
+    needs_context: bool = False
+
+
+class ParseResult(Model):
+    accepted_facts: list[Fact] = Field(default_factory=list)
+    rejected_facts: list[dict[str, object]] = Field(default_factory=list)
+    unresolved_links: list[int] = Field(default_factory=list)
+    needs_context: bool = False

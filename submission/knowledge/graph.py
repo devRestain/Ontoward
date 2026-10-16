@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from rdflib import Graph, Namespace, RDF, RDFS, SKOS, URIRef
 from settings import ROOT, knowledge_path
 
-from .conditions import Applicability, AssociationProfile, ExpectedValue, FeatureCondition, FeatureContribution, ScoringPolicy, numeric_match
+from .conditions import Applicability, AssociationProfile, ExpectedValue, FeatureCondition, FeatureContribution, QuestionTemplate, ReasoningPolicy, ScoringPolicy, numeric_match
 
 OW = Namespace("urn:ontoward:")
 HPI_ORDER = tuple(str(OW[name]) for name in (
@@ -33,6 +33,7 @@ class Manifest(BaseModel):
     source_snapshots: list[dict[str, object]] = Field(min_length=1)
     scoring_policy_version: str = Field(min_length=1)
     scoring_policy: Asset
+    reasoning_policy: Asset
     schema_asset: Asset = Field(alias="schema")
     vocabulary: Asset
     bundles: list[Asset] = Field(min_length=1)
@@ -51,12 +52,13 @@ class Plan(BaseModel):
 
 
 class ClinicalKnowledge:
-    def __init__(self, graph: Graph, questions: dict[str, str] | None = None, plans: dict[str, Plan] | None = None,
-                 policy: ScoringPolicy | None = None, labels: dict[str, str] | None = None):
+    def __init__(self, graph: Graph, questions: dict[str, QuestionTemplate] | None = None, plans: dict[str, Plan] | None = None,
+                 policy: ScoringPolicy | None = None, labels: dict[str, str] | None = None, reasoning=None):
         self._graph = graph
         self.questions = questions or {}
         self.plans = plans or {}
         self.policy = policy or ScoringPolicy.load_default()
+        self.reasoning = reasoning or ReasoningPolicy()
         self.labels = labels or {}
         self._contributions: dict[str, list[FeatureContribution]] = {}
         self._feature_cache = {}
@@ -64,6 +66,9 @@ class ClinicalKnowledge:
         self._refinement_cache = {}
         self._target_profiles = None
         self._disease_profiles = None
+        self._pattern_profiles = {}
+        self._refinement_parents = None
+        self._alias_grams = {}
         self._label_index = None
         self._labels = {}
         self._concept_cache = None
@@ -73,7 +78,12 @@ class ClinicalKnowledge:
     @classmethod
     def load(cls, manifest_path: Path) -> ClinicalKnowledge:
         manifest_path = knowledge_path(manifest_path.relative_to(ROOT).as_posix())
-        manifest = Manifest.model_validate_json(manifest_path.read_text(encoding="utf-8"))
+        raw_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if raw_manifest.get("preparation_status") == "withdrawn_by_D18":
+            raise ValueError("D18 source-only reset withdrew previous clinical knowledge; admit a new pinned source batch before consultation")
+        if raw_manifest.get("preparation_status") == "graph_admitted_text_pending":
+            raise ValueError("D20 graph is approved; complete and admit its pinned interview and examination text assets before consultation")
+        manifest = Manifest.model_validate(raw_manifest)
         if getattr(manifest, "preparation_status", None) == "preview_only":
             raise ValueError("Preview knowledge requires explicit batch admission")
 
@@ -90,8 +100,9 @@ class ClinicalKnowledge:
         for asset in [manifest.schema_asset, manifest.vocabulary, *manifest.bundles]:
             graph.parse(data=read(asset, ".ttl").decode("utf-8"), format="turtle")
         questions = json.loads(read(manifest.questions, ".json")) if manifest.questions else {}
-        if not isinstance(questions, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in questions.items()):
-            raise ValueError("Question assets must map identifiers to template strings")
+        if not isinstance(questions, dict):
+            raise ValueError("Question assets must map identifiers to answer contracts")
+        questions = {key: QuestionTemplate.model_validate(value) for key, value in questions.items()}
         labels = json.loads(read(manifest.labels, ".json")) if manifest.labels else {}
         if not isinstance(labels, dict) or any(not isinstance(k, str) or not isinstance(v, str) or not v.strip()
                 or unicodedata.normalize("NFC", v) != v or not list(graph.objects(URIRef(k), RDF.type))
@@ -103,7 +114,8 @@ class ClinicalKnowledge:
         policy = ScoringPolicy.model_validate_json(read(manifest.scoring_policy, ".json"))
         if policy.version != manifest.scoring_policy_version:
             raise ValueError("Scoring policy version differs from the manifest")
-        knowledge = cls(graph, questions, {key: Plan.model_validate(value) for key, value in raw_plans.items()}, policy, labels)
+        reasoning = ReasoningPolicy.model_validate_json(read(manifest.reasoning_policy, ".json"))
+        knowledge = cls(graph, questions, {key: Plan.model_validate(value) for key, value in raw_plans.items()}, policy, labels, reasoning)
         knowledge.validate_graph()
         knowledge.validate_question_assets()
         return knowledge
@@ -123,15 +135,23 @@ class ClinicalKnowledge:
         return (URIRef(concept_id), RDF.type, OW[kind]) in self._graph
 
     def resolve_concept(self, text: str) -> list[str]:
-        normalized = text.strip().casefold()
+        normalized = self.normalize_alias(text)
         if self._label_index is None:
             self._label_index = {}
             for predicate in (RDFS.label, SKOS.altLabel):
                 for subject, label in self._graph.subject_objects(predicate):
-                    self._label_index.setdefault(str(label).strip().casefold(), set()).add(str(subject))
+                    self._label_index.setdefault(self.normalize_alias(str(label)), set()).add(str(subject))
             for subject, label in self.labels.items():
-                self._label_index.setdefault(label.casefold(), set()).add(subject)
+                self._label_index.setdefault(self.normalize_alias(label), set()).add(subject)
+            self._alias_grams = {}
+            for label in self._label_index:
+                for gram in {label[i:i + 2] for i in range(max(1, len(label) - 1))}:
+                    self._alias_grams.setdefault(gram, set()).add(label)
         return sorted(self._label_index.get(normalized, set()))
+
+    @staticmethod
+    def normalize_alias(text):
+        return "".join(unicodedata.normalize("NFC", text).casefold().split())
 
     def concepts(self, ids=None) -> list[dict[str, str]]:
         if self._concept_cache is None:
@@ -143,14 +163,23 @@ class ClinicalKnowledge:
 
     def search_concepts(self, text: str) -> list[str]:
         self.resolve_concept("")
-        normalized = unicodedata.normalize("NFC", text).casefold()
-        matches = [(len(label), subject) for label, subjects in self._label_index.items()
-                   if label and label in normalized for subject in subjects]
-        return list(dict.fromkeys(subject for _, subject in sorted(matches, key=lambda pair: (-pair[0], pair[1]))))
+        normalized = self.normalize_alias(text)
+        grams = {normalized[i:i + 2] for i in range(max(1, len(normalized) - 1))}
+        labels = set().union(*(self._alias_grams.get(gram, set()) for gram in grams)) if grams else set()
+        matches = [(label in normalized, len(label) if label in normalized else sum(g in label for g in grams) / max(1, len(label)), subject)
+                   for label in labels for subject in self._label_index[label]]
+        return list(dict.fromkeys(subject for _, _, subject in sorted(matches, key=lambda p: (-p[0], -p[1], p[2]))))[:64]
+
+    def iter_concepts(self, ids=None):
+        if self._concept_cache is None:
+            self.concepts()
+        for key in self._concept_cache if ids is None else ids:
+            if key in self._concept_cache:
+                yield self._concept_cache[key]
 
     def get_target_values(self, target_id: str, attribute_id: str) -> list[str]:
         values = self._target_values.get((target_id, attribute_id))
-        return list(values) if values is not None else self.get_attribute_values(attribute_id)
+        return list(values) if values is not None else []
 
     def get_symptom_attributes(self, symptom_id: str) -> list[str]:
         values = {str(value) for value in self._graph.objects(URIRef(symptom_id), OW.hasAttribute)}
@@ -253,6 +282,8 @@ class ClinicalKnowledge:
         return False
 
     def pattern_refines(self, child_id: str, parent_id: str) -> bool:
+        if self._refinement_parents is not None:
+            return parent_id in self._refinement_parents.get(child_id, set())
         key = (child_id, parent_id)
         if key in self._refinement_cache:
             return self._refinement_cache[key]
@@ -313,12 +344,26 @@ class ClinicalKnowledge:
         return [self.label(str(test)) for test in sorted(self._graph.objects(URIRef(disease_id), OW.evaluatedBy), key=str)]
 
     def question(self, key: str, target_id: str | None = None) -> str:
-        text = self.questions.get(f"{target_id}|{key}", self.questions.get(key, ""))
-        return text.replace("{symptom}", self.label(target_id)) if target_id else text
+        template = self.question_contract(key, target_id)
+        if template is None or not template.interviewable:
+            return ""
+        return template.text.replace("{symptom}", self.label(target_id)) if target_id else template.text
+
+    def question_contract(self, key, target_id=None):
+        base = self.questions.get(target_id)
+        if base is not None and not base.interviewable:
+            return base
+        return self.questions.get(f"{target_id}|{key}", self.questions.get(key))
+
+    def get_target_patterns(self, target_id):
+        return sorted({p.id for p in self.get_patterns_by_target(target_id)})
+
+    def get_pattern_associations(self, pattern_id):
+        return self._pattern_profiles.get(pattern_id, [])
 
     def validate_question_assets(self):
         for key, template in self.questions.items():
-            for _, field, spec, conversion in Formatter().parse(template):
+            for _, field, spec, conversion in Formatter().parse(template.text):
                 if field not in {None, "symptom"} or spec or conversion:
                     raise ValueError("Questions allow only the symptom placeholder")
             if "|" in key:
@@ -333,6 +378,8 @@ class ClinicalKnowledge:
             else:
                 raise ValueError("Question identifier is not an admitted interview concept")
             for attribute, target in pairs:
+                if not template.interviewable or (target in self.questions and not self.questions[target].interviewable):
+                    continue
                 text = self.question(attribute, target)
                 if unicodedata.normalize("NFC", text) != text or not 1 <= len(text) <= 30:
                     raise ValueError("Prepared question must contain 1 to 30 NFC codepoints")
@@ -347,11 +394,13 @@ class ClinicalKnowledge:
         value = self._one(subject, predicate, required=False)
         return str(value) if value is not None else None
 
-    def validate_graph(self) -> None:
+    def validate_graph(self, *, require_action_assets=True) -> None:
         self._feature_cache.clear()
         self._profile_cache.clear()
         self._refinement_cache.clear()
         self._target_profiles = self._disease_profiles = self._label_index = None
+        self._refinement_parents = None
+        self._pattern_profiles = {}
         self._labels.clear()
         self._concept_cache = None
         self._target_values = {}
@@ -418,6 +467,7 @@ class ClinicalKnowledge:
             self._target_profiles.setdefault(profile.target, []).append(profile)
         for profile in sorted(profiles, key=lambda p: p.association_id):
             self._disease_profiles.setdefault(profile.disease_id, []).append(profile)
+            self._pattern_profiles.setdefault(profile.id, []).append(profile)
         target_values = {}
         for target, members in self._target_profiles.items():
             for pattern_id in {p.id for p in members}:
@@ -450,15 +500,30 @@ class ClinicalKnowledge:
                     refined_association=child.association_id, changed_feature_ids=changed,
                     delta_score=child.score-parent.score, kind="atomic" if len(changed) == 1 else "joint", policy_version=self.policy.version))
             self._contributions[child.association_id] = sorted(contributions, key=lambda c: c.baseline_association)
+        self._refinement_parents = parents
         context_types = {"past_medical_history", "surgical_history", "medication_history", "allergy_history",
                          "family_history", "social_history", "occupational_history", "psychosocial_history",
                          "screening_history", "demographic"}
         for context in self._graph.subjects(RDF.type, OW.ContextFactor):
             if self._optional(context, OW.contextType) not in context_types:
                 raise ValueError("Invalid ContextFactor type")
+        for disease, context in self._graph.subject_objects(OW.hasSupportingContext):
+            if not self.has_type(str(disease), "Disease") or not self.has_type(str(context), "ContextFactor"):
+                raise ValueError("Supporting context requires Disease and ContextFactor endpoints")
+        for target, system in self._graph.subject_objects(OW.inSystem):
+            if not any(self.has_type(str(target), kind) for kind in ("Symptom", "ExamFinding")) or not self.has_type(str(system), "BodySystem"):
+                raise ValueError("Interview system requires a finding and BodySystem endpoints")
         for finding in self._graph.subjects(RDF.type, OW.ExamFinding):
+            if not require_action_assets:
+                continue
             if not self.get_exam_methods(str(finding)):
                 raise ValueError("ExamFinding requires a detection method")
+            for method in self.get_exam_methods(str(finding)):
+                if unicodedata.normalize("NFC", method["text"]) != method["text"] or not 1 <= len(method["text"]) <= 30:
+                    raise ValueError("Prepared examination must contain 1 to 30 NFC codepoints")
+        for plan in self.plans.values():
+            if any(unicodedata.normalize("NFC", text) != text or not 1 <= len(text) <= 30 for text in plan.education):
+                raise ValueError("Prepared education must contain 1 to 30 NFC codepoints")
         self.concepts()
         self.resolve_concept("")
         self._types = {}

@@ -13,9 +13,8 @@
 - Resolve source filenames relative to this directory and preserve the original source-folder identity.
 - Preserve `title`, `organization`, `year`, `language`, `source_url`, and `license` from each document's YAML metadata.
 - Select clinical Markdown from catalog entries rather than a broad glob that would ingest local `AGENTS.md` files.
-- Apply D16 for the separately requested fixed original education excerpts and keep retired guideline relation-extraction jobs archived.
-- Keep education preparation in root Dev/education/, durable drafts in root data/preparation/education/, and runtime readers in root submission/.
-- Use D09 for ontology preparation without treating D16 education excerpts as RDF relationships or runtime plans.
+- Apply D18: preserve original documents and catalogs and exclude guideline-derived ontology and education artifacts from the source-only rebuild.
+- Do not resume removed extraction batches or education drafts without a new user request.
 - Use `NOVA_GUIDELINES_DIR` as a provided source-location contract without requiring guideline-text retrieval during consultation.
 - Extract and review clinical relations before submission rather than during case-independent prepare() or consultation.
 - Preserve source document and section references and applicability with every extracted clinical relation.

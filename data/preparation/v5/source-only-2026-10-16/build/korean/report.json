@@ -1,0 +1,22 @@
+{
+  "accepted_jobs": {},
+  "automatic_retries": 0,
+  "build_id": "f3054c11e8ef5b5d7a6790c9de2ce2f29479b8f8544c305621e2075fad978137",
+  "calls_this_run": 1,
+  "calls_total": 1,
+  "failure": "Codex process failed; inspect the request-specific audit and do not retry automatically",
+  "independent_clinical_validation": "not_run",
+  "label_jobs": 2520,
+  "max_calls": 370,
+  "model": "gpt-6-luna",
+  "model_translation_labels": 0,
+  "next_day_auto_resume": false,
+  "official_source_labels": 1104,
+  "provider": "docker_codex_cli",
+  "question_jobs": 1170,
+  "runtime_admission": "not_run",
+  "status": "blocked",
+  "unresolved_lexical_labels": 2530,
+  "unresolved_question_jobs": 1170,
+  "workset_sha256": "46907aacef811cf3bbf8f7832ab47f2264c1a2a419f783512e69767b585e91be"
+}

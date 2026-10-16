@@ -1,0 +1,43 @@
+{
+  "status": "pass",
+  "decision": "D23",
+  "completed_slice": "APP.TEXT20",
+  "review": "direct_semantic_review_of_decisions_owned_states_contracts_and_document_links",
+  "maintained_state_documents": [
+    {
+      "path": "PROJECT_STATE.md",
+      "sha256": "7e6b134df025c4535f4d0dc0ce1b64584387ae16aff74b32dadfa5b2fffd22fa"
+    },
+    {
+      "path": "data/PROJECT_STATE.md",
+      "sha256": "773f44fb4aaf70895f274e785e26a0aca972c2807a06dce34fdd35091626a9e5"
+    },
+    {
+      "path": "submission/PROJECT_STATE.md",
+      "sha256": "7c62c9cbd07eb1ea65f6edffe8eb4b704eeae75f7535c002e0dec16af3c5072c"
+    },
+    {
+      "path": "DECISION_STATE.md",
+      "sha256": "b00e508a2a393579db700ea37f94b465aa3cafe44cdfc7bba734da4430600f62"
+    }
+  ],
+  "active_state_goals": [
+    "ROOT.TEXT22:complete",
+    "DATA.TEXT23:complete",
+    "APP.TEXT20:complete"
+  ],
+  "user_decisions_waiting": [],
+  "all_archive_bytes_match_current_submission": true,
+  "archive": {
+    "path": "Tmp/packaging/ontoward-submission.zip",
+    "sha256": "0c49a38e601c0acddd551863b674a03f36078485a61b0ac8ad74b14a552e66c1"
+  },
+  "execution_environment": {
+    "path": "data/preparation/v5/runtime-text-2026-10-16/execution-environment.json",
+    "sha256": "dc7390af33dae606766a8b70a565566466a0a5daf8614be4f0a9289a983375d9"
+  },
+  "new_model_calls": 0,
+  "official_environment_e2e": "not_run",
+  "official_submission": "not_run",
+  "verified_at": "2026-10-16T12:39:38.695337+00:00"
+}

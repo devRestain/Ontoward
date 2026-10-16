@@ -48,8 +48,15 @@ def main() -> None:
 
     settings = packaged_settings()
     text_files = {contained_path(settings[key], "config").relative_to(SOURCE).as_posix()
-                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_DOCTOR_PROMPT", "ONTOWARD_TEXTS")}
-    required = REQUIRED | text_files
+                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_TEXTS")}
+    manifest_path = knowledge_path(settings[SETTING])
+    knowledge_files = {manifest_path.relative_to(SOURCE).as_posix()}
+    if manifest_path.is_file():
+        manifest_data = json.loads(manifest_path.read_text())
+        assets = [manifest_data[key] for key in ("schema", "vocabulary", "scoring_policy", "reasoning_policy", "questions", "labels", "plans")
+                  if key in manifest_data] + manifest_data.get("bundles", [])
+        knowledge_files.update(knowledge_path(asset["path"]).relative_to(SOURCE).as_posix() for asset in assets)
+    required = REQUIRED | text_files | knowledge_files
     files = []
     for path in sorted(SOURCE.rglob("*")):
         relative = path.relative_to(SOURCE)
@@ -65,6 +72,8 @@ def main() -> None:
             relative.parts[0] in {"workflow", "knowledge"} and path.suffix == ".py"
         )
         knowledge = relative.parts[0] == "knowledge" and path.suffix in {".ttl", ".json"}
+        if knowledge and relative.as_posix() not in required:
+            continue
         if not (runtime or knowledge):
             raise ValueError(f"Unapproved submission file: {relative}")
         files.append((path, relative.as_posix()))

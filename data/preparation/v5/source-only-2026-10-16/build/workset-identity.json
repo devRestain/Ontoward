@@ -1,0 +1,27 @@
+{
+  "build_id": "f3054c11e8ef5b5d7a6790c9de2ce2f29479b8f8544c305621e2075fad978137",
+  "bytes": 85056738,
+  "catalog_manifest_sha256": "20f88e7eb7a9cb6e8c0aa7d6eaa5c17b7d5f2a519c691696f8b28397c0aae87a",
+  "generator_files": {
+    "admission.py": "3ca782d5fab0072ce4913d12f34338bd3a89f07a472869181199836758f62ccc",
+    "codex_cli.py": "518040856e1f0968996d2be89cad21fb35c12c7de88b2a7c3a3f9a52509d4e58",
+    "database.py": "0133a8e9d935ab581b8c21ec2c6f326616a836e482845ec10a13d4ce590a5a0b",
+    "evidence.py": "c9007becb903d32db74242abfcb8323d78f171f4ba2a91449425aa03149e766e",
+    "korean.py": "e7c404770da20e9601c680e8a3f67f9b0f12e2ef0121e68dac69ee0d6a101b5d",
+    "model_normalization.py": "60ed01d42aafc761654fec6304bad45e74f7d23773a904a784641bb4afd045ad",
+    "reset.py": "2ae3be7c5bbb1a22cbfda90d6a78cfa99e6bb1944bdf6a06bf4d9587571e450b",
+    "source_catalog.py": "b382bc94e46f71984ef6f51f247cfee5bc5132cda046b25bb567cf74d41a41bc",
+    "source_projection.py": "f287e5b4d38410c756de6a6319e6f97cd7493249f82c21db7d23a635635da4ee",
+    "v5.py": "0e8e234b23bcc55637807483527d36fc7a87f8861dd89578714070804c4b6c4b"
+  },
+  "labels": 2520,
+  "max_calls": 370,
+  "path": "data/preparation/v5/source-only-2026-10-16/build/korean-workset.json",
+  "prompt_files": {
+    "korean-label.txt": "3f3bbda953856297f6ab40811906d5329612a30700c57cc4b9eb21618f53ddfe",
+    "korean-question.txt": "625bb45b296971b74e9850ebdc8515ad1eb215ba86260cf317c162ee67e320ec",
+    "korean-review.txt": "f1107e4d997d7a4d41d2b7905cd15a3da7e540464922c7041a5586f2c6578044"
+  },
+  "questions": 1170,
+  "sha256": "46907aacef811cf3bbf8f7832ab47f2264c1a2a419f783512e69767b585e91be"
+}

@@ -1,0 +1,11 @@
+{
+  "build_id": "f3054c11e8ef5b5d7a6790c9de2ce2f29479b8f8544c305621e2075fad978137",
+  "bytes": 389131,
+  "files": 86,
+  "path": "data/preparation/v5/source-only-2026-10-16/build/generation-evidence.zip",
+  "raw_source_packages": "excluded",
+  "runtime_submission": "not_created",
+  "sha256": "5bfe320946a6da3e849a8848dce99d13c80a2a33a5a5abb91b4c6a04c1536c3a",
+  "status": "pass",
+  "verification": "extracted_file_set_and_all_sha256"
+}

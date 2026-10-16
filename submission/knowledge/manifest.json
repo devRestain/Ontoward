@@ -1,26 +1,26 @@
 {
   "approval_basis": "explicit_user_candidate_acceptance",
-  "build_id": "b4954e33d5c04f4d76949149d9bf6affec1d2ab8c4b34fa99085003933d346aa",
+  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
   "bundles": [
     {
-      "path": "knowledge/5b45f46d2f2db935-clinical.ttl",
-      "sha256": "d5e10911907b1e5c828b5c0f7045d5a97fb4d0bbec792b8fc2f9c4d42c5fc0e0"
+      "path": "knowledge/5b44871b970f5e98-clinical.ttl",
+      "sha256": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a"
     }
   ],
-  "clinical_text_status": "minimal_questions_prepared",
+  "clinical_text_status": "patient_actions_prepared",
   "independent_clinical_validation": "not_run",
-  "labels": {
-    "path": "knowledge/5b45f46d2f2db935-labels.ko.json",
-    "sha256": "dd78a19a34897196c35ad4590226c9a05b98d496c675bae609cae7f3118d3efc"
-  },
-  "normalization_version": "v5.0.2",
+  "normalization_version": "v5.0.4-source-findings",
   "preparation_status": "admitted",
   "questions": {
-    "path": "knowledge/5b45f46d2f2db935-questions.ko.json",
-    "sha256": "f9d2c959df735efbd366f41333ffb63df1a61728defd047ac3ba1301d5d817c5"
+    "path": "knowledge/5b44871b970f5e98-questions.ko.json",
+    "sha256": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687"
   },
-  "registry_version": "1aaddeddf716ce9539d363871b55197aec9188070c862a850d6c8f11edb25f30",
-  "review_receipt_sha256": "5b45f46d2f2db935ac1290c77834e0568447df422d121ccc84f7ae62163c0dd8",
+  "reasoning_policy": {
+    "path": "knowledge/5b44871b970f5e98-reasoning_policy.json",
+    "sha256": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc"
+  },
+  "registry_version": "1157f6419ef5a8c7278c2ac3c5fdf8a04f14192b1bc3dd3532d182e89b6d9197",
+  "review_receipt_sha256": "5b44871b970f5e987041c0103a8e06572956d7ac92859d032bd926802d04ec04",
   "schema": {
     "path": "knowledge/schema.ttl",
     "sha256": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89"
@@ -786,7 +786,7 @@
     }
   ],
   "vocabulary": {
-    "path": "knowledge/5b45f46d2f2db935-vocabulary.ttl",
-    "sha256": "e01cb7a29d117c1733bc50c2580ebd0de050f3fc9d1125de5c59836210fef928"
+    "path": "knowledge/5b44871b970f5e98-vocabulary.ttl",
+    "sha256": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88"
   }
 }

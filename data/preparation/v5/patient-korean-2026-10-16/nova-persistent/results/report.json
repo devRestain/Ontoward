@@ -1,0 +1,45 @@
+{
+  "accepted_jobs": 1120,
+  "accepted_total": 1160,
+  "authentication": {
+    "mode": "nova_dev_key",
+    "origin": "https://nova.snubhai.org",
+    "session": "none"
+  },
+  "authorized_failure_resumptions": 26,
+  "automatic_resume": true,
+  "automatic_retries": 0,
+  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+  "by_purpose": {
+    "attribute": 561,
+    "context": 243,
+    "examination": 1,
+    "presence": 464
+  },
+  "call_states": {
+    "completed": 137,
+    "failed_or_unknown": 27
+  },
+  "calls_total": 164,
+  "constraints": {
+    "count_spaces_and_punctuation": true,
+    "max_codepoints": 30,
+    "min_codepoints": 1,
+    "normalization": "NFC",
+    "truncate": false
+  },
+  "failure": "Whole batch contains an unresolved or rejected item: {\"decision\":\"reject\",\"job_id\":\"f59e12a518aef84fc3e3c0cede741c0bd0943cc11d936a8fcb087a0a153e7aba\",\"reason\":\"Changes iodine deficiency to insufficient iodine intake, which is not equivalent.\"}",
+  "finished_at": "2026-10-16T11:33:13.751438+00:00",
+  "independent_clinical_validation": "not_run",
+  "jobs": 1269,
+  "label_jobs": 0,
+  "max_calls": 991,
+  "model": "gpt-6-luna",
+  "previously_accepted_jobs": 40,
+  "provider": "nova_dev_key",
+  "reasoning_effort": "medium",
+  "runtime_admission": "not_run",
+  "status": "blocked",
+  "unresolved_jobs": 149,
+  "workset_sha256": "9858df02502debd96364c49aab63c900f7f13cf2cccfbe611e747028d563f9fc"
+}

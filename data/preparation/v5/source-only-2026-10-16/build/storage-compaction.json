@@ -1,0 +1,38 @@
+{
+  "archive_logical_bytes": 41495205,
+  "build_id": "f3054c11e8ef5b5d7a6790c9de2ce2f29479b8f8544c305621e2075fad978137",
+  "files": {
+    "interrupted-preview-1e837763-4fe3-4e38-ab6e-9405c809cfeb/sources.json": {
+      "archive": "d225a01fd53575f8463ff5f8a5c0ded67de1ab218a932cbafbdf7c2dea133a5c.json.gz",
+      "archive_bytes": 15871606,
+      "archive_sha256": "63d1d6f5feed4b06f3076ec4f2dfa7fc437e28aac8e0def616595642cc52c035",
+      "original_bytes": 1099176699,
+      "original_sha256": "d225a01fd53575f8463ff5f8a5c0ded67de1ab218a932cbafbdf7c2dea133a5c",
+      "state": "original_removed_after_roundtrip_verification"
+    },
+    "korean-workset.json": {
+      "archive": "46907aacef811cf3bbf8f7832ab47f2264c1a2a419f783512e69767b585e91be.json.gz",
+      "archive_bytes": 9753364,
+      "archive_sha256": "4b2f5ec32a2b7c03a4d2a96f4e9ffad386377d79de9b2242f3fc11d8e0201882",
+      "original_bytes": 85056738,
+      "original_sha256": "46907aacef811cf3bbf8f7832ab47f2264c1a2a419f783512e69767b585e91be",
+      "state": "original_removed_after_roundtrip_verification"
+    },
+    "preview/sources.json": {
+      "archive": "103cb5d4d6b0e11dc7907daf6e3049557c92626f035473ca95d9b36c4867ce20.json.gz",
+      "archive_bytes": 15870235,
+      "archive_sha256": "5aa46ea3c7bfe88261180c6706834675fbcb17e1f13ffd5451b13a9f17fb88ae",
+      "original_bytes": 1099176699,
+      "original_sha256": "103cb5d4d6b0e11dc7907daf6e3049557c92626f035473ca95d9b36c4867ce20",
+      "state": "original_removed_after_roundtrip_verification"
+    }
+  },
+  "format": "lossless-preparation-archives-v1",
+  "historical_identity": "original_hash_preserved_in_archive",
+  "original_logical_bytes": 2283410136,
+  "physical_allocated_bytes": "not_measured",
+  "raw_sources_and_sqlite": "unchanged",
+  "reduced_logical_bytes": 2241914931,
+  "restore": "gzip -dc archives/<original_sha256>.json.gz > <original_relative_path>",
+  "status": "pass"
+}

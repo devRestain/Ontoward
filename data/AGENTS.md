@@ -2,81 +2,44 @@
 
 ## Ownership
 
-- Own source provenance, review records, preparation results, admitted additional sources, and generated RDF knowledge artifacts in this directory.
-- Preserve organizer inputs in `../assets/` and record their inspection evidence in this scope.
-- Keep extraction, candidate validation, RDF generation, and bundle assembly code in root `Dev/` and runtime retrieval code in root `submission/`.
-- Treat Turtle knowledge as derived general clinical evidence rather than patient state.
-- Use ontology/, catalog/, and provenance/ for retained inputs without creating additional state scopes.
-- Own ontology/schema.ttl, ontology/vocabulary.ttl, catalog/guideline_paths.txt, and provenance/competition.json without adding another operational state.
-- Own ontology/vocabulary-candidates.md as natural-language clinician-review data separate from RDF inputs and submission knowledge.
-- Admit runtime Turtle and required JSON schema assets into submission/knowledge/ after the existing review and submission checks; keep root data/ exclusively for development and provenance.
-- Keep runtime execution and tests independent of this directory even when no completed submission knowledge exists.
-- Keep directory-orientation files separate from actual Turtle bundles and manifest evidence.
-- Read ontology/AGENTS.md before changing the schema or starter vocabulary.
+- Own source provenance, preparation results, source-role catalogs, derived v5 expressions, Korean mappings, verification, and admission receipts.
+- Preserve upstream assets byte-for-byte and keep preparation code in root Dev and runtime readers in root submission.
+- Keep operational progress only in PROJECT_STATE.md and choices only in root DECISION_STATE.md.
+- Read ontology/AGENTS.md and D18 before changing ontology assets.
+- Reserve README.md for Korean human orientation.
 
-## Source Preparation
+## Source-only Preparation
 
-- Read the root PRD and `DECISION_STATE.md` before preparing source assets.
-- Apply the SNOMED-first preparation sequence from root decisions D05 and D09; retain earlier guideline-derived records without automatically resuming their workflow.
-- Apply the ontology model and consumption boundaries from D08.
-- Keep source-supported alternative disease presentations distinct from corrections of patient wording without creating unsupported clinical relations.
-- Keep D09 v5.0 source previews in preparation/v5/ and require separate registry and clinical review plus runtime admission before placing clinical assets in submission/.
-- Keep generated guideline schemas, source selections, unit inputs, atomic statements, candidate links, and review records in their existing locations as preserved prior-work artifacts.
-- Use International and Korean RF2 metadata and exact module dependencies to pin the supplied composition; do not infer versions from expected months.
-- Keep source file hashes, raw assertions, candidate registries, variant dispositions, conditional contributions, reports, and preview assets together under preparation/v5/.
-- Preserve the approved 510-term English vocabulary as seeds and keep v5.0 registries separate from deprecated extraction-vocabulary.json and authored starter terminology.
-- Keep automated preview generation distinct from human registry review, clinical review, and runtime admission.
-- Preserve source SCTIDs, Description and Relationship identifiers, exact quotations and spans, relationship groups, direct versus descendant scope, source variants, and file hashes in preparation records.
-- Do not admit inferred clinical links from model knowledge. Keep SNOMED, feature, terminology review, and RDF submission admission as distinct evidence.
-- Record multiple approved disease topics and exact source group-definition evidence as preparation metadata; preserve single-disease candidate ownership and member-specific conditions.
-- Preserve differential-list provenance without treating a possible association as expected presence or clinical importance.
-- Link English and supplied Korean names to verified SCTIDs while keeping mappings as candidates until review; keep runtime admission separate.
-- Apply source acquisition choices from root decision D02 only when preparing SNOMED CT.
-- Apply language-dependent source choices from root decision D04 when relevant.
-- Ingest all eight BODHI-S CSVs under the 2026-10-15 request; project only source relations whose complete meaning fits v5.0 and retain explicit dispositions for other source roles.
-- Keep full source SQLite databases, normalization candidates, quota reservations, preview RDF, review batches, and admission receipts in preparation/v5/.
-- Admit only explicitly approved pinned batches with complete mapping dependencies; keep unreviewed clinical text and exam methods outside runtime assets.
-- Preserve source version, origin, license, and attribution with admitted assets.
-- Preserve guideline locations, titles, organizations, years, languages, source URLs, and document licenses.
-- Select source documents through the guideline catalog and exclude project guidance and review-only case answers.
-- Treat guideline and v4.2 SNOMED tools and schemas as deprecated under ontology/deprecated.json; do not restore their jobs or schedule live pilots.
-- Preserve common concept URIs and keep relation-level source paths, sections, applicability, and review records outside the runtime graph.
-- Keep catalog/guideline_paths.txt as a path-only projection of the catalog with project-root-relative assets/guidelines/ paths.
-- Treat the path index as original-document navigation rather than extraction, source admission, or provenance review.
-- Separate source presence and selected metadata inspection from full provenance review and generated RDF evidence.
-- Check document-specific conditions before including RDF relations, planning evidence, excerpts, or translations in submissions.
-- Exclude transformed copies of documents with modification-distribution restrictions from submission artifacts.
-- Separate Doctor-visible starting information from simulator scripts, examination tables, and review answers.
-- Preserve BODHI symptom UUIDs as source keys.
-- Preserve nullable raw SNOMED identifiers separately from verified SNOMED links.
-- Establish verified SNOMED links against the admitted terminology release.
+- Apply D18's deletion of pre-v5 and non-SNOMED/BODHI derived data, old seeds, manual translations, prior clinical bundles, approvals, education drafts, and temporary copies.
+- Preserve source packages, ordinary catalog navigation, competition provenance, deletion receipts, and the clean empty v5 base.
+- Reuse only hash-verified complete raw source custody and clear all previous projection, normalization, and approval records.
+- Ingest the entire supplied International and Korean RF2 Snapshot composition and all eight BODHI-S CSVs.
+- Select latest components before active filtering and preserve exact module dependencies, source hashes, row IDs, relationship groups, and raw fields.
+- Use preparation/v5/ for source SQLite, full-schema catalog, candidate RDF, Korean mappings, pending wording, and generator evidence.
+- Require source-backed node roles and exact source edges; identify every derived expression and relation by its transformation rule and source assertions.
+- Keep whole variants unresolved when conditions, units, roles, or group scopes are unsupported.
+- Keep all fourteen schema classes visible in coverage even when executable mappings are missing.
+- Preserve complete raw BODHI edge roles without turning speciality, influence, or prerequisite edges into tests or unconditional clinical support.
+- Distinguish complete vocabulary/source catalogs from the executable RDF dependency subset.
+- Link Korean RF2 descriptions only by the same verified SCTID and retain source Description/row identity.
+- Preserve the official Korean term; generate source-bound clinical questions with NFC 1–30 codepoints without truncation.
+- Record missing Korean, overlong questions, diagnosis-qualified targets, and non-interviewable structural records explicitly.
+- Freeze the complete selected Korean workset with the D18 computed finite Docker Codex budget; execute it only when the user resumes deferred CLI work and keep model translations separate from Korean RF2 terms and clinical assertions.
+- Apply D19 source finding roles and clinical Observable dimensions with grouped values, acquisition metadata, domain and specialty gaps; preserve source-findings.ttl outside executable previews.
+- Resolve evidence IDs through catalog/evidence.json and SQLite evidence tables; do not copy global attribute proof into individual question jobs.
+- Preserve superseded large JSON in hash-verified lossless archives with restoration receipts; keep the original assets, saved empty base, and request ledgers unchanged.
+- Require new batch-pinned runtime admission after D18 and never reuse deleted approvals.
+- Apply D20 user candidate acceptance to the complete competition graph batch and exact connection policy without a further clinical approval gate.
+- Keep competition-graph-2026-10-16/ as the admitted graph, source-custody reference, relation proof, approval receipt, and required action-text handoff.
+- Apply D21 with a fresh graph-pinned patient-action workset; exclude internal-label translation and preserve NFC 1-30 validation, separate semantic comparison, request reservations, partial results, and exact provider evidence.
+- Apply D22 NOVA-only same-day continuation after user-authorized failures; preserve reviewed texts and failed attempts and stop on completion or the pinned request/service limit.
+- Preserve technical exclusions for incomplete source meanings and missing acquisition; do not turn them into pending user decisions or fabricated values.
+- Apply D23 to resolve remaining user-approval waiting expressions for complete source-backed competition candidates and D22 patient actions; retain exact receipts and historical preparation evidence.
+- Keep runtime-text-2026-10-16/ as the D23 receipt original graph-manifest snapshot text-provenance verification and runtime-admission handoff.
 
-## Artifact Evidence
+## Evidence and Handoff
 
-- Record source admission, review, extraction, and bundle preparation results in `data/PROJECT_STATE.md`.
-- Retain document-level extraction outputs and failed, pending-review, excluded, or approved preparation records outside submission bundles.
-- Preserve prior request/response, checkpoint, approval, and preparation evidence as archival data; keep new v5.0 source records in preparation/v5/.
-- Distinguish automated validation, complete pilot review, sampled batch review, quality admission, and submission admission.
-- Record explicit user candidate acceptance without an additional agent source-meaning audit gate.
-- Preserve D15 approval basis, exact batch dependencies, text hashes, and independent clinical validation status in the separate approved receipt.
-- Keep original candidate review material and source dispositions unchanged after admission.
-- Own authored Korean wording and its prepared labels and questions without treating display translations as new clinical assertions.
-- Own D16 pinned Disease inventories explicit source-section mappings verbatim excerpts and review reports in preparation/education/.
-- Preserve draft_pending_user_review status and separate mapped drafts from unresolved navigation candidates for every runtime Disease.
-- Keep source-specific scope restrictions original language attribution and redistribution conditions attached to each education excerpt.
-- Require separate selection for education runtime admission without reusing D15 approval for these source excerpts.
-- Bundle only quality-admitted and submission-admitted outputs by existing source group.
-- Preserve bundle file lists, versions, source identity, triple counts, and preparation-result links in the submission manifest.
-- Distinguish source inspection from generated Turtle and manifest evidence.
-- Distinguish the authored schema and starter vocabulary from extracted clinical relations and submission bundles.
-- Measure triple counts, Turtle sizes, full-load time, peak memory, and query time on representative document lengths and types.
-- Treat file partitioning as a maintenance boundary rather than evidence of reduced runtime memory.
-- Verify submission size and file-count limits against actual bundles and required code.
-- Keep published archive hashes separate from unverified extracted-directory identity.
-- Record absent or unconfigured artifacts without claiming successful preparation.
-
-## Handoff
-
-- Keep one current source preparation goal in `data/PROJECT_STATE.md`.
-- Keep pending choices and their alternatives in root `DECISION_STATE.md`.
-- Reserve `data/README.md` for human-readable directory orientation.
+- Keep source inventories, generator hashes, per-class coverage, provenance checks, deletion receipts, and the clean-base checkpoint together.
+- Separate automated provenance/structural checks from clinical meaning, wording review, runtime admission, official submission, and evaluation.
+- Create a separate generation-evidence.zip with replay code and evidence; exclude credentials and raw source packages.
+- Report only performed checks and preserve exact unresolved coverage and the next bounded action.

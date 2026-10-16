@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SETTING = "ONTOWARD_KNOWLEDGE_MANIFEST"
-SETTINGS = {SETTING, "ONTOWARD_PARSER_PROMPT", "ONTOWARD_DOCTOR_PROMPT", "ONTOWARD_TEXTS"}
+SETTINGS = {SETTING, "ONTOWARD_PARSER_PROMPT", "ONTOWARD_TEXTS"}
 
 
 def packaged_settings() -> dict[str, str]:

@@ -1,53 +1,81 @@
 /state version=1
 /project id=ontoward
-/status value=complete
-/checkpoint revision=48be55b730020ea23ac9b432025002aa1e95d6ed dirty=true updated=2026-10-15T02:08:43+00:00
-/goal phase=current id=ROOT.EDUCATION16 state=complete action="Complete D16 offline fixed-source education excerpt preparation and review handoff"
-/goal phase=next id=ROOT.PARSER16 state=planned action="Design fact-level validation and question-specific recovery"
-/goal phase=history id=ROOT.FULLV501 state=complete action="Preserve D15 approved knowledge admission information preservation and isolated acceptance"
-/goal phase=history id=ROOT.V501 state=complete action="Preserve the completed v5.0 preview and offline workflow acceptance"
-/accept id=ROOT.FULLV501.A1 state=pass action="Implement source custody approval and quota behavior" evidence=ROOT.FULLV501.E1
-/accept id=ROOT.FULLV501.A2 state=pass action="Preserve the complete offline consultation workflow" evidence=ROOT.FULLV501.E2
-/accept id=ROOT.FULLV501.A3 state=pass action="Verify full database projection and isolated archive resource limits" evidence=ROOT.FULLV501.E3,ROOT.FULLV501.E4
-/accept id=ROOT.FULLV501.A4 state=pass action="Integrate the D15 approved batch through the data owner" evidence=ROOT.FULLV501.E6
-/accept id=ROOT.FULLV501.A5 state=pass action="Reconcile D15 contracts report adoption and the three state scopes" evidence=ROOT.FULLV501.E7
-/accept id=ROOT.FULLV501.A6 state=pass action="Verify independent archive consultation without parent workspace inputs" evidence=ROOT.FULLV501.E8,ROOT.FULLV501.E9
-/evidence id=ROOT.FULLV501.E1 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/database/verification.json observed="Pass 31 offline source custody approval text-pin rollback and quota checks with synthetic inputs"
-/evidence id=ROOT.FULLV501.E2 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/workflow-accepted/verification.json observed="Pass all 58 offline workflow checks including first-pass fact preservation bounded expansion resolved evidence SOAP context and differential consistency"
-/evidence id=ROOT.FULLV501.E3 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference DATA.ADMISSION15 source verification approval and preservation evidence without claiming independent clinical validation"
-/evidence id=ROOT.FULLV501.E4 class=artifact result=pass source=Tmp/v5-admission-2026-10-15/archive.json observed="Verify the 43-file admitted archive at 1300435 compressed and 12901632 expanded bytes with pinned knowledge and SDK source identity"
-/evidence id=ROOT.FULLV501.E5 class=static result=pass source=git-diff-check observed="Pass git diff --check after implementation and human documentation updates"
-/evidence id=ROOT.FULLV501.E6 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference D15 explicit user acceptance and completed data-owned RDF and minimal-text admission"
-/evidence id=ROOT.FULLV501.E7 class=semantic result=pass source=Tmp/v5-admission-2026-10-15/handoff-review.json observed="Reconcile PRD D15 scoped contracts report adoption and all maintained state documents"
-/evidence id=ROOT.FULLV501.E8 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/isolated/workflow/verification.json observed="Pass all 58 workflow checks from the extracted archive with networking disabled"
-/evidence id=ROOT.FULLV501.E9 class=runtime result=pass source=Tmp/v5-admission-2026-10-15/isolated/admitted/verification.json observed="Pass three actual-knowledge scripted consultations from the extracted archive through confirmed termination"
-/evidence id=ROOT.FULLV501.E10 class=external_service result=not_run source=DECISION_STATE.md observed="Leave actual Luna official SDK submission evaluation and diagnostic performance unrun under D15"
-/accept id=ROOT.V501.A1 state=pass action="Align D02 D05 D07 D08 D09 D10 D11 D14 PRD and scoped contracts with v5.0" evidence=ROOT.V501.E1
-/accept id=ROOT.V501.A2 state=pass action="Replace retired extraction tooling with the bounded provider-free RF2 and BODHI source projection" evidence=ROOT.V501.E2,ROOT.V501.E3
-/accept id=ROOT.V501.A3 state=pass action="Verify the complete offline workflow and the isolated archive" evidence=ROOT.V501.E4,ROOT.V501.E5
-/accept id=ROOT.V501.A4 state=pass action="Preserve required archival evidence and reconcile the three maintained state scopes" evidence=ROOT.V501.E6,ROOT.V501.E7
-/evidence id=ROOT.V501.E1 class=semantic result=pass source=DECISION_STATE.md observed="Replace active v4.2 ownership manual-role categorical-only and live-pilot guidance with the accepted shared-pattern typed-condition source-policy contract"
-/evidence id=ROOT.V501.E2 class=static result=pass source=Dev/ontology/source_projection.py observed="Implement the bounded model-free pipeline and remove the retired SNOMED and guideline extraction modules prompts and verifiers"
-/evidence id=ROOT.V501.E3 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference DATA.V501 source preview and review boundaries without admitting its clinical assets"
-/evidence id=ROOT.V501.E4 class=runtime result=pass source=Tmp/workflow-tests/verification.json observed="Pass all 52 maintained offline workflow checks including v5.0 scoring typed values applicability questions SOAP submission and confirmed termination"
-/evidence id=ROOT.V501.E5 class=artifact result=pass source=Tmp/ontology-v5/archive-verification.json observed="Build the isolated 38-file ZIP at 48128 compressed bytes and pass all 52 workflow checks from its extracted runtime with matching source schema and SDK bytes"
-/evidence id=ROOT.V501.E6 class=artifact result=pass source=Tmp/ontology-v5/preservation.json observed="Verify all 274 files in seven retained preparation manifests and preserve the exact v4.2 schema and vocabulary Git blobs"
-/evidence id=ROOT.V501.E7 class=semantic result=pass source=Tmp/ontology-v5/handoff-review.json observed="Reconcile root submission and data goals evidence blockers and handoffs and remove retired pipeline and live-pilot tasks"
-/evidence id=ROOT.V501.E8 class=static result=pass source=git-diff-check observed="Pass git diff --check after the implementation and contract updates"
-/evidence id=ROOT.V501.E9 class=deployment result=not_run source=compose.yaml observed="Leave extraction-container recreation WSL2 deployment remote publication and infrastructure changes unrun"
-/evidence id=ROOT.V501.E10 class=external_service result=not_run source=Dev/ontology/source_projection.py observed="Make no real model or API calls and leave clinical review diagnostic performance official submission and evaluation unrun"
-/blocker id=ROOT.FULLV5REVIEW01.B1 state=resolved action="Apply explicit D15 user acceptance of the pinned candidate batch" source=DECISION_STATE.md
-/scope id=ROOT.V501.S1 state=in action="Own root requirements Compose preparation tooling maintained verification packaging and cross-scope handoff"
-/scope id=ROOT.FULLV501.S1 state=in action="Own D15 preparation helpers maintained verification packaging report adoption and cross-scope reconciliation"
-/scope id=ROOT.FULLV501.S2 state=out action="Exclude disease plans source downloads old jobs actual model calls remote writes commits and infrastructure changes"
-/accept id=ROOT.EDUCATION16.A1 state=pass action="Implement pinned inventory exact excerpt extraction and offline behavior checks" evidence=ROOT.EDUCATION16.E1,ROOT.EDUCATION16.E2
-/accept id=ROOT.EDUCATION16.A2 state=pass action="Complete the data-owned runtime Disease review batch" evidence=ROOT.EDUCATION16.E3,ROOT.EDUCATION16.E4
-/accept id=ROOT.EDUCATION16.A3 state=pass action="Reconcile D16 requirements contracts and all maintained state scopes" evidence=ROOT.EDUCATION16.E5
-/evidence id=ROOT.EDUCATION16.E1 class=runtime result=pass source=Tmp/education-2026-10-15/tests.json observed="Pass 14 offline education inventory extraction boundary mutation and draft-only behavior checks"
-/evidence id=ROOT.EDUCATION16.E2 class=runtime result=pass source=Tmp/education-2026-10-15/workflow.json observed="Pass all 58 existing synthetic workflow checks through SOAP submission and confirmed termination"
-/evidence id=ROOT.EDUCATION16.E3 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference DATA.EDUCATION16 fixed-source draft coverage and explicit unresolved dispositions without claiming user approval or clinical validation"
-/evidence id=ROOT.EDUCATION16.E4 class=artifact result=pass source=Tmp/education-2026-10-15/preservation.json observed="Verify all 43 submission runtime files retain their pre-D16 bytes while keeping education drafts outside submission"
-/evidence id=ROOT.EDUCATION16.E5 class=semantic result=pass source=Tmp/education-2026-10-15/handoff-review.json observed="Reconcile D16 decisions requirements source contracts human orientation and root data and submission handoffs"
-/evidence id=ROOT.EDUCATION16.E6 class=external_service result=not_run source=DECISION_STATE.md observed="Leave new downloads model calls independent clinical validation official evaluation commits and publication unrun"
-/scope id=ROOT.EDUCATION16.S1 state=in action="Own education preparation tooling maintained checks and cross-scope review handoff under D16"
-/handoff state=ready action="Present the data-owned D16 draft review batch and retain ROOT.PARSER16 as the next implementation design"
+/status value=active
+/checkpoint revision=a0c7d3a02ef8215b6ff5f6bc65a425da59881067 dirty=true updated=2026-10-16T13:38:41+00:00
+/goal phase=current id=ROOT.GIT25 state=active action="Preserve original work on a backup branch and publish the compact verified main to origin under D25"
+/goal phase=history id=ROOT.STORAGE24 state=complete action="Reclaim disposable project storage and prepare a compact source snapshot while preserving the admitted competition runtime"
+/goal phase=history id=ROOT.TEXT22 state=complete action="Coordinate APP.TEXT20 runtime text admission Korean consultation verification and D23 competition acceptance"
+/goal phase=history id=ROOT.KOREAN21 state=complete action="Complete patient-only Korean generation and D22 NOVA continuation verification"
+/goal phase=history id=ROOT.GRAPH20 state=complete action="Complete D20 competition graph connections approval and offline pipeline verification"
+/goal phase=history id=ROOT.FINDING19 state=complete action="Expand source-backed findings and attributes and remove repeated preparation evidence storage"
+/goal phase=history id=ROOT.SOURCE18 state=complete action="Complete D18 offline extraction tooling verification and generation evidence handoff"
+/accept id=ROOT.FINDING19.A1 state=pass action="Discover examination roles observable dimensions and specialty coverage from supplied sources" evidence=ROOT.FINDING19.E1
+/accept id=ROOT.FINDING19.A2 state=pass action="Normalize workset provenance audit exports and intermediate storage without losing source custody" evidence=ROOT.FINDING19.E2
+/accept id=ROOT.FINDING19.A3 state=pass action="Verify the new build preserve consultation boundaries and package generation evidence" evidence=ROOT.FINDING19.E3,ROOT.FINDING19.E4
+/evidence id=ROOT.FINDING19.E1 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference completed source-owned finding attribute domain specialty role and provenance verification under D19"
+/evidence id=ROOT.FINDING19.E2 class=runtime result=pass source=Tmp/d19-verification/tooling/verification.json observed="Pass 52 source admission Korean workset budget and failure controls plus 15 finding grouping acquisition and archive failure checks in Tmp/d19-verification/findings/verification.json using scripted responses and no real model calls"
+/evidence id=ROOT.FINDING19.E3 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference maintained consultation regressions and the explicit deferral of Korean candidate consultation without changing production admission"
+/evidence id=ROOT.FINDING19.E4 class=artifact result=pass source=data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/evidence.json observed="Extract and verify all 99 generation evidence ZIP files with SHA256 0ceb5a1d9f96f26bb78168ca4c52ccd2d0cedc69c0a9b983aa36b9ada73b063b; include source code Docker pins rules source hashes coverage and observed verification while excluding raw source packages and credentials"
+/accept id=ROOT.SOURCE18.A1 state=pass action="Reconcile withdrawn data decisions and all maintained state scopes" evidence=ROOT.SOURCE18.E1
+/accept id=ROOT.SOURCE18.A2 state=pass action="Integrate corrected source extraction frozen Korean jobs and finite-budget failure controls" evidence=ROOT.SOURCE18.E2
+/accept id=ROOT.SOURCE18.A3 state=pass action="Reconcile maintained consultation behavior and explicitly deferred candidate verification" evidence=ROOT.SOURCE18.E3
+/accept id=ROOT.SOURCE18.A4 state=pass action="Package and extract-verify generation code settings source hashes and observed results" evidence=ROOT.SOURCE18.E4
+/evidence id=ROOT.SOURCE18.E1 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference completed data-owned cleanup verification and remove withdrawn task and approval references across the three maintained states"
+/evidence id=ROOT.SOURCE18.E2 class=runtime result=pass source=Tmp/d18-verification/tooling/verification.json observed="Pass 50 offline source admission Korean workset semantic-gate budget and failure-control checks using scripted responses"
+/evidence id=ROOT.SOURCE18.E3 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Reference application-owned regression evidence and preserve the explicit deferral of new Korean candidate consultation"
+/evidence id=ROOT.SOURCE18.E4 class=artifact result=pass source=data/preparation/v5/source-only-2026-10-16/build/evidence.json observed="Extract and verify all 86 evidence ZIP files with SHA256 5bfe320946a6da3e849a8848dce99d13c80a2a33a5a5abb91b4c6a04c1536c3a excluding raw source packages and credentials"
+/evidence id=ROOT.CLI18.E1 class=runtime result=fail source=data/preparation/v5/source-only-2026-10-16/build/execution-environment.json observed="Detect reserved built-in provider override in CLI 0.162.1 configuration loading before a model response and preserve the first attempt without retry"
+/evidence id=ROOT.CLI18.E2 class=external_service result=not_run source=Dev/ontology/codex_cli.py observed="Preserve the historical CLI configuration failure and record current patient-text generation only through D22 NOVA"
+/scope id=ROOT.SOURCE18.S1 state=in action="Own preparation tooling declared Docker execution verification evidence packaging and cross-scope handoff"
+/scope id=ROOT.SOURCE18.S2 state=out action="Record D18 exclusions for further Codex CLI work downloads commits publication deployment and runtime admission at that checkpoint"
+/scope id=ROOT.FINDING19.S1 state=in action="Own source extraction tooling compact preparation storage offline verification generation evidence and cross-scope handoff"
+/scope id=ROOT.FINDING19.S2 state=out action="Record D19 exclusions for Codex CLI changes real Korean work runtime admission official submission downloads commits and deployment at that checkpoint"
+/accept id=ROOT.GRAPH20.A1 state=pass action="Implement D20 source-derived graph connections and pinned candidate approval" evidence=ROOT.GRAPH20.E1
+/accept id=ROOT.GRAPH20.A2 state=pass action="Preserve maintained consultation behavior" evidence=ROOT.GRAPH20.E2
+/accept id=ROOT.GRAPH20.A3 state=pass action="Verify actual graph consultations and reconcile all maintained state scopes" evidence=ROOT.GRAPH20.E3,ROOT.GRAPH20.E5
+/accept id=ROOT.GRAPH20.A4 state=pass action="Verify the isolated runtime archive and text-pending boundary" evidence=ROOT.GRAPH20.E4
+/evidence id=ROOT.GRAPH20.E1 class=runtime result=pass source=Tmp/d20-verification/connections-unit.json observed="Pass 19 focused Context prerequisite polarity subject ROS consumer and separate examination text admission checks"
+/evidence id=ROOT.GRAPH20.E2 class=runtime result=pass source=Tmp/d20-verification/workflow-canonical/verification.json observed="Pass all 69 maintained offline workflow and packaging regressions"
+/evidence id=ROOT.GRAPH20.E3 class=runtime result=pass source=data/preparation/v5/competition-graph-2026-10-16/verification.json observed="Pass 155 real-source graph checks and three complete scripted consultations covering present absent and unknown Context with six ROS actions fifteen SOAP fields and confirmed submission per case"
+/evidence id=ROOT.GRAPH20.E4 class=artifact result=pass source=data/preparation/v5/competition-graph-2026-10-16/packaging.json observed="Extract and verify the 42-file 1339807-byte runtime ZIP with 99104 graph triples 9401 Associations and the declared text-pending prepare refusal; retain official submission as not_run"
+/evidence id=ROOT.GRAPH20.E5 class=semantic result=pass source=DECISION_STATE.md observed="Reconcile D20 selected rules contracts human orientation approval receipt and all three maintained state scopes while preserving the separate Korean task"
+/evidence id=ROOT.GRAPH20.E6 class=runtime result=pass source=Tmp/d20-verification/tooling-canonical/verification.json observed="Pass 52 maintained source custody admission failure-control and scripted Korean workset checks with zero real model calls"
+/scope id=ROOT.GRAPH20.S1 state=in action="Own D20 tooling decisions source-only graph approval offline verification and cross-scope handoff"
+/scope id=ROOT.GRAPH20.S2 state=out action="Exclude Korean generation real model calls official environment access publication downloads commits and deployment"
+/accept id=ROOT.KOREAN21.A1 state=pass action="Implement patient-only graph binding and bounded NOVA failure resumption" evidence=ROOT.KOREAN21.E1
+/accept id=ROOT.KOREAN21.A2 state=pass action="Complete generation and separate semantic comparison with NFC 1-30 enforcement" evidence=ROOT.KOREAN21.E2,ROOT.KOREAN21.E4
+/evidence id=ROOT.KOREAN21.E1 class=runtime result=pass source=data/preparation/v5/patient-korean-2026-10-16/offline-verification.json observed="Pass 33 patient-action scope identity NFC length budget explicit resumption and service-code classification controls with scripted responses"
+/evidence id=ROOT.KOREAN21.E2 class=external_service result=pass source=data/preparation/v5/patient-korean-2026-10-16/execution-summary.json observed="Execute the requested NOVA development route with openai/gpt-6-luna medium through 219 reserved requests and retain every outcome without changing runtime admission"
+/scope id=ROOT.KOREAN21.S1 state=in action="Own D21-D22 tooling NOVA execution offline verification evidence packaging and cross-scope handoff"
+/scope id=ROOT.KOREAN21.S2 state=out action="Record D21-D22 preparation boundaries before the separately completed APP.TEXT20 runtime admission"
+/evidence id=ROOT.KOREAN21.E3 class=runtime result=pass source=data/preparation/v5/patient-korean-2026-10-16/offline-verification.json observed="Pass 33 patient-text controls and 52 source custody admission and existing Korean regression checks in project containers with scripted responses and no network"
+/evidence id=ROOT.KOREAN21.E4 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference completed data-owned text coverage exact provenance and the full cross-run patient-action audit without promoting wording preparation to runtime admission"
+/evidence id=ROOT.KOREAN21.E5 class=artifact result=pass source=data/preparation/v5/patient-korean-2026-10-16/code-custody.json observed="Preserve six exact versioned generator and prompt snapshots plus every request ledger while retaining the original graph and text-pending runtime pins"
+/accept id=ROOT.KOREAN21.A3 state=pass action="Preserve replay evidence and reconcile the maintained handoff" evidence=ROOT.KOREAN21.E6,ROOT.KOREAN21.E7
+/evidence id=ROOT.KOREAN21.E6 class=artifact result=pass source=data/preparation/v5/patient-korean-2026-10-16/evidence.json observed="Extract and hash-verify all 820 files in the 6017676-byte generation evidence ZIP while excluding credentials raw source packages and runtime submission"
+/evidence id=ROOT.KOREAN21.E7 class=semantic result=pass source=data/preparation/v5/patient-korean-2026-10-16/handoff-verification.json observed="Record the D22 preparation checkpoint before APP.TEXT20 admission and retain its original graph_admitted_text_pending manifest as historical evidence"
+/accept id=ROOT.TEXT22.A1 state=pass action="Reconcile D23 competition acceptance and the three maintained state scopes" evidence=ROOT.TEXT22.E1
+/accept id=ROOT.TEXT22.A2 state=pass action="Verify canonical offline behavior and the isolated Korean runtime archive" evidence=ROOT.TEXT22.E2,ROOT.TEXT22.E3
+/evidence id=ROOT.TEXT22.E1 class=semantic result=pass source=data/preparation/v5/runtime-text-2026-10-16/competition-acceptance.json observed="Apply D23 to complete source-backed competition candidates and resolve remaining user-approval waiting expressions while reconciling root data submission contracts and human orientation"
+/evidence id=ROOT.TEXT22.E2 class=runtime result=pass source=data/preparation/v5/runtime-text-2026-10-16/verification.json observed="Pass 69 maintained workflow and 52 source-admission checks and reference completed APP.TEXT20 admitted-RDF Korean consultation and examination evidence without real model calls"
+/evidence id=ROOT.TEXT22.E3 class=artifact result=pass source=data/preparation/v5/runtime-text-2026-10-16/packaging.json observed="Verify the 42-file active-manifest archive in a two-CPU eight-GB network-disabled container without parent data or assets and pass 69 workflow tests three admitted-RDF cases and 577 Korean path checks"
+/scope id=ROOT.TEXT22.S1 state=in action="Own D23 decision reconciliation preparation tooling active-manifest packaging offline verification and cross-scope handoff"
+/scope id=ROOT.TEXT22.S2 state=out action="Exclude new model calls official services submission evaluation downloads commits and deployment"
+/accept id=ROOT.STORAGE24.A1 state=pass action="Remove proven project caches and preserve historical preparation bytes in verified lossless archives" evidence=ROOT.STORAGE24.E1,ROOT.STORAGE24.E2
+/accept id=ROOT.STORAGE24.A2 state=pass action="Separate local preparation outputs from versioned sources and prepare an independent compact source ZIP" evidence=ROOT.STORAGE24.E3
+/accept id=ROOT.STORAGE24.A3 state=pass action="Preserve active runtime pins supplied assets and isolated consultation behavior" evidence=ROOT.STORAGE24.E4
+/evidence id=ROOT.STORAGE24.E1 class=artifact result=pass source=data/provenance/storage-cleanup-2026-10-16-archives.json observed="Roundtrip hash-verify 18846978048 historical SQLite bytes as 3499532670 gzip bytes before removing only their expanded copies"
+/evidence id=ROOT.STORAGE24.E2 class=runtime result=pass source=data/provenance/storage-cleanup-2026-10-16-docker.json observed="Remove 41 proven obsolete image records two stopped project containers and 34552400 project CLI cache bytes while preserving active images credentials installed plugins and other projects; observe zero separate build-cache records"
+/evidence id=ROOT.STORAGE24.E3 class=artifact result=pass source=Tmp/packaging/ontoward-github-source.json observed="Verify the compact current-source ZIP without Git history local credentials or raw preparation data and match all 42 verified submission files; retain 59 local generated files after Git index removal"
+/evidence id=ROOT.STORAGE24.E4 class=runtime result=pass source=data/provenance/storage-cleanup-2026-10-16.json observed="Verify 43 unchanged retained runtime files all 16280 asset hashes and 109 source files with 12586084 source rows; pass 69 workflow tests three admitted cases and 577 Korean checks in the independent network-disabled two-CPU eight-GB ZIP container"
+/scope id=ROOT.STORAGE24.S1 state=in action="Own D24 project-only cleanup Docker ownership checks ignore rules source snapshot offline acceptance and cross-scope handoff"
+/scope id=ROOT.STORAGE24.S2 state=out action="Exclude commits history rewriting remote refresh push downloads official services and Colima changes"
+/accept id=ROOT.GIT25.A1 state=pass action="Preserve the latest original local main and verify current runtime identity" evidence=ROOT.GIT25.E1
+/accept id=ROOT.GIT25.A2 state=not_run action="Create compact main history without the oversized local ancestors" evidence=ROOT.GIT25.E2
+/accept id=ROOT.GIT25.A3 state=not_run action="Publish main to the authorized origin and verify remote identity" evidence=ROOT.GIT25.E3
+/evidence id=ROOT.GIT25.E1 class=artifact result=pass source=data/provenance/github-publication-2026-10-16.json observed="Create codex/pre-cleanup-20261016 at a0c7d3a and verify all 259 source files and 42 runtime files against the prepared archives"
+/evidence id=ROOT.GIT25.E2 class=artifact result=not_run source=data/provenance/github-publication-2026-10-16.json observed="Prepare compact main creation from fetched origin main 2650f45 while preserving the current tree and excluding a local catalog dictionary"
+/evidence id=ROOT.GIT25.E3 class=external_service result=not_run source=data/provenance/github-publication-2026-10-16.json observed="Authorize ordinary main push to devRestain/Ontoward after outbound object verification"
+/scope id=ROOT.GIT25.S1 state=in action="Own D25 local backup branch main commit origin fetch and push object verification and publication handoff"
+/scope id=ROOT.GIT25.S2 state=out action="Exclude backup-branch publication remote settings changes source deletion dependency downloads models and official competition submission"
+/handoff state=incomplete action="Create and publish compact main then record verified remote identity"

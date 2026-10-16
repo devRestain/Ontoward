@@ -1,0 +1,15 @@
+{
+  "approval_basis": "explicit_user_candidate_acceptance",
+  "associations": 9401,
+  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+  "clinical_text": "patient_actions_prepared",
+  "independent_clinical_validation": "not_run",
+  "metrics": {
+    "associations": 9401,
+    "graph_triples": 99105,
+    "peak_rss_kib": 437416,
+    "prepare_seconds": 2.6110504920361564
+  },
+  "receipt_sha256": "5b44871b970f5e987041c0103a8e06572956d7ac92859d032bd926802d04ec04",
+  "status": "admitted"
+}

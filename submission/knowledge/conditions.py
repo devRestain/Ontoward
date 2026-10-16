@@ -140,6 +140,37 @@ class FeatureContribution(Strict):
     policy_version: str
 
 
+class QuestionTemplate(Strict):
+    text: str
+    answer_type: Literal["presence", "category", "quantity", "duration", "free_text"] = "free_text"
+    affirmative: bool = False
+    interviewable: bool = True
+    reason: str | None = None
+
+    @model_validator(mode="after")
+    def validate_contract(self):
+        if self.affirmative and self.answer_type != "presence":
+            raise ValueError("Only a presence question can map affirmative replies")
+        if not self.interviewable and not self.reason:
+            raise ValueError("Blocked questions require an explicit reason")
+        return self
+
+
+class ReasoningPolicy(Strict):
+    version: Literal["d17.1"] = "d17.1"
+    absence_penalties: dict[str, float] = Field(default_factory=lambda: {"high": 0.5, "very_high": 1.0})
+    per_target_cap: float = 1.0
+    total_cap: float = 2.0
+
+    @model_validator(mode="after")
+    def validate_penalties(self):
+        if (set(self.absence_penalties) != {"high", "very_high"}
+                or not 0 <= self.absence_penalties["high"] <= self.absence_penalties["very_high"] <= self.per_target_cap
+                or self.per_target_cap > self.total_cap):
+            raise ValueError("Invalid bounded absence policy")
+        return self
+
+
 class ScoringPolicy(Strict):
     version: str = Field(min_length=1)
     labels: dict[str, float]

@@ -1,0 +1,7 @@
+{
+  "Dev/ontology/admission.py": "1b25dd42e80ca6914d60a0e5df85e7927423c30edd033859d18da05e0cfcce97",
+  "Dev/packaging/package_submission.py": "b4758b7b7ef80697081b179efd8449de73885eee060b760614650f6b1c6a612f",
+  "Dev/tests/workflow/test_korean_admitted.py": "2df5321a177b0181100d92b90afd56aaa6573c999db0389364f910a33e88df43",
+  "Dev/tests/workflow/test_workflow.py": "4a8cfe5ef4ff2f236311c0afb3cd19678f5afe64a283f1ae0bc9383c569ca9f0",
+  "Tmp/app-text20/admit.py": "55b10581aa942c0cb97a738cce1e952e1e722ece58e627ee44adaa2224b05e57"
+}

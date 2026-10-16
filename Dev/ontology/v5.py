@@ -11,7 +11,7 @@ from submission.knowledge.conditions import ExpectedValue, ScoringPolicy
 ROOT = Path(__file__).resolve().parents[2]
 
 OW = Namespace("urn:ontoward:")
-NORMALIZATION_VERSION = "v5.0.2"
+NORMALIZATION_VERSION = "v5.0.4-source-findings"
 
 
 def digest(value):
@@ -38,6 +38,9 @@ def write(path, value):
 
 
 def write_sources(path, assertions, dispositions):
+    if hasattr(dispositions, 'database'):
+        write(path, dispositions.database.audit_reference())
+        return
     temporary = path.with_name(path.name + ".tmp")
     with temporary.open("w", encoding="utf-8") as stream:
         stream.write('{"assertions":{')
@@ -149,7 +152,7 @@ class PreviewBuilder:
             self.graph.set((node, OW.applicability, Literal(json.dumps(list(applicability), sort_keys=True), datatype=RDF.JSON)))
         return key
 
-    def export(self, output, *, source_snapshots, report, dispositions):
+    def export(self, output, *, source_snapshots, report, dispositions, require_action_assets=True):
         output = workspace_path(output)
         if output.exists() and any(output.iterdir()):
             raise ValueError("Use a new or empty preview directory")
@@ -187,6 +190,8 @@ class PreviewBuilder:
             if value not in categorical.get(attribute, set()):
                 self.vocabulary.remove((attribute, OW.canHaveValue, value))
         used_concepts = set(self.graph.subjects(OW.hasAssociation, None)) | set(self.graph.objects(None, OW.targets))
+        for payload in self.graph.objects(None, OW.applicability):
+            used_concepts.update(URIRef(item["concept_id"]) for item in json.loads(str(payload)))
         used_concepts.update(self.graph.objects(None, OW.onAttribute))
         pending = list(used_concepts)
         while pending:
@@ -207,7 +212,7 @@ class PreviewBuilder:
             sys.path.insert(0, str(ROOT / "submission"))
         from knowledge.graph import ClinicalKnowledge
         knowledge = ClinicalKnowledge(combined)
-        knowledge.validate_graph()
+        knowledge.validate_graph(require_action_assets=require_action_assets)
         patterns = sorted(self.graph.subjects(RDF.type, OW.ClinicalPattern), key=str)
         by_target = {}
         for pattern in patterns:
@@ -217,15 +222,17 @@ class PreviewBuilder:
                 self.graph.add((URIRef(child), OW.refinesPattern, URIRef(parent)))
         (output / "schema.ttl").write_bytes((ROOT / "data/ontology/schema.ttl").read_bytes())
         (output / "scoring_policy.json").write_bytes((ROOT / "submission/knowledge/scoring_policy.json").read_bytes())
+        (output / "reasoning_policy.json").write_bytes((ROOT / "submission/knowledge/reasoning_policy.json").read_bytes())
         for name, graph in (("vocabulary.ttl", self.vocabulary), ("clinical.ttl", self.graph)):
             (output / name).write_text("".join(sorted(f"{s.n3()} {p.n3()} {o.n3()} .\n" for s, p, o in graph)), encoding="utf-8")
         assets = {name: {"path": "knowledge/" + name, "sha256": digest((output / name).read_bytes())}
-                  for name in ("schema.ttl", "vocabulary.ttl", "clinical.ttl", "scoring_policy.json")}
+                  for name in ("schema.ttl", "vocabulary.ttl", "clinical.ttl", "scoring_policy.json", "reasoning_policy.json")}
         self.registry = dict(sorted(self.registry.items()))
         registry_version = digest(self.registry)
         manifest = {"schema_version": "5.0", "registry_version": registry_version,
                     "normalization_version": NORMALIZATION_VERSION, "source_snapshots": source_snapshots,
                     "scoring_policy_version": ScoringPolicy.load_default().version, "scoring_policy": assets["scoring_policy.json"],
+                    "reasoning_policy": assets["reasoning_policy.json"],
                     "schema": assets["schema.ttl"], "vocabulary": assets["vocabulary.ttl"], "bundles": [assets["clinical.ttl"]],
                     "preparation_status": "preview_only", "build_id": report.get("build_id")}
         report = {**report, "status": "preview_only", "schema_version": "5.0", "patterns": len(patterns),

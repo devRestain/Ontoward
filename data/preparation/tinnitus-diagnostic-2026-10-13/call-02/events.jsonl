@@ -1,4 +1,0 @@
-{"type":"thread.started","thread_id":"01a130cf-4b88-7ea3-996c-c2653c064cf1"}
-{"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"{\"patterns\":[{\"disease\":\"Hypertension\",\"target\":{\"kind\":\"symptom\",\"term\":\"Tinnitus\"},\"features\":[],\"evidence\":[{\"start_line\":20,\"end_line\":20,\"quote\":\"- Metabolic diseases such as heart disease, hypertension, and diabetes are associated with an onset of tinnitus.\"}]}],\"supporting_contexts\":[],\"finding_methods\":[],\"planned_tests\":[]}"}}
-{"type":"turn.completed","usage":{"input_tokens":20841,"cached_input_tokens":0,"cache_write_input_tokens":0,"output_tokens":415,"reasoning_output_tokens":323}}

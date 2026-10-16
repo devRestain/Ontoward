@@ -14,7 +14,7 @@ COPY --from=codex /usr/local/lib/node_modules /usr/local/lib/node_modules
 RUN ln -s /usr/local/lib/node_modules/@openai/codex/bin/codex.js /usr/local/bin/codex
 
 WORKDIR /workspace
-COPY Dev/ontology/requirements.txt /opt/ontology/requirements.txt
+COPY submission/requirements.txt /opt/ontology/requirements.txt
 RUN python -m pip install --no-cache-dir --only-binary=:all: -r /opt/ontology/requirements.txt
 RUN mkdir -p /opt/ontology/codex-state && chmod 700 /opt/ontology/codex-state
 
