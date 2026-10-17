@@ -13,11 +13,11 @@ class ModelClient:
         self.usage = usage
         self.new_request_id = new_request_id
 
-    def complete(self, state, client, *, role, messages):
+    def complete(self, state, client, *, role, messages, max_tokens=None):
         session = state.session
         if role not in {"gateway", "terminology", "empathy", "education", "education_doctor"}:
             raise ValueError("Unsupported designated-model role")
-        allowance = self.budget.model_allowance(session, role)
+        allowance = self.budget.model_allowance(session, role, maximum=max_tokens)
         if role.startswith("education"):
             size = len(json.dumps(messages, ensure_ascii=False).encode("utf-8"))
             if size > LIMITS.education_request_bytes or size > session.input_token_limit - session.input_tokens:
@@ -43,6 +43,11 @@ class ModelClient:
             self.usage.record_tokens(state, amounts)
             usage_accounted = True
             content = completion["choices"][0]["message"]["content"]
+            exchange["finish_reason"] = completion["choices"][0].get("finish_reason", "stop")
+            if exchange["finish_reason"] == "length":
+                exchange["error"] = "OUTPUT_TRUNCATED"
+                state.interaction.issues.append(f"truncated_{role}_response")
+                return None
             if content is None:
                 content = ""
             if not isinstance(content, str):

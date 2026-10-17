@@ -103,14 +103,19 @@ def verify(submission, output, candidate=None):
                     value["measurement"] = {"kind": "quantity", "value": 2.0, "unit": "month", "operator": "eq"}
                 elif q["attribute_id"] == str(OW.EpisodeDuration):
                     value["measurement"] = {"kind": "interval", "lower": 1.0, "upper": 2.0, "unit": "h", "upper_inclusive": False}
+            if q and q["purpose"] == "greeting":
+                return self.completion(json.dumps({"facts": [], "clinical_content": False,
+                    "spans": [{"quote": text, "role": "nonclinical"}]}))
             fact = {"field": field, "quote": text, "value": value}
             if q:
                 fact["record_id"] = q["item_id"]
             return self.completion(json.dumps({"facts": [fact]}, ensure_ascii=False))
 
         def say(self, content, request_id):
-            if content == config.texts.chief_question:
-                q = {"purpose": "chief", "target_id": None, "attribute_id": None}
+            if content == config.texts.greeting:
+                q = {"purpose": "greeting", "target_id": None, "attribute_id": None}
+            elif content in {*config.texts.intake_questions.values(), *config.texts.history_questions.values()}:
+                q = {"purpose": "common", "target_id": None, "attribute_id": None}
             elif content in {*KOREAN.values(), config.texts.provisional_education, config.texts.symptom_education,
                              config.texts.understanding_question, config.texts.correction_education}:
                 q = {"purpose": "education", "target_id": None, "attribute_id": None}
@@ -125,7 +130,9 @@ def verify(submission, output, candidate=None):
             import unicodedata
             assert unicodedata.normalize('NFC',content)==content and 1 <= len(content) <= 30
             self.remaining -= 1
-            if q["purpose"] == "chief":
+            if q["purpose"] == "greeting":
+                answer = "안녕하세요"
+            elif q["purpose"] == "chief":
                 answer = knowledge.label(self.target)
             elif q["target_id"] == self.target and q["attribute_id"] == str(OW.Location) and self.target == target:
                 answer = ", ".join(knowledge.label(value) for value in locations)

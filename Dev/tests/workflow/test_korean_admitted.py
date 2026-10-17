@@ -39,10 +39,12 @@ def verify(submission, output):
     target = str(OW.SymptomSnomedCT21522001)
     blocked = {key for key, template in knowledge.questions.items() if not template.interviewable}
     allowed_say = {template.text for template in knowledge.questions.values() if template.interviewable}
-    allowed_say.update((config.texts.chief_question, config.texts.open_question, config.texts.provisional_education,
+    allowed_say.update((config.texts.greeting, config.texts.open_question, config.texts.provisional_education,
         config.texts.symptom_education, config.texts.understanding_question, config.texts.correction_education,
         config.texts.clarification_question, *config.texts.clarification_questions.values()))
     allowed_say.update(KOREAN.values())
+    common_texts = {*config.texts.intake_questions.values(), *config.texts.history_questions.values()}
+    allowed_say.update(common_texts)
     exam_profiles = [profile for profile in knowledge._profile_cache.values()
                      if knowledge.has_type(profile.target, 'ExamFinding')]
     require(bool(exam_profiles), 'admitted_graph_has_a_source_backed_examination')
@@ -123,7 +125,8 @@ def verify(submission, output):
             self.actions.append({'kind':kind, 'content':content, 'request_id':request_id})
             response = {'status':'OK', 'turn':50 - self.remaining, 'turns_remaining':self.remaining}
             response['content' if kind == 'SAY' else 'result'] = ('다리 혈관에서 잡음이 들립니다' if kind == 'EXAM' else
-                '배가 아파요' if content == config.texts.chief_question else
+                '안녕하세요' if content == config.texts.greeting else
+                '모르겠어요' if content in common_texts else
                 {'present':'네, 해당 내용이 있어요', 'absent':'그런 내용은 없어요', 'unknown':'모르겠어요'}.get(self.context_status, '모르겠어요')
                 if content in context_texts else '알겠습니다' if content in KOREAN.values() else
                 '모르겠어요' if content in attribute_texts else '다른 증상은 없어요')
@@ -161,7 +164,7 @@ def verify(submission, output):
                 'education_generation_and_delivery:' + context_status)
         require(any(entry.question.purpose == 'feature' for entry in delivered),
                 'context_reaches_diagnostic_questions:' + context_status)
-        require(client.actions[0]['content'] == config.texts.chief_question and
+        require(client.actions[0]['content'] == config.texts.greeting and
                 any(entry.question.purpose == 'hpi' for entry in delivered) and
                 any(entry.question.purpose == 'open_inquiry' for entry in delivered), 'greeting_hpi_and_open_inquiry:' + context_status)
         require(0 < len(ros) <= 6, 'bounded_ros:' + context_status)

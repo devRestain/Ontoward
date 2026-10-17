@@ -7,7 +7,9 @@ from .rules.action import content_error
 
 class Texts(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    chief_question: str
+    greeting: str
+    intake_questions: dict[str, str]
+    history_questions: dict[str, str]
     primary_chief_question: str
     unmapped_question: str
     open_question: str
@@ -105,11 +107,15 @@ class TextConfig(BaseModel):
                 raise ValueError(f"Invalid text placeholders: {name}")
             if any(spec or conversion for _, _, spec, conversion in parts):
                 raise ValueError(f"Text placeholders do not support format conversions: {name}")
-        for name in ("primary_chief_question", "chief_question", "unmapped_question", "open_question", "clarification_question",
+        for name in ("primary_chief_question", "greeting", "unmapped_question", "open_question", "clarification_question",
                      "symptom_education", "provisional_education", "understanding_question", "correction_education", "empathy_fallback"):
             if content_error(getattr(texts, name)):
                 raise ValueError(f"Invalid prepared utterance: {name}")
-        if any(content_error(text) for text in texts.clarification_questions.values()):
+        from .rules.collection import INTAKE, HISTORY
+        if set(texts.intake_questions) != set(INTAKE) or set(texts.history_questions) != set(HISTORY):
+            raise ValueError("Missing common collection questions")
+        if any(content_error(text) for text in [*texts.clarification_questions.values(),
+                *texts.intake_questions.values(), *texts.history_questions.values()]):
             raise ValueError("Invalid prepared clarification")
         return cls(parser_prompt=prompt, terminology_prompt=terminology, empathy_prompt=empathy,
                    education_prompt=education, education_doctor_prompt=education_doctor,

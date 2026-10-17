@@ -1,5 +1,5 @@
 {
-  "algorithm_version": "d38.1",
+  "algorithm_version": "d40.1",
   "approval_basis": "explicit_user_candidate_acceptance",
   "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
   "bundles": [
@@ -21,8 +21,8 @@
     "sha256": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687"
   },
   "reasoning_policy": {
-    "path": "knowledge/d38-reasoning_policy.json",
-    "sha256": "e3f59dd1cc1b9c5450be9c4f43981b87acd9ab514ee409dbc1c1d2b640c5359f"
+    "path": "knowledge/d40-reasoning_policy.json",
+    "sha256": "8bd6c2cb190c760bbeeecca4b8ad5519626e47ae77adc9a18a03a953c6ef0118"
   },
   "registry_version": "1157f6419ef5a8c7278c2ac3c5fdf8a04f14192b1bc3dd3532d182e89b6d9197",
   "review_receipt_sha256": "5b44871b970f5e987041c0103a8e06572956d7ac92859d032bd926802d04ec04",

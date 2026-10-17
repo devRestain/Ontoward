@@ -157,7 +157,7 @@ class QuestionTemplate(Strict):
 
 
 class ReasoningPolicy(Strict):
-    version: Literal["d38.1"] = "d38.1"
+    version: Literal["d40.1"] = "d40.1"
     supporting_cap: float = Field(default=4.0, ge=0)
     comparison_current: int = Field(default=8, ge=1)
     comparison_potential: int = Field(default=4, ge=1)

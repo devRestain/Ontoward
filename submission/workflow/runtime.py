@@ -37,7 +37,7 @@ def prepare() -> PreparedResources:
 
 def assemble_consultation(client, resources, *, now=utc_now, sleep=None, new_request_id=None):
     new_request_id = new_request_id if new_request_id is not None else lambda: str(uuid4())
-    budget = BudgetPolicy(now, education_enabled=resources.config.education_enabled)
+    budget = BudgetPolicy(now, education_enabled=resources.config.education_enabled, knowledge=resources.knowledge)
     usage = UsageAccounting()
     interactions = InteractionLifecycle(new_request_id)
     questions = QuestionLifecycle(resources.config, interactions)

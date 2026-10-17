@@ -6,6 +6,7 @@
 - Keep consultation algorithms and the unchanged SDK in root submission/.
 - Keep the D31 personal web entrypoint and standalone report in this directory without changing submission/ code settings knowledge or state.
 - Keep the D32 project atlas in atlas.html with embedded styles and static diagrams; support direct file opening without scripts network requests builds or a server.
+- Keep the D39 knowledge browser in knowledge.py and knowledge/ with read-only manifest-pinned RDF and allowlisted preparation SQLite inputs.
 - Derive atlas explanations from project READMEs and current source; label the snapshot date illustrative examples runtime admission and deferred verification explicitly.
 - Read root D27 and the preserved devkit and competition references before changing simulator behavior.
 - Record operational progress in root PROJECT_STATE.md without creating another state scope.
@@ -28,6 +29,8 @@
 - Use sh Test/run.sh verify for maintained offline API and model-boundary checks.
 - Use sh Test/run.sh C10 scripted for an isolated offline public-case consultation.
 - Use sh Test/web.sh for the localhost website and shell worker; share the same atomic execution lock with CLI runs.
+- Use sh Test/knowledge.sh start or stop for the separate loopback knowledge viewer without model calls or consultation execution.
+- Preserve SQLite WAL visibility through directory mounts and mode=ro connections; keep preparation candidates distinct from admitted graph nodes and derived display names distinct from source labels.
 - Default the website to C10 NOVA and 200 total role requests; require an explicit start action and retain one active run without queuing or automatic resumption.
 - Observe the original run.py through Test-only in-memory graph and SDK wrappers; delegate once and preserve errors retries routing and all clinical decisions.
 - Store the initial state and reversible node changes with actual node names session turn request IDs and source labels; mark missing or partial traces explicitly.
@@ -41,6 +44,8 @@
 - Keep the scripted Gateway case-independent and limited to supplied source names and aliases; do not add case-to-concept fixtures or clinical synonym tables.
 - Handle D34 terminology and empathy request tasks in scripted doubles without adding clinical semantics or treating fixture responses as model-quality evidence.
 - Handle D37 education and education_doctor protocol fixtures and forward the requested reasoning effort through the model bridge.
+- Return compact D40 Gateway facts and keep scripted patient replies case-independent without adding clinical mappings.
+- Label isolated synthetic archive acceptance separately from public-sample consultation and keep its patient fixture outside the agent container.
 
 ## Evidence
 
@@ -48,5 +53,6 @@
 - Mark scripted replies as test fixtures and all local results as unscored.
 - Record fixture and runtime hashes in the data-owned provenance receipt.
 - Run sh Test/run.sh verify for API and web controls and Test/test_observer.py in the root offline dev service for full workflow parity and trace reconstruction.
+- Run sh Test/knowledge.sh verify for actual graph traversal source-row lookup table browsing and read-only preservation; record browser evidence separately.
 - Keep C10 scripted clinical failure separate from successful website execution and result delivery; never tune fixtures to a case answer or alter submission for a green report.
 - Report authenticated NOVA calls, official API execution, clinical accuracy, and official scoring separately.

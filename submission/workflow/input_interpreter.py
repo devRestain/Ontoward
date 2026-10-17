@@ -9,18 +9,36 @@ from pydantic import ValidationError
 
 from .rules.input import fixed_reply, validate_facts
 from .rules.limits import LIMITS
-from .state.models import ClinicalValue, ParsedInput, ParseResult, PatientReport, RecordItem, WorkflowState
+from .state.models import ClinicalValue, ParsedInput, ParseResult, PatientContextEntry, PatientReport, RecordItem, WorkflowState
+from .rules.collection import INTAKE
 
 
 @lru_cache(maxsize=1)
 def parser_schema():
     def compact(value):
         if isinstance(value, dict):
-            return {key: compact(item) for key, item in value.items() if key not in {"title", "default"}}
+            if "anyOf" in value and any(item.get("type") == "null" for item in value["anyOf"]):
+                return compact(next(item for item in value["anyOf"] if item.get("type") != "null"))
+            return {key: compact(item) for key, item in value.items()
+                    if key not in {"title", "default", "maxLength", "minLength", "minimum", "maximum"}}
         if isinstance(value, list):
             return [compact(item) for item in value]
         return value
-    return compact(ParsedInput.model_json_schema())
+    schema = compact(ParsedInput.model_json_schema())
+    value = schema["$defs"]["ClinicalValue"]
+    value["properties"].pop("text")
+    value["required"].remove("text")
+    value["properties"]["record_details"] = {"type": "array", "items": {"type": "string"}, "maxItems": 8}
+    schema["$defs"].pop("RecordDetail")
+    measured = schema["$defs"]["ExpectedValue"]
+    measured["properties"] = {key: item for key, item in measured["properties"].items()
+        if key in {"kind", "value", "unit", "operator", "lower", "upper", "lower_inclusive", "upper_inclusive", "upper_unit"}}
+    measured["properties"]["kind"] = {"enum": ["quantity", "interval"]}
+    schema["$defs"]["Fact"]["required"].remove("field")
+    subjective = ["S.cc", "S.hpi", "S.pmh", "S.fh", "S.sh", "S.ros"]
+    schema["$defs"]["Fact"]["properties"]["field"] = {"enum": [*subjective, "O.exam"]}
+    schema["$defs"]["SpeechSpan"]["properties"]["field"] = {"enum": subjective}
+    return schema
 
 
 @lru_cache(maxsize=1)
@@ -68,6 +86,13 @@ class InputInterpreter:
         else:
             text = incoming.get("content" if action.question.kind == "SAY" else "result", "")
             text = text if isinstance(text, str) else ""
+        if action and (action.question.purpose == "education" or state.session.current == "Education"):
+            if action.question.purpose == "education":
+                self.questions.complete_unresolved(state, action, text, source_id)
+            elif (item := state.case.get(action.question.item_id)) and item.status == "unasked":
+                state.case.remove({item.id})
+            self.interactions.consume_input(state)
+            return
         facts = incoming["initial"] if initial else incoming
         if incoming.get("error"):
             parsed = ParseResult()
@@ -75,7 +100,7 @@ class InputInterpreter:
             parsed = self._parse_text(state, knowledge, client, text)
         elif "facts" in facts:
             parsed = self._validate_facts({key: facts[key] for key in
-                ("facts", "clinical_content", "empathy") if key in facts}, state, knowledge, text)
+                ("facts", "clinical_content", "empathy", "patient_context", "spans") if key in facts}, state, knowledge, text)
         else:
             fixed = ParsedInput() if initial and not text.strip() else (None if initial else fixed_reply(self.config, state, text, knowledge))
             parsed = self._validate_facts(fixed.model_dump(), state, knowledge, text) if fixed is not None else self._parse_text(state, knowledge, client, text)
@@ -101,6 +126,10 @@ class InputInterpreter:
             self.interactions.request_clarification(state, action.question if action else None)
         if action and action.question.purpose != "empathy":
             self.questions.complete_unresolved(state, action, text, source_id)
+        if (action and action.question.purpose == "context" and action.question.coverage and action.question.target_id
+                and any(e.id == source_id and e.delivered for e in interaction.history)
+                and action.question.target_id not in state.questions.context_coverage):
+            state.questions.context_coverage.append(action.question.target_id)
         if action and incoming.get("error") and action.empathy_source_id:
             self.interactions.skip_empathy(state, "action_response_error", action.empathy_source_id)
         self.interactions.consume_input(state)
@@ -108,6 +137,10 @@ class InputInterpreter:
             item = state.case.get(action.question.item_id)
             if item and item.status == "unasked":
                 self.questions.discard_unasked(state, {item.id})
+        if action and action.question.purpose == "greeting":
+            item = state.case.get(action.question.item_id)
+            if item and (not item.value or item.value.kind == "text" and not item.value.record_category):
+                state.case.remove({item.id})
 
     def _preserve_report(self, state, parsed, source_id, text):
         if not text.strip() or any(report.source_id == source_id for report in state.interaction.patient_reports):
@@ -117,8 +150,12 @@ class InputInterpreter:
             clauses = [part for part in re.split(r"(?<!\d)[.!?。！？](?:\s|$)|[\n;]", fact.quote) if re.search(r"\w", part)]
             # A broad quotation alone does not establish extraction of each sentence.
             quotes.extend([fact.quote] if len(clauses) <= 1 else [detail.quote for detail in fact.value.record_details])
+        if parsed:
+            quotes.extend(fact.quote for fact in parsed.patient_context)
         if parsed and parsed.empathy:
             quotes.append(parsed.empathy.quote)
+        if parsed:
+            quotes.extend(span.quote for span in parsed.spans if span.role != "clinical")
         texts = self.config.texts
         reply = text.strip().rstrip(texts.reply_trailing_punctuation)
         if reply in {*texts.unknown_replies, *texts.education_acknowledgements}:
@@ -139,11 +176,17 @@ class InputInterpreter:
             if re.search(r"\w", text[cursor:start]):
                 uncovered.append((cursor, start))
             cursor = end
+        clinical = []
+        for start, end in uncovered:
+            for span in parsed.spans if parsed else []:
+                offset = text.find(span.quote)
+                if span.role == "clinical" and offset < end and offset + len(span.quote) > start:
+                    clinical.append((max(start, offset), min(end, offset + len(span.quote)), span.field))
         state.interaction.patient_reports.append(PatientReport(source_id=source_id, text=text,
-            covered_spans=covered, uncovered_spans=uncovered))
-        if uncovered:
+            covered_spans=covered, uncovered_spans=uncovered, clinical_spans=clinical))
+        if clinical:
             state.interaction.issues.append("unstructured_patient_report")
-        return bool(uncovered)
+        return bool(clinical)
 
     @staticmethod
     def _chief_input(state):
@@ -174,6 +217,7 @@ class InputInterpreter:
                 parsed = self._merge_recovery(state, parsed, expanded)
                 self._mark_missing_binding(parsed, state, text)
         if (not state.interaction.termination and not parsed.context_limited and parsed.clinical_content
+                and not parsed.truncated and parsed.valid_output
                 and self._needs_terminology(parsed, text)):
             fallback = self._request_parse(state, knowledge, client, text, previous=parsed, terminology=True)
             if fallback is not None:
@@ -220,6 +264,8 @@ class InputInterpreter:
                 and (not question.episode_id or f.value.episode_id in {None, question.episode_id})
                 and (not question.attribute_id or f.value.values or f.value.measurement or f.value.not_applicable)
                 for f in parsed.accepted_facts)
+        elif question and question.record_category:
+            resolved = any(f.value.record_category == question.record_category for f in parsed.accepted_facts)
         else:
             resolved = bool(parsed.accepted_facts)
         parsed.binding_unresolved = not resolved
@@ -254,8 +300,12 @@ class InputInterpreter:
                     continue
             elif fact.repair_of is None and (original.needs_context or original.binding_unresolved):
                 if not any((fact.record_id and fact.record_id == old.record_id) or
-                    (fact.value.subject, fact.value.observation_id, fact.value.episode_id, fact.value.concept_ids, fact.value.attribute_id)
-                    == (old.value.subject, old.value.observation_id, old.value.episode_id, old.value.concept_ids, old.value.attribute_id)
+                    (fact.value.subject, fact.value.subject_member, fact.value.time_context,
+                     fact.value.observation_id, fact.value.episode_id, fact.value.concept_ids, fact.value.attribute_id,
+                     fact.value.record_category, fact.quote if fact.value.kind == "text" else None)
+                    == (old.value.subject, old.value.subject_member, old.value.time_context,
+                        old.value.observation_id, old.value.episode_id, old.value.concept_ids, old.value.attribute_id,
+                        old.value.record_category, old.quote if old.value.kind == "text" else None)
                     for old in accepted):
                     accepted.append(fact)
                     continue
@@ -267,12 +317,27 @@ class InputInterpreter:
             rejected_facts=[item for item in original.rejected_facts if item["index"] not in repaired] + expanded.rejected_facts,
             needs_context=expanded.needs_context, lookup_terms=expanded.lookup_terms,
             context_limited=expanded.context_limited, clinical_content=bool(accepted) or expanded.clinical_content,
-            empathy=original.empathy or expanded.empathy)
+            empathy=original.empathy or expanded.empathy,
+            patient_context=expanded.patient_context or original.patient_context,
+            spans=expanded.spans or original.spans, truncated=expanded.truncated,
+            valid_output=original.valid_output or expanded.valid_output)
+
+    def _required_vocabulary(self, state, knowledge, text):
+        pending = state.interaction.pending
+        if not pending:
+            return []
+        q = pending.question
+        required = list(filter(None, (q.target_id, q.attribute_id)))
+        if q.attribute_id:
+            allowed = knowledge.get_attribute_values(q.attribute_id)
+            matched = [c for c in self._search(state, knowledge, text, kind="AttributeValue") if c in allowed]
+            required.extend((matched or allowed)[:4])
+        return list(dict.fromkeys(required))
 
     def _vocabulary(self, state, knowledge, text, *, expanded=False, lookup_terms=()):
         pending = state.interaction.pending
         chief_input = self._chief_input(state)
-        required = list(filter(None, (pending.question.target_id, pending.question.attribute_id))) if pending else []
+        required = self._required_vocabulary(state, knowledge, text)
         def candidates():
             attribute = pending.question.attribute_id if pending else None
             allowed_values = set(knowledge.get_attribute_values(attribute)) if attribute else set()
@@ -383,14 +448,14 @@ class InputInterpreter:
             # Keep the current input, question, schema and required IDs intact.
             if len(vocabulary) > preferred_count:
                 vocabulary.pop()
+            elif len(vocabulary) > required_count:
+                vocabulary.pop()
             elif payload["dialogue"]:
                 payload["dialogue"].pop()
             elif payload["records"]:
                 payload["records"].pop()
             elif payload.get("frozen_facts"):
                 payload["frozen_facts"].pop()
-            elif len(vocabulary) > required_count:
-                vocabulary.pop()
             else:
                 return None
 
@@ -410,6 +475,7 @@ class InputInterpreter:
                    "schema": deepcopy(terminology_schema() if terminology else parser_schema()), "vocabulary": vocabulary,
                    "task": "terminology" if terminology else "gateway",
                    "parser_pass": "terminology" if terminology else "expansion" if expanded else "primary"}
+        payload["patient_context"] = {key: value.model_dump() for key, value in state.case.patient_context.items()}
         if pending and pending.question.target_id and not terminology:
             question = pending.question
             payload["binding_contract"] = {"target_id": question.target_id, "attribute_id": question.attribute_id,
@@ -427,6 +493,7 @@ class InputInterpreter:
         if self._chief_input(state) and not terminology and not frozen_chief:
             payload["chief_mapping_required"] = True
         if previous:
+            payload["recovery_reason"] = "output_truncated" if previous.truncated else "binding_or_context"
             payload["unlinked_facts"] = [previous.accepted_facts[i].model_dump() for i in previous.unresolved_links]
             payload["rejected_facts"] = [{**item, "reason": str(item["reason"])[:240]} for item in previous.rejected_facts]
             payload["frozen_facts"] = [fact.model_dump() for i, fact in enumerate(previous.accepted_facts) if i not in previous.unresolved_links]
@@ -436,7 +503,7 @@ class InputInterpreter:
                       LIMITS.expanded_gateway_request_bytes if expanded else LIMITS.gateway_request_bytes)
         if compact:
             byte_limit = min(byte_limit, state.interaction.model_history[-1]["parser_payload"]["request_bytes"] - 1)
-        required = set(filter(None, (pending.question.target_id, pending.question.attribute_id))) if pending else set()
+        required = self._required_vocabulary(state, knowledge, text) if not terminology else []
         fitted = self._fit_request(payload, required_count=len(required), byte_limit=byte_limit)
         if fitted is None:
             state.interaction.issues.append("gateway_request_overflow")
@@ -444,7 +511,8 @@ class InputInterpreter:
         messages, request_bytes = fitted
         vocabulary_bytes = len(json.dumps(vocabulary, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
         previous_calls = len(state.interaction.model_history)
-        content = self.model.complete(state, client, role="terminology" if terminology else "gateway", messages=messages)
+        options = {"max_tokens": LIMITS.gateway_recovery_tokens} if previous and previous.truncated else {}
+        content = self.model.complete(state, client, role="terminology" if terminology else "gateway", messages=messages, **options)
         if len(state.interaction.model_history) > previous_calls:
             state.interaction.model_history[-1]["parser_payload"] = {
                 "pass": payload["parser_pass"], "vocabulary_count": len(vocabulary), "vocabulary_bytes": vocabulary_bytes,
@@ -453,6 +521,9 @@ class InputInterpreter:
                 "context_bytes": len(json.dumps(context, ensure_ascii=False, separators=(",", ":")).encode("utf-8")),
                 "context_records": len(context["records"]), "context_turns": len(context["dialogue"])}
         if content is None:
+            if (len(state.interaction.model_history) > previous_calls
+                    and state.interaction.model_history[-1].get("error") == "OUTPUT_TRUNCATED"):
+                return ParseResult(needs_context=True, truncated=True)
             if (len(state.interaction.model_history) > previous_calls
                     and state.interaction.model_history[-1].get("error") == "CONTEXT_LIMIT_EXCEEDED"):
                 return ParseResult(needs_context=True, context_limited=True)
@@ -511,6 +582,8 @@ class InputInterpreter:
         pending = state.interaction.pending
         changed = False
         priorities = set()
+        for fact in parsed.patient_context:
+            state.case.patient_context[fact.key] = PatientContextEntry(value=fact.value, quote=fact.quote, source_refs=[source_id])
         for index, fact in enumerate(parsed.accepted_facts):
             value = fact.value.model_copy(deep=True)
             item_id = fact.record_id or f"{source_id}:fact:{index}"
@@ -531,6 +604,8 @@ class InputInterpreter:
             context_refs = list(dict.fromkeys([*(existing.context_refs if existing else []), *fact.context_refs]))
             state.case.put(field, RecordItem(id=item_id, scope=scope, status="done", value=value,
                 source_refs=refs, context_refs=context_refs,
+                resolves=list(dict.fromkeys([*(existing.resolves if existing else []), *(
+                    [pending.question.clarifies_id] if pending and pending.question.clarifies_id else [])])),
                 acquisition=pending.question.kind if pending else "initial"))
 
         if changed:
@@ -553,3 +628,10 @@ class InputInterpreter:
                         and fact.value.concept_ids != [anchor.target_id] for fact in parsed.accepted_facts):
                     state.case.primary_chief = None
             state.case.select_primary()
+            anchor = state.case.primary_chief
+            if anchor:
+                for field, item in state.case.entries():
+                    value = item.value
+                    if (value and value.record_category in INTAKE and value.subject == "patient"
+                            and not value.observation_id and not value.concept_ids):
+                        value.observation_id, value.episode_id = anchor.observation_id, anchor.episode_id

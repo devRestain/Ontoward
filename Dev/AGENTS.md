@@ -59,6 +59,7 @@
 - Use the proven project dev container with tests/workflow/compose.offline.yaml for current projection and checks; keep dependencies off the host.
 - Preserve the existing extraction image and dedicated authentication volume; use the declared extraction service for the explicitly requested Korean run without downloading dependencies.
 - Run python -B Dev/tests/workflow/test_workflow.py for the complete offline consultation flow.
+- Run python -B Dev/tests/workflow/test_intake_soap.py for D40 C03 input custody semantic SOAP protected collection and record-only Education.
 - Run python -B Dev/tests/workflow/test_algorithm.py for D38 matching delta equivalence chief collection and decision invariants.
 - Use tests/workflow/compare_algorithms.py with a frozen baseline submission and its original fixtures for the bounded D38 comparison.
 - Run python -B Dev/tests/workflow/test_input_empathy.py for D34 question binding terminology recovery and empathy delivery behavior.

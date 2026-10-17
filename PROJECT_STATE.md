@@ -1,8 +1,11 @@
 /state version=1
 /project id=ontoward
-/status value=active
-/checkpoint revision=90be692c869a3b7cd12df48c7733d533c718da8c dirty=true updated=2026-10-17T13:20:56+00:00
-/goal phase=current id=ROOT.CLEANUP17 state=complete action="Remove completed Dev and Tmp legacy outputs while preserving active runtime custody and acceptance receipts"
+/status value=complete
+/checkpoint revision=88af4e5b739c823f49c64bfe117108a359985639 dirty=true updated=2026-10-17T16:33:15.325078+00:00
+/goal phase=current id=ROOT.D40 state=complete action="Coordinate D40 input SOAP session acceptance and independent packaging"
+/goal phase=history id=ROOT.DOCS17 state=complete action="Refresh current project orientation workflow whitepaper and static ontology workflow and extraction diagrams"
+/goal phase=history id=ROOT.VIEWER39 state=complete action="Provide a personal offline read-only browser for admitted ontology relationships and preparation SQLite records"
+/goal phase=history id=ROOT.CLEANUP17 state=complete action="Remove completed Dev and Tmp legacy outputs while preserving active runtime custody and acceptance receipts"
 /goal phase=history id=ROOT.ALGORITHM38 state=complete action="Coordinate D38 algorithm implementation offline acceptance and standalone packaging"
 /goal phase=history id=ROOT.EDUCATION37 state=complete action="Coordinate D37 Education D36 integration source custody offline acceptance and the standalone archive"
 /goal phase=history id=ROOT.EVIDENCE36 state=complete action="Complete the isolated D36 audit fixes and archive acceptance without overwriting concurrent education work"
@@ -16,7 +19,7 @@
 /goal phase=history id=ROOT.GUIDELINES30 state=complete action="Implement reusable disease-to-guideline mapping with exact source evidence and bounded NOVA semantic review"
 /goal phase=history id=ROOT.CHIEF29 state=complete action="Coordinate case-independent chief mapping evaluator correction offline acceptance and the D29 archive handoff"
 /goal phase=history id=ROOT.INTEGRATE36 state=complete action="Verify D36 with concurrent Education changes in the D37 standalone archive"
-/goal phase=next id=ROOT.NOVA27 state=deferred action="Confirm one case the shared request ceiling and credit use before running the D38 archive against real NOVA development models"
+/goal phase=next id=ROOT.NOVA27 state=deferred action="Confirm one case the shared request ceiling and credit use before running the D40 archive against real NOVA development models"
 /goal phase=history id=ROOT.CONTEXT28 state=complete action="Coordinate D28 context failure recovery offline verification and a standalone submission archive handoff"
 /goal phase=history id=ROOT.TEST27 state=complete action="Implement and verify the D27 isolated public-sample evaluator and NOVA development-chat bridge"
 /goal phase=history id=ROOT.READINESS26 state=complete action="Complete D26 submission readiness with Education pass offline verification and an independent runtime ZIP"
@@ -261,4 +264,33 @@
 /evidence id=ROOT.CLEANUP17.E3 class=artifact result=pass source=Tmp/storage-cleanup-2026-10-17/checks/artifact.json observed="Match all 51 accepted D38 archive members to unchanged submission source; preserve submission data and decision states and their existing acceptance evidence sources"
 /evidence id=ROOT.CLEANUP17.E4 class=runtime result=pass source=Tmp/storage-cleanup-2026-10-17/checks/artifact.json observed="Complete current prepare in the project dev container without network"
 /scope id=ROOT.CLEANUP17.S1 state=in action="Limit deletion to Dev and Tmp and update root orientation and operational state without changing accepted decisions source data runtime Docker resources or deferred external execution"
-/handoff state=blocked action="Await exact case request ceiling and credit authorization for ROOT.NOVA27 using the D38 archive"
+/accept id=ROOT.VIEWER39.A1 state=pass action="Browse the complete pinned graph with readable names typed conditions and actual bidirectional relationships" evidence=ROOT.VIEWER39.E1,ROOT.VIEWER39.E2
+/accept id=ROOT.VIEWER39.A2 state=pass action="Read actual preparation tables and source rows without changing database or runtime assets" evidence=ROOT.VIEWER39.E1,ROOT.VIEWER39.E3
+/accept id=ROOT.VIEWER39.A3 state=pass action="Verify local browser interactions responsive layout and all maintained state handoffs" evidence=ROOT.VIEWER39.E2,ROOT.VIEWER39.E4
+/evidence id=ROOT.VIEWER39.E1 class=runtime result=pass source=Tmp/knowledge-viewer/verification.json observed="Pass 34 real-graph source-row table pagination typed-value lookup and write-refusal checks in the network-disabled dev service with 16912 nodes 99105 triples seven verified asset pins and explicit zero Test and ValueMatch coverage"
+/evidence id=ROOT.VIEWER39.E2 class=runtime result=pass source=Tmp/knowledge-viewer/browser-verification.json observed="Verify Korean search graph-node navigation source evidence dialogs exact raw-row filtering full-value inspection and status in the authorized built-in browser at 1280x720 and 390x844 with no console errors or mobile page overflow"
+/evidence id=ROOT.VIEWER39.E3 class=runtime result=pass source=Tmp/knowledge-viewer/container.json observed="Run the proven ontoward knowledge-viewer service from the existing dev image with a read-only root five read-only mounts and only 127.0.0.1 port 8766 published"
+/evidence id=ROOT.VIEWER39.E4 class=semantic result=pass source=Tmp/knowledge-viewer/handoff.json observed="Review root submission and data state dependencies preserve both child goals and deferred external handoffs record D39 ownership and commands and retain concurrent README edits"
+/evidence id=ROOT.VIEWER39.E5 class=external_service result=not_run source=Tmp/knowledge-viewer/browser-verification.json observed="Leave model calls consultation execution official evaluation publication and deployment outside this read-only viewer slice"
+/scope id=ROOT.VIEWER39.S1 state=in action="Own Test viewer code static assets local container commands behavioral verification screenshots root requirements decisions documentation and operational state"
+/scope id=ROOT.VIEWER39.S2 state=out action="Exclude source mutation runtime admission clinical translations model job resumption dependency downloads host installation commits remote writes and deployment"
+/accept id=ROOT.DOCS17.A1 state=pass action="Align requested documents with current decisions source schema workflow and preparation boundaries" evidence=ROOT.DOCS17.E1
+/accept id=ROOT.DOCS17.A2 state=pass action="Verify schema graph coverage actual workflow topology offline links and runtime preservation" evidence=ROOT.DOCS17.E2,ROOT.DOCS17.E4,ROOT.DOCS17.E5
+/accept id=ROOT.DOCS17.A3 state=pass action="Reconcile all maintained state dependencies and preserve concurrent viewer work" evidence=ROOT.DOCS17.E3
+/evidence id=ROOT.DOCS17.E1 class=semantic result=pass source=Tmp/docs-atlas-2026-10-17/review.json observed="Align D08 D20-D23 D33-D38 and concurrent D39 explanations with current source while distinguishing schema instances preparation admission patient evidence fixed Education diagnosis and deferred external validation"
+/evidence id=ROOT.DOCS17.E2 class=static result=pass source=Tmp/docs-atlas-2026-10-17/verification.json observed="Verify seven atlas sections ten embedded SVG figures fourteen schema classes twenty-nine properties seventeen class relationships exact seventeen-node twenty-nine-edge workflow topology 176 local links zero scripts zero external assets and routed diagram geometry"
+/evidence id=ROOT.DOCS17.E3 class=semantic result=pass source=Tmp/docs-atlas-2026-10-17/review.json observed="Reconcile root and submission documentation completion review unchanged data state and D39 decision inputs and retain ROOT.NOVA27 and APP.REVALIDATE29 deferred without changing concurrent viewer work"
+/evidence id=ROOT.DOCS17.E4 class=artifact result=pass source=Tmp/docs-atlas-2026-10-17/verification.json observed="Match fifty-eight protected files and all fifty-one accepted D38 ZIP members to unchanged runtime source while allowing only requested documentation and owning state edits"
+/evidence id=ROOT.DOCS17.E5 class=runtime result=pass source=Tmp/docs-atlas-2026-10-17/verification.json observed="Complete strict prepare and compile the actual graph in the network-disabled dev service with Education enabled 1323 question contracts 1308 interviewable contracts fifteen blocked contracts and one ExamMethod without a patient consultation"
+/evidence id=ROOT.DOCS17.E6 class=runtime result=not_run source=Tmp/docs-atlas-2026-10-17/verification.json observed="Leave atlas browser mobile print and Mermaid rendering unrun because inspected project images have no renderer and retain real-model official evaluation new packaging publication and deployment outside this documentation slice"
+/scope id=ROOT.DOCS17.S1 state=in action="Own requested root and submission orientation static atlas diagrams offline documentation verification and maintained state reconciliation"
+/accept id=ROOT.D40.A1 state=pass action="Reconcile D40 authority requirements contracts human workflow and the three maintained state scopes" evidence=ROOT.D40.E1,ROOT.D40.E2
+/accept id=ROOT.D40.A2 state=pass action="Verify the local evaluator integration and source-matching standalone archive without external effects" evidence=ROOT.D40.E2,ROOT.D40.E3,ROOT.D40.E4
+/evidence id=ROOT.D40.E1 class=semantic result=pass source=Tmp/d40-2026-10-18/evidence/handoff.json observed="Read the supplied C03 run and review as evidence apply the approved D40 plan align PRD decisions contracts Korean orientation and atlas flow descriptions and preserve the preexisting viewer and documentation work"
+/evidence id=ROOT.D40.E2 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.D40 for initial extraction shared current facts semantic SOAP protected sessions raw-only Education and extracted-archive consultation acceptance"
+/evidence id=ROOT.D40.E3 class=runtime result=pass source=Tmp/test-evaluator/D40-offline-verify-20261018/verification.json observed="Pass forty-three evaluator and web checks with scripted local models; fix Test observer import precedence demonstrated by the extracted SDK entrypoint without changing SDK or viewer bytes"
+/evidence id=ROOT.D40.E4 class=artifact result=pass source=data/PROJECT_STATE.md observed="Reference DATA.D40 for d40.1 manifest policy code prompt and ZIP custody with unchanged admitted clinical sources"
+/evidence id=ROOT.D40.E5 class=external_service result=not_run source=data/provenance/algorithm-d40-2026-10-18.json observed="Leave actual Luna quality new NOVA requests and credits independent clinical validation official evaluation upload commits remote writes deployment and visual rendering unrun"
+/scope id=ROOT.D40.S1 state=in action="Own D40 cross-directory integration local Test harness offline verification independent packaging documentation and maintained state handoff"
+/scope id=ROOT.D40.S2 state=out action="Exclude new clinical graph admission source downloads live models official services commits remote writes and deployment"
+/handoff state=blocked action="Require separate user authorization before live Luna or NOVA execution and retain the completed D40 offline slice"

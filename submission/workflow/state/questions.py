@@ -34,6 +34,11 @@ class QuestionLifecycle:
         for item in state.questions.education:
             if item.id in ids and item.status == "pending":
                 item.status, item.reason = "undelivered", "budget_or_replanning"
+        for q in state.questions.questions:
+            if q.item_id in ids and q.record_category:
+                ledger = state.questions.intake if q.purpose == "intake" else state.questions.history
+                if ledger.get(q.record_category) == "unasked":
+                    ledger[q.record_category] = "budget_stopped"
         state.case.remove(ids)
         state.questions.questions = [q for q in state.questions.questions if q.item_id not in ids]
         self.interactions.clear_selected(state, ids)
@@ -72,5 +77,6 @@ class QuestionLifecycle:
                 concept_ids=[action.question.target_id] if action.question.target_id else [],
                 attribute_id=action.question.attribute_id, observation_id=action.question.observation_id,
                 episode_id=action.question.episode_id, subject=action.question.subject,
+                record_category=action.question.record_category, evidence_use="record_only",
                 time_context=action.question.time_context)
             item.source_refs = [source_id]

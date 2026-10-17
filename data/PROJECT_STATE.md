@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-data
-/status value=active
-/checkpoint revision=95d264f76070b93518d8ee4942982a8849046b73 dirty=true updated=2026-10-17T12:31:16+00:00
-/goal phase=current id=DATA.ALGORITHM38 state=complete action="Pin D38 reasoning policy and preserve admitted graph and action custody"
+/status value=complete
+/checkpoint revision=88af4e5b739c823f49c64bfe117108a359985639 dirty=true updated=2026-10-17T16:33:15.325078+00:00
+/goal phase=current id=DATA.D40 state=complete action="Pin D40 policy and preserve admitted graph and source custody"
+/goal phase=history id=DATA.ALGORITHM38 state=complete action="Pin D38 reasoning policy and preserve admitted graph and action custody"
 /goal phase=history id=DATA.EDUCATION37 state=complete action="Admit the D37 build-pinned guideline navigation index and preserve source custody"
 /goal phase=history id=DATA.GUIDELINES30 state=complete action="Map every admitted Disease to relevant preserved guideline corpus documents with exact source and request provenance"
 /goal phase=history id=DATA.EVIDENCE36 state=complete action="Record the D36 isolated snapshot custody and unchanged admitted asset pins without adopting concurrent education changes"
@@ -118,4 +119,11 @@
 /accept id=DATA.ALGORITHM38.A2 state=pass action="Bind exact offline acceptance and standalone archive identity to the policy receipt" evidence=DATA.ALGORITHM38.E1
 /evidence id=DATA.ALGORITHM38.E1 class=artifact result=pass source=provenance/algorithm-d38-2026-10-17.json observed="Pin d38.1 policy manifest and source-matching 51-file ZIP while preserving twelve protected assets and original D20-D23 admission"
 /scope id=DATA.ALGORITHM38.S1 state=in action="Own separate D38 policy custody and acceptance receipt without changing source assertions or resuming model jobs"
-/handoff state=ready action="Retain the accepted D38 runtime policy receipt and unchanged source custody"
+/accept id=DATA.D40.A1 state=pass action="Pin d40.1 policy code config prompts manifest and independent archive without changing clinical admission" evidence=DATA.D40.E1
+/accept id=DATA.D40.A2 state=pass action="Preserve original source weights RDF Korean actions guideline index SDK and reported C03 asset gaps" evidence=DATA.D40.E1,DATA.D40.E2
+/evidence id=DATA.D40.E1 class=artifact result=pass source=provenance/algorithm-d40-2026-10-18.json observed="Pin current d40.1 policy source-matching 52-file ZIP runtime code config prompt and manifest hashes; change only algorithm_version and reasoning_policy manifest fields preserve ten protected runtime files source weights and original D20-D23 and D37 receipts"
+/evidence id=DATA.D40.E2 class=semantic result=pass source=../Tmp/d40-2026-10-18/evidence/c03-admitted-replay.json observed="Observe zero FindingAttribute links on the admitted short-stature chief preserve record-only home quantities and retain review-reported normal-variant family-growth and examination coverage gaps without hand-authored clinical nodes or edges"
+/evidence id=DATA.D40.E3 class=runtime result=pass source=../submission/PROJECT_STATE.md observed="Reference APP.D40 application-owned offline acceptance and distinguish controlled C03 responses and synthetic HTTP protocol proof from actual Luna or clinical validation"
+/evidence id=DATA.D40.E4 class=external_service result=not_run source=provenance/algorithm-d40-2026-10-18.json observed="Leave source expansion real model quality new NOVA requests credits independent clinical review official evaluation and publication unrun"
+/scope id=DATA.D40.S1 state=in action="Own D40 policy and acceptance custody while preserving original source admission and leaving model jobs unresumed"
+/handoff state=blocked action="Require separate user authorization before live Luna or NOVA execution and retain the completed D40 offline slice"

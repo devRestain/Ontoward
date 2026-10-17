@@ -98,10 +98,6 @@ class ClinicalReasoner:
                 if any(item.value.status in {"present", "uncertain"} for item in bases):
                     diseases.update(p.disease_id for p in self.knowledge.get_patterns_by_target(target))
                 statuses = {item.value.status for item in bases}
-                resolved = [item for item in bases if len(item.value.concept_ids) == 1 and item.value.status in {"present", "absent"}]
-                if resolved:
-                    bases = resolved
-                    statuses = {item.value.status for item in bases}
                 status = next(iter(statuses)) if len(statuses) == 1 and all(len(item.value.concept_ids) == 1 for item in bases) else "uncertain"
                 for pattern in self.knowledge.get_target_patterns(target):
                     key = json.dumps([pattern, observation, episode, timing], separators=(",", ":"))

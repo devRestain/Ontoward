@@ -79,7 +79,7 @@ class ScriptedModels:
                 for row in payload['sentences']]}, ensure_ascii=False))
         if role == 'patient':
             utterance = payload['utterance']
-            text = self.case['start_information']['opening'] if '불편' in utterance else '모르겠어요'
+            text = '모르겠어요' if '?' in utterance or '？' in utterance else '알겠습니다'
             return completion(json.dumps({'content': text, 'effective_content': utterance}, ensure_ascii=False))
         if role == 'examiner':
             request = payload['request']
@@ -93,7 +93,7 @@ class ScriptedModels:
         question, text = payload['question'], payload['input']
         is_chief = question is None or (question['purpose'] in {'chief', 'clarification'} and question['field'] == 'S.cc')
         if is_chief:
-            return completion(json.dumps(self.parse_chief(payload), ensure_ascii=False))
+            return self.wire_completion(self.parse_chief(payload))
         facts = []
         if payload['parser_pass'] != 'expansion':
             concept = question['target_id']
@@ -113,8 +113,15 @@ class ScriptedModels:
                 if question:
                     fact['record_id'] = question['item_id']
                 facts.append(fact)
-        return completion(json.dumps({'facts': facts, 'clinical_content': text.strip().rstrip('.!?') not in
-                                     {'모르겠어요', '모르겠습니다', '알겠습니다', '감사합니다'}}, ensure_ascii=False))
+        return self.wire_completion({'facts': facts, 'clinical_content': text.strip().rstrip('.!?') not in
+                                     {'모르겠어요', '모르겠습니다', '알겠습니다', '감사합니다'}})
+
+    @staticmethod
+    def wire_completion(parsed):
+        wire = copy.deepcopy(parsed)
+        for fact in wire.get('facts', []):
+            fact['value'].pop('text', None)
+        return completion(json.dumps(wire, ensure_ascii=False))
 
     def parse_chief(self, payload):
         # This protocol double ranks supplied names only; real semantic selection belongs to NOVA.

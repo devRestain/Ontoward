@@ -9,6 +9,7 @@ from .state.models import ClinicalValue, Question, RecordItem, WorkflowState
 from .rules.limits import LIMITS, SESSION_INTERVIEW_LIMITS
 from .rules.selection import QuestionEvaluation, QuestionPath, question_key, eligible
 from .state.evidence import EvidenceIndex
+from .rules.collection import INTAKE, HISTORY, ATTRIBUTE_CATEGORIES, CATEGORY_FIELDS, answered, slot_resolved, slot_records
 
 
 class InterviewPlanner:
@@ -21,6 +22,7 @@ class InterviewPlanner:
         self.usage = usage
         self.model = model
         self.reasoner = ClinicalReasoner(knowledge)
+        self.budget.knowledge = knowledge
 
     @staticmethod
     def has_resolved_evidence(state: WorkflowState, target, attribute=None, observation=None, episode=None,
@@ -56,8 +58,29 @@ class InterviewPlanner:
         return False
 
     def prepare_initiation(self, state):
-        self.questions.register(state, Question(item_id="Initiation:chief", field="S.cc", purpose="chief",
-            text=self.config.texts.chief_question, order=0, priority=1))
+        if not any(e.delivered and e.question and e.question.purpose == "greeting" for e in state.interaction.history):
+            self.questions.register(state, Question(item_id="Initiation:greeting", field="S.hpi", purpose="greeting",
+                text=self.config.texts.greeting, order=-1, priority=LIMITS.clarification_priority, coverage=True))
+        self._prepare_common(state, INTAKE, self.config.texts.intake_questions, "intake", state.questions.intake)
+
+    def _prepare_common(self, state, categories, texts, purpose, ledger):
+        anchor = state.case.primary_chief
+        for order, slot in enumerate(categories):
+            if answered(state, slot):
+                ledger[slot] = ("not_applicable" if any(i.value.not_applicable for i in slot_records(state.case, slot))
+                                else "acquired" if slot_resolved(state.case, slot) else "unknown")
+                ident = f"{state.session.current}:{slot}"
+                if (item := state.case.get(ident)) and item.status == "unasked":
+                    self.questions.discard_unasked(state, {ident})
+                continue
+            ledger[slot] = "unasked"
+            self.questions.register(state, Question(item_id=f"{state.session.current}:{slot}",
+                purpose=purpose, field=CATEGORY_FIELDS[slot], text=texts[slot], order=order,
+                priority=LIMITS.hpi_priority, coverage=True, record_category=slot,
+                subject="family" if slot == "family_history" else "patient",
+                observation_id=anchor.observation_id if anchor and slot in INTAKE else None,
+                episode_id=anchor.episode_id if anchor and slot in INTAKE else None,
+                answer_type="presence" if slot in {"course", "recurrence", "medical_history", "medication", "allergy", "family_history"} else "free_text"))
 
     def prepare_chief_complaint(self, state):
         anchor = state.case.select_primary()
@@ -70,7 +93,7 @@ class InterviewPlanner:
                 spec = self._spec(state, value.concept_ids[0], observation=value.observation_id, episode=value.episode_id,
                                   field="S.cc", time_context=value.time_context)
                 if spec:
-                    original = Question(item_id="chief_confirmation", order=0, priority=1, **spec)
+                    original = Question(item_id="chief_confirmation", order=0, priority=1, clarifies_id=candidate.id, **spec)
             if not self.prepare_clarification(state, original, primary_choice=len(state.case.chief_complaints()) > 1):
                 state.stop("failed", "primary_chief_unresolved")
             return False
@@ -95,6 +118,8 @@ class InterviewPlanner:
             args = (state, anchor.target_id, attribute, anchor.observation_id, anchor.episode_id, "patient", timing)
             if self.has_resolved_evidence(*args):
                 status = "acquired"
+            elif (category := ATTRIBUTE_CATEGORIES.get(attribute.rsplit(":", 1)[-1])) and slot_resolved(state.case, category):
+                status = "recorded_unmapped"
             elif any(item.value.not_applicable for _, item in state.case.current_entries()
                      if item.status == "done" and item.source_refs and item.value and item.value.kind == "attribute"
                      and item.value.concept_ids == [anchor.target_id] and item.value.subject == "patient"
@@ -158,6 +183,7 @@ class InterviewPlanner:
                       purpose="clarification", text=text, affirmative_presence=bool(confirmation and original.affirmative_presence),
                       answer_type=original.answer_type if confirmation else "free_text",
                       order=-state.session.clarifications, priority=LIMITS.clarification_priority)
+        values["clarifies_id"] = (original.clarifies_id or original.item_id) if original else None
         self.questions.register(state, Question(**values))
         return True
 
@@ -366,7 +392,10 @@ class InterviewPlanner:
         return len(path.specs) <= current + future
 
     def replan(self, state, *, force=False):
-        if state.interaction.pending or state.interaction.termination or state.session.current in {"Initiation", "Education"}:
+        if state.interaction.pending or state.interaction.termination or state.session.current == "Education":
+            return
+        if state.session.current == "Initiation":
+            self.prepare_initiation(state)
             return
         if state.case.chief(confirmed=True) is None:
             self.prepare_chief_complaint(state)
@@ -380,6 +409,8 @@ class InterviewPlanner:
             if not self.open_done(state) or "unasked" in state.questions.chief_attributes.values():
                 return
         mode = state.session.current
+        if mode == "ContextFactor" and self._prepare_context_coverage(state):
+            return
         plan_key = json.dumps([state.differential.clinical_revision, state.questions.revision,
             len(state.interaction.history), state.case.primary_chief.model_dump() if state.case.primary_chief else None,
             mode, self.budget.action_capacity(state), self.budget.calls_left(state.session)], sort_keys=True)
@@ -441,6 +472,59 @@ class InterviewPlanner:
     def prepare_context_questions(self, state):
         self.replan(state, force=True)
 
+    def _prepare_context_coverage(self, state):
+        self._prepare_common(state, HISTORY, self.config.texts.history_questions, "history", state.questions.history)
+        if any(q.purpose == "history" for q in state.pending_questions()):
+            return True
+        if len(state.questions.context_coverage) >= 2:
+            return False
+        anchor = state.case.primary_chief
+        if anchor is None:
+            return False
+        snapshot = self.reasoner.evaluate(EvidenceIndex.from_case(state.case), anchor)
+        profiles = self.knowledge.get_patterns_by_target(anchor.target_id)
+        specs, paths, prerequisites = {}, [], set()
+        for profile in profiles:
+            contexts = [(c.concept_id, c.subject, c.time_context, True) for c in profile.applicability]
+            contexts += [(c["id"], "family" if c["type"] == "family_history" else "patient", "unspecified", False)
+                for c in self.knowledge.get_supporting_context(profile.disease_id)]
+            for target, subject, timing, prerequisite in contexts:
+                exclusion_key = f"{target}|{subject}|{timing}"
+                if target in state.questions.context_coverage or self.was_asked(state, target, subject=subject, time_context=timing):
+                    state.questions.context_exclusions[exclusion_key] = "already_asked"
+                    continue
+                kind = self.knowledge.get_context_type(target)
+                field = "S.fh" if subject == "family" else "S.sh" if kind in {
+                    "social_history", "occupational_history", "psychosocial_history", "demographic"} else "S.pmh"
+                spec = self._spec(state, target, purpose="context", field=field, subject=subject, time_context=timing)
+                if not spec:
+                    state.questions.context_exclusions[exclusion_key] = "blocked_asset"
+                    continue
+                if not self._eligible(state, spec):
+                    resolved = self.has_resolved_evidence(state, target, subject=subject, time_context=timing)
+                    state.questions.context_exclusions[exclusion_key] = "resolved" if resolved else "unknown_or_not_applicable_or_blocked"
+                    continue
+                state.questions.context_exclusions.pop(exclusion_key, None)
+                key = self._key(spec)
+                specs[key] = dict(spec, coverage=True)
+                if prerequisite:
+                    prerequisites.add(key)
+                paths.append(QuestionPath((spec,), None, profile.disease_id, None, (anchor.record_id,)))
+        if not specs:
+            state.questions.session_endings["ContextFactor"] = "no_available_unanswered_context"
+            return False
+        assessments = QuestionEvaluation(self.reasoner, snapshot, sorted({p.disease_id for p in paths})).assess(specs, paths)
+        previous = {self.knowledge.get_context_type(c) for c in state.questions.context_coverage}
+        key = min(specs, key=lambda key: (key not in prerequisites,
+            -(assessments[key].get("utility") or 0), self.knowledge.get_context_type(specs[key]["target_id"]) in previous, key))
+        spec = specs[key]
+        spec["assessment"] = assessments[key]
+        state.questions.selection_report = {"policy_version": self.knowledge.reasoning.version,
+            "reason": "required_context_coverage", "target": spec["target_id"],
+            "utility": assessments[key].get("utility"), "complete": assessments[key]["complete"]}
+        self._register(state, spec, 0, LIMITS.hpi_priority)
+        return True
+
     def prepare_differential_questions(self, state):
         self.replan(state, force=True)
 
@@ -480,10 +564,12 @@ class InterviewPlanner:
                 self.interactions.select_question(state, min(questions, key=lambda q: (-q.priority, q.order, q.item_id)))
                 state.interaction.selected.render_source = "education"
             return
-        unnecessary = {q.item_id for q in state.questions.questions if q.assessment
+        unnecessary = {q.item_id for q in state.questions.questions if q.assessment and not q.coverage
             and (item := state.case.get(q.item_id)) and item.status == "unasked"
             and (not q.assessment.get("complete") or not (q.assessment.get("utility") or 0) > 0)}
         self.questions.discard_unasked(state, unnecessary)
+        redundant = {q.item_id for q in state.pending_questions() if q.record_category and slot_resolved(state.case, q.record_category)}
+        self.questions.discard_unasked(state, redundant)
         answered = {q.item_id for q in state.questions.questions if q.target_id and q.purpose != "clarification" and
                     (item := state.case.get(q.item_id)) and item.status == "unasked" and (
                     self.has_resolved_evidence(state, q.target_id, q.attribute_id, q.observation_id, q.episode_id, q.subject,

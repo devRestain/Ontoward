@@ -64,6 +64,8 @@ class SubmissionWriter:
         if value.measurement:
             parts.append(self._measurement(value.measurement))
         parts.extend(detail.english.strip() for detail in value.record_details)
+        parts.extend(f"{q.name}: {'approximately ' if q.approximate else ''}{q.value:g} {q.unit} ({q.when})"
+                     for q in value.quantities)
         return "; ".join(dict.fromkeys(part for part in parts if part))
 
     def _context(self, value, episodes):
@@ -76,7 +78,10 @@ class SubmissionWriter:
         if multiple and value.episode_id:
             key = next(key for key in related if key[2] == value.episode_id)
             episode = texts.episode_format.format(number=episodes[key])
-        return " (" + texts.clinical_context_format.format(subject=texts.subject_labels[value.subject],
+        subject = texts.subject_labels[value.subject]
+        if value.subject_member:
+            subject += ": " + value.subject_member
+        return " (" + texts.clinical_context_format.format(subject=subject,
             time=texts.time_labels[value.time_context], episode=episode) + ")"
 
     def _attribute(self, value):
@@ -121,15 +126,23 @@ class SubmissionWriter:
             if value.status != "present":
                 labels += f" ({texts.status_labels[value.status]})"
             lines.append(self._line(texts.soap_labels["cc"], labels + self._context(value, episodes)))
+        return texts.record_separator.join(dict.fromkeys(lines))
+
+    def _chief_hpi(self, state, episodes):
+        texts = self.config.texts
+        chiefs = state.case.chief_complaints()
+        if not chiefs:
+            return ""
+        lines = [self._line(texts.soap_labels["hpi"], "; ".join(dict.fromkeys(
+            self._describe_record(item, episodes) for item in chiefs)))]
+        for chief in chiefs:
+            value = chief.value
             attributes = [item.value for field, item in state.case.current_entries() if field == "S.hpi"
                 and item.status == "done" and item.source_refs and item.value
                 if item.value.subject == value.subject and item.value.time_context != "past"
                 and item.value.observation_id == value.observation_id and item.value.episode_id == value.episode_id
                 and (set(item.value.concept_ids) & set(value.concept_ids)
                      or not item.value.concept_ids and item.value.record_category)]
-            for attribute in attributes:
-                if attribute.attribute_id == str(OW.TimeSinceOnset) or attribute.record_category == "onset":
-                    lines.append(self._line(texts.attribute_labels["TimeSinceOnset"], self._attribute_content(attribute)))
             pain = any(str(OW.PainQuality) in self.knowledge.get_symptom_attributes(target)
                 or re.search(r"\b(?:pain|headache)\b", self._label(target), re.I) for target in value.concept_ids)
             if pain:
@@ -190,7 +203,7 @@ class SubmissionWriter:
             return
         current = dict((item.id, item) for _, item in state.case.current_entries())
         evidence = self._obtained(current.get(item_id) for item_id in state.case.diagnosis_evidence)
-        evidence = [item for item in evidence if item.value.status in {"present", "absent"}]
+        evidence = [item for item in evidence if item.value.status in {"present", "absent"} and item.value.evidence_use == "reasoning"]
         texts = self.config.texts
         episodes = {}
         for item in self._obtained(current.values()):
@@ -202,6 +215,10 @@ class SubmissionWriter:
             evidence_text = "; ".join(filter(None, (evidence_text, texts.symptom_assessment)))
         if state.case.diagnosis:
             evidence_text = texts.assessment_format.format(diagnosis=state.case.diagnosis, evidence=evidence_text)
+        if state.case.fixed_diagnosis:
+            evidence_text += texts.record_separator + self._line("Certainty", "Working diagnosis")
+            if state.case.fixed_diagnosis.unresolved:
+                evidence_text += texts.record_separator + self._line("Incomplete assessment", "; ".join(state.case.fixed_diagnosis.unresolved))
         alternatives = []
         for hypothesis in ClinicalReasoner.supported_hypotheses(state):
             if hypothesis.disease_id == state.differential.selected_id:
@@ -223,14 +240,18 @@ class SubmissionWriter:
         note = {section: {field: "" for field in fields} for section, fields in RECORD_FIELDS.items()}
         note["S"]["cc"] = self._chief_text(state, episodes)
         chiefs = state.case.chief_complaints()
-        if chiefs:
-            note["S"]["hpi"] = self._line(texts.soap_labels["hpi"], "; ".join(dict.fromkeys(
-                self._describe_record(item, episodes) for item in chiefs)))
+        note["S"]["hpi"] = self._chief_hpi(state, episodes)
+        if state.case.patient_context:
+            context = "; ".join(f"{key.capitalize()}: {entry.value}" for key, entry in state.case.patient_context.items())
+            note["S"]["hpi"] = self._line("Patient", context) + (texts.record_separator + note["S"]["hpi"] if note["S"]["hpi"] else "")
         hpi_targets = {target for item in self._obtained([*chiefs, *(item for field, item in state.case.current_entries() if field == "S.hpi")])
                        for target in item.value.concept_ids}
         for field, item in state.case.current_entries():
             section, name = field.split(".")
             if field != "S.cc" and item.status == "done" and item.value and (section in {"A", "P"} or item.source_refs):
+                if (section == "S" and item.value.kind == "text" and not (item.value.concept_ids
+                        or item.value.record_category or item.value.attribute_id or item.value.record_details or item.value.quantities)):
+                    continue
                 text = self._section_entry(field, item, episodes, multiple_hpi_targets=len(hpi_targets) > 1)
                 if text:
                     if field == "O.exam":
@@ -240,9 +261,10 @@ class SubmissionWriter:
                             text = texts.exam_turn_format.format(text=text, turn=", ".join(map(str, turns)))
                     note[section][name] += (texts.record_separator if note[section][name] else "") + text
         for report in state.interaction.patient_reports:
-            for start, end in report.uncovered_spans:
+            for start, end, field in report.clinical_spans:
                 text = self._line(texts.soap_labels["patient_report"], report.text[start:end].strip())
-                note["S"]["hpi"] += (texts.record_separator if note["S"]["hpi"] else "") + text
+                section, name = field.split(".")
+                note[section][name] += (texts.record_separator if note[section][name] else "") + text
         note["O"]["tests"] = ""
         if not self.config.education_enabled:
             note["P"]["education"] = ""

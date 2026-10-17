@@ -90,6 +90,8 @@ def parse_plan(raw, contexts, progress):
                 if (not isinstance(text, str) or not text.strip() or "\n" in text or "\r" in text
                         or not re.search(r"[A-Za-z]", text)):
                     raise ValueError("require a nonempty English sentence on one line")
+                if re.match(r"^(otherwise|else|in that case)\b", text.strip(), re.I):
+                    raise ValueError("include the treatment prerequisite in this sentence")
                 refs = references(row["references"], contexts)
                 if (row["basis"] in {"guideline", "mixed"} and not refs
                         or row["basis"] == "model_knowledge" and refs):
@@ -173,6 +175,8 @@ def generate_plan(state, client, knowledge, config, model):
     progress.attempted = True
     fixed = state.case.fixed_diagnosis
     base = {"task": "education", "fixed_diagnosis": fixed.model_dump(),
+            "patient_context": {key: entry.model_dump() for key, entry in state.case.patient_context.items()},
+            "delivery_turn_budget": model.budget.action_capacity(state),
             "dialogue": state.interaction.dialogue(),
             "records": [{"field": field, **item.model_dump(exclude_none=True)} for field, item in state.case.current_entries()
                         if field.startswith(("S.", "O.")) and item.status == "done" and item.source_refs]}
@@ -219,7 +223,7 @@ def generate_plan(state, client, knowledge, config, model):
                 for note in notes:
                     proposed = {**base, "phase": "combine", "notes": wire_notes([*batch, note])}
                     if message_bytes(messages(config.education_prompt, proposed)) > LIMITS.education_request_bytes:
-                        if len(batch) < 2:
+                        if not batch:
                             raise ValueError("education_notes_overflow")
                         contexts = note_context(batch)
                         values, valid = _request(state, client, model, config,

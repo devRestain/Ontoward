@@ -39,7 +39,7 @@ class Verification(unittest.TestCase):
 
     @staticmethod
     def greeting(s):
-        q = Question(item_id="Initiation:chief", field="S.cc", purpose="chief", text=CONFIG.texts.chief_question, order=0, priority=1)
+        q = Question(item_id="Initiation:chief", field="S.cc", purpose="greeting", text=CONFIG.texts.greeting, order=0, priority=1)
         s.interaction.history.append(InteractionEntry(id="greeting", kind="SAY", delivered=True, question=q,
             request={"content": q.text}, response={"content": "네"}, turn=1))
 
@@ -223,8 +223,8 @@ class Verification(unittest.TestCase):
         self.assertEqual([entry["role"] for entry in s.interaction.model_history], ["empathy", "gateway"])
         self.assertEqual(s.session.gateway_successes, 1)
 
-    def test_empathy_is_available_in_all_five_sessions_without_education(self):
-        for scope in ("Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education"):
+    def test_empathy_is_available_in_the_four_collection_sessions(self):
+        for scope in ("Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis"):
             with self.subTest(scope=scope):
                 self.setUp()
                 s = state(scope, True)
@@ -271,8 +271,8 @@ class Verification(unittest.TestCase):
         self.assertEqual(len(s.interaction.empathy_events), 5)
 
     def test_generated_empathy_preserves_exhausted_interview_caps_in_every_session(self):
-        for scope, maximum in (("Initiation", 1), ("ChiefComplaint", 16), ("ContextFactor", 7),
-                               ("DifferentialDiagnosis", 12), ("Education", 0)):
+        for scope, maximum in (("Initiation", 7), ("ChiefComplaint", 14), ("ContextFactor", 9),
+                               ("DifferentialDiagnosis", 10)):
             with self.subTest(scope=scope):
                 self.setUp()
                 s = state(scope, True)
@@ -398,7 +398,7 @@ class Verification(unittest.TestCase):
         initial = self.consultation.nova_session.initialize_case(self.client)
         result = WorkflowState.model_validate(build_graph(self.consultation, self.k).invoke(initial.model_dump(), {"recursion_limit": 1500}))
         self.assertEqual(result.interaction.termination, "submitted")
-        self.assertEqual(self.client.actions[0]["content"], CONFIG.texts.chief_question)
+        self.assertEqual(self.client.actions[0]["content"], CONFIG.texts.greeting)
         self.assertEqual(self.client.actions[1]["content"], CONFIG.texts.empathy_fallback)
         self.assertEqual(sum(event.status == "delivered" for event in result.interaction.empathy_events), 1)
         self.assertTrue(any(item.value and item.value.text == "별도증상도 있어요" for item in result.case.S["ros"].values()))

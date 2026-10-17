@@ -306,7 +306,7 @@ class Algorithm(unittest.TestCase):
         planner.prepare_chief_complaint(state)
         self.assertTrue(state.questions.chief_attribute_reasons[str(OW.Quality)])
         f.WorkflowState.model_validate(state.model_dump())
-        state.session.usage["ChiefComplaint"].actions = 15
+        state.session.usage["ChiefComplaint"].actions = 13
         planner.prepare_chief_complaint(state)
         self.assertEqual(state.questions.chief_attributes[str(OW.Onset)], "budget_stopped")
         consultation = f.make_consultation(prepared=f.resources(k))
@@ -371,7 +371,7 @@ class Algorithm(unittest.TestCase):
         paths, _ = planner._frontier(state,base,[str(OW.Beta)])
         path = next(p for p in paths if p.pattern_id == str(OW.sixStep))
         self.assertEqual(len(path.specs),6)
-        state.session.usage["DifferentialDiagnosis"].actions = 6
+        state.session.usage["DifferentialDiagnosis"].actions = 4
         self.assertTrue(planner._plan_fits(state,path))
         engine = QuestionEvaluation(reasoner,base,[h.disease_id for h in base.hypotheses])
         key = question_key(path.specs[0])
@@ -379,7 +379,7 @@ class Algorithm(unittest.TestCase):
         self.assertGreater(result["plan_value"],0)
         self.assertEqual(result["paths"][0]["evaluation"],"complete")
         self.assertLessEqual(engine.used,512)
-        state.session.usage["DifferentialDiagnosis"].actions = 7
+        state.session.usage["DifferentialDiagnosis"].actions = 5
         self.assertFalse(planner._plan_fits(state,path))
 
     def test_explicit_chief_correction_rebuilds_collection_after_open(self):

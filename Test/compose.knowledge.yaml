@@ -1,0 +1,32 @@
+name: ontoward
+
+services:
+  knowledge-viewer:
+    image: ontoward-dev
+    pull_policy: never
+    command: [python, /viewer/knowledge.py, --root, /workspace, --host, 0.0.0.0, --port, "8080"]
+    working_dir: /viewer
+    user: "65534:65534"
+    ports: ["127.0.0.1:8766:8080"]
+    labels:
+      io.ontoward.component: knowledge-viewer
+    volumes:
+      - ./knowledge.py:/viewer/knowledge.py:ro
+      - ./knowledge:/viewer/knowledge:ro
+      - ../submission/knowledge:/workspace/submission/knowledge:ro
+      - ../data/preparation/v5/competition-graph-2026-10-16:/workspace/data/preparation/v5/competition-graph-2026-10-16:ro
+      - ../data/preparation/v5/source-only-2026-10-16/findings-2026-10-16:/workspace/data/preparation/v5/source-only-2026-10-16/findings-2026-10-16:ro
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    cpus: 2.0
+    mem_limit: 2g
+    networks: [knowledge-viewer-web]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/overview', timeout=2).close()"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+
+networks:
+  knowledge-viewer-web: {}

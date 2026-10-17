@@ -143,5 +143,6 @@ def observing(path):
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, '/submission')
     with observing(Path(os.environ.get('NOVA_OUTPUT_DIR', '/output')) / 'trace.jsonl'):
         runpy.run_path('/submission/run.py', run_name='__main__')

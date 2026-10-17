@@ -16,6 +16,7 @@
 - Keep D37 navigation admission in preparation/guideline-runtime and pin the original D30 mapping current graph build source hashes and packaged index.
 - Preserve D20-D23 RDF and interview asset pins while distinguishing case-local generated P from admitted clinical graph assertions.
 - Keep D38 policy hashes unchanged-source custody archive identity and offline acceptance in provenance/algorithm-d38-2026-10-17.json without rewriting historical graph receipts.
+- Keep D40 policy prompt archive and unchanged-source custody in provenance/algorithm-d40-2026-10-18.json without rewriting graph admission receipts.
 - Mark clinical background-only D30 links as background_only with empty P fields and section selections; preserve them as plan-evidence gaps rather than care coverage.
 - Reuse only hash-verified complete raw source custody and clear all previous projection, normalization, and approval records.
 - Ingest the entire supplied International and Korean RF2 Snapshot composition and all eight BODHI-S CSVs.

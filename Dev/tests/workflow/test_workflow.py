@@ -141,6 +141,19 @@ def state(scope="Initiation", initialized=False, turns=50):
         current=scope, initialized=initialized))
 
 
+def complete_common_history(s):
+    from workflow.rules.collection import INTAKE, HISTORY, CATEGORY_FIELDS
+    for slot in (*INTAKE, *HISTORY):
+        q = Question(item_id="answered:" + slot, purpose="intake" if slot in INTAKE else "history",
+            field=CATEGORY_FIELDS[slot], text="확인 질문입니다.", record_category=slot, order=0, priority=0)
+        s.interaction.history.append(InteractionEntry(id=q.item_id, kind="SAY", delivered=True, question=q,
+            request={"content": q.text}, response={"content": "모르겠어요"}))
+    q = Question(item_id="greeted", purpose="greeting", field="S.hpi", text=CONFIG.texts.greeting, order=-1, priority=1)
+    s.interaction.history.append(InteractionEntry(id=q.item_id, kind="SAY", delivered=True, question=q,
+        request={"content":q.text}, response={"content":"안녕하세요"}))
+    s.questions.context_coverage = [str(OW.Context)]
+
+
 def record(s, ident="chief", target=OW.Complaint, kind="symptom", status="present", field="S.cc", episode="episode1", attribute=None, values=None):
     s.case.put(field, RecordItem(id=ident, scope=s.session.current, status="done", source_refs=["source"],
         value=ClinicalValue(kind=kind, text="synthetic observation", status=status, concept_ids=[str(target)],
@@ -239,6 +252,9 @@ class FakeSDK:
             facts = [fact("S.cc", "symptom", OW.Other if self.no_candidate else OW.Complaint, text, q=q)]
         elif q["purpose"] == "hpi":
             for attr, value in ((OW.Location, OW.Here), (OW.Quality, OW.Dull)):
+                supplied = {row["id"] for row in payload["vocabulary"]}
+                if not {str(attr), str(value)} <= supplied:
+                    continue
                 matching = next((r for r in payload["records"] if r["id"].endswith(str(attr))), None)
                 matched_q = {**q, "item_id": matching["id"]} if matching else None
                 facts.append(fact("S.hpi", "attribute", OW.Complaint, text, q=matched_q, attribute=attr, values=[value]))
@@ -264,7 +280,9 @@ class FakeSDK:
             raise NovaError("EXAM_NOT_RECOGNIZED")
         answer = ("가상소견 확인" if exam else "가상부위, 둔해요" if "부위" in text or "느낌" in text else
                   self.context if text == QUESTIONS[str(OW.Context)] else
-                  "가상증상이 있어요" if text in {CONFIG.texts.chief_question, CONFIG.texts.clarification_question} else
+                  "안녕하세요" if text == CONFIG.texts.greeting else
+                  "모르겠어요" if text in {*CONFIG.texts.intake_questions.values(), *CONFIG.texts.history_questions.values()} else
+                  "가상증상이 있어요" if text == CONFIG.texts.clarification_question else
                   "없어요" if text == CONFIG.texts.open_question or text.endswith("도 있나요?") or text == "별도증상 있나요?" else "알겠습니다")
         return {"status": "OK", "turn": 50 - self.remaining, "turns_remaining": self.remaining,
                 "result" if exam else "content": answer}
@@ -318,7 +336,7 @@ class Verification(unittest.TestCase):
         w = make_consultation()
         record(s)
         w.planner.prepare_chief_complaint(s)
-        s.session.turns_remaining = 2
+        s.session.turns_remaining = w.budget.required_actions(s, "ContextFactor") + 3 + 2
         before = s.model_dump()
         decision = w.budget.evaluate(s)
         self.assertEqual(before, s.model_dump())
@@ -354,7 +372,7 @@ class Verification(unittest.TestCase):
                                   new_request_id=lambda: "fixed-request")
         s = state("Initiation", True)
         s.session.deadline = clock[0] + timedelta(seconds=241)
-        q = question(s, purpose="chief", field="S.cc", target=None, text=CONFIG.texts.chief_question)
+        q = question(s, purpose="chief", field="S.cc", target=None, text=CONFIG.texts.greeting)
         w.interactions.select_question(s, q)
 
         w.doctor.validate_action(s)
@@ -368,7 +386,7 @@ class Verification(unittest.TestCase):
 
     def test_node_validation_does_not_replay_completed_external_action(self):
         s = state("Initiation", True)
-        q = question(s, purpose="chief", field="S.cc", target=None, text=CONFIG.texts.chief_question)
+        q = question(s, purpose="chief", field="S.cc", target=None, text=CONFIG.texts.greeting)
         s.interaction.selected = ActionSpec(question=q, content=q.text, request_id="once", ready=True)
         client = FakeSDK()
         w = make_consultation(client)
@@ -552,7 +570,7 @@ class Verification(unittest.TestCase):
         result, client = self.run_flow()
         self.assertEqual(result.interaction.termination, "submitted")
         self.assertEqual(result.case.diagnosis, "가상질환B")
-        self.assertEqual(client.actions[0]["content"], CONFIG.texts.chief_question)
+        self.assertEqual(client.actions[0]["content"], CONFIG.texts.greeting)
         self.assertIn("EXAM", [a["kind"] for a in client.actions])
         self.assertLessEqual(len(client.actions), 36)
         note = client.submissions[0]["note"]
@@ -609,7 +627,7 @@ class Verification(unittest.TestCase):
         interview = make_planner(knowledge(), CONFIG)
         record(s)
         interview.prepare_chief_complaint(s)
-        s.session.turns_remaining = 2
+        s.session.turns_remaining = interview.budget.required_actions(s, "ContextFactor") + 3 + 2
         make_consultation().check_budget(s)
         ids = {q.item_id for q in s.questions.questions}
         self.assertIn("ChiefComplaint:open", ids)
@@ -714,7 +732,7 @@ class Verification(unittest.TestCase):
         make_interpreter(CONFIG).process_input(s, knowledge(), client)
         self.assertFalse(s.case.S["cc"])
         self.assertEqual(s.interaction.history[0].response["opening"], "가상증상이 있어요")
-        self.assertEqual(len(client.calls), 3)
+        self.assertEqual(len(client.calls), 2)
         self.assertIn("invalid_gateway_output", s.interaction.issues)
 
     def test_fact_grounding_and_correction_boundary(self):
@@ -943,8 +961,8 @@ class Verification(unittest.TestCase):
         self.assertTrue(s.interaction.selected.ready)
         self.assertFalse(client.calls)
         interface.execute_action(s, client)
-        self.assertEqual(client.actions[0]["content"], CONFIG.texts.chief_question)
-        self.assertEqual(s.interaction.dialogue()[0]["doctor"], CONFIG.texts.chief_question)
+        self.assertEqual(client.actions[0]["content"], CONFIG.texts.greeting)
+        self.assertEqual(s.interaction.dialogue()[0]["doctor"], CONFIG.texts.greeting)
         other = state()
         q = question(other, text="가" * 31)
         other.interaction.selected = ActionSpec(question=q, content=q.text, request_id="invalid")
@@ -1095,13 +1113,13 @@ class Verification(unittest.TestCase):
         client.session = lambda: {**original(), "initial": {"opening": "", "vital_signs": {"pulse": 80}}}
         s, client = self.run_flow(client)
         self.assertEqual(s.interaction.termination, "submitted")
-        self.assertEqual(client.actions[0]["content"], CONFIG.texts.chief_question)
+        self.assertEqual(client.actions[0]["content"], CONFIG.texts.greeting)
         self.assertEqual(s.interaction.model_history[0]["role"], "gateway")
         client = FakeSDK(malformed=True)
         s, client = self.run_flow(client)
         self.assertEqual(s.interaction.termination, "failed")
         self.assertEqual(s.session.clarifications, 2)
-        self.assertEqual(len(client.actions), 3)
+        self.assertEqual(len(client.actions), 7)
         self.assertFalse(client.submissions)
         s = state()
         record(s, target=OW.Other, status="uncertain")
@@ -1136,7 +1154,7 @@ class Verification(unittest.TestCase):
     def test_action_transient_replay_and_no_response_format_retry(self):
         for code in ("REQUEST_PENDING", "PATIENT_RESPONSE_INVALID", "EXAMINER_RESPONSE_INVALID"):
             s = state()
-            q = question(s, text=CONFIG.texts.chief_question, purpose="chief", field="S.cc", target=None)
+            q = question(s, text=CONFIG.texts.greeting, purpose="chief", field="S.cc", target=None)
             s.interaction.selected = ActionSpec(question=q, content=q.text, request_id="first", ready=True)
             client, requests = FakeSDK(), []
             real = client.say
@@ -1163,7 +1181,7 @@ class Verification(unittest.TestCase):
     def test_shared_budget_reserves_one_gateway_without_render_cost(self):
         s, client = state(), FakeSDK()
         s.session.call_limit = 1
-        q = question(s, purpose="chief", text=CONFIG.texts.chief_question, field="S.cc", target=None)
+        q = question(s, purpose="chief", text=CONFIG.texts.clarification_question, field="S.cc", target=None)
         s.interaction.selected = ActionSpec(question=q, content=q.text, request_id="budget")
         make_doctor(CONFIG).validate_action(s)
         self.assertEqual(BudgetPolicy().calls_left(s.session), 1)
@@ -1220,7 +1238,8 @@ class Verification(unittest.TestCase):
         self.assertIsNone(s.case.get(q.item_id))
         self.assertEqual(s.questions.education[0].status, "delivered")
         self.assertEqual(s.questions.education[0].question.text, q.text)
-        self.assertTrue(s.interaction.needs_clarification)
+        self.assertFalse(s.interaction.needs_clarification)
+        self.assertEqual(client.calls, [])
         agent.refresh_after_input(s)
         self.assertFalse(s.interaction.needs_clarification)
         self.assertEqual(s.case.P["education"], {})
@@ -1283,12 +1302,12 @@ class Verification(unittest.TestCase):
         client._reply, client.chat = reply, chat
         s, client = self.run_flow(client, resources(k, CONFIG.model_copy(update={"education_enabled": True})))
         self.assertEqual(s.interaction.termination, "submitted")
-        self.assertEqual(s.case.diagnosis, "가상질환B")
+        self.assertEqual(s.case.diagnosis, s.case.fixed_diagnosis.name)
         delivered = [a["content"] for a in client.actions]
         self.assertIn(KOREAN["education"], delivered)
         self.assertNotIn(CONFIG.texts.correction_education, delivered)
         self.assertEqual(s.session.usage["Education"].actions, 5)
-        self.assertTrue(any(item.value and str(OW.Other) in item.value.concept_ids for _, item in s.case.entries()))
+        self.assertFalse(any(item.value and item.value.status == "present" and str(OW.Other) in item.value.concept_ids for _, item in s.case.entries()))
         self.assertIn("Review the treatment plan", client.submissions[0]["note"]["P"]["treatment"])
 
     def test_model_limit_finalization_and_clarification_candidate_recovery(self):
@@ -1659,14 +1678,14 @@ class Verification(unittest.TestCase):
 
     def test_session_cap_and_shared_response_window(self):
         s, w = state("DifferentialDiagnosis", True, turns=20), make_consultation()
-        s.session.usage["DifferentialDiagnosis"].actions = 11
+        s.session.usage["DifferentialDiagnosis"].actions = 9
         q = question(s)
         self.assertFalse(w.budget.evaluate(s).finalize)
         self.assertNotIn(q.item_id, w.budget.evaluate(s).discard)
         s.session.turns_remaining = 3
         self.assertNotIn(q.item_id, w.budget.evaluate(s).discard)
         self.assertIn(q.item_id, BudgetPolicy(education_enabled=True).evaluate(s).discard)
-        s.session.usage["DifferentialDiagnosis"].actions = 12
+        s.session.usage["DifferentialDiagnosis"].actions = 10
         self.assertIn(q.item_id, w.budget.evaluate(s).discard)
         self.assertFalse(w.budget.evaluate(s).finalize)
         s.session.current = "Education"
@@ -1804,7 +1823,7 @@ class Verification(unittest.TestCase):
         client.chat = Mock(return_value=client.completion("{invalid"))
         s.interaction.incoming = {"initial": {"opening": "가상증상이 있어요"}}
         make_interpreter(CONFIG).process_input(s, knowledge(), client)
-        self.assertEqual(client.chat.call_count, 3)
+        self.assertEqual(client.chat.call_count, 2)
         self.assertFalse(s.case.chief_complaints())
         self.assertTrue(s.interaction.needs_clarification)
 
@@ -2023,6 +2042,8 @@ class Verification(unittest.TestCase):
     def test_context_cannot_starve_more_valuable_diagnostic_acquisition(self):
         k, s = knowledge(), state("ContextFactor", True, turns=4)
         record(s)
+        complete_common_history(s)
+        s.questions.context_coverage.append(str(OW.Context0))
         for i in range(40):
             target = OW[f"Context{i}"]
             k._graph.add((target, RDF.type, OW.ContextFactor))
@@ -2093,14 +2114,14 @@ class Verification(unittest.TestCase):
         self.assertNotIn("urn:", json.dumps(assessment))
 
     def test_session_hard_caps_stop_actions_without_borrowing(self):
-        for scope, maximum in (("Initiation", 1), ("ChiefComplaint", 16), ("ContextFactor", 7),
-                               ("DifferentialDiagnosis", 12), ("Education", 0)):
+        for scope, maximum in (("Initiation", 7), ("ChiefComplaint", 14), ("ContextFactor", 9),
+                               ("DifferentialDiagnosis", 10), ("Education", 0)):
             with self.subTest(scope=scope):
                 s, client = state(scope, True), FakeSDK()
                 w = make_consultation(client)
                 s.session.questions_prepared = True
                 s.session.usage[scope].actions = max(0, maximum - 1)
-                q = question(s, target=None, purpose="chief", field="S.cc", text=CONFIG.texts.chief_question)
+                q = question(s, target=None, purpose="chief", field="S.cc", text=CONFIG.texts.greeting)
                 w.interactions.select_question(s, q)
                 w.doctor.validate_action(s)
                 w.doctor.execute_action(s, client)
@@ -2176,11 +2197,12 @@ class Verification(unittest.TestCase):
         self.assertEqual({q.attribute_id for q in questions[:-1]}, set(map(str, attrs)))
 
     def test_empathy_bypasses_session_caps_but_uses_shared_turns_and_model_budget(self):
-        for scope, maximum in (("Initiation", 1), ("ChiefComplaint", 16), ("ContextFactor", 7),
-                               ("DifferentialDiagnosis", 12), ("Education", 0)):
+        for scope, maximum in (("Initiation", 7), ("ChiefComplaint", 14), ("ContextFactor", 9),
+                               ("DifferentialDiagnosis", 10)):
             with self.subTest(scope=scope):
                 s, client = state(scope, True), FakeSDK()
                 record(s)
+                complete_common_history(s)
                 s.session.usage[scope].actions = maximum
                 w = make_consultation(client)
                 q = question(s, purpose="empathy", target=None, text="많이 힘드셨겠어요")
@@ -2304,7 +2326,7 @@ class Verification(unittest.TestCase):
         payload = copy.deepcopy(s.interaction.submission_payload)
         note = payload["note"]
         self.assertEqual(payload["diagnosis"], "Cough")
-        self.assertEqual(note["S"]["cc"], "C.C: Cough\nOnset: 3 days before presentation")
+        self.assertEqual(note["S"]["cc"], "C.C: Cough")
         self.assertEqual(note["S"]["hpi"], "P.I: Cough (+)\nOnset: 3 days before presentation\nDuration: 1–2 min\nAggravating factor: At night")
         self.assertEqual(note["S"]["pmh"], "PMH: (-)\nMedicine history: (-)")
         self.assertEqual(note["S"]["sh"], "Smoking: (-)")
@@ -2342,15 +2364,17 @@ class Verification(unittest.TestCase):
         s.case.get("old-score").value.time_context = "past"
         writer = make_writer(FakeSDK(), k, CONFIG)
         writer.build_soap(s)
-        cc = s.interaction.submission_payload["note"]["S"]["cc"]
-        self.assertIn("Pain assessment: Location: Chest; Quality: Dull; Duration: 30 min; Severity: NRS 6", cc)
-        self.assertNotIn("NRS 9", cc)
+        note = s.interaction.submission_payload["note"]["S"]
+        self.assertTrue(note["cc"].startswith("C.C: Chest pain"))
+        self.assertNotIn("Pain assessment:", note["cc"])
+        self.assertIn("Pain assessment: Location: Chest; Quality: Dull; Duration: 30 min; Severity: NRS 6", note["hpi"])
+        self.assertNotIn("NRS 9", note["hpi"].split("\n")[1])
         s.case.get("score").value.measurement = ExpectedValue(kind="quantity", value=6, unit="score")
         writer.build_soap(s)
-        self.assertNotIn("NRS", s.interaction.submission_payload["note"]["S"]["cc"])
+        self.assertNotIn("NRS 6", s.interaction.submission_payload["note"]["S"]["hpi"])
         s.case.remove({"score", "location", "quality", "duration"})
         writer.build_soap(s)
-        self.assertIn("Pain assessment: Unknown", s.interaction.submission_payload["note"]["S"]["cc"])
+        self.assertIn("Pain assessment: Unknown", s.interaction.submission_payload["note"]["S"]["hpi"])
 
     def test_history_english_source_terms_negatives_unknowns_and_unasked(self):
         from rdflib import RDFS
@@ -2388,7 +2412,8 @@ class Verification(unittest.TestCase):
         self.assertTrue(gateway._validate_facts({"facts":[forged]}, s, k, raw["quote"]).rejected_facts)
         forged = copy.deepcopy(raw)
         forged["value"]["record_category"] = "allergy"
-        self.assertTrue(gateway._validate_facts({"facts":[forged]}, s, k, raw["quote"]).rejected_facts)
+        routed = gateway._validate_facts({"facts":[forged]}, s, k, raw["quote"])
+        self.assertEqual(routed.accepted_facts[0].field, "S.pmh")
         forged = copy.deepcopy(raw)
         del forged["value"]["record_category"]
         self.assertTrue(gateway._validate_facts({"facts":[forged]}, s, k, raw["quote"]).rejected_facts)
@@ -2407,7 +2432,9 @@ class Verification(unittest.TestCase):
         self.assertEqual(len(parsed.accepted_facts), 1)
         gateway._apply_facts(s, parsed, "reported-onset")
         make_writer(FakeSDK(), k, CONFIG).build_soap(s)
-        self.assertIn("Onset: 3 days before presentation", s.interaction.submission_payload["note"]["S"]["cc"])
+        note = s.interaction.submission_payload["note"]["S"]
+        self.assertNotIn("Onset:", note["cc"])
+        self.assertIn("Onset: 3 days before presentation", note["hpi"])
 
     def test_record_keywords_preserve_reasoning_and_multiple_chief_hpi_links(self):
         k, s = knowledge(), state("DifferentialDiagnosis", True)

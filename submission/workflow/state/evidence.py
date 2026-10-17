@@ -22,6 +22,7 @@ class EvidenceIndex:
             case = isolated
         entries = tuple((field, item) for field, item in case.current_entries()
                         if item.status == "done" and item.source_refs and item.value
+                        and item.value.evidence_use == "reasoning"
                         and item.value.kind in {"symptom", "finding", "attribute", "context"})
         groups, contexts = {}, []
         for _, item in entries:

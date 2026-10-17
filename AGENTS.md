@@ -30,6 +30,7 @@
 - Keep the D27 local evaluation API, simulator model bridge, and isolated public-sample container harness in `Test/`.
 - Keep the D31 local website, shell execution bridge, and read-only workflow observation in Test/; preserve submission/ bytes.
 - Keep the D32 static project atlas in Test/atlas.html as a self-contained offline document; preserve runtime files and exclude execution controls and external assets.
+- Keep the D39 read-only knowledge browser in Test/knowledge.py and Test/knowledge/ with local container commands in Test/knowledge.sh; preserve submission and source databases.
 - Assign Dev, Test, and Tmp operational progress to root `PROJECT_STATE.md` without adding state scopes.
 - Preserve organizer packages in assets/ and permit only the D12 hash-pinned unchanged nova_sdk.py submission copy.
 - Keep project-authored directory contracts and human orientation in `assets/` separate from preserved upstream files.
@@ -39,7 +40,8 @@
 - Treat root, `submission/`, and `data/` as the three maintained state scopes.
 - Keep generated directories and upstream archive internals under their existing owner.
 - Apply D17 prepared interviews Pattern-first fit bounded parsing and adaptive budgets while preserving D11 session and submission boundaries.
-- Apply D38 to one primary chief full attribute collection shared pure reasoning residual graph questions and versioned policy while preserving D35 budgets and D37 Education.
+- Apply D38 to one primary chief full attribute collection shared pure reasoning residual graph questions and versioned policy with D40 budgets and Education response boundaries.
+- Apply D40 initial patient context compact parsing semantic SOAP protected intake and history budgets and transcript-only Education replies.
 - Apply D17 prepared Doctor delivery and designated-model Gateway interpretation; keep selection in InterviewPlanner and submission in SubmissionWriter.
 - Maintain the implemented Korean workflow white paper in submission/README.md and keep root README as project orientation.
 - Do not resume cancelled model jobs or expand the corpus without a new user request.
@@ -53,9 +55,9 @@
 - Apply D29 for case-independent chief mapping to one supplied Symptom, source-backed bilingual aliases, and one bounded full-index lookup recovery.
 - Preserve D30 source mappings and apply D37 manifest-pinned navigation to the organizer guideline mount without packaging original documents.
 - Generate D37 English P sentences with Luna high and render independent NFC 1-30 Korean Doctor statements while retaining source and model-knowledge provenance.
-- Apply D33 English SOAP Category: Content entries with source terminology explicit polarity and quote-backed keywords while retaining D36 uncovered patient speech as explicitly unstructured S reports.
-- Apply D36 resolved-destination acquisition checks and shared current evidence for chief selection question resolution reasoning and symptom fallback.
-- Apply D34 question-bound vocabulary interpretation one binding repair record-only terminology fallback and separate budgeted empathy SAY across all sessions.
+- Apply D33 English SOAP Category: Content entries with source terminology explicit polarity and quote-backed keywords and display only D40 unresolved clinical spans as unstructured S reports.
+- Apply D36 resolved-destination acquisition checks and D40 shared current evidence for chief selection question resolution reasoning SOAP and symptom fallback.
+- Apply D34 question-bound vocabulary interpretation one binding repair record-only terminology fallback and separate budgeted empathy SAY in the four collection sessions.
 - Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep maintained workflow tests in Dev/tests/workflow and generated synthetic assets and evidence in Tmp.
 
 ## Working Order
@@ -70,7 +72,7 @@
 - Use D07 for preserved preparation evidence, separately admitted submission bundles, and one runtime RDFLib Graph.
 - Use D08 and data/ontology/AGENTS.md for shared patterns, typed conditions, disease associations, conditional weights, and SDK text mapping.
 - Use specific clinical pain complaints as D08 retrieval targets and preserve finer Location values, raw wording, interpretation uncertainty, and separate episodes.
-- Use D17 for the five-session adaptive workflow and Python reasoning, D35 for session budgets and question continuation, and D12 for wire format and packaging.
+- Use D17 for the five-session workflow and Python reasoning, D40 for session collection and budgets, and D12 for wire format and packaging.
 - Apply D15 for information-preserving SOAP and bounded Gateway vocabulary; use D18 for all knowledge and Korean text preparation.
 - Preserve D36 original reports and quote coverage without treating unstructured speech as scored evidence or acquired examination findings.
 - Apply newer explicit user decisions before stale operational plans or next goals; record implementation and execution only from observed evidence.

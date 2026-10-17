@@ -51,6 +51,7 @@ class Consultation:
         return True
 
     def prepare_education(self, state):
+        self.interactions.skip_empathy(state, "education_record_only")
         self.reasoner.select_diagnosis(state)
         if not state.interaction.termination:
             self.freeze_diagnosis(state)
@@ -61,9 +62,19 @@ class Consultation:
 
     def freeze_diagnosis(self, state):
         if self.planner.config.education_enabled and not state.case.fixed_diagnosis:
+            unresolved = []
+            chosen = next((h for h in state.differential.hypotheses if h.disease_id == state.differential.selected_id), None)
+            if chosen and chosen.unresolved_conditions:
+                unresolved.append("Diagnostic prerequisites remain unconfirmed")
+            if any(s in {"unknown", "blocked_asset", "budget_stopped", "recorded_unmapped"} for s in state.questions.chief_attributes.values()):
+                unresolved.append("Chief complaint details remain incomplete")
+            if not any(e.delivered and e.kind == "EXAM" for e in state.interaction.history):
+                unresolved.append("No additional physical examination obtained")
+            if any(r.clinical_spans for r in state.interaction.patient_reports):
+                unresolved.append("Some patient reports remain unstructured")
             state.case.fixed_diagnosis = FixedDiagnosis(kind=state.case.diagnosis_kind,
                 disease_id=state.differential.selected_id, name=state.case.diagnosis,
-                evidence_ids=list(state.case.diagnosis_evidence))
+                evidence_ids=list(state.case.diagnosis_evidence), unresolved=unresolved)
 
     def refresh_after_input(self, state: WorkflowState) -> None:
         if state.interaction.termination:
@@ -98,10 +109,12 @@ class Consultation:
         self.questions.discard_unasked(state, decision.discard)
 
     def select_action(self, state: WorkflowState) -> None:
+        if state.session.current == "Education":
+            self.interactions.skip_empathy(state, "education_record_only")
         event = self.interactions.pending_empathy(state)
         greeting_due = state.session.current == "Initiation" and not any(
-            entry.delivered and entry.question and entry.question.purpose == "chief" for entry in state.interaction.history)
-        if event and not greeting_due:
+            entry.delivered and entry.question and entry.question.purpose == "greeting" for entry in state.interaction.history)
+        if event and not greeting_due and state.session.current != "Education":
             if self.budget.can_empathize(state):
                 self.doctor.prepare_empathy(state, self.client, event)
                 if state.interaction.selected or state.interaction.termination:

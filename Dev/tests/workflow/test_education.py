@@ -122,6 +122,9 @@ class EducationTests(unittest.TestCase):
         for field, text in TEXT.items():
             self.assertIn(text, plan[field])
         direct = next(p for p in self.client.education_calls if p.get("phase") == "direct")
+        self.assertEqual(direct["fixed_diagnosis"]["certainty"], "working")
+        self.assertIn("unresolved", direct["fixed_diagnosis"])
+        self.assertLessEqual(direct["delivery_turn_budget"], 10)
         self.assertEqual(len(direct["dialogue"]), 15)
         self.assertEqual(direct["dialogue"][0]["patient"], "Original patient opening")
         self.assertEqual(direct["documents"][0]["text"].splitlines()[-1], "Complete source ending.")
@@ -245,6 +248,32 @@ class EducationTests(unittest.TestCase):
         self.assertEqual(result.session.usage["Education"].actions, 0)
         self.assertTrue(all(self.client.submissions[0]["note"]["P"].values()))
 
+    def test_invalid_condition_withholds_the_whole_treatment_group(self):
+        self.sources([])
+        conditional = "If the diagnosis and indication are confirmed, discuss the appropriate treatment."
+        def plan(payload):
+            raw = education_response(payload)
+            raw["P"]["treatment"][0]["text"] = conditional
+            return raw
+        def render(payload):
+            raw = education_response(payload)
+            for row in raw["items"]:
+                if row["id"].startswith("plan:treatment:"):
+                    row["utterances"] = ["가" * 31, "확인 후 치료를 상의하겠습니다."]
+            return raw
+        self.client.plan_response = plan
+        self.client.render_response = render
+        result = self.finish()
+        self.assertEqual(result.interaction.termination, "submitted")
+        self.assertEqual(result.session.usage["Education"].actions, 4)
+        self.assertIn(conditional, self.client.submissions[0]["note"]["P"]["treatment"])
+        self.assertIn("plan:treatment:0", result.interaction.education.rendering_errors)
+        self.assertFalse(any(row.question.plan_sentence_id == "plan:treatment:0"
+                             for row in result.questions.education))
+        self.assertFalse(any(action["content"] == "확인 후 치료를 상의하겠습니다." for action in self.client.actions))
+        renders = [p for p in self.client.education_calls if p["task"] == "education_doctor"]
+        self.assertEqual([len(p["sentences"]) for p in renders], [5, 1])
+
     def test_malformed_render_identifier_uses_the_bounded_repair(self):
         self.sources([])
         attempts = []
@@ -274,7 +303,7 @@ class EducationTests(unittest.TestCase):
         result = self.finish()
         self.assertEqual(result.case.diagnosis, result.case.fixed_diagnosis.name)
         self.assertEqual(sum(p["task"] == "education" for p in self.client.education_calls), 1)
-        self.assertTrue(any(item.value and str(w.OW.Other) in item.value.concept_ids for _, item in result.case.entries()))
+        self.assertFalse(any(item.value and str(w.OW.Other) in item.value.concept_ids for _, item in result.case.entries()))
         self.assertTrue(any(turn.get("patient") == self.client.late_report for turn in result.interaction.dialogue()))
 
     def test_full_dialogue_overflow_does_not_send_a_truncated_request(self):
@@ -286,14 +315,14 @@ class EducationTests(unittest.TestCase):
         self.assertIn("education_context_overflow", result.interaction.education.errors)
         self.assertEqual(result.interaction.education.status, "failed")
 
-    def test_new_distress_during_education_gets_separate_empathy_without_replanning(self):
+    def test_education_distress_is_recorded_without_empathy_or_replanning(self):
         self.sources([])
         self.client.late_report = "진단을 듣고 너무 걱정돼요"
         self.client.late_empathy = True
         result = self.finish()
         self.assertEqual(result.interaction.termination, "submitted")
-        self.assertEqual(result.session.usage["Education"].empathy_actions, 1)
-        self.assertEqual(result.session.usage["Education"].actions, 6)
+        self.assertEqual(result.session.usage["Education"].empathy_actions, 0)
+        self.assertEqual(result.session.usage["Education"].actions, 5)
         self.assertEqual(sum(p["task"] == "education" for p in self.client.education_calls), 1)
         self.assertEqual(result.case.diagnosis, result.case.fixed_diagnosis.name)
         self.assertEqual(sum(item.status == "delivered" for item in result.questions.education), 5)
@@ -307,14 +336,14 @@ class EducationTests(unittest.TestCase):
         self.assertEqual(self.client.actions, [])
         self.assertTrue(all(item.status == "undelivered" for item in result.questions.education))
 
-    def test_call_budget_exhaustion_preserves_partial_delivery_and_five_fields(self):
+    def test_prepared_education_finishes_without_reply_model_allowance(self):
         self.sources([])
         self.s.session.call_limit = 3
         result = self.finish()
         self.assertEqual(result.interaction.termination, "submitted")
         self.assertTrue(all(self.client.submissions[0]["note"]["P"].values()))
-        self.assertLess(sum(item.status == "delivered" for item in result.questions.education), 5)
-        self.assertTrue(any(item.status == "undelivered" for item in result.questions.education))
+        self.assertEqual(sum(item.status == "delivered" for item in result.questions.education), 5)
+        self.assertFalse(any(item.status == "undelivered" for item in result.questions.education))
 
     def test_transient_unknown_stops_before_say_and_diagnose(self):
         self.sources([])

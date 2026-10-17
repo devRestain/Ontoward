@@ -23,7 +23,8 @@ class Verification(unittest.TestCase):
                      target=target, kind=kind, field=field, text="다른 내용도 알려주세요")
         pending(s, q)
         s.interaction.incoming = {"content" if kind == "SAY" else "result": text, "facts": facts,
-                                  "clinical_content": clinical_content}
+                                  "clinical_content": clinical_content,
+                                  "spans": [{"quote": text, "role": "clinical", "field": field}] if kind == "SAY" else []}
         self.interpreter.process_input(s, self.k, self.client)
         return q
 
@@ -172,7 +173,7 @@ class Verification(unittest.TestCase):
         s = state("ChiefComplaint", True)
         first, second = "가상증상이 있어요.", "항생제 알레르기가 있어요."
         accepted = fact("S.cc", "symptom", OW.Complaint, first)
-        self.reply(s, first + " " + second, [accepted])
+        self.reply(s, first + " " + second, [accepted], field="S.pmh")
         report = s.interaction.patient_reports[0]
         self.assertEqual(report.text, first + " " + second)
         self.assertEqual(report.covered_spans, [(0, len(first))])
@@ -182,7 +183,8 @@ class Verification(unittest.TestCase):
         self.assertEqual({hypothesis.evidence_score for hypothesis in s.differential.hypotheses}, {1})
         self.consultation.writer.build_soap(s)
         note = s.interaction.submission_payload["note"]
-        self.assertIn("Patient report (unstructured): " + second, note["S"]["hpi"])
+        self.assertIn("Patient report (unstructured): " + second, note["S"]["pmh"])
+        self.assertNotIn(second, note["S"]["hpi"])
         self.assertEqual(note["O"]["tests"], "")
         self.assertNotIn(second, note["A"]["evidence"])
 
@@ -255,7 +257,8 @@ class Verification(unittest.TestCase):
         retract, allergy = "아까 증상은 사실 없어요.", "항생제 알레르기가 있어요."
         correction = fact("S.cc", "symptom", OW.Complaint, retract, status="absent")
         correction["correction"] = True
-        s.interaction.incoming = {"content": retract + " " + allergy, "facts": [correction]}
+        s.interaction.incoming = {"content": retract + " " + allergy, "facts": [correction],
+            "spans": [{"quote": allergy, "role": "clinical", "field": "S.pmh"}]}
         s.session.gateway_successes = s.session.doctor_successes = 1
         self.interpreter.process_input(s, self.k, self.client)
         self.client.remaining = 0
@@ -264,7 +267,7 @@ class Verification(unittest.TestCase):
         self.assertEqual(result.case.diagnosis_kind, "symptom")
         self.assertEqual(result.case.diagnosis_evidence, ["remaining-chief"])
         self.assertEqual(len(self.client.submissions), 1)
-        self.assertIn(allergy, self.client.submissions[0]["note"]["S"]["hpi"])
+        self.assertIn(allergy, self.client.submissions[0]["note"]["S"]["pmh"])
         self.assertNotIn("chief", result.case.diagnosis_evidence)
 
 

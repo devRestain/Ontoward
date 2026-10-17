@@ -25,6 +25,38 @@ class RecordDetail(Model):
     english: str = Field(min_length=1, max_length=160, pattern=r"^[^\r\n]+$")
 
 
+RecordCategory = Literal["onset", "duration", "course", "quality", "aggravating_factor", "relieving_factor",
+    "associated_symptoms", "previous_care", "presentation", "medical_history", "medication", "allergy",
+    "surgery", "family_history", "smoking", "alcohol", "occupation", "patient_context", "recurrence",
+    "measurement", "social_history", "developmental_history", "review_of_systems", "other"]
+
+
+class RecordQuantity(Model):
+    name: str = Field(min_length=1, max_length=60)
+    value: float = Field(allow_inf_nan=False)
+    unit: str = Field(min_length=1, max_length=30)
+    when: str = Field(default="unspecified", min_length=1, max_length=80)
+    approximate: bool = False
+
+
+class PatientContextFact(Model):
+    key: Literal["age", "sex", "reporter"]
+    value: str = Field(min_length=1, max_length=80)
+    quote: str = Field(min_length=1, max_length=160)
+
+
+class PatientContextEntry(Model):
+    value: str
+    quote: str
+    source_refs: list[str]
+
+
+class SpeechSpan(Model):
+    quote: str = Field(min_length=1)
+    role: Literal["clinical", "nonclinical", "emotion", "request", "conditional"]
+    field: SOAPField = "S.hpi"
+
+
 class ClinicalValue(Model):
     kind: Literal["symptom", "finding", "context", "attribute", "text", "plan", "education"]
     text: str
@@ -39,11 +71,13 @@ class ClinicalValue(Model):
     values: list[str] = Field(default_factory=list)
     measurement: ExpectedValue | None = None
     subject: Literal["patient", "family"] = "patient"
+    subject_member: str | None = None
+    reported_by: str | None = None
     time_context: Literal["current", "past", "unspecified"] = "unspecified"
-    record_category: Literal["onset", "duration", "course", "quality", "aggravating_factor", "relieving_factor",
-        "associated_symptoms", "previous_care", "presentation", "medical_history", "medication", "allergy",
-        "surgery", "family_history", "smoking", "alcohol", "occupation", "other"] | None = None
+    record_category: RecordCategory | None = None
     record_details: list[RecordDetail] = Field(default_factory=list, max_length=8)
+    quantities: list[RecordQuantity] = Field(default_factory=list, max_length=8)
+    evidence_use: Literal["reasoning", "record_only"] = "reasoning"
 
     @model_validator(mode="after")
     def validate_measurement(self):
@@ -62,6 +96,7 @@ class RecordItem(Model):
     source_refs: list[str] = Field(default_factory=list)
     context_refs: list[str] = Field(default_factory=list)
     acquisition: Literal["initial", "SAY", "EXAM"] | None = None
+    resolves: list[str] = Field(default_factory=list)
 
 
 class FixedDiagnosis(Model):
@@ -69,6 +104,8 @@ class FixedDiagnosis(Model):
     disease_id: str | None = None
     name: str
     evidence_ids: list[str] = Field(default_factory=list)
+    certainty: Literal["working"] = "working"
+    unresolved: list[str] = Field(default_factory=list)
 
 
 class ChiefAnchor(Model):
@@ -89,6 +126,7 @@ class CaseState(Model):
     diagnosis_evidence: list[str] = Field(default_factory=list)
     fixed_diagnosis: FixedDiagnosis | None = None
     primary_chief: ChiefAnchor | None = None
+    patient_context: dict[str, PatientContextEntry] = Field(default_factory=dict)
     _locations: dict[str, tuple[str, str]] = PrivateAttr(default_factory=dict)
 
     @model_validator(mode="after")
@@ -134,26 +172,30 @@ class CaseState(Model):
 
     @staticmethod
     def evidence_key(value, target=None):
-        return (value.subject, value.observation_id, value.episode_id,
+        return (value.subject, value.subject_member, value.observation_id, value.episode_id,
                 target if target is not None else tuple(sorted(value.concept_ids)),
                 value.attribute_id, value.time_context)
 
     def current_entries(self):
         entries = list(self.entries())
         groups = {}
-        for _, item in entries:
+        for field, item in entries:
             value = item.value
             if (item.status != "done" or not item.source_refs or value is None
                     or value.kind not in {"symptom", "finding", "attribute", "context"}):
                 continue
             for target in value.concept_ids:
-                key = self.evidence_key(value, target)
+                key = (*self.evidence_key(value, target), item.acquisition if field.startswith("O.") else "patient_report")
                 # Missing occurrence IDs never join independent symptom episodes.
                 if value.kind != "context" and (not value.observation_id or not value.episode_id):
                     key += (item.id,)
                 groups.setdefault(key, []).append(item)
-        conflicts = set()
+        conflicts, superseded = set(), set()
         for items in groups.values():
+            resolved_ids = {ident for item in items if item.value.status in {"present", "absent"}
+                            for ident in item.resolves}
+            superseded.update(i.id for i in items if i.id in resolved_ids and i.value.status in {"unknown", "uncertain"})
+            items = [i for i in items if i.id not in superseded]
             definite = [i for i in items if i.value.status in {"present", "absent"} and len(i.value.concept_ids) == 1
                         and i.value.mapping_status in {"exact", "broader"}]
             statuses = {i.value.status for i in definite}
@@ -165,6 +207,8 @@ class CaseState(Model):
             if (len(statuses) > 1 and not categorical) or len(numeric) > 1 or positive & negative:
                 conflicts.update(i.id for i in items)
         for field, item in entries:
+            if item.id in superseded:
+                continue
             if item.id in conflicts or (item.value and item.value.mapping_status in {"ambiguous", "unmapped"}
                                        and item.value.kind in {"symptom", "finding", "attribute", "context"}):
                 item = item.model_copy(deep=True)
@@ -312,7 +356,7 @@ class Question(Model):
     item_id: str
     field: SOAPField
     kind: Literal["SAY", "EXAM"] = "SAY"
-    purpose: Literal["chief", "hpi", "open_inquiry", "ros", "clarification", "context", "feature", "education", "empathy"]
+    purpose: Literal["chief", "greeting", "intake", "history", "hpi", "open_inquiry", "ros", "clarification", "context", "feature", "education", "empathy"]
     text: str
     order: int
     priority: int
@@ -327,6 +371,9 @@ class Question(Model):
     assessment: dict[str, object] = Field(default_factory=dict)
     primary_choice: bool = False
     plan_sentence_id: str | None = None
+    record_category: RecordCategory | None = None
+    coverage: bool = False
+    clarifies_id: str | None = None
 
     def semantic_key(self):
         import json
@@ -362,6 +409,11 @@ class QuestionPlan(Model):
     revision: int = 0
     last_plan_key: str = ""
     selection_report: dict[str, object] = Field(default_factory=dict)
+    intake: dict[str, str] = Field(default_factory=dict)
+    history: dict[str, str] = Field(default_factory=dict)
+    context_coverage: list[str] = Field(default_factory=list)
+    context_exclusions: dict[str, str] = Field(default_factory=dict)
+    session_endings: dict[str, str] = Field(default_factory=dict)
 
 
 class ActionSpec(Model):
@@ -401,6 +453,7 @@ class PatientReport(Model):
     text: str
     covered_spans: list[tuple[int, int]] = Field(default_factory=list)
     uncovered_spans: list[tuple[int, int]] = Field(default_factory=list)
+    clinical_spans: list[tuple[int, int, SOAPField]] = Field(default_factory=list)
 
 
 class SourceReference(Model):
@@ -507,6 +560,8 @@ class ParsedInput(Model):
     lookup_terms: list[LookupTerm] = Field(default_factory=list, max_length=8)
     clinical_content: bool = True
     empathy: EmpathySignal | None = None
+    patient_context: list[PatientContextFact] = Field(default_factory=list, max_length=3)
+    spans: list[SpeechSpan] = Field(default_factory=list)
 
 
 class ParseResult(Model):
@@ -520,3 +575,7 @@ class ParseResult(Model):
     empathy: EmpathySignal | None = None
     binding_unresolved: bool = False
     recovery_history: list[dict[str, object]] = Field(default_factory=list)
+    patient_context: list[PatientContextFact] = Field(default_factory=list)
+    spans: list[SpeechSpan] = Field(default_factory=list)
+    truncated: bool = False
+    valid_output: bool = False

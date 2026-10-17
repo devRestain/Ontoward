@@ -1,5 +1,18 @@
 {
-  "chief_question": "안녕하세요. 무엇이 어떻게 불편하세요?",
+  "greeting": "안녕하세요. 병원 오시는 길이 불편하진 않으셨나요?",
+  "intake_questions": {
+    "onset": "언제부터 불편하셨어요?",
+    "course": "불편한 것이 점점 심해지나요?",
+    "recurrence": "이전에도 이렇게 불편하신 적 있으셨어요?",
+    "previous_care": "이전에는 어떻게 치료받으셨나요?"
+  },
+  "history_questions": {
+    "medical_history": "평소 앓고 있는 병이 있으신가요?",
+    "medication": "현재 복용하는 약이 있나요?",
+    "allergy": "알레르기가 있으신가요?",
+    "family_history": "가족 중 비슷한 증상을 겪은 분이 있나요?",
+    "social_history": "평소 생활환경은 어떠신가요?"
+  },
   "primary_chief_question": "어떤 증상이 가장 불편하세요?",
   "unmapped_question": "불편한 부위는 어디인가요?",
   "open_question": "그 밖에 불편한 증상이 있나요?",
@@ -63,7 +76,9 @@
     "associated_symptoms": "Associated symptoms", "previous_care": "Previous care", "presentation": "Presentation",
     "medical_history": "PMH", "medication": "Medicine history", "allergy": "Allergy", "surgery": "Op. Hx",
     "family_history": "Family history", "smoking": "Smoking", "alcohol": "Alcohol", "occupation": "Occupation",
-    "other": "Other"
+    "patient_context": "Patient", "recurrence": "Previous similar episodes", "measurement": "Reported measurements",
+    "social_history": "Social history", "developmental_history": "Developmental history",
+    "review_of_systems": "Additional symptoms", "other": "Other"
   },
   "term_abbreviations": {
     "diabetes": "DM", "diabetes mellitus": "DM", "hypertension": "HTN", "tuberculosis": "Tbc",
@@ -75,7 +90,7 @@
     "temperature": "BT", "temperature_c": "BT", "temp": "BT", "blood_pressure": "BP",
     "heart_rate": "HR", "pulse": "PR", "respiratory_rate": "RR", "respiration": "RR",
     "oxygen_saturation": "SpO2", "spo2": "SpO2", "systolic": "SBP", "diastolic": "DBP",
-    "체온": "BT", "맥박": "PR", "호흡수": "RR", "산소포화도": "SpO2", "혈압": "BP", "회/분": "/min"
+    "체온": "BT", "맥박": "PR", "호흡": "RR", "호흡수": "RR", "산소포화도": "SpO2", "혈압": "BP", "회/분": "/min"
   },
   "soap_labels": {
     "patient_report": "Patient report (unstructured)",

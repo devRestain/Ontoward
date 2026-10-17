@@ -6,8 +6,8 @@ SessionName = Literal["Initiation", "ChiefComplaint", "ContextFactor", "Differen
 SESSION_ORDER: tuple[SessionName, ...] = ("Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education")
 PLAN_FIELDS = ("tests", "treatment", "disposition", "follow_up", "education")
 SESSION_INTERVIEW_LIMITS = {
-    "Initiation": (1, 1), "ChiefComplaint": (7, 16), "ContextFactor": (2, 7),
-    "DifferentialDiagnosis": (3, 12), "Education": (0, 0),
+    "Initiation": (5, 7), "ChiefComplaint": (7, 14), "ContextFactor": (7, 9),
+    "DifferentialDiagnosis": (3, 10), "Education": (5, 10),
 }
 
 
@@ -23,7 +23,8 @@ class Limits:
     model_calls: int = 200
     input_tokens: int = 500000
     output_tokens: int = 100000
-    gateway_tokens: int = 2048
+    gateway_tokens: int = 4096
+    gateway_recovery_tokens: int = 8000
     submission_repairs: int = 1
     clarifications: int = 2
     focused_ros: int = 6

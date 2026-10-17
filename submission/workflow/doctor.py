@@ -28,8 +28,15 @@ class Doctor:
         progress.rendering_attempted = True
         batches, batch = [], []
         base = {"task": "education_doctor", "fixed_diagnosis": state.case.fixed_diagnosis.model_dump(),
-                "dialogue": state.interaction.dialogue()[-2:]}
-        for sentence in progress.sentences:
+                "dialogue": state.interaction.dialogue()[-2:], "turn_budget": self.budget.action_capacity(state)}
+        core, remaining = [], list(progress.sentences)
+        for field in ("education", "tests", "treatment", "disposition", "follow_up"):
+            first = next((sentence for sentence in remaining if sentence.field == field), None)
+            if first:
+                core.append(first)
+                remaining.remove(first)
+        ordered = [*core, *sorted(remaining, key=lambda s: s.priority != "safety")]
+        for sentence in ordered:
             row = {"id": sentence.id, "text": sentence.text}
             if message_bytes(messages(self.config.education_doctor_prompt, {**base, "sentences": [*batch, row]})) > LIMITS.education_request_bytes:
                 if batch:
@@ -68,9 +75,11 @@ class Doctor:
                         if not isinstance(utterances, list) or not utterances or any(not isinstance(text, str) for text in utterances):
                             raise ValueError("expected Korean utterance list")
                         utterances = [unicodedata.normalize("NFC", text) for text in utterances]
+                        lengths = [len(text) for text in utterances]
                         if any(content_error(text) or any(c in text for c in "\r\n?？")
+                               or text.startswith(("그 외에는", "그렇지 않으면", "이 경우에는"))
                                or not any("\uac00" <= c <= "\ud7a3" for c in text) for text in utterances):
-                            raise ValueError("invalid NFC 1-30 Korean statement")
+                            raise ValueError(f"require standalone NFC 1-30 Korean statements; actual lengths={lengths}")
                         rendered[ident] = utterances
                         del remaining[ident]
                     except (TypeError, ValueError) as error:
@@ -81,11 +90,11 @@ class Doctor:
             if state.interaction.termination:
                 break
         order = 0
-        for sentence in progress.sentences:
+        for sentence in ordered:
             for number, text in enumerate(rendered.get(sentence.id, [])):
                 self.questions.register(state, Question(item_id=f"Education:{sentence.id}:{number}",
                     field=f"P.{sentence.field}", purpose="education", text=text, order=order,
-                    priority=int(sentence.priority == "safety"), plan_sentence_id=sentence.id))
+                    priority=0, plan_sentence_id=sentence.id))
                 order += 1
             if sentence.id not in rendered:
                 progress.rendering_errors.setdefault(sentence.id, "rendering_not_completed")
