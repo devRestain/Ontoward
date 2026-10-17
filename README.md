@@ -27,7 +27,7 @@ Ontoward/
 ├── Dev/
 │   ├── codex/      # 최소 CLI 환경·인증 설정
 │   ├── ontology/   # 현재 v5.0 원천 투영
-│   ├── education/  # 질환별 고정 원문 교육 전처리
+│   ├── guidelines/ # 원문 근거 매핑·D37 탐색 인덱스 준비
 │   ├── tests/      # 워크플로우·원천 행동 검증
 │   └── packaging/  # 제출 ZIP 구성 도구
 ├── data/

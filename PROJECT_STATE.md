@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward
 /status value=active
-/checkpoint revision=95d264f76070b93518d8ee4942982a8849046b73 dirty=true updated=2026-10-17T12:31:16+00:00
-/goal phase=current id=ROOT.ALGORITHM38 state=complete action="Coordinate D38 algorithm implementation offline acceptance and standalone packaging"
+/checkpoint revision=90be692c869a3b7cd12df48c7733d533c718da8c dirty=true updated=2026-10-17T13:20:56+00:00
+/goal phase=current id=ROOT.CLEANUP17 state=complete action="Remove completed Dev and Tmp legacy outputs while preserving active runtime custody and acceptance receipts"
+/goal phase=history id=ROOT.ALGORITHM38 state=complete action="Coordinate D38 algorithm implementation offline acceptance and standalone packaging"
 /goal phase=history id=ROOT.EDUCATION37 state=complete action="Coordinate D37 Education D36 integration source custody offline acceptance and the standalone archive"
 /goal phase=history id=ROOT.EVIDENCE36 state=complete action="Complete the isolated D36 audit fixes and archive acceptance without overwriting concurrent education work"
 /goal phase=history id=ROOT.MERGE35 state=complete action="Integrate session budgets with existing SOAP input and empathy features and verify the combined main candidate"
@@ -253,4 +254,11 @@
 /evidence id=ROOT.ALGORITHM38.E3 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference DATA.ALGORITHM38 policy hash unchanged-source custody and archive receipt"
 /evidence id=ROOT.ALGORITHM38.E4 class=semantic result=pass source=Tmp/d38/document-review.json observed="Align D38 decisions PRD contracts Korean workflow and all three maintained state handoffs"
 /scope id=ROOT.ALGORITHM38.S1 state=in action="Own D38 offline tests comparison packaging documentation and cross-scope reconciliation"
+/accept id=ROOT.CLEANUP17.A1 state=pass action="Delete completed copies synthetic fixtures rebuildable search cache and superseded education tooling" evidence=ROOT.CLEANUP17.E1
+/accept id=ROOT.CLEANUP17.A2 state=pass action="Preserve referenced acceptance evidence admitted runtime source custody and deferred handoffs" evidence=ROOT.CLEANUP17.E1,ROOT.CLEANUP17.E2,ROOT.CLEANUP17.E3,ROOT.CLEANUP17.E4
+/evidence id=ROOT.CLEANUP17.E1 class=artifact result=pass source=Tmp/storage-cleanup-2026-10-17/receipt.json observed="Remove 14062 completed files and synthetic symlinks totaling 3568529773 logical bytes; retain exact deletion inventory compact acceptance reports saved evaluator runs live viewer files and the accepted D38 ZIP"
+/evidence id=ROOT.CLEANUP17.E2 class=runtime result=pass source=Tmp/storage-cleanup-2026-10-17/checks/workflow.json observed="Pass all 98 maintained offline workflow tests in the project dev container using disposable container-local fixtures and scripted responses"
+/evidence id=ROOT.CLEANUP17.E3 class=artifact result=pass source=Tmp/storage-cleanup-2026-10-17/checks/artifact.json observed="Match all 51 accepted D38 archive members to unchanged submission source; preserve submission data and decision states and their existing acceptance evidence sources"
+/evidence id=ROOT.CLEANUP17.E4 class=runtime result=pass source=Tmp/storage-cleanup-2026-10-17/checks/artifact.json observed="Complete current prepare in the project dev container without network"
+/scope id=ROOT.CLEANUP17.S1 state=in action="Limit deletion to Dev and Tmp and update root orientation and operational state without changing accepted decisions source data runtime Docker resources or deferred external execution"
 /handoff state=blocked action="Await exact case request ceiling and credit authorization for ROOT.NOVA27 using the D38 archive"

@@ -26,4 +26,4 @@ ZIP은 Tmp/packaging/ontoward-submission.zip에 만들어진다. 공개 설정·
 
 유지 중인 상담 행동 검증과 실제 원천 후보·한국어 자산을 이용한 격리 상담을 구분한다. D18에서 이전 실행 배치를 철회했으므로 실제 prepare가 실패하는 상태를 빈 Graph나 자동 승인으로 우회하지 않는다. 한국어 준비·검증·재실행 명령은 [온톨로지 도구](ontology/README.md)에 있다.
 
-D18에서 이전 v4.2·seed·임상 배치·번역·승인·지침 교육 초안과 임시 사본을 삭제했다. 원본 자료와 일반 상담 동작은 보존한다. 과거 교육 도구는 현재 작업의 실행 경로가 아니며 삭제된 배치를 재개하지 않는다. 현재 운영 사실은 [루트 상태](../PROJECT_STATE.md)에 기록한다.
+D18에서 이전 v4.2·seed·임상 배치·번역·승인·지침 교육 초안과 임시 사본을 삭제했다. 원본 자료와 일반 상담 동작은 보존한다. D37로 대체된 고정 교육 발췌 도구와 해당 테스트는 제거했다. 현재 교육 원문 연결은 [guidelines/](guidelines/README.md), 진단 후 계획·한국어 안내와 행동 검증은 submission/workflow/와 tests/workflow/test_education.py가 담당한다. 현재 운영 사실은 [루트 상태](../PROJECT_STATE.md)에 기록한다.
