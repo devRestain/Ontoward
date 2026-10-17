@@ -1,0 +1,26 @@
+{
+  "code_files": 24,
+  "current_slice": "ROOT.GUIDELINES30 and DATA.GUIDELINES30 complete",
+  "decision_state_sha256": "fa4627c89e59ba8822aef0b4299ae123f079a9866fe4d8adae8476f7f169784f",
+  "deferred_runtime_goals": [
+    "ROOT.NOVA27",
+    "APP.REVALIDATE29"
+  ],
+  "evidence_files": 359,
+  "independent_clinical_validation": "not_run",
+  "model_calls": 0,
+  "network": "none",
+  "observed_at": "2026-10-17T10:08:53.155381+09:00",
+  "plan_extraction": "not_run",
+  "provenance_artifacts": 11,
+  "result": "pass",
+  "reviewed_states": {
+    "PROJECT_STATE.md": "e9104d43dd1340fb342b127bd5e97ea37d12fd8bc1b5e9f64decc0bad51b8478",
+    "data/PROJECT_STATE.md": "c8654808cc5a6a2270b3bec7c9b9518cd30cefc518511c4f610da9c55fae1d40",
+    "submission/PROJECT_STATE.md": "33898b3c8b249f791820125924e51e499896552e89047afe639fac17f1e3a45d"
+  },
+  "runtime_admission": "not_run",
+  "submission_state": "Review the existing application-owned state without editing it",
+  "tracked_diff_whitespace": "pass; git diff --check on the changed root data and Dev guidance/state documents",
+  "verification_scope": "Verify saved evidence and compact receipt hashes after state reconciliation; perform no new clinical or model validation"
+}

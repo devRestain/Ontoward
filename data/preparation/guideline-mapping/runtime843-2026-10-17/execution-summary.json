@@ -1,0 +1,216 @@
+{
+  "automatic_retries": 0,
+  "clinical_accuracy": "not_evaluated",
+  "completed_stages": {
+    "continuation": 1,
+    "continuation-2": 63,
+    "main-bounded": 2,
+    "main-evidence": 48,
+    "pilot-four": 1,
+    "pilot-single": 1,
+    "recovery": 14,
+    "recovery-2": 6,
+    "recovery-4": 5,
+    "recovery-5": 1
+  },
+  "corrections": [
+    "Reduce request body windows after INVALID_REQUEST_BODY and CONTEXT_LIMIT_EXCEEDED service rejections; preserve all requests and received error bodies",
+    "Require supplied evidence IDs and copy exact source windows in Python after one fabricated quote rejection",
+    "Validate the shared document pool across one request; preserve both original per-disease pool rejections and accept one unchanged complete response through explicit hashed revalidation",
+    "Recover only unresolved diseases in new stages under the original 150-request ceiling; preserve the prepared but uncalled recovery-3 workset"
+  ],
+  "credential_variable": "NOVA_DEV_KEY",
+  "decision": "D30",
+  "endpoint": "https://nova.snubhai.org/v1/chat/completions",
+  "external_guideline_currentness": "not_run",
+  "failure_records": [
+    {
+      "automatic_retries": 0,
+      "completed_after_revalidation": false,
+      "error": "Duplicate or unprovided document ID",
+      "records": [
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/4f320a66-1cec-4fa1-8037-94f74d406a0e/failure.json",
+          "sha256": "02694bf0033c5120bc52d566150607f4d8750213bb4747e4f5485bbf94189e71"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/4f320a66-1cec-4fa1-8037-94f74d406a0e/request.json",
+          "sha256": "c7f8fe1f9d3b086f850d5133724af6054687e463ec8d65245a7bc9fa2d7053e8"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/4f320a66-1cec-4fa1-8037-94f74d406a0e/response.json",
+          "sha256": "937e0b04f748f8a49687fd06e124d86a39f3d574e007c72c40f2781c89f82c67"
+        }
+      ],
+      "request_id": "4f320a66-1cec-4fa1-8037-94f74d406a0e",
+      "type": "ValueError"
+    },
+    {
+      "automatic_retries": 0,
+      "completed_after_revalidation": false,
+      "error": "INVALID_REQUEST_BODY",
+      "records": [
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/5277014c-4428-444a-96b7-19d506a2dbe2/failure.json",
+          "sha256": "97b4ab2815ac24d32792696f778dfafdf2c66bd4d4b5e80e703c00baedcaec6f"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/5277014c-4428-444a-96b7-19d506a2dbe2/http-error-body.json",
+          "sha256": "d150438ec7906d3f03c3ca5236440c6989d564e7406960f4e53b2ed40e8e6cea"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/5277014c-4428-444a-96b7-19d506a2dbe2/request.json",
+          "sha256": "5ada2b3932e74688d0e54e2a01a28d7a23b122f7a76887c8eaeafa0388233e8c"
+        }
+      ],
+      "request_id": "5277014c-4428-444a-96b7-19d506a2dbe2",
+      "type": "NovaError"
+    },
+    {
+      "automatic_retries": 0,
+      "completed_after_revalidation": false,
+      "error": "CONTEXT_LIMIT_EXCEEDED",
+      "records": [
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/8c28e137-8079-4408-bcb9-b22388b0bba4/failure.json",
+          "sha256": "d4390bc36d9d78a38359a49cc42c37674fe5995806f027971790c6efbb9dfd0f"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/8c28e137-8079-4408-bcb9-b22388b0bba4/http-error-body.json",
+          "sha256": "48576cb52507d8401b68184080b9d6b01b57456fd653fa32cdb555166d7ede52"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/8c28e137-8079-4408-bcb9-b22388b0bba4/request.json",
+          "sha256": "3cdb2d1382671902c21bd3f40de2e8c12da9f21fd6f4a5f61e65efea8681b18a"
+        }
+      ],
+      "request_id": "8c28e137-8079-4408-bcb9-b22388b0bba4",
+      "type": "NovaError"
+    },
+    {
+      "automatic_retries": 0,
+      "completed_after_revalidation": false,
+      "error": "Quote is not exact supplied body evidence: urn:ontoward:SnomedCT1149222004 G05298",
+      "records": [
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/9d192fa8-be14-4327-84df-4dc56f4267fc/failure.json",
+          "sha256": "84e70edf2e35ceab0cd5ceec64d8c78050848b03e71f9b1668e477ebaab7b1dd"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/9d192fa8-be14-4327-84df-4dc56f4267fc/request.json",
+          "sha256": "fad0f0283678edb2928e2c4bada9f7f57be4a34cd8a3e875d7093db7bc820336"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/9d192fa8-be14-4327-84df-4dc56f4267fc/response.json",
+          "sha256": "227b9567c8a0f438298dbf24d9a8d68b0fcb899f5763094759050ae33533ed7a"
+        }
+      ],
+      "request_id": "9d192fa8-be14-4327-84df-4dc56f4267fc",
+      "type": "ValueError"
+    },
+    {
+      "automatic_retries": 0,
+      "completed_after_revalidation": true,
+      "error": "Duplicate or unprovided document ID",
+      "records": [
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/de53ec39-1ba0-4b85-bf72-d75a630c3cb7/failure.json",
+          "sha256": "cd23e53e3eb0a5bd4d541d5ade099b2624477ed66c7070f88b9c7d27dd07d55f"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/de53ec39-1ba0-4b85-bf72-d75a630c3cb7/request.json",
+          "sha256": "a18c1d66d27dd6de07eb6aa63816a559898dc9d0c0b77e5e771d380266cded29"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/de53ec39-1ba0-4b85-bf72-d75a630c3cb7/response.json",
+          "sha256": "cadf05586b4a800d92f02f27ed82ae86b7ac7069cdbb13feb934d0c9afd87be7"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/de53ec39-1ba0-4b85-bf72-d75a630c3cb7/revalidation.json",
+          "sha256": "299afc1947d1875e4f31365f79f6de59c444ab5dd37be791bab8a3d78707cc40"
+        }
+      ],
+      "request_id": "de53ec39-1ba0-4b85-bf72-d75a630c3cb7",
+      "type": "ValueError"
+    },
+    {
+      "automatic_retries": 0,
+      "completed_after_revalidation": false,
+      "error": "INVALID_REQUEST_BODY",
+      "records": [
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/f3aba67a-fe42-43ee-a284-2d36dda99d14/failure.json",
+          "sha256": "6f0797d1e3e638122a6d8d47c01b0b5653f4897cd4388cdc6b3de0b2e6162d0d"
+        },
+        {
+          "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/f3aba67a-fe42-43ee-a284-2d36dda99d14/request.json",
+          "sha256": "4d8e19d8755e185503a1bb5c435553f5effcb217293f80643f139458b2c50c4c"
+        }
+      ],
+      "request_id": "f3aba67a-fe42-43ee-a284-2d36dda99d14",
+      "type": "NovaError"
+    }
+  ],
+  "independent_clinical_validation": "not_run",
+  "ledger": {
+    "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/requests.jsonl",
+    "sha256": "36d00a382a9c5864e7c85cafac07f926a143de5e20b849b5c04d069022e5929c"
+  },
+  "observed_at": "2026-10-17T10:07:47.438259+09:00",
+  "plan_extraction": "not_run",
+  "raw_model_response_files": 144,
+  "request_policy": {
+    "automatic_retries": 0,
+    "code_sha256": "327c72d224ff20e361546a8250ee942bf7671100a6d8ac89941eb3b1d38c5f8f",
+    "kst_day": "2026-10-17",
+    "max_calls": 150,
+    "model": "openai/gpt-6-luna",
+    "origin": "https://nova.snubhai.org",
+    "prompt_sha256": "0d49d91e4a8aa6a515a59ede78e6e877876294eab97a1b11afb01887077c3efa",
+    "session": "none"
+  },
+  "reserved_requests": 147,
+  "response_usage_scope": "All 144 stored model response files once, including rejected and revalidated responses; HTTP failures have no token usage evidence",
+  "response_usage_totals": {
+    "completion_tokens": 191431,
+    "prompt_tokens": 2615911,
+    "total_tokens": 2807342
+  },
+  "retained_failure_records": 6,
+  "revalidated_responses": 1,
+  "revalidation_records": [
+    {
+      "action": "Correct request-level source pool validation and accept the complete unchanged response",
+      "original_rejection_preserved": true,
+      "record": {
+        "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/calls/de53ec39-1ba0-4b85-bf72-d75a630c3cb7/revalidation.json",
+        "sha256": "299afc1947d1875e4f31365f79f6de59c444ab5dd37be791bab8a3d78707cc40"
+      },
+      "request_id": "de53ec39-1ba0-4b85-bf72-d75a630c3cb7",
+      "response_sha256": "cadf05586b4a800d92f02f27ed82ae86b7ac7069cdbb13feb934d0c9afd87be7",
+      "result": "pass",
+      "validation_code_sha256": "5f4f74ddbed58f12bfba5fd84a39025315c052dfd8825d79030a1014c87f991b"
+    }
+  ],
+  "runtime_admission": "not_run",
+  "same_stage_automatic_resume": false,
+  "session_created": false,
+  "stages": {
+    "continuation": 1,
+    "continuation-2": 63,
+    "main": 1,
+    "main-bounded": 3,
+    "main-evidence": 49,
+    "pilot": 1,
+    "pilot-four": 1,
+    "pilot-single": 1,
+    "pilot-split": 1,
+    "recovery": 14,
+    "recovery-2": 6,
+    "recovery-4": 5,
+    "recovery-5": 1
+  },
+  "status": "complete",
+  "uncompleted_requests": 5,
+  "validated_completed_requests": 142
+}

@@ -58,6 +58,7 @@ def verify(submission, output):
             self.context_status = context_status
             self.remaining = 50
             self.actions, self.submissions = [], []
+            self.unlinked_recoveries = 0
             self.deadline = datetime.now(timezone.utc) + timedelta(minutes=25)
 
         def session(self):
@@ -69,6 +70,14 @@ def verify(submission, output):
             payload = json.loads(messages[1]['content'])
             question, text = payload['question'], payload['input']
             facts = []
+            available = {entry['id'] for entry in payload['vocabulary']}
+            if payload['parser_pass'] == 'expansion' and target in available:
+                for original_fact in payload.get('unlinked_facts', []):
+                    if original_fact['quote'] == '배가 아파요':
+                        repaired = json.loads(json.dumps(original_fact))
+                        repaired['value']['concept_ids'] = [target]
+                        facts.append(repaired)
+                        self.unlinked_recoveries += 1
             if payload['parser_pass'] != 'expansion' and (question is None or
                     question['purpose'] in {'chief', 'hpi', 'ros', 'feature', 'context', 'clarification'}):
                 is_context = question is not None and question['purpose'] == 'context'
@@ -78,7 +87,7 @@ def verify(submission, output):
                 value = {'kind':'context' if is_context else 'attribute' if attr else 'finding' if is_exam else 'symptom',
                     'text':text, 'status':self.context_status if is_context else 'unknown' if attr else
                         'present' if concept == target or is_exam else 'absent',
-                    'concept_ids':[concept], 'subject':question['subject'] if question else 'patient',
+                    'concept_ids':[concept] if concept in available else [], 'subject':question['subject'] if question else 'patient',
                     'time_context':question['time_context'] if question else 'current'}
                 if not is_context:
                     value.update(observation_id=(question['observation_id'] if question else None) or 'abdominal',
@@ -89,7 +98,10 @@ def verify(submission, output):
                 if question:
                     fact['record_id'] = question['item_id']
                 facts.append(fact)
-            return {'choices':[{'message':{'content':json.dumps({'facts':facts}, ensure_ascii=False)}}],
+            parsed = {'facts': facts}
+            if any(item['field'] == 'S.cc' and not item['value']['concept_ids'] for item in facts):
+                parsed.update(needs_context=True, lookup_terms=[knowledge.label(target)])
+            return {'choices':[{'message':{'content':json.dumps(parsed, ensure_ascii=False)}}],
                     'usage':{'prompt_tokens':20, 'completion_tokens':10}}
 
         def action(self, kind, content, request_id):
@@ -97,7 +109,7 @@ def verify(submission, output):
                     'delivery_nfc_1_to_30:' + request_id)
             require(any('\uac00' <= char <= '\ud7a3' for char in content), 'delivery_contains_korean:' + request_id)
             require(content in allowed_say if kind == 'SAY' else content == exam_text,
-                    'deliver_exact_prepared_wording:' + request_id)
+                    'deliver_exact_prepared_wording:' + request_id + ':' + content)
             self.remaining -= 1
             self.actions.append({'kind':kind, 'content':content, 'request_id':request_id})
             response = {'status':'OK', 'turn':50 - self.remaining, 'turns_remaining':self.remaining}
@@ -132,6 +144,7 @@ def verify(submission, output):
         contexts = [entry for entry in delivered if entry.question.purpose == 'context']
         require(outcome.interaction.termination == 'submitted' and len(client.submissions) == 1,
                 'confirmed_submission:' + context_status)
+        require(client.unlinked_recoveries > 0, 'bounded_korean_complaint_link_recovery:' + context_status)
         require(outcome.session.usage['Education'].actions == 0 and outcome.session.usage['Education'].calls == 0
                 and not any(entry.question.purpose == 'education' for entry in delivered)
                 and client.submissions[0]['note']['P']['education'] == '', 'education_pass:' + context_status)
@@ -152,6 +165,8 @@ def verify(submission, output):
             expanded = metrics['pass'] == 'expansion'
             require(metrics['vocabulary_count'] <= (1024 if expanded else 256) and
                     metrics['vocabulary_bytes'] <= (131072 if expanded else 32768), 'bounded_gateway_projection:' + context_status)
+            require(metrics['request_bytes'] <= metrics['request_byte_limit'] <= (16384 if expanded else 12288),
+                    'bounded_complete_gateway_request:' + context_status)
         (output / ('case-' + context_status + '.json')).write_text(outcome.model_dump_json(indent=2))
         cases.append({'context_status':context_status, 'termination':outcome.interaction.termination,
             'diagnosis_kind':outcome.case.diagnosis_kind, 'actions':len(client.actions), 'ros_actions':len(ros),

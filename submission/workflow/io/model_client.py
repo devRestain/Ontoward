@@ -50,6 +50,8 @@ class ModelClient:
                 state.interaction.issues.append(error.code)
             elif error.code == "PROVIDER_RESPONSE_INVALID":
                 state.interaction.issues.append(f"empty_{role}_response")
+            elif error.code == "CONTEXT_LIMIT_EXCEEDED":
+                state.interaction.issues.append(error.code)
             else:
                 state.stop(failure_outcome(error), error.code)
         except (KeyError, IndexError, TypeError, ValueError):

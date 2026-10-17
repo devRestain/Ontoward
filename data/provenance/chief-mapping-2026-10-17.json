@@ -1,0 +1,512 @@
+{
+  "decision": "D29",
+  "observed_at": "2026-10-17T00:43:48.657771+09:00",
+  "baseline_revision": "7b13f05b094fce2999d32c61b1fdad12ff03867c",
+  "request": "Require case-independent Gateway selection of one existing Symptom for a reported chief complaint",
+  "mapping_policy": {
+    "case_rules": "none",
+    "manual_clinical_synonym_table": "none",
+    "source_names": "preferred label, all RDF labels and SKOS altLabels",
+    "initial_chief_candidate_kind": "Symptom",
+    "ids_per_mapped_chief": 1,
+    "approximation_status": "uncertain",
+    "lookup_terms_maximum": 8,
+    "lookup_term_codepoints": 80,
+    "extra_calls_per_reply": 1,
+    "primary_bytes": 12288,
+    "expansion_bytes": 16384,
+    "context_recovery_bytes": 8192,
+    "empty_facts": "unresolved; recover once",
+    "exhausted_recovery": "preserve raw report and request bounded clarification"
+  },
+  "historical_correction": {
+    "receipt": "data/provenance/local-evaluator-2026-10-16.json",
+    "meaning": "The saved C01/C03 empty mappings diagnose the removed scripted string matcher, not absence of graph vocabulary or real NOVA mapping failure",
+    "original_candidate_exposure": "unknown; original requests stored hashes without message bodies",
+    "current_baseline_candidate_measurement": "Tmp/cc-mapping-2026-10-17/inspection-before.json",
+    "current_candidate_audit": "Test/server.py now preserves actual model request bodies without credentials",
+    "nonempty_response_counter": "doctor_successes includes {facts:[]}; parser_result.linked_chief_facts records accepted links"
+  },
+  "verification": {
+    "status": "pass",
+    "decision": "D29",
+    "canonical": {
+      "workflow_tests": 85,
+      "admitted_cases": 3,
+      "korean_checks": 790
+    },
+    "isolated": {
+      "workflow_tests": 85,
+      "admitted_cases": 3,
+      "korean_checks": 790
+    },
+    "evaluator": {
+      "tests": 25,
+      "source": "Tmp/test-evaluator/verify-20261016T153402Z-4258/verification.json"
+    },
+    "artifact": {
+      "archive": "Tmp/packaging/cc-mapping-2026-10-17/ontoward-submission.zip",
+      "sha256": "8854832ee1ff787a9d08213938b65c6065f87aaa14d7a9e8b693553f0cfe2c28",
+      "file_count": 42,
+      "compressed_bytes": 1364316
+    },
+    "protected_count": 14,
+    "payload_measurement_cases": 6,
+    "actual_nova": "not_run",
+    "official_sample_validation": "not_run",
+    "clinical_accuracy": "not_evaluated"
+  },
+  "artifact": {
+    "status": "pass",
+    "archive": "Tmp/packaging/cc-mapping-2026-10-17/ontoward-submission.zip",
+    "sha256": "8854832ee1ff787a9d08213938b65c6065f87aaa14d7a9e8b693553f0cfe2c28",
+    "file_count": 42,
+    "compressed_bytes": 1364316,
+    "runtime_members": {
+      ".env": "4573177a2f0b44518cf6bb9a1ef0140772fccad3ee42ac00263edc85f100e808",
+      "config/input_parser.txt": "7ceaf5e08b7966b8081821f1a9371f3e26befd8fbc98f233e7390b9f9a98d0b5",
+      "config/texts.ko.json": "bde4044afa22e355f32ec0a3fc1057730c1a64909ab404355195e671d10bcffd",
+      "knowledge/5b44871b970f5e98-clinical.ttl": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a",
+      "knowledge/5b44871b970f5e98-questions.ko.json": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687",
+      "knowledge/5b44871b970f5e98-reasoning_policy.json": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc",
+      "knowledge/5b44871b970f5e98-vocabulary.ttl": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88",
+      "knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "knowledge/conditions.py": "bce35e863d6a53e448ec36d752f6d11abc1f4ba36c7c551f2ce8ada777306eb6",
+      "knowledge/graph.py": "6b780e4560206271c682967f1e409b1cee9881c1e6c6b42f2016e6afbfe6efb3",
+      "knowledge/manifest.json": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61",
+      "knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+      "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+      "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+      "settings.py": "a57a980c77a7e50e3528ebeaed3b1c5fe866a7d2898e5350488d4ef2451985db",
+      "workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/clinical_reasoner.py": "485fdd6c4c2bd6a29ce7c81c57557870e3cb54c0b9ac2724f334ddfd68ea1f54",
+      "workflow/consultation.py": "18dd1702c3f231e49e52b9a5b7874a14b3518824ee1ab9197c5a3082096cce4b",
+      "workflow/doctor.py": "fc386d980520d6423093ac2e154b9b80148394f1a559dbfa35c98d50c2c841ae",
+      "workflow/graph.py": "a4e5c6ac1c960cd913ae27295769132c46068c7a67b090b68e9bea7fa71430e4",
+      "workflow/input_interpreter.py": "fa486523f00453d871fa26cf7a9e6c1bd8df62b2dca04cd07faab8c939318a47",
+      "workflow/interview_planner.py": "c331b4a018416434b1920b052bc5b8d9e9768e4bc9bda6fb1d61828e60253c8d",
+      "workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/io/model_client.py": "ef723303f2d46620dcb361a54484324e490ca2d73153b54c6c89cba9ac4dfdc4",
+      "workflow/io/nova_session.py": "fac9fda2db826d001cfa8c8a307084981848d9f0581eab9b40ff0a5bfd54158c",
+      "workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+      "workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/rules/action.py": "8c0607c389057c9299e6046974b42e3e713a82246f2f70e4318f2dd3f5bc3942",
+      "workflow/rules/budget.py": "c4bddf97bf1b928cab581821a0762371369d1b1c321a414ec1234ffe59e214c8",
+      "workflow/rules/input.py": "efc9a0af9fdba43f07cddfa76f2a28286d269212ffd0d46892a48c5531cb0686",
+      "workflow/rules/limits.py": "a2c5a438d315800739e208e896825c4fe0595a3a0ba9f8764bda1954e1cd6bd2",
+      "workflow/rules/submission.py": "ce004712cd7d06e5a9fa3789ab5338c6cd1e73a970ba3048f6be624cebeba91f",
+      "workflow/runtime.py": "c729ccb4742608c3a5b6b12dcd9cbcdc60f181e35d4bb381a0f312139583d586",
+      "workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/state/interactions.py": "63953fdc176918822f95331e77d778925e07e6a490e241ead8c5a4661bad0f31",
+      "workflow/state/models.py": "0a0fac86f8b658ee970315292ce56d078822b8de261df7489de4713443371279",
+      "workflow/state/questions.py": "c8e246cf7aba746da59d626f3c5bbe66c51ac7b8ca662d5f54b4f92291ebbe80",
+      "workflow/state/usage.py": "ed68c2d9903a41724d5b258d4f4d7bc6e9bc1f6417b14245c1d36a244fc16b1a",
+      "workflow/submission_writer.py": "2939bd9cafa32ddfa096a3c89e52dbcd61f82b67c4764d14c70dac892a012dc0",
+      "workflow/text_config.py": "fac113881ca925cc67a83cb273a177a7de96b6ad789251ecdcb42093dbb422f1"
+    },
+    "protected_hashes": {
+      "submission/knowledge/5b44871b970f5e98-vocabulary.ttl": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88",
+      "submission/knowledge/reasoning_policy.json": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc",
+      "submission/knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+      "submission/knowledge/5b44871b970f5e98-questions.ko.json": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687",
+      "submission/knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "submission/knowledge/manifest.json": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61",
+      "submission/knowledge/5b44871b970f5e98-reasoning_policy.json": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc",
+      "submission/knowledge/5b44871b970f5e98-clinical.ttl": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a",
+      "submission/nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "submission/requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+      "submission/.env": "4573177a2f0b44518cf6bb9a1ef0140772fccad3ee42ac00263edc85f100e808",
+      "assets/nova-samples-2026/C01/case.json": "0f38a63265017667fe91828ede0271a9c0f5575bc164d81a1f05540445586b71",
+      "assets/nova-samples-2026/C03/case.json": "907dc541535dd939ec63fb19547f0d200e1f24264479729610c5d4bdf5343e07",
+      "assets/nova-samples-2026/C10/case.json": "570a87bdf976a4c99052120aacee6a7af9777ca23226f41e97d211f404067311"
+    },
+    "source_identity": "pass",
+    "protected_assets": "unchanged",
+    "actual_nova": "not_run"
+  },
+  "isolation": {
+    "cpu_max": "200000 100000",
+    "memory_max": "8589934592",
+    "root_read_only": true,
+    "submission_read_only": true,
+    "tmp_mount_options": [
+      "rw",
+      "nosuid",
+      "nodev",
+      "noexec",
+      "relatime",
+      "size=524288k",
+      "inode64"
+    ],
+    "uid": 501,
+    "development_key_present": false,
+    "workspace_entries": [],
+    "parent_data_present": false,
+    "parent_assets_present": false,
+    "network_interfaces": [
+      "lo"
+    ]
+  },
+  "prompt_measurements": [
+    {
+      "case": "C01",
+      "fault": false,
+      "calls": 2,
+      "payloads": [
+        {
+          "pass": "primary",
+          "vocabulary_count": 30,
+          "vocabulary_bytes": 3794,
+          "payload_bytes": 8244,
+          "request_bytes": 12161,
+          "request_byte_limit": 12288,
+          "compact": false,
+          "context_bytes": 28,
+          "context_records": 0,
+          "context_turns": 0
+        },
+        {
+          "pass": "expansion",
+          "vocabulary_count": 51,
+          "vocabulary_bytes": 6268,
+          "payload_bytes": 11951,
+          "request_bytes": 16277,
+          "request_byte_limit": 16384,
+          "compact": false,
+          "context_bytes": 442,
+          "context_records": 1,
+          "context_turns": 0
+        }
+      ],
+      "results": [
+        {
+          "accepted_facts": 0,
+          "linked_chief_facts": 0,
+          "unlinked_facts": 0,
+          "rejected_facts": 0,
+          "needs_context": true,
+          "lookup_terms": []
+        },
+        {
+          "accepted_facts": 0,
+          "linked_chief_facts": 0,
+          "unlinked_facts": 0,
+          "rejected_facts": 0,
+          "needs_context": true,
+          "lookup_terms": []
+        }
+      ],
+      "issues": [
+        "chief_mapping_unresolved",
+        "chief_mapping_unresolved"
+      ],
+      "overflows": []
+    },
+    {
+      "case": "C03",
+      "fault": false,
+      "calls": 2,
+      "payloads": [
+        {
+          "pass": "primary",
+          "vocabulary_count": 26,
+          "vocabulary_bytes": 3351,
+          "payload_bytes": 8344,
+          "request_bytes": 12203,
+          "request_byte_limit": 12288,
+          "compact": false,
+          "context_bytes": 28,
+          "context_records": 0,
+          "context_turns": 0
+        },
+        {
+          "pass": "expansion",
+          "vocabulary_count": 46,
+          "vocabulary_bytes": 5787,
+          "payload_bytes": 11968,
+          "request_bytes": 16218,
+          "request_byte_limit": 16384,
+          "compact": false,
+          "context_bytes": 436,
+          "context_records": 1,
+          "context_turns": 0
+        }
+      ],
+      "results": [
+        {
+          "accepted_facts": 0,
+          "linked_chief_facts": 0,
+          "unlinked_facts": 0,
+          "rejected_facts": 0,
+          "needs_context": true,
+          "lookup_terms": []
+        },
+        {
+          "accepted_facts": 0,
+          "linked_chief_facts": 0,
+          "unlinked_facts": 0,
+          "rejected_facts": 0,
+          "needs_context": true,
+          "lookup_terms": []
+        }
+      ],
+      "issues": [
+        "chief_mapping_unresolved",
+        "chief_mapping_unresolved"
+      ],
+      "overflows": []
+    },
+    {
+      "case": "C10",
+      "fault": false,
+      "calls": 2,
+      "payloads": [
+        {
+          "pass": "primary",
+          "vocabulary_count": 28,
+          "vocabulary_bytes": 3602,
+          "payload_bytes": 8331,
+          "request_bytes": 12226,
+          "request_byte_limit": 12288,
+          "compact": false,
+          "context_bytes": 28,
+          "context_records": 0,
+          "context_turns": 0
+        },
+        {
+          "pass": "expansion",
+          "vocabulary_count": 48,
+          "vocabulary_bytes": 6059,
+          "payload_bytes": 11992,
+          "request_bytes": 16274,
+          "request_byte_limit": 16384,
+          "compact": false,
+          "context_bytes": 443,
+          "context_records": 1,
+          "context_turns": 0
+        }
+      ],
+      "results": [
+        {
+          "accepted_facts": 0,
+          "linked_chief_facts": 0,
+          "unlinked_facts": 0,
+          "rejected_facts": 0,
+          "needs_context": true,
+          "lookup_terms": []
+        },
+        {
+          "accepted_facts": 0,
+          "linked_chief_facts": 0,
+          "unlinked_facts": 0,
+          "rejected_facts": 0,
+          "needs_context": true,
+          "lookup_terms": []
+        }
+      ],
+      "issues": [
+        "chief_mapping_unresolved",
+        "chief_mapping_unresolved"
+      ],
+      "overflows": []
+    },
+    {
+      "case": "C01",
+      "fault": true,
+      "calls": 2,
+      "payloads": [
+        {
+          "pass": "primary",
+          "vocabulary_count": 30,
+          "vocabulary_bytes": 3794,
+          "payload_bytes": 8244,
+          "request_bytes": 12161,
+          "request_byte_limit": 12288,
+          "compact": false,
+          "context_bytes": 28,
+          "context_records": 0,
+          "context_turns": 0
+        },
+        {
+          "pass": "expansion",
+          "vocabulary_count": 8,
+          "vocabulary_bytes": 993,
+          "payload_bytes": 4514,
+          "request_bytes": 8041,
+          "request_byte_limit": 8192,
+          "compact": true,
+          "context_bytes": 28,
+          "context_records": 0,
+          "context_turns": 0
+        }
+      ],
+      "results": [
+        null,
+        {
+          "accepted_facts": 0,
+          "linked_chief_facts": 0,
+          "unlinked_facts": 0,
+          "rejected_facts": 0,
+          "needs_context": true,
+          "lookup_terms": []
+        }
+      ],
+      "issues": [
+        "CONTEXT_LIMIT_EXCEEDED",
+        "chief_mapping_unresolved"
+      ],
+      "overflows": []
+    },
+    {
+      "case": "C03",
+      "fault": true,
+      "calls": 2,
+      "payloads": [
+        {
+          "pass": "primary",
+          "vocabulary_count": 26,
+          "vocabulary_bytes": 3351,
+          "payload_bytes": 8344,
+          "request_bytes": 12203,
+          "request_byte_limit": 12288,
+          "compact": false,
+          "context_bytes": 28,
+          "context_records": 0,
+          "context_turns": 0
+        },
+        {
+          "pass": "expansion",
+          "vocabulary_count": 4,
+          "vocabulary_bytes": 565,
+          "payload_bytes": 4630,
+          "request_bytes": 8093,
+          "request_byte_limit": 8192,
+          "compact": true,
+          "context_bytes": 28,
+          "context_records": 0,
+          "context_turns": 0
+        }
+      ],
+      "results": [
+        null,
+        {
+          "accepted_facts": 0,
+          "linked_chief_facts": 0,
+          "unlinked_facts": 0,
+          "rejected_facts": 0,
+          "needs_context": true,
+          "lookup_terms": []
+        }
+      ],
+      "issues": [
+        "CONTEXT_LIMIT_EXCEEDED",
+        "chief_mapping_unresolved"
+      ],
+      "overflows": []
+    },
+    {
+      "case": "C10",
+      "fault": true,
+      "calls": 2,
+      "payloads": [
+        {
+          "pass": "primary",
+          "vocabulary_count": 28,
+          "vocabulary_bytes": 3602,
+          "payload_bytes": 8331,
+          "request_bytes": 12226,
+          "request_byte_limit": 12288,
+          "compact": false,
+          "context_bytes": 28,
+          "context_records": 0,
+          "context_turns": 0
+        },
+        {
+          "pass": "expansion",
+          "vocabulary_count": 5,
+          "vocabulary_bytes": 735,
+          "payload_bytes": 4497,
+          "request_bytes": 7980,
+          "request_byte_limit": 8192,
+          "compact": true,
+          "context_bytes": 28,
+          "context_records": 0,
+          "context_turns": 0
+        }
+      ],
+      "results": [
+        null,
+        {
+          "accepted_facts": 0,
+          "linked_chief_facts": 0,
+          "unlinked_facts": 0,
+          "rejected_facts": 0,
+          "needs_context": true,
+          "lookup_terms": []
+        }
+      ],
+      "issues": [
+        "CONTEXT_LIMIT_EXCEEDED",
+        "chief_mapping_unresolved"
+      ],
+      "overflows": []
+    }
+  ],
+  "protected_hashes": {
+    "submission/knowledge/5b44871b970f5e98-vocabulary.ttl": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88",
+    "submission/knowledge/reasoning_policy.json": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc",
+    "submission/knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+    "submission/knowledge/5b44871b970f5e98-questions.ko.json": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687",
+    "submission/knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+    "submission/knowledge/manifest.json": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61",
+    "submission/knowledge/5b44871b970f5e98-reasoning_policy.json": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc",
+    "submission/knowledge/5b44871b970f5e98-clinical.ttl": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a",
+    "submission/nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    "submission/requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+    "submission/.env": "4573177a2f0b44518cf6bb9a1ef0140772fccad3ee42ac00263edc85f100e808",
+    "assets/nova-samples-2026/C01/case.json": "0f38a63265017667fe91828ede0271a9c0f5575bc164d81a1f05540445586b71",
+    "assets/nova-samples-2026/C03/case.json": "907dc541535dd939ec63fb19547f0d200e1f24264479729610c5d4bdf5343e07",
+    "assets/nova-samples-2026/C10/case.json": "570a87bdf976a4c99052120aacee6a7af9777ca23226f41e97d211f404067311"
+  },
+  "source_hashes": {
+    "submission/workflow/input_interpreter.py": "fa486523f00453d871fa26cf7a9e6c1bd8df62b2dca04cd07faab8c939318a47",
+    "submission/workflow/rules/input.py": "efc9a0af9fdba43f07cddfa76f2a28286d269212ffd0d46892a48c5531cb0686",
+    "submission/workflow/state/models.py": "0a0fac86f8b658ee970315292ce56d078822b8de261df7489de4713443371279",
+    "submission/knowledge/graph.py": "6b780e4560206271c682967f1e409b1cee9881c1e6c6b42f2016e6afbfe6efb3",
+    "submission/config/input_parser.txt": "7ceaf5e08b7966b8081821f1a9371f3e26befd8fbc98f233e7390b9f9a98d0b5",
+    "Dev/tests/workflow/test_workflow.py": "61d032b85c136cc962ea0ed0e9784ae72203f044f3f45bb20d6f9df7b9d61c83",
+    "Dev/tests/workflow/test_admitted.py": "80ab61cff156715f0a7cec95f536547a66cf14a3d1da07aa941a196b6830c2f2",
+    "Dev/tests/workflow/test_korean_admitted.py": "e68c2f243435768dccbf37a54ff18629d345ea6277495c4f49b51294a80198e0",
+    "Test/models.py": "b77dbdcadc58693303a431917743c6f384d97d33d4481f40d442830387539e77",
+    "Test/server.py": "a43cea6b9cf77d7199ac4e65957c174580d5a7134ea649beb3fd5d2d817a6ba2",
+    "Test/report.py": "528aa7f5a1a8c79b566571783b1e11dcf5b426249e4a42b0d230006e0f46c5de",
+    "Test/test_evaluator.py": "6e0ce3779adcf2d2548e5a53d29e0b8789fe441eef7fc0bd3c03bc9b3d214a14"
+  },
+  "earlier_failures": [
+    {
+      "source": "Tmp/cc-mapping-2026-10-17/workflow/verification.json",
+      "classification": "scripted_fixture",
+      "resolution": "Use lookup hints before returning an unoffered expansion ID"
+    },
+    {
+      "source": "Tmp/cc-mapping-2026-10-17/canonical/verification.json",
+      "classification": "scripted_fixture",
+      "resolution": "Supply the source label as a retrieval hint for the unlinked Korean test complaint; preserve strict prepared wording checks"
+    },
+    {
+      "classification": "prompt_fit",
+      "resolution": "Compact redundant schema metadata and prompt wording; retain all field constraints and at least one Symptom under the 8-KiB recovery cap"
+    }
+  ],
+  "superseded_experiment": "Tmp/test-evaluator/C03-20261016T152537Z-99531 is excluded from acceptance; final scripted Gateway has no case-to-concept fixtures",
+  "models": "scripted_only",
+  "verification_network": "none",
+  "authenticated_nova": "not_run",
+  "source_downloads": "not_run",
+  "official_upload": "not_run",
+  "official_scoring": "not_run",
+  "commit": "not_run",
+  "deployment": "not_run"
+}

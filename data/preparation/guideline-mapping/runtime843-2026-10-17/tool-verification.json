@@ -1,0 +1,14 @@
+{
+  "code_sha256": "694d894d6c2002f083c2a726a98b55365d1e0a7b489b1cb2a714353c2bbef22a",
+  "command": "python -B -m unittest Dev.tests.guidelines.test_mapping",
+  "errors": 0,
+  "failures": 0,
+  "model_calls": 0,
+  "network": "none",
+  "observed_at": "2026-10-17T10:04:05.505458+09:00",
+  "python": "3.12.15",
+  "rdflib": "7.6.0",
+  "result": "pass",
+  "test_sha256": "011d332c34b3d8926c6987564060b91d41912c68e3fd014f3683cbd1d1d6bd37",
+  "tests": 23
+}

@@ -32,6 +32,7 @@ Ontoward/
 │   ├── catalog/    # 원본 경로 목록
 │   └── provenance/ # 출처 식별·저장 정리와 복원 영수증
 ├── assets/         # 주최자 원본과 공모전 참고 문서
+├── Test/           # 로컬 평가 API·NOVA 모의 환자·격리 컨테이너
 └── Tmp/
     ├── codex/      # 임시 Codex 출력
     └── packaging/  # 생성 ZIP
@@ -64,6 +65,12 @@ docker compose run --rm dev
 ```
 
 Dockerfile은 submission/requirements.txt의 고정 버전을 PyPI 휠로 설치한다. D18 준비는 기존 dev 이미지의 SQLite·Pydantic·RDFLib로 전체 RF2 Snapshot·BODHI-S를 처리한다. 필요한 정규화·한국어 생성은 별도 ontology-extraction 서비스와 기존 전용 Codex 인증 volume을 사용한다. 선택 어휘의 번역·임상 질문 전체 작업 집합과 생성·의미 대조의 유한 호출 상한을 고정한다. Dev/ontology와 data가 준비·검토를, submission/knowledge가 명시적 승인 후 수용한 실행 자산을 관리한다.
+
+## 로컬 공개 샘플 테스트
+
+[Test 실행 안내](Test/README.md)에 SDK HTTP API와 예선 자원 제약을 재현하는 컨테이너를 둔다. `sh Test/run.sh verify`는 외부 모델 없는 API 경계 검사이고 `sh Test/run.sh C10 scripted`는 기존 제출 에이전트의 오프라인 실행이다. 별도 `nova` 모드는 루트 개발 키로 모의 환자·진찰·Gateway를 호출하며 시뮬레이터만 외부 네트워크를 사용한다. 환자 대본·진찰표·참조 SOAP·개발 키는 에이전트에 연결하지 않는다. 로컬 결과는 채점하지 않으며 공식 평가와 구분한다.
+
+[D29](DECISION_STATE.md#D29)는 실제 Input Gateway가 주호소를 기존 Symptom 하나에 매핑하도록 요구하고 원천의 한·영 라벨·동의어와 제한된 전체 색인 재검색을 사용한다. Test의 증례별 문자열 매처는 제거했다. 오프라인 회귀와 프로토콜 대역의 통과는 실제 NOVA의 자연어 해석 정확도와 구분한다.
 
 ## ZIP 만들기
 

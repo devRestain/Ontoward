@@ -153,21 +153,24 @@ class ClinicalKnowledge:
     def normalize_alias(text):
         return "".join(unicodedata.normalize("NFC", text).casefold().split())
 
-    def concepts(self, ids=None) -> list[dict[str, str]]:
+    def concepts(self, ids=None) -> list[dict[str, object]]:
         if self._concept_cache is None:
-            self._concept_cache = {str(subject): {"id": str(subject), "label": self.label(str(subject)), "kind": kind}
+            self._concept_cache = {str(subject): {"id": str(subject), "label": self.label(str(subject)), "kind": kind,
+                "aliases": sorted({str(name) for predicate in (RDFS.label, SKOS.altLabel)
+                                   for name in self._graph.objects(subject, predicate)} - {self.label(str(subject))})}
                 for kind in ("Symptom", "ExamFinding", "ContextFactor", "AttributeValue", "FindingAttribute")
                 for subject in sorted(set(self._graph.subjects(RDF.type, OW[kind])), key=str)}
         selected = self._concept_cache if ids is None else dict.fromkeys(ids)
         return [dict(self._concept_cache[key]) for key in selected if key in self._concept_cache]
 
-    def search_concepts(self, text: str) -> list[str]:
+    def search_concepts(self, text: str, *, kind: str | None = None) -> list[str]:
         self.resolve_concept("")
         normalized = self.normalize_alias(text)
         grams = {normalized[i:i + 2] for i in range(max(1, len(normalized) - 1))}
         labels = set().union(*(self._alias_grams.get(gram, set()) for gram in grams)) if grams else set()
         matches = [(label in normalized, len(label) if label in normalized else sum(g in label for g in grams) / max(1, len(label)), subject)
-                   for label in labels for subject in self._label_index[label]]
+                   for label in labels for subject in self._label_index[label]
+                   if kind is None or self.has_type(subject, kind)]
         return list(dict.fromkeys(subject for _, _, subject in sorted(matches, key=lambda p: (-p[0], -p[1], p[2]))))[:64]
 
     def iter_concepts(self, ids=None):

@@ -1,0 +1,19 @@
+{
+  "catalog_documents_preserved": 15904,
+  "complete_coverage_required": true,
+  "diseases": 843,
+  "independent_clinical_validation": "not_run",
+  "mapped": 843,
+  "mappings_sha256": "6501f6efa20397b548bbe09721dd14dd102cfc5937a1027b33744f3fd8e51361",
+  "model_requests": 147,
+  "model_responses": 142,
+  "model_results_replayed": 843,
+  "result": "pass",
+  "runtime_admission": "not_run",
+  "source_family_paths_verified": 253,
+  "submission_files_preserved": 44,
+  "unrelated_guidance_baseline_differences": [
+    "submission/PROJECT_STATE.md",
+    "submission/README.md"
+  ]
+}

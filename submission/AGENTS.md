@@ -38,6 +38,9 @@
 
 - Route every SAY/EXAM reply through InputInterpreter, including education replies.
 - Use openai/gpt-6-luna only for Gateway interpretation and parse the first substantive patient statement with that model.
+- Apply D29 to require one best supplied Symptom per reported current chief; mark approximate interpretation uncertain and retain its exact patient quote.
+- Expose source labels and aliases, restrict initial chief candidates to Symptoms, and use bounded model lookup terms to search the full source index within the existing one-call recovery allowance.
+- Keep the chief schema enum synchronized with the transmitted candidates, reject multiple chief IDs and unqualified diagnostic composites, and record linked-chief counts separately from nonempty model responses.
 - Keep routing, selection, scores, final diagnosis, and SOAP in Python.
 - Preserve the complete actual transcript case-locally; exclude failed drafts, undelivered text, and transport errors from dialogue.
 - Project current question, relevant observations/episodes, and original context into bounded requests rather than sending the full history.
@@ -49,7 +52,10 @@
 - Include malformed or empty Gateway JSON in that same one-call recovery allowance without admitting ungrounded facts.
 - Use fixed parsing only for complete replies matching an explicit prepared answer contract; send compound, temporal, and subject-changing replies to Gateway.
 - Bound primary vocabulary to 256 concepts/32 KiB and expansion to 1024 concepts/128 KiB.
-- Require only question Target/Attribute identifiers, prefer Target-specific values and current wording, and stop candidate construction at the count limit.
+- Preserve question Target/Attribute identifiers, prioritize chief lookup terms and current wording before optional Target-specific values, and stop candidate construction at the count limit.
+- Apply D28 whole-message UTF-8 JSON caps of 12 KiB primary, 16 KiB expansion, and 8 KiB after a context rejection; include system instructions, schema, current input, question, vocabulary, and past context.
+- Prioritize current wording and trim optional vocabulary and past context without truncating current input, question, schema, or required Target/Attribute IDs; preserve oversized input for clarification without transmission.
+- Treat CONTEXT_LIMIT_EXCEEDED as a request-specific rejection and use only the existing one-call recovery allowance with a smaller payload and a new request ID; preserve accepted facts and normal clarification/finalization limits.
 - Keep unknown, uncertain, explicit absence, unasked, unperformed, and acquired evidence distinct.
 - Preserve raw reports, subject/time, broad and fine locations, corrections, separate observations/episodes, typed quantities/ranges, and both time axes.
 - Keep patient speech, actual EXAM findings, initial vitals, proposed tests, and plans in their designated SOAP roles.

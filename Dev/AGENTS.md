@@ -6,6 +6,7 @@
 - Keep runtime code and graph readers in root submission/ and durable provenance and preparation results in root data/.
 - Keep disposable fixtures and reports in root Tmp/ and operational progress in root PROJECT_STATE.md.
 - Own tests/workflow, tests/ontology, architecture/WORKFLOW_RULES.md, and packaging/package_submission.py.
+- Own guidelines/map.py and tests/guidelines for D30 catalog-allowlisted disease mappings, exact evidence replay, and bounded session-free NOVA gpt-6-luna review.
 - Package only submission runtime files and public settings; keep preparation code, tests, guidance, state, source originals, and credentials outside the ZIP.
 - Read archive inputs only from /submission and write output only to /output.
 

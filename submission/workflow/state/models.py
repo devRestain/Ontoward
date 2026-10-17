@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Literal
+from typing import Annotated, Literal
 
 from nova_sdk import RECORD_FIELDS
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_validator
@@ -311,9 +311,13 @@ class Fact(Model):
     context_refs: list[str] = Field(default_factory=list)
 
 
+LookupTerm = Annotated[str, Field(min_length=1, max_length=80)]
+
+
 class ParsedInput(Model):
     facts: list[Fact] = Field(default_factory=list)
     needs_context: bool = False
+    lookup_terms: list[LookupTerm] = Field(default_factory=list, max_length=8)
 
 
 class ParseResult(Model):
@@ -321,3 +325,5 @@ class ParseResult(Model):
     rejected_facts: list[dict[str, object]] = Field(default_factory=list)
     unresolved_links: list[int] = Field(default_factory=list)
     needs_context: bool = False
+    context_limited: bool = False
+    lookup_terms: list[LookupTerm] = Field(default_factory=list, max_length=8)

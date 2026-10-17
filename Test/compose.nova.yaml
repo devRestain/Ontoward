@@ -1,0 +1,11 @@
+services:
+  test-simulator:
+    environment:
+      TEST_BACKEND: nova
+      NOVA_API_BASE: ${NOVA_API_BASE:-https://nova.snubhai.org}
+      NOVA_DEV_KEY: ${NOVA_DEV_KEY:?Set NOVA_DEV_KEY in the root .env for NOVA mode}
+      TEST_MAX_NOVA_REQUESTS: ${TEST_MAX_NOVA_REQUESTS:-200}
+    networks: [test-case, test-egress]
+
+networks:
+  test-egress: {}

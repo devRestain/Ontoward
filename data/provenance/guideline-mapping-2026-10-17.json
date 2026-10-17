@@ -1,0 +1,208 @@
+{
+  "artifacts": {
+    "code-custody.json": {
+      "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/code-custody.json",
+      "sha256": "04fb9608c80127a6094010da454c727797353710982300c479cd4dd1f96b7122"
+    },
+    "evidence-files.json": {
+      "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/evidence-files.json",
+      "sha256": "79c8967791420c4fcafe352dfc713d7ad6667afa6ca1be4c1b3c02c80e4c540c"
+    },
+    "execution-summary.json": {
+      "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/execution-summary.json",
+      "sha256": "d89e1006691e515a74f78ad6a77137d57e41268a6a6070f9e0950edd8a42e542"
+    },
+    "inventory.json": {
+      "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/inventory.json",
+      "sha256": "239c752c05858d766f8277268f2f77ed09d9b46ae7832161d61a7379de673f47"
+    },
+    "mappings.csv": {
+      "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/mappings.csv",
+      "sha256": "a29a544880c44024da8f67cb3c0aa88ce2d6bbfb1b02c2784d7f09683ff0e905"
+    },
+    "mappings.json": {
+      "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/mappings.json",
+      "sha256": "6501f6efa20397b548bbe09721dd14dd102cfc5937a1027b33744f3fd8e51361"
+    },
+    "preparation.json": {
+      "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/preparation.json",
+      "sha256": "40c772289caafc434787a2eca13445ef483f1742141652cf4321d5b39f74ffb8"
+    },
+    "review.md": {
+      "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/review.md",
+      "sha256": "5b29ffb01c4007ac3656d13552cb1494f760da869e7cb33be48fbc17b7bf3f22"
+    },
+    "summary.json": {
+      "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/summary.json",
+      "sha256": "bbff90c2032f6f24993357cca0b7f5a844dcce514114079f675d00b0fe99fe1c"
+    },
+    "tool-verification.json": {
+      "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/tool-verification.json",
+      "sha256": "5dded1105278d1e7ce437ba0a2a05882c66c6fe8004a971527c5be977d715291"
+    },
+    "verification.json": {
+      "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/verification.json",
+      "sha256": "243db57adec611cd6aaf2a9b6cc76f323a584990ea9ea5bc123c40ed3b2ae8b0"
+    }
+  },
+  "background_only_diseases": [
+    {
+      "disease_id": "urn:ontoward:SnomedCT18140003",
+      "labels": {
+        "en": "Rhinosporidiosis",
+        "ko": "리노스포리듐증"
+      }
+    },
+    {
+      "disease_id": "urn:ontoward:SnomedCT39812007",
+      "labels": {
+        "en": "Contusion of forearm",
+        "ko": "아래팔의 타박상"
+      }
+    },
+    {
+      "disease_id": "urn:ontoward:SnomedCT45613006",
+      "labels": {
+        "en": "Contusion of lower leg"
+      }
+    },
+    {
+      "disease_id": "urn:ontoward:SnomedCT51523009",
+      "labels": {
+        "en": "Congenital laryngocele",
+        "ko": "후두 낭종"
+      }
+    }
+  ],
+  "baseline_revision": "7b13f05b094fce2999d32c61b1fdad12ff03867c",
+  "batch": "data/preparation/guideline-mapping/runtime843-2026-10-17",
+  "catalog": {
+    "path": "assets/guidelines/catalog.csv",
+    "sha256": "b24b4048a16de52b2e00ec399752e8871de08ed47ca3d926d74e86da6aabcf28"
+  },
+  "coverage": {
+    "background_only_diseases": 4,
+    "care_navigation_without_section_headings": 12,
+    "diseases": 843,
+    "diseases_with_exact_coverage": 429,
+    "diseases_with_guidance": 252,
+    "document_roles": {
+      "clinical_guidance": 270,
+      "clinical_summary": 5,
+      "clinician_textbook": 616,
+      "evidence_review": 56,
+      "patient_information": 22
+    },
+    "external_guideline_currentness": "not_run",
+    "independent_clinical_validation": "not_run",
+    "links": 969,
+    "mapped": 843,
+    "no_plan_section_headings": 16,
+    "partial_scope_only": 338,
+    "plan_extraction": "not_run",
+    "relations": {
+      "broader": 86,
+      "exact": 479,
+      "narrower": 317,
+      "related": 87
+    },
+    "runtime_admission": "not_run",
+    "selected_documents": 821,
+    "unmapped": 0
+  },
+  "decision": "D30",
+  "handoff": "Use care_navigation records as inputs to a separately bounded extraction of source-supported tests, treatment, disposition and follow-up with population and applicability conditions; preserve D26 Education disabled and keep background links as gaps",
+  "limits": [
+    "Document mapping is complete; disease-specific clinical plan evidence is not complete",
+    "338 diseases have only narrower or related links; use each relation and applicability scope",
+    "Four diseases have only clinical background links with empty P fields and no section selection",
+    "Twelve care-navigation diseases lack heading-classified P section pointers; review body content during later extraction",
+    "Document role and relation are model assessments, not independent clinical validation",
+    "P fields and section pointers are navigation candidates, not extracted recommendations or patient plans",
+    "No external source currentness review, plan extraction, runtime admission, source download, upload, commit or deployment"
+  ],
+  "model": {
+    "automatic_retries": 0,
+    "kst_day": "2026-10-17",
+    "max_calls": 150,
+    "model": "openai/gpt-6-luna",
+    "origin": "https://nova.snubhai.org",
+    "raw_model_response_files": 144,
+    "reserved_requests": 147,
+    "retained_failure_records": 6,
+    "revalidated_responses": 1,
+    "session": "none",
+    "validated_completed_requests": 142
+  },
+  "observed_at": "2026-10-17T10:07:47.438259+09:00",
+  "runtime": {
+    "assets": [
+      {
+        "path": "submission/knowledge/schema.ttl",
+        "sha256": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89"
+      },
+      {
+        "path": "submission/knowledge/5b44871b970f5e98-vocabulary.ttl",
+        "sha256": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88"
+      },
+      {
+        "path": "submission/knowledge/5b44871b970f5e98-clinical.ttl",
+        "sha256": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a"
+      },
+      {
+        "path": "submission/knowledge/scoring_policy.json",
+        "sha256": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea"
+      },
+      {
+        "path": "submission/knowledge/5b44871b970f5e98-questions.ko.json",
+        "sha256": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687"
+      }
+    ],
+    "path": "submission/knowledge/manifest.json",
+    "sha256": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61"
+  },
+  "semantic_method": "Read-only database/RF2 aliases, catalog-allowlisted full-text retrieval, bounded supplied body windows reviewed by NOVA openai/gpt-6-luna; preserve exact quotes, relation scope, document role and heading subtree references",
+  "source_database": {
+    "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+    "path": "data/preparation/v5/competition-graph-2026-10-16/ontology.sqlite3",
+    "source_custody": {
+      "build_id": "3ee766032ca36e3e77c21b6bc6e7d284a0eae78c0c0617bee24c456b5f3bc492",
+      "path": "data/preparation/v5/source-only-2026-10-16/findings-2026-10-16/ontology.sqlite3"
+    }
+  },
+  "status": "complete",
+  "tool_verification": {
+    "code_sha256": "694d894d6c2002f083c2a726a98b55365d1e0a7b489b1cb2a714353c2bbef22a",
+    "command": "python -B -m unittest Dev.tests.guidelines.test_mapping",
+    "errors": 0,
+    "failures": 0,
+    "model_calls": 0,
+    "network": "none",
+    "observed_at": "2026-10-17T10:04:05.505458+09:00",
+    "python": "3.12.15",
+    "rdflib": "7.6.0",
+    "result": "pass",
+    "test_sha256": "011d332c34b3d8926c6987564060b91d41912c68e3fd014f3683cbd1d1d6bd37",
+    "tests": 23
+  },
+  "unrelated_state": "Preserve ROOT.NOVA27 and APP.REVALIDATE29 as separately deferred runtime verification",
+  "verification": {
+    "catalog_documents_preserved": 15904,
+    "complete_coverage_required": true,
+    "diseases": 843,
+    "independent_clinical_validation": "not_run",
+    "mapped": 843,
+    "mappings_sha256": "6501f6efa20397b548bbe09721dd14dd102cfc5937a1027b33744f3fd8e51361",
+    "model_requests": 147,
+    "model_responses": 142,
+    "model_results_replayed": 843,
+    "result": "pass",
+    "runtime_admission": "not_run",
+    "source_family_paths_verified": 253,
+    "submission_files_preserved": 44,
+    "unrelated_guidance_baseline_differences": [
+      "submission/PROJECT_STATE.md",
+      "submission/README.md"
+    ]
+  }
+}

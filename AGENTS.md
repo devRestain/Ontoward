@@ -27,7 +27,8 @@
 - Keep execution classes and shared case models in submission/workflow/ and RDFLib access code in submission/knowledge/ under D13.
 - Keep pre-submission extraction, validation, RDF generation, and bundle preparation code and prompts in `Dev/`.
 - Keep disposable project scratch in `Tmp/` and durable preparation results in `data/`.
-- Assign Dev and Tmp operational progress to root `PROJECT_STATE.md` without adding state scopes.
+- Keep the D27 local evaluation API, simulator model bridge, and isolated public-sample container harness in `Test/`.
+- Assign Dev, Test, and Tmp operational progress to root `PROJECT_STATE.md` without adding state scopes.
 - Preserve organizer packages in assets/ and permit only the D12 hash-pinned unchanged nova_sdk.py submission copy.
 - Keep project-authored directory contracts and human orientation in `assets/` separate from preserved upstream files.
 - Keep admitted additional sources, provenance, preparation results, and generated knowledge artifacts in `data/`.
@@ -45,6 +46,8 @@
 - Apply newer D22 NOVA-only continuation and explicitly authorized failure resumption within the frozen same-day ceiling; retain every rejected request and stop on completion or request/service limits.
 - Apply D23 competition acceptance to complete source-backed candidates and D22 patient actions without another clinical or user approval gate; preserve technical exclusions and exact runtime pins.
 - Apply D26 with Education disabled in the packaged public setting; skip its actions and turn reserve and leave P.education empty while completing diagnosis submission.
+- Apply D29 for case-independent chief mapping to one supplied Symptom, source-backed bilingual aliases, and one bounded full-index lookup recovery.
+- Apply D30 to fresh guideline-corpus document mappings for every admitted Disease; keep relation scope exact source evidence and bounded NOVA gpt-6-luna provenance outside runtime knowledge and SOAP plan generation.
 - Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep maintained workflow tests in Dev/tests/workflow and generated synthetic assets and evidence in Tmp.
 
 ## Working Order
@@ -109,6 +112,8 @@
 - Use `/workspace` as the container working directory; mount the project root in dev and only declared input/output paths in ontology-extraction.
 - Identify existing Docker resources through the Compose project and service labels plus the workspace mount before using them.
 - Keep extraction CLI state and credentials in a dedicated project-owned Docker volume outside disposable scratch and submission artifacts.
+- Use Test/compose.yaml for the network-isolated scripted evaluator and its separate compose.nova.yaml overlay for NOVA development chat.
+- Keep Test/ patient scripts and the development key outside the agent container and preserve the unchanged submission/run.py entrypoint.
 - Record image, package, and RDFLib execution availability only after observing the relevant container behavior.
 
 ## Documentation and Handoff

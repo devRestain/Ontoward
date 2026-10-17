@@ -1426,11 +1426,11 @@ class Verification(unittest.TestCase):
         self.assertGreater(len(expanded), len(vocabulary))
 
     def test_parser_expands_once_and_preserves_first_valid_facts(self):
-        for mode in ("resolve", "malformed", "mutate_frozen", "budget"):
+        for mode in ("resolve", "malformed", "mutate_frozen", "budget", "context_limit"):
             with self.subTest(mode=mode):
                 k, s, client = knowledge(), state("ChiefComplaint", True), FakeSDK()
                 from rdflib import RDFS
-                for i in range(300):
+                for i in range(70):
                     node = OW[f"Added{i:04d}"]
                     k._graph.add((node, RDF.type, OW.Symptom))
                     k._graph.add((node, RDFS.label, Literal(f"unused label {i}", lang="en")))
@@ -1450,9 +1450,14 @@ class Verification(unittest.TestCase):
                     payloads.append(payload)
                     if payload["parser_pass"] == "primary":
                         self.assertNotIn(far, {entry["id"] for entry in payload["vocabulary"]})
-                        return client.completion(json.dumps({"facts": [first, unlinked]}, ensure_ascii=False))
+                        return client.completion(json.dumps({"facts": [first, unlinked],
+                                                             "lookup_terms": ["unseen terminology"]}, ensure_ascii=False))
                     if mode == "malformed":
                         return client.completion("{invalid")
+                    if mode == "context_limit":
+                        raise NovaError("CONTEXT_LIMIT_EXCEEDED", 400)
+                    if mode == "resolve":
+                        self.assertIn(far, {entry["id"] for entry in payload["vocabulary"]})
                     replacement = copy.deepcopy(payload["unlinked_facts"][0])
                     replacement["value"]["concept_ids"] = [far]
                     if mode == "mutate_frozen":
@@ -1631,9 +1636,10 @@ class Verification(unittest.TestCase):
                                                        interviewable=False, reason="diagnosis_qualified_target")
         k.validate_graph()
         self.assertEqual(k.question(str(OW.Composite), str(OW.Composite)), "")
-        bad = fact("S.cc", "symptom", OW.Composite, "두통 있어요")
-        parsed = make_interpreter(CONFIG)._validate_facts({"facts": [bad]}, s, k, "두통 있어요")
-        self.assertFalse(parsed.accepted_facts)
+        for status in ("present", "uncertain"):
+            bad = fact("S.cc", "symptom", OW.Composite, "두통 있어요", status=status)
+            parsed = make_interpreter(CONFIG)._validate_facts({"facts": [bad]}, s, k, "두통 있어요")
+            self.assertFalse(parsed.accepted_facts)
         s.session.doctor_successes = 1
         q = question(s, target=OW.Complaint, attribute=OW.TimeSinceOnset)
         q.answer_type = "duration"
@@ -1756,6 +1762,218 @@ class Verification(unittest.TestCase):
         self.assertEqual(client.chat.call_count, 2)
         self.assertFalse(s.case.chief_complaints())
         self.assertTrue(s.interaction.needs_clarification)
+
+    def test_gateway_context_limit_recovers_once_with_smaller_request(self):
+        client = FakeSDK()
+        original = client.chat
+        def chat(messages, **kwargs):
+            if not client.calls:
+                client.calls.append({"messages": messages, **kwargs})
+                raise NovaError("CONTEXT_LIMIT_EXCEEDED", 400)
+            return original(messages, **kwargs)
+        client.chat = chat
+        result, _ = self.run_flow(client)
+        first, recovery = result.interaction.model_history[:2]
+        self.assertEqual(result.interaction.termination, "submitted")
+        self.assertEqual(first["error"], "CONTEXT_LIMIT_EXCEEDED")
+        self.assertTrue(recovery["parser_payload"]["compact"])
+        self.assertLess(recovery["parser_payload"]["request_bytes"], first["parser_payload"]["request_bytes"])
+        self.assertLessEqual(recovery["parser_payload"]["request_bytes"], 8192)
+        self.assertNotEqual(first["request"]["request_id"], recovery["request"]["request_id"])
+        self.assertEqual(len(first["attempts"]), 1)
+        self.assertEqual(result.session.doctor_calls, len(client.calls))
+        self.assertEqual(client.submissions[0]["note"]["P"]["education"], "")
+
+    def test_gateway_repeated_context_limit_preserves_input_and_clarifies(self):
+        s, client = state(), FakeSDK()
+        text = "가상증상이 있어요"
+        s.interaction.incoming = {"initial": {"opening": text}}
+        client.chat = Mock(side_effect=NovaError("CONTEXT_LIMIT_EXCEEDED", 400))
+        make_interpreter(CONFIG).process_input(s, knowledge(), client)
+        self.assertEqual(client.chat.call_count, 2)
+        self.assertEqual(s.session.doctor_calls, 2)
+        self.assertTrue(s.session.models_available)
+        self.assertIsNone(s.interaction.termination)
+        self.assertTrue(s.interaction.needs_clarification)
+        self.assertFalse(s.case.chief_complaints())
+        self.assertEqual(s.interaction.dialogue()[0]["patient"], text)
+        self.assertEqual(len({call.kwargs["request_id"] for call in client.chat.call_args_list}), 2)
+
+    def test_gateway_whole_request_bound_keeps_current_input_and_required_ids(self):
+        from rdflib import RDFS
+        k, s, client = knowledge(), state("ChiefComplaint", True), FakeSDK()
+        for i in range(400):
+            node = OW[f"Extra{i:04d}"]
+            k._graph.add((node, RDF.type, OW.Symptom))
+            k._graph.add((node, RDFS.label, Literal(f"unrelated symptom {i}", lang="en")))
+        k.validate_graph()
+        for i in range(40):
+            record(s, f"old-{i}")
+            s.case.get(f"old-{i}").value.text = "earlier evidence " * 70
+        q = question(s, target=OW.Complaint, attribute=OW.Location, purpose="hpi", field="S.hpi")
+        pending(s, q)
+        before = s.case.model_dump()
+        text = '가상부위와 다른부위, "그대로"\\보존'
+        interpreter = make_interpreter(CONFIG)
+        client.chat = Mock(return_value=client.completion('{"facts":[]}'))
+        interpreter._request_parse(s, k, client, text)
+        from workflow.state.models import ParseResult
+        interpreter._request_parse(s, k, client, text, previous=ParseResult(needs_context=True))
+        for index, call in enumerate(client.chat.call_args_list):
+            messages = call.kwargs["messages"]
+            payload = json.loads(messages[1]["content"])
+            self.assertEqual(payload["input"], text)
+            self.assertEqual(payload["spoken_question"], s.interaction.pending.content)
+            self.assertEqual(payload["question"]["target_id"], str(OW.Complaint))
+            self.assertTrue({str(OW.Complaint), str(OW.Location)} <= {c["id"] for c in payload["vocabulary"]})
+            byte_limit = 12288 if index == 0 else 16384
+            self.assertLessEqual(len(json.dumps(messages, ensure_ascii=False, separators=(",", ":")).encode()), byte_limit)
+        self.assertEqual(client.chat.call_count, 2)
+        self.assertEqual(s.case.model_dump(), before)
+
+    def test_gateway_oversized_current_input_is_preserved_without_transmission(self):
+        s, client = state(), FakeSDK()
+        text = "가상증상 " * 5000
+        s.interaction.incoming = {"initial": {"opening": text}}
+        client.chat = Mock()
+        make_interpreter(CONFIG).process_input(s, knowledge(), client)
+        client.chat.assert_not_called()
+        self.assertEqual(s.session.doctor_calls, 0)
+        self.assertIn("gateway_request_overflow", s.interaction.issues)
+        self.assertTrue(s.interaction.needs_clarification)
+        self.assertEqual(s.interaction.dialogue()[0]["patient"], text)
+
+    def test_gateway_exposes_source_aliases_and_filters_chief_retrieval_by_type(self):
+        from rdflib import RDFS, SKOS
+        k = knowledge()
+        k._graph.add((OW.Complaint, RDFS.label, Literal("Reported discomfort", lang="en")))
+        k._graph.add((OW.Complaint, SKOS.altLabel, Literal("Current concern", lang="en")))
+        k._graph.add((OW.Alpha, RDFS.label, Literal("Current concern", lang="en")))
+        k.validate_graph()
+        before = frozenset(k._graph)
+        concept = k.concepts([str(OW.Complaint)])[0]
+        self.assertEqual(concept["label"], "가상증상")
+        self.assertTrue({"Reported discomfort", "Current concern"} <= set(concept["aliases"]))
+        self.assertIn(str(OW.Alpha), k.search_concepts("Current concern"))
+        self.assertNotIn(str(OW.Alpha), k.search_concepts("Current concern", kind="Symptom"))
+        self.assertIn(str(OW.Complaint), k.search_concepts("Current concern", kind="Symptom"))
+        self.assertEqual(frozenset(k._graph), before)
+
+    def test_empty_chief_response_gets_one_recovery_without_semantic_success(self):
+        s, client = state(), FakeSDK()
+        text = "가상증상이 있어요"
+        s.interaction.incoming = {"initial": {"opening": text}}
+        client.chat = Mock(return_value=client.completion('{"facts":[]}'))
+        make_interpreter(CONFIG).process_input(s, knowledge(), client)
+        self.assertEqual(client.chat.call_count, 2)
+        self.assertEqual(s.session.doctor_successes, 2)
+        self.assertFalse(s.case.chief_complaints())
+        self.assertTrue(s.interaction.needs_clarification)
+        self.assertEqual([e["parser_result"]["linked_chief_facts"] for e in s.interaction.model_history], [0, 0])
+        self.assertEqual(s.interaction.dialogue()[0]["patient"], text)
+
+    def test_chief_selection_is_one_supplied_symptom_after_bounded_recovery(self):
+        k, s, client = knowledge(), state(), FakeSDK()
+        text, requests = "가상증상이 있어요", []
+        s.interaction.incoming = {"initial": {"opening": text}}
+        ambiguous = fact("S.cc", "symptom", OW.Complaint, text, status="uncertain")
+        ambiguous["value"]["concept_ids"].append(str(OW.Other))
+        def chat(messages, **kwargs):
+            payload = json.loads(messages[1]["content"])
+            requests.append(payload)
+            self.assertTrue(payload["chief_mapping_required"])
+            self.assertTrue(all(c["kind"] == "Symptom" for c in payload["vocabulary"]))
+            selected = payload["schema"]["anyOf"][0]["properties"]["facts"]["contains"]
+            ids = selected["properties"]["value"]["properties"]["concept_ids"]
+            self.assertEqual((ids["minItems"], ids["maxItems"]), (1, 1))
+            self.assertEqual(set(ids["items"]["enum"]), {c["id"] for c in payload["vocabulary"]})
+            if payload["parser_pass"] == "primary":
+                return client.completion(json.dumps({"facts": [ambiguous]}, ensure_ascii=False))
+            self.assertEqual(len(payload["schema"]["anyOf"]), 1)
+            fixed = copy.deepcopy(ambiguous)
+            fixed["value"]["concept_ids"] = [str(OW.Complaint)]
+            return client.completion(json.dumps({"facts": [fixed]}, ensure_ascii=False))
+        client.chat = Mock(side_effect=chat)
+        make_interpreter(CONFIG).process_input(s, k, client)
+        self.assertEqual(client.chat.call_count, 2)
+        chief = s.case.chief_complaints()[0]
+        self.assertEqual(chief.value.concept_ids, [str(OW.Complaint)])
+        self.assertEqual(chief.value.status, "uncertain")
+        self.assertFalse(s.interaction.needs_clarification)
+        self.assertEqual([e["parser_result"]["linked_chief_facts"] for e in s.interaction.model_history], [0, 1])
+
+    def test_chief_lookup_terms_retrieve_unoffered_symptom_and_repair_only_its_id(self):
+        from rdflib import RDFS, SKOS
+        k, s, client = knowledge(), state(), FakeSDK()
+        for i in range(400):
+            node = OW[f"Padding{i:04d}"]
+            k._graph.add((node, RDF.type, OW.Symptom))
+            k._graph.add((node, RDFS.label, Literal(f"unrelated {i}", lang="en")))
+        target = str(OW.ZzzConcern)
+        k._graph.add((URIRef(target), RDF.type, OW.Symptom))
+        k._graph.add((URIRef(target), RDFS.label, Literal("검토된 증상", lang="ko")))
+        k._graph.add((URIRef(target), SKOS.altLabel, Literal("Unlisted concern", lang="en")))
+        k.validate_graph()
+        text, requests = "설명하기 어려운 불편감이에요", []
+        s.interaction.incoming = {"initial": {"opening": text}}
+        first = fact("S.cc", "symptom", OW.Complaint, text)
+        first["value"]["concept_ids"] = []
+        def chat(messages, **kwargs):
+            payload = json.loads(messages[1]["content"])
+            requests.append(payload)
+            ids = {entry["id"] for entry in payload["vocabulary"]}
+            if payload["parser_pass"] == "primary":
+                self.assertNotIn(target, ids)
+                return client.completion(json.dumps({"facts": [first], "needs_context": True,
+                                                     "lookup_terms": ["Unlisted concern"]}, ensure_ascii=False))
+            self.assertIn(target, ids)
+            self.assertEqual(payload["unlinked_facts"][0]["value"]["text"], text)
+            repaired = copy.deepcopy(payload["unlinked_facts"][0])
+            repaired["value"]["concept_ids"] = [target]
+            return client.completion(json.dumps({"facts": [repaired]}, ensure_ascii=False))
+        client.chat = Mock(side_effect=chat)
+        make_interpreter(CONFIG).process_input(s, k, client)
+        self.assertEqual(client.chat.call_count, 2)
+        chief = s.case.chief_complaints(confirmed=True)[0]
+        self.assertEqual(chief.value.concept_ids, [target])
+        self.assertEqual(chief.value.text, text)
+        self.assertEqual(s.interaction.model_history[-1]["parser_result"]["linked_chief_facts"], 1)
+        self.assertFalse(s.interaction.needs_clarification)
+        for index, call in enumerate(client.chat.call_args_list):
+            self.assertLessEqual(len(json.dumps(call.kwargs["messages"], ensure_ascii=False, separators=(",", ":")).encode()),
+                                 12288 if index == 0 else 16384)
+
+    def test_unlinked_chief_remains_a_report_without_a_disease_conversion(self):
+        from rdflib import RDFS
+        k, s, client = knowledge(), state(), FakeSDK()
+        k._graph.add((OW.Alpha, RDFS.label, Literal("Named disorder", lang="en")))
+        k.validate_graph()
+        text = "설명하기 어려운 불편감이에요"
+        s.interaction.incoming = {"initial": {"opening": text}}
+        first = fact("S.cc", "symptom", OW.Complaint, text)
+        first["value"]["concept_ids"] = []
+        requests = []
+        def chat(messages, **kwargs):
+            payload = json.loads(messages[1]["content"])
+            requests.append(payload)
+            if payload["parser_pass"] == "primary":
+                return client.completion(json.dumps({"facts": [first], "lookup_terms": ["Named disorder"]}, ensure_ascii=False))
+            self.assertNotIn(str(OW.Alpha), {item["id"] for item in payload["vocabulary"]})
+            return client.completion('{"facts":[],"needs_context":true}')
+        client.chat = Mock(side_effect=chat)
+        make_interpreter(CONFIG).process_input(s, k, client)
+        self.assertEqual(client.chat.call_count, 2)
+        chief = s.case.chief_complaints()[0]
+        self.assertEqual(chief.value.text, text)
+        self.assertEqual(chief.value.concept_ids, [])
+        self.assertTrue(s.interaction.needs_clarification)
+
+    def test_gateway_lookup_hints_have_a_finite_size(self):
+        s, k, interpreter = state(), knowledge(), make_interpreter(CONFIG)
+        for terms in (["x"] * 9, ["x" * 81], [" "], "not a list"):
+            self.assertIsNone(interpreter._validate_facts({"facts": [], "lookup_terms": terms}, s, k, "reported"))
+        parsed = interpreter._validate_facts({"facts": [], "lookup_terms": ["Current concern", "Current concern"]}, s, k, "reported")
+        self.assertEqual(parsed.lookup_terms, ["Current concern"])
 
     def test_context_cannot_starve_more_valuable_diagnostic_acquisition(self):
         k, s = knowledge(), state("ContextFactor", True, turns=4)

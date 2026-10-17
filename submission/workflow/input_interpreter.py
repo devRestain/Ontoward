@@ -1,5 +1,6 @@
 import hashlib
 import json
+from copy import deepcopy
 from functools import lru_cache
 
 from knowledge.graph import ClinicalKnowledge
@@ -12,7 +13,13 @@ from .state.models import ClinicalValue, ParsedInput, ParseResult, RecordItem, W
 
 @lru_cache(maxsize=1)
 def parser_schema():
-    return ParsedInput.model_json_schema()
+    def compact(value):
+        if isinstance(value, dict):
+            return {key: compact(item) for key, item in value.items() if key not in {"title", "default"}}
+        if isinstance(value, list):
+            return [compact(item) for item in value]
+        return value
+    return compact(ParsedInput.model_json_schema())
 
 
 class InputInterpreter:
@@ -75,13 +82,22 @@ class InputInterpreter:
             self.questions.complete_unresolved(state, action, text, source_id)
         self.interactions.consume_input(state)
 
+    @staticmethod
+    def _chief_input(state):
+        if any(item.value.concept_ids for item in state.case.chief_complaints()):
+            return False
+        pending = state.interaction.pending
+        return pending is None or (pending.question.purpose in {"chief", "clarification"}
+                                   and pending.question.field == "S.cc")
+
     def _search(self, state, knowledge, text):
-        key = hashlib.sha256(knowledge.normalize_alias(text).encode()).hexdigest()
+        kind = "Symptom" if self._chief_input(state) else None
+        key = hashlib.sha256(((kind or "*") + "\0" + knowledge.normalize_alias(text)).encode()).hexdigest()
         cache = state.differential.search_cache
         if key not in cache:
             if len(cache) >= 128:
                 cache.pop(next(iter(cache)))
-            cache[key] = knowledge.search_concepts(text)
+            cache[key] = knowledge.search_concepts(text, kind=kind)
         return cache[key]
 
     def _parse_text(self, state, knowledge, client, text):
@@ -90,7 +106,7 @@ class InputInterpreter:
             return parsed
         if not (parsed.unresolved_links or parsed.rejected_facts or parsed.needs_context):
             return parsed
-        expanded = self._request_parse(state, knowledge, client, text, previous=parsed)
+        expanded = self._request_parse(state, knowledge, client, text, previous=parsed, compact=parsed.context_limited)
         if expanded is None:
             return parsed
         accepted = list(parsed.accepted_facts)
@@ -125,19 +141,22 @@ class InputInterpreter:
                 state.interaction.issues.append("invalid_gateway_expansion")
         return ParseResult(accepted_facts=accepted, unresolved_links=sorted(unresolved),
             rejected_facts=[item for item in parsed.rejected_facts if item["index"] not in repaired_indices] + expanded.rejected_facts,
-            needs_context=expanded.needs_context)
+            needs_context=expanded.needs_context, lookup_terms=expanded.lookup_terms)
 
-    def _vocabulary(self, state, knowledge, text, *, expanded=False):
+    def _vocabulary(self, state, knowledge, text, *, expanded=False, lookup_terms=()):
         pending = state.interaction.pending
+        chief_input = self._chief_input(state)
         required = list(filter(None, (pending.question.target_id, pending.question.attribute_id))) if pending else []
         def candidates():
+            for term in lookup_terms:
+                yield from self._search(state, knowledge, term)
+            yield from self._search(state, knowledge, text)
             if pending and pending.question.target_id:
                 question = pending.question
                 attrs = [question.attribute_id] if question.attribute_id else knowledge.get_symptom_attributes(question.target_id)
                 for attribute in attrs:
                     yield attribute
                     yield from knowledge.get_target_values(question.target_id, attribute)
-            yield from self._search(state, knowledge, text)
             projected = self.interactions.project_context(state, pending.question if pending else None,
                                                           self._search(state, knowledge, text), expanded=expanded)
             for item in projected["records"]:
@@ -165,7 +184,7 @@ class InputInterpreter:
                 continue
             seen.add(ident)
             concept = next(knowledge.iter_concepts([ident]), None)
-            if concept is None:
+            if concept is None or (chief_input and concept["kind"] != "Symptom"):
                 continue
             extra = len(json.dumps(concept, ensure_ascii=False, separators=(",", ":")).encode("utf-8")) + bool(vocabulary)
             if size + extra > byte_limit:
@@ -174,42 +193,113 @@ class InputInterpreter:
             size += extra
         return vocabulary, size
 
-    def _request_parse(self, state, knowledge, client, text, *, previous=None):
+    def _fit_request(self, payload, *, required_count, byte_limit):
+        vocabulary = payload["vocabulary"]
+        if payload.get("chief_mapping_required"):
+            first_symptom = next((i for i, c in enumerate(vocabulary) if c["kind"] == "Symptom"), None)
+            if first_symptom is None:
+                return None
+            required_count = max(required_count, first_symptom + 1)
+        preferred_count = min(len(vocabulary), max(required_count, 32))
+        while True:
+            if payload.get("chief_mapping_required"):
+                chief = {"properties": {"field": {"const": "S.cc"}, "value": {"properties": {
+                    "kind": {"const": "symptom"}, "subject": {"const": "patient"},
+                    "status": {"enum": ["present", "uncertain"]},
+                    "time_context": {"enum": ["current", "unspecified"]},
+                    "concept_ids": {"minItems": 1, "maxItems": 1,
+                        "items": {"enum": [c["id"] for c in vocabulary if c["kind"] == "Symptom"]}}},
+                    "required": ["kind", "subject", "status", "time_context", "concept_ids"]}},
+                    "required": ["field", "value"]}
+                selected = {"properties": {"facts": {"contains": chief}}, "required": ["facts"]}
+                payload["schema"]["anyOf"] = [selected]
+                if payload["parser_pass"] == "primary":
+                    payload["schema"]["anyOf"].append({"properties": {
+                        "needs_context": {"const": True}, "lookup_terms": {"minItems": 1}},
+                        "required": ["needs_context", "lookup_terms"]})
+            encoded = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+            messages = [{"role": "system", "content": self.config.parser_prompt}, {"role": "user", "content": encoded}]
+            size = len(json.dumps(messages, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+            if size <= byte_limit:
+                return messages, size
+            # Keep the current input, question, schema and required IDs intact.
+            if len(vocabulary) > preferred_count:
+                vocabulary.pop()
+            elif payload["dialogue"]:
+                payload["dialogue"].pop()
+            elif payload["records"]:
+                payload["records"].pop()
+            elif len(vocabulary) > required_count:
+                vocabulary.pop()
+            else:
+                return None
+
+    def _request_parse(self, state, knowledge, client, text, *, previous=None, compact=False):
         expanded = previous is not None
         pending = state.interaction.pending
         context = self.interactions.project_context(state, pending.question if pending else None,
                                                     self._search(state, knowledge, text), expanded=expanded)
         try:
-            vocabulary, vocabulary_bytes = self._vocabulary(state, knowledge, text, expanded=expanded)
+            vocabulary, vocabulary_bytes = self._vocabulary(state, knowledge, text, expanded=expanded,
+                lookup_terms=previous.lookup_terms if previous else ())
         except ValueError:
             state.interaction.issues.append("gateway_required_vocabulary_overflow")
             return None
         payload = {"input": text, "question": pending.question.model_dump(exclude={"order", "priority", "selection_value"}) if pending else None,
                    "spoken_question": pending.content if pending else None, **context,
-                   "schema": parser_schema(), "vocabulary": vocabulary,
+                   "schema": deepcopy(parser_schema()), "vocabulary": vocabulary,
                    "parser_pass": "expansion" if expanded else "primary"}
+        if self._chief_input(state):
+            payload["chief_mapping_required"] = True
         if previous:
             payload["unlinked_facts"] = [previous.accepted_facts[i].model_dump() for i in previous.unresolved_links]
             payload["rejected_facts"] = previous.rejected_facts
             payload["needs_context"] = previous.needs_context
-        encoded = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-        messages = [{"role": "system", "content": self.config.parser_prompt}, {"role": "user", "content": encoded}]
+            payload["lookup_terms"] = previous.lookup_terms
+        byte_limit = (LIMITS.compact_gateway_request_bytes if compact else
+                      LIMITS.expanded_gateway_request_bytes if expanded else LIMITS.gateway_request_bytes)
+        if compact:
+            byte_limit = min(byte_limit, state.interaction.model_history[-1]["parser_payload"]["request_bytes"] - 1)
+        required = set(filter(None, (pending.question.target_id, pending.question.attribute_id))) if pending else set()
+        fitted = self._fit_request(payload, required_count=len(required), byte_limit=byte_limit)
+        if fitted is None:
+            state.interaction.issues.append("gateway_request_overflow")
+            return None
+        messages, request_bytes = fitted
+        vocabulary_bytes = len(json.dumps(vocabulary, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
         previous_calls = len(state.interaction.model_history)
         content = self.model.complete(state, client, role="gateway", messages=messages)
         if len(state.interaction.model_history) > previous_calls:
             state.interaction.model_history[-1]["parser_payload"] = {
                 "pass": payload["parser_pass"], "vocabulary_count": len(vocabulary), "vocabulary_bytes": vocabulary_bytes,
-                "payload_bytes": len(encoded.encode("utf-8")),
+                "payload_bytes": len(messages[1]["content"].encode("utf-8")),
+                "request_bytes": request_bytes, "request_byte_limit": byte_limit, "compact": compact,
                 "context_bytes": len(json.dumps(context, ensure_ascii=False, separators=(",", ":")).encode("utf-8")),
                 "context_records": len(context["records"]), "context_turns": len(context["dialogue"])}
         if content is None:
+            if (len(state.interaction.model_history) > previous_calls
+                    and state.interaction.model_history[-1].get("error") == "CONTEXT_LIMIT_EXCEEDED"):
+                return ParseResult(needs_context=True, context_limited=True)
             return None
         try:
             parsed = self._validate_facts(json.loads(content), state, knowledge, text,
                 dialogue_ids={turn["id"] for turn in context["dialogue"]},
                 supplied_records={item["id"] for item in context["records"]},
                 allowed={concept["id"] for concept in vocabulary})
-            return parsed if parsed is not None else ParseResult(needs_context=True)
+            parsed = parsed if parsed is not None else ParseResult(needs_context=True)
+            linked_chiefs = [fact for fact in parsed.accepted_facts if fact.field == "S.cc"
+                and fact.value.kind == "symptom" and fact.value.subject == "patient"
+                and fact.value.time_context != "past" and fact.value.status in {"present", "uncertain"}
+                and len(fact.value.concept_ids) == 1]
+            if self._chief_input(state) and text.strip() and not linked_chiefs:
+                parsed.needs_context = True
+                state.interaction.issues.append("chief_mapping_unresolved")
+            if len(state.interaction.model_history) > previous_calls:
+                state.interaction.model_history[-1]["parser_result"] = {
+                    "accepted_facts": len(parsed.accepted_facts), "linked_chief_facts": len(linked_chiefs),
+                    "unlinked_facts": len(parsed.unresolved_links), "rejected_facts": len(parsed.rejected_facts),
+                    "needs_context": parsed.needs_context, "lookup_terms": parsed.lookup_terms}
+            return parsed
         except (TypeError, ValueError):
             state.interaction.issues.append("invalid_gateway_output")
             return ParseResult(needs_context=True)

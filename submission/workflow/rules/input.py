@@ -90,15 +90,20 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
     expected_type = {"symptom": "Symptom", "finding": "ExamFinding", "context": "ContextFactor"}
     for concept in value.concept_ids:
         contract = knowledge.questions.get(concept)
-        if contract and not contract.interviewable and value.status == "present" and (
-                knowledge.normalize_alias(knowledge.label(concept)) not in knowledge.normalize_alias(fact.quote)):
-            raise ValueError("Unqualified wording cannot establish a diagnostic composite")
+        if contract and not contract.interviewable and (value.status == "present" or (
+                fact.field == "S.cc" and value.status == "uncertain")):
+            candidate = next(iter(knowledge.concepts([concept])), {})
+            names = [knowledge.label(concept), *candidate.get("aliases", [])]
+            if not any(knowledge.normalize_alias(name) in knowledge.normalize_alias(fact.quote) for name in names):
+                raise ValueError("Unqualified wording cannot establish a diagnostic composite")
         if value.kind in expected_type and not knowledge.has_type(concept, expected_type[value.kind]):
             raise ValueError("Unknown or mistyped clinical concept")
         if value.kind == "attribute" and not any(knowledge.has_type(concept, kind) for kind in ("Symptom", "ExamFinding")):
             raise ValueError("Attribute requires a finding target")
     if len(value.concept_ids) > 1 and value.status == "present":
         raise ValueError("Multiple interpretations must remain uncertain")
+    if fact.field == "S.cc" and value.kind == "symptom" and len(value.concept_ids) > 1:
+        raise ValueError("A chief complaint requires one best existing Symptom")
     if value.attribute_id:
         if not value.concept_ids or not all(value.attribute_id in knowledge.get_symptom_attributes(c) for c in value.concept_ids):
             raise ValueError("Attribute is not applicable")
@@ -117,9 +122,13 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
 
 
 def validate_facts(raw, state, knowledge, text, *, dialogue_ids=None, supplied_records=None, allowed=None):
-    if (not isinstance(raw, dict) or set(raw) - {"facts", "needs_context"} or not isinstance(raw.get("facts", []), list)
+    if (not isinstance(raw, dict) or set(raw) - {"facts", "needs_context", "lookup_terms"} or not isinstance(raw.get("facts", []), list)
             or type(raw.get("needs_context", False)) is not bool):
         raise ValueError("Invalid fact envelope")
+    terms = raw.get("lookup_terms", [])
+    if not isinstance(terms, list) or len(terms) > 8 or any(
+            not isinstance(term, str) or not term.strip() or len(term) > 80 for term in terms):
+        raise ValueError("Invalid lookup terms")
     dialogue_ids = set(dialogue_ids) if dialogue_ids is not None else {entry["id"] for entry in state.interaction.dialogue()}
     accepted, rejected = [], []
     for index, item in enumerate(raw.get("facts", [])):
@@ -171,4 +180,5 @@ def validate_facts(raw, state, knowledge, text, *, dialogue_ids=None, supplied_r
     return ParseResult(accepted_facts=facts, rejected_facts=rejected,
         unresolved_links=[i for i, fact in enumerate(facts) if fact.value.kind in {"symptom", "finding"}
                           and not fact.value.concept_ids and fact.value.status in {"present", "uncertain"}],
-        needs_context=raw.get("needs_context", False) or any("missing_context" in str(item["reason"]) for item in rejected))
+        needs_context=raw.get("needs_context", False) or any("missing_context" in str(item["reason"]) for item in rejected),
+        lookup_terms=list(dict.fromkeys(term.strip() for term in terms)))

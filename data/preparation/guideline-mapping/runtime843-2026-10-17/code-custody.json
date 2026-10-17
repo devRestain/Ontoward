@@ -1,0 +1,76 @@
+{
+  "baseline_revision": "7b13f05b094fce2999d32c61b1fdad12ff03867c",
+  "decision": "D30",
+  "dirty_workspace_preserved": true,
+  "evidence_manifest": {
+    "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/evidence-files.json",
+    "sha256": "79c8967791420c4fcafe352dfc713d7ad6667afa6ca1be4c1b3c02c80e4c540c"
+  },
+  "execution_summary": {
+    "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/execution-summary.json",
+    "sha256": "d89e1006691e515a74f78ad6a77137d57e41268a6a6070f9e0950edd8a42e542"
+  },
+  "files": {
+    "Dev/education/prepare.py": "61a1ed1fda55981883c5920877d4d470f8250709c9698ab2ac4ab2f4de4bf8b4",
+    "Dev/guidelines/README.md": "8392731805761905dc05edcbe9c4fafe30863e0dce23851a2e12d65a8d5c4d81",
+    "Dev/guidelines/map.py": "694d894d6c2002f083c2a726a98b55365d1e0a7b489b1cb2a714353c2bbef22a",
+    "Dev/guidelines/prompt.txt": "601860f8ca6ac8afd3b3c1486872df16682096b35800fe977293c5635f701028",
+    "Dev/ontology/admission.py": "1b25dd42e80ca6914d60a0e5df85e7927423c30edd033859d18da05e0cfcce97",
+    "Dev/ontology/codex_cli.py": "87daa0c3a97647fb87f711e19b5dba05f03099e712d10da2fac0366244a0dc28",
+    "Dev/ontology/connections.py": "4c0df15fe49afc73299c44a75808d1d3b1cffd8a53cec8ae836ae89296d952b8",
+    "Dev/ontology/database.py": "8d980f32013060c81c2f9d7417bd40cf5491ea503c405b3f8ee3c8b2442bd3bb",
+    "Dev/ontology/evidence.py": "8300d85523da6491e05686fce098f656cde672e5c4a51be5869fbfb6fa16008d",
+    "Dev/ontology/findings.py": "0b6883405a8d1b0b619cabb4136e173f9491efaa3d8c1c8168af20d16f9ddaf8",
+    "Dev/ontology/korean.py": "c1a215024c90611d5c8c428fa184332e70516494a91cd5587d6da3ef76d38d7c",
+    "Dev/ontology/model_normalization.py": "60ed01d42aafc761654fec6304bad45e74f7d23773a904a784641bb4afd045ad",
+    "Dev/ontology/patient_text.py": "10af547d2996687787948220c645e8ef486ab7fe84a51cc5258314760b7e86a6",
+    "Dev/ontology/provenance.py": "7c49f9cf3105012640e6e0a91b94492fe958a381bbfb7569fbdbdd6f1c66d224",
+    "Dev/ontology/reset.py": "2ae3be7c5bbb1a22cbfda90d6a78cfa99e6bb1944bdf6a06bf4d9587571e450b",
+    "Dev/ontology/source_catalog.py": "b76ae10922f4da73c5ef005dac2391e25c2538af93bc4899c038dc1556286e38",
+    "Dev/ontology/source_projection.py": "0f4f06603f6541af0bbc2285e37ee234f6b593789e65b50c8a210c3ad324bf5d",
+    "Dev/ontology/storage.py": "0f2908933a1677aab708844fc363b393c7734aa0a711eb0f1c13966a34d56b26",
+    "Dev/ontology/v5.py": "01d755cc3d58b3294c309557fdfa89cd58e8c2672e3d26ba6c72163fdd686484",
+    "Dev/tests/guidelines/test_mapping.py": "011d332c34b3d8926c6987564060b91d41912c68e3fd014f3683cbd1d1d6bd37",
+    "Dev/tests/workflow/compose.offline.yaml": "0af17a119a91a4d6424bc74ecf65cc8e34243b1b93c9977204c7c7e6f0fb3ea5",
+    "Dockerfile": "c7efa8c4a290b37aa203ce9ae019c4804ef7fd04238f7985eeaaf3e7959b2bd8",
+    "compose.yaml": "3b5f4840a4408fa5b994a28d4ee7e37e15eca48f2c55711e14681eda845f1b90",
+    "submission/requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011"
+  },
+  "mapping_verification": {
+    "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/verification.json",
+    "sha256": "243db57adec611cd6aaf2a9b6cc76f323a584990ea9ea5bc123c40ed3b2ae8b0"
+  },
+  "observed_at": "2026-10-17T10:07:47.438259+09:00",
+  "request_versions": {
+    "directory": "data/preparation/guideline-mapping/runtime843-2026-10-17/replay",
+    "files": {
+      "064274861ef66430d12c9b35ab2b6dd368b81d51397f2149859eec8ee21f3a87-map.py": "064274861ef66430d12c9b35ab2b6dd368b81d51397f2149859eec8ee21f3a87",
+      "1bf655c49a1182bef08382d960d979864d2c2ee6e059a729fb2b53f8ff450653-map.py": "1bf655c49a1182bef08382d960d979864d2c2ee6e059a729fb2b53f8ff450653",
+      "21892a85b4ea338b9b2012c84ab6594587ee7b0ccef50cdeaea6365201808114-map.py": "21892a85b4ea338b9b2012c84ab6594587ee7b0ccef50cdeaea6365201808114",
+      "2fe596b0f3eae035f56948597aba86cd81228cc08692289bd5d1be2a84bd4597-map.py": "2fe596b0f3eae035f56948597aba86cd81228cc08692289bd5d1be2a84bd4597",
+      "327c72d224ff20e361546a8250ee942bf7671100a6d8ac89941eb3b1d38c5f8f-map.py": "327c72d224ff20e361546a8250ee942bf7671100a6d8ac89941eb3b1d38c5f8f",
+      "55abc199b967a3d76602c93626b12a1f9d2800d5abf2c54ddb43e53b88e5351c-prompt.txt": "55abc199b967a3d76602c93626b12a1f9d2800d5abf2c54ddb43e53b88e5351c",
+      "5f4f74ddbed58f12bfba5fd84a39025315c052dfd8825d79030a1014c87f991b-map.py": "5f4f74ddbed58f12bfba5fd84a39025315c052dfd8825d79030a1014c87f991b",
+      "601860f8ca6ac8afd3b3c1486872df16682096b35800fe977293c5635f701028-prompt.txt": "601860f8ca6ac8afd3b3c1486872df16682096b35800fe977293c5635f701028",
+      "708a7dd4c6626dba63a13b3ef7bd6f2d3e98ea928737bbc62875b8e56e643f31-map.py": "708a7dd4c6626dba63a13b3ef7bd6f2d3e98ea928737bbc62875b8e56e643f31",
+      "a2e076c210ae247b117ecfae283ba48afcdd05f137a30c6e03dd5727398d696d-map.py": "a2e076c210ae247b117ecfae283ba48afcdd05f137a30c6e03dd5727398d696d",
+      "a6740bbd49276a1645d8a251ca0f8eb0fd67d8547bcbe177590d8d2a63487e5f-map.py": "a6740bbd49276a1645d8a251ca0f8eb0fd67d8547bcbe177590d8d2a63487e5f",
+      "b95517f00b69cc11fec9803c90408acdade5a2b2d2b8ad0c30223a32d3089690-map.py": "b95517f00b69cc11fec9803c90408acdade5a2b2d2b8ad0c30223a32d3089690",
+      "d2da8d8eefc6a20fbacba69adc534e2db6e97df5cf1a3b9e24478a3c45e28b8f-map.py": "d2da8d8eefc6a20fbacba69adc534e2db6e97df5cf1a3b9e24478a3c45e28b8f",
+      "d8727ec6ded8eaecd6ff7bd3beaadf4ddb00a7f143283a9a428fb046d19f5d05-map.py": "d8727ec6ded8eaecd6ff7bd3beaadf4ddb00a7f143283a9a428fb046d19f5d05",
+      "prompt.txt": "0d49d91e4a8aa6a515a59ede78e6e877876294eab97a1b11afb01887077c3efa"
+    }
+  },
+  "tool_verification": {
+    "path": "data/preparation/guideline-mapping/runtime843-2026-10-17/tool-verification.json",
+    "sha256": "5dded1105278d1e7ce437ba0a2a05882c66c6fe8004a971527c5be977d715291"
+  },
+  "verification_environment": {
+    "additional_dependencies": false,
+    "compose_project": "ontoward",
+    "compose_service": "dev",
+    "offline_overlay": "Dev/tests/workflow/compose.offline.yaml",
+    "python": "3.12.15",
+    "rdflib": "7.6.0"
+  }
+}

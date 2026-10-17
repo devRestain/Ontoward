@@ -1,0 +1,72 @@
+name: ontoward
+
+services:
+  test-simulator:
+    image: ontoward-test:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: none
+    command: [python, /test/server.py]
+    user: "${ONTOWARD_TEST_UID:-501}:${ONTOWARD_TEST_GID:-20}"
+    environment:
+      TEST_CASE: ${TEST_CASE:-C10}
+      TEST_BACKEND: scripted
+      NOVA_RUN_TOKEN: ontoward-local-test
+      NOVA_SESSION_ID: 00000000-0000-4000-8000-000000000001
+    volumes:
+      - ../assets/nova-samples-2026:/cases:ro
+      - ../submission/nova_sdk.py:/sdk/nova_sdk.py:ro
+      - ${TEST_OUTPUT:-../Tmp/test-evaluator/manual}/simulator:/output
+    read_only: true
+    tmpfs: ["/tmp:size=64m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [test-case]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).close()"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+
+  test-agent:
+    image: ontoward-test:local
+    command: [python, /test/agent.py]
+    user: "${ONTOWARD_TEST_UID:-501}:${ONTOWARD_TEST_GID:-20}"
+    working_dir: /submission
+    cpus: 2.0
+    mem_limit: 8g
+    environment:
+      NOVA_API_BASE: http://test-simulator:8080
+      NOVA_RUN_TOKEN: ontoward-local-test
+      NOVA_SESSION_ID: 00000000-0000-4000-8000-000000000001
+      NOVA_OUTPUT_DIR: /output
+      PYTHONPATH: /submission
+    volumes:
+      - ../submission:/submission:ro
+      - ${TEST_OUTPUT:-../Tmp/test-evaluator/manual}/agent:/output
+    read_only: true
+    tmpfs: ["/tmp:size=512m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [test-case]
+
+  test-check:
+    image: ontoward-test:local
+    command: [python, /test/test_evaluator.py]
+    user: "${ONTOWARD_TEST_UID:-501}:${ONTOWARD_TEST_GID:-20}"
+    environment:
+      PYTHONPATH: /submission
+    volumes:
+      - ../submission:/submission:ro
+      - ../assets/nova-samples-2026:/cases:ro
+      - ${TEST_OUTPUT:-../Tmp/test-evaluator/manual}:/output
+    network_mode: none
+    read_only: true
+    tmpfs: ["/tmp:size=512m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+
+networks:
+  test-case:
+    internal: true

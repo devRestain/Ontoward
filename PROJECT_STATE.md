@@ -1,9 +1,13 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=50395467f7f7234fa830a5a0b4d42548e6731b99 dirty=true updated=2026-10-16T14:12:16+00:00
-/goal phase=current id=ROOT.READINESS26 state=complete action="Complete D26 submission readiness with Education pass offline verification and an independent runtime ZIP"
-/goal phase=next id=ROOT.OFFICIAL26 state=deferred action="Coordinate one explicitly authorized official sample validation of the pinned D26 ZIP"
+/checkpoint revision=7b13f05b094fce2999d32c61b1fdad12ff03867c dirty=true updated=2026-10-17T10:07:47+09:00
+/goal phase=current id=ROOT.GUIDELINES30 state=complete action="Implement reusable disease-to-guideline mapping with exact source evidence and bounded NOVA semantic review"
+/goal phase=history id=ROOT.CHIEF29 state=complete action="Coordinate case-independent chief mapping evaluator correction offline acceptance and the D29 archive handoff"
+/goal phase=next id=ROOT.NOVA27 state=deferred action="Verify one explicitly authorized C10 local NOVA run using D29 with a fixed request ceiling and development-credit use"
+/goal phase=history id=ROOT.CONTEXT28 state=complete action="Coordinate D28 context failure recovery offline verification and a standalone submission archive handoff"
+/goal phase=history id=ROOT.TEST27 state=complete action="Implement and verify the D27 isolated public-sample evaluator and NOVA development-chat bridge"
+/goal phase=history id=ROOT.READINESS26 state=complete action="Complete D26 submission readiness with Education pass offline verification and an independent runtime ZIP"
 /goal phase=history id=ROOT.GIT25 state=complete action="Preserve original work on a backup branch and publish the compact verified main to origin under D25"
 /goal phase=history id=ROOT.STORAGE24 state=complete action="Reclaim disposable project storage and prepare a compact source snapshot while preserving the admitted competition runtime"
 /goal phase=history id=ROOT.TEXT22 state=complete action="Coordinate APP.TEXT20 runtime text admission Korean consultation verification and D23 competition acceptance"
@@ -11,6 +15,7 @@
 /goal phase=history id=ROOT.GRAPH20 state=complete action="Complete D20 competition graph connections approval and offline pipeline verification"
 /goal phase=history id=ROOT.FINDING19 state=complete action="Expand source-backed findings and attributes and remove repeated preparation evidence storage"
 /goal phase=history id=ROOT.SOURCE18 state=complete action="Complete D18 offline extraction tooling verification and generation evidence handoff"
+/goal phase=history id=ROOT.WHITEPAPER02 state=complete action="Reconcile the submission whitepaper handoff with active decisions and maintained state ownership"
 /accept id=ROOT.FINDING19.A1 state=pass action="Discover examination roles observable dimensions and specialty coverage from supplied sources" evidence=ROOT.FINDING19.E1
 /accept id=ROOT.FINDING19.A2 state=pass action="Normalize workset provenance audit exports and intermediate storage without losing source custody" evidence=ROOT.FINDING19.E2
 /accept id=ROOT.FINDING19.A3 state=pass action="Verify the new build preserve consultation boundaries and package generation evidence" evidence=ROOT.FINDING19.E3,ROOT.FINDING19.E4
@@ -89,4 +94,46 @@
 /evidence id=ROOT.READINESS26.E4 class=external_service result=not_run source=data/provenance/submission-readiness-2026-10-16.json observed="Leave actual Luna authenticated SDK upload official sample validation and scoring unrun and record incomplete clinical plan coverage"
 /scope id=ROOT.READINESS26.S1 state=in action="Own D26 cross-scope coordination public rule inspection offline acceptance and local packaging"
 /scope id=ROOT.READINESS26.S2 state=out action="Exclude Education retrieval new data or model generation authenticated services upload evaluation commits and deployment"
-/handoff state=blocked action="Obtain exact authorization for official sample validation of the pinned D26 Education-pass ZIP"
+/accept id=ROOT.TEST27.A1 state=pass action="Implement the local API isolated containers role-bound model bridge and bounded request controls" evidence=ROOT.TEST27.E1
+/accept id=ROOT.TEST27.A2 state=pass action="Exercise the unchanged submission entrypoint and preserve public-case completion limits" evidence=ROOT.TEST27.E2
+/accept id=ROOT.TEST27.A3 state=pass action="Reconcile D27 documentation all maintained state scopes and source custody" evidence=ROOT.TEST27.E3
+/evidence id=ROOT.TEST27.E1 class=runtime result=pass source=Tmp/test-evaluator/verify-20261016T144431Z-75874/verification.json observed="Pass 21 network-disabled checks over readiness time and turn budgets SDK HTTP refusals NFC request replay pending requests model limits SOAP completion missing evidence and session-free NOVA serialization under an inherited local session environment"
+/evidence id=ROOT.TEST27.E2 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.TEST27 C10 local HTTP completion observed sandbox limits and the explicit C01 and C03 scripted Gateway failures"
+/evidence id=ROOT.TEST27.E3 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference DATA.SAMPLES27 source custody and align D27 PRD root and Test contracts human instructions and the three state scopes"
+/evidence id=ROOT.TEST27.E4 class=external_service result=not_run source=data/provenance/local-evaluator-2026-10-16.json observed="Leave actual NOVA official sessions scoring downloads commits and deployment unrun after offline-only verification"
+/scope id=ROOT.TEST27.S1 state=in action="Own Test implementation containers request evidence offline checks documentation and cross-scope handoff"
+/scope id=ROOT.TEST27.S2 state=out action="Exclude clinical graph expansion actual NOVA calls official evaluation source downloads commits and deployment"
+/scope id=ROOT.TEST27.S3 state=out action="Record the D27 official validation deferral before the user-reported D28 sample failure"
+/accept id=ROOT.CONTEXT28.A1 state=pass action="Verify the bounded Gateway recovery and retained consultation behavior" evidence=ROOT.CONTEXT28.E1
+/accept id=ROOT.CONTEXT28.A2 state=pass action="Package and isolate the fixed submission archive" evidence=ROOT.CONTEXT28.E2
+/accept id=ROOT.CONTEXT28.A3 state=pass action="Reconcile D28 requirements decisions source custody and scoped handoffs" evidence=ROOT.CONTEXT28.E3,ROOT.CONTEXT28.E4
+/evidence id=ROOT.CONTEXT28.E1 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.CONTEXT28 complete prompt limits context rejection recovery and admitted consultation verification"
+/evidence id=ROOT.CONTEXT28.E2 class=artifact result=pass source=Tmp/context-limit-2026-10-16/artifact.json observed="Extract and source-match the 42-file 1363214-byte ZIP with SHA256 b7dfecc5c28fb7d24f3bbe6645ed921071cd1cd1a8821ee9fcedd2fc15e68972 under Tmp/packaging/context-limit-2026-10-16 while preserving the prior archive"
+/evidence id=ROOT.CONTEXT28.E3 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference DATA.CONTEXT28 user-reported failure public documentation and unchanged admission custody"
+/evidence id=ROOT.CONTEXT28.E4 class=semantic result=pass source=DECISION_STATE.md observed="Apply D28 in PRD submission contract workflow rules Korean workflow explanation and all three maintained operational states"
+/evidence id=ROOT.CONTEXT28.E5 class=external_service result=not_run source=data/provenance/context-limit-2026-10-17.json observed="Leave new model calls uploads server sample validation and scoring unrun after the user-reported previous archive failure"
+/scope id=ROOT.CONTEXT28.S1 state=in action="Own D28 offline tooling tests public documentation local packaging and cross-scope handoff"
+/scope id=ROOT.CONTEXT28.S2 state=out action="Exclude authenticated services new models upload evaluation downloads commits deployment and D27 simulator redesign"
+/accept id=ROOT.CHIEF29.A1 state=pass action="Remove case-specific scripted mapping and preserve auditable Gateway requests" evidence=ROOT.CHIEF29.E1
+/accept id=ROOT.CHIEF29.A2 state=pass action="Verify the production Gateway and independently packaged consultation workflow" evidence=ROOT.CHIEF29.E2,ROOT.CHIEF29.E3
+/accept id=ROOT.CHIEF29.A3 state=pass action="Reconcile D29 requirements custody and all maintained state scopes" evidence=ROOT.CHIEF29.E4,ROOT.CHIEF29.E5
+/evidence id=ROOT.CHIEF29.E1 class=runtime result=pass source=Tmp/test-evaluator/verify-20261016T153402Z-4258/verification.json observed="Pass 25 offline evaluator checks including generic supplied-alias selection no case fallback actual Gateway request custody and empty-facts transport counting"
+/evidence id=ROOT.CHIEF29.E2 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.CHIEF29 single-Symptom selection lookup recovery actual-admitted consultations and isolated verification"
+/evidence id=ROOT.CHIEF29.E3 class=artifact result=pass source=Tmp/cc-mapping-2026-10-17/artifact.json observed="Extract and source-match the 42-file 1364316-byte D29 ZIP with SHA256 8854832ee1ff787a9d08213938b65c6065f87aaa14d7a9e8b693553f0cfe2c28 while preserving the D28 archive"
+/evidence id=ROOT.CHIEF29.E4 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference DATA.CHIEF29 unchanged source custody and the correction of historical scripted failures without claiming missing graph vocabulary"
+/evidence id=ROOT.CHIEF29.E5 class=semantic result=pass source=DECISION_STATE.md observed="Apply D29 in PRD root submission and Test contracts workflow rules human orientation and all three state scopes; retain real NOVA and official validation as unrun"
+/scope id=ROOT.CHIEF29.S1 state=in action="Own D29 evaluator correction offline verification archive packaging documentation and cross-scope handoff"
+/scope id=ROOT.CHIEF29.S2 state=out action="Exclude real model calls official services downloads commits remote writes and deployment"
+/accept id=ROOT.GUIDELINES30.A1 state=pass action="Verify reusable retrieval mapping replay and failure controls in the project container" evidence=ROOT.GUIDELINES30.E1,ROOT.GUIDELINES30.E3,ROOT.GUIDELINES30.E4
+/accept id=ROOT.GUIDELINES30.A2 state=pass action="Reference data-owned disease coverage and exact source and model provenance" evidence=ROOT.GUIDELINES30.E2
+/evidence id=ROOT.GUIDELINES30.E1 class=runtime result=pass source=data/preparation/guideline-mapping/runtime843-2026-10-17/tool-verification.json observed="Pass twenty-three offline retrieval exact-evidence source-path source-hierarchy budget failure and replay checks in the project dev container without network or model calls"
+/evidence id=ROOT.GUIDELINES30.E2 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference completed DATA.GUIDELINES30 document coverage source custody applicability limits background-only gaps and strict replay without treating navigation as extracted patient plans"
+/evidence id=ROOT.GUIDELINES30.E3 class=external_service result=pass source=data/preparation/guideline-mapping/runtime843-2026-10-17/execution-summary.json observed="Use only session-free NOVA openai/gpt-6-luna with 147 reserved requests within the frozen 150-request ceiling; preserve 144 raw model responses six failure records and one explicitly revalidated unchanged response with zero automatic retries"
+/evidence id=ROOT.GUIDELINES30.E4 class=artifact result=pass source=data/preparation/guideline-mapping/runtime843-2026-10-17/code-custody.json observed="Pin preparation code prompts dependencies replay versions and result hashes; preserve all protected runtime files and unrelated concurrent guidance changes"
+/evidence id=ROOT.GUIDELINES30.E5 class=semantic result=not_run source=data/provenance/guideline-mapping-2026-10-17.json observed="Leave actual SOAP P extraction independent clinical validation external guideline currentness and runtime admission unrun; preserve D26 Education disabled and separate deferred runtime verification"
+/scope id=ROOT.GUIDELINES30.S1 state=in action="Own D30 preparation tooling offline verification bounded NOVA calls and cross-scope handoff"
+/scope id=ROOT.GUIDELINES30.S2 state=out action="Exclude patient plan generation runtime admission uploads downloads commits and deployment"
+/accept id=ROOT.WHITEPAPER02.A1 state=pass action="Reference application-owned whitepaper verification and preserve active D30 and deferred runtime handoffs" evidence=ROOT.WHITEPAPER02.E1
+/evidence id=ROOT.WHITEPAPER02.E1 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Reference APP.WHITEPAPER02 and review DECISION_STATE.md and data/PROJECT_STATE.md while preserving D30 preparation goals and the separate model and server verification boundaries"
+/scope id=ROOT.WHITEPAPER02.S1 state=in action="Record documentation coordination and Tmp verification ownership without replacing active guideline preparation"
+/handoff state=ready action="Use completed D30 preparation and data-owned applicability gaps for a separately bounded P extraction workset; preserve ROOT.NOVA27 and APP.REVALIDATE29 as separately deferred runtime verification"

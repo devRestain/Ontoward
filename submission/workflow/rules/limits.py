@@ -28,6 +28,9 @@ class Limits:
     parser_vocabulary_bytes: int = 32768
     expanded_parser_concepts: int = 1024
     expanded_parser_vocabulary_bytes: int = 131072
+    gateway_request_bytes: int = 12288
+    expanded_gateway_request_bytes: int = 16384
+    compact_gateway_request_bytes: int = 8192
     content_codepoints: int = 30
     diagnosis_bytes: int = 500
     record_bytes: int = 100000
