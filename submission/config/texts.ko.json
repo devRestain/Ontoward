@@ -1,5 +1,6 @@
 {
   "chief_question": "안녕하세요. 무엇이 어떻게 불편하세요?",
+  "primary_chief_question": "어떤 증상이 가장 불편하세요?",
   "unmapped_question": "불편한 부위는 어디인가요?",
   "open_question": "그 밖에 불편한 증상이 있나요?",
   "clarification_question": "불편한 증상을 조금 더 설명해 주세요.",

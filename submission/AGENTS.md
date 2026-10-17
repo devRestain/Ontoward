@@ -2,7 +2,7 @@
 
 ## Ownership
 
-- Apply root PRD.md, D18 source-only knowledge ownership, D17 matching and parsing, and D35 interview budgets and continuation.
+- Apply root PRD.md, D38 chief anchored inference and graph question selection, D18 source custody, and D35 non-borrowing session budgets.
 - Keep run.py limited to SDK callbacks from workflow/runtime.py.
 - Assemble immutable knowledge and configuration in PreparedResources and initialize case-owned collaborators and WorkflowState for each consult call.
 - Keep Consultation as the sole coordinator for Initiation, ChiefComplaint, ContextFactor, DifferentialDiagnosis, Education, and finalization.
@@ -24,13 +24,14 @@
 - Block direct questions about diagnosis-qualified Targets without an approved observable mapping.
 - Never map an unqualified complaint to a cause-qualified concept or restore a qualifier removed from the question.
 - Start with the prepared greeting and chief-complaint invitation.
-- Process applicable unresolved core HPI in slot-first round-robin order: Location, Laterality, PainQuality or Quality, TimeSinceOnset, EpisodeDuration, Severity.
-- Ask one Open Inquiry after core HPI, then evaluate remaining questions adaptively.
-- Freeze the ROS candidate system union from confirmed chief complaints; select by current utility, skip known symptoms, and ask at most six without chaining new systems.
+- Select one patient-prioritized primary chief and process its entire get_symptom_attributes list in stable source order.
+- Record acquired unknown not_applicable blocked_asset and budget_stopped outcomes separately and reserve the last available collection slot for one Open Inquiry.
+- Freeze ROS systems from the primary chief and ask at most six useful presence questions without chaining from additional symptoms.
 - Do not use BodySystem to filter Disease recall.
 - Require confirmed Target presence in the same observation/episode before asking SAY attributes; retain EXAM as a separate acquisition action.
-- Use stable semantic question keys and preserve delivered history and pending actions.
-- Replan undelivered questions after new clinical evidence; permit reconsideration of low-priority undelivered questions only after a new evidence revision.
+- Use semantic keys including Target Attribute subject occurrence and exact time context; preserve delivered history and pending actions.
+- Use at most two primary clarifications and stop primary_chief_unresolved instead of choosing an arbitrary first report.
+- Rebuild chief collection and ROS on explicit primary correction while preserving delivered history; replan on evidence question history session chief or budget changes.
 - Account for the capped supporting-Context bonus in question utility, drop exhausted Context utility, and advance to diagnostic acquisition when its utility is greater.
 - Never ordinarily repeat a delivered question; keep clarification case-wide at two and preserve unresolved values.
 - Remove unasked placeholders and references together and retain completed facts, delivered explanations, and plans.
@@ -39,8 +40,8 @@
 
 - Route every SAY/EXAM reply through InputInterpreter, including education replies.
 - Use openai/gpt-6-luna for gateway terminology and empathy roles; track the first substantive Gateway interpretation separately from other model successes.
-- Apply D29 to require one best supplied Symptom per reported current chief; mark approximate interpretation uncertain and retain its exact patient quote.
-- Expose source labels and aliases, restrict initial chief candidates to Symptoms, and use bounded model lookup terms to search the full source index within the existing one-call recovery allowance.
+- Map each current chief report to one supplied Symptom and separate exact broader ambiguous or unmapped mapping from clinical presence.
+- Restrict chief identifiers to Symptoms while extracting incidental attributes values symptoms and Context from the whole utterance under the existing bounded recovery allowance.
 - Keep the chief schema enum synchronized with the transmitted candidates, reject multiple chief IDs and unqualified diagnostic composites, and record linked-chief counts separately from nonempty model responses.
 - Keep routing selection scores diagnosis and SOAP serialization in Python while accepting validated D37 model-generated P sentences.
 - Preserve the complete actual transcript case-locally; exclude failed drafts, undelivered text, and transport errors from dialogue.
@@ -67,7 +68,7 @@
 - Prioritize current wording and trim optional vocabulary and past context without truncating current input, question, schema, or required Target/Attribute IDs; preserve oversized input for clarification without transmission.
 - Treat CONTEXT_LIMIT_EXCEEDED as a request-specific rejection and use only the existing one-call recovery allowance with a smaller payload and a new request ID; preserve accepted facts and normal clarification/finalization limits.
 - Keep unknown, uncertain, explicit absence, unasked, unperformed, and acquired evidence distinct.
-- Use CaseState.current_entries for chief confirmation question resolution reasoning and SOAP while preserving raw conflicting records.
+- Use the shared current-evidence projection for chief confirmation question resolution reasoning and SOAP while preserving raw conflicts and unstructured reports.
 - Preserve raw reports, subject/time, broad and fine locations, corrections, separate observations/episodes, typed quantities/ranges, and both time axes.
 - Keep patient speech, actual EXAM findings, initial vitals, proposed tests, and plans in their designated SOAP roles.
 - Do not infer units, thresholds, clinical causal qualifiers, examinations, or plans from unqualified wording.
@@ -79,14 +80,20 @@
 - Activate support only after complete Feature/applicability matching; never merge episodes or count uncertain alternatives as independent confirmation.
 - Replace matched ancestors with matching refinements even when support decreases, retain fractional/zero source weights, and aggregate once per Disease–Target.
 - Record incomparable matches without fabricating a combined-source weight.
-- Preserve the original scoring_policy and hash-pin the separate D17 reasoning_policy.
+- Preserve nonexclusive categorical positives and distinguish explicit value negation from numeric conflict.
+- Restrict chief support to the anchored occurrence and exclude another occurrence of the same Target from auxiliary support.
+- Preserve source Association weights and hash-pin the separate d38.1 reasoning policy without changing source graph or action assets.
 - Apply bounded absence penalties only to basic presence Patterns with matched applicability, high/very_high source typicality, and explicit current absence in the active chief episode.
 - Cap penalties at one per Target and two per Disease; do not penalize unknown, missing relations, detailed mismatch, or another episode's absence.
-- Calculate fit as source support plus capped positive-only Context minus bounded contradiction.
-- Rank by fit, current-chief coverage, explicit conflicts, and Disease URI; require positive support, positive fit, and complete current-chief explanation for primary and alternative diagnosis eligibility.
+- Calculate fit as exact-chief support plus min(4, other Target support) plus positive Context capped at one minus bounded contradiction.
+- Require positive exact-chief support matched applicability and positive fit; rank eligible diagnoses by fit chief support conflicts and URI.
 - Preserve broad candidate recall and use incomplete conditions for question utility rather than confirmed diagnostic support.
 - Keep public indexes/refinement caches in PreparedResources and patient search/matching caches only in case state.
-- Invalidate changed observation/episode evaluations and recompute Context when its scoring mode changes; skip repeated scoring without changed clinical evidence.
+- Preserve full diagnostic recall and compare eight current plus four structurally diverse potential candidates before expanding to all chief-compatible candidates.
+- Compare typed answer regions with D plus 0.25 E using gap scale four and action cost one; exclude unknown replies from information-branch weighting.
+- Discount feasible future paths by 0.5 per step up to six questions and enforce 512 hypothetical evaluations per selection.
+- Record incomplete computation separately from no useful information and retain selected paths outcomes runner-ups and actual post-answer results.
+- Evaluate actual and isolated hypothetical evidence through the same pure kernel and dependency indexes; score Context from acquisition independently of session.
 - Select a separately typed confirmed chief-symptom diagnosis if no eligible Disease remains and fail explicitly without supported chief evidence.
 
 ## Budgets, Recovery, and Submission
@@ -94,8 +101,8 @@
 - Apply D35 interview target/cap pairs of Initiation 1/1, ChiefComplaint 7/16, ContextFactor 2/7, and DifferentialDiagnosis 3/12 without borrowing unused capacity.
 - Treat interview targets as conditional coverage goals and skip filler while reserving five shared turns before enabled Education.
 - Deliver Education within remaining shared turns without a separate three-turn cap or mandatory understanding question.
-- Require positive rank-change, spread, or unlock utility for optional questions; after the target require rank-change or spread, or positive unlock while no Disease has diagnostic eligibility.
-- Recheck utility during selection even without a new clinical revision; exempt core HPI before Open Inquiry, Open Inquiry, clarification, education, and empathy from this optional-question filter.
+- Require fully evaluated positive structural decision utility for optional questions and budgeted binding clarifications; exclude resolved unknown unavailable or false-prerequisite paths.
+- Preserve compulsory primary selection full chief collection and Open Inquiry while comparing optional presence attributes Context and EXAM with the shared kernel.
 - Keep Usage.actions as total consumed server turns and empathy_actions as its empathy subset; count actions minus empathy_actions against interview caps.
 - Charge empathy SAY and model calls to the common 50-turn and model/token budgets without an independent empathy quota; preserve queued empathy across replanning and interpret its reply before continuation.
 - Preserve empathy dialogue and accepted clinical facts without inserting an unlinked acknowledgement into SOAP.
@@ -135,7 +142,8 @@
 - Consume D23 admitted D22 patient actions through strict prepare; preserve D20 graph and policy semantics and use only exact prepared SAY and EXAM wording.
 - Keep require_action_assets=False confined to offline graph preparation and validation; use full graph and question validation during prepare.
 - Use package-relative runtime imports and settings.py for file-relative paths.
-- Run maintained offline behavioral tests and actual-admitted-RDF scripted consultations through root Dev/tests/workflow.
+- Run maintained workflow D38 algorithm input empathy evidence Education and admitted-RDF checks through root Dev/tests/workflow.
+- Compare frozen pre-D38 and D38 synthetic consultations with identical source fixtures and budgets without public-case tuning.
 - Keep synthetic fixtures and evidence in Tmp and verify the extracted ZIP without parent data/assets or network.
 - Package only active manifest knowledge assets and required runtime defaults; exclude superseded unreferenced knowledge files without deleting their source custody.
 - Reconcile D18 in requirements, contracts, decisions, and all three maintained operational states before completion.

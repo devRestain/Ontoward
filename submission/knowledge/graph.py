@@ -77,6 +77,7 @@ class ClinicalKnowledge:
         self._concept_cache = None
         self._target_values = {}
         self._types = None
+        self._supporting_cache = {}
 
     @classmethod
     def load(cls, manifest_path: Path) -> ClinicalKnowledge:
@@ -341,8 +342,10 @@ class ClinicalKnowledge:
                     yield child, parent
 
     def get_supporting_context(self, disease_id: str) -> list[dict[str, str]]:
-        return [{"id": str(context), "type": str(self._one(context, OW.contextType))}
+        if disease_id not in self._supporting_cache:
+            self._supporting_cache[disease_id] = [{"id": str(context), "type": str(self._one(context, OW.contextType))}
                 for context in sorted(self._graph.objects(URIRef(disease_id), OW.hasSupportingContext), key=str)]
+        return self._supporting_cache[disease_id]
 
     def get_context_type(self, context_id: str) -> str:
         return str(self._one(URIRef(context_id), OW.contextType))
@@ -406,6 +409,7 @@ class ClinicalKnowledge:
         return str(value) if value is not None else None
 
     def validate_graph(self, *, require_action_assets=True) -> None:
+        self._supporting_cache.clear()
         self._feature_cache.clear()
         self._profile_cache.clear()
         self._refinement_cache.clear()
@@ -540,3 +544,17 @@ class ClinicalKnowledge:
         self._types = {}
         for subject, kind in self._graph.subject_objects(RDF.type):
             self._types.setdefault(str(subject), set()).add(str(kind))
+        self.patterns_by_input, self.associations_by_context = {}, {}
+        self.diseases_by_supporting_context = {}
+        for profile in profiles:
+            for feature in self.get_pattern_features(profile.id):
+                key = (profile.target, feature.attribute)
+                self.patterns_by_input.setdefault(key, set()).add(profile.id)
+            self.patterns_by_input.setdefault((profile.target, None), set()).add(profile.id)
+            for condition in profile.applicability:
+                key = (condition.concept_id, condition.subject, condition.time_context)
+                self.associations_by_context.setdefault(key, []).append(profile)
+        for disease in sorted({p.disease_id for p in profiles}):
+            for context in self.get_supporting_context(disease):
+                subject = "family" if context["type"] == "family_history" else "patient"
+                self.diseases_by_supporting_context.setdefault((context["id"], subject), set()).add(disease)

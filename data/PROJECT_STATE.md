@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-data
-/status value=complete
-/checkpoint revision=f3f5df5782e2aa38b948180f51b19012b0150cf1 dirty=true updated=2026-10-17T09:56:17+00:00
-/goal phase=current id=DATA.EDUCATION37 state=complete action="Admit the D37 build-pinned guideline navigation index and preserve source custody"
+/status value=active
+/checkpoint revision=95d264f76070b93518d8ee4942982a8849046b73 dirty=true updated=2026-10-17T12:31:16+00:00
+/goal phase=current id=DATA.ALGORITHM38 state=complete action="Pin D38 reasoning policy and preserve admitted graph and action custody"
+/goal phase=history id=DATA.EDUCATION37 state=complete action="Admit the D37 build-pinned guideline navigation index and preserve source custody"
 /goal phase=history id=DATA.GUIDELINES30 state=complete action="Map every admitted Disease to relevant preserved guideline corpus documents with exact source and request provenance"
 /goal phase=history id=DATA.EVIDENCE36 state=complete action="Record the D36 isolated snapshot custody and unchanged admitted asset pins without adopting concurrent education changes"
 /goal phase=history id=DATA.INPUT34 state=complete action="Record D34 unchanged knowledge admission SDK and archive custody"
@@ -113,4 +114,8 @@
 /evidence id=DATA.EDUCATION37.E4 class=semantic result=pass source=../Tmp/education37/document-review.json observed="Distinguish admitted navigation from patient-specific model plans and preserve exact broader narrower related and background-only applicability scope with separate source and model-knowledge provenance"
 /evidence id=DATA.EDUCATION37.E5 class=external_service result=not_run source=preparation/guideline-runtime/education-2026-10-17/verification.json observed="Leave source currentness independent clinical validation real model quality and official evaluation unverified"
 /scope id=DATA.EDUCATION37.S1 state=in action="Own D37 navigation-index admission original hash custody and compact integrated code provenance"
-/handoff state=ready action="Consume the admitted index and exact original corpus through D37 runtime lookup while preserving source custody and separate clinical and official validation boundaries"
+/accept id=DATA.ALGORITHM38.A1 state=pass action="Pin the D38 runtime policy while preserving clinical graph source weights and Korean custody" evidence=DATA.ALGORITHM38.E1
+/accept id=DATA.ALGORITHM38.A2 state=pass action="Bind exact offline acceptance and standalone archive identity to the policy receipt" evidence=DATA.ALGORITHM38.E1
+/evidence id=DATA.ALGORITHM38.E1 class=artifact result=pass source=provenance/algorithm-d38-2026-10-17.json observed="Pin d38.1 policy manifest and source-matching 51-file ZIP while preserving twelve protected assets and original D20-D23 admission"
+/scope id=DATA.ALGORITHM38.S1 state=in action="Own separate D38 policy custody and acceptance receipt without changing source assertions or resuming model jobs"
+/handoff state=ready action="Retain the accepted D38 runtime policy receipt and unchanged source custody"

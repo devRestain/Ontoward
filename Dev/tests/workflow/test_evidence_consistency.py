@@ -154,13 +154,18 @@ class Verification(unittest.TestCase):
                 self.interpreter._apply_facts(s, parsed, "separate-report")
                 self.assertEqual([item.id for item in s.case.chief_complaints(confirmed=True)], ["chief"])
 
-    def test_conflicting_attribute_values_do_not_support_both_patterns(self):
+    def test_nonexclusive_values_remain_positive_until_explicitly_contradicted(self):
         s = state("DifferentialDiagnosis", True)
         record(s)
         record(s, "here", kind="attribute", field="S.hpi", attribute=OW.Location, values=[OW.Here])
         record(s, "elsewhere", kind="attribute", field="S.hpi", attribute=OW.Location, values=[OW.Elsewhere])
-        self.assertFalse(InterviewPlanner.has_resolved_evidence(s, str(OW.Complaint), str(OW.Location), "obs1", "episode1"))
+        self.assertTrue(InterviewPlanner.has_resolved_evidence(s, str(OW.Complaint), str(OW.Location), "obs1", "episode1"))
         self.consultation.reasoner.retrieve_candidates(s)
+        self.assertEqual({hypothesis.evidence_score for hypothesis in s.differential.hypotheses}, {2})
+        s.case.get("elsewhere").value.values = [str(OW.Here)]
+        s.case.get("elsewhere").value.status = "absent"
+        self.assertFalse(InterviewPlanner.has_resolved_evidence(s, str(OW.Complaint), str(OW.Location), "obs1", "episode1"))
+        self.consultation.reasoner.refresh_hypotheses(s)
         self.assertEqual({hypothesis.evidence_score for hypothesis in s.differential.hypotheses}, {1})
 
     def test_omitted_allergy_is_preserved_and_does_not_create_score_support(self):

@@ -20,10 +20,7 @@ class Consultation:
             return
         state.session.initialized = True
         self.prepare_session(state)
-        if state.session.current not in {"Initiation", "Education"} and state.interaction.needs_clarification:
-            if state.session.questions_prepared:
-                self.planner.prepare_clarification(state, state.interaction.clarification_target)
-            self.interactions.consume_clarification(state)
+        self.interactions.consume_clarification(state)
 
     def prepare_session(self, state: WorkflowState) -> None:
         prepare = {
@@ -41,22 +38,15 @@ class Consultation:
         return True
 
     def prepare_chief_complaint(self, state):
-        if not state.case.chief_complaints():
-            if not self.planner.prepare_clarification(state):
-                state.stop("failed", "no_supported_chief_complaint")
-            return False
-        self.planner.prepare_chief_complaint(state)
-        return True
+        return self.planner.prepare_chief_complaint(state)
 
     def prepare_context_factors(self, state):
         self.reasoner.retrieve_candidates(state)
-        if not state.differential.hypotheses and self.planner.prepare_clarification(state):
-            return False
         self.planner.prepare_context_questions(state)
         return True
 
     def prepare_differential_diagnosis(self, state):
-        self.reasoner.refresh_hypotheses(state, score_context=True)
+        self.reasoner.refresh_hypotheses(state)
         self.planner.prepare_differential_questions(state)
         return True
 
@@ -84,10 +74,15 @@ class Consultation:
         if state.session.current == "ChiefComplaint" and self.planner.open_done(state):
             state.differential.initialized = True
         self.reasoner.refresh_hypotheses(state)
-        interaction = state.interaction
-        if state.session.current != "Initiation" and interaction.needs_clarification:
-            self.planner.prepare_clarification(state, interaction.clarification_target)
-            self.interactions.consume_clarification(state)
+        delivered = next((entry for entry in reversed(state.interaction.history)
+                          if entry.delivered and entry.question and entry.question.assessment), None)
+        if delivered and "observed_after" not in delivered.question.assessment:
+            supported = {h.disease_id for h in self.reasoner.supported_hypotheses(state)}
+            delivered.question.assessment["observed_after"] = {
+                h.disease_id: {"score": h.score, "chief_score": h.chief_score,
+                              "eligible": h.disease_id in supported}
+                for h in state.differential.hypotheses}
+        self.interactions.consume_clarification(state)
         self.planner.replan(state)
 
     def check_budget(self, state: WorkflowState) -> None:
@@ -122,9 +117,7 @@ class Consultation:
             self.prepare_session(state)
             return
         if state.session.current in {"ContextFactor", "DifferentialDiagnosis"}:
-            self.reasoner.refresh_hypotheses(state, score_context=True)
-            if not state.differential.hypotheses and self.planner.prepare_clarification(state):
-                return
+            self.reasoner.refresh_hypotheses(state)
         if state.interaction.termination:
             return
         if state.session.current == "Education":

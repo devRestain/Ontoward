@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "decision": "D38",
+  "status": "accepted_offline",
+  "created_at": "2026-10-17T12:31:16+00:00",
+  "authority": "user-approved D38 implementation plan",
+  "design_reference": {
+    "conversation_id": "6ad32e92-9f24-8342-a18d-50a13da14042",
+    "role": "design data; the approved user plan governs implementation"
+  },
+  "baseline_revision": "95d264f76070b93518d8ee4942982a8849046b73",
+  "baseline_manifest_sha256": "65a8e398d2c7d7ea06035f0e0feb9fe10e726a2106a0e1a72e15617f8bcdde4b",
+  "manifest_sha256": "b0e4729b413ff737f99f3e2739db2cdc9f91510664d64ef5f3cbf09ea07fcf75",
+  "manifest_changed_fields": [
+    "algorithm_version",
+    "reasoning_policy"
+  ],
+  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+  "reasoning_policy": {
+    "path": "submission/knowledge/d38-reasoning_policy.json",
+    "sha256": "e3f59dd1cc1b9c5450be9c4f43981b87acd9ab514ee409dbc1c1d2b640c5359f",
+    "defaults": {
+      "absence_penalties": {
+        "high": 0.5,
+        "very_high": 1.0
+      },
+      "comparison_current": 8,
+      "comparison_potential": 4,
+      "eligibility_weight": 0.25,
+      "future_discount": 0.5,
+      "per_target_cap": 1.0,
+      "plan_questions": 6,
+      "score_scale": 4.0,
+      "simulation_limit": 512,
+      "supporting_cap": 4.0,
+      "total_cap": 2.0,
+      "version": "d38.1"
+    }
+  },
+  "preserved_files": {
+    "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+    "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+    "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    ".env": "590fd421c37b70d7c7984fa3dff0b39529b8833856bd6f97dcab50770da3a514",
+    "settings.py": "ae1211c911fe54b2e4d0a21b1e75d4a106d68df31640f67435d4f1f2c4881eae",
+    "knowledge/5b44871b970f5e98-vocabulary.ttl": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88",
+    "knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+    "knowledge/5b44871b970f5e98-questions.ko.json": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687",
+    "knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+    "knowledge/guideline-index.json": "f6b7e631c62b06d335bbd8e4001c773b5b1d3dc540c8d29c0f1aa0cf1ba39907",
+    "knowledge/5b44871b970f5e98-reasoning_policy.json": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc",
+    "knowledge/5b44871b970f5e98-clinical.ttl": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a"
+  },
+  "source_association_weights": "unchanged",
+  "source_graph_and_action_admission": "retain D20-D23; this receipt admits only the D38 runtime policy",
+  "archive": {
+    "path": "Tmp/d38/final/ontoward-submission.zip",
+    "sha256": "71eee6c94e28a01e20bb6c29ea32d1e3a86370ad8712f3726aad4c47937cf647",
+    "files": 51,
+    "expanded_bytes": 14680500,
+    "compressed_bytes": 1531440
+  },
+  "acceptance": {
+    "summary": "Tmp/d38/verification.json",
+    "isolated": "Tmp/d38/accepted/output/verification.json",
+    "comparison": "Tmp/d38/comparison-final/comparison.json",
+    "document_review": "Tmp/d38/document-review.json",
+    "computation": "Tmp/d38/admitted-computation.json",
+    "tests": {
+      "workflow": 98,
+      "algorithm": 25,
+      "input": 23,
+      "evidence": 18,
+      "education": 17
+    },
+    "korean_checks": 522,
+    "admitted_delta_patches": 24
+  },
+  "execution": {
+    "network": "none",
+    "cpus": 2,
+    "memory_bytes": 8589934592,
+    "root_read_only": true,
+    "submission_read_only": true,
+    "parent_workspace_visible": false,
+    "development_key_present": false,
+    "guideline_originals": "read-only organizer mount; originals excluded from archive",
+    "dev_image": "sha256:261d00d1b7779ebbf28aeb0ca58b0bf04792e5059a22a10278397cc63261ef25",
+    "package_image": "sha256:04f9bb7e65c653902fa997f369fdca94df454b9618afac4f03d0ea1f476e729b"
+  },
+  "not_run": [
+    "actual Luna interpretation quality",
+    "clinical accuracy",
+    "official sample validation",
+    "official evaluation",
+    "upload",
+    "commits",
+    "deployment"
+  ]
+}

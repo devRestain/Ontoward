@@ -8,6 +8,7 @@ from .rules.action import content_error
 class Texts(BaseModel):
     model_config = ConfigDict(extra="forbid")
     chief_question: str
+    primary_chief_question: str
     unmapped_question: str
     open_question: str
     clarification_question: str
@@ -104,7 +105,7 @@ class TextConfig(BaseModel):
                 raise ValueError(f"Invalid text placeholders: {name}")
             if any(spec or conversion for _, _, spec, conversion in parts):
                 raise ValueError(f"Text placeholders do not support format conversions: {name}")
-        for name in ("chief_question", "unmapped_question", "open_question", "clarification_question",
+        for name in ("primary_chief_question", "chief_question", "unmapped_question", "open_question", "clarification_question",
                      "symptom_education", "provisional_education", "understanding_question", "correction_education", "empathy_fallback"):
             if content_error(getattr(texts, name)):
                 raise ValueError(f"Invalid prepared utterance: {name}")

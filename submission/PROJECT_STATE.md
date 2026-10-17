@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-submission
-/status value=complete
-/checkpoint revision=f3f5df5782e2aa38b948180f51b19012b0150cf1 dirty=true updated=2026-10-17T09:56:17+00:00
-/goal phase=current id=APP.EDUCATION37 state=complete action="Implement fixed-diagnosis guideline Education with English P and independent Korean delivery"
+/status value=active
+/checkpoint revision=95d264f76070b93518d8ee4942982a8849046b73 dirty=true updated=2026-10-17T12:31:16+00:00
+/goal phase=current id=APP.ALGORITHM38 state=complete action="Implement D38 chief anchored reasoning and graph based question selection"
+/goal phase=history id=APP.EDUCATION37 state=complete action="Implement fixed-diagnosis guideline Education with English P and independent Korean delivery"
 /goal phase=history id=APP.EVIDENCE36 state=complete action="Verify acquisition-safe corrections shared current evidence and uncovered patient reports in the isolated D36 snapshot"
 /goal phase=history id=APP.MERGE35 state=complete action="Integrate session budgets with existing SOAP input and empathy features and verify the combined main candidate"
 /goal phase=history id=APP.BUDGET35 state=complete action="Implement D35 session targets caps useful-question continuation empathy accounting and synchronous budget routing"
@@ -10,7 +11,7 @@
 /goal phase=history id=APP.SOAP33 state=complete action="Render English Category Content SOAP with source terms quote-backed keywords explicit polarity and same-episode pain assessment"
 /goal phase=history id=APP.CHIEF29 state=complete action="Require one existing Symptom for chief mapping with source aliases bounded lookup recovery and explicit semantic evidence"
 /goal phase=history id=APP.INTEGRATE36 state=complete action="Verify D36 against the combined D37 runtime and independent archive"
-/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify real Luna interpretation English planning Korean delivery and completed submission from the D37 archive after separate external execution authorization"
+/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify real Luna interpretation English planning Korean delivery and completed submission from the D38 archive after separate external execution authorization"
 /goal phase=history id=APP.CONTEXT28 state=complete action="Bound complete Gateway requests and recover context rejection once while preserving consultation and submission behavior"
 /goal phase=history id=APP.TEST27 state=complete action="Verify unchanged D26 callbacks through the D27 local HTTP API with the scripted C10 fixture"
 /goal phase=history id=APP.READINESS26 state=complete action="Pass Education and complete diagnostic acquisition Gateway recovery assessment and confirmed submission under D26"
@@ -159,4 +160,11 @@
 /evidence id=APP.EDUCATION37.E5 class=semantic result=pass source=../Tmp/education37/document-review.json observed="Align runtime roles state ownership public Education setting English SOAP serialization original mount and bounded failures with D37 while retaining D34 and D36 behavior"
 /evidence id=APP.EDUCATION37.E6 class=external_service result=not_run source=../Tmp/education37/verification.json observed="Leave real Luna clinical semantic quality official validation evaluation upload and deployment unrun"
 /scope id=APP.EDUCATION37.S1 state=in action="Own D37 fixed diagnosis source consumption English plan Korean rendering separate delivery and final serialization"
-/handoff state=blocked action="Retain the verified D37 runtime and defer real-model consultation until the case request ceiling credit use and external execution are authorized"
+/accept id=APP.ALGORITHM38.A1 state=pass action="Implement single chief collection pure shared inference and residual graph question selection" evidence=APP.ALGORITHM38.E1,APP.ALGORITHM38.E2
+/accept id=APP.ALGORITHM38.A2 state=pass action="Preserve full consultation acquisition Education SOAP and confirmed standalone submission" evidence=APP.ALGORITHM38.E2,APP.ALGORITHM38.E3
+/evidence id=APP.ALGORITHM38.E1 class=runtime result=pass source=../Tmp/d38/accepted/output/algorithm/algorithm-verification.json observed="Pass twenty-five D38 checks including independent matching full-delta equivalence ambiguous mapping numeric units exact chief scope candidate reentry and six-step capacity"
+/evidence id=APP.ALGORITHM38.E2 class=runtime result=pass source=../Tmp/d38/accepted/output/verification.json observed="Pass 181 workflow algorithm input evidence and Education tests three admitted consultations 522 Korean checks fourteen observer scenarios twenty-four admitted delta patches and the unchanged SDK entrypoint with completed receipt"
+/evidence id=APP.ALGORITHM38.E3 class=artifact result=pass source=../Tmp/d38/archive-accepted.json observed="Match all 51 archive members to source with SHA256 71eee6c94e28a01e20bb6c29ea32d1e3a86370ad8712f3726aad4c47937cf647 and retain protected SDK entrypoint dependencies RDF source policy and Korean action bytes"
+/evidence id=APP.ALGORITHM38.E4 class=external_service result=not_run source=../Tmp/d38/verification.json observed="Leave real Luna meaning quality clinical accuracy official sample validation evaluation upload and deployment unrun"
+/scope id=APP.ALGORITHM38.S1 state=in action="Own D38 primary anchor mapping evidence kernel capped scoring answer regions planner traces and session integration"
+/handoff state=blocked action="Await separate external execution authorization for APP.REVALIDATE29 using the D38 archive"

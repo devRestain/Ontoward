@@ -1,4 +1,5 @@
 import re
+import hashlib
 
 from pydantic import ValidationError
 
@@ -17,9 +18,9 @@ def fixed_reply(config, state: WorkflowState, text: str, knowledge=None) -> Pars
         return None
     statuses = {**dict.fromkeys(texts.present_replies, "present"), **dict.fromkeys(texts.absent_replies, "absent")}
     if (question.affirmative_presence and question.answer_type == "presence" and question.target_id
-            and question.purpose in {"context", "feature", "ros"} and not question.attribute_id
+            and question.purpose in {"context", "feature", "ros", "clarification"} and not question.attribute_id
             and question.kind == "SAY" and reply in statuses):
-        kind = "context" if question.purpose == "context" else "symptom"
+        kind = "context" if question.field in {"S.pmh", "S.fh", "S.sh"} else "symptom"
         return ParsedInput(facts=[Fact(field=question.field, record_id=question.item_id, quote=text,
             value=ClinicalValue(kind=kind, text=text, status=statuses[reply], concept_ids=[question.target_id],
                 observation_id=question.observation_id or question.item_id,
@@ -63,6 +64,7 @@ def resolve_destination(fact, state, knowledge):
         if (q.target_id and q.target_id in value.concept_ids and q.subject == value.subject
                 and q.attribute_id == value.attribute_id and (not q.observation_id or value.observation_id in {None, q.observation_id})
                 and (not q.episode_id or value.episode_id in {None, q.episode_id})
+                and value.time_context == q.time_context
                 and (item := state.case.get(q.item_id)) and item.status == "unasked"):
             fact.record_id = q.item_id
     existing = state.case.get(fact.record_id) if fact.record_id else None
@@ -136,6 +138,8 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
         raise ValueError("Attribute fact requires an attribute")
     if value.kind == "attribute" and value.status in {"present", "uncertain"} and not (value.values or value.measurement):
         raise ValueError("Substantive attribute answer requires a categorical or numeric value")
+    if value.not_applicable and (value.kind != "attribute" or value.status != "unknown" or value.values or value.measurement):
+        raise ValueError("Inapplicability requires an unknown attribute without an invented value")
     if value.kind in {"plan", "education"}:
         raise ValueError("Input cannot create plans or delivered education")
     if fact.record_id:
@@ -151,12 +155,13 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
             or (question.target_id and question.target_id not in value.concept_ids)
             or (question.observation_id and value.observation_id not in {None, question.observation_id})
             or (question.episode_id and value.episode_id not in {None, question.episode_id})
+            or value.time_context != question.time_context
         ):
             raise ValueError("Answer does not match its question target and episode")
         if previous and previous.kind in {"symptom", "finding", "attribute", "context"} and (
                 value.kind != previous.kind or value.subject != previous.subject
                 or value.observation_id != previous.observation_id or value.episode_id != previous.episode_id
-                or value.attribute_id != previous.attribute_id or (value.time_context == "past") != (previous.time_context == "past")):
+                or value.attribute_id != previous.attribute_id or value.time_context != previous.time_context):
             raise ValueError("Correction must preserve its evidence type attribute observation and episode")
         if previous and existing.acquisition in {"SAY", "EXAM"} and pending and existing.acquisition != pending.question.kind:
             raise ValueError("Correction must preserve its acquisition channel")
@@ -177,6 +182,8 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
         raise ValueError("Multiple interpretations must remain uncertain")
     if fact.field == "S.cc" and value.kind == "symptom" and len(value.concept_ids) > 1:
         raise ValueError("A chief complaint requires one best existing Symptom")
+    if value.primary_concern and (value.kind != "symptom" or value.subject != "patient" or value.time_context == "past"):
+        raise ValueError("Primary concern requires a current patient symptom")
     if value.attribute_id:
         if not value.concept_ids or not all(value.attribute_id in knowledge.get_symptom_attributes(c) for c in value.concept_ids):
             raise ValueError("Attribute is not applicable")
@@ -190,6 +197,51 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
         if (context_type == "family_history") != (value.subject == "family"):
             raise ValueError("Context subject does not match its clinical meaning")
 
+
+
+def normalize_occurrences(facts, state):
+    question = state.interaction.pending.question if state.interaction.pending else None
+    source = state.interaction.pending.request_id if state.interaction.pending else "initial"
+    for index, fact in facts:
+        value = fact.value
+        if value.kind not in {"symptom", "finding", "attribute"}:
+            continue
+        if (question and question.target_id in value.concept_ids and question.subject == value.subject
+                and "time_context" not in value.model_fields_set):
+            value.time_context = question.time_context
+        if question and question.primary_choice and value.kind == "symptom":
+            candidates = [i for i in state.case.chief_complaints() if i.value.concept_ids == value.concept_ids
+                          and i.value.subject == value.subject and i.value.time_context == value.time_context]
+            if len(candidates) == 1:
+                previous = candidates[0]
+                fact.record_id = previous.id
+                value.observation_id, value.episode_id = previous.value.observation_id, previous.value.episode_id
+                value.primary_concern = True
+        if (question and question.target_id in value.concept_ids and question.subject == value.subject
+                and not value.observation_id and not value.episode_id and value.time_context == question.time_context):
+            value.observation_id = question.observation_id or question.item_id
+            value.episode_id = question.episode_id or value.observation_id
+        if value.kind in {"symptom", "finding"}:
+            suffix = hashlib.sha256(f"{source}:{index}".encode()).hexdigest()[:24]
+            value.observation_id = value.observation_id or f"observation:{suffix}"
+            value.episode_id = value.episode_id or value.observation_id
+    for _, fact in facts:
+        value = fact.value
+        if value.kind != "attribute" or value.observation_id and value.episode_id:
+            continue
+        anchors = [f.value for _, f in facts if f.value.kind in {"symptom", "finding"}
+                   and f.value.concept_ids == value.concept_ids and f.value.subject == value.subject
+                   and f.value.time_context == value.time_context
+                   and (not value.observation_id or value.observation_id == f.value.observation_id)
+                   and (not value.episode_id or value.episode_id == f.value.episode_id)]
+        if not anchors:
+            anchors = [i.value for _, i in state.case.current_entries() if i.status == "done" and i.source_refs
+                       and i.value and i.value.kind in {"symptom", "finding"}
+                       and i.value.concept_ids == value.concept_ids and i.value.subject == value.subject
+                       and i.value.time_context == value.time_context]
+        keys = {(v.observation_id, v.episode_id) for v in anchors}
+        if len(keys) == 1:
+            value.observation_id, value.episode_id = next(iter(keys))
 
 
 def validate_facts(raw, state, knowledge, text, *, dialogue_ids=None, supplied_records=None, allowed=None, frozen_facts=()):
@@ -211,17 +263,23 @@ def validate_facts(raw, state, knowledge, text, *, dialogue_ids=None, supplied_r
             not isinstance(term, str) or not term.strip() or len(term) > 80 for term in terms):
         raise ValueError("Invalid lookup terms")
     dialogue_ids = set(dialogue_ids) if dialogue_ids is not None else {entry["id"] for entry in state.interaction.dialogue()}
-    accepted, rejected = [], []
+    accepted, rejected, parsed = [], [], []
     for index, item in enumerate(raw.get("facts", [])):
         try:
             fact = Fact.model_validate(item)
+            parsed.append((index, fact))
+        except (ValidationError, ValueError, TypeError) as error:
+            rejected.append({"index": index, "raw": item, "reason": str(error)})
+    normalize_occurrences(parsed, state)
+    for index, fact in parsed:
+        try:
             _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records, allowed)
             accepted.append((index, fact))
         except (ValidationError, ValueError, TypeError) as error:
-            rejected.append({"index": index, "raw": item, "reason": str(error)})
+            rejected.append({"index": index, "raw": raw["facts"][index], "reason": str(error)})
 
     def observation(value):
-        return (value.subject, value.observation_id, value.episode_id)
+        return (value.subject, value.observation_id, value.episode_id, value.time_context)
 
     anchors = {(*observation(item.value), concept) for _, item in state.case.current_entries() if item.status == "done" and item.source_refs
                and item.value and item.value.kind in {"symptom", "finding"} for concept in item.value.concept_ids}
@@ -249,13 +307,13 @@ def validate_facts(raw, state, knowledge, text, *, dialogue_ids=None, supplied_r
         if fact.value.kind in {"symptom", "finding"} and fact.value.status in {"present", "absent"}:
             key = (*observation(fact.value), tuple(sorted(fact.value.concept_ids)))
             anchor_statuses.setdefault(key, set()).add(fact.value.status)
-    blocked.update(key[:3] for key, statuses in anchor_statuses.items() if len(statuses) > 1)
+    blocked.update(key[:4] for key, statuses in anchor_statuses.items() if len(statuses) > 1)
     facts = []
     for index, fact in accepted:
         value = fact.value
         question = state.interaction.pending.question if state.interaction.pending else None
         key = (value.subject, value.observation_id or (question.observation_id if question else None),
-               value.episode_id or (question.episode_id if question else None))
+               value.episode_id or (question.episode_id if question else None), value.time_context)
         if key in blocked or (value.kind == "attribute" and not all((*key, concept) in anchors for concept in value.concept_ids)):
             rejected.append({"index": index, "raw": raw["facts"][index], "reason": "dependent_observation_or_correction"})
         else:

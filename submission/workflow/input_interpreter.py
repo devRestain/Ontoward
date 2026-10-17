@@ -154,7 +154,6 @@ class InputInterpreter:
                                    and pending.question.field == "S.cc")
 
     def _search(self, state, knowledge, text, *, kind=None):
-        kind = kind or ("Symptom" if self._chief_input(state) else None)
         key = hashlib.sha256(((kind or "*") + "\0" + knowledge.normalize_alias(text)).encode()).hexdigest()
         cache = state.differential.search_cache
         if key not in cache:
@@ -215,11 +214,11 @@ class InputInterpreter:
                 and f.value.status in {"present", "uncertain"} for f in parsed.accepted_facts)
         elif question and question.target_id:
             resolved = any(question.target_id in f.value.concept_ids and f.value.attribute_id == question.attribute_id
-                and f.value.status in {"present", "absent", "uncertain"}
-                and f.value.subject == question.subject and (question.time_context == "unspecified" or f.value.time_context == question.time_context)
+                and (f.value.status in {"present", "absent", "uncertain"} or f.value.not_applicable)
+                and f.value.subject == question.subject and f.value.time_context == question.time_context
                 and (not question.observation_id or f.value.observation_id in {None, question.observation_id})
                 and (not question.episode_id or f.value.episode_id in {None, question.episode_id})
-                and (not question.attribute_id or f.value.values or f.value.measurement)
+                and (not question.attribute_id or f.value.values or f.value.measurement or f.value.not_applicable)
                 for f in parsed.accepted_facts)
         else:
             resolved = bool(parsed.accepted_facts)
@@ -239,7 +238,7 @@ class InputInterpreter:
             if len(linked) == 1 and not rejected:
                 index, old = linked[0], accepted[linked[0]]
                 same_fact = fact.model_dump(exclude={"value", "repair_of"}) == old.model_dump(exclude={"value", "repair_of"})
-                same_value = fact.value.model_dump(exclude={"concept_ids", "status"}) == old.value.model_dump(exclude={"concept_ids", "status"})
+                same_value = fact.value.model_dump(exclude={"concept_ids", "mapping_status", "status"}) == old.value.model_dump(exclude={"concept_ids", "mapping_status", "status"})
                 conservative = fact.value.status == old.value.status or (old.value.status == "present" and fact.value.status == "uncertain")
                 if same_fact and same_value and conservative and fact.value.concept_ids:
                     fact.repair_of = old.repair_of
@@ -294,8 +293,14 @@ class InputInterpreter:
                     yield from knowledge.get_target_values(question.target_id, attribute)
                     yield from knowledge.get_attribute_values(attribute)
             if chief_input:
+                for target in self._search(state, knowledge, text, kind="Symptom")[:8]:
+                    yield target
+                    for attr in knowledge.get_symptom_attributes(target):
+                        yield attr
+                        yield from knowledge.get_target_values(target, attr)
                 yield from self._search(state, knowledge, text, kind="FindingAttribute")[:8]
                 yield from self._search(state, knowledge, text, kind="AttributeValue")[:8]
+                yield from self._search(state, knowledge, text, kind="ContextFactor")[:8]
             yield from matches[8:]
             projected = self.interactions.project_context(state, pending.question if pending else None,
                                                           self._search(state, knowledge, text), expanded=expanded)
@@ -400,7 +405,7 @@ class InputInterpreter:
         except ValueError:
             state.interaction.issues.append("gateway_required_vocabulary_overflow")
             return None
-        payload = {"input": text, "question": pending.question.model_dump(exclude={"order", "priority", "selection_value"}) if pending else None,
+        payload = {"input": text, "question": pending.question.model_dump(exclude={"order", "priority", "assessment"}) if pending else None,
                    "spoken_question": pending.content if pending else None, **context,
                    "schema": deepcopy(terminology_schema() if terminology else parser_schema()), "vocabulary": vocabulary,
                    "task": "terminology" if terminology else "gateway",
@@ -505,9 +510,12 @@ class InputInterpreter:
     def _apply_facts(self, state: WorkflowState, parsed: ParseResult, source_id: str) -> None:
         pending = state.interaction.pending
         changed = False
+        priorities = set()
         for index, fact in enumerate(parsed.accepted_facts):
             value = fact.value.model_copy(deep=True)
             item_id = fact.record_id or f"{source_id}:fact:{index}"
+            if value.primary_concern:
+                priorities.add(item_id)
             existing = state.case.get(item_id)
             if value.kind in {"symptom", "finding", "attribute"}:
                 question = next((q for q in state.questions.questions if q.item_id == item_id), None)
@@ -527,3 +535,21 @@ class InputInterpreter:
 
         if changed:
             state.differential.clinical_revision += 1
+        if not state.case.fixed_diagnosis:
+            if priorities:
+                for _, item in list(state.case.entries()):
+                    if item.value:
+                        item.value.primary_concern = item.id in priorities
+                        if item.id in priorities:
+                            state.case.put("S.cc", item)
+                state.case.primary_chief = None
+            elif pending and pending.question.purpose == "chief" and state.case.primary_chief:
+                anchor = state.case.primary_chief
+                previous = state.case.get(anchor.record_id)
+                if previous and not previous.value.primary_concern and any(
+                        fact.field == "S.cc" and fact.value.kind == "symptom"
+                        and fact.value.subject == "patient" and fact.value.time_context != "past"
+                        and fact.value.status in {"present", "uncertain"}
+                        and fact.value.concept_ids != [anchor.target_id] for fact in parsed.accepted_facts):
+                    state.case.primary_chief = None
+            state.case.select_primary()

@@ -157,7 +157,15 @@ class QuestionTemplate(Strict):
 
 
 class ReasoningPolicy(Strict):
-    version: Literal["d17.1"] = "d17.1"
+    version: Literal["d38.1"] = "d38.1"
+    supporting_cap: float = Field(default=4.0, ge=0)
+    comparison_current: int = Field(default=8, ge=1)
+    comparison_potential: int = Field(default=4, ge=1)
+    simulation_limit: int = Field(default=512, ge=1)
+    plan_questions: int = Field(default=6, ge=2, le=6)
+    score_scale: float = Field(default=4.0, gt=0)
+    eligibility_weight: float = Field(default=0.25, ge=0, le=1)
+    future_discount: float = Field(default=0.5, gt=0, le=1)
     absence_penalties: dict[str, float] = Field(default_factory=lambda: {"high": 0.5, "very_high": 1.0})
     per_target_cap: float = 1.0
     total_cap: float = 2.0

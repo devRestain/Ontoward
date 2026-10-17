@@ -174,7 +174,7 @@ def generate_plan(state, client, knowledge, config, model):
     fixed = state.case.fixed_diagnosis
     base = {"task": "education", "fixed_diagnosis": fixed.model_dump(),
             "dialogue": state.interaction.dialogue(),
-            "records": [{"field": field, **item.model_dump()} for field, item in state.case.current_entries()
+            "records": [{"field": field, **item.model_dump(exclude_none=True)} for field, item in state.case.current_entries()
                         if field.startswith(("S.", "O.")) and item.status == "done" and item.source_refs]}
     documents = []
     if fixed.kind == "disease":

@@ -38,6 +38,7 @@ from workflow.rules.budget import BudgetPolicy
 from workflow.rules.action import content_error
 from workflow.rules.input import fixed_reply
 from workflow.runtime import PreparedResources, assemble_consultation, prepare, consult
+from workflow.state.evidence import EvidenceIndex
 from workflow.state.models import ActionSpec, ClinicalValue, Fact, Hypothesis, InteractionEntry, ParsedInput, Question, RecordItem, SessionContext, WorkflowState
 from knowledge.graph import ClinicalKnowledge, OW, Plan
 from knowledge.conditions import ExpectedValue, QuestionTemplate
@@ -178,7 +179,7 @@ def add_v5_pattern(k, name, target, expectations, *, disease=OW.Alpha, label="ve
 def question(s, ident="q", purpose="feature", target=OW.Other, attribute=None, text="別の症状はありますか？", order=0, priority=0, field="S.ros", kind="SAY"):
     q = Question(item_id=ident, field=field, purpose=purpose, kind=kind, target_id=str(target) if target else None,
                  attribute_id=str(attribute) if attribute else None, text=text, order=order, priority=priority,
-                 affirmative_presence=attribute is None, answer_type="category" if attribute else "presence")
+                 affirmative_presence=attribute is None, answer_type="category" if attribute else "presence", time_context="current")
     make_planner(knowledge(), CONFIG).questions.register(s, q)
     return q
 
@@ -190,7 +191,7 @@ def pending(s, q):
 def fact(field, kind, target, text, *, q=None, attribute=None, values=None, status="present"):
     v = {"kind": kind, "text": text, "status": status, "concept_ids": [str(target)],
          "observation_id": (q or {}).get("observation_id") or "obs1",
-         "episode_id": (q or {}).get("episode_id") or "episode1", "time_context": "current"}
+         "episode_id": (q or {}).get("episode_id") or "episode1", "time_context": (q or {}).get("time_context", "current")}
     if attribute:
         v.update(attribute_id=str(attribute), values=[str(value) for value in values])
     result = {"field": field, "value": v, "quote": text}
@@ -341,7 +342,6 @@ class Verification(unittest.TestCase):
         w.doctor.execute_action(s, client)
         w.interpreter.process_input(s, knowledge(), client)
         w.refresh_after_input(s)
-        w.advance_session(s)
         self.assertEqual(s.session.current, "ChiefComplaint")
         self.assertTrue(s.session.questions_prepared)
         self.assertIn("hpi", [q.purpose for q in s.questions.questions])
@@ -467,7 +467,10 @@ class Verification(unittest.TestCase):
         reasoner.retrieve_candidates(s)
         alpha = lambda: next(h for h in s.differential.hypotheses if h.disease_id == str(OW.Alpha))
         self.assertEqual(alpha().evidence_score, 1)
-        make_planner(k, CONFIG).prepare_context_questions(s)
+        planner = make_planner(k, CONFIG)
+        paths, _ = planner._frontier(s, reasoner.evaluate(EvidenceIndex.from_case(s.case), reasoner.anchor(s.case)), [str(OW.Alpha)])
+        required = next(p.specs[0] for p in paths if p.specs[0]["target_id"] == str(OW.Context))
+        planner._register(s, required, 0, 1)
         required_question = next(q for q in s.questions.questions if q.target_id == str(OW.Context))
         self.assertEqual((required_question.subject, required_question.time_context), ("patient", "current"))
         record(s, "old-context", OW.Context, "context", "present", "S.pmh")
@@ -578,7 +581,7 @@ class Verification(unittest.TestCase):
         self.assertEqual(s.interaction.termination, "submitted")
         self.assertEqual(s.case.diagnosis_kind, "symptom")
         self.assertEqual(s.case.diagnosis, "별도증상")
-        self.assertEqual(s.session.clarifications, 2)
+        self.assertEqual(s.session.clarifications, 0)
         self.assertFalse(s.differential.hypotheses)
         self.assertEqual(client.submissions[0]["note"]["P"]["treatment"], "")
         self.assertIn("Cause undetermined", client.submissions[0]["note"]["A"]["evidence"])
@@ -1020,6 +1023,8 @@ class Verification(unittest.TestCase):
         k.validate_graph()
         record(s)
         record(s, ident="known", target=OW.Ros0, field="S.ros", status="absent")
+        record(s, "location", kind="attribute", field="S.hpi", attribute=OW.Location, values=[OW.Here])
+        record(s, "quality", kind="attribute", field="S.hpi", attribute=OW.Quality, values=[OW.Dull])
         planner = make_planner(k, CONFIG)
         planner.prepare_chief_complaint(s)
         opening = next(q for q in s.questions.questions if q.purpose == "open_inquiry")
@@ -1029,9 +1034,27 @@ class Verification(unittest.TestCase):
         ClinicalReasoner(k).retrieve_candidates(s)
         planner.replan(s, force=True)
         ros = [q for q in s.questions.questions if q.purpose == "ros" and s.case.get(q.item_id).status == "unasked"]
-        self.assertEqual(len(ros), 6)
-        self.assertNotIn(str(OW.Ros0), [q.target_id for q in ros])
-        self.assertEqual(len(set(q.semantic_key() for q in ros)), 6)
+        self.assertEqual(len(ros), 1)
+        delivered = []
+        for index in range(6):
+            planner.select_question(s)
+            selected = s.interaction.selected.question
+            self.assertEqual(selected.purpose, "ros")
+            self.assertNotEqual(selected.target_id, str(OW.Ros0))
+            delivered.append(selected.semantic_key())
+            s.interaction.history.append(InteractionEntry(id=f"ros:{index}", kind="SAY", delivered=True, question=selected,
+                request={"content": selected.text}, response={"content": "없어요"}))
+            item = s.case.get(selected.item_id)
+            item.status = "done"
+            item.source_refs = [f"ros:{index}"]
+            item.value = ClinicalValue(kind="symptom", text="없어요", status="absent", concept_ids=[selected.target_id],
+                observation_id=selected.observation_id, episode_id=selected.episode_id, time_context=selected.time_context)
+            s.session.usage["ChiefComplaint"].actions += 1
+            planner.interactions.clear_selected(s)
+            ClinicalReasoner(k).refresh_hypotheses(s)
+            planner.replan(s, force=True)
+        self.assertEqual(len(set(delivered)), 6)
+        self.assertFalse(any(q.purpose == "ros" and s.case.get(q.item_id).status == "unasked" for q in s.questions.questions))
         k._graph.add((OW.Cross, RDF.type, OW.Disease))
         add_v5_pattern(k, "cross", OW.Ros1, [], disease=OW.Cross)
         record(s, ident="new", target=OW.Ros1, field="S.ros")
@@ -1298,8 +1321,8 @@ class Verification(unittest.TestCase):
         client.chat = chat
         s, client = self.run_flow(client)
         self.assertEqual(s.interaction.termination, "submitted")
-        self.assertEqual(s.case.diagnosis_kind, "disease")
-        self.assertEqual(s.session.clarifications, 1)
+        self.assertEqual(s.case.diagnosis_kind, "symptom")
+        self.assertEqual(s.session.clarifications, 0)
 
     def test_shared_resources_keep_case_dialogue_separate(self):
         r = resources()
@@ -1363,7 +1386,7 @@ class Verification(unittest.TestCase):
         self.assertFalse(planner.has_resolved_evidence(*args))
         ClinicalReasoner(knowledge()).retrieve_candidates(s)
         planner.prepare_differential_questions(s)
-        self.assertTrue(any(item.purpose == "clarification" for item in s.questions.questions))
+        self.assertFalse(any(item.purpose == "clarification" for item in s.questions.questions))
         record(s, ident="clarified", field="S.hpi", kind="attribute", attribute=OW.Location, values=[OW.Here])
         self.assertTrue(planner.has_resolved_evidence(*args))
         s.case.get("clarified").value.values = []
@@ -2032,18 +2055,19 @@ class Verification(unittest.TestCase):
         w.planner.replan(s)
         self.assertFalse(any(q.target_id == str(OW.MoreContext) for q in s.questions.questions))
 
-    def test_primary_and_differential_require_all_confirmed_chief_targets(self):
+    def test_primary_anchor_does_not_require_a_single_disease_for_additional_reports(self):
         s, k = state("Education", True), knowledge()
         record(s)
+        s.case.get("chief").value.primary_concern = True
         record(s, "second-chief", OW.Other, episode="episode2")
         reasoner = ClinicalReasoner(k)
         reasoner.select_diagnosis(s)
-        self.assertTrue(any(0 < h.chief_coverage < 1 and h.evidence_score > 0 for h in s.differential.hypotheses))
-        self.assertEqual(s.case.diagnosis_kind, "symptom")
-        self.assertFalse(reasoner.supported_hypotheses(s))
+        self.assertEqual(s.case.diagnosis_kind, "disease")
+        self.assertTrue(reasoner.supported_hypotheses(s))
+        self.assertTrue(all(h.chief_coverage == 1 for h in reasoner.supported_hypotheses(s)))
         make_writer(FakeSDK(), k, CONFIG).build_soap(s)
-        self.assertEqual(s.interaction.submission_payload["note"]["A"]["differential"], "")
-        self.assertIn(k.label(str(OW.Other)), s.interaction.submission_payload["note"]["S"]["cc"])
+        self.assertNotIn(k.label(str(OW.Other)), s.interaction.submission_payload["note"]["S"]["cc"])
+        self.assertIn(k.label(str(OW.Other)), s.interaction.submission_payload["note"]["S"]["ros"])
 
     def test_assessment_includes_acquired_positive_and_negative_reasoning_evidence(self):
         k, s = knowledge(), state("Education", True)
@@ -2093,43 +2117,38 @@ class Verification(unittest.TestCase):
                 self.assertFalse(s.session.finalizing)
                 self.assertEqual(route_budget(s), "advance_session")
 
-    def test_usefulness_changes_at_target_without_new_clinical_revision(self):
+    def test_usefulness_and_capacity_are_checked_without_new_clinical_revision(self):
         s, w = state("DifferentialDiagnosis", True), make_consultation()
-        s.session.usage[s.session.current].actions = 2
-        s.differential.hypotheses = [Hypothesis(disease_id=str(OW.Alpha), evidence_score=2, chief_coverage=1)]
-        low = question(s, ident="unlock-only")
-        low.selection_value = [0, 0, 0.5, 1, 4]
-        zero = question(s, ident="typicality-only", order=1)
-        zero.selection_value = [0, 0, 0, 1, 4]
-        high = question(s, ident="discriminating", order=2)
-        high.selection_value = [0, 0.5, 0.5, 0, 0]
-        w.planner.select_question(s)
-        self.assertEqual(s.interaction.selected.question.item_id, low.item_id)
-        self.assertIsNone(s.case.get(zero.item_id))
-        w.interactions.clear_selected(s)
-        revision = s.differential.clinical_revision
-        s.session.usage[s.session.current].actions = 3
-        w.planner.select_question(s)
-        self.assertEqual(s.differential.clinical_revision, revision)
-        self.assertIsNone(s.case.get(low.item_id))
-        self.assertEqual(s.interaction.selected.question.item_id, high.item_id)
+        low = question(s, ident="conditional", order=0)
+        low.assessment = {"complete": True, "utility": 0.125}
+        zero = question(s, ident="zero", order=1)
+        zero.assessment = {"complete": True, "utility": 0}
+        for actions in (2, 3):
+            s.session.usage[s.session.current].actions = actions
+            w.planner.select_question(s)
+            self.assertEqual(s.interaction.selected.question.item_id, low.item_id)
+            self.assertIsNone(s.case.get(zero.item_id))
+            w.interactions.clear_selected(s)
+        s.session.usage[s.session.current].actions = 12
+        w.check_budget(s)
+        self.assertFalse(s.pending_questions())
 
-    def test_unlock_remains_useful_without_supported_diagnosis_and_no_filler_minimum(self):
+    def test_conditional_value_survives_target_and_zero_utility_does_not_fill_minimum(self):
         s, w = state("DifferentialDiagnosis", True), make_consultation()
         s.session.usage[s.session.current].actions = 3
         q = question(s)
-        q.selection_value = [0, 0, 0.5, 0, 0]
+        q.assessment = {"complete": True, "utility": 0.125}
         w.planner.select_question(s)
         self.assertEqual(s.interaction.selected.question.item_id, q.item_id)
         s, w = state("ContextFactor", True), make_consultation()
-        question(s, purpose="context")
+        q = question(s, purpose="context")
+        q.assessment = {"complete": True, "utility": 0}
         w.planner.select_question(s)
-        self.assertEqual(s.session.usage[s.session.current].actions, 0)
         self.assertEqual(route_budget(s), "advance_session")
         result, _ = self.run_flow()
         self.assertLess(result.session.usage["ChiefComplaint"].actions, 7)
 
-    def test_multiple_chief_hpi_round_robin_preserves_open_at_cap(self):
+    def test_multiple_reports_require_primary_then_only_its_full_attributes(self):
         k, s = knowledge(), state("ChiefComplaint", True)
         attrs = [OW.Location, OW.Laterality, OW.Quality, OW.TimeSinceOnset, OW.EpisodeDuration, OW.Severity]
         for index in range(3):
@@ -2146,11 +2165,15 @@ class Verification(unittest.TestCase):
         w.planner.prepare_chief_complaint(s)
         w.check_budget(s)
         questions = sorted(s.questions.questions, key=lambda q: q.order)
-        self.assertEqual(len(questions), 16)
+        self.assertEqual(len(questions), 1)
+        self.assertTrue(questions[0].primary_choice)
+        s.case.get("chief-1").value.primary_concern = True
+        w.planner.prepare_chief_complaint(s)
+        questions = sorted(s.pending_questions(), key=lambda q: q.order)
+        self.assertEqual(len(questions), 7)
         self.assertEqual(questions[-1].purpose, "open_inquiry")
-        self.assertEqual([q.target_id for q in questions[:3]], [str(OW[f"Chief{i}"]) for i in range(3)])
-        self.assertTrue(all(q.attribute_id == str(OW.Location) for q in questions[:3]))
-        self.assertEqual(len(s.case.unasked("ChiefComplaint")), 16)
+        self.assertTrue(all(q.target_id == str(OW.Chief1) for q in questions[:-1]))
+        self.assertEqual({q.attribute_id for q in questions[:-1]}, set(map(str, attrs)))
 
     def test_empathy_bypasses_session_caps_but_uses_shared_turns_and_model_budget(self):
         for scope, maximum in (("Initiation", 1), ("ChiefComplaint", 16), ("ContextFactor", 7),

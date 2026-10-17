@@ -29,6 +29,9 @@ class ClinicalValue(Model):
     kind: Literal["symptom", "finding", "context", "attribute", "text", "plan", "education"]
     text: str
     status: Literal["present", "absent", "uncertain", "unknown"] = "unknown"
+    mapping_status: Literal["exact", "broader", "ambiguous", "unmapped"] = "exact"
+    primary_concern: bool = False
+    not_applicable: bool = False
     concept_ids: list[str] = Field(default_factory=list)
     observation_id: str | None = None
     episode_id: str | None = None
@@ -68,6 +71,14 @@ class FixedDiagnosis(Model):
     evidence_ids: list[str] = Field(default_factory=list)
 
 
+class ChiefAnchor(Model):
+    record_id: str
+    target_id: str
+    observation_id: str
+    episode_id: str
+    time_context: Literal["current", "past", "unspecified"] = "unspecified"
+
+
 class CaseState(Model):
     S: dict[str, dict[str, RecordItem]] = Field(default_factory=lambda: {key: {} for key in RECORD_FIELDS["S"]})
     O: dict[str, dict[str, RecordItem]] = Field(default_factory=lambda: {key: {} for key in RECORD_FIELDS["O"]})
@@ -77,6 +88,7 @@ class CaseState(Model):
     diagnosis_kind: Literal["disease", "symptom"] | None = None
     diagnosis_evidence: list[str] = Field(default_factory=list)
     fixed_diagnosis: FixedDiagnosis | None = None
+    primary_chief: ChiefAnchor | None = None
     _locations: dict[str, tuple[str, str]] = PrivateAttr(default_factory=dict)
 
     @model_validator(mode="after")
@@ -124,7 +136,7 @@ class CaseState(Model):
     def evidence_key(value, target=None):
         return (value.subject, value.observation_id, value.episode_id,
                 target if target is not None else tuple(sorted(value.concept_ids)),
-                value.attribute_id, value.time_context == "past")
+                value.attribute_id, value.time_context)
 
     def current_entries(self):
         entries = list(self.entries())
@@ -142,14 +154,19 @@ class CaseState(Model):
                 groups.setdefault(key, []).append(item)
         conflicts = set()
         for items in groups.values():
-            definite = [i for i in items if i.value.status in {"present", "absent"} and len(i.value.concept_ids) == 1]
+            definite = [i for i in items if i.value.status in {"present", "absent"} and len(i.value.concept_ids) == 1
+                        and i.value.mapping_status in {"exact", "broader"}]
             statuses = {i.value.status for i in definite}
-            attributes = {(tuple(sorted(i.value.values)), i.value.measurement.model_dump_json() if i.value.measurement else None)
-                          for i in definite if i.value.kind == "attribute" and i.value.status == "present"}
-            if len(statuses) > 1 or len(attributes) > 1:
+            numeric = {i.value.measurement.signature() for i in definite if i.value.measurement
+                       and i.value.status == "present"}
+            categorical = any(i.value.kind == "attribute" and i.value.values for i in definite)
+            positive = {v for i in definite if i.value.status == "present" for v in i.value.values}
+            negative = {v for i in definite if i.value.status == "absent" for v in i.value.values}
+            if (len(statuses) > 1 and not categorical) or len(numeric) > 1 or positive & negative:
                 conflicts.update(i.id for i in items)
         for field, item in entries:
-            if item.id in conflicts:
+            if item.id in conflicts or (item.value and item.value.mapping_status in {"ambiguous", "unmapped"}
+                                       and item.value.kind in {"symptom", "finding", "attribute", "context"}):
                 item = item.model_copy(deep=True)
                 item.value.status = "uncertain"
             yield field, item
@@ -159,6 +176,34 @@ class CaseState(Model):
         return [item for field, item in self.current_entries() if field == "S.cc" and item.status == "done" and item.source_refs
                 and item.value and item.value.kind == "symptom" and item.value.subject == "patient"
                 and item.value.time_context != "past" and item.value.status in statuses]
+
+    def chief(self, *, confirmed=False):
+        candidates = self.chief_complaints(confirmed=confirmed)
+        if self.primary_chief:
+            matching = [i for i in candidates if i.value.concept_ids == [self.primary_chief.target_id]
+                        and i.value.observation_id == self.primary_chief.observation_id
+                        and i.value.episode_id == self.primary_chief.episode_id
+                        and i.value.time_context == self.primary_chief.time_context]
+            return next((i for i in matching if i.id == self.primary_chief.record_id),
+                        matching[0] if len(matching) == 1 else None)
+        priority = [i for i in candidates if i.value.primary_concern]
+        return priority[0] if len(priority) == 1 else candidates[0] if len(candidates) == 1 else None
+
+    def select_primary(self):
+        selected = self.chief(confirmed=True) or self.chief()
+        if selected is None and self.primary_chief:
+            self.primary_chief = None
+            selected = self.chief()
+        if selected is None or len(selected.value.concept_ids) != 1:
+            return None
+        value = selected.value
+        self.primary_chief = ChiefAnchor(record_id=selected.id, target_id=value.concept_ids[0],
+            observation_id=value.observation_id or selected.id, episode_id=value.episode_id or selected.id,
+            time_context=value.time_context)
+        for item in self.chief_complaints():
+            if item.id != selected.id:
+                self.put("S.ros", item)
+        return self.primary_chief
 
 
 class Usage(Model):
@@ -208,6 +253,9 @@ class Hypothesis(Model):
     association_ids: list[str] = Field(default_factory=list)
     contributions: list[ScoreContribution] = Field(default_factory=list)
     evidence_score: float = Field(default=0, allow_inf_nan=False)
+    chief_score: float = Field(default=0, ge=0, allow_inf_nan=False)
+    supporting_raw: float = Field(default=0, ge=0, allow_inf_nan=False)
+    supporting_score: float = Field(default=0, ge=0, allow_inf_nan=False)
     context_bonus: int | None = None
     contradiction_penalty: float = Field(default=0, ge=0, allow_inf_nan=False)
     contradiction_ids: list[str] = Field(default_factory=list)
@@ -230,6 +278,7 @@ class PatternMatch(Model):
     pattern_id: str
     observation_id: str
     episode_id: str
+    time_context: Literal["current", "past", "unspecified"] = "unspecified"
     fingerprint: str
     status: Literal["matched", "contradicted", "incomplete"]
     matched: list[str] = Field(default_factory=list)
@@ -252,7 +301,6 @@ class DifferentialState(Model):
     clinical_revision: int = 0
     last_scored_revision: int = -1
     last_fingerprint: str = ""
-    context_scored: bool = False
     pattern_matches: dict[str, PatternMatch] = Field(default_factory=dict)
     association_matches: list[AssociationMatch] = Field(default_factory=list)
     pattern_evaluations: int = 0
@@ -276,7 +324,8 @@ class Question(Model):
     time_context: Literal["current", "past", "unspecified"] = "unspecified"
     affirmative_presence: bool = False
     answer_type: Literal["presence", "category", "quantity", "duration", "free_text"] = "free_text"
-    selection_value: list[float] = Field(default_factory=list)
+    assessment: dict[str, object] = Field(default_factory=dict)
+    primary_choice: bool = False
     plan_sentence_id: str | None = None
 
     def semantic_key(self):
@@ -304,6 +353,15 @@ class QuestionPlan(Model):
     ros_targets: list[str] = Field(default_factory=list)
     ros_initialized: bool = False
     blocked_keys: list[str] = Field(default_factory=list)
+    chief_attributes: dict[str, str] = Field(default_factory=dict)
+    chief_attribute_reasons: dict[str, str] = Field(default_factory=dict)
+    chief_anchor_key: str = ""
+    chief_processed: int = 0
+    chief_acquired: int = 0
+    chief_total: int = 0
+    revision: int = 0
+    last_plan_key: str = ""
+    selection_report: dict[str, object] = Field(default_factory=dict)
 
 
 class ActionSpec(Model):

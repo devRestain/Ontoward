@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward
-/status value=complete
-/checkpoint revision=f3f5df5782e2aa38b948180f51b19012b0150cf1 dirty=true updated=2026-10-17T09:56:17+00:00
-/goal phase=current id=ROOT.EDUCATION37 state=complete action="Coordinate D37 Education D36 integration source custody offline acceptance and the standalone archive"
+/status value=active
+/checkpoint revision=95d264f76070b93518d8ee4942982a8849046b73 dirty=true updated=2026-10-17T12:31:16+00:00
+/goal phase=current id=ROOT.ALGORITHM38 state=complete action="Coordinate D38 algorithm implementation offline acceptance and standalone packaging"
+/goal phase=history id=ROOT.EDUCATION37 state=complete action="Coordinate D37 Education D36 integration source custody offline acceptance and the standalone archive"
 /goal phase=history id=ROOT.EVIDENCE36 state=complete action="Complete the isolated D36 audit fixes and archive acceptance without overwriting concurrent education work"
 /goal phase=history id=ROOT.MERGE35 state=complete action="Integrate session budgets with existing SOAP input and empathy features and verify the combined main candidate"
 /goal phase=history id=ROOT.BUDGET35 state=complete action="Coordinate D35 budget acceptance offline archive verification and scoped handoff"
@@ -14,7 +15,7 @@
 /goal phase=history id=ROOT.GUIDELINES30 state=complete action="Implement reusable disease-to-guideline mapping with exact source evidence and bounded NOVA semantic review"
 /goal phase=history id=ROOT.CHIEF29 state=complete action="Coordinate case-independent chief mapping evaluator correction offline acceptance and the D29 archive handoff"
 /goal phase=history id=ROOT.INTEGRATE36 state=complete action="Verify D36 with concurrent Education changes in the D37 standalone archive"
-/goal phase=next id=ROOT.NOVA27 state=deferred action="Confirm one case the shared request ceiling and credit use before running the D37 archive against real NOVA development models"
+/goal phase=next id=ROOT.NOVA27 state=deferred action="Confirm one case the shared request ceiling and credit use before running the D38 archive against real NOVA development models"
 /goal phase=history id=ROOT.CONTEXT28 state=complete action="Coordinate D28 context failure recovery offline verification and a standalone submission archive handoff"
 /goal phase=history id=ROOT.TEST27 state=complete action="Implement and verify the D27 isolated public-sample evaluator and NOVA development-chat bridge"
 /goal phase=history id=ROOT.READINESS26 state=complete action="Complete D26 submission readiness with Education pass offline verification and an independent runtime ZIP"
@@ -245,4 +246,11 @@
 /evidence id=ROOT.EDUCATION37.E6 class=external_service result=not_run source=Tmp/education37/verification.json observed="Leave actual Luna quality official sample validation scoring upload commits and deployment unrun"
 /scope id=ROOT.EDUCATION37.S1 state=in action="Own D37 cross-scope integration offline verification archive identity documentation and handoff"
 /scope id=ROOT.EDUCATION37.S2 state=out action="Exclude live services credit use downloads official evaluation commits remote writes and deployment"
-/handoff state=blocked action="Use the verified D37 archive for a separately authorized real NOVA run only after confirming the case request ceiling and credit effects"
+/accept id=ROOT.ALGORITHM38.A1 state=pass action="Coordinate D38 implementation and complete standalone acceptance" evidence=ROOT.ALGORITHM38.E1,ROOT.ALGORITHM38.E2
+/accept id=ROOT.ALGORITHM38.A2 state=pass action="Reconcile D38 policy custody requirements contracts and scoped handoffs" evidence=ROOT.ALGORITHM38.E3,ROOT.ALGORITHM38.E4
+/evidence id=ROOT.ALGORITHM38.E1 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.ALGORITHM38 isolated runtime and artifact acceptance"
+/evidence id=ROOT.ALGORITHM38.E2 class=runtime result=pass source=Tmp/d38/comparison-final/comparison.json observed="Compare three frozen baseline and D38 synthetic consultations and three prerequisite probes with identical source fixtures and budgets"
+/evidence id=ROOT.ALGORITHM38.E3 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference DATA.ALGORITHM38 policy hash unchanged-source custody and archive receipt"
+/evidence id=ROOT.ALGORITHM38.E4 class=semantic result=pass source=Tmp/d38/document-review.json observed="Align D38 decisions PRD contracts Korean workflow and all three maintained state handoffs"
+/scope id=ROOT.ALGORITHM38.S1 state=in action="Own D38 offline tests comparison packaging documentation and cross-scope reconciliation"
+/handoff state=blocked action="Await exact case request ceiling and credit authorization for ROOT.NOVA27 using the D38 archive"

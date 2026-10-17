@@ -43,6 +43,7 @@ class QuestionLifecycle:
         state.questions.questions = []
 
     def reject_action(self, state, action, error):
+        state.questions.revision += 1
         if action.question.purpose == "education":
             delivery = next(item for item in state.questions.education if item.id == action.question.item_id)
             delivery.status, delivery.reason = "undelivered", error
@@ -58,6 +59,7 @@ class QuestionLifecycle:
         self.interactions.clear_selected(state)
 
     def complete_unresolved(self, state, action, text, source_id):
+        state.questions.revision += 1
         if action.question.purpose == "education":
             delivery = next(item for item in state.questions.education if item.id == action.question.item_id)
             if delivery.status == "pending":
