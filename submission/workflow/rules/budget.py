@@ -45,6 +45,14 @@ class BudgetPolicy:
             return 0
         return min(LIMITS.gateway_tokens, session.output_token_limit - session.output_tokens)
 
+    def can_empathize(self, state):
+        session = state.session
+        return (not session.finalizing and not state.interaction.submission_payload
+                and self.action_capacity(state) > 0 and "SAY" in session.allowed_actions
+                and self.calls_left(session) >= 2
+                and session.output_token_limit - session.output_tokens >= 2 * LIMITS.gateway_tokens
+                and self.seconds_left(session) > session.reserve_seconds + LIMITS.response_seconds)
+
     def evaluate(self, state):
         if state.interaction.termination or state.interaction.pending:
             return BudgetDecision()

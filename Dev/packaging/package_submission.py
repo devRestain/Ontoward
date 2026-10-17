@@ -48,7 +48,7 @@ def main() -> None:
 
     settings = packaged_settings()
     text_files = {contained_path(settings[key], "config").relative_to(SOURCE).as_posix()
-                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_TEXTS")}
+                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_TERMINOLOGY_PROMPT", "ONTOWARD_EMPATHY_PROMPT", "ONTOWARD_TEXTS")}
     manifest_path = knowledge_path(settings[SETTING])
     knowledge_files = {manifest_path.relative_to(SOURCE).as_posix()}
     if manifest_path.is_file():

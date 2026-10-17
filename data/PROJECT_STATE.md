@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-data
 /status value=complete
-/checkpoint revision=7b13f05b094fce2999d32c61b1fdad12ff03867c dirty=true updated=2026-10-17T10:07:47+09:00
+/checkpoint revision=5be1aeebc66a748b86262e28a2947e6b0bb4bd31 dirty=true updated=2026-10-17T08:18:14+00:00
 /goal phase=current id=DATA.GUIDELINES30 state=complete action="Map every admitted Disease to relevant preserved guideline corpus documents with exact source and request provenance"
+/goal phase=history id=DATA.INPUT34 state=complete action="Record D34 unchanged knowledge admission SDK and archive custody"
 /goal phase=history id=DATA.CHIEF29 state=complete action="Record D29 unchanged source custody mapping evidence and the corrected interpretation of scripted chief failures"
 /goal phase=history id=DATA.CONTEXT28 state=complete action="Record the D28 reported sample failure prompt measurements archive identity and preserved source admission pins"
 /goal phase=history id=DATA.SAMPLES27 state=complete action="Record D27 public-sample simulator source custody and unchanged runtime admission pins"
@@ -93,4 +94,9 @@
 /evidence id=DATA.GUIDELINES30.E4 class=artifact result=pass source=preparation/guideline-mapping/runtime843-2026-10-17/evidence-files.json observed="Pin 359 inventory workset request response failure replay mapping and verification files while retaining exact source hashes line ranges full heading subtrees and original model records locally"
 /evidence id=DATA.GUIDELINES30.E5 class=semantic result=not_run source=provenance/guideline-mapping-2026-10-17.json observed="Leave actual P extraction external guideline currentness independent clinical validation and runtime admission unrun; keep clinical background links as P gaps and preserve D26 Education disabled"
 /scope id=DATA.GUIDELINES30.S1 state=in action="Own D30 fresh source mappings applicability navigation evidence and provenance outside v5 runtime knowledge"
+/accept id=DATA.INPUT34.A1 state=pass action="Preserve source-backed runtime admission while recording D34 code and archive custody" evidence=DATA.INPUT34.E1,DATA.INPUT34.E2
+/evidence id=DATA.INPUT34.E1 class=artifact result=pass source=provenance/input-empathy-2026-10-17.json observed="Match ten protected SDK entrypoint requirements and admitted knowledge files and pin forty-four source-matching archive files with SHA256 262bf0e246861a9822b9730765c3970db44502101e9b986effb2e8e284800a3f"
+/evidence id=DATA.INPUT34.E2 class=semantic result=pass source=../DECISION_STATE.md observed="Apply D34 record-only medical normalization without creating source assertions vocabulary numeric attributes clinical relations or new admission"
+/evidence id=DATA.INPUT34.E3 class=external_service result=not_run source=provenance/input-empathy-2026-10-17.json observed="Leave actual NOVA interpretation empathy quality independent clinical validation and official submission unrun"
+/scope id=DATA.INPUT34.S1 state=in action="Own compact D34 unchanged-asset provenance while preserving the independent D30 preparation goal and handoff"
 /handoff state=ready action="Read mappings review and applicability scopes for a separately bounded source-based P extraction workset; preserve background-only gaps and withdrawn guideline and education batches without runtime admission"

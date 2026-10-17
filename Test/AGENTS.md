@@ -36,6 +36,7 @@
 - Preserve request identity, completed responses, refused turns, failed requests, and final submission receipts.
 - Preserve actual Gateway request bodies and responses in simulator output so transmitted candidates can be audited without exposing credentials.
 - Keep the scripted Gateway case-independent and limited to supplied source names and aliases; do not add case-to-concept fixtures or clinical synonym tables.
+- Handle D34 terminology and empathy request tasks in scripted doubles without adding clinical semantics or treating fixture responses as model-quality evidence.
 
 ## Evidence
 

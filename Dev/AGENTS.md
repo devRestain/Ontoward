@@ -58,6 +58,7 @@
 - Use the proven project dev container with tests/workflow/compose.offline.yaml for current projection and checks; keep dependencies off the host.
 - Preserve the existing extraction image and dedicated authentication volume; use the declared extraction service for the explicitly requested Korean run without downloading dependencies.
 - Run python -B Dev/tests/workflow/test_workflow.py for the complete offline consultation flow.
+- Run python -B Dev/tests/workflow/test_input_empathy.py for D34 question binding terminology recovery and empathy delivery behavior.
 - Run python -B Dev/tests/workflow/test_admitted.py --submission PATH --output PATH for actual admitted knowledge and archive isolation with scripted patient and model responses.
 - Run python -B Dev/tests/workflow/test_korean_admitted.py --submission PATH --output PATH for exact prepared Korean delivery, Context polarity, and separate examination acquisition through SOAP and confirmed submission.
 - Run python -B Dev/tests/ontology/test_database.py for source/approval/quota/Korean behavior and verify_database.py plus verify_catalog.py for real-source coverage, graph semantics, provenance, Korean coverage, and resource evidence.

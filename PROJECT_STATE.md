@@ -1,12 +1,14 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=931a09310aa5bcc330ba6171303d61cb2164da2b dirty=true updated=2026-10-17T05:00:48+00:00
-/goal phase=current id=ROOT.ATLAS32 state=complete action="Provide a self-contained offline project atlas for workflow inference question selection and knowledge preparation"
+/checkpoint revision=5be1aeebc66a748b86262e28a2947e6b0bb4bd31 dirty=true updated=2026-10-17T08:18:14+00:00
+/goal phase=current id=ROOT.INPUT34 state=complete action="Coordinate D34 vocabulary binding terminology fallback empathy delivery offline acceptance and a standalone archive"
+/goal phase=history id=ROOT.SOAP33 state=complete action="Coordinate English Category Content SOAP formatting quote-backed parsing offline acceptance and a standalone archive under D33"
+/goal phase=history id=ROOT.ATLAS32 state=complete action="Provide a self-contained offline project atlas for workflow inference question selection and knowledge preparation"
 /goal phase=history id=ROOT.WEB31 state=complete action="Implement the local Test website workflow observation and per-turn diagnosis reports without changing submission"
 /goal phase=history id=ROOT.GUIDELINES30 state=complete action="Implement reusable disease-to-guideline mapping with exact source evidence and bounded NOVA semantic review"
 /goal phase=history id=ROOT.CHIEF29 state=complete action="Coordinate case-independent chief mapping evaluator correction offline acceptance and the D29 archive handoff"
-/goal phase=next id=ROOT.NOVA27 state=deferred action="Verify one explicitly authorized C10 local NOVA run using D29 with a fixed request ceiling and development-credit use"
+/goal phase=next id=ROOT.NOVA27 state=deferred action="Verify one explicitly authorized C10 local NOVA run using D34 with a fixed request ceiling and development-credit use"
 /goal phase=history id=ROOT.CONTEXT28 state=complete action="Coordinate D28 context failure recovery offline verification and a standalone submission archive handoff"
 /goal phase=history id=ROOT.TEST27 state=complete action="Implement and verify the D27 isolated public-sample evaluator and NOVA development-chat bridge"
 /goal phase=history id=ROOT.READINESS26 state=complete action="Complete D26 submission readiness with Education pass offline verification and an independent runtime ZIP"
@@ -162,4 +164,26 @@
 /evidence id=ROOT.ATLAS32.E5 class=runtime result=not_run source=Tmp/project-atlas-2026-10-17/verification.json observed="Leave browser rendering desktop mobile and print visual inspection unrun after finding no browser executable or automation package in the project dev container; retain responsive and print styles as static evidence only"
 /scope id=ROOT.ATLAS32.S1 state=in action="Own Test/atlas.html static explanations local references root coordination and offline document verification"
 /scope id=ROOT.ATLAS32.S2 state=out action="Exclude runtime and data mutation execution controls new dependencies external applications network downloads model calls commits publication and deployment"
-/handoff state=ready action="Open Test/atlas.html directly in a browser for the offline guide; preserve ROOT.NOVA27 and APP.REVALIDATE29 as separately deferred verification"
+/accept id=ROOT.SOAP33.A1 state=pass action="Align the accepted English SOAP format across requirements contracts decisions whitepaper and workflow rules" evidence=ROOT.SOAP33.E1
+/accept id=ROOT.SOAP33.A2 state=pass action="Verify the maintained workflow and actual admitted knowledge through confirmed scripted submission" evidence=ROOT.SOAP33.E2
+/accept id=ROOT.SOAP33.A3 state=pass action="Build and verify a source-matching archive without parent data assets or network" evidence=ROOT.SOAP33.E3,ROOT.SOAP33.E4
+/accept id=ROOT.SOAP33.A4 state=pass action="Reconcile maintained state scopes and preserve independent preparation ownership" evidence=ROOT.SOAP33.E4,ROOT.SOAP33.E5
+/evidence id=ROOT.SOAP33.E1 class=semantic result=pass source=DECISION_STATE.md observed="Adopt D33 fixed English Category Content entries in PRD root and submission contracts the Korean whitepaper and Dev architecture rules without changing the fifteen-field SDK contract"
+/evidence id=ROOT.SOAP33.E2 class=runtime result=pass source=Tmp/soap-format-2026-10-17/verification.json observed="Pass ninety maintained workflow tests three admitted RDF consultations and seven hundred ninety Korean dialogue Context and examination checks in both source and extracted archive using network-disabled dev and scripted replies"
+/evidence id=ROOT.SOAP33.E3 class=artifact result=pass source=Tmp/soap-format-2026-10-17/archive.json observed="Build the cached offline package image and pin the forty-two-file source-matching archive at Tmp/packaging/soap-format-2026-10-17/ontoward-submission.zip with SHA256 78f3fffe2b328dc53fda5def045aa13cb5c4354211b0c17251e27e0a523e65bc"
+/evidence id=ROOT.SOAP33.E4 class=artifact result=pass source=Tmp/soap-format-2026-10-17/verification.json observed="Match fifteen protected baseline files including admitted knowledge assets SDK entrypoint requirements public settings and data state and confirm isolated archive execution without parent data or assets"
+/evidence id=ROOT.SOAP33.E5 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Reference APP.SOAP33 and review data state without replacing its independent preparation goal or handoff; preserve deferred ROOT.NOVA27 and APP.REVALIDATE29 using the new archive"
+/evidence id=ROOT.SOAP33.E6 class=static result=pass source=git-diff-check observed="Pass code and document diff whitespace inspection and review the changed renderer parsing metadata source labels tests requirements and decision boundaries"
+/evidence id=ROOT.SOAP33.E7 class=external_service result=not_run source=Tmp/soap-format-2026-10-17/verification.json observed="Leave actual Luna keyword translation official sample validation official submission clinical accuracy and scoring unrun"
+/scope id=ROOT.SOAP33.S1 state=in action="Own D33 cross-directory coordination maintained tests package verification and root handoff while assigning SOAP implementation to submission"
+/accept id=ROOT.INPUT34.A1 state=pass action="Verify question-bound interpretation record-only recovery and empathy through maintained offline workflows" evidence=ROOT.INPUT34.E1
+/accept id=ROOT.INPUT34.A2 state=pass action="Build and independently verify the complete source-matching submission archive" evidence=ROOT.INPUT34.E2,ROOT.INPUT34.E3
+/accept id=ROOT.INPUT34.A3 state=pass action="Reconcile D34 contracts decisions human documentation and maintained state scopes" evidence=ROOT.INPUT34.E4,ROOT.INPUT34.E5
+/evidence id=ROOT.INPUT34.E1 class=runtime result=pass source=Tmp/d34-2026-10-17/verification.json observed="Pass ninety workflow tests twenty-two D34 tests three admitted RDF consultations eight hundred fourteen Korean checks forty-one evaluator tests and thirteen observer parity scenarios without real model calls"
+/evidence id=ROOT.INPUT34.E2 class=artifact result=pass source=Tmp/d34-2026-10-17/artifact.json observed="Pin the forty-four-file archive at Tmp/packaging/input-empathy-2026-10-17/ontoward-submission.zip with SHA256 262bf0e246861a9822b9730765c3970db44502101e9b986effb2e8e284800a3f and preserve ten protected SDK entrypoint dependency and knowledge files"
+/evidence id=ROOT.INPUT34.E3 class=runtime result=pass source=Tmp/d34-2026-10-17/isolated/final-evidence/verification.json observed="Pass all four extracted-archive suites with ninety workflow tests twenty-two D34 tests three admitted consultations and eight hundred fourteen Korean checks using no network or parent workspace mount under two CPUs and eight GB"
+/evidence id=ROOT.INPUT34.E4 class=semantic result=pass source=Tmp/d34-2026-10-17/document-review.json observed="Review eight documents and fifty-two local links and align D34 role ownership prepared clinical text empathy exceptions medical text isolation and shared budgets"
+/evidence id=ROOT.INPUT34.E5 class=semantic result=pass source=Tmp/d34-2026-10-17/handoff-review.json observed="Reconcile root and submission D34 completion and deferred live verification while preserving the independent data guideline goal and handoff"
+/evidence id=ROOT.INPUT34.E6 class=external_service result=not_run source=Tmp/d34-2026-10-17/verification.json observed="Leave actual NOVA clinical terminology mapping empathy quality official evaluation upload and credit use unrun"
+/scope id=ROOT.INPUT34.S1 state=in action="Own D34 cross-scope coordination test doubles behavioral verification packaging and documentation while preserving existing D33 changes"
+/handoff state=blocked action="Use Tmp/packaging/input-empathy-2026-10-17/ontoward-submission.zip for separately authorized ROOT.NOVA27 or APP.REVALIDATE29 and preserve fixed request and credit-use boundaries"

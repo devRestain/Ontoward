@@ -1,9 +1,11 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=7b13f05b094fce2999d32c61b1fdad12ff03867c dirty=true updated=2026-10-17T09:23:31+09:00
-/goal phase=current id=APP.CHIEF29 state=complete action="Require one existing Symptom for chief mapping with source aliases bounded lookup recovery and explicit semantic evidence"
-/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify one user-authorized server sample validation using the D29 archive and retain every case result"
+/checkpoint revision=5be1aeebc66a748b86262e28a2947e6b0bb4bd31 dirty=true updated=2026-10-17T08:18:14+00:00
+/goal phase=current id=APP.INPUT34 state=complete action="Bind clinical replies to admitted question vocabulary preserve unlinked medical reports and deliver bounded empathy across sessions"
+/goal phase=history id=APP.SOAP33 state=complete action="Render English Category Content SOAP with source terms quote-backed keywords explicit polarity and same-episode pain assessment"
+/goal phase=history id=APP.CHIEF29 state=complete action="Require one existing Symptom for chief mapping with source aliases bounded lookup recovery and explicit semantic evidence"
+/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify one user-authorized server sample validation using the D34 archive and retain every case result"
 /goal phase=history id=APP.CONTEXT28 state=complete action="Bound complete Gateway requests and recover context rejection once while preserving consultation and submission behavior"
 /goal phase=history id=APP.TEST27 state=complete action="Verify unchanged D26 callbacks through the D27 local HTTP API with the scripted C10 fixture"
 /goal phase=history id=APP.READINESS26 state=complete action="Pass Education and complete diagnostic acquisition Gateway recovery assessment and confirmed submission under D26"
@@ -96,4 +98,23 @@
 /evidence id=APP.WHITEPAPER02.E6 class=runtime result=not_run source=../Tmp/codex/whitepaper-2026-10-17/verification.json observed="Leave full consultation regression packaging and independent ZIP execution unrun for this documentation-only slice"
 /evidence id=APP.WHITEPAPER02.E7 class=external_service result=not_run source=../Tmp/codex/whitepaper-2026-10-17/verification.json observed="Leave real model calls official sample validation clinical accuracy scoring uploads and deployment unrun"
 /scope id=APP.WHITEPAPER02.S1 state=in action="Own the Korean whitepaper and its documentation verification while preserving the D29 runtime handoff and active D30 preparation"
-/handoff state=blocked action="Use Tmp/packaging/cc-mapping-2026-10-17/ontoward-submission.zip for separately authorized APP.REVALIDATE29 and distinguish offline contract verification from real NOVA mapping quality"
+/accept id=APP.SOAP33.A1 state=pass action="Render concise English Category Content SOAP entries and one separate source-labeled English diagnosis" evidence=APP.SOAP33.E1,APP.SOAP33.E2
+/accept id=APP.SOAP33.A2 state=pass action="Preserve polarity source evidence typed measurements episode ownership and clinical reasoning while validating added keywords" evidence=APP.SOAP33.E1
+/accept id=APP.SOAP33.A3 state=pass action="Complete scripted admitted-knowledge consultations and independently execute the source-matching runtime archive" evidence=APP.SOAP33.E2,APP.SOAP33.E3
+/evidence id=APP.SOAP33.E1 class=runtime result=pass source=../Tmp/soap-format-2026-10-17/workflow/verification.json observed="Pass ninety maintained tests including the English cough payload confirmed DIAGNOSE pain scale and episode isolation broad history denial unknown polarity exact keyword quotes unchanged reasoning fingerprints and compact Gateway recovery"
+/evidence id=APP.SOAP33.E2 class=runtime result=pass source=../Tmp/soap-format-2026-10-17/verification.json observed="Pass three actual admitted RDF scripted consultations with English subjective fields and diagnoses plus seven hundred ninety Korean interview Context polarity and examination checks in both source and extracted archive"
+/evidence id=APP.SOAP33.E3 class=artifact result=pass source=../PROJECT_STATE.md observed="Reference ROOT.SOAP33 source-matching archive isolation and protected admitted knowledge SDK entrypoint requirements settings and data-state hash verification"
+/evidence id=APP.SOAP33.E4 class=semantic result=pass source=../DECISION_STATE.md observed="Apply D33 in submission contract whitepaper configurable SOAP labels and current handoff without changing scoring eligibility or admission pins"
+/evidence id=APP.SOAP33.E5 class=external_service result=not_run source=../Tmp/soap-format-2026-10-17/verification.json observed="Leave real Luna keyword translation source mapping quality authenticated official acceptance clinical performance and scoring unrun"
+/scope id=APP.SOAP33.S1 state=in action="Own deterministic SOAP rendering English label selection quote-backed record metadata and its isolation from clinical scoring and replanning"
+/accept id=APP.INPUT34.A1 state=pass action="Bind clinical replies to expected vocabulary and preserve unsupported medical reports without scoring them" evidence=APP.INPUT34.E1
+/accept id=APP.INPUT34.A2 state=pass action="Deliver bounded empathy in all five sessions and preserve subsequent clinical replies" evidence=APP.INPUT34.E1
+/accept id=APP.INPUT34.A3 state=pass action="Preserve admitted knowledge clinical SOAP behavior and confirmed submission in the standalone archive" evidence=APP.INPUT34.E2,APP.INPUT34.E3
+/accept id=APP.INPUT34.A4 state=pass action="Align runtime roles public prompt settings contracts whitepaper and scoped handoff with D34" evidence=APP.INPUT34.E4
+/evidence id=APP.INPUT34.E1 class=runtime result=pass source=../Tmp/d34-2026-10-17/verification.json observed="Pass ninety maintained workflow tests and twenty-two D34 tests including home height reports type repair frozen anchors question references emotional recovery repeated distress budget limits and post-empathy clinical input in source and archive"
+/evidence id=APP.INPUT34.E2 class=runtime result=pass source=../Tmp/d34-2026-10-17/isolated/final-evidence/verification.json observed="Complete three admitted RDF consultations and eight hundred fourteen Korean dialogue Context polarity examination SOAP and DIAGNOSE checks without network or parent data"
+/evidence id=APP.INPUT34.E3 class=artifact result=pass source=../data/provenance/input-empathy-2026-10-17.json observed="Match SDK entrypoint requirements admitted knowledge and all forty-four archived runtime files to source while adding only runtime interpretation empathy and packaged prompts"
+/evidence id=APP.INPUT34.E4 class=semantic result=pass source=../Tmp/d34-2026-10-17/handoff-review.json observed="Apply D34 in the runtime contract Korean whitepaper public settings and deferred live-verification handoff without changing ontology admission or D26 Education pass"
+/evidence id=APP.INPUT34.E5 class=external_service result=not_run source=../Tmp/d34-2026-10-17/verification.json observed="Leave actual Luna medical normalization empathy quality official submission clinical performance and scoring unrun"
+/scope id=APP.INPUT34.S1 state=in action="Own question-bound InputInterpreter recovery exact-quote emotional signals Doctor empathy and shared role accounting"
+/handoff state=blocked action="Use Tmp/packaging/input-empathy-2026-10-17/ontoward-submission.zip for separately authorized APP.REVALIDATE29 and distinguish offline behavior from live model and official evaluation evidence"

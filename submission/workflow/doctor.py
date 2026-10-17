@@ -1,20 +1,53 @@
+import json
 import unicodedata
 
 from nova_sdk import NovaError
 
 from .rules.action import ActionResponse, REFUSAL_ERRORS, RESPONSE_FORMAT_ERRORS, content_error, failure_outcome
 from .rules.limits import LIMITS
-from .state.models import WorkflowState
+from .state.models import ActionSpec, Question, WorkflowState
 
 
 class Doctor:
-    def __init__(self, executor, nova_session, usage, questions, interactions, new_request_id):
+    def __init__(self, executor, nova_session, usage, questions, interactions, new_request_id, model, config):
         self.executor = executor
         self.nova_session = nova_session
         self.usage = usage
         self.questions = questions
         self.interactions = interactions
         self.new_request_id = new_request_id
+        self.model = model
+        self.config = config
+
+    def prepare_empathy(self, state, client, event):
+        payload = {"task": "empathy", "input": event.quote,
+                   "last_empathy": [entry.request["content"] for entry in state.interaction.history
+                       if entry.delivered and entry.question and entry.question.purpose == "empathy"][-2:]}
+        messages = [{"role": "system", "content": self.config.empathy_prompt},
+                    {"role": "user", "content": json.dumps(payload, ensure_ascii=False, separators=(",", ":"))}]
+        if len(json.dumps(messages, ensure_ascii=False, separators=(",", ":")).encode()) > LIMITS.gateway_request_bytes:
+            self.interactions.skip_empathy(state, "empathy_request_overflow", event.source_id)
+            return
+        content = self.model.complete(state, client, role="empathy", messages=messages)
+        if state.interaction.termination:
+            self.interactions.skip_empathy(state, "model_termination", event.source_id)
+            return
+        text = self.config.texts.empathy_fallback
+        try:
+            raw = json.loads(content)
+            if not isinstance(raw, dict) or set(raw) != {"text"} or not isinstance(raw["text"], str):
+                raise ValueError("Invalid empathy response")
+            generated = unicodedata.normalize("NFC", raw["text"])
+            if (content_error(generated) or any(character in generated for character in "?？\r\n")
+                    or not any("\uac00" <= character <= "\ud7a3" for character in generated)):
+                raise ValueError("Invalid empathy statement")
+            text = generated
+        except (TypeError, ValueError):
+            state.interaction.issues.append("empathy_prepared_fallback")
+        question = Question(item_id=f"empathy:{event.source_id}", field="S.ros", purpose="empathy",
+                            text=text, order=0, priority=0)
+        state.interaction.selected = ActionSpec(question=question, content=text, request_id=self.new_request_id(),
+                                               render_source="empathy", empathy_source_id=event.source_id)
 
     def validate_action(self, state: WorkflowState) -> None:
         action = state.interaction.selected
@@ -24,7 +57,11 @@ class Doctor:
         error = content_error(action.content)
         allowed = action.question.kind in state.session.allowed_actions
         if error or not allowed:
-            self.questions.reject_action(state, action, error or "not_allowed")
+            if action.empathy_source_id:
+                self.interactions.skip_empathy(state, error or "not_allowed", action.empathy_source_id)
+                self.interactions.clear_selected(state)
+            else:
+                self.questions.reject_action(state, action, error or "not_allowed")
             return
         action.ready = True
 

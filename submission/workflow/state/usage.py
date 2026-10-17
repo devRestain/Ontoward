@@ -10,8 +10,10 @@ class UsageAccounting:
         state.session.output_tokens += amounts[1]
 
     @staticmethod
-    def record_model_success(state):
+    def record_model_success(state, role):
         state.session.doctor_successes += 1
+        if role == "gateway":
+            state.session.gateway_successes += 1
 
     @staticmethod
     def disable_models(state):

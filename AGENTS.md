@@ -50,6 +50,8 @@
 - Apply D26 with Education disabled in the packaged public setting; skip its actions and turn reserve and leave P.education empty while completing diagnosis submission.
 - Apply D29 for case-independent chief mapping to one supplied Symptom, source-backed bilingual aliases, and one bounded full-index lookup recovery.
 - Apply D30 to fresh guideline-corpus document mappings for every admitted Disease; keep relation scope exact source evidence and bounded NOVA gpt-6-luna provenance outside runtime knowledge and SOAP plan generation.
+- Apply D33 English SOAP Category: Content entries with source terminology explicit polarity and quote-backed keywords; preserve raw patient speech outside the rendered note and never infer unasked negatives or an NRS scale.
+- Apply D34 question-bound vocabulary interpretation one binding repair record-only terminology fallback and separate budgeted empathy SAY across all sessions.
 - Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep maintained workflow tests in Dev/tests/workflow and generated synthetic assets and evidence in Tmp.
 
 ## Working Order

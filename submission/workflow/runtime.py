@@ -42,7 +42,7 @@ def assemble_consultation(client, resources, *, now=utc_now, sleep=None, new_req
     nova_session = NovaSessionClient(executor, budget, usage, interactions)
     model = ModelClient(executor, budget, usage, new_request_id)
     interpreter = InputInterpreter(resources.config, model, questions, interactions)
-    doctor = Doctor(executor, nova_session, usage, questions, interactions, new_request_id)
+    doctor = Doctor(executor, nova_session, usage, questions, interactions, new_request_id, model, resources.config)
     planner = InterviewPlanner(resources.knowledge, resources.config, questions, interactions, budget, usage)
     reasoner = ClinicalReasoner(resources.knowledge)
     writer = SubmissionWriter(client, resources.knowledge, resources.config, executor, nova_session, interactions, new_request_id)

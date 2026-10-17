@@ -2,7 +2,7 @@ import re
 
 from pydantic import ValidationError
 
-from ..state.models import ClinicalValue, Fact, ParsedInput, ParseResult, WorkflowState
+from ..state.models import ClinicalValue, EmpathySignal, Fact, ParsedInput, ParseResult, WorkflowState
 
 
 def fixed_reply(config, state: WorkflowState, text: str, knowledge=None) -> ParsedInput | None:
@@ -10,10 +10,10 @@ def fixed_reply(config, state: WorkflowState, text: str, knowledge=None) -> Pars
     texts = config.texts
     reply = text.strip().rstrip(texts.reply_trailing_punctuation)
     if reply in texts.unknown_replies:
-        return ParsedInput()
-    if question.purpose == "education" and reply in texts.education_acknowledgements:
-        return ParsedInput()
-    if not state.session.doctor_successes:
+        return ParsedInput(clinical_content=False)
+    if question.purpose in {"education", "empathy"} and reply in texts.education_acknowledgements:
+        return ParsedInput(clinical_content=False)
+    if not state.session.gateway_successes:
         return None
     statuses = {**dict.fromkeys(texts.present_replies, "present"), **dict.fromkeys(texts.absent_replies, "absent")}
     if (question.affirmative_presence and question.answer_type == "presence" and question.target_id
@@ -57,12 +57,34 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
         raise ValueError("Unknown dialogue context reference")
     if fact.quote not in text or value.text != fact.quote or fact.field.startswith(("A.", "P.")) or fact.field == "O.tests":
         raise ValueError("Fact is not grounded in an allowed current input")
+    if any(detail.quote not in fact.quote or not detail.quote.strip() or not detail.english.strip()
+           for detail in value.record_details):
+        raise ValueError("Record keywords require exact current-input evidence")
+    if ((value.measurement and value.measurement.unit.casefold() == "nrs"
+            or any(re.search(r"\bNRS\b", detail.english, re.I) for detail in value.record_details))
+            and not re.search(r"\bNRS\b", fact.quote + " " + (pending.content if pending else ""), re.I)):
+        raise ValueError("NRS requires an explicitly reported or requested scale")
+    category_fields = {
+        "onset": "S.hpi", "duration": "S.hpi", "course": "S.hpi", "quality": "S.hpi",
+        "aggravating_factor": "S.hpi", "relieving_factor": "S.hpi", "associated_symptoms": "S.hpi",
+        "previous_care": "S.hpi", "presentation": "S.hpi", "medical_history": "S.pmh",
+        "medication": "S.pmh", "allergy": "S.pmh", "surgery": "S.pmh", "family_history": "S.fh",
+        "smoking": "S.sh", "alcohol": "S.sh", "occupation": "S.sh",
+    }
+    if value.record_category not in {None, "other"} and fact.field != category_fields[value.record_category]:
+        raise ValueError("Record category does not match its SOAP field")
+    if (value.kind == "text" and fact.field.startswith("S.") and value.status in {"present", "absent"}
+            and not value.concept_ids and (not value.record_category or (
+                value.status == "present" and not value.record_details))):
+        raise ValueError("Unlinked text requires a record category and reported keywords")
     if fact.field == "O.exam" and (pending is None or pending.question.kind != "EXAM"):
         raise ValueError("Patient speech cannot create examination findings")
     if value.kind == "finding" and fact.field != "O.exam":
         raise ValueError("Examination findings require an actual examination")
     if value.kind == "attribute" and not value.attribute_id:
         raise ValueError("Attribute fact requires an attribute")
+    if value.kind == "attribute" and value.status in {"present", "uncertain"} and not (value.values or value.measurement):
+        raise ValueError("Substantive attribute answer requires a categorical or numeric value")
     if value.kind in {"plan", "education"}:
         raise ValueError("Input cannot create plans or delivered education")
     if fact.record_id:
@@ -121,10 +143,20 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
 
 
 
-def validate_facts(raw, state, knowledge, text, *, dialogue_ids=None, supplied_records=None, allowed=None):
-    if (not isinstance(raw, dict) or set(raw) - {"facts", "needs_context", "lookup_terms"} or not isinstance(raw.get("facts", []), list)
-            or type(raw.get("needs_context", False)) is not bool):
+def validate_facts(raw, state, knowledge, text, *, dialogue_ids=None, supplied_records=None, allowed=None, frozen_facts=()):
+    if (not isinstance(raw, dict) or set(raw) - {"facts", "needs_context", "lookup_terms", "clinical_content", "empathy"}
+            or not isinstance(raw.get("facts", []), list) or type(raw.get("needs_context", False)) is not bool
+            or type(raw.get("clinical_content", True)) is not bool):
         raise ValueError("Invalid fact envelope")
+    empathy = None
+    try:
+        empathy = EmpathySignal.model_validate(raw["empathy"]) if raw.get("empathy") is not None else None
+        if empathy and (not empathy.quote.strip() or empathy.quote not in text
+                        or state.interaction.pending and state.interaction.pending.question.kind != "SAY"):
+            raise ValueError("Empathy requires an exact current patient quote")
+    except (ValidationError, ValueError, TypeError):
+        empathy = None
+        state.interaction.issues.append("invalid_empathy_signal")
     terms = raw.get("lookup_terms", [])
     if not isinstance(terms, list) or len(terms) > 8 or any(
             not isinstance(term, str) or not term.strip() or len(term) > 80 for term in terms):
@@ -145,6 +177,8 @@ def validate_facts(raw, state, knowledge, text, *, dialogue_ids=None, supplied_r
     anchors = {(*observation(item.value), concept) for _, item in state.case.entries() if item.status == "done" and item.source_refs
                and item.value and item.value.kind in {"symptom", "finding"} for concept in item.value.concept_ids}
     anchors.update((*observation(f.value), concept) for _, f in accepted if f.value.kind in {"symptom", "finding"}
+                   for concept in f.value.concept_ids)
+    anchors.update((*observation(f.value), concept) for f in frozen_facts if f.value.kind in {"symptom", "finding"}
                    for concept in f.value.concept_ids)
     blocked = set()
     corrections = {}
@@ -181,4 +215,5 @@ def validate_facts(raw, state, knowledge, text, *, dialogue_ids=None, supplied_r
         unresolved_links=[i for i, fact in enumerate(facts) if fact.value.kind in {"symptom", "finding"}
                           and not fact.value.concept_ids and fact.value.status in {"present", "uncertain"}],
         needs_context=raw.get("needs_context", False) or any("missing_context" in str(item["reason"]) for item in rejected),
-        lookup_terms=list(dict.fromkeys(term.strip() for term in terms)))
+        lookup_terms=list(dict.fromkeys(term.strip() for term in terms)),
+        clinical_content=raw.get("clinical_content", True) or bool(facts), empathy=empathy)

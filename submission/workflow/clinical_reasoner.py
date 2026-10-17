@@ -22,7 +22,8 @@ def observation_groups(state: WorkflowState):
 
 
 def fingerprint(items):
-    values = [(item.id, item.value.model_dump(exclude={"text"})) for item in sorted(items, key=lambda i: i.id)]
+    values = [(item.id, item.value.model_dump(exclude={"text", "record_category", "record_details"}))
+              for item in sorted(items, key=lambda i: i.id)]
     return hashlib.sha256(json.dumps(values, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
@@ -234,12 +235,12 @@ class ClinicalReasoner:
                 return
             chief = chiefs[0]
             concepts = chief.value.concept_ids
-            state.case.diagnosis = self.knowledge.label(concepts[0]) if len(concepts) == 1 else chief.value.text
+            state.case.diagnosis = self.knowledge.label(concepts[0], language="en") if len(concepts) == 1 else chief.value.text
             state.case.diagnosis_kind = "symptom"
             state.case.diagnosis_evidence = [chief.id]
             return
         chosen = supported[0]
         state.differential.selected_id = chosen.disease_id
-        state.case.diagnosis = self.knowledge.label(chosen.disease_id)
+        state.case.diagnosis = self.knowledge.label(chosen.disease_id, language="en")
         state.case.diagnosis_kind = "disease"
         state.case.diagnosis_evidence = sorted(set(chosen.evidence_ids + chosen.contradiction_ids))

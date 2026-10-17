@@ -1,8 +1,8 @@
 # Ontoward 진료 워크플로우 백서
 
-이 문서는 **2026-10-17의 D29 반영 구현**을 기준으로, 초기 정보가 어떻게 환자 관찰이 되고, 그 관찰이 어떻게 다음 질문과 최종 진단으로 이어지는지 설명한다. 프로그램을 읽고 수정 방향을 고안할 수 있도록 실행 순서뿐 아니라 점수 계산, 조건 매칭, 질문 우선순위의 실제 규칙과 한계도 함께 다룬다. 설명의 기준은 `submission/`의 코드와 수용된 지식·정책이며, 사용자 선택은 [결정 문서](../DECISION_STATE.md), 실행·검증 이력은 [제출 상태](PROJECT_STATE.md)가 소유한다.
+이 문서는 **2026-10-17의 D33 반영 구현**을 기준으로, 초기 정보가 어떻게 환자 관찰이 되고, 그 관찰이 어떻게 다음 질문과 최종 진단으로 이어지는지 설명한다. 프로그램을 읽고 수정 방향을 고안할 수 있도록 실행 순서뿐 아니라 점수 계산, 조건 매칭, 질문 우선순위의 실제 규칙과 한계도 함께 다룬다. 설명의 기준은 `submission/`의 코드와 수용된 지식·정책이며, 사용자 선택은 [결정 문서](../DECISION_STATE.md), 실행·검증 이력은 [제출 상태](PROJECT_STATE.md)가 소유한다.
 
-핵심 흐름은 **준비 질문 선택 → Doctor의 검증·전달 → 실제 응답 보존 → Gateway의 사실 구조화 → Python의 조건 매칭·점수 갱신 → 다음 질문 재계획 → SOAP·진단 제출**이다. Doctor는 준비된 한국어를 전달하고, 지정 모델은 자유로운 답을 구조화한다. 질환 후보 검색, 임상 조건 비교, 점수·진단과 SOAP는 Python이 담당한다. 진료 중에는 수용된 읽기 전용 RDF를 사용한다.
+핵심 흐름은 **준비 질문 선택 → Doctor의 검증·전달 → 실제 응답 보존 → Gateway의 사실 구조화 → Python의 조건 매칭·점수 갱신 → 다음 질문 재계획 → SOAP·진단 제출**이다. Doctor는 준비된 한국어 임상 문구를 전달하고 D34의 공감 문장만 생성한다. 지정 모델은 자유로운 답의 구조화·기록용 의학 표현·공감을 맡는다. 질환 후보 검색, 임상 조건 비교, 점수·진단과 SOAP는 Python이 담당한다. 진료 중에는 수용된 읽기 전용 RDF를 사용한다.
 
 | 현재 동작을 정한 결정 | 백서에서 확인할 내용 |
 |---|---|
@@ -11,8 +11,10 @@
 | D20·D22·D23 | 원천 그래프 연결과 한국어 환자 행동의 수용 |
 | D26 | Education 기본 pass, Context 질문 가치와 진단 자격 보완 |
 | D28 | Gateway 전체 요청 크기 제한과 더 작은 요청으로 한 번 복구 |
+| D34 | 질문 범주 어휘 바인딩·기록용 의학 표현·전 세션 공감 SAY |
 | D29 | 증례별 규칙 없이 기존 Symptom 하나를 고르는 주호소 매핑 |
 | D30 | 질환별 가이드라인 문서 매핑은 사전 준비이며 현재 추론·SOAP 계획에 자동 편입하지 않음 |
+| D33 | 영어 용어·키워드와 `Category: Content` 기반 초진 기록 |
 
 **현재 제출 설정(D26):** `ONTOWARD_EDUCATION_ENABLED=false`로 Education을 pass한다. 교육·이해 확인·정정 행동과 보호 턴은 0이고 `P.education`은 빈 문자열이다. 나머지 문진·진찰·해석·진단·SOAP·확인 종료를 수행한다. 아래 교육 설명은 명시적으로 활성화했을 때의 보존된 경로이며 교육 검색 구현이나 공식 채점 통과를 뜻하지 않는다.
 
@@ -302,7 +304,7 @@ SOAP의 `S` 6개, `O` 2개, `A` 2개, `P` 5개 필드는 모두 문자열이며 
 
 ### 3.3 Doctor와 준비된 질문
 
-Doctor는 LLM을 호출하지 않는다. knowledge manifest의 질문 계약과 config의 고정 문구를 사용하고, 전달 직전 NFC 1–30자를 독립 확인한다. 공백·문장부호·줄바꿈도 센다. 생성 실패용 재시도나 문장 절단은 없다.
+임상 질문·진찰·교육에는 knowledge manifest의 질문 계약과 config의 고정 문구를 사용한다. D34의 공감 문장은 별도 모델 호출로 생성한다. 모든 발화는 전달 직전 NFC 1–30자를 독립 확인하고 공백·문장부호도 센다. 공감 생성의 빈 출력·형식·길이 오류는 검증된 준비 공감 문구로 처리하며 문장을 자르지 않는다.
 
 질문 계약에는 text, answer_type, affirmative, interviewable, reason이 있다. 대상 URI 또는 속성 URI가 키이며 대상|속성 예외가 우선한다. {symptom}은 실제 한국어 표시 이름으로 대입한 결과까지 prepare에서 검증한다.
 
@@ -316,13 +318,13 @@ Doctor는 LLM을 호출하지 않는다. knowledge manifest의 질문 계약과 
 
 실제 호출은 [ModelClient](workflow/io/model_client.py)의 `complete()`가 맡는다. 모델은 `openai/gpt-6-luna`, `reasoning_effort=medium`이며 한 호출의 출력 여유는 최대 2,048토큰이다. 모델이 내놓는 것은 사실 후보이고, 단계·질문·점수·진단·계획은 출력할 수 없다. [프롬프트](config/input_parser.txt), Pydantic 스키마, Python 검증이 이 경계를 함께 만든다.
 
-초기 `opening`을 포함한 첫 실질적 환자 진술은 Gateway에 보낸다. 코드의 판단 기준인 `doctor_successes`는 **비어 있지 않은 모델 응답 문자열 수**다. 유효 JSON이나 주호소 연결 성공 횟수가 아니므로, 비어 있지 않은 잘못된 응답도 이 수를 올릴 수 있다. 이후에는 전체 답이 준비된 계약과 완전히 맞는 경우에만 고정 규칙을 쓴다. 명확한 긍정형 존재 질문의 짧은 긍정·부정, 단일 기간 표현, 유일하게 연결되는 범주 별칭 등이 그 예다. 복합 답·시간 전환·주체 변경은 Gateway로 보낸다.
+초기 `opening`을 포함한 첫 실질적 환자 진술은 Gateway에 보낸다. 최초 해석의 판단 기준은 Gateway의 비어 있지 않은 응답 수인 `gateway_successes`다. 공통 `doctor_successes`는 세 역할을 합친 **비어 있지 않은 모델 응답 문자열 수**다. 유효 JSON이나 주호소 연결 성공 횟수가 아니므로, 비어 있지 않은 잘못된 응답도 이 수를 올릴 수 있다. 이후에는 전체 답이 준비된 계약과 완전히 맞는 경우에만 고정 규칙을 쓴다. 명확한 긍정형 존재 질문의 짧은 긍정·부정, 단일 기간 표현, 유일하게 연결되는 범주 별칭 등이 그 예다. 복합 답·시간 전환·주체 변경은 Gateway로 보낸다.
 
 ### 4.2 D29: 기존 Symptom 하나를 선택하는 절차
 
 주호소 매핑은 자연어와 그래프 사이의 첫 연결이다. 이 단계가 틀리면 뒤의 조건 매칭이 결정론적이어도 잘못된 Target에서 출발하므로 별도로 살펴야 한다.
 
-1. 아직 개념이 연결된 주호소가 없고 초기 입력 또는 주호소용 답을 처리하는 경우 `chief_mapping_required`를 켠다. 이때 초기 어휘 후보를 `Symptom`으로 제한한다.
+1. 아직 개념이 연결된 주호소가 없고 초기 입력 또는 주호소용 답을 처리하는 경우 `chief_mapping_required`를 켠다. 이때 주호소 선택 후보만 `Symptom`으로 제한하고 부수 정보에 필요한 속성·값은 전체 해석 어휘에 함께 둔다.
 2. 원문과 원천 라벨·동의어를 검색한다. `search_concepts()`는 NFC 정규화·대소문자 통일·공백 제거 뒤 라벨 포함 여부와 두 글자 조각의 겹침으로 정렬하고 검색당 최대 64개를 반환한다. 이는 문자열 검색 순위이고 의미적 정확도를 보증하는 값이 아니다.
 3. Gateway에 한·영 라벨·별칭과 허용 Symptom을 제공한다. 보고된 현재 주호소마다 가장 적합한 하나를 고르도록 요청하고, 표현이 근사하면 정확한 인용과 `uncertain`을 남긴다. 이 요청만으로 모든 주호소의 누락 없는 추출을 보장하지는 않는다.
 4. 요청별 스키마의 `concept_ids`를 길이 1·전송한 Symptom ID 열거형으로 제한한다. 첫 요청에는 적절한 후보가 없을 때 `needs_context=true`와 `lookup_terms`를 내는 선택지도 있다.
@@ -331,7 +333,19 @@ Doctor는 LLM을 호출하지 않는다. knowledge manifest의 질문 계약과 
 
 하나의 주호소 사실에 여러 Symptom ID를 남기는 것은 거절된다. 서로 다른 주호소는 별도 사실로 표현할 수 있다. Disease를 Symptom으로 대신 쓰거나 증례 ID별 매처를 적용하지 않는다. `lookup_terms`는 검색 힌트이며 환자가 말했다는 근거로 수용하지 않는다.
 
-### 4.3 전체 대화 보존과 제한된 전송
+### 4.3 D34: 질문 범주 바인딩과 전 세션 공감
+
+현재 질문에는 Target·FindingAttribute·허용 AttributeValue·답변 형식·주체·관찰·에피소드를 담은 `binding_contract`를 제공한다. 해당 속성의 전체 허용 값과 한·영 원천 동의어를 검색하고 전송 후보에 맞춘 enum과 Python 검증을 함께 적용한다. 정확한 동등 표현 다음으로 양립하는 넓은 관찰 용어를 uncertain으로 연결한다. 현재 질문의 참조는 선택 문맥에서 자리표시자를 줄여도 유효하며, 복구된 속성은 먼저 수용한 같은 응답의 관찰을 기준으로 검증할 수 있다.
+
+키처럼 수용된 수치 속성이 없는 보고는 원문 인용과 영어 `record_details`를 가진 기록용 text로 남긴다. “어머니가 집에서 측정한 일 년 전 100 cm·현재 약 105 cm”는 모든 시점·수치·보고 맥락을 유지하는 주관적 기록이다. 새 높이 속성·저신장 해석·객관 진찰 결과를 만들지 않고 점수 근거에도 사용하지 않는다. 질문의 필요한 의미가 해결되지 않으면 명료화 대상으로 남는다.
+
+Gateway는 `clinical_content`와 정확한 인용을 동반한 `empathy` 신호를 함께 낸다. 정서만 있는 발화는 의료 정보 부재로 구분하고, 혼합 발화는 임상 사실과 공감 요청을 함께 보존한다. `new_distress`·`renewed_request`는 공감 대기 이벤트가 되고 `repeat`·`acknowledgement`는 문진을 재개한다. 출처별 중복 생성·전달을 막는다.
+
+Consultation은 필수 인사 뒤 다음 임상 질문보다 먼저 공감을 선택한다. Doctor가 별도 `empathy` 호출로 진단·치료 조언·추가 질문 없이 환자 감정을 인정하는 한국어 문장을 만들고 SAY 한 턴으로 전달한다. Initiation·ChiefComplaint·ContextFactor·DifferentialDiagnosis·Education 모두에서 같은 경로를 쓰며 D26 Education pass와 독립적이다. 공감은 임상 질문 자리표시자나 P.education 완료가 아니고, 환자 답은 다시 InputInterpreter로 처리한다.
+
+공감 이벤트는 pending·attempted·delivered·skipped와 요청 출처·미전달 사유를 보존한다. 생성과 다음 응답 해석에 필요한 호출·출력 여유 및 최종화 시간을 확보한 경우만 진행한다. 입력 하나당 임상 최대 세 호출과 공감 최대 한 호출이며, 실제 NOVA 의미 해석·공감 품질은 오프라인 대역으로 입증하지 않는다.
+
+### 4.4 전체 대화 보존과 제한된 전송
 
 전체 실제 대화는 InteractionState에 남긴다. 모델 입력은 현재 응답·실제 질문·관련 관찰/에피소드와 필요한 원문 구간이다.
 
@@ -350,7 +364,7 @@ Doctor는 LLM을 호출하지 않는다. knowledge manifest의 질문 계약과 
 
 전체 요청을 맞출 때는 먼저 선택 어휘를 우선 후보 수까지 줄이고, 이어 과거 대화·기록을 줄이며, 필요하면 나머지 선택 어휘도 줄인다. 주호소 스키마의 허용 ID는 매번 남은 후보에 맞춰 다시 만든다. 최소 필수 내용조차 들어가지 않으면 현재 원문을 잘라 보내지 않고 요청을 보류한다. 위 표의 부분별 최댓값을 동시에 전송한다는 의미가 아니다.
 
-### 4.4 사실별 수용과 한 번의 해석 복구
+### 4.5 사실별 수용과 단계별 해석 복구
 
 ```mermaid
 flowchart TD
@@ -363,6 +377,10 @@ flowchart TD
     Quarantine --> Repair{복구 필요와 예산}
     Repair -->|허용| One[문맥·연결·사실을 합쳐 추가 호출 한 번]
     One --> Independent
+    One --> Remaining{임상 보고가 여전히 미해결이고 예산 있음}
+    Remaining -->|예| Medical[기록용 의학 표현 한 번]
+    Medical --> Apply
+    Remaining -->|아니오| Unknown
     Repair -->|불가| Unknown[원문과 미해결 사유 보존]
     Facts --> Apply[CaseState 반영]
     Independent --> Apply
@@ -371,7 +389,7 @@ flowchart TD
 
 `accepted_facts`, `rejected_facts`, `unresolved_links`를 구분한다. `quote`는 비어 있지 않은 현재 입력의 정확한 부분 문자열이어야 하며 `value.text`와 같아야 한다. 모델은 제공된 어휘와 기록·대화 참조만 사용할 수 있고, 실제 EXAM 응답이 아니면 O.exam을 만들 수 없다. 환자 말에서 A·P 또는 실제 검사 결과를 생성하는 것도 허용하지 않는다.
 
-잘못된 사실 하나가 독립된 다른 증상까지 없애지는 않는다. 다만 잘못된 관찰에 의존한 속성이나 같은 기록의 충돌 정정은 함께 격리한다. 복구는 응답 하나당 **추가 호출 한 번**이며 JSON 오류·빈 facts·문맥 부족·개념 연결·거절 사실이 이 한도를 공유한다. 복구가 실패해도 첫 통과의 독립 유효 사실은 보존한다. 미연결 사실을 고칠 때에는 원래 인용·관찰·발현·주체 등을 유지하고 개념 ID만 보완하도록 제한한다.
+잘못된 사실 하나가 독립된 다른 증상까지 없애지는 않는다. 잘못된 관찰에 의존한 속성이나 충돌 정정은 함께 격리한다. D34는 **최초 해석 → 바인딩·구조 복구 1회 → 기록용 의학 표현 1회**의 최대 세 호출을 사용한다. JSON 오류·빈 실질 답·문맥·연결·거절 사실은 한 바인딩 복구를 공유한다. `repair_of`는 입력 내 원래 사실의 인덱스이며 거부된 타입·필드를 바로잡을 수 있다. 이미 수용한 독립 사실은 동결하고 미연결 사실의 ID와 보수적인 uncertain 전환만 보완한다. 원래 거부와 각 단계의 결과는 `parse_rejections`·`parse_recoveries`에 보존한다.
 
 `CONTEXT_LIMIT_EXCEEDED`이면 같은 내용을 그대로 보내지 않고 새 ID의 더 작은 요청을 만든다. 상한은 8 KiB이며 직전 요청보다도 작아야 한다. 이미 추가 호출을 사용했다면 또 복구하지 않는다. 반면 전송 결과가 불명확한 일시 오류의 같은 ID 재전송은 7절의 전송 복구이며, 이 해석 복구와 목적이 다르다.
 
@@ -654,13 +672,19 @@ SDK 1.0.1 원본은 바꾸지 않는다. SOAP는 정확히 15개 문자열 필�
 
 | 구역 | 전송 필드 | 내용과 획득 경계 |
 |---|---|---|
-| S | `cc`, `hpi`, `pmh`, `fh`, `sh`, `ros` | 환자 보고, 속성·주체·시점·발현·원문 |
+| S | `cc`, `hpi`, `pmh`, `fh`, `sh`, `ros` | 영어 용어·키워드, 범주·내용, (+)/(-), 필요한 주체·시점·발현 구분 |
 | O | `exam`, `tests` | 초기 제공 활력징후와 실제 EXAM 결과; 예선 `tests`는 빈 문자열 |
 | A | `evidence`, `differential` | 선택 진단에 사용한 실제 양성·음성 근거와 적격 감별 최대 다섯 개 |
 | P | `tests`, `treatment`, `disposition`, `follow_up`, `education` | 수용된 질환 계획·검사 연결; 기본 `education`은 빈 문자열 |
 | 별도 인수 | `diagnosis` | 비어 있지 않은 주진단 문자열 하나 |
 
-S·O에는 처리 완료·값 있음·출처 있음인 기록을 사용한다. A.evidence는 `diagnosis_evidence` 중 실제 확보한 present/absent만 사용하고, 제한 반증에 사용한 음성 소견도 함께 남긴다. 내부 URI·request_id를 근거 문장에 노출하지 않으며 “네”라는 원문도 대상·상태·주체·시간과 함께 읽을 수 있게 한다. EXAM은 획득 턴을, 초기 활력징후는 초기 제공 사실임을 표시한다.
+S·O에는 처리 완료·값 있음·출처 있음인 기록을 사용한다. D33은 가능한 모든 항목에 원천 영어 용어를 사용하고 각 줄을 `Category: Content`로 만든다. 환자 원문은 인용·대화 이력에 보존하며 그대로 SOAP에 나열하지 않는다. 짧은 “네”도 해당 용어와 (+)로 기록한다. 영어 원천 용어나 승인된 영어 계획이 없으면 원래 표현을 보존한다.
+
+예를 들어 기침 사례는 `S.cc`에 `C.C: Cough`·`Onset: 3 days before presentation`, `S.hpi`에 `P.I: Cough (+)`·`Duration: 1–2 min`·`Aggravating factor: At night`를 쓴다. 병력·ROS는 `Medicine history: (-)`·`Smoking: (-)`·`Dyspnea: (-)`처럼 표시한다. 일반적인 만성질환 부재를 개별 DM·HTN 음성으로 확장하지 않고, 모른다는 답은 `(Unknown)`이며 미질문은 추가하지 않는다. 통증이면 같은 관찰·발현에서 얻은 점수·부위·양상·기간을 `Pain assessment:`로 모으고, NRS 척도는 명시된 경우만 쓴다.
+
+구조화된 개념·속성·값·수치를 우선하며, 추가 내용은 기존 Gateway가 고정 `record_category`와 정확한 원문 구간·짧은 영어 `record_details`를 함께 추출한다. 별도 요약 호출은 없고 Python이 인용의 실제 포함과 필드·범주의 일치를 검증한다. 번역의 임상 의미가 맞는지는 스크립트 검증만으로 입증되지 않는다. 연결하지 못한 보고는 `Unmapped report`로 드러내고 원문은 증례 상태에서 추적한다.
+
+A.evidence는 `diagnosis_evidence` 중 실제 확보한 present/absent만 사용하고, 제한 반증에 사용한 음성 소견도 남긴다. `Diagnosis: #1. ...`·`Evidence: ...`로 구성하며, 감별은 확보 근거가 있는 `r/o Diagnosis: reason`만 표시한다. 내부 URI·request_id를 노출하지 않고 EXAM은 `PE:`와 획득 턴을, 초기 활력징후는 `V/S:`와 초기 제공 사실임을 표시한다. 가족·과거·여러 발현의 구분이 필요할 때만 주체·시간·발현을 붙이며 수치·단위·구간 경계를 보존한다.
 
 모든 칸은 문자열이고 없는 내용은 빈 문자열이다. `note.A.diagnosis`를 추가하지 않으며 note와 별도로 진단을 보낸다. note의 JSON 크기는 UTF-8 100,000바이트 이내, diagnosis는 500바이트 이내여야 한다. 30자 한도는 SAY·EXAM 발화에 적용하며 SOAP 전체에 적용하지 않는다.
 
@@ -681,6 +705,8 @@ S·O에는 처리 완료·값 있음·출처 있음인 기록을 사용한다. A
 ```dotenv
 ONTOWARD_KNOWLEDGE_MANIFEST=knowledge/manifest.json
 ONTOWARD_PARSER_PROMPT=config/input_parser.txt
+ONTOWARD_TERMINOLOGY_PROMPT=config/medical_terminology.txt
+ONTOWARD_EMPATHY_PROMPT=config/empathy.txt
 ONTOWARD_TEXTS=config/texts.ko.json
 ONTOWARD_EDUCATION_ENABLED=false
 ```
@@ -691,6 +717,7 @@ ONTOWARD_EDUCATION_ENABLED=false
 
 ```sh
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_workflow.py
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_input_empathy.py
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_admitted.py --submission /workspace/submission --output /workspace/Tmp/admitted-verification
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_korean_admitted.py --submission /workspace/submission --output /workspace/Tmp/korean-verification
 docker compose --profile tools run --rm --no-deps --pull never -T package
@@ -765,9 +792,9 @@ sequenceDiagram
     C->>C: 예산 확인 후 다음 대화·세션 전환·최종화
 ```
 
-환자에게 보이는 한 번의 질문 뒤에는 **문구 검증 → 실제 전송 → 원문 보존 → 사실 해석 → 추론 갱신 → 다음 질문 재계획**이 이어진다. Doctor는 문장을 생성하거나 진단을 선택하지 않는다. 지정 모델도 다음 행동을 고르는 대신 실제 응답의 의미를 해석한다. 위 도식의 `client.chat()`은 같은 NOVA SDK를 통한 Gateway 호출이다.
+환자에게 보이는 한 번의 질문 뒤에는 **문구 검증 → 실제 전송 → 원문 보존 → 사실 해석 → 추론 갱신 → 다음 질문 재계획**이 이어진다. Doctor는 임상 질문을 생성하거나 진단을 선택하지 않고, 공감 문장만 생성할 수 있다. 지정 모델도 다음 행동을 고르는 대신 실제 응답의 의미를 해석한다. 위 도식의 `client.chat()`은 같은 NOVA SDK를 통한 Gateway 호출이다.
 
-“네”처럼 짧은 답이라도 무엇에 동의했는지가 질문 계약으로 완전히 정해질 때만 고정 규칙으로 처리한다. “아니요, 작년에는 있었어요”는 현재 부재와 과거 존재를 함께 말하므로 전체 응답을 Gateway로 보낸다. 한 응답의 사실 일부가 잘못됐을 때 독립된 다른 유효 사실까지 지우지 않는다. 복구용 추가 호출은 응답당 최대 한 번이며 일반 문진·교육과 같은 증례 예산을 공유한다.
+“네”처럼 짧은 답이라도 무엇에 동의했는지가 질문 계약으로 완전히 정해질 때만 고정 규칙으로 처리한다. “아니요, 작년에는 있었어요”는 현재 부재와 과거 존재를 함께 말하므로 전체 응답을 Gateway로 보낸다. 한 응답의 사실 일부가 잘못됐을 때 독립된 다른 유효 사실까지 지우지 않는다. 임상 처리는 응답당 최대 세 호출이며 공감 생성은 별도 최대 한 호출이다. 모두 같은 증례 예산을 공유한다.
 
 실제 전송이 성공한 뒤에만 전달 이력을 만든다. 질문 후보에만 있었던 문구, 거절된 초안, 전송 오류는 환자와 나눈 대화가 아니다. 다음 질문은 마지막 응답을 처리한 뒤 선택하므로, 앞서 만든 질문 목록을 환자의 답과 무관하게 끝까지 읽지 않는다. 핵심 HPI까지는 준비한 순서를 따르고, Open Inquiry 뒤의 문진은 새 근거로 재계획한다. Education에서는 진단 변경을 확인하여 필요한 설명과 정정을 갱신한다.
 
