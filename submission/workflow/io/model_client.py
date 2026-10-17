@@ -13,8 +13,8 @@ class ModelClient:
 
     def complete(self, state, client, *, role, messages):
         session = state.session
-        if role != "gateway":
-            raise ValueError("Only response interpretation uses the designated model")
+        if role not in {"gateway", "empathy"}:
+            raise ValueError("Only Gateway and empathy calls use the designated model")
         allowance = self.budget.model_allowance(session)
         if not allowance:
             state.interaction.issues.append(f"{role}_budget_exhausted")
@@ -40,12 +40,14 @@ class ModelClient:
                 content = ""
             if not isinstance(content, str):
                 raise ValueError("Invalid model content")
-            if content.strip():
+            if content.strip() and role == "gateway":
                 self.usage.record_model_success(state)
             return content
         except NovaError as error:
             exchange["error"] = error.code
-            if error.code in {"MODEL_CALL_LIMIT", "MODEL_TOKEN_BUDGET", *TRANSIENT_ERRORS, "REQUEST_BUDGET_EXHAUSTED"}:
+            if error.code in TRANSIENT_ERRORS:
+                state.stop("unknown", error.code)
+            elif error.code in {"MODEL_CALL_LIMIT", "MODEL_TOKEN_BUDGET", "REQUEST_BUDGET_EXHAUSTED"}:
                 self.usage.disable_models(state)
                 state.interaction.issues.append(error.code)
             elif error.code == "PROVIDER_RESPONSE_INVALID":

@@ -1,17 +1,17 @@
 # Workflow Rule Index
 
-Use D26 for the default Education pass and submission-readiness fixes, D17 for preserved interview policies, and D08/D12/D13/D14 for ontology, wire, responsibility, and packaging boundaries. Definitions live in Python. Behavioral checks below belong to Dev/tests/workflow/test_workflow.py; actual admitted RDF and independent archives use test_admitted.py and test_korean_admitted.py. compare_traces.py remains the historical D13 behavior-preserving comparison. See D17_REVIEW_ADOPTION.md for the two supplied reviews and adoption boundaries.
+Use D33 for session targets/caps, optional-question continuation, empathy accounting, and one transient replay, D26 for the default Education pass, D17 for preserved reasoning and parsing, and D08/D12/D13/D14 for ontology, wire, responsibility, and packaging boundaries. Definitions live in Python. Behavioral checks below belong to Dev/tests/workflow/test_workflow.py; actual admitted RDF and independent archives use test_admitted.py and test_korean_admitted.py. compare_traces.py remains the historical D13 behavior-preserving comparison. See D17_REVIEW_ADOPTION.md for the two supplied reviews and adoption boundaries.
 
 | ID | Rule and owner | Behavioral acceptance |
 |---|---|---|
-| WF-01 | Consultation preserves five sessions and handles pending input first | test_full_five_session_workflow; test_budget_keeps_pending_done_and_plans |
+| WF-01 | Consultation preserves five sessions and processes each received reply immediately | test_full_five_session_workflow; test_last_response_is_processed_before_budget_and_keeps_facts_and_plans |
 | WF-02 | graph.run_node retains validated copied-state and action replay boundary | test_node_validation_does_not_replay_completed_external_action |
 | QP-01 | QuestionLifecycle atomically registers/discards placeholders and references | test_discard_batch_rejects_pending_and_done_without_partial_changes |
 | QP-02 | InterviewPlanner distinguishes asked from resolved and bounds clarification | test_asked_history_does_not_resolve_unknown_or_empty_attribute |
 | QP-03 | Core HPI precedes Open Inquiry and bounded ROS within original systems | test_focused_ros_union_limits_order_and_cross_system_retrieval; test_ros_full_flow_explicit_negative_and_unknown |
 | QP-04 | Replan by evidence revision, block absent attributes, and reconsider undelivered questions | test_d17_absent_target_attributes_and_reconsideration; test_context_cannot_starve_more_valuable_diagnostic_acquisition; test_saturated_supporting_context_has_no_remaining_bonus_utility |
-| BD-01 | BudgetPolicy shares actions and protects reply/finalization plus education capacity only when enabled | test_d17_shared_action_pool_and_response_window; test_education_pass_keeps_full_diagnostic_budget_and_empty_education |
-| BD-02 | Recheck before transmission and preserve last-turn submission | test_injected_clock_expires_collection_between_framing_and_execution; test_closed_expired_reserve_and_fiftieth_turn |
+| BD-01 | BudgetPolicy applies conditional targets and non-borrowing session caps inside shared resources | test_session_hard_caps_stop_actions_without_borrowing; test_session_cap_and_shared_response_window |
+| BD-02 | Apply a lightweight transmission gate and preserve last-turn submission | test_injected_clock_expires_collection_between_framing_and_execution; test_closed_expired_reserve_and_fiftieth_turn |
 | IN-01 | InputInterpreter validates current quotes, type, references, and corrections | test_fact_grounding_and_correction_boundary; test_contextual_correction_preserves_episode_and_quote |
 | IN-02 | Validate independent facts and quarantine invalid dependencies atomically | test_d17_partial_facts_and_atomic_correction_dependencies |
 | IN-03 | InteractionLifecycle projects bounded original episode/source context | test_d17_context_is_bounded_and_retains_old_episode_source; test_actual_korean_context_short_answer_and_case_isolation |
@@ -20,7 +20,7 @@ Use D26 for the default Education pass and submission-readiness fixes, D17 for p
 | IN-06 | Interpret only exact prepared replies and reject unqualified composite links, including approximate chief links | test_d17_composite_guard_and_exact_duration_reply; test_strict_reply_vs_compound_free_text |
 | IN-07 | Require one supplied Symptom for chief mapping, expose source aliases, recover empty output and search bounded bilingual hints without case rules | test_chief_selection_is_one_supplied_symptom_after_bounded_recovery; test_gateway_exposes_source_aliases_and_filters_chief_retrieval_by_type; test_chief_lookup_terms_retrieve_unoffered_symptom_and_repair_only_its_id; test_empty_chief_response_gets_one_recovery_without_semantic_success; test_unlinked_chief_remains_a_report_without_a_disease_conversion; test_gateway_lookup_hints_have_a_finite_size |
 | AC-01 | Doctor validates prepared NFC text and never generates utterances | test_prepared_doctor_validates_and_delivers_without_model_calls; test_nfc_length_and_test_block |
-| RT-01 | RequestExecutor preserves IDs/payloads, delays, timeouts, and once-only usage | test_transport_identity_delays_timeout_and_usage_once; test_action_retries_and_response_format_new_identity |
+| RT-01 | RequestExecutor replays a transient once after two seconds with identical ID/payload and once-only usage | test_transport_identity_delays_timeout_and_usage_once; test_action_transient_replay_and_no_response_format_retry; test_exhausted_transient_gateway_stops_without_actions_or_submission |
 | CL-01 | Shared Pattern matching is reused and invalidated by corrections | test_d17_shared_pattern_cache_and_correction_invalidation |
 | CL-02 | Preserve source refinement replacement, joint deltas, typed conditions, and episode boundaries | test_v5_shared_patterns_refinement_replacement_and_joint_deltas; test_v5_typed_time_bases_units_and_episode_boundaries |
 | CL-03 | Match applicability and never activate unknown conditions | test_v5_applicability_is_required_and_unknown_is_not_support |
@@ -31,3 +31,5 @@ Use D26 for the default Education pass and submission-readiness fixes, D17 for p
 | SB-02 | Bound SOAP repair and require completed DIAGNOSE | test_soap_reconstruction_local_and_server; test_submission_unknown_keeps_exact_payload |
 | PK-01 | Preserve SDK bytes, package boundaries, hashes, and local-only knowledge paths | test_packaging_configured_texts_and_exclusions; test_knowledge_paths_hashes_and_missing_manifest |
 | PK-02 | Keep shared knowledge patient-free and separate case state | test_shared_resources_keep_case_dialogue_separate |
+| BD-03 | Empathy uses shared turns/models while bypassing interview caps; replies precede finalization | test_empathy_bypasses_session_caps_but_uses_shared_turns_and_model_budget; test_last_empathy_response_precedes_soap_and_confirmed_submission |
+| QP-05 | Drop zero-value optional questions and tighten continuation at targets even without a new revision | test_usefulness_changes_at_target_without_new_clinical_revision; test_unlock_remains_useful_without_supported_diagnosis_and_no_filler_minimum; test_multiple_chief_hpi_round_robin_preserves_open_at_cap |

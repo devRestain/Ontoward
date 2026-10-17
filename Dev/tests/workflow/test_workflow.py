@@ -342,14 +342,14 @@ class Verification(unittest.TestCase):
         w = assemble_consultation(client, resources(), now=lambda: clock[0], sleep=lambda _: None,
                                   new_request_id=lambda: "fixed-request")
         s = state("Initiation", True)
-        s.session.deadline = clock[0] + timedelta(seconds=121)
+        s.session.deadline = clock[0] + timedelta(seconds=241)
         q = question(s, purpose="chief", field="S.cc", target=None, text=CONFIG.texts.chief_question)
         w.interactions.select_question(s, q)
 
         w.doctor.validate_action(s)
         self.assertTrue(s.interaction.selected.ready)
         clock[0] += timedelta(seconds=2)
-        w.check_budget(s)
+        w.doctor.execute_action(s, client)
         self.assertTrue(s.session.finalizing)
         self.assertIsNone(s.interaction.selected)
         self.assertFalse(client.actions)
@@ -540,7 +540,7 @@ class Verification(unittest.TestCase):
         self.assertEqual(result.case.diagnosis, "가상질환B")
         self.assertEqual(client.actions[0]["content"], CONFIG.texts.chief_question)
         self.assertIn("EXAM", [a["kind"] for a in client.actions])
-        self.assertLessEqual(len(client.actions), 50)
+        self.assertLessEqual(len(client.actions), 36)
         note = client.submissions[0]["note"]
         self.assertEqual({s: tuple(f) for s, f in note.items()}, RECORD_FIELDS)
         self.assertEqual(note["O"]["tests"], "")
@@ -572,13 +572,10 @@ class Verification(unittest.TestCase):
         self.assertEqual(client.submissions[0]["note"]["P"]["treatment"], "")
         self.assertIn("원인 미확정", client.submissions[0]["note"]["A"]["evidence"])
 
-    def test_pure_routes_initialization_pending_and_current_scope(self):
+    def test_pure_routes_initialization_and_current_scope(self):
         s = state()
         self.assertEqual(route_budget(s), "enter_session")
         q = question(s)
-        pending(s, q)
-        self.assertEqual(route_budget(s), "process_input")
-        s.interaction.pending = None
         s.session.initialized = True
         s.case.get(q.item_id).scope = "Education"
         self.assertEqual(route_budget(s), "advance_session")
@@ -598,7 +595,7 @@ class Verification(unittest.TestCase):
         interview = make_planner(knowledge(), CONFIG)
         record(s)
         interview.prepare_chief_complaint(s)
-        s.session.turns_remaining = 5
+        s.session.turns_remaining = 2
         make_consultation().check_budget(s)
         ids = {q.item_id for q in s.questions.questions}
         self.assertIn("ChiefComplaint:open", ids)
@@ -609,18 +606,20 @@ class Verification(unittest.TestCase):
         self.assertEqual(before, s.model_dump())
         self.assertEqual({i.id for i in s.case.unasked("ChiefComplaint")}, ids)
 
-    def test_budget_keeps_pending_done_and_plans(self):
+    def test_last_response_is_processed_before_budget_and_keeps_facts_and_plans(self):
         s = state("Education", True)
         record(s)
         record(s, ident="plan", kind="plan", field="P.education")
         q = question(s, purpose="education", field="P.education")
         pending(s, q)
         s.session.turns_remaining = 0
+        s.session.doctor_successes = 1
+        s.interaction.incoming = {"content": "알겠습니다", "facts": []}
+        make_interpreter(CONFIG).process_input(s, knowledge(), FakeSDK())
         make_consultation().check_budget(s)
-        self.assertIsNotNone(s.case.get("q"))
-        s.interaction.pending = None
-        make_consultation().check_budget(s)
-        self.assertIsNone(s.case.get("q"))
+        self.assertIsNone(s.interaction.pending)
+        self.assertEqual(s.case.get("q").status, "done")
+        self.assertTrue(s.session.finalizing)
         self.assertIsNotNone(s.case.get("chief"))
         self.assertIsNotNone(s.case.get("plan"))
 
@@ -796,7 +795,7 @@ class Verification(unittest.TestCase):
                              for _, item in s.case.entries() if item.value))
         s, client = self.run_flow(FakeSDK(unknown_action=True))
         self.assertEqual(s.interaction.termination, "unknown")
-        self.assertEqual(len(client.actions), 3)
+        self.assertEqual(len(client.actions), 2)
         self.assertEqual(len({action["request_id"] for action in client.actions}), 1)
         self.assertIsNotNone(s.interaction.pending)
         self.assertEqual(s.interaction.history[-1].request["request_id"], client.actions[0]["request_id"])
@@ -806,7 +805,7 @@ class Verification(unittest.TestCase):
         for result in ("timeout", "not_completed"):
             s, client = self.run_flow(FakeSDK(submit_status=result))
             self.assertEqual(s.interaction.termination, "unknown")
-            self.assertEqual(len(client.submissions), 3 if result == "timeout" else 1)
+            self.assertEqual(len(client.submissions), 2 if result == "timeout" else 1)
             self.assertEqual(len({item["request_id"] for item in client.submissions}), 1)
             self.assertEqual(client.submissions[0]["request_id"], s.interaction.submission_request_id)
             self.assertEqual(client.submissions[0]["note"], s.interaction.submission_payload["note"])
@@ -1005,6 +1004,7 @@ class Verification(unittest.TestCase):
             k.questions[str(symptom)] = QuestionTemplate(text=f"증상{index} 있나요?", answer_type="presence", affirmative=True)
             for system in (OW.SystemA, OW.SystemB):
                 k._graph.add((symptom, OW.inSystem, system))
+            add_v5_pattern(k, f"rosUtility{index}", symptom, [], disease=OW.Beta)
         k.validate_graph()
         record(s)
         record(s, ident="known", target=OW.Ros0, field="S.ros", status="absent")
@@ -1031,6 +1031,7 @@ class Verification(unittest.TestCase):
         k._graph.add((OW.System, RDF.type, OW.BodySystem))
         k._graph.add((OW.Complaint, OW.inSystem, OW.System))
         k._graph.add((OW.Other, OW.inSystem, OW.System))
+        add_v5_pattern(k, "otherRosUtility", OW.Other, [], disease=OW.Beta)
         s, client = self.run_flow(r=resources(k))
         self.assertEqual(s.interaction.termination, "submitted")
         ros = next(item for _, item in s.case.entries() if item.value and item.value.concept_ids == [str(OW.Other)] and item.value.status == "absent")
@@ -1080,15 +1081,15 @@ class Verification(unittest.TestCase):
         def chat(**kwargs):
             calls.append(copy.deepcopy(kwargs))
             timeouts.append(client.timeout)
-            if len(calls) < 3:
+            if len(calls) < 2:
                 raise NovaError("REQUEST_PENDING")
             return client.completion("안녕하세요")
         client.chat = chat
         with patch("workflow.io.request_executor.time.sleep") as sleep:
             self.assertEqual(make_consultation().interpreter.model.complete(s, client, role="gateway", messages=[]), "안녕하세요")
-        self.assertEqual(calls, [calls[0]] * 3)
-        self.assertEqual([call.args[0] for call in sleep.call_args_list], [2, 5])
-        self.assertEqual(timeouts, [240] * 3)
+        self.assertEqual(calls, [calls[0]] * 2)
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [2])
+        self.assertEqual(timeouts, [240] * 2)
         self.assertEqual(client.timeout, 120)
         self.assertEqual((s.session.doctor_calls, s.session.input_tokens, s.session.output_tokens), (1, 20, 10))
         self.assertEqual(len(s.interaction.model_history), 1)
@@ -1097,8 +1098,8 @@ class Verification(unittest.TestCase):
         make_consultation().doctor.executor.execute(s, client, lambda: seen.append(client.timeout), {}, [])
         self.assertLessEqual(seen[0], 5)
 
-    def test_action_retries_and_response_format_new_identity(self):
-        for code, same_id in (("REQUEST_PENDING", True), ("PATIENT_RESPONSE_INVALID", False)):
+    def test_action_transient_replay_and_no_response_format_retry(self):
+        for code in ("REQUEST_PENDING", "PATIENT_RESPONSE_INVALID", "EXAMINER_RESPONSE_INVALID"):
             s = state()
             q = question(s, text=CONFIG.texts.chief_question, purpose="chief", field="S.cc", target=None)
             s.interaction.selected = ActionSpec(question=q, content=q.text, request_id="first", ready=True)
@@ -1110,11 +1111,19 @@ class Verification(unittest.TestCase):
                     raise NovaError(code)
                 return real(**kwargs)
             client.say = say
-            make_doctor(CONFIG).execute_action(s, client)
-            self.assertEqual(requests[0]["request_id"] == requests[1]["request_id"], same_id)
-            self.assertEqual(requests[0]["content"], requests[1]["content"])
-            self.assertEqual(s.session.usage["Initiation"].actions, 1)
-            self.assertEqual(len(s.interaction.dialogue()), 1)
+            with patch("workflow.io.request_executor.time.sleep") as sleep:
+                make_doctor(CONFIG).execute_action(s, client)
+            self.assertEqual(len(requests), 2 if code == "REQUEST_PENDING" else 1)
+            if code == "REQUEST_PENDING":
+                self.assertEqual(requests[0], requests[1])
+                sleep.assert_called_once_with(2)
+            else:
+                sleep.assert_not_called()
+                make_interpreter(CONFIG).process_input(s, knowledge(), client)
+                self.assertEqual(s.case.get(q.item_id).value.status, "unknown")
+                self.assertIsNone(s.interaction.pending)
+            self.assertEqual(s.session.usage["Initiation"].actions, int(code == "REQUEST_PENDING"))
+            self.assertEqual(len(s.interaction.dialogue()), int(code == "REQUEST_PENDING"))
 
     def test_shared_budget_reserves_one_gateway_without_render_cost(self):
         s, client = state(), FakeSDK()
@@ -1162,17 +1171,18 @@ class Verification(unittest.TestCase):
 
     def test_delivered_education_survives_gateway_failure(self):
         s = state("Education", True)
+        config = CONFIG.model_copy(update={"education_enabled": True})
         record(s)
         q = question(s, text="준비된 안내입니다.", purpose="education", field="P.education", target=None)
         s.interaction.selected = ActionSpec(question=q, content=q.text, request_id="education", ready=True)
         client = FakeSDK(malformed=True)
         client._reply = lambda *args, **kwargs: {"status": "OK", "turn": 1, "turns_remaining": 49, "content": "새로운 증상이 있어요"}
-        make_doctor(CONFIG).execute_action(s, client)
-        make_interpreter(CONFIG).process_input(s, knowledge(), client)
+        make_doctor(config).execute_action(s, client)
+        make_interpreter(config).process_input(s, knowledge(), client)
         self.assertEqual(s.case.get(q.item_id).value.kind, "education")
         self.assertEqual(s.case.get(q.item_id).value.text, q.text)
         self.assertTrue(s.interaction.needs_clarification)
-        interview = make_planner(knowledge(), CONFIG)
+        interview = make_planner(knowledge(), config)
         interview.prepare_clarification(s, s.interaction.clarification_target)
         clarification = s.questions.questions[-1]
         self.assertEqual(clarification.field, "S.ros")
@@ -1235,7 +1245,7 @@ class Verification(unittest.TestCase):
         self.assertIn("가상 B 첫 안내입니다.", delivered)
         self.assertIn("가상 C 안내입니다.", delivered)
         self.assertNotIn("가상 B 둘째 안내입니다.", delivered)
-        self.assertGreaterEqual(s.session.usage["Education"].actions, 3)
+        self.assertEqual(s.session.usage["Education"].actions, 3)
         self.assertIn(CONFIG.texts.correction_education, delivered)
         self.assertIn("가상 C 계획", client.submissions[0]["note"]["P"]["treatment"])
 
@@ -1602,22 +1612,24 @@ class Verification(unittest.TestCase):
         w.planner.select_question(s)
         self.assertEqual(s.interaction.selected.question.target_id, str(OW.Other))
 
-    def test_d17_shared_action_pool_and_response_window(self):
+    def test_session_cap_and_shared_response_window(self):
         s, w = state("DifferentialDiagnosis", True, turns=20), make_consultation()
-        s.session.usage["DifferentialDiagnosis"].actions = 14
+        s.session.usage["DifferentialDiagnosis"].actions = 11
         q = question(s)
         self.assertFalse(w.budget.evaluate(s).finalize)
         self.assertNotIn(q.item_id, w.budget.evaluate(s).discard)
         s.session.turns_remaining = 3
         self.assertNotIn(q.item_id, w.budget.evaluate(s).discard)
         self.assertIn(q.item_id, BudgetPolicy(education_enabled=True).evaluate(s).discard)
+        s.session.usage["DifferentialDiagnosis"].actions = 12
+        self.assertIn(q.item_id, w.budget.evaluate(s).discard)
+        self.assertFalse(w.budget.evaluate(s).finalize)
         s.session.current = "Education"
-        self.assertEqual(w.budget.action_capacity(s), 3)
+        self.assertEqual(w.budget.action_capacity(s), 0)
+        self.assertEqual(BudgetPolicy(education_enabled=True).action_capacity(s), 3)
         now = datetime.now(timezone.utc)
         s.session.deadline = now + timedelta(seconds=200)
         self.assertTrue(w.budget.evaluate(s).finalize)
-        pending(s, q)
-        self.assertFalse(w.budget.evaluate(s).finalize)
         self.assertGreater(w.budget.model_allowance(s.session), 0)
         client = FakeSDK()
         timeouts = []
@@ -2045,6 +2057,181 @@ class Verification(unittest.TestCase):
         self.assertIn("별도증상 / 환자", assessment["differential"])
         self.assertIn(": 없음;", assessment["differential"])
         self.assertNotIn("urn:", json.dumps(assessment))
+
+    def test_session_hard_caps_stop_actions_without_borrowing(self):
+        for scope, maximum in (("Initiation", 1), ("ChiefComplaint", 16), ("ContextFactor", 7),
+                               ("DifferentialDiagnosis", 12), ("Education", 0)):
+            with self.subTest(scope=scope):
+                s, client = state(scope, True), FakeSDK()
+                w = make_consultation(client)
+                s.session.questions_prepared = True
+                s.session.usage[scope].actions = max(0, maximum - 1)
+                q = question(s, target=None, purpose="chief", field="S.cc", text=CONFIG.texts.chief_question)
+                w.interactions.select_question(s, q)
+                w.doctor.validate_action(s)
+                w.doctor.execute_action(s, client)
+                self.assertEqual(len(client.actions), int(maximum > 0))
+                self.assertEqual(s.session.usage[scope].actions, maximum)
+                if maximum:
+                    w.interpreter.process_input(s, knowledge(), client)
+                    q = question(s, ident="over-cap", target=None, purpose="chief", field="S.cc")
+                    w.interactions.select_question(s, q)
+                    w.doctor.validate_action(s)
+                    w.doctor.execute_action(s, client)
+                    self.assertEqual(len(client.actions), 1)
+                w.check_budget(s)
+                self.assertFalse(s.session.finalizing)
+                self.assertEqual(route_budget(s), "advance_session")
+
+    def test_usefulness_changes_at_target_without_new_clinical_revision(self):
+        s, w = state("DifferentialDiagnosis", True), make_consultation()
+        s.session.usage[s.session.current].actions = 2
+        s.differential.hypotheses = [Hypothesis(disease_id=str(OW.Alpha), evidence_score=2, chief_coverage=1)]
+        low = question(s, ident="unlock-only")
+        low.selection_value = [0, 0, 0.5, 1, 4]
+        zero = question(s, ident="typicality-only", order=1)
+        zero.selection_value = [0, 0, 0, 1, 4]
+        high = question(s, ident="discriminating", order=2)
+        high.selection_value = [0, 0.5, 0.5, 0, 0]
+        w.planner.select_question(s)
+        self.assertEqual(s.interaction.selected.question.item_id, low.item_id)
+        self.assertIsNone(s.case.get(zero.item_id))
+        w.interactions.clear_selected(s)
+        revision = s.differential.clinical_revision
+        s.session.usage[s.session.current].actions = 3
+        w.planner.select_question(s)
+        self.assertEqual(s.differential.clinical_revision, revision)
+        self.assertIsNone(s.case.get(low.item_id))
+        self.assertEqual(s.interaction.selected.question.item_id, high.item_id)
+
+    def test_unlock_remains_useful_without_supported_diagnosis_and_no_filler_minimum(self):
+        s, w = state("DifferentialDiagnosis", True), make_consultation()
+        s.session.usage[s.session.current].actions = 3
+        q = question(s)
+        q.selection_value = [0, 0, 0.5, 0, 0]
+        w.planner.select_question(s)
+        self.assertEqual(s.interaction.selected.question.item_id, q.item_id)
+        s, w = state("ContextFactor", True), make_consultation()
+        question(s, purpose="context")
+        w.planner.select_question(s)
+        self.assertEqual(s.session.usage[s.session.current].actions, 0)
+        self.assertEqual(route_budget(s), "advance_session")
+        result, _ = self.run_flow()
+        self.assertLess(result.session.usage["ChiefComplaint"].actions, 7)
+
+    def test_multiple_chief_hpi_round_robin_preserves_open_at_cap(self):
+        k, s = knowledge(), state("ChiefComplaint", True)
+        attrs = [OW.Location, OW.Laterality, OW.Quality, OW.TimeSinceOnset, OW.EpisodeDuration, OW.Severity]
+        for index in range(3):
+            target = OW[f"Chief{index}"]
+            k._graph.add((target, RDF.type, OW.Symptom))
+            k.questions[str(target)] = QuestionTemplate(text=f"증상{index} 있나요?", answer_type="presence", affirmative=True)
+            for attr in attrs:
+                k._graph.add((attr, RDF.type, OW.FindingAttribute))
+                k._graph.add((target, OW.hasAttribute, attr))
+                k.questions[str(target) + "|" + str(attr)] = QuestionTemplate(text="증상을 알려주세요", answer_type="free_text")
+            record(s, ident=f"chief-{index}", target=target)
+        k.validate_graph()
+        w = make_consultation(prepared=resources(k))
+        w.planner.prepare_chief_complaint(s)
+        w.check_budget(s)
+        questions = sorted(s.questions.questions, key=lambda q: q.order)
+        self.assertEqual(len(questions), 16)
+        self.assertEqual(questions[-1].purpose, "open_inquiry")
+        self.assertEqual([q.target_id for q in questions[:3]], [str(OW[f"Chief{i}"]) for i in range(3)])
+        self.assertTrue(all(q.attribute_id == str(OW.Location) for q in questions[:3]))
+        self.assertEqual(len(s.case.unasked("ChiefComplaint")), 16)
+
+    def test_empathy_bypasses_session_caps_but_uses_shared_turns_and_model_budget(self):
+        for scope, maximum in (("Initiation", 1), ("ChiefComplaint", 16), ("ContextFactor", 7),
+                               ("DifferentialDiagnosis", 12), ("Education", 0)):
+            with self.subTest(scope=scope):
+                s, client = state(scope, True), FakeSDK()
+                record(s)
+                s.session.usage[scope].actions = maximum
+                w = make_consultation(client)
+                q = question(s, purpose="empathy", target=None, text="많이 힘드셨겠어요")
+                w.planner.replan(s, force=True)
+                w.check_budget(s)
+                self.assertIsNotNone(s.case.get(q.item_id))
+                w.planner.select_question(s)
+                w.doctor.validate_action(s)
+                w.doctor.execute_action(s, client)
+                w.interpreter.process_input(s, knowledge(), client)
+                self.assertEqual(s.session.turns_remaining, 49)
+                self.assertEqual(s.session.usage[scope].actions, maximum + 1)
+                self.assertEqual(s.session.usage[scope].empathy_actions, 1)
+                self.assertEqual(w.budget.interview_actions(s), maximum)
+                self.assertEqual(w.budget.action_capacity(s), 0)
+                self.assertGreater(s.session.doctor_calls, 0)
+                self.assertIsNone(s.interaction.pending)
+                self.assertIsNone(s.case.get(q.item_id))
+        s, client = state("ChiefComplaint", True), FakeSDK()
+        s.session.call_limit = 1
+        client.chat = Mock(return_value=client.completion("많이 힘드셨겠어요"))
+        w = make_consultation(client)
+        self.assertEqual(w.interpreter.model.complete(s, client, role="empathy", messages=[]), "많이 힘드셨겠어요")
+        self.assertEqual((s.session.doctor_calls, s.session.input_tokens, s.session.output_tokens), (1, 20, 10))
+        self.assertEqual(s.session.doctor_successes, 0)
+        q = question(s, purpose="empathy", target=None)
+        w.interactions.select_question(s, q)
+        w.doctor.validate_action(s)
+        w.doctor.execute_action(s, client)
+        self.assertTrue(s.session.finalizing)
+        self.assertFalse(client.actions)
+
+    def test_last_empathy_response_precedes_soap_and_confirmed_submission(self):
+        s, client = state("DifferentialDiagnosis", True, turns=1), FakeSDK()
+        record(s)
+        s.session.usage[s.session.current].actions = 12
+        s.differential.initialized = True
+        client.remaining = 1
+        original_reply = client._reply
+        def reply(*args, **kwargs):
+            return {**original_reply(*args, **kwargs), "content": "별도증상도 있어요"}
+        client._reply = reply
+        client.chat = Mock(return_value=client.completion(json.dumps({"facts": [
+            fact("S.ros", "symptom", OW.Other, "별도증상도 있어요") ]}, ensure_ascii=False)))
+        w = make_consultation(client)
+        q = question(s, purpose="empathy", target=None, text="많이 힘드셨겠어요")
+        w.interactions.select_question(s, q)
+        w.doctor.validate_action(s)
+        w.doctor.execute_action(s, client)
+        result = WorkflowState.model_validate(build_graph(w, w.planner.knowledge).invoke(s.model_dump(), {"recursion_limit": 200}))
+        self.assertEqual(result.interaction.termination, "submitted")
+        self.assertEqual(result.session.turns_remaining, 0)
+        self.assertIsNone(result.interaction.pending)
+        self.assertEqual(result.session.usage["DifferentialDiagnosis"].empathy_actions, 1)
+        self.assertEqual(len(client.submissions), 1)
+        self.assertIn("별도증상도 있어요", client.submissions[0]["note"]["S"]["ros"])
+        self.assertEqual(client.submissions[0]["note"]["P"]["education"], "")
+
+    def test_exhausted_transient_gateway_stops_without_actions_or_submission(self):
+        client, requests = FakeSDK(), []
+        def chat(**kwargs):
+            requests.append(copy.deepcopy(kwargs))
+            raise NovaError("REQUEST_PENDING")
+        client.chat = chat
+        with patch("workflow.io.request_executor.time.sleep") as sleep:
+            result, _ = self.run_flow(client)
+        self.assertEqual(result.interaction.termination, "unknown")
+        self.assertEqual(requests, [requests[0]] * 2)
+        sleep.assert_called_once_with(2)
+        self.assertEqual(result.session.doctor_calls, 1)
+        self.assertFalse(client.actions)
+        self.assertFalse(client.submissions)
+
+    def test_transient_does_not_replay_without_delay_and_phase_reserve(self):
+        clock = datetime(2026, 10, 17, tzinfo=timezone.utc)
+        s, client, attempts = state(), FakeSDK(), []
+        s.session.deadline = clock + timedelta(seconds=241)
+        w = assemble_consultation(client, resources(), now=lambda: clock, sleep=Mock())
+        call = Mock(side_effect=NovaError("API_UNAVAILABLE"))
+        with self.assertRaises(NovaError):
+            w.doctor.executor.execute(s, client, call, {}, attempts, action=True)
+        call.assert_called_once()
+        w.doctor.executor.sleep.assert_not_called()
+        self.assertEqual(client.timeout, 120)
 
 
 if __name__ == "__main__":

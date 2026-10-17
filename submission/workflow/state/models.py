@@ -110,6 +110,7 @@ class CaseState(Model):
 
 class Usage(Model):
     actions: int = 0
+    empathy_actions: int = 0
     calls: int = 0
 
 
@@ -209,7 +210,7 @@ class Question(Model):
     item_id: str
     field: SOAPField
     kind: Literal["SAY", "EXAM"] = "SAY"
-    purpose: Literal["chief", "hpi", "open_inquiry", "ros", "clarification", "context", "feature", "education"]
+    purpose: Literal["chief", "hpi", "open_inquiry", "ros", "clarification", "context", "feature", "education", "empathy"]
     text: str
     order: int
     priority: int

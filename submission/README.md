@@ -39,7 +39,7 @@
 
 ### 그래프와 내부 세션을 함께 읽는 방법
 
-하나의 공식 NOVA 세션 안에 다섯 내부 세션이 있다. `Consultation` 하나가 순서를 조정하며 각 세션에 고정 턴 수를 배정하지 않는다. 내부 세션은 “지금 무엇을 확인하는가”를 나타내고, 그래프 노드는 “응답 처리·질문 선택·전송 중 어떤 작업을 하는가”를 나타낸다. 따라서 세션이 바뀌어도 같은 그래프의 질문·응답 루프를 사용한다.
+하나의 공식 NOVA 세션 안에 다섯 내부 세션이 있다. `Consultation` 하나가 순서를 조정하며 D33의 조건부 최소 목표와 세션별 문진 상한을 적용한다. 내부 세션은 “지금 무엇을 확인하는가”를 나타내고, 그래프 노드는 “응답 처리·질문 선택·전송 중 어떤 작업을 하는가”를 나타낸다. 세션이 바뀌어도 같은 질문·응답 루프를 사용하고 유용한 질문이 없으면 목표 전에 종료한다.
 
 | 내부 세션 | 하는 일 |
 |---|---|
@@ -52,7 +52,7 @@
 
 ### 현재 LangGraph의 노드와 분기
 
-아래 이름은 [graph.py](workflow/graph.py)의 실제 노드 이름이다. 사각형은 작업, 마름모는 작업 후 상태에 따라 이동할 곳이 달라지는 지점이다. `check_budget`과 `recheck_action_budget`은 같은 예산 판단을 호출하며, 후자는 전송 직전에 한 번 더 확인한다.
+아래 이름은 [graph.py](workflow/graph.py)의 실제 노드 이름이다. 사각형은 작업, 마름모는 작업 후 상태에 따라 이동할 곳이 달라지는 지점이다. `check_budget`은 세션과 공통 자원을 판단하고 `execute_action` 내부에서 전송 직전 경량 검사를 수행한다.
 
 ```mermaid
 flowchart TD
@@ -60,7 +60,6 @@ flowchart TD
     subgraph Loop["현재 내부 세션에서 반복하는 진료 작업"]
         process_input --> refresh_after_input["refresh_after_input<br/>추론 갱신과 미전송 질문 재계획"]
         refresh_after_input --> check_budget{"check_budget<br/>예산과 현재 상태 확인"}
-        check_budget -->|처리할 응답이 남음| process_input
         check_budget -->|현재 세션 진입 준비 필요| enter_session["enter_session<br/>현재 세션 질문 준비"]
         enter_session --> check_budget
         check_budget -->|미전송 질문 있음| select_question["select_question<br/>현재 계획에서 다음 질문 선택"]
@@ -68,16 +67,11 @@ flowchart TD
         advance_session --> check_budget
         select_question --> validate_action{"validate_action<br/>준비 문구와 허용 행동 검증"}
         validate_action -->|선택 없음 또는 검증 거절| check_budget
-        validate_action -->|전송 준비 완료| recheck_action_budget{"recheck_action_budget<br/>전송 직전 예산 재확인"}
-        recheck_action_budget -->|대기 응답 있음| process_input
-        recheck_action_budget -->|세션 진입 필요| enter_session
-        recheck_action_budget -->|세션 질문 끝| advance_session
-        recheck_action_budget -->|선택 행동 재검토 필요| check_budget
-        recheck_action_budget -->|전송 가능| execute_action["execute_action<br/>SAY 또는 EXAM 실행과 응답 기록"]
-        execute_action --> process_input
+        validate_action -->|전송 준비 완료| execute_action["execute_action<br/>경량 검사·SAY 또는 EXAM·응답 기록"]
+        execute_action -->|응답 수신| process_input
+        execute_action -->|자원 부족으로 전송 생략| check_budget
     end
     check_budget -->|최종화 조건 충족| build_soap
-    recheck_action_budget -->|최종화 조건 충족| build_soap
     subgraph Submission["진단과 기록의 최종 제출"]
         build_soap["build_soap<br/>진단 재선택·계획 갱신·SOAP 구성"] -->|구성 가능| validate_submission{"validate_submission<br/>필드·크기·제출 조건 검증"}
         validate_submission -->|수정 가능한 오류| repair_submission["repair_submission<br/>한 번 재구성"]
@@ -88,7 +82,7 @@ flowchart TD
     end
     check_budget -->|명시적 종료 사유| abort
     validate_action -->|명시적 종료 사유| abort
-    recheck_action_budget -->|명시적 종료 사유| abort
+    execute_action -->|명시적 종료 사유| abort
     build_soap -->|진단 또는 기록 구성 실패| abort
     validate_submission -->|복구 불가 또는 한도 소진| abort
     confirm_submission -->|제출 확인됨| finish["finish<br/>정상 종료"]
@@ -97,9 +91,9 @@ flowchart TD
     abort --> END
 ```
 
-한 번의 대화는 `select_question → validate_action → recheck_action_budget → execute_action → process_input → refresh_after_input` 순으로 돈다. 질문의 문구를 먼저 확인하고, 전송 시점의 예산까지 확보한 뒤 환자에게 전달한다. 답을 받으면 새 사실을 기존 기록에 반영하고 후보와 미전송 질문을 다시 살핀다. 행동 사용량은 그래프의 이동 횟수와 구분하며, 서버가 알려 준 SAY·EXAM의 남은 턴 변화를 반영한다.
+한 번의 대화는 `select_question → validate_action → execute_action → process_input → refresh_after_input` 순으로 돈다. 문구를 확인한 뒤 행동 종류별 남은 용량·모델·시간을 경량 검사하고 전달한다. 답을 받으면 새 사실과 미전송 질문을 갱신한다. 행동 사용량은 그래프 이동과 구분하며 서버가 알려 준 SAY·EXAM의 남은 턴 변화를 반영한다.
 
-`check_budget`의 이동 우선순위는 **명시적 종료 → 대기 응답 처리 → 최종화 → 세션 진입 → 질문 선택 또는 세션 전환**이다. 이미 받아 둔 응답은 최종화보다 먼저 처리하므로 마지막 답을 기록에서 잃지 않는다. 시간이 부족해지거나 행동·모델 예산이 소진되면 남은 문진을 줄이고 확보한 사실로 최종화한다. 기한이 이미 끝난 경우에는 만료로 종료한다.
+`check_budget`의 이동 우선순위는 **명시적 종료 → 최종화 → 세션 진입 → 질문 선택 또는 세션 전환**이다. 동기 실행은 응답 수신 직후 해석을 완료하므로 예산 검사에서 pending 복구로 돌아가지 않는다. 세션 문진 상한은 다음 세션으로 이동하는 조건이고 공통 행동·모델·시간 부족은 최종화 조건이다. 마지막 응답도 처리한 뒤 판단하며 기한이 이미 끝나면 만료로 종료한다.
 
 `advance_session`은 현재 세션을 초기화했고, 대기 응답과 미전송 질문이 없을 때 다음 단계로 이동한다. 주호소나 후보가 불분명하면 허용된 명료화를 준비하고 현재 단계에서 다시 확인할 수 있다. 세션을 다섯 번 새로 열거나 이전 세션으로 자동 되돌아가는 방식은 아니다.
 
@@ -316,7 +310,7 @@ Doctor는 LLM을 호출하지 않는다. knowledge manifest의 질문 계약과 
 
 실제 호출은 [ModelClient](workflow/io/model_client.py)의 `complete()`가 맡는다. 모델은 `openai/gpt-6-luna`, `reasoning_effort=medium`이며 한 호출의 출력 여유는 최대 2,048토큰이다. 모델이 내놓는 것은 사실 후보이고, 단계·질문·점수·진단·계획은 출력할 수 없다. [프롬프트](config/input_parser.txt), Pydantic 스키마, Python 검증이 이 경계를 함께 만든다.
 
-초기 `opening`을 포함한 첫 실질적 환자 진술은 Gateway에 보낸다. 코드의 판단 기준인 `doctor_successes`는 **비어 있지 않은 모델 응답 문자열 수**다. 유효 JSON이나 주호소 연결 성공 횟수가 아니므로, 비어 있지 않은 잘못된 응답도 이 수를 올릴 수 있다. 이후에는 전체 답이 준비된 계약과 완전히 맞는 경우에만 고정 규칙을 쓴다. 명확한 긍정형 존재 질문의 짧은 긍정·부정, 단일 기간 표현, 유일하게 연결되는 범주 별칭 등이 그 예다. 복합 답·시간 전환·주체 변경은 Gateway로 보낸다.
+초기 `opening`을 포함한 첫 실질적 환자 진술은 Gateway에 보낸다. 코드의 판단 기준인 `doctor_successes`는 **비어 있지 않은 Gateway 응답 문자열 수**다. 유효 JSON이나 주호소 연결 성공 횟수가 아니므로, 비어 있지 않은 잘못된 응답도 이 수를 올릴 수 있다. 이후에는 전체 답이 준비된 계약과 완전히 맞는 경우에만 고정 규칙을 쓴다. 명확한 긍정형 존재 질문의 짧은 긍정·부정, 단일 기간 표현, 유일하게 연결되는 범주 별칭 등이 그 예다. 복합 답·시간 전환·주체 변경은 Gateway로 보낸다.
 
 ### 4.2 D29: 기존 Symptom 하나를 선택하는 절차
 
@@ -594,13 +588,13 @@ selection_value = [rank_change, spread, unlock, is_chief_target, typicality]
 
 벡터가 같으면 비Context 질문을 먼저 두고 마지막에는 의미 키로 순서를 정한다. ContextFactor에서는 정렬된 목록의 첫 비Context 질문 앞까지만 Context를 유지한다. 따라서 더 유용한 소견 질문·진찰이 나오거나 같은 가치의 동률에서 비Context가 먼저 오면 감별 단계로 넘어갈 수 있다. DifferentialDiagnosis에서는 남은 Context와 소견·진찰을 함께 비교한다.
 
-Context는 벡터의 첫 세 값이 모두 0이면 버린다. **ROS·일반 Feature 질문에는 같은 양수 문턱이 없다.** 질환 후보가 없거나 계산상 변화량이 0이어도 적격 질문으로 남아 용량 안에서 실행될 수 있다. 현재 구현에 전역적인 확신도·확률·양수 정보이득 종료 조건이 있다고 읽으면 안 된다.
+선택적 질문은 벡터의 첫 세 값이 모두 0이면 버린다. 최소 목표 이후에는 `rank_change > 0` 또는 `spread > 0`이거나, 적격 Disease가 없으면서 `unlock > 0`이어야 계속한다. 주호소 관련성·typicality만으로 질문을 늘리지 않는다. 핵심 HPI와 Open Inquiry·명료화·교육·공감은 이 필터의 예외지만 자원 상한은 따른다. 이 규칙은 확신도나 확률 기반 종료 조건은 아니다.
 
-등록할 질문 수는 `min(현재 행동 용량, 남은 모델 호출 수)`로 제한한다. ChiefComplaint에서는 추가로 실제 전달한 ROS를 세어 여섯 번의 잔여 한도를 적용한다. 핵심 HPI·Open Inquiry는 실행 순서와 예산 보존 우선순위를 따로 갖는다. 여유가 충분할 때 HPI 뒤 Open Inquiry 순이지만, 예산 가지치기에서는 Open Inquiry의 높은 priority 때문에 일부 HPI보다 먼저 보존될 수 있다.
+등록할 질문 수는 `min(현재 세션의 남은 문진 상한, 공통 행동 용량, 남은 모델 호출 수)`로 제한한다. 선택 시에도 가치를 다시 확인하므로 임상 개정 없이 최소 목표를 넘겨도 종료 조건을 적용한다. ChiefComplaint에서는 실제 전달 ROS 총 여섯 번의 잔여 한도를 적용한다. 핵심 HPI는 주호소별 순환 순서로 처리하고 예산 가지치기에서 Open Inquiry 자리를 보존한다.
 
 ### 6.5 새 답 뒤에는 미전송 목록을 다시 만든다
 
-`replan()`은 대기 응답이 없고 임상 개정 또는 현재 세션이 달라졌을 때 미전송 일반 질문을 버리고 새 가치로 다시 만든다. 강제 재계획을 하는 세션 진입도 있다. 대기 행동·완료 사실·실제 전달 이력은 지우지 않고, 명료화 질문은 일반 재계획 폐기에서 제외한다.
+`replan()`은 대기 응답이 없고 임상 개정 또는 현재 세션이 달라졌을 때 미전송 일반 질문을 버리고 새 가치로 다시 만든다. 강제 재계획을 하는 세션 진입도 있다. 대기 행동·완료 사실·실제 전달 이력은 지우지 않고, 명료화와 공감 행동은 일반 재계획 폐기에서 제외한다.
 
 따라서 “처음 만든 질문 목록을 전부 읽는 프로그램”이 아니다. 동시에 이미 전달한 질문의 미해결 답을 새 질문인 것처럼 무한 반복하지도 않는다. 제한된 명료화, 고정 ROS 범위, 공통 예산이 반복 범위를 제한한다.
 
@@ -610,7 +604,19 @@ Context는 벡터의 첫 세 값이 모두 0이면 버린다. **ROS·일반 Feat
 
 ### 7.1 새 행동을 시작할 수 있는 조건
 
-현재 한도는 [limits.py](workflow/rules/limits.py), 순수 예산 판단은 [budget.py](workflow/rules/budget.py)에 있다. 공통 풀을 모든 내부 세션이 공유하며 서버의 남은 양이 더 작으면 그 값을 반영한다.
+현재 한도는 [limits.py](workflow/rules/limits.py), 순수 예산 판단은 [budget.py](workflow/rules/budget.py)에 있다. D33 세션 문진 상한과 공감 행동이 공통 풀을 공유하며 서버의 남은 양이 더 작으면 그 값을 반영한다.
+
+| 내부 세션 | 조건부 최소 목표 | 최대 문진 횟수 |
+|---|---:|---:|
+| Initiation | 1 | 1 |
+| ChiefComplaint | 7 | 16 |
+| ContextFactor | 2 | 7 |
+| DifferentialDiagnosis | 3 | 12 |
+| Education | 0 | 0 |
+
+최소 목표를 채우기 위해 이미 아는 정보나 가치 없는 질문을 추가하지 않는다. 미사용 횟수를 다른 세션에 넘기지 않으며 기본 문진 합계는 최대 36회다. 명료화와 서버가 소비한 거절 턴도 문진에 포함한다. Education을 명시적으로 활성화한 경우에만 목표 2회·최대 3회다.
+
+공감 SAY는 `purpose="empathy"`로 식별하고 세션 문진 상한에서 제외한다. `Usage.actions`는 총 소비 턴이고 `empathy_actions`는 그중 공감 턴이며, 문진 사용량은 두 값의 차이다. 공감도 공통 50턴과 모델·토큰 예산을 사용한다. 문진 36회를 다 쓴 경우 14턴이 남지만 고정 공감 할당량은 아니다. `ModelClient.complete(role="empathy", ...)`는 지정 모델과 공통 예산을 사용하며 감지·생성 프롬프트·트리거는 별도 구현이다. 공감 모델 성공으로 첫 환자 진술 Gateway 해석을 생략하지 않는다. 환자 답은 해석하되 내용 없는 공감 확인을 SOAP 임상 항목으로 만들지 않는다.
 
 | 자원·보호량 | 현재 구현 |
 |---|---|
@@ -624,11 +630,11 @@ Context는 벡터의 첫 세 값이 모두 0이면 버린다. **ROS·일반 Feat
 
 이 정책은 새 행동마다 최악의 두 번 Gateway 호출을 모두 보장하는 예약은 아니다. 첫 해석에 필요한 한 호출을 남기고, 추가 복구는 실제 남은 예산에서 가능할 때 수행한다. 입력 토큰은 이미 사용한 양과 서버 잔여량을 추적하며 새 요청의 실제 토큰 수를 로컬에서 정확히 예측하는 구조는 아니다.
 
-전송 직전에 예산을 다시 검사한다. 새 질문을 시작할 여유가 없어도 이미 받은 pending 응답은 먼저 처리한 뒤 최종화한다. 그래프 이동 횟수·성공 SAY/EXAM의 턴 소비·모델 호출 수는 다른 값이며, 단축 규칙으로 해석한 답은 모델 호출을 추가하지 않는다.
+전송 직전에는 전체 예산 정책을 재실행하지 않고 경량 검사만 수행한다. 새 질문을 시작할 여유가 없어도 이미 받은 응답은 동기 경로에서 해석한 뒤 최종화한다. 그래프 이동 횟수·서버가 소비한 SAY/EXAM 턴·모델 호출 수는 다른 값이며 단축 규칙으로 해석한 답은 모델 호출을 추가하지 않는다.
 
 ### 7.2 교육 설정과 복구의 의미
 
-기본 설정에서는 교육 계획·전달을 주장하지 않고 Education을 pass한다. 교육을 활성화한 경우에도 계획과 전달 사실은 다르다. Doctor의 실제 정상 응답에서만 전달을 기록하며 이후 Gateway 실패로 지우지 않는다. 교육 중 판단이 바뀌면 correction_required를 설정하고 준비된 정정 문구를 먼저 전달한다. 여유가 없으면 미이행 상태를 남긴다.
+기본 설정에서는 교육 계획·전달을 주장하지 않고 Education을 pass한다. 교육을 활성화한 경우에도 계획과 전달 사실은 다르다. Doctor의 실제 정상 응답에서만 전달을 기록하며 이후 Gateway 실패로 지우지 않는다. 교육 중 판단이 바뀌면 correction_required를 설정하고 3회 상한 안에서 정정과 새 설명을 이해 확인보다 우선한다. 여유가 없으면 미이행 상태를 남긴다.
 
 D18에서 이전 임상 배치와 지침 기반 교육 초안을 삭제했다. D20은 새 그래프의 typed Context·ROS·필수 조건과 선택한 직접 진찰 경로를 수용한다. 질환별 계획과 행동 문구는 실제 수용한 자산만 사용하며, 공통 잠정 안내와 이해 확인은 config에 준비되어 있다. 그래프 승인과 문구 준비를 구분하고 누락 문구를 임의 생성하여 진료를 시작하지 않는다.
 
@@ -637,8 +643,8 @@ D18에서 이전 임상 배치와 지침 기반 교육 초안을 삭제했다. D
 | 미해결 입력 | 유효 사실과 원문 보존, 필요한 의미에 제한적 명료화 |
 | Gateway JSON 오류·빈 출력 | 문맥·연결 복구와 공유하는 추가 한 호출로 재해석, 재실패 시 원문·미해결 보존 |
 | Gateway CONTEXT_LIMIT_EXCEEDED | 기존 추가 한 호출 안에서 새 ID와 최대 8 KiB의 더 작은 요청으로 복구, 재거절 시 수용 사실·원문을 보존하고 기존 명료화·최종화 규칙 적용 |
-| 일시 전송 오류 | 동일 요청 ID·payload를 2초·5초 뒤 최대 두 번 재전송 |
-| 명시적 환자/진찰 응답 형식 오류 | 새 요청 ID로 한 번 재시도 |
+| 일시 전송 오류 | 동일 요청 ID·payload로 2초 후 1회 재전송, 미해결이면 unknown 종료 |
+| 명시적 환자/진찰 응답 형식 오류 | 미확인으로 보존하고 새 ID 자동 재시도 없이 다음 가능한 질문 |
 | EXAM 거절 | 획득 소견으로 만들지 않음 |
 | SOAP 오류 | 보존 사실에서 한 번 재구성 |
 | 결과 불명·만료·폐쇄 | 명시적 비정상 종료 |
@@ -646,7 +652,7 @@ D18에서 이전 임상 배치와 지침 기반 교육 초안을 삭제했다. D
 
 SDK 1.0.1 원본은 바꾸지 않는다. SOAP는 정확히 15개 문자열 필드이며 diagnosis는 별도 인수다. O.tests는 비우고 계획 검사는 P.tests에 둔다. A.evidence는 실제 획득한 소견만 기록한다. 50번째 응답 뒤에도 마감 전 DIAGNOSE는 가능하다.
 
-일시 전송 복구는 [RequestExecutor](workflow/io/request_executor.py)가 같은 payload·request_id를 유지하여 2초·5초 후 최대 두 번 재전송한다. 새로운 해석·새 환자 행동을 고르는 것이 아니라 동일 효과의 결과를 확인하는 재요청이다. 각 호출 timeout은 최대 240초와 남은 단계 여유 중 작은 값이며 호출 후 원래 값을 복원한다. 명시적인 환자·진찰 응답 형식 오류는 별도의 새 ID 재시도 한 번을 사용한다. 실제 서버가 같은 방식으로 복구했는지는 별도 관측이다.
+일시 전송 복구는 [RequestExecutor](workflow/io/request_executor.py)가 같은 payload·request_id로 2초 후 한 번 재전송한다. 최초 호출을 포함해 최대 두 번이며 여유가 부족하면 재전송하지 않는다. 각 timeout은 최대 240초와 남은 단계 여유 중 작은 값이고 호출 후 원래 값을 복원한다. 미해결 일시 오류는 unknown 종료하며 추가 환자 행동이나 DIAGNOSE를 보내지 않는다. 명시적 환자·진찰 응답 형식 오류는 자동 재시도하지 않는다. 실제 서버에서의 복구 성공은 별도 관측이다.
 
 ### 7.3 무엇이 SOAP에 들어가는가
 
@@ -884,7 +890,7 @@ ContextFactor와 DifferentialDiagnosis는 새로운 공식 세션을 만드는 �
 | 설명·이해·정정 | 기본 0회; 명시적 활성화 때만 승인 설명과 남은 시간 | 기본 P.education 빈 문자열; 활성화 때만 실제 전달 이력 |
 | SOAP·DIAGNOSE | 검증 결과와 전체 한 번의 재구성 한도 | 서버 결과와 확인된 종료 상태 |
 
-루프 안에서 실행한 SAY·EXAM의 서버 턴 변화가 실제 행동 사용량이다. 공통 상한 50턴 안에서 서버가 알려 준 남은 턴을 따르며, 예를 들어 “10번째 대화부터 ContextFactor”처럼 세션 경계를 고정하지 않는다. 그래프 노드 수, SAY·EXAM 행동 수, Gateway 호출 수는 각각 구분하고 DIAGNOSE는 환자에게 질문하는 행동과 별도로 처리한다. 마지막 행동 응답까지 처리한 뒤 마감 전에 제출한다.
+루프 안에서 실행한 SAY·EXAM의 서버 턴 변화가 실제 행동 사용량이다. D33 세션 문진 상한과 공통 50턴을 함께 따르며 공감은 세션 상한에서 제외하지만 공통 턴을 쓴다. 최소 목표는 강제 횟수가 아니므로 고정 대화 번호로 세션을 나누지 않는다. 그래프 노드 수, 문진·공감 SAY/EXAM 수, 모델 호출 수는 구분하고 마지막 행동 응답까지 처리한 뒤 마감 전에 제출한다.
 
 새 SAY·EXAM 전에 Gateway 한 호출과 출력 여유, 응답 처리 120초, 최종화 120초를 확보한다. 기한·모델·행동 예산이 부족하면 문진을 계속 늘리는 대신 최종화로 이동한다. 이 절의 순서는 그 조건을 충족했을 때의 실행 계획이며, Mermaid 원문의 시각 렌더링·실제 Luna 호출·공식 진료 실행·임상 성능은 별도 검증 대상이다.
 

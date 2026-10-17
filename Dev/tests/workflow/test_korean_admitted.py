@@ -188,6 +188,11 @@ def verify(submission, output):
             'social_history', 'occupational_history', 'psychosocial_history', 'demographic'} else 'S.pmh'
         spec = consultation.planner._spec(state, context['id'], purpose='context', field=field,
                                           subject=subject, time_context='unspecified')
+        supporting = {h.disease_id: knowledge.get_supporting_context(h.disease_id) for h in state.differential.hypotheses}
+        matches = {}
+        for match in state.differential.pattern_matches.values():
+            matches.setdefault(match.pattern_id, []).append(match)
+        spec['value'] = consultation.planner._value(state, spec, matches, supporting)
         consultation.planner._register(state, spec, 0, 1)
         consultation.planner.select_question(state)
         consultation.doctor.validate_action(state)
@@ -216,7 +221,7 @@ def verify(submission, output):
     state.session.initialized = True
     spec = consultation.planner._spec(state, exam_target, episode='one')
     consultation.planner._register(state, spec, 0, 1)
-    consultation.planner.select_question(state)
+    consultation.interactions.select_question(state, state.questions.questions[-1])
     consultation.doctor.validate_action(state)
     consultation.doctor.execute_action(state, client)
     consultation.interpreter.process_input(state, knowledge, client)

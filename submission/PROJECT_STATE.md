@@ -1,9 +1,10 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=7b13f05b094fce2999d32c61b1fdad12ff03867c dirty=true updated=2026-10-17T09:23:31+09:00
-/goal phase=current id=APP.CHIEF29 state=complete action="Require one existing Symptom for chief mapping with source aliases bounded lookup recovery and explicit semantic evidence"
-/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify one user-authorized server sample validation using the D29 archive and retain every case result"
+/checkpoint revision=5be1aeebc66a748b86262e28a2947e6b0bb4bd31 dirty=true updated=2026-10-17T17:34:52+09:00
+/goal phase=current id=APP.BUDGET33 state=complete action="Implement D33 session targets caps useful-question continuation empathy accounting and synchronous budget routing"
+/goal phase=history id=APP.CHIEF29 state=complete action="Require one existing Symptom for chief mapping with source aliases bounded lookup recovery and explicit semantic evidence"
+/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify one user-authorized server sample validation using the D33 archive and retain every case result"
 /goal phase=history id=APP.CONTEXT28 state=complete action="Bound complete Gateway requests and recover context rejection once while preserving consultation and submission behavior"
 /goal phase=history id=APP.TEST27 state=complete action="Verify unchanged D26 callbacks through the D27 local HTTP API with the scripted C10 fixture"
 /goal phase=history id=APP.READINESS26 state=complete action="Pass Education and complete diagnostic acquisition Gateway recovery assessment and confirmed submission under D26"
@@ -96,4 +97,15 @@
 /evidence id=APP.WHITEPAPER02.E6 class=runtime result=not_run source=../Tmp/codex/whitepaper-2026-10-17/verification.json observed="Leave full consultation regression packaging and independent ZIP execution unrun for this documentation-only slice"
 /evidence id=APP.WHITEPAPER02.E7 class=external_service result=not_run source=../Tmp/codex/whitepaper-2026-10-17/verification.json observed="Leave real model calls official sample validation clinical accuracy scoring uploads and deployment unrun"
 /scope id=APP.WHITEPAPER02.S1 state=in action="Own the Korean whitepaper and its documentation verification while preserving the D29 runtime handoff and active D30 preparation"
-/handoff state=blocked action="Use Tmp/packaging/cc-mapping-2026-10-17/ontoward-submission.zip for separately authorized APP.REVALIDATE29 and distinguish offline contract verification from real NOVA mapping quality"
+/accept id=APP.BUDGET33.A1 state=pass action="Enforce non-borrowing session caps and decision-relevant continuation with shared empathy accounting" evidence=APP.BUDGET33.E1
+/accept id=APP.BUDGET33.A2 state=pass action="Process responses before finalization and bound transient replay without duplicate execution" evidence=APP.BUDGET33.E1,APP.BUDGET33.E2
+/accept id=APP.BUDGET33.A3 state=pass action="Verify admitted knowledge Korean acquisition SOAP and confirmed archive submission" evidence=APP.BUDGET33.E3,APP.BUDGET33.E4
+/evidence id=APP.BUDGET33.E1 class=runtime result=pass source=../Tmp/budget33/workflow/verification.json observed="Pass ninety-three offline behavior tests including session caps targets no filler empathy turns and model budgets last-response facts one transient replay no format retry and opt-in Education correction within three turns"
+/evidence id=APP.BUDGET33.E2 class=runtime result=pass source=../Tmp/budget33/comparison.json observed="Reduce the same three scripted admitted-RDF consultations from fifty turns each to twenty-nine twenty-nine and twenty-one while retaining their diagnoses model-call counts and confirmed submissions"
+/evidence id=APP.BUDGET33.E3 class=runtime result=pass source=../Tmp/budget33/korean/verification.json observed="Pass three complete Korean consultations 475 checks three selected Context polarity cases and separate explicitly selected EXAM acquisition with fifteen SOAP fields and completed confirmation"
+/evidence id=APP.BUDGET33.E4 class=runtime result=pass source=../Tmp/budget33/verification.json observed="Pass ninety-three workflow tests three admitted-RDF consultations and the same 475 Korean checks from the independently extracted runtime ZIP without parent workspace data or network"
+/evidence id=APP.BUDGET33.E5 class=artifact result=pass source=../Tmp/budget33/documents.json observed="Preserve every knowledge config SDK dependency public-setting settings and entrypoint hash and reconcile D33 workflow documentation"
+/evidence id=APP.BUDGET33.E6 class=external_service result=not_run source=../Tmp/budget33/verification.json observed="Leave actual empathy generation triggers real Luna official API and clinical accuracy unrun"
+/scope id=APP.BUDGET33.S1 state=in action="Own D33 runtime budget planner routing accounting and bounded model and transport behavior"
+/scope id=APP.BUDGET33.S2 state=out action="Exclude source graph changes new clinical admission empathy generation triggers live providers upload commits and deployment"
+/handoff state=blocked action="Use Tmp/packaging/budget33-2026-10-17/ontoward-submission.zip for separately authorized APP.REVALIDATE29; integrate empathy through purpose empathy Usage.empathy_actions and ModelClient role empathy while sharing case budgets"

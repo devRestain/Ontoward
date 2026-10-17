@@ -48,6 +48,7 @@
 - Apply newer D22 NOVA-only continuation and explicitly authorized failure resumption within the frozen same-day ceiling; retain every rejected request and stop on completion or request/service limits.
 - Apply D23 competition acceptance to complete source-backed candidates and D22 patient actions without another clinical or user approval gate; preserve technical exclusions and exact runtime pins.
 - Apply D26 with Education disabled in the packaged public setting; skip its actions and turn reserve and leave P.education empty while completing diagnosis submission.
+- Apply D33 session interview targets and caps, decision-relevant early stopping, separate empathy accounting, and one same-request transient replay after two seconds.
 - Apply D29 for case-independent chief mapping to one supplied Symptom, source-backed bilingual aliases, and one bounded full-index lookup recovery.
 - Apply D30 to fresh guideline-corpus document mappings for every admitted Disease; keep relation scope exact source evidence and bounded NOVA gpt-6-luna provenance outside runtime knowledge and SOAP plan generation.
 - Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep maintained workflow tests in Dev/tests/workflow and generated synthetic assets and evidence in Tmp.
@@ -64,7 +65,7 @@
 - Use D07 for preserved preparation evidence, separately admitted submission bundles, and one runtime RDFLib Graph.
 - Use D08 and data/ontology/AGENTS.md for shared patterns, typed conditions, disease associations, conditional weights, and SDK text mapping.
 - Use specific clinical pain complaints as D08 retrieval targets and preserve finer Location values, raw wording, interpretation uncertainty, and separate episodes.
-- Use D17 for the five-session adaptive workflow Python decisions common action budget and reconsideration of undelivered low-priority questions; use D12 for wire format and packaging.
+- Use D17 for the five-session adaptive workflow and Python reasoning, D33 for session budgets and question continuation, and D12 for wire format and packaging.
 - Apply D15 for information-preserving SOAP and bounded Gateway vocabulary; use D18 for all knowledge and Korean text preparation.
 - Apply newer explicit user decisions before stale operational plans or next goals; record implementation and execution only from observed evidence.
 - Isolate runtime LLM instructions and editable clinical text in submission/config with public environment-selected paths; keep machine field names and decision codes in Python.

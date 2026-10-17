@@ -2,7 +2,7 @@
 
 ## Ownership
 
-- Apply root PRD.md, D18 source-only knowledge ownership, and D17 interview, matching, parsing, and budget policy.
+- Apply root PRD.md, D18 source-only knowledge ownership, D17 matching and parsing, and D33 interview budgets and continuation.
 - Keep run.py limited to SDK callbacks from workflow/runtime.py.
 - Assemble immutable knowledge and configuration in PreparedResources and initialize case-owned collaborators and WorkflowState for each consult call.
 - Keep Consultation as the sole coordinator for Initiation, ChiefComplaint, ContextFactor, DifferentialDiagnosis, Education, and finalization.
@@ -17,7 +17,7 @@
 
 ## Prepared Interviews
 
-- Use prepared text for every SAY and EXAM; do not generate or rephrase patient utterances with a model.
+- Use prepared text for interview and education SAY and every EXAM; keep empathy generation and triggers outside the D33 accounting slice.
 - Validate text during prepare and independently after NFC normalization immediately before delivery; require 1–30 codepoints including whitespace and punctuation and never truncate.
 - Use the manifest-pinned QuestionTemplate answer_type, affirmative, interviewable, and reason fields.
 - Block direct questions about diagnosis-qualified Targets without an approved observable mapping.
@@ -37,7 +37,7 @@
 ## Gateway and Evidence
 
 - Route every SAY/EXAM reply through InputInterpreter, including education replies.
-- Use openai/gpt-6-luna only for Gateway interpretation and parse the first substantive patient statement with that model.
+- Use openai/gpt-6-luna for Gateway interpretation and the shared-budget empathy caller interface; always parse the first substantive patient statement with Gateway even after a successful empathy model call.
 - Apply D29 to require one best supplied Symptom per reported current chief; mark approximate interpretation uncertain and retain its exact patient quote.
 - Expose source labels and aliases, restrict initial chief candidates to Symptoms, and use bounded model lookup terms to search the full source index within the existing one-call recovery allowance.
 - Keep the chief schema enum synchronized with the transmitted candidates, reject multiple chief IDs and unqualified diagnostic composites, and record linked-chief counts separately from nonempty model responses.
@@ -80,13 +80,19 @@
 
 ## Budgets, Recovery, and Submission
 
-- Use a common 50-turn action pool rather than per-session caps; reserve education/understanding/correction turns only when Education is explicitly enabled.
+- Apply D33 interview target/cap pairs of Initiation 1/1, ChiefComplaint 7/16, ContextFactor 2/7, and DifferentialDiagnosis 3/12 without borrowing unused capacity.
+- Treat targets as conditional coverage goals and skip filler; cap Education at 0 by default and target 2/cap 3 only when explicitly enabled.
+- Require positive rank-change, spread, or unlock utility for optional questions; after the target require rank-change or spread, or positive unlock while no Disease has diagnostic eligibility.
+- Recheck utility during selection even without a new clinical revision; exempt core HPI before Open Inquiry, Open Inquiry, clarification, education, and empathy from this optional-question filter.
+- Keep Usage.actions as total consumed server turns and empathy_actions as its empathy subset; count actions minus empathy_actions against interview caps.
+- Charge empathy SAY and model calls to the common 50-turn and model/token budgets without an independent empathy quota; preserve queued empathy across replanning and interpret its reply before continuation.
+- Preserve empathy dialogue and accepted clinical facts without inserting an unlinked acknowledgement into SOAP.
 - Reserve one Gateway call/output allowance, 120 seconds for reply processing, and 120 seconds for finalization before new actions.
-- Process received pending replies before finalization and let response processing consume its reserved window.
+- Process every received reply immediately after execution and let interpretation consume its reserved window; do not route budget checks back to pending recovery.
 - Share 200 model calls, 500000 input tokens, and 100000 output tokens case-wide; count unique requests and successful actions once.
-- Recheck before transmission, distinguish graph steps from SDK turns, and enforce server constraints.
-- Preserve exact payload/request identity for transient retries after two/five seconds, at most twice, with timeout bounded by 240 seconds and the remaining phase reserve.
-- Retry explicit patient/exam response-format errors once with a new request ID; never edit the pinned SDK.
+- Keep one graph budget evaluation and a lightweight capacity/model/time gate before transmission; distinguish graph steps from SDK turns and enforce server constraints.
+- Replay transient errors once after two seconds with the exact payload/request ID and timeout bounded by 240 seconds and the remaining phase reserve; stop unknown if unresolved.
+- Preserve patient/exam response-format errors as unresolved without a new-ID automatic retry; never edit the pinned SDK.
 - Preserve delivered education if later parsing fails and prioritize correction_required after a changed diagnosis.
 - Record unmet correction when actions/time run out and never claim an undelivered explanation.
 - Use only admitted plans and prepared common provisional wording; keep missing disease plans visible and apply D18's deletion of prior education drafts.

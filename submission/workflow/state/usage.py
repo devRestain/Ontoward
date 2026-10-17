@@ -18,9 +18,13 @@ class UsageAccounting:
         state.session.models_available = False
 
     @staticmethod
-    def record_actions(state, previous_turns, remaining):
+    def record_actions(state, previous_turns, remaining, *, purpose=None):
         state.session.turns_remaining = remaining
-        state.session.usage[state.session.current].actions += max(0, previous_turns - remaining)
+        consumed = max(0, previous_turns - remaining)
+        usage = state.session.usage[state.session.current]
+        usage.actions += consumed
+        if purpose == "empathy":
+            usage.empathy_actions += consumed
 
     @staticmethod
     def exhaust_turns(state):

@@ -78,9 +78,13 @@ class InputInterpreter:
                 and fact.value.attribute_id == action.question.attribute_id)) for fact in parsed.accepted_facts)
         if unresolved and not incoming.get("error"):
             self.interactions.request_clarification(state, action.question if action else None)
-        if action:
+        if action and action.question.purpose != "empathy":
             self.questions.complete_unresolved(state, action, text, source_id)
         self.interactions.consume_input(state)
+        if action and action.question.purpose == "empathy":
+            item = state.case.get(action.question.item_id)
+            if item and item.status == "unasked":
+                self.questions.discard_unasked(state, {item.id})
 
     @staticmethod
     def _chief_input(state):

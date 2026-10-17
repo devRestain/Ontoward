@@ -325,20 +325,20 @@
         <li><span class="step-dot">4</span><div class="session-name"><strong>DifferentialDiagnosis</strong><span>감별을 위한 정보수집</span></div><div class="session-body"><p>가상 답에서 순위를 바꿀 수 있는 질문·진찰을 고르고, 실제 응답 뒤에 추론과 미전송 질문을 갱신합니다.</p><p class="small">속성 문진은 같은 관찰·발현의 Target 존재가 확인되어야 합니다. EXAM 거절·오류는 획득 소견으로 기록하지 않습니다.</p></div></li>
         <li><span class="step-dot skip-dot">5</span><div class="session-name"><strong>Education</strong><span>기본 설정에서 생략</span></div><div class="session-body"><p>진단을 선택하고 교육 행동 없이 최종화로 진행합니다.</p><p class="small">현재 <code>ONTOWARD_EDUCATION_ENABLED=false</code>. 명시적으로 활성화한 경로의 설명·이해 확인·정정은 현재 기본 실행에 포함되지 않습니다.</p></div></li>
       </ol>
+      <div class="note"><p><strong>D33 문진 목표 / 상한:</strong> Initiation 1/1 · ChiefComplaint 7/16 · ContextFactor 2/7 · DifferentialDiagnosis 3/12 · Education 0/0. 유용한 질문이 없으면 최소 목표 전에도 종료하고 남은 횟수를 다른 세션에 넘기지 않습니다. 문진은 최대 36회이며 공감 SAY는 별도로 집계하면서 공통 50턴·모델 예산을 사용합니다. 14턴은 고정 공감 할당량이 아닙니다.</p></div>
       <h3>매 질문에서 반복하는 공통 루프</h3>
       <ol class="loop">
         <li><span class="order">01 / select_question</span><h4>미전송 질문 선택</h4><p>InterviewPlanner가 현재 단계와 사실에서 준비된 질문을 고릅니다.</p></li>
         <li><span class="order">02 / validate_action</span><h4>문구와 행동 검증</h4><p>Doctor가 NFC 1–30자와 준비 계약을 확인합니다. 문장을 생성하거나 자르지 않습니다.</p></li>
-        <li><span class="order">03 / recheck_action_budget</span><h4>전송 직전 예산 확인</h4><p>남은 턴·모델·시간을 다시 봅니다. 대기 응답이 있으면 먼저 처리합니다.</p></li>
-        <li><span class="order">04 / execute_action</span><h4>SAY 또는 EXAM 실행</h4><p>SDK로 전달하고 실제 응답·전달 이력·사용량을 증례별로 보존합니다.</p></li>
-        <li><span class="order">05 / process_input</span><h4>응답을 사실로 수용</h4><p>단축 계약 또는 Gateway로 해석한 뒤 인용·타입·참조·주체·시점을 검증합니다.</p></li>
-        <li><span class="order">06 / refresh_after_input</span><h4>추론 갱신과 재계획</h4><p>변경 근거로 후보·미전송 질문을 갱신하고 check_budget으로 돌아갑니다.</p></li>
+        <li><span class="order">03 / execute_action</span><h4>SAY 또는 EXAM 실행</h4><p>전송 직전 경량 자원 검사를 통과하면 SDK로 전달하고 실제 응답·전달 이력·사용량을 보존합니다.</p></li>
+        <li><span class="order">04 / process_input</span><h4>응답을 사실로 수용</h4><p>단축 계약 또는 Gateway로 해석한 뒤 인용·타입·참조·주체·시점을 검증합니다.</p></li>
+        <li><span class="order">05 / refresh_after_input</span><h4>추론 갱신과 재계획</h4><p>변경 근거로 후보·미전송 질문을 갱신하고 check_budget으로 돌아갑니다.</p></li>
       </ol>
       <p class="loop-return">새 답 → 사실 갱신 → 다음 질문 또는 세션 전환 · 예산 부족 시 최종화</p>
       <div class="note"><p><strong>모델 결과가 곧 환자 사실은 아닙니다.</strong> 현재 응답의 정확한 인용과 제공된 ID를 검증합니다. 독립 유효 사실은 보존하고 무효 의존 사실은 격리합니다. JSON·문맥·개념 연결·사실 복구는 응답당 추가 호출 한 번을 공유합니다.</p></div>
       <div class="split">
         <div><h3>예산을 다 쓰기 전에 제출 준비</h3><ul class="list"><li><strong>SAY·EXAM 공통 50턴</strong><p>모델은 증례 전체 최대 200회, 입력 500,000·출력 100,000토큰입니다. 그래프 노드 수는 행동 턴 수와 다릅니다.</p></li><li><strong>새 행동 전 응답·최종화 여유 확보</strong><p>Gateway 1회·출력 2,048토큰, 응답 처리 120초와 최종화 120초 여유를 확인합니다. 이미 받은 마지막 응답도 먼저 처리합니다.</p></li></ul></div>
-        <div><h3>문제가 생기면 제한적으로 복구</h3><ul class="list"><li><strong>의미 명료화는 증례 전체 2회</strong><p>원문과 미해결 상태를 남깁니다. 후보를 끝내 확정하지 못하면 근거가 있는 주호소의 증상 진단을 검토합니다.</p></li><li><strong>일시 전송 오류는 같은 요청을 재확인</strong><p>같은 ID·payload로 2초·5초 뒤 최대 2회 재전송합니다. SOAP 재구성은 로컬·서버 오류를 합쳐 1회입니다.</p></li></ul></div>
+        <div><h3>문제가 생기면 제한적으로 복구</h3><ul class="list"><li><strong>의미 명료화는 증례 전체 2회</strong><p>원문과 미해결 상태를 남깁니다. 후보를 끝내 확정하지 못하면 근거가 있는 주호소의 증상 진단을 검토합니다.</p></li><li><strong>일시 전송 오류는 같은 요청을 재확인</strong><p>같은 ID·payload로 2초 후 한 번 재전송하며 미해결이면 unknown으로 종료합니다. 환자·진찰 형식 오류는 새 ID 자동 재시도 없이 미확인으로 남깁니다. SOAP 재구성은 합쳐 1회입니다.</p></li></ul></div>
       </div>
       <h3>마지막은 SOAP 구성 → 검증 → DIAGNOSE → 영수증 확인</h3>
       <div class="soap" aria-label="SOAP 15개 문자열 필드">
@@ -438,7 +438,7 @@
         <div><h3>한 질문의 계산 예</h3><p>현재 A의 fit=4, B의 fit=3이라고 가정합니다. 어떤 답이 A에는 0, B에는 +2를 만들고 미해결 조건이 하나라면 B의 추정 fit은 5가 됩니다.</p><p class="small">이 시나리오에서 순위 변경=1, 변화량 차이=2, 조건 해소 가치=2가 될 수 있습니다. 같은 변화를 여는 조건이 두 개면 조건 해소 가치는 1로 줄어들 수 있습니다.</p></div>
         <div><h3>선택을 제한하는 실제 규칙</h3><ul class="list"><li><strong>Context 가점은 최대 +1</strong><p>상한을 이미 채운 Context는 가점 가치가 소진됩니다. 단, 필수 적용 조건을 해결하는 역할은 남을 수 있습니다.</p></li><li><strong>미전송 계획만 새로 만듭니다</strong><p>대기 행동·완료 사실·실제 전달 이력은 유지합니다. 명료화는 증례 전체 2회 한도를 따릅니다.</p></li></ul></div>
       </div>
-      <div class="note ochre"><p><strong>현재 종료 규칙을 읽을 때:</strong> Context는 앞의 세 가치가 모두 0이면 제외하지만, ROS·일반 Feature 질문에는 같은 양수 문턱이 없습니다. 가치 0인 질문도 자격과 용량이 있으면 남을 수 있습니다. 확신도나 양수 정보이득을 달성해서 수집을 끝낸다고 해석하지 않습니다.</p></div>
+      <div class="note ochre"><p><strong>D33 종료 규칙:</strong> 선택적 질문은 앞의 세 가치 중 양수가 있어야 합니다. 최소 목표 이후에는 순위 변경이나 변화량 차이가 양수이거나, 적격 Disease가 없으면서 조건 해소 가치가 양수여야 계속합니다. 핵심 HPI·Open Inquiry·명료화·교육·공감은 가치 필터 예외이며 자원 한도는 따릅니다. 이는 확신도나 확률 기반 정보이득을 계산한 정책은 아닙니다.</p></div>
       <p class="source">근거: <a href="../submission/README.md#question-selection">백서 §6 질문 선택</a><a href="../submission/workflow/interview_planner.py">interview_planner.py</a><a href="../submission/workflow/rules/budget.py">예산 판단</a></p>
     </section>
 

@@ -4,6 +4,10 @@ from typing import Literal
 
 SessionName = Literal["Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education"]
 SESSION_ORDER: tuple[SessionName, ...] = ("Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education")
+SESSION_INTERVIEW_LIMITS = {
+    "Initiation": (1, 1), "ChiefComplaint": (7, 16), "ContextFactor": (2, 7),
+    "DifferentialDiagnosis": (3, 12), "Education": (0, 0),
+}
 
 
 @dataclass(frozen=True)
@@ -16,7 +20,6 @@ class Limits:
     input_tokens: int = 500000
     output_tokens: int = 100000
     gateway_tokens: int = 2048
-    response_format_retries: int = 1
     submission_repairs: int = 1
     clarifications: int = 2
     focused_ros: int = 6
@@ -35,7 +38,7 @@ class Limits:
     diagnosis_bytes: int = 500
     record_bytes: int = 100000
     request_timeout: int = 240
-    retry_delays: tuple[int, ...] = (2, 5)
+    retry_delays: tuple[int, ...] = (2,)
     graph_base_steps: int = 150
     graph_steps_per_turn: int = 24
     model: str = "openai/gpt-6-luna"

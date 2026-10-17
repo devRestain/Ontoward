@@ -8,8 +8,6 @@ from .state.models import WorkflowState
 def route_budget(state: WorkflowState) -> str:
     if state.interaction.termination:
         return "abort"
-    if state.interaction.pending:
-        return "process_input"
     if state.session.finalizing:
         return "build_soap"
     if not state.session.initialized:
@@ -23,14 +21,13 @@ def route_validation(state: WorkflowState) -> str:
     action = state.interaction.selected
     if action is None:
         return "check_budget"
-    return "recheck_action_budget" if action.ready else "check_budget"
+    return "execute_action" if action.ready else "check_budget"
 
 
-def route_action_budget(state: WorkflowState) -> str:
-    route = route_budget(state)
-    if route != "select_question":
-        return route
-    return "execute_action" if state.interaction.selected and state.interaction.selected.ready else "check_budget"
+def route_after_action(state: WorkflowState) -> str:
+    if state.interaction.termination:
+        return "abort"
+    return "process_input" if state.interaction.incoming is not None else "check_budget"
 
 
 def route_soap(state: WorkflowState) -> str:
@@ -75,7 +72,6 @@ def build_graph(consultation, knowledge):
         "enter_session": consultation.enter_session, "check_budget": consultation.check_budget,
         "select_question": consultation.planner.select_question,
         "validate_action": consultation.doctor.validate_action,
-        "recheck_action_budget": consultation.check_budget,
         "execute_action": partial(consultation.doctor.execute_action, client=consultation.client),
         "advance_session": consultation.advance_session, "build_soap": consultation.finalize,
         "validate_submission": consultation.writer.validate_submission,
@@ -90,12 +86,10 @@ def build_graph(consultation, knowledge):
     graph.add_edge("process_input", "refresh_after_input")
     graph.add_edge("refresh_after_input", "check_budget")
     graph.add_edge("enter_session", "check_budget")
-    graph.add_conditional_edges("check_budget", route_budget, {key: key for key in ("abort", "process_input", "build_soap", "enter_session", "select_question", "advance_session")})
+    graph.add_conditional_edges("check_budget", route_budget, {key: key for key in ("abort", "build_soap", "enter_session", "select_question", "advance_session")})
     graph.add_edge("select_question", "validate_action")
-    graph.add_conditional_edges("validate_action", route_validation, {key: key for key in ("abort", "check_budget", "recheck_action_budget")})
-    graph.add_conditional_edges("recheck_action_budget", route_action_budget,
-                                {key: key for key in ("abort", "process_input", "build_soap", "enter_session", "advance_session", "execute_action", "check_budget")})
-    graph.add_edge("execute_action", "process_input")
+    graph.add_conditional_edges("validate_action", route_validation, {key: key for key in ("abort", "check_budget", "execute_action")})
+    graph.add_conditional_edges("execute_action", route_after_action, {key: key for key in ("abort", "process_input", "check_budget")})
     graph.add_edge("advance_session", "check_budget")
     graph.add_conditional_edges("build_soap", route_soap, {key: key for key in ("abort", "validate_submission")})
     graph.add_conditional_edges("validate_submission", route_submission, {key: key for key in ("abort", "repair_submission", "submit_diagnosis")})

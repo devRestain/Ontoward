@@ -226,6 +226,17 @@ class InterviewPlanner:
                        for o, e, status, n in self._occurrences(state, target))
         return True
 
+    def _useful(self, state, purpose, value):
+        if purpose in {"chief", "open_inquiry", "clarification", "education", "empathy"}:
+            return True
+        if purpose == "hpi" and not self.open_done(state):
+            return True
+        if not any(number > 0 for number in value[:3]):
+            return False
+        if self.budget.interview_actions(state) < self.budget.interview_limits(state)[0]:
+            return True
+        return value[0] > 0 or value[1] > 0 or (not ClinicalReasoner.supported_hypotheses(state) and value[2] > 0)
+
     def _adaptive_options(self, state, supporting):
         options = {}
         chiefs = state.case.chief_complaints(confirmed=True)
@@ -288,7 +299,7 @@ class InterviewPlanner:
         mode = state.session.current
         if not force and (state.questions.last_planned_revision, state.questions.last_planned_scope) == (state.differential.clinical_revision, mode):
             return
-        discard = {q.item_id for q in state.questions.questions if q.purpose != "clarification"
+        discard = {q.item_id for q in state.questions.questions if q.purpose not in {"clarification", "empathy"}
                    and (item := state.case.get(q.item_id)) and item.status == "unasked"}
         self.questions.discard_unasked(state, discard)
         supporting = {h.disease_id: self.knowledge.get_supporting_context(h.disease_id)
@@ -300,7 +311,7 @@ class InterviewPlanner:
             match_index.setdefault(match.pattern_id, []).append(match)
         for spec in options:
             spec["value"] = self._value(state, spec, match_index, supporting)
-        options = [spec for spec in options if spec["purpose"] != "context" or any(spec["value"][:3])]
+        options = [spec for spec in options if self._useful(state, spec["purpose"], spec["value"])]
         if state.session.current == "DifferentialDiagnosis":
             for spec in raw_options:
                 args = (state, spec["target_id"], spec["attribute_id"], spec["observation_id"], spec["episode_id"], spec["subject"])
@@ -375,11 +386,11 @@ class InterviewPlanner:
                      if entry.delivered and entry.question and entry.question.purpose == "education"}
         texts = [text for text in texts if text not in delivered]
         correction = state.interaction.correction_required
-        capacity = min(state.session.turns_remaining, self.budget.calls_left(state.session))
+        capacity = min(self.budget.action_capacity(state), self.budget.calls_left(state.session))
         if correction:
             texts.insert(0, self.config.texts.correction_education)
-        if capacity >= 2:
-            reserve = int(not correction and capacity >= 3)
+        if capacity >= 2 and not correction:
+            reserve = int(capacity >= 3)
             texts = texts[:max(0, capacity - reserve - 1)] + [self.config.texts.understanding_question]
         for order, text in enumerate(texts[:capacity]):
             correction = text == self.config.texts.correction_education
@@ -390,6 +401,10 @@ class InterviewPlanner:
                 text=text, order=order, priority=LIMITS.clarification_priority if correction else capacity - order))
 
     def select_question(self, state):
+        unnecessary = {q.item_id for q in state.questions.questions
+                       if (item := state.case.get(q.item_id)) and item.scope == state.session.current
+                       and item.status == "unasked" and not self._useful(state, q.purpose, q.selection_value)}
+        self.questions.discard_unasked(state, unnecessary)
         answered = {q.item_id for q in state.questions.questions if q.target_id and q.purpose != "clarification" and
                     (item := state.case.get(q.item_id)) and item.status == "unasked" and (
                     self.has_resolved_evidence(state, q.target_id, q.attribute_id, q.observation_id, q.episode_id, q.subject,
