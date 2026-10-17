@@ -1,5 +1,6 @@
 import hashlib
 import json
+import re
 from copy import deepcopy
 from functools import lru_cache
 
@@ -8,7 +9,7 @@ from pydantic import ValidationError
 
 from .rules.input import fixed_reply, validate_facts
 from .rules.limits import LIMITS
-from .state.models import ClinicalValue, ParsedInput, ParseResult, RecordItem, WorkflowState
+from .state.models import ClinicalValue, ParsedInput, ParseResult, PatientReport, RecordItem, WorkflowState
 
 
 @lru_cache(maxsize=1)
@@ -63,7 +64,7 @@ class InputInterpreter:
             if vitals:
                 state.case.put("O.exam", RecordItem(id="initial:vitals", scope="Initiation", status="done",
                     value=ClinicalValue(kind="finding", text=json.dumps(vitals, ensure_ascii=False) if not isinstance(vitals, str) else vitals,
-                                        status="present"), source_refs=[source_id]))
+                                        status="present"), source_refs=[source_id], acquisition="initial"))
         else:
             text = incoming.get("content" if action.question.kind == "SAY" else "result", "")
             text = text if isinstance(text, str) else ""
@@ -77,7 +78,7 @@ class InputInterpreter:
                 ("facts", "clinical_content", "empathy") if key in facts}, state, knowledge, text)
         else:
             fixed = ParsedInput() if initial and not text.strip() else (None if initial else fixed_reply(self.config, state, text, knowledge))
-            parsed = ParseResult(accepted_facts=fixed.facts, clinical_content=fixed.clinical_content) if fixed is not None else self._parse_text(state, knowledge, client, text)
+            parsed = self._validate_facts(fixed.model_dump(), state, knowledge, text) if fixed is not None else self._parse_text(state, knowledge, client, text)
         if parsed is not None:
             self._apply_facts(state, parsed, source_id)
             audited = [item for step in parsed.recovery_history for item in step["rejected_facts"]]
@@ -87,9 +88,12 @@ class InputInterpreter:
                 self.interactions.queue_empathy(state, parsed.empathy, source_id)
             if parsed.rejected_facts:
                 interaction.issues.append("partial_input_facts")
+        uncovered_report = self._preserve_report(state, parsed, source_id, text) if initial or action.question.kind == "SAY" else False
         if interaction.termination:
             return
-        unresolved = parsed is None or parsed.binding_unresolved or (parsed.rejected_facts or parsed.needs_context) and not any(
+        conflicts = any(item.value and item.value.status != state.case.get(item.id).value.status
+                        for _, item in state.case.current_entries())
+        unresolved = uncovered_report or conflicts or parsed is None or parsed.binding_unresolved or (parsed.rejected_facts or parsed.needs_context) and not any(
             action and (fact.record_id == action.question.item_id or (
                 action.question.target_id in fact.value.concept_ids
                 and fact.value.attribute_id == action.question.attribute_id)) for fact in parsed.accepted_facts)
@@ -104,6 +108,42 @@ class InputInterpreter:
             item = state.case.get(action.question.item_id)
             if item and item.status == "unasked":
                 self.questions.discard_unasked(state, {item.id})
+
+    def _preserve_report(self, state, parsed, source_id, text):
+        if not text.strip() or any(report.source_id == source_id for report in state.interaction.patient_reports):
+            return False
+        quotes = []
+        for fact in parsed.accepted_facts if parsed else []:
+            clauses = [part for part in re.split(r"(?<!\d)[.!?。！？](?:\s|$)|[\n;]", fact.quote) if re.search(r"\w", part)]
+            # A broad quotation alone does not establish extraction of each sentence.
+            quotes.extend([fact.quote] if len(clauses) <= 1 else [detail.quote for detail in fact.value.record_details])
+        if parsed and parsed.empathy:
+            quotes.append(parsed.empathy.quote)
+        texts = self.config.texts
+        reply = text.strip().rstrip(texts.reply_trailing_punctuation)
+        if reply in {*texts.unknown_replies, *texts.education_acknowledgements}:
+            quotes.append(text)
+        spans = []
+        for quote in quotes:
+            start = text.find(quote)
+            if start >= 0:
+                spans.append((start, start + len(quote)))
+        covered = []
+        for start, end in sorted(set(spans)):
+            if covered and start <= covered[-1][1]:
+                covered[-1] = (covered[-1][0], max(end, covered[-1][1]))
+            else:
+                covered.append((start, end))
+        uncovered, cursor = [], 0
+        for start, end in [*covered, (len(text), len(text))]:
+            if re.search(r"\w", text[cursor:start]):
+                uncovered.append((cursor, start))
+            cursor = end
+        state.interaction.patient_reports.append(PatientReport(source_id=source_id, text=text,
+            covered_spans=covered, uncovered_spans=uncovered))
+        if uncovered:
+            state.interaction.issues.append("unstructured_patient_report")
+        return bool(uncovered)
 
     @staticmethod
     def _chief_input(state):
@@ -467,29 +507,13 @@ class InputInterpreter:
         changed = False
         for index, fact in enumerate(parsed.accepted_facts):
             value = fact.value.model_copy(deep=True)
-            item_id = fact.record_id
-            if item_id is None:
-                matches = [q for q in state.questions.questions if q.target_id in value.concept_ids
-                           and q.attribute_id == value.attribute_id and q.subject == value.subject
-                           and (not q.observation_id or q.observation_id == value.observation_id)
-                           and (not q.episode_id or q.episode_id == value.episode_id)]
-                if len(matches) == 1:
-                    item_id = matches[0].item_id
-            item_id = item_id or f"{source_id}:fact:{index}"
+            item_id = fact.record_id or f"{source_id}:fact:{index}"
             existing = state.case.get(item_id)
             if value.kind in {"symptom", "finding", "attribute"}:
                 question = next((q for q in state.questions.questions if q.item_id == item_id), None)
                 value.observation_id = value.observation_id or (question.observation_id if question else None) or item_id
                 value.episode_id = value.episode_id or (question.episode_id if question else None) or value.observation_id
             field = fact.field
-            if existing:
-                field = next(field for field, item in state.case.entries() if item.id == existing.id)
-            elif value.kind == "symptom" and value.subject == "patient" and value.time_context != "past" and pending and pending.question.purpose == "chief":
-                field = "S.cc"
-            elif value.kind == "symptom" and pending and pending.question.purpose in {"ros", "open_inquiry"} and not existing:
-                field = "S.ros"
-            elif value.kind == "symptom" and pending and pending.question.purpose == "clarification" and not existing:
-                field = pending.question.field
             if value.kind in {"symptom", "finding", "attribute", "context"}:
                 changed = changed or existing is None or existing.value is None or (
                     value.model_dump(exclude={"text", "record_category", "record_details"})
@@ -498,7 +522,8 @@ class InputInterpreter:
             scope = existing.scope if existing else state.session.current
             context_refs = list(dict.fromkeys([*(existing.context_refs if existing else []), *fact.context_refs]))
             state.case.put(field, RecordItem(id=item_id, scope=scope, status="done", value=value,
-                                            source_refs=refs, context_refs=context_refs))
+                source_refs=refs, context_refs=context_refs,
+                acquisition=pending.question.kind if pending else "initial"))
 
         if changed:
             state.differential.clinical_revision += 1

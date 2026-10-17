@@ -45,8 +45,10 @@ services:
       NOVA_OUTPUT_DIR: /output
       PYTHONPATH: /submission
       TEST_TRACE: ${TEST_TRACE:-1}
+      NOVA_GUIDELINES_DIR: /opt/nova/guidelines
     volumes:
       - ../submission:/submission:ro
+      - ../assets/guidelines:/opt/nova/guidelines:ro
       - ${TEST_OUTPUT:-../Tmp/test-evaluator/manual}/agent:/output
     read_only: true
     tmpfs: ["/tmp:size=512m,mode=1777"]

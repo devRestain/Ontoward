@@ -77,6 +77,7 @@
     "체온": "BT", "맥박": "PR", "호흡수": "RR", "산소포화도": "SpO2", "혈압": "BP", "회/분": "/min"
   },
   "soap_labels": {
+    "patient_report": "Patient report (unstructured)",
     "cc": "C.C", "hpi": "P.I", "pain": "Pain assessment", "exam": "PE", "vitals": "V/S",
     "tests": "Tests", "treatment": "Treatment", "disposition": "Disposition", "follow_up": "Follow-up",
     "education": "Education", "unknown": "Unknown", "unmapped": "Unmapped report"

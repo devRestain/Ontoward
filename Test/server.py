@@ -159,12 +159,12 @@ class Evaluation:
                 self.save()
         return outcome
 
-    def call_model(self, role, messages, max_tokens=2048, request_id=None):
+    def call_model(self, role, messages, max_tokens=2048, request_id=None, *, reasoning_effort='medium'):
         request_id = request_id or str(uuid.uuid4())
         entry = {'request_id': request_id, 'parent_request_id': self.inflight, 'role': role,
                  'messages': messages, 'max_tokens': max_tokens, 'backend': self.backend,
                  'model': 'openai/gpt-6-luna' if self.backend == 'nova' else None,
-                 'reasoning_effort': 'medium' if self.backend == 'nova' else None, 'status': 'requested'}
+                 'reasoning_effort': reasoning_effort if self.backend == 'nova' else None, 'status': 'requested'}
         def record(**values):
             try:
                 with (self.output / 'model-calls.jsonl').open('a', encoding='utf-8') as stream:
@@ -174,7 +174,7 @@ class Evaluation:
         started = time.monotonic()
         record()
         try:
-            response = self.models.complete(role, messages, max_tokens, request_id)
+            response = self.models.complete(role, messages, max_tokens, request_id, reasoning_effort=reasoning_effort)
         except Exception as error:
             record(status='error', error=getattr(error, 'code', type(error).__name__), seconds=time.monotonic() - started)
             raise
@@ -298,11 +298,12 @@ class Evaluation:
         role = 'gateway'
         try:
             task = json.loads(messages[-1]['content'])
-            if isinstance(task, dict) and task.get('task') in {'gateway', 'terminology', 'empathy'}:
+            if isinstance(task, dict) and task.get('task') in {'gateway', 'terminology', 'empathy', 'education', 'education_doctor'}:
                 role = task['task']
         except (ValueError, TypeError):
             pass
-        response, text = self.call_model(role, messages, min(max_tokens, 100000 - self.output_tokens), body['request_id'])
+        response, text = self.call_model(role, messages, min(max_tokens, 100000 - self.output_tokens), body['request_id'],
+                                        reasoning_effort=body.get('reasoning_effort'))
         self.doctor_calls += 1
         if not text.strip():
             raise NovaError('PROVIDER_RESPONSE_INVALID', 503)

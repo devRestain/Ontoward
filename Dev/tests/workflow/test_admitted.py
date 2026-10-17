@@ -6,6 +6,7 @@ from pathlib import Path
 import resource
 import sys
 import time
+from education_fixtures import education_response, KOREAN
 
 
 def verify(submission, output, candidate=None):
@@ -83,6 +84,9 @@ def verify(submission, output, candidate=None):
 
         def chat(self, messages, **kwargs):
             payload = json.loads(messages[1]["content"])
+            education = education_response(payload)
+            if education is not None:
+                return self.completion(json.dumps(education, ensure_ascii=False))
             q, text = payload["question"], payload.get("input")
             if payload["parser_pass"] == "expansion":
                 return self.completion('{"facts":[]}')
@@ -107,7 +111,7 @@ def verify(submission, output, candidate=None):
         def say(self, content, request_id):
             if content == config.texts.chief_question:
                 q = {"purpose": "chief", "target_id": None, "attribute_id": None}
-            elif content in {config.texts.provisional_education, config.texts.symptom_education,
+            elif content in {*KOREAN.values(), config.texts.provisional_education, config.texts.symptom_education,
                              config.texts.understanding_question, config.texts.correction_education}:
                 q = {"purpose": "education", "target_id": None, "attribute_id": None}
             elif content == config.texts.open_question:
@@ -169,13 +173,18 @@ def verify(submission, output, candidate=None):
             score = next(h.evidence_score for h in state.differential.hypotheses if h.disease_id == disease)
             assert score == 4
             assert state.case.diagnosis_kind == "disease"
-            assert any(issue.startswith("missing_plan:") for issue in state.interaction.issues)
+            assert state.case.fixed_diagnosis if config.education_enabled else any(
+                issue.startswith("missing_plan:") for issue in state.interaction.issues)
         else:
             assert state.case.diagnosis_kind == "symptom"
-        assert state.session.usage["Education"].actions == 0
-        assert state.session.usage["Education"].calls == 0
-        assert not any(action["question"]["purpose"] == "education" for action in client.actions)
-        assert state.interaction.submission_payload["note"]["P"]["education"] == ""
+        if config.education_enabled:
+            assert state.session.usage["Education"].actions >= 5
+            assert state.session.usage["Education"].calls >= 2
+            assert all(state.interaction.submission_payload["note"]["P"].values())
+            assert len(state.interaction.education.sentences) == 5
+        else:
+            assert state.session.usage["Education"].actions == 0
+            assert state.interaction.submission_payload["note"]["P"]["education"] == ""
         note = state.interaction.submission_payload["note"]
         assert note["S"]["cc"].startswith("C.C: ")
         assert all(": " in line for fields in note.values() for text in fields.values() for line in text.splitlines())
@@ -185,7 +194,7 @@ def verify(submission, output, candidate=None):
             hpi = state.interaction.submission_payload["note"]["S"]["hpi"]
             assert "2 months" in hpi
         for exchange in state.interaction.model_history:
-            assert exchange["role"] in {"gateway", "terminology", "empathy"}
+            assert exchange["role"] in {"gateway", "terminology", "empathy", "education", "education_doctor"}
             if exchange["role"] in {"gateway", "terminology"}:
                 metrics = exchange["parser_payload"]
                 expanded = metrics["pass"] != "primary"

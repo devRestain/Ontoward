@@ -6,6 +6,7 @@ from pathlib import Path
 import resource
 import sys
 import time
+from education_fixtures import education_response, KOREAN
 import unicodedata
 
 
@@ -41,6 +42,7 @@ def verify(submission, output):
     allowed_say.update((config.texts.chief_question, config.texts.open_question, config.texts.provisional_education,
         config.texts.symptom_education, config.texts.understanding_question, config.texts.correction_education,
         config.texts.clarification_question, *config.texts.clarification_questions.values()))
+    allowed_say.update(KOREAN.values())
     exam_profiles = [profile for profile in knowledge._profile_cache.values()
                      if knowledge.has_type(profile.target, 'ExamFinding')]
     require(bool(exam_profiles), 'admitted_graph_has_a_source_backed_examination')
@@ -68,6 +70,10 @@ def verify(submission, output):
 
         def chat(self, messages, **kwargs):
             payload = json.loads(messages[1]['content'])
+            education = education_response(payload)
+            if education is not None:
+                return {'choices':[{'message':{'content':json.dumps(education, ensure_ascii=False)}}],
+                        'usage':{'prompt_tokens':20, 'completion_tokens':10}}
             if payload.get('task') == 'terminology':
                 return {'choices':[{'message':{'content':'{"facts":[],"clinical_content":false}'}}],
                         'usage':{'prompt_tokens':20, 'completion_tokens':10}}
@@ -119,7 +125,8 @@ def verify(submission, output):
             response['content' if kind == 'SAY' else 'result'] = ('다리 혈관에서 잡음이 들립니다' if kind == 'EXAM' else
                 '배가 아파요' if content == config.texts.chief_question else
                 {'present':'네, 해당 내용이 있어요', 'absent':'그런 내용은 없어요', 'unknown':'모르겠어요'}.get(self.context_status, '모르겠어요')
-                if content in context_texts else '모르겠어요' if content in attribute_texts else '다른 증상은 없어요')
+                if content in context_texts else '알겠습니다' if content in KOREAN.values() else
+                '모르겠어요' if content in attribute_texts else '다른 증상은 없어요')
             return response
 
         def say(self, content, request_id):
@@ -148,9 +155,10 @@ def verify(submission, output):
         require(outcome.interaction.termination == 'submitted' and len(client.submissions) == 1,
                 'confirmed_submission:' + context_status)
         require(client.unlinked_recoveries > 0, 'bounded_korean_complaint_link_recovery:' + context_status)
-        require(outcome.session.usage['Education'].actions == 0 and outcome.session.usage['Education'].calls == 0
-                and not any(entry.question.purpose == 'education' for entry in delivered)
-                and client.submissions[0]['note']['P']['education'] == '', 'education_pass:' + context_status)
+        require((outcome.session.usage['Education'].actions >= 5 and all(client.submissions[0]['note']['P'].values())
+                 and len(outcome.interaction.education.sentences) == 5) if config.education_enabled else
+                (outcome.session.usage['Education'].actions == 0 and client.submissions[0]['note']['P']['education'] == ''),
+                'education_generation_and_delivery:' + context_status)
         require(any(entry.question.purpose == 'feature' for entry in delivered),
                 'context_reaches_diagnostic_questions:' + context_status)
         require(client.actions[0]['content'] == config.texts.chief_question and
@@ -161,9 +169,11 @@ def verify(submission, output):
         require(all(h.context_bonus in {0, 1} for h in outcome.differential.hypotheses), 'context_bonus_cap:' + context_status)
         require(any(h.context_bonus == 1 for h in outcome.differential.hypotheses) if context_status == 'present' and contexts else
                 all(h.context_bonus == 0 for h in outcome.differential.hypotheses), 'context_polarity_semantics:' + context_status)
-        require(all(exchange['role'] in {'gateway', 'terminology', 'empathy'} for exchange in outcome.interaction.model_history)
+        require(all(exchange['role'] in {'gateway', 'terminology', 'empathy', 'education', 'education_doctor'} for exchange in outcome.interaction.model_history)
                 and outcome.session.gateway_successes > 0, 'bounded_designated_model_roles:' + context_status)
         for exchange in outcome.interaction.model_history:
+            if exchange['role'] not in {'gateway', 'terminology'}:
+                continue
             metrics = exchange['parser_payload']
             expanded = metrics['pass'] != 'primary'
             require(metrics['vocabulary_count'] <= (1024 if expanded else 256) and
@@ -211,8 +221,9 @@ def verify(submission, output):
         require(any(h.context_bonus == 1 for h in state.differential.hypotheses) if context_status == 'present' else
                 all(h.context_bonus == 0 for h in state.differential.hypotheses), 'selected_context_bonus:' + context_status)
         section, name = field.split('.')
-        require(client.submissions[0]['note'][section][name] and client.submissions[0]['note']['P']['education'] == '',
-                'selected_context_soap_and_education_pass:' + context_status)
+        require(client.submissions[0]['note'][section][name] and
+                (bool(client.submissions[0]['note']['P']['education']) == config.education_enabled),
+                'selected_context_soap_and_education:' + context_status)
         (output / ('case-selected-context-' + context_status + '.json')).write_text(state.model_dump_json(indent=2))
         context_cases.append({'status':context_status, 'target':context['id'], 'field':field, 'termination':state.interaction.termination})
 

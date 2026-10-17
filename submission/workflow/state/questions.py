@@ -1,4 +1,4 @@
-from .models import ClinicalValue, RecordItem
+from .models import ClinicalValue, EducationDelivery, RecordItem
 
 
 class QuestionLifecycle:
@@ -7,6 +7,10 @@ class QuestionLifecycle:
         self.interactions = interactions
 
     def register(self, state, question):
+        if question.purpose == "education":
+            if not any(item.id == question.item_id for item in state.questions.education):
+                state.questions.education.append(EducationDelivery(question=question))
+            return
         if state.case.get(question.item_id):
             return
         item = RecordItem(id=question.item_id, scope=state.session.current)
@@ -25,6 +29,11 @@ class QuestionLifecycle:
             raise ValueError("Cannot discard a pending question")
         if any((item := state.case.get(item_id)) and item.status != "unasked" for item_id in ids):
             raise ValueError("Cannot discard a completed record")
+        if any(item.id in ids and item.status == "delivered" for item in state.questions.education):
+            raise ValueError("Cannot discard delivered education")
+        for item in state.questions.education:
+            if item.id in ids and item.status == "pending":
+                item.status, item.reason = "undelivered", "budget_or_replanning"
         state.case.remove(ids)
         state.questions.questions = [q for q in state.questions.questions if q.item_id not in ids]
         self.interactions.clear_selected(state, ids)
@@ -34,6 +43,11 @@ class QuestionLifecycle:
         state.questions.questions = []
 
     def reject_action(self, state, action, error):
+        if action.question.purpose == "education":
+            delivery = next(item for item in state.questions.education if item.id == action.question.item_id)
+            delivery.status, delivery.reason = "undelivered", error
+            self.interactions.clear_selected(state)
+            return
         if action.question.semantic_key() not in state.questions.blocked_keys:
             state.questions.blocked_keys.append(action.question.semantic_key())
         item = state.case.get(action.question.item_id)
@@ -44,6 +58,11 @@ class QuestionLifecycle:
         self.interactions.clear_selected(state)
 
     def complete_unresolved(self, state, action, text, source_id):
+        if action.question.purpose == "education":
+            delivery = next(item for item in state.questions.education if item.id == action.question.item_id)
+            if delivery.status == "pending":
+                delivery.status, delivery.reason = "undelivered", "action_not_delivered"
+            return
         item = state.case.get(action.question.item_id)
         if item and item.status == "unasked":
             item.status = "done"

@@ -121,7 +121,8 @@ class SubmissionWriter:
             if value.status != "present":
                 labels += f" ({texts.status_labels[value.status]})"
             lines.append(self._line(texts.soap_labels["cc"], labels + self._context(value, episodes)))
-            attributes = [item.value for item in self._obtained(state.case.S["hpi"].values())
+            attributes = [item.value for field, item in state.case.current_entries() if field == "S.hpi"
+                and item.status == "done" and item.source_refs and item.value
                 if item.value.subject == value.subject and item.value.time_context != "past"
                 and item.value.observation_id == value.observation_id and item.value.episode_id == value.episode_id
                 and (set(item.value.concept_ids) & set(value.concept_ids)
@@ -187,11 +188,12 @@ class SubmissionWriter:
         if state.interaction.pending:
             state.stop("unknown", "pending_action_at_finalization")
             return
-        evidence = self._obtained(state.case.get(item_id) for item_id in state.case.diagnosis_evidence)
+        current = dict((item.id, item) for _, item in state.case.current_entries())
+        evidence = self._obtained(current.get(item_id) for item_id in state.case.diagnosis_evidence)
         evidence = [item for item in evidence if item.value.status in {"present", "absent"}]
         texts = self.config.texts
         episodes = {}
-        for item in self._obtained(item for _, item in state.case.entries()):
+        for item in self._obtained(current.values()):
             if item.value.episode_id:
                 for target in item.value.concept_ids:
                     episodes.setdefault((item.value.subject, target, item.value.episode_id), len(episodes) + 1)
@@ -204,7 +206,7 @@ class SubmissionWriter:
         for hypothesis in ClinicalReasoner.supported_hypotheses(state):
             if hypothesis.disease_id == state.differential.selected_id:
                 continue
-            findings = self._obtained(state.case.get(ident) for ident in hypothesis.evidence_ids + hypothesis.contradiction_ids)
+            findings = self._obtained(current.get(ident) for ident in hypothesis.evidence_ids + hypothesis.contradiction_ids)
             findings = [item for item in findings if item.value.status in {"present", "absent"}]
             support = texts.label_separator.join(self._describe_record(item, episodes) for item in findings)
             if not support:
@@ -224,9 +226,9 @@ class SubmissionWriter:
         if chiefs:
             note["S"]["hpi"] = self._line(texts.soap_labels["hpi"], "; ".join(dict.fromkeys(
                 self._describe_record(item, episodes) for item in chiefs)))
-        hpi_targets = {target for item in self._obtained([*chiefs, *state.case.S["hpi"].values()])
+        hpi_targets = {target for item in self._obtained([*chiefs, *(item for field, item in state.case.current_entries() if field == "S.hpi")])
                        for target in item.value.concept_ids}
-        for field, item in state.case.entries():
+        for field, item in state.case.current_entries():
             section, name = field.split(".")
             if field != "S.cc" and item.status == "done" and item.value and (section in {"A", "P"} or item.source_refs):
                 text = self._section_entry(field, item, episodes, multiple_hpi_targets=len(hpi_targets) > 1)
@@ -237,6 +239,10 @@ class SubmissionWriter:
                         if turns:
                             text = texts.exam_turn_format.format(text=text, turn=", ".join(map(str, turns)))
                     note[section][name] += (texts.record_separator if note[section][name] else "") + text
+        for report in state.interaction.patient_reports:
+            for start, end in report.uncovered_spans:
+                text = self._line(texts.soap_labels["patient_report"], report.text[start:end].strip())
+                note["S"]["hpi"] += (texts.record_separator if note["S"]["hpi"] else "") + text
         note["O"]["tests"] = ""
         if not self.config.education_enabled:
             note["P"]["education"] = ""

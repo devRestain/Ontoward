@@ -199,8 +199,7 @@ def http_server(runs, address=('0.0.0.0', 8080)):
                     folder = runs.directory(run_id)
                     runs.status(run_id)
                     with runs.guard:
-                        if not (folder / 'report.html').exists():
-                            render(folder)
+                        render(folder)
                     return self.respond(200, (folder / 'report.html').read_bytes(), 'text/html; charset=utf-8')
                 files = {'/': ('index.html', 'text/html'), '/app.js': ('app.js', 'text/javascript'),
                          '/style.css': ('style.css', 'text/css')}

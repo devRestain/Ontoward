@@ -14,6 +14,8 @@ from datetime import datetime, timedelta, timezone
 from unittest.mock import patch, Mock
 
 import tempfile
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from education_fixtures import education_response, KOREAN
 
 PROJECT = Path(__file__).resolve().parents[3]
 HERE = Path(os.environ.get("ONTOWARD_TEST_OUTPUT", PROJECT / "Tmp/d18-verification/workflow"))
@@ -98,6 +100,8 @@ def write_assets():
 
 
 write_assets()
+(COPY / ".env").write_text((COPY / ".env").read_text().replace(
+    "ONTOWARD_EDUCATION_ENABLED=true", "ONTOWARD_EDUCATION_ENABLED=false"))
 CONFIG = TextConfig.load()
 
 
@@ -221,6 +225,9 @@ class FakeSDK:
     def chat(self, messages, **kwargs):
         self.calls.append({"messages": messages, **kwargs})
         payload = json.loads(messages[1]["content"])
+        education = education_response(payload)
+        if education is not None:
+            return self.completion(json.dumps(education, ensure_ascii=False))
         if payload.get("task") == "empathy":
             return self.completion(json.dumps({"text": CONFIG.texts.empathy_fallback}, ensure_ascii=False))
         if payload.get("task") == "terminology":
@@ -622,7 +629,8 @@ class Verification(unittest.TestCase):
         make_interpreter(CONFIG).process_input(s, knowledge(), FakeSDK())
         make_consultation().check_budget(s)
         self.assertIsNone(s.interaction.pending)
-        self.assertEqual(s.case.get("q").status, "done")
+        self.assertIsNone(s.case.get("q"))
+        self.assertEqual(s.questions.education[0].status, "undelivered")
         self.assertTrue(s.session.finalizing)
         self.assertIsNotNone(s.case.get("chief"))
         self.assertIsNotNone(s.case.get("plan"))
@@ -871,22 +879,22 @@ class Verification(unittest.TestCase):
             agent.validate_submission(t)
             self.assertEqual(t.interaction.termination, "failed", kind)
 
-    def test_education_revision_preserves_delivered_and_budget(self):
+    def test_education_finalization_preserves_generated_plan_and_delivery(self):
         s = state("Education", True)
-        s.differential.selected_id = str(OW.Beta)
-        agent = make_planner(knowledge(), CONFIG.model_copy(update={"education_enabled": True}))
-        s.case.diagnosis_kind = "disease"
+        record(s)
+        client = FakeSDK()
+        agent = make_consultation(client, resources(config=CONFIG.model_copy(update={"education_enabled": True})))
         agent.prepare_education(s)
-        delivered = s.questions.questions[0]
-        s.case.get(delivered.item_id).status = "done"
-        s.case.get(delivered.item_id).value = ClinicalValue(kind="education", text=delivered.text, status="present")
-        s.case.get(delivered.item_id).source_refs = ["delivered"]
-        s.differential.selected_id = str(OW.Alpha)
-        agent.prepare_education(s, replace=True)
-        self.assertEqual(len(s.case.unasked("Education")), 2)
-        self.assertIsNotNone(s.case.get(delivered.item_id))
-        self.assertEqual(s.case.get("plan:education").value.concept_ids, [str(OW.Alpha)])
-        self.assertEqual(s.session.current, "Education")
+        before = s.case.model_dump()["P"]
+        agent.planner.select_question(s)
+        agent.doctor.validate_action(s)
+        agent.doctor.execute_action(s, client)
+        agent.interpreter.process_input(s, agent.planner.knowledge, client)
+        calls = len(client.calls)
+        agent.finalize(s)
+        self.assertEqual(s.case.model_dump()["P"], before)
+        self.assertEqual(len(client.calls), calls)
+        self.assertEqual(sum(item.status == "delivered" for item in s.questions.education), 1)
 
     def test_missing_plan_question_and_observed_past(self):
         k = knowledge()
@@ -1181,15 +1189,18 @@ class Verification(unittest.TestCase):
         s.interaction.selected = ActionSpec(question=q, content=q.text, request_id="education", ready=True)
         client = FakeSDK(malformed=True)
         client._reply = lambda *args, **kwargs: {"status": "OK", "turn": 1, "turns_remaining": 49, "content": "새로운 증상이 있어요"}
-        make_doctor(config).execute_action(s, client)
-        make_interpreter(config).process_input(s, knowledge(), client)
-        self.assertEqual(s.case.get(q.item_id).value.kind, "education")
-        self.assertEqual(s.case.get(q.item_id).value.text, q.text)
+        agent = make_consultation(client, resources(config=config))
+        agent.reasoner.select_diagnosis(s)
+        agent.freeze_diagnosis(s)
+        agent.doctor.execute_action(s, client)
+        agent.interpreter.process_input(s, agent.planner.knowledge, client)
+        self.assertIsNone(s.case.get(q.item_id))
+        self.assertEqual(s.questions.education[0].status, "delivered")
+        self.assertEqual(s.questions.education[0].question.text, q.text)
         self.assertTrue(s.interaction.needs_clarification)
-        interview = make_planner(knowledge(), config)
-        interview.prepare_clarification(s, s.interaction.clarification_target)
-        clarification = s.questions.questions[-1]
-        self.assertEqual(clarification.field, "S.ros")
+        agent.refresh_after_input(s)
+        self.assertFalse(s.interaction.needs_clarification)
+        self.assertEqual(s.case.P["education"], {})
         self.assertFalse(hasattr(SubmissionWriter, "prepare_education"))
 
     def test_text_environment_overrides_and_invalid_config(self):
@@ -1217,7 +1228,7 @@ class Verification(unittest.TestCase):
         with patch.dict(os.environ, {"ONTOWARD_TEXTS": "config/review-texts.json"}):
             with self.assertRaisesRegex(ValueError, "SOAP category"): TextConfig.load()
 
-    def test_new_fact_during_education_changes_remaining_delivery(self):
+    def test_new_fact_during_education_preserves_fixed_diagnosis_and_plan(self):
         k = knowledge()
         k._graph.parse(data='''@prefix ow: <urn:ontoward:> .
           @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -1237,7 +1248,7 @@ class Verification(unittest.TestCase):
         original_chat, original_reply = client.chat, client._reply
         def reply(text, request_id, exam=False):
             result = original_reply(text, request_id, exam)
-            if text == "가상 B 첫 안내입니다.":
+            if text == KOREAN["education"]:
                 result["content"] = "별도증상도 있어요"
             return result
         def chat(messages, **kwargs):
@@ -1249,14 +1260,13 @@ class Verification(unittest.TestCase):
         client._reply, client.chat = reply, chat
         s, client = self.run_flow(client, resources(k, CONFIG.model_copy(update={"education_enabled": True})))
         self.assertEqual(s.interaction.termination, "submitted")
-        self.assertEqual(s.case.diagnosis, "가상질환C")
+        self.assertEqual(s.case.diagnosis, "가상질환B")
         delivered = [a["content"] for a in client.actions]
-        self.assertIn("가상 B 첫 안내입니다.", delivered)
-        self.assertIn("가상 C 안내입니다.", delivered)
-        self.assertNotIn("가상 B 둘째 안내입니다.", delivered)
-        self.assertEqual(s.session.usage["Education"].actions, 3)
-        self.assertIn(CONFIG.texts.correction_education, delivered)
-        self.assertIn("가상 C 계획", client.submissions[0]["note"]["P"]["treatment"])
+        self.assertIn(KOREAN["education"], delivered)
+        self.assertNotIn(CONFIG.texts.correction_education, delivered)
+        self.assertEqual(s.session.usage["Education"].actions, 5)
+        self.assertTrue(any(item.value and str(OW.Other) in item.value.concept_ids for _, item in s.case.entries()))
+        self.assertIn("Review the treatment plan", client.submissions[0]["note"]["P"]["treatment"])
 
     def test_model_limit_finalization_and_clarification_candidate_recovery(self):
         for code in ("MODEL_CALL_LIMIT", "MODEL_TOKEN_BUDGET"):
@@ -1715,31 +1725,19 @@ class Verification(unittest.TestCase):
         self.assertEqual(client.chat.call_count, 2)
         self.assertEqual(s.case.get(q.item_id).value.values, [str(OW.Here)])
 
-    def test_d17_education_leaves_and_uses_correction_turn(self):
+    def test_education_exhaustion_preserves_the_complete_plan(self):
         s, client = state("Education", True, turns=3), FakeSDK()
         s.session.gateway_successes = s.session.doctor_successes = 1
         client.remaining = 3
-        s.case.diagnosis_kind = "disease"
-        s.differential.selected_id = str(OW.Beta)
+        record(s)
         w = make_consultation(client, resources(config=CONFIG.model_copy(update={"education_enabled": True})))
-        w.planner.prepare_education(s)
-        for _ in range(2):
-            w.planner.select_question(s)
-            w.doctor.validate_action(s)
-            w.doctor.execute_action(s, client)
-            w.interpreter.process_input(s, knowledge(), client)
-        self.assertEqual(s.session.turns_remaining, 1)
-        s.interaction.correction_required = True
-        s.interaction.diagnosis_revision = 1
-        s.differential.selected_id = str(OW.Alpha)
-        w.planner.prepare_education(s, replace=True)
-        w.planner.select_question(s)
-        w.doctor.validate_action(s)
-        w.doctor.execute_action(s, client)
-        w.interpreter.process_input(s, knowledge(), client)
-        self.assertEqual(client.actions[-1]["content"], CONFIG.texts.correction_education)
-        self.assertEqual(s.session.turns_remaining, 0)
-        self.assertFalse(s.interaction.correction_required)
+        w.prepare_education(s)
+        result = WorkflowState.model_validate(build_graph(w, w.planner.knowledge).invoke(s.model_dump()))
+        self.assertEqual(result.session.turns_remaining, 0)
+        self.assertEqual(result.interaction.termination, "submitted")
+        self.assertEqual(sum(item.status == "delivered" for item in result.questions.education), 3)
+        self.assertEqual(sum(item.status == "undelivered" for item in result.questions.education), 2)
+        self.assertTrue(all(client.submissions[0]["note"]["P"].values()))
 
     def test_education_pass_keeps_full_diagnostic_budget_and_empty_education(self):
         self.assertFalse(prepare().config.education_enabled)

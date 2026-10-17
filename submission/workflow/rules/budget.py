@@ -31,7 +31,7 @@ class BudgetPolicy:
 
     def interview_limits(self, state):
         if state.session.current == "Education" and self.education_enabled:
-            return 2, LIMITS.education_turns
+            return 0, LIMITS.turns
         return SESSION_INTERVIEW_LIMITS[state.session.current]
 
     @staticmethod
@@ -61,10 +61,15 @@ class BudgetPolicy:
         session = state.session
         return session.clarifications < LIMITS.clarifications and self.can_start_action(state)
 
-    def model_allowance(self, session):
+    def model_allowance(self, session, role="gateway"):
         if not self.calls_left(session):
             return 0
-        return min(LIMITS.gateway_tokens, session.output_token_limit - session.output_tokens)
+        maximum = {"education": LIMITS.education_tokens,
+                   "education_doctor": LIMITS.education_doctor_tokens}.get(role, LIMITS.gateway_tokens)
+        reserve = LIMITS.gateway_tokens if role.startswith("education") and not session.finalizing else 0
+        if reserve and self.calls_left(session) < 2:
+            return 0
+        return max(0, min(maximum, session.output_token_limit - session.output_tokens - reserve))
 
     def can_empathize(self, state):
         session = state.session
@@ -81,13 +86,12 @@ class BudgetPolicy:
         if self.seconds_left(session) <= 0:
             return BudgetDecision(expired=True)
         if not self.collection_available(session):
-            return BudgetDecision(finalize=True, discard=frozenset(item.id for item in state.case.unasked(session.current)))
+            return BudgetDecision(finalize=True, discard=frozenset(item.id for item in state.unasked()))
         if not session.initialized:
             return BudgetDecision()
         actions_left, calls_left = self.shared_action_capacity(state), self.calls_left(session)
         interview_left = self.action_capacity(state)
-        questions = [q for q in state.questions.questions
-                     if (item := state.case.get(q.item_id)) and item.scope == session.current and item.status == "unasked"]
+        questions = state.pending_questions()
         keep = set()
         for question in sorted(questions, key=lambda q: (-q.priority, q.order, q.item_id)):
             if actions_left <= 0 or calls_left < 1 or (question.purpose != "empathy" and interview_left <= 0):

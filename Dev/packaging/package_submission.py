@@ -48,12 +48,13 @@ def main() -> None:
 
     settings = packaged_settings()
     text_files = {contained_path(settings[key], "config").relative_to(SOURCE).as_posix()
-                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_TERMINOLOGY_PROMPT", "ONTOWARD_EMPATHY_PROMPT", "ONTOWARD_TEXTS")}
+                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_TERMINOLOGY_PROMPT", "ONTOWARD_EMPATHY_PROMPT",
+                              "ONTOWARD_EDUCATION_PROMPT", "ONTOWARD_EDUCATION_DOCTOR_PROMPT", "ONTOWARD_TEXTS")}
     manifest_path = knowledge_path(settings[SETTING])
     knowledge_files = {manifest_path.relative_to(SOURCE).as_posix()}
     if manifest_path.is_file():
         manifest_data = json.loads(manifest_path.read_text())
-        assets = [manifest_data[key] for key in ("schema", "vocabulary", "scoring_policy", "reasoning_policy", "questions", "labels", "plans")
+        assets = [manifest_data[key] for key in ("schema", "vocabulary", "scoring_policy", "reasoning_policy", "questions", "labels", "plans", "guidelines")
                   if key in manifest_data] + manifest_data.get("bundles", [])
         knowledge_files.update(knowledge_path(asset["path"]).relative_to(SOURCE).as_posix() for asset in assets)
     required = REQUIRED | text_files | knowledge_files

@@ -7,6 +7,7 @@
 - Keep disposable fixtures and reports in root Tmp/ and operational progress in root PROJECT_STATE.md.
 - Own tests/workflow, tests/ontology, architecture/WORKFLOW_RULES.md, and packaging/package_submission.py.
 - Own guidelines/map.py and tests/guidelines for D30 catalog-allowlisted disease mappings, exact evidence replay, and bounded session-free NOVA gpt-6-luna review.
+- Use guidelines/map.py runtime-export for D37 build-pinned navigation and data-owned admission without copying original documents.
 - Package only submission runtime files and public settings; keep preparation code, tests, guidance, state, source originals, and credentials outside the ZIP.
 - Read archive inputs only from /submission and write output only to /output.
 
@@ -59,6 +60,8 @@
 - Preserve the existing extraction image and dedicated authentication volume; use the declared extraction service for the explicitly requested Korean run without downloading dependencies.
 - Run python -B Dev/tests/workflow/test_workflow.py for the complete offline consultation flow.
 - Run python -B Dev/tests/workflow/test_input_empathy.py for D34 question binding terminology recovery and empathy delivery behavior.
+- Run python -B Dev/tests/workflow/test_education.py for D37 full-document context fixed diagnosis English plans and bounded Korean delivery.
+- Run python -B Dev/tests/workflow/test_evidence_consistency.py for D36 acquisition-safe corrections shared evidence and uncovered patient reports through confirmed submission.
 - Run python -B Dev/tests/workflow/test_admitted.py --submission PATH --output PATH for actual admitted knowledge and archive isolation with scripted patient and model responses.
 - Run python -B Dev/tests/workflow/test_korean_admitted.py --submission PATH --output PATH for exact prepared Korean delivery, Context polarity, and separate examination acquisition through SOAP and confirmed submission.
 - Run python -B Dev/tests/ontology/test_database.py for source/approval/quota/Korean behavior and verify_database.py plus verify_catalog.py for real-source coverage, graph semantics, provenance, Korean coverage, and resource evidence.

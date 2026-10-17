@@ -1,13 +1,16 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=13f6b83b2d343a6c6dd2c599957ecf0c7597224d dirty=true updated=2026-10-17T08:48:44+00:00
-/goal phase=current id=APP.MERGE35 state=complete action="Integrate session budgets with existing SOAP input and empathy features and verify the combined main candidate"
+/checkpoint revision=f3f5df5782e2aa38b948180f51b19012b0150cf1 dirty=true updated=2026-10-17T09:56:17+00:00
+/goal phase=current id=APP.EDUCATION37 state=complete action="Implement fixed-diagnosis guideline Education with English P and independent Korean delivery"
+/goal phase=history id=APP.EVIDENCE36 state=complete action="Verify acquisition-safe corrections shared current evidence and uncovered patient reports in the isolated D36 snapshot"
+/goal phase=history id=APP.MERGE35 state=complete action="Integrate session budgets with existing SOAP input and empathy features and verify the combined main candidate"
 /goal phase=history id=APP.BUDGET35 state=complete action="Implement D35 session targets caps useful-question continuation empathy accounting and synchronous budget routing"
 /goal phase=history id=APP.INPUT34 state=complete action="Bind clinical replies to admitted question vocabulary preserve unlinked medical reports and deliver bounded empathy across sessions"
 /goal phase=history id=APP.SOAP33 state=complete action="Render English Category Content SOAP with source terms quote-backed keywords explicit polarity and same-episode pain assessment"
 /goal phase=history id=APP.CHIEF29 state=complete action="Require one existing Symptom for chief mapping with source aliases bounded lookup recovery and explicit semantic evidence"
-/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify one user-authorized server sample validation using the merged D35 archive and retain every case result"
+/goal phase=history id=APP.INTEGRATE36 state=complete action="Verify D36 against the combined D37 runtime and independent archive"
+/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify real Luna interpretation English planning Korean delivery and completed submission from the D37 archive after separate external execution authorization"
 /goal phase=history id=APP.CONTEXT28 state=complete action="Bound complete Gateway requests and recover context rejection once while preserving consultation and submission behavior"
 /goal phase=history id=APP.TEST27 state=complete action="Verify unchanged D26 callbacks through the D27 local HTTP API with the scripted C10 fixture"
 /goal phase=history id=APP.READINESS26 state=complete action="Pass Education and complete diagnostic acquisition Gateway recovery assessment and confirmed submission under D26"
@@ -138,4 +141,22 @@
 /evidence id=APP.MERGE35.E3 class=artifact result=pass source=../Tmp/merge35/documents.json observed="Match protected main knowledge prompts SDK dependency settings entrypoint clinical reasoner and SOAP writer bytes while applying D35 to D34 empathy and updating the merged-archive handoff"
 /evidence id=APP.MERGE35.E4 class=external_service result=not_run source=../Tmp/merge35/verification.json observed="Leave actual Luna interpretation empathy quality official submission clinical performance and scoring unrun"
 /scope id=APP.MERGE35.S1 state=in action="Own integrated D33 SOAP D34 interpretation and empathy and D35 budget behavior without new clinical admission"
-/handoff state=blocked action="Use Tmp/packaging/merge35-2026-10-17/ontoward-submission.zip for separately authorized APP.REVALIDATE29 and distinguish offline behavior from live model and official evaluation evidence"
+/accept id=APP.EVIDENCE36.A1 state=pass action="Block cross-acquisition overwrites and prevent withdrawn or conflicting chiefs from diagnosis fallback" evidence=APP.EVIDENCE36.E1
+/accept id=APP.EVIDENCE36.A2 state=pass action="Preserve uncovered speech and complete admitted-RDF consultations in the isolated archive" evidence=APP.EVIDENCE36.E2,APP.EVIDENCE36.E3
+/evidence id=APP.EVIDENCE36.E1 class=runtime result=pass source=../Tmp/evidence36/archive/evidence/verification.json observed="Pass 18 evidence tests covering direct and implicit EXAM references initial vitals same-acquisition corrections ID-free withdrawals conflict-aware consumers uncovered allergy broad quotations and final confirmed submission"
+/evidence id=APP.EVIDENCE36.E2 class=runtime result=pass source=../Tmp/evidence36/archive/verification.json observed="Pass 98 maintained workflow tests 23 input-empathy tests three admitted-RDF consultations and 505 Korean checks with two CPUs eight GB read-only root and submission and no network credentials or parent data assets"
+/evidence id=APP.EVIDENCE36.E3 class=artifact result=pass source=../Tmp/evidence36/package.json observed="Source-match the frozen audit-only 44-file archive with SHA256 051ddc71549db6e37cbfce73768a66783fc74913f1c78de5d209c80c7b7321f5 and preserve the original SDK settings dependency and admitted-knowledge pins"
+/evidence id=APP.EVIDENCE36.E4 class=runtime result=not_run source=../Tmp/evidence36/verification.json observed="Leave working-tree integration unrun at the D36 snapshot checkpoint and retain that snapshot and patch; use APP.EDUCATION37 for subsequent integrated acceptance"
+/evidence id=APP.EVIDENCE36.E5 class=external_service result=not_run source=../Tmp/evidence36/verification.json observed="Leave actual Luna semantic completeness clinical performance official submission and scoring unrun"
+/scope id=APP.EVIDENCE36.S1 state=in action="Own D36 input evidence resolution report coverage and deterministic SOAP behavior"
+/accept id=APP.INTEGRATE36.A1 state=pass action="Retain acquisition-safe corrections current evidence and raw reports in the D37 runtime" evidence=APP.EDUCATION37.E1,APP.EDUCATION37.E3
+/accept id=APP.EDUCATION37.A1 state=pass action="Preserve fixed diagnosis full source context English P and independently validated Korean delivery through failures and budgets" evidence=APP.EDUCATION37.E1,APP.EDUCATION37.E2
+/accept id=APP.EDUCATION37.A2 state=pass action="Complete admitted consultations and final SDK submission from the extracted archive while preserving protected assets" evidence=APP.EDUCATION37.E3,APP.EDUCATION37.E4
+/evidence id=APP.EDUCATION37.E1 class=runtime result=pass source=../Tmp/education37/verified/output/verification.json observed="Pass 98 workflow 23 input-empathy 18 D36 evidence and 17 Education tests from the extracted archive; retain late reports and empathy without changing frozen diagnosis or initial P"
+/evidence id=APP.EDUCATION37.E2 class=runtime result=pass source=../Tmp/education37/verified/output/education/education-verification.json observed="Verify all original byte ranges full dialogue in every Education request scoped quote references one plan repair NFC thirty-character rendering partial delivery source failures and time call turn and transport limits"
+/evidence id=APP.EDUCATION37.E3 class=runtime result=pass source=../Tmp/education37/verification.json observed="Complete three admitted-RDF consultations at 34 34 and 26 actions plus 550 Korean checks and the unchanged SDK entrypoint at 34 turns with all five English P fields and a completed receipt; use scripted models without clinical quality claims"
+/evidence id=APP.EDUCATION37.E4 class=artifact result=pass source=../Tmp/education37/archive.json observed="Match all 49 archive members to runtime source and preserve original SDK entrypoint requirements and admitted RDF and wording hashes while adding only the pinned navigation index and required runtime code prompts"
+/evidence id=APP.EDUCATION37.E5 class=semantic result=pass source=../Tmp/education37/document-review.json observed="Align runtime roles state ownership public Education setting English SOAP serialization original mount and bounded failures with D37 while retaining D34 and D36 behavior"
+/evidence id=APP.EDUCATION37.E6 class=external_service result=not_run source=../Tmp/education37/verification.json observed="Leave real Luna clinical semantic quality official validation evaluation upload and deployment unrun"
+/scope id=APP.EDUCATION37.S1 state=in action="Own D37 fixed diagnosis source consumption English plan Korean rendering separate delivery and final serialization"
+/handoff state=blocked action="Retain the verified D37 runtime and defer real-model consultation until the case request ceiling credit use and external execution are authorized"

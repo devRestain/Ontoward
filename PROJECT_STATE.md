@@ -1,16 +1,20 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=13f6b83b2d343a6c6dd2c599957ecf0c7597224d dirty=true updated=2026-10-17T08:48:44+00:00
-/goal phase=current id=ROOT.MERGE35 state=complete action="Integrate session budgets with existing SOAP input and empathy features and verify the combined main candidate"
+/checkpoint revision=f3f5df5782e2aa38b948180f51b19012b0150cf1 dirty=true updated=2026-10-17T09:56:17+00:00
+/goal phase=current id=ROOT.EDUCATION37 state=complete action="Coordinate D37 Education D36 integration source custody offline acceptance and the standalone archive"
+/goal phase=history id=ROOT.EVIDENCE36 state=complete action="Complete the isolated D36 audit fixes and archive acceptance without overwriting concurrent education work"
+/goal phase=history id=ROOT.MERGE35 state=complete action="Integrate session budgets with existing SOAP input and empathy features and verify the combined main candidate"
 /goal phase=history id=ROOT.BUDGET35 state=complete action="Coordinate D35 budget acceptance offline archive verification and scoped handoff"
 /goal phase=history id=ROOT.INPUT34 state=complete action="Coordinate D34 vocabulary binding terminology fallback empathy delivery offline acceptance and a standalone archive"
 /goal phase=history id=ROOT.SOAP33 state=complete action="Coordinate English Category Content SOAP formatting quote-backed parsing offline acceptance and a standalone archive under D33"
 /goal phase=history id=ROOT.ATLAS32 state=complete action="Provide a self-contained offline project atlas for workflow inference question selection and knowledge preparation"
 /goal phase=history id=ROOT.WEB31 state=complete action="Implement the local Test website workflow observation and per-turn diagnosis reports without changing submission"
+/goal phase=history id=ROOT.NOTE31 state=complete action="Expose observed Note snapshots and actual SOAP payloads in the Test website and document LangSmith configuration without external transmission"
 /goal phase=history id=ROOT.GUIDELINES30 state=complete action="Implement reusable disease-to-guideline mapping with exact source evidence and bounded NOVA semantic review"
 /goal phase=history id=ROOT.CHIEF29 state=complete action="Coordinate case-independent chief mapping evaluator correction offline acceptance and the D29 archive handoff"
-/goal phase=next id=ROOT.NOVA27 state=deferred action="Verify one explicitly authorized C10 local NOVA run using the merged D35 archive with a fixed request ceiling and development-credit use"
+/goal phase=history id=ROOT.INTEGRATE36 state=complete action="Verify D36 with concurrent Education changes in the D37 standalone archive"
+/goal phase=next id=ROOT.NOVA27 state=deferred action="Confirm one case the shared request ceiling and credit use before running the D37 archive against real NOVA development models"
 /goal phase=history id=ROOT.CONTEXT28 state=complete action="Coordinate D28 context failure recovery offline verification and a standalone submission archive handoff"
 /goal phase=history id=ROOT.TEST27 state=complete action="Implement and verify the D27 isolated public-sample evaluator and NOVA development-chat bridge"
 /goal phase=history id=ROOT.READINESS26 state=complete action="Complete D26 submission readiness with Education pass offline verification and an independent runtime ZIP"
@@ -156,6 +160,17 @@
 /evidence id=ROOT.WEB31.E9 class=static result=pass source=Tmp/test-web31/verification.json observed="Pass shell syntax and both frontend JavaScript syntax checks using existing project tooling"
 /scope id=ROOT.WEB31.S1 state=in action="Own the Test website shell bridge shared lock runtime observation offline reports verification and root documentation"
 /scope id=ROOT.WEB31.S2 state=out action="Exclude submission and data mutation live-provider verification downloads new dependencies commits publication and deployment"
+/accept id=ROOT.NOTE31.A1 state=pass action="Show all Note fields separate diagnosis record statuses provenance and generated payloads across observed turns and saved runs" evidence=ROOT.NOTE31.E1,ROOT.NOTE31.E2,ROOT.NOTE31.E3
+/accept id=ROOT.NOTE31.A2 state=pass action="Preserve stored artifacts and reconcile local instructions LangSmith guidance requirements and maintained state ownership" evidence=ROOT.NOTE31.E4,ROOT.NOTE31.E5
+/evidence id=ROOT.NOTE31.E1 class=runtime result=pass source=Tmp/test-evaluator/verify-note31-20261017-pass/verification.json observed="Pass forty-three offline evaluator and web checks including refreshed legacy reports and the keyword-compatible pending-request test double while preserving concurrent simulator changes"
+/evidence id=ROOT.NOTE31.E2 class=runtime result=pass source=Tmp/test-note-2026-10-17/verification.json observed="Execute the actual viewer in the existing project Node container with a text DOM double covering fifteen fields completion and clinical states source labels Unicode spans actual payload distinction legacy partial traces and keyboard tabs; open saved C01 C03 and C10 traces"
+/evidence id=ROOT.NOTE31.E3 class=runtime result=pass source=Tmp/test-note-2026-10-17/verification.json observed="Refresh the idle project web container serve three updated saved reports over HTTP and observe the same three runs an online worker and no active run without starting a consultation"
+/evidence id=ROOT.NOTE31.E4 class=artifact result=pass source=Tmp/test-note-2026-10-17/preservation.json observed="Preserve fifty-four saved run artifacts and fifty-four submission files during report refresh; record the concurrently changed submission state and other education changes separately without claiming whole-session source identity"
+/evidence id=ROOT.NOTE31.E5 class=semantic result=pass source=Test/README.md observed="Document Note usage and current LangSmith keys project endpoint workspace and post-run export option; retain ROOT.EDUCATION37 and child goals and leave cloud transmission unimplemented"
+/evidence id=ROOT.NOTE31.E6 class=runtime result=not_run source=Tmp/test-note-2026-10-17/verification.json observed="Leave real browser interaction and visual inspection unrun after finding no browser executable Playwright Puppeteer or jsdom in the existing project image"
+/evidence id=ROOT.NOTE31.E7 class=external_service result=not_run source=Tmp/test-note-2026-10-17/verification.json observed="Leave LangSmith account access uploads actual NOVA calls official validation and scoring unrun"
+/scope id=ROOT.NOTE31.S1 state=in action="Own the Test Note viewer saved report refresh focused checks configuration guidance and root documentation"
+/scope id=ROOT.NOTE31.S2 state=out action="Exclude submission edits concurrent education ownership cloud connections external uploads model calls dependencies commits and deployment"
 /accept id=ROOT.ATLAS32.A1 state=pass action="Provide static workflow inference and preparation diagrams with offline navigation and local source references" evidence=ROOT.ATLAS32.E1,ROOT.ATLAS32.E2
 /accept id=ROOT.ATLAS32.A2 state=pass action="Preserve existing submission and Test implementation bytes without dependencies or execution controls" evidence=ROOT.ATLAS32.E3
 /accept id=ROOT.ATLAS32.A3 state=pass action="Reconcile D32 requirements contracts human instructions and root handoff while preserving child goals" evidence=ROOT.ATLAS32.E4
@@ -210,4 +225,24 @@
 /evidence id=ROOT.MERGE35.E5 class=external_service result=not_run source=Tmp/merge35/verification.json observed="Leave actual models official upload sample validation scoring remote push and deployment unrun"
 /scope id=ROOT.MERGE35.S1 state=in action="Own the user-authorized local integration commits main merge conflict resolution offline acceptance archive and handoff"
 /scope id=ROOT.MERGE35.S2 state=out action="Exclude external models official submission remote writes source mutation new clinical admission and deployment"
-/handoff state=blocked action="Use Tmp/packaging/merge35-2026-10-17/ontoward-submission.zip for separately authorized ROOT.NOVA27 or APP.REVALIDATE29 and preserve fixed request and credit-use boundaries"
+/accept id=ROOT.EVIDENCE36.A1 state=pass action="Verify reported counterexamples and maintained consultation behavior in the project container" evidence=ROOT.EVIDENCE36.E1
+/accept id=ROOT.EVIDENCE36.A2 state=pass action="Verify the isolated archive and reconcile affected decisions contracts and state" evidence=ROOT.EVIDENCE36.E2,ROOT.EVIDENCE36.E3
+/evidence id=ROOT.EVIDENCE36.E1 class=runtime result=pass source=Tmp/evidence36/verification.json observed="Pass 98 workflow 23 input-empathy and 18 evidence tests three admitted-RDF consultations and 505 Korean checks in the isolated D36 snapshot with completed DIAGNOSE"
+/evidence id=ROOT.EVIDENCE36.E2 class=artifact result=pass source=Tmp/evidence36/package.json observed="Verify the 44-file 1375944-byte archive with SHA256 051ddc71549db6e37cbfce73768a66783fc74913f1c78de5d209c80c7b7321f5 against the frozen D36 source and preserve 21 protected baseline files"
+/evidence id=ROOT.EVIDENCE36.E3 class=semantic result=pass source=Tmp/evidence36/review.md observed="Reconcile D36 requirements contracts whitepaper decisions and all three state scopes while preserving concurrent education edits and a separate audit patch"
+/evidence id=ROOT.EVIDENCE36.E4 class=runtime result=not_run source=Tmp/evidence36/verification.json observed="Leave combined acceptance unrun at the D36 snapshot checkpoint; use ROOT.EDUCATION37 for subsequent integrated archive acceptance"
+/evidence id=ROOT.EVIDENCE36.E5 class=external_service result=not_run source=Tmp/evidence36/verification.json observed="Leave actual models official validation upload scoring independent clinical validation and deployment unrun"
+/scope id=ROOT.EVIDENCE36.S1 state=in action="Own D36 regression tests packaging evidence and cross-scope documentation"
+/scope id=ROOT.EVIDENCE36.S2 state=out action="Exclude live models official services source admission downloads commits remote writes and deployment"
+/accept id=ROOT.INTEGRATE36.A1 state=pass action="Verify the combined Education and D36 runtime before selecting a new archive" evidence=ROOT.EDUCATION37.E1,ROOT.EDUCATION37.E2
+/accept id=ROOT.EDUCATION37.A1 state=pass action="Verify integrated runtime source custody local model roles and observer behavior" evidence=ROOT.EDUCATION37.E1,ROOT.EDUCATION37.E3
+/accept id=ROOT.EDUCATION37.A2 state=pass action="Verify the independent archive and reconcile maintained decisions contracts and state" evidence=ROOT.EDUCATION37.E2,ROOT.EDUCATION37.E4
+/evidence id=ROOT.EDUCATION37.E1 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Reference completed APP.EDUCATION37 runtime acceptance and DATA.EDUCATION37 source custody while preserving D36 report acquisition and conflict handling"
+/evidence id=ROOT.EDUCATION37.E2 class=artifact result=pass source=Tmp/education37/archive.json observed="Source-match the 49-file 1522448-byte archive with SHA256 b88b97483be32255d9a578115a4c66f7457f7fd24333f118b4c54dc855bf6977 and preserve ten protected assets; exclude original guidelines preparation files and development keys"
+/evidence id=ROOT.EDUCATION37.E3 class=runtime result=pass source=Tmp/education37/verification.json observed="Pass 43 local evaluator tests and fourteen observer parity scenarios with 710 reconstructed node updates; complete unchanged SDK run.py through the local HTTP evaluator at 34 turns using the extracted read-only archive and corpus mount with network none two CPUs and eight GB"
+/evidence id=ROOT.EDUCATION37.E4 class=semantic result=pass source=Tmp/education37/document-review.json observed="Reconcile D37 and superseded D26 D30 D33 D35 limits across requirements contracts Korean orientation and all three state scopes; preserve concurrent Test viewer changes without asserting browser visual verification"
+/evidence id=ROOT.EDUCATION37.E5 class=runtime result=fail source=Tmp/test-evaluator/C01-20261017T093607Z-89936/result.json observed="Preserve the scripted C01 failure before Education at three turns with no_supported_chief_complaint and no confirmed submission; distinguish lexical double limitations from real model quality"
+/evidence id=ROOT.EDUCATION37.E6 class=external_service result=not_run source=Tmp/education37/verification.json observed="Leave actual Luna quality official sample validation scoring upload commits and deployment unrun"
+/scope id=ROOT.EDUCATION37.S1 state=in action="Own D37 cross-scope integration offline verification archive identity documentation and handoff"
+/scope id=ROOT.EDUCATION37.S2 state=out action="Exclude live services credit use downloads official evaluation commits remote writes and deployment"
+/handoff state=blocked action="Use the verified D37 archive for a separately authorized real NOVA run only after confirming the case request ceiling and credit effects"

@@ -4,6 +4,7 @@ from typing import Literal
 
 SessionName = Literal["Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education"]
 SESSION_ORDER: tuple[SessionName, ...] = ("Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education")
+PLAN_FIELDS = ("tests", "treatment", "disposition", "follow_up", "education")
 SESSION_INTERVIEW_LIMITS = {
     "Initiation": (1, 1), "ChiefComplaint": (7, 16), "ContextFactor": (2, 7),
     "DifferentialDiagnosis": (3, 12), "Education": (0, 0),
@@ -15,7 +16,10 @@ class Limits:
     turns: int = 50
     finalization_seconds: int = 120
     response_seconds: int = 120
-    education_turns: int = 3
+    education_turns: int = 5
+    education_request_bytes: int = 65536
+    education_tokens: int = 8000
+    education_doctor_tokens: int = 4000
     model_calls: int = 200
     input_tokens: int = 500000
     output_tokens: int = 100000

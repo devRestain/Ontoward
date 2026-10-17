@@ -12,7 +12,7 @@ def route_budget(state: WorkflowState) -> str:
         return "build_soap"
     if not state.session.initialized:
         return "enter_session"
-    return "select_question" if (state.case.unasked(state.session.current)
+    return "select_question" if (state.unasked()
         or any(event.status == "pending" for event in state.interaction.empathy_events)) else "advance_session"
 
 

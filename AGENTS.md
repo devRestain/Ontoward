@@ -47,11 +47,13 @@
 - Apply D21 patient-action-only Korean generation with independent NFC 1-30 validation; prioritize the explicitly requested NOVA development-key route and retain SNU workspace Codex CLI as the alternative.
 - Apply newer D22 NOVA-only continuation and explicitly authorized failure resumption within the frozen same-day ceiling; retain every rejected request and stop on completion or request/service limits.
 - Apply D23 competition acceptance to complete source-backed candidates and D22 patient actions without another clinical or user approval gate; preserve technical exclusions and exact runtime pins.
-- Apply D26 with Education disabled in the packaged public setting; skip its actions and turn reserve and leave P.education empty while completing diagnosis submission.
+- Apply D37 Education by default after fixing the diagnosis; preserve the explicit D26 disabled setting without education actions or reserved turns.
 - Apply D35 session interview targets and caps, decision-relevant early stopping, separate empathy accounting, and one same-request transient replay after two seconds.
 - Apply D29 for case-independent chief mapping to one supplied Symptom, source-backed bilingual aliases, and one bounded full-index lookup recovery.
-- Apply D30 to fresh guideline-corpus document mappings for every admitted Disease; keep relation scope exact source evidence and bounded NOVA gpt-6-luna provenance outside runtime knowledge and SOAP plan generation.
-- Apply D33 English SOAP Category: Content entries with source terminology explicit polarity and quote-backed keywords; preserve raw patient speech outside the rendered note and never infer unasked negatives or an NRS scale.
+- Preserve D30 source mappings and apply D37 manifest-pinned navigation to the organizer guideline mount without packaging original documents.
+- Generate D37 English P sentences with Luna high and render independent NFC 1-30 Korean Doctor statements while retaining source and model-knowledge provenance.
+- Apply D33 English SOAP Category: Content entries with source terminology explicit polarity and quote-backed keywords while retaining D36 uncovered patient speech as explicitly unstructured S reports.
+- Apply D36 resolved-destination acquisition checks and shared current evidence for chief selection question resolution reasoning and symptom fallback.
 - Apply D34 question-bound vocabulary interpretation one binding repair record-only terminology fallback and separate budgeted empathy SAY across all sessions.
 - Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep maintained workflow tests in Dev/tests/workflow and generated synthetic assets and evidence in Tmp.
 
@@ -69,12 +71,14 @@
 - Use specific clinical pain complaints as D08 retrieval targets and preserve finer Location values, raw wording, interpretation uncertainty, and separate episodes.
 - Use D17 for the five-session adaptive workflow and Python reasoning, D35 for session budgets and question continuation, and D12 for wire format and packaging.
 - Apply D15 for information-preserving SOAP and bounded Gateway vocabulary; use D18 for all knowledge and Korean text preparation.
+- Preserve D36 original reports and quote coverage without treating unstructured speech as scored evidence or acquired examination findings.
 - Apply newer explicit user decisions before stale operational plans or next goals; record implementation and execution only from observed evidence.
 - Isolate runtime LLM instructions and editable clinical text in submission/config with public environment-selected paths; keep machine field names and decision codes in Python.
 - Package only submission runtime Python, pinned requirements, public .env, config prompts and text, and knowledge assets through the package Compose service under D14.
 - Exclude submission guidance, operational state, root .env, caches, preparation files, and organizer originals from the ZIP.
 - Keep local development credentials in the root .env and only application-owned public settings in submission/.env.
 - Resolve runtime knowledge paths inside submission/ without reading parent workspace data.
+- Resolve D37 original documents only relative to NOVA_GUIDELINES_DIR with /opt/nova/guidelines as the default and verify their pinned hashes.
 - Keep runtime Turtle, required JSON schemas, and their manifest inside submission/knowledge/ for both execution and tests.
 - Use package-relative imports within runtime packages and settings.py for file-relative submission data paths.
 - Apply D13 responsibility names and keep Consultation as the sole internal-session coordinator.

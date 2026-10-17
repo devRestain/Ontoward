@@ -1,7 +1,7 @@
 import json
 
 from ..rules.limits import LIMITS
-from .models import ActionSpec, ClinicalValue, EmpathyEvent, InteractionEntry
+from .models import ActionSpec, EmpathyEvent, InteractionEntry
 
 
 class InteractionLifecycle:
@@ -77,15 +77,8 @@ class InteractionLifecycle:
             event.status = "delivered"
             event.request_id = action.request_id
         if action.question.purpose == "education":
-            item = state.case.get(action.question.item_id)
-            if item:
-                item.status = "done"
-                item.value = ClinicalValue(kind="education", text=action.content, status="present")
-                item.source_refs = [entry.id]
-            state.interaction.explained_revision = state.interaction.diagnosis_revision
-            if action.question.item_id.startswith("Education:correction:"):
-                state.interaction.correction_required = False
-                state.interaction.correction_count += 1
+            delivery = next(item for item in state.questions.education if item.id == action.question.item_id)
+            delivery.status, delivery.request_id = "delivered", entry.id
 
     @staticmethod
     def project_context(state, question, concepts, *, expanded=False):

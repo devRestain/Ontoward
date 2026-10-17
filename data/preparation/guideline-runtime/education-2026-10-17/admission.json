@@ -1,0 +1,37 @@
+{
+  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+  "decision": "D37",
+  "diseases": 843,
+  "documents": 821,
+  "independent_clinical_validation": "not_run",
+  "index": {
+    "path": "knowledge/guideline-index.json",
+    "sha256": "f6b7e631c62b06d335bbd8e4001c773b5b1d3dc540c8d29c0f1aa0cf1ba39907"
+  },
+  "manifest_sha256": "65a8e398d2c7d7ea06035f0e0feb9fe10e726a2106a0e1a72e15617f8bcdde4b",
+  "mappings_sha256": "6501f6efa20397b548bbe09721dd14dd102cfc5937a1027b33744f3fd8e51361",
+  "previous_manifest_sha256": "f9451b2bd6c607bf6490b25135ee7043d8981fecf8ae68a038e8a2727ab38b61",
+  "source_assets": [
+    {
+      "path": "submission/knowledge/schema.ttl",
+      "sha256": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89"
+    },
+    {
+      "path": "submission/knowledge/5b44871b970f5e98-vocabulary.ttl",
+      "sha256": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88"
+    },
+    {
+      "path": "submission/knowledge/5b44871b970f5e98-clinical.ttl",
+      "sha256": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a"
+    },
+    {
+      "path": "submission/knowledge/scoring_policy.json",
+      "sha256": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea"
+    },
+    {
+      "path": "submission/knowledge/5b44871b970f5e98-questions.ko.json",
+      "sha256": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687"
+    }
+  ],
+  "source_text_packaged": false
+}

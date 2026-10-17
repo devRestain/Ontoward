@@ -5,6 +5,7 @@ from nova_sdk import NovaError
 
 from .rules.action import ActionResponse, REFUSAL_ERRORS, RESPONSE_FORMAT_ERRORS, content_error, failure_outcome
 from .rules.limits import LIMITS
+from .education import message_bytes, messages
 from .state.models import ActionSpec, Question, WorkflowState
 
 
@@ -19,6 +20,75 @@ class Doctor:
         self.model = model
         self.config = config
         self.budget = budget
+
+    def prepare_education(self, state, client):
+        progress = state.interaction.education
+        if progress.rendering_attempted:
+            return
+        progress.rendering_attempted = True
+        batches, batch = [], []
+        base = {"task": "education_doctor", "fixed_diagnosis": state.case.fixed_diagnosis.model_dump(),
+                "dialogue": state.interaction.dialogue()[-2:]}
+        for sentence in progress.sentences:
+            row = {"id": sentence.id, "text": sentence.text}
+            if message_bytes(messages(self.config.education_doctor_prompt, {**base, "sentences": [*batch, row]})) > LIMITS.education_request_bytes:
+                if batch:
+                    batches.append(batch)
+                batch = []
+            batch.append(row)
+        if batch:
+            batches.append(batch)
+        rendered = {}
+        for batch in batches:
+            remaining = {row["id"]: row for row in batch}
+            errors = {}
+            for attempt in range(2):
+                payload = {**base, "sentences": list(remaining.values()), "validation_errors": errors}
+                request = messages(self.config.education_doctor_prompt, payload)
+                if message_bytes(request) > LIMITS.education_request_bytes:
+                    errors = {ident: "education_doctor_context_overflow" for ident in remaining}
+                    break
+                content = self.model.complete(state, client, role="education_doctor", messages=request)
+                try:
+                    raw = json.loads(content)
+                    if not isinstance(raw, dict) or set(raw) != {"items"} or not isinstance(raw["items"], list):
+                        raise ValueError("invalid render response")
+                    rows = raw["items"]
+                except (TypeError, ValueError):
+                    rows = []
+                errors = {}
+                unknown = any(not isinstance(row, dict) or not isinstance(row.get("id"), str)
+                              or row["id"] not in remaining for row in rows)
+                for ident in list(remaining):
+                    matches = [row for row in rows if isinstance(row, dict) and row.get("id") == ident]
+                    try:
+                        if unknown or len(matches) != 1 or set(matches[0]) != {"id", "utterances"}:
+                            raise ValueError("missing, duplicate or unexpected render ID")
+                        utterances = matches[0]["utterances"]
+                        if not isinstance(utterances, list) or not utterances or any(not isinstance(text, str) for text in utterances):
+                            raise ValueError("expected Korean utterance list")
+                        utterances = [unicodedata.normalize("NFC", text) for text in utterances]
+                        if any(content_error(text) or any(c in text for c in "\r\n?？")
+                               or not any("\uac00" <= c <= "\ud7a3" for c in text) for text in utterances):
+                            raise ValueError("invalid NFC 1-30 Korean statement")
+                        rendered[ident] = utterances
+                        del remaining[ident]
+                    except (TypeError, ValueError) as error:
+                        errors[ident] = str(error)
+                if not remaining or state.interaction.termination or not self.budget.model_allowance(state.session, "education_doctor"):
+                    break
+            progress.rendering_errors.update(errors)
+            if state.interaction.termination:
+                break
+        order = 0
+        for sentence in progress.sentences:
+            for number, text in enumerate(rendered.get(sentence.id, [])):
+                self.questions.register(state, Question(item_id=f"Education:{sentence.id}:{number}",
+                    field=f"P.{sentence.field}", purpose="education", text=text, order=order,
+                    priority=int(sentence.priority == "safety"), plan_sentence_id=sentence.id))
+                order += 1
+            if sentence.id not in rendered:
+                progress.rendering_errors.setdefault(sentence.id, "rendering_not_completed")
 
     def prepare_empathy(self, state, client, event):
         payload = {"task": "empathy", "input": event.quote,

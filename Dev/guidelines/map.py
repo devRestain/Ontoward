@@ -866,9 +866,52 @@ def verify(root, output, *, require_complete=True):
     return result
 
 
+def runtime_export(root, output):
+    output = output_directory(root, output)
+    raw = (output / "mappings.json").read_bytes()
+    verification = load(output / "verification.json")
+    if verification.get("result") != "pass" or verification.get("mappings_sha256") != sha256(raw):
+        raise ValueError("Require the verified complete D30 mapping")
+    runtime, diseases = runtime_inputs(root)
+    manifest_path = root / runtime["path"]
+    manifest = load(manifest_path)
+    inventory = load(output / "inventory.json")
+    if inventory["source_database"]["build_id"] != manifest["build_id"]:
+        raise ValueError("Mapping graph build changed")
+    mappings = json.loads(raw)["diseases"]
+    if len(mappings) != len(diseases) or {m["disease_id"] for m in mappings} != {d["id"] for d in diseases}:
+        raise ValueError("Mapping Disease coverage changed")
+    rows = []
+    for mapping in mappings:
+        selections = []
+        for selection in mapping["selections"]:
+            source = selection["source"]
+            read_lines(root, source)
+            selections.append({**source, **{key: selection[key] for key in
+                ("document_role", "evidence_use", "relation", "scope")}})
+        if not selections:
+            raise ValueError("Require a mapped document for every Disease")
+        rows.append({"disease_id": mapping["disease_id"], "selections": selections})
+    index = {"version": "guideline-runtime-1", "build_id": manifest["build_id"],
+             "mappings_sha256": sha256(raw), "diseases": rows}
+    target = root / "submission/knowledge/guideline-index.json"
+    write(target, json_bytes(index))
+    manifest["guidelines"] = {"path": "knowledge/guideline-index.json", "sha256": sha256(target.read_bytes())}
+    write(manifest_path, json_bytes(manifest))
+    receipt = {"decision": "D37", "build_id": manifest["build_id"], "diseases": len(rows),
+               "documents": len({s["path"] for row in rows for s in row["selections"]}),
+               "mappings_sha256": sha256(raw), "index": manifest["guidelines"],
+               "previous_manifest_sha256": runtime["sha256"],
+               "manifest_sha256": sha256(manifest_path.read_bytes()),
+               "source_assets": runtime["assets"], "source_text_packaged": False,
+               "independent_clinical_validation": "not_run"}
+    save(root / "data/preparation/guideline-runtime/education-2026-10-17/admission.json", receipt)
+    return receipt
+
+
 def main():
     parser = argparse.ArgumentParser(description="Map admitted Diseases to catalog-allowlisted guideline corpus documents")
-    parser.add_argument("command", choices=["prepare", "run", "recover", "export", "verify"])
+    parser.add_argument("command", choices=["prepare", "run", "recover", "export", "verify", "runtime-export"])
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--max-calls", type=int, default=150)
     parser.add_argument("--batch-size", type=int, default=8)
@@ -886,6 +929,8 @@ def main():
         result = export(ROOT, args.output)
     elif args.command == "recover":
         result = recover(ROOT, args.output, round_number=args.recovery_round)
+    elif args.command == "runtime-export":
+        result = runtime_export(ROOT, args.output)
     else:
         result = verify(ROOT, args.output, require_complete=not args.allow_gaps)
     print(json.dumps(result, ensure_ascii=False))

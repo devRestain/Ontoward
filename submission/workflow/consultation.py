@@ -1,5 +1,5 @@
 from .rules.limits import SESSION_ORDER
-from .state.models import WorkflowState
+from .state.models import FixedDiagnosis, WorkflowState
 
 
 class Consultation:
@@ -20,7 +20,7 @@ class Consultation:
             return
         state.session.initialized = True
         self.prepare_session(state)
-        if state.session.current != "Initiation" and state.interaction.needs_clarification:
+        if state.session.current not in {"Initiation", "Education"} and state.interaction.needs_clarification:
             if state.session.questions_prepared:
                 self.planner.prepare_clarification(state, state.interaction.clarification_target)
             self.interactions.consume_clarification(state)
@@ -63,13 +63,24 @@ class Consultation:
     def prepare_education(self, state):
         self.reasoner.select_diagnosis(state)
         if not state.interaction.termination:
-            self.planner.prepare_education(state)
+            self.freeze_diagnosis(state)
+            self.planner.prepare_education(state, self.client)
+            if self.planner.config.education_enabled and not state.interaction.termination:
+                self.doctor.prepare_education(state, self.client)
         return True
+
+    def freeze_diagnosis(self, state):
+        if self.planner.config.education_enabled and not state.case.fixed_diagnosis:
+            state.case.fixed_diagnosis = FixedDiagnosis(kind=state.case.diagnosis_kind,
+                disease_id=state.differential.selected_id, name=state.case.diagnosis,
+                evidence_ids=list(state.case.diagnosis_evidence))
 
     def refresh_after_input(self, state: WorkflowState) -> None:
         if state.interaction.termination:
             return
-        previous = (state.case.diagnosis_kind, state.case.diagnosis)
+        if state.case.fixed_diagnosis:
+            self.interactions.consume_clarification(state)
+            return
         if state.session.current == "ChiefComplaint" and self.planner.open_done(state):
             state.differential.initialized = True
         self.reasoner.refresh_hypotheses(state)
@@ -77,15 +88,7 @@ class Consultation:
         if state.session.current != "Initiation" and interaction.needs_clarification:
             self.planner.prepare_clarification(state, interaction.clarification_target)
             self.interactions.consume_clarification(state)
-        if self.planner.config.education_enabled and state.session.current == "Education" and state.session.initialized:
-            self.reasoner.select_diagnosis(state)
-            if not interaction.termination and previous != (state.case.diagnosis_kind, state.case.diagnosis):
-                interaction.diagnosis_revision += 1
-                if interaction.explained_revision >= 0:
-                    interaction.correction_required = True
-                self.planner.prepare_education(state, replace=True)
-        else:
-            self.planner.replan(state)
+        self.planner.replan(state)
 
     def check_budget(self, state: WorkflowState) -> None:
         decision = self.budget.evaluate(state)
@@ -113,7 +116,7 @@ class Consultation:
         self.planner.select_question(state)
 
     def advance_session(self, state: WorkflowState) -> None:
-        if not state.session.initialized or state.interaction.pending or state.case.unasked(state.session.current):
+        if not state.session.initialized or state.interaction.pending or state.unasked():
             raise ValueError("Cannot advance an unfinished session")
         if not state.session.questions_prepared:
             self.prepare_session(state)
@@ -137,7 +140,11 @@ class Consultation:
             return
         self.reasoner.select_diagnosis(state)
         if not state.interaction.termination:
-            self.planner.prepare_education(state, create_questions=False)
+            self.freeze_diagnosis(state)
+            if self.planner.config.education_enabled:
+                state.session.current = "Education"
+            self.planner.prepare_education(state, self.client)
+            self.questions.discard_unasked(state, {item.id for item in state.questions.education if item.status == "pending"})
             self.writer.build_soap(state)
 
     def repair_submission(self, state: WorkflowState) -> None:

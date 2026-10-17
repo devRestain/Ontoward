@@ -1,3 +1,5 @@
+import json
+
 from nova_sdk import NovaError
 
 from ..rules.action import failure_outcome
@@ -13,15 +15,20 @@ class ModelClient:
 
     def complete(self, state, client, *, role, messages):
         session = state.session
-        if role not in {"gateway", "terminology", "empathy"}:
+        if role not in {"gateway", "terminology", "empathy", "education", "education_doctor"}:
             raise ValueError("Unsupported designated-model role")
-        allowance = self.budget.model_allowance(session)
+        allowance = self.budget.model_allowance(session, role)
+        if role.startswith("education"):
+            size = len(json.dumps(messages, ensure_ascii=False).encode("utf-8"))
+            if size > LIMITS.education_request_bytes or size > session.input_token_limit - session.input_tokens:
+                state.interaction.issues.append(f"{role}_input_budget_exhausted")
+                return None
         if not allowance:
             state.interaction.issues.append(f"{role}_budget_exhausted")
             return None
         request = {"messages": messages, "model": LIMITS.model, "request_id": self.new_request_id(),
                    "max_tokens": allowance,
-                   "reasoning_effort": LIMITS.gateway_reasoning}
+                   "reasoning_effort": "high" if role == "education" else LIMITS.gateway_reasoning}
         exchange = {"role": role, "scope": session.current, "request": request, "attempts": []}
         state.interaction.model_history.append(exchange)
         self.usage.record_model_request(state)

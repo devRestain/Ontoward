@@ -68,3 +68,13 @@ docker compose run --rm --no-deps --pull never -T dev \
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev \
   python -B -m unittest Dev.tests.guidelines.test_mapping
 ```
+
+## D37 런타임 문서 연결 내보내기
+
+완료·검증된 D30 매핑을 현재 그래프 build에 연결한 인덱스로 내보낸다. 이 명령은 모델을 호출하지 않으며 원문과 기존 RDF·문진 자산을 보존한다.
+
+```sh
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B -m Dev.guidelines.map runtime-export --output data/preparation/guideline-mapping/runtime843-2026-10-17
+```
+
+결과는 submission/knowledge/guideline-index.json, manifest의 해시 연결, data/preparation/guideline-runtime/education-2026-10-17/admission.json이다. 가이드라인 원문은 ZIP에 넣지 않고 NOVA_GUIDELINES_DIR 기본 /opt/nova/guidelines 아래에서 상대 경로와 해시로 확인한다. 진단 후 증례별 계획·한국어 안내는 D37 런타임이 소유하며 D30의 준비 검증이나 문서 연결이 임상 품질 검증을 대신하지 않는다.

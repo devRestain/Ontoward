@@ -9,7 +9,7 @@ from .state.models import AssociationMatch, Hypothesis, PatternMatch, ScoreContr
 
 def observation_groups(state: WorkflowState):
     groups = {}
-    for _, item in state.case.entries():
+    for _, item in state.case.current_entries():
         value = item.value
         if item.status != "done" or not item.source_refs or value is None or value.kind not in {"symptom", "finding", "attribute"}:
             continue
@@ -36,11 +36,13 @@ class ClinicalReasoner:
         self.refresh_hypotheses(state)
 
     def refresh_hypotheses(self, state, *, score_context=False, force=False):
+        if state.case.fixed_diagnosis:
+            return
         differential = state.differential
         if not differential.initialized:
             return
         groups = observation_groups(state)
-        contexts = [item for _, item in state.case.entries() if item.status == "done" and item.source_refs
+        contexts = [item for _, item in state.case.current_entries() if item.status == "done" and item.source_refs
                     and item.value and item.value.kind == "context"]
         clinical = [item for group in groups.values() for items in group.values() for item in items] + contexts
         signature = fingerprint(clinical) + ":" + ",".join(sorted(i.id for i in state.case.chief_complaints(confirmed=True)))
@@ -219,6 +221,12 @@ class ClinicalReasoner:
         return [h for h in state.differential.hypotheses if h.evidence_score > 0 and h.score > 0 and h.chief_coverage == 1]
 
     def select_diagnosis(self, state):
+        fixed = state.case.fixed_diagnosis
+        if fixed:
+            state.case.diagnosis_kind, state.case.diagnosis = fixed.kind, fixed.name
+            state.case.diagnosis_evidence = list(fixed.evidence_ids)
+            state.differential.selected_id = fixed.disease_id
+            return
         state.differential.initialized = True
         self.refresh_hypotheses(state, score_context=True)
         if state.interaction.termination:

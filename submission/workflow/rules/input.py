@@ -47,15 +47,56 @@ def fixed_reply(config, state: WorkflowState, text: str, knowledge=None) -> Pars
             subject=question.subject, time_context=question.time_context))])
 
 
+def resolve_destination(fact, state, knowledge):
+    pending = state.interaction.pending
+    value = fact.value
+    if fact.correction and not fact.record_id:
+        if not value.concept_ids or not value.observation_id or not value.episode_id:
+            raise ValueError("Correction requires an explicit observation and episode")
+        matches = [item.id for _, item in state.case.entries() if item.status == "done" and item.value
+                   and state.case.evidence_key(item.value) == state.case.evidence_key(value)]
+        if len(matches) != 1:
+            raise ValueError("Correction requires one existing evidence record")
+        fact.record_id = matches[0]
+    if not fact.record_id and pending:
+        q = pending.question
+        if (q.target_id and q.target_id in value.concept_ids and q.subject == value.subject
+                and q.attribute_id == value.attribute_id and (not q.observation_id or value.observation_id in {None, q.observation_id})
+                and (not q.episode_id or value.episode_id in {None, q.episode_id})
+                and (item := state.case.get(q.item_id)) and item.status == "unasked"):
+            fact.record_id = q.item_id
+    existing = state.case.get(fact.record_id) if fact.record_id else None
+    if existing:
+        fact.field = next(field for field, item in state.case.entries() if item.id == existing.id)
+    elif value.kind == "context" and value.concept_ids:
+        context_type = knowledge.get_context_type(value.concept_ids[0])
+        fact.field = "S.fh" if context_type == "family_history" else (
+            "S.sh" if context_type in {"social_history", "occupational_history", "psychosocial_history", "demographic"} else "S.pmh")
+    elif value.kind == "symptom" and pending:
+        q = pending.question
+        if value.subject == "patient" and value.time_context != "past" and q.purpose == "chief":
+            fact.field = "S.cc"
+        elif q.purpose in {"ros", "open_inquiry"}:
+            fact.field = "S.ros"
+        elif q.purpose == "clarification":
+            fact.field = q.field
+    q = next((q for q in state.questions.questions if q.item_id == fact.record_id), None)
+    if q and value.kind in {"symptom", "finding", "attribute"}:
+        value.observation_id = value.observation_id or q.observation_id or q.item_id
+        value.episode_id = value.episode_id or q.episode_id or value.observation_id
+    return existing, q
+
+
 def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records, allowed):
     pending = state.interaction.pending
     value = fact.value
+    existing, question = resolve_destination(fact, state, knowledge)
     if allowed is not None and not set([*value.concept_ids, *value.values,
             *([value.attribute_id] if value.attribute_id else [])]) <= allowed:
         raise ValueError("Identifier outside supplied vocabulary")
     if not set(fact.context_refs) <= dialogue_ids:
         raise ValueError("Unknown dialogue context reference")
-    if fact.quote not in text or value.text != fact.quote or fact.field.startswith(("A.", "P.")) or fact.field == "O.tests":
+    if not fact.quote.strip() or fact.quote not in text or value.text != fact.quote or fact.field.startswith(("A.", "P.")) or fact.field == "O.tests":
         raise ValueError("Fact is not grounded in an allowed current input")
     if any(detail.quote not in fact.quote or not detail.quote.strip() or not detail.english.strip()
            for detail in value.record_details):
@@ -79,8 +120,18 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
         raise ValueError("Unlinked text requires a record category and reported keywords")
     if fact.field == "O.exam" and (pending is None or pending.question.kind != "EXAM"):
         raise ValueError("Patient speech cannot create examination findings")
+    if fact.field == "O.exam" and existing and existing.status == "done":
+        q = pending.question
+        if (existing.acquisition == "initial" or "initial" in existing.source_refs
+                or not q.target_id or q.target_id not in value.concept_ids
+                or value.attribute_id != q.attribute_id or value.subject != q.subject
+                or q.observation_id and value.observation_id != q.observation_id
+                or q.episode_id and value.episode_id != q.episode_id):
+            raise ValueError("Examination correction requires the same acquisition target and occurrence")
     if value.kind == "finding" and fact.field != "O.exam":
         raise ValueError("Examination findings require an actual examination")
+    if fact.field.startswith("S.") and pending and pending.question.kind == "EXAM" and existing and existing.value:
+        raise ValueError("Examination results cannot correct patient reports")
     if value.kind == "attribute" and not value.attribute_id:
         raise ValueError("Attribute fact requires an attribute")
     if value.kind == "attribute" and value.status in {"present", "uncertain"} and not (value.values or value.measurement):
@@ -90,8 +141,6 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
     if fact.record_id:
         if supplied_records is not None and fact.record_id not in supplied_records:
             raise ValueError("missing_context_record")
-        existing = state.case.get(fact.record_id)
-        question = next((q for q in state.questions.questions if q.item_id == fact.record_id), None)
         if existing is None or (existing.value and existing.value.kind in {"plan", "education"}) or (
             question and question.purpose == "education"
         ):
@@ -104,11 +153,13 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
             or (question.episode_id and value.episode_id not in {None, question.episode_id})
         ):
             raise ValueError("Answer does not match its question target and episode")
-        if previous and previous.kind in {"symptom", "finding", "attribute"} and (
-            value.subject != previous.subject or value.observation_id != previous.observation_id
-            or value.episode_id != previous.episode_id
-        ):
-            raise ValueError("Correction must preserve its observation and episode")
+        if previous and previous.kind in {"symptom", "finding", "attribute", "context"} and (
+                value.kind != previous.kind or value.subject != previous.subject
+                or value.observation_id != previous.observation_id or value.episode_id != previous.episode_id
+                or value.attribute_id != previous.attribute_id or (value.time_context == "past") != (previous.time_context == "past")):
+            raise ValueError("Correction must preserve its evidence type attribute observation and episode")
+        if previous and existing.acquisition in {"SAY", "EXAM"} and pending and existing.acquisition != pending.question.kind:
+            raise ValueError("Correction must preserve its acquisition channel")
     expected_type = {"symptom": "Symptom", "finding": "ExamFinding", "context": "ContextFactor"}
     for concept in value.concept_ids:
         contract = knowledge.questions.get(concept)
@@ -136,8 +187,6 @@ def _validate_fact(fact, state, knowledge, text, dialogue_ids, supplied_records,
     if value.kind == "context" and value.concept_ids:
         context = value.concept_ids[0]
         context_type = knowledge.get_context_type(context)
-        fact.field = "S.fh" if context_type == "family_history" else (
-            "S.sh" if context_type in {"social_history", "occupational_history", "psychosocial_history", "demographic"} else "S.pmh")
         if (context_type == "family_history") != (value.subject == "family"):
             raise ValueError("Context subject does not match its clinical meaning")
 
@@ -174,7 +223,7 @@ def validate_facts(raw, state, knowledge, text, *, dialogue_ids=None, supplied_r
     def observation(value):
         return (value.subject, value.observation_id, value.episode_id)
 
-    anchors = {(*observation(item.value), concept) for _, item in state.case.entries() if item.status == "done" and item.source_refs
+    anchors = {(*observation(item.value), concept) for _, item in state.case.current_entries() if item.status == "done" and item.source_refs
                and item.value and item.value.kind in {"symptom", "finding"} for concept in item.value.concept_ids}
     anchors.update((*observation(f.value), concept) for _, f in accepted if f.value.kind in {"symptom", "finding"}
                    for concept in f.value.concept_ids)

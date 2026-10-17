@@ -13,6 +13,8 @@
 - Apply D18's deletion of pre-v5 and non-SNOMED/BODHI derived data, old seeds, manual translations, prior clinical bundles, approvals, education drafts, and temporary copies.
 - Preserve source packages, ordinary catalog navigation, competition provenance, deletion receipts, and the clean empty v5 base.
 - Keep D30 fresh guideline mappings in preparation/guideline-mapping with original source hashes and model request records; preserve withdrawn education batches as withdrawn and keep document navigation separate from plan extraction and runtime admission.
+- Keep D37 navigation admission in preparation/guideline-runtime and pin the original D30 mapping current graph build source hashes and packaged index.
+- Preserve D20-D23 RDF and interview asset pins while distinguishing case-local generated P from admitted clinical graph assertions.
 - Mark clinical background-only D30 links as background_only with empty P fields and section selections; preserve them as plan-evidence gaps rather than care coverage.
 - Reuse only hash-verified complete raw source custody and clear all previous projection, normalization, and approval records.
 - Ingest the entire supplied International and Korean RF2 Snapshot composition and all eight BODHI-S CSVs.

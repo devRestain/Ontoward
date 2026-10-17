@@ -6,7 +6,7 @@ Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수�
 
 [프로젝트 흐름 지도](Test/atlas.html)는 브라우저에서 직접 여는 개인용 오프라인 안내서다. 전체 구조·다섯 내부 세션·공통 행동 루프·Pattern 추론·다음 질문 선택·지식 준비를 정적 도식으로 설명한다. `Test/atlas.html` 파일을 브라우저로 열면 되며 서버·빌드·패키지 설치는 필요 없다. 2026-10-17의 문서·구현 기준으로 작성했으며 자동 갱신하지 않는다.
 
-D26의 현재 제출 설정은 Education을 pass한다. 교육 행동과 보호 턴을 사용하지 않고 `P.education`을 비운 채 문진·진찰·해석·진단·SOAP·DIAGNOSE 확인까지 진행한다. 교육 검색은 후속 범위이며, 공식 서버 수락과 실제 점수는 별도 검증 대상이다.
+D37의 현재 제출 설정은 진단을 고정한 뒤 Education을 실행한다. Disease에 연결된 가이드라인 원문을 제공 마운트에서 읽고 전체 실제 대화와 함께 Luna high에 전달해 영어 P 계획을 생성한다. Doctor가 NFC 1–30자 한국어로 변환해 남은 공통 턴 안에서 안내하고, 영어 계획을 보존하여 SOAP·DIAGNOSE를 제출한다. 실제 모델 품질·공식 서버 수락·점수는 별도 검증 대상이다.
 
 ## 구조
 
@@ -53,8 +53,12 @@ submission/.env는 **ZIP에 포함하는 공개 실행 설정**이다. 현재 �
 ```dotenv
 ONTOWARD_KNOWLEDGE_MANIFEST=knowledge/manifest.json
 ONTOWARD_PARSER_PROMPT=config/input_parser.txt
+ONTOWARD_TERMINOLOGY_PROMPT=config/medical_terminology.txt
+ONTOWARD_EMPATHY_PROMPT=config/empathy.txt
+ONTOWARD_EDUCATION_PROMPT=config/education.txt
+ONTOWARD_EDUCATION_DOCTOR_PROMPT=config/education_doctor.txt
 ONTOWARD_TEXTS=config/texts.ko.json
-ONTOWARD_EDUCATION_ENABLED=false
+ONTOWARD_EDUCATION_ENABLED=true
 ```
 
 공통 설정을 중복하지 않도록 .env와 settings.py를 유지한다. settings.py가 prepare()에서 이 파일을 읽으며 파일 경로는 settings.py 위치를 기준으로 결정한다. 실행 위치가 바뀌어도 같은 submission/knowledge를 참조한다. 같은 이름의 환경변수가 있으면 그것이 우선하며 manifest 경로는 submission/knowledge, 프롬프트·문구는 submission/config 내부 상대 경로여야 한다. 단순 KEY=VALUE 형식으로 공백 행과 주석을 허용하고 셸 확장·따옴표 처리는 하지 않는다. 공식 토큰·세션은 실행기가 제공하며 이 파일에 넣지 않는다. 새로운 설정을 추가할 때는 코드의 허용 항목과 실제 소비 위치도 함께 추가한다.

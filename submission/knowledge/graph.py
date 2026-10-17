@@ -9,6 +9,7 @@ from string import Formatter
 from pydantic import BaseModel, ConfigDict, Field
 from rdflib import Graph, Namespace, RDF, RDFS, SKOS, URIRef
 from settings import ROOT, knowledge_path
+from .guidelines import GuidelineLibrary
 
 from .conditions import Applicability, AssociationProfile, ExpectedValue, FeatureCondition, FeatureContribution, QuestionTemplate, ReasoningPolicy, ScoringPolicy, numeric_match
 
@@ -40,6 +41,7 @@ class Manifest(BaseModel):
     questions: Asset | None = None
     labels: Asset | None = None
     plans: Asset | None = None
+    guidelines: Asset | None = None
 
 
 class Plan(BaseModel):
@@ -57,6 +59,7 @@ class ClinicalKnowledge:
         self._graph = graph
         self.questions = questions or {}
         self.plans = plans or {}
+        self.guidelines = None
         self.policy = policy or ScoringPolicy.load_default()
         self.reasoning = reasoning or ReasoningPolicy()
         self.labels = labels or {}
@@ -118,6 +121,9 @@ class ClinicalKnowledge:
         knowledge = cls(graph, questions, {key: Plan.model_validate(value) for key, value in raw_plans.items()}, policy, labels, reasoning)
         knowledge.validate_graph()
         knowledge.validate_question_assets()
+        if manifest.guidelines:
+            knowledge.guidelines = GuidelineLibrary.load(read(manifest.guidelines, ".json"),
+                raw_manifest.get("build_id"), {str(node) for node in graph.subjects(RDF.type, OW.Disease)})
         return knowledge
 
     def label(self, concept_id: str, *, language="ko") -> str:

@@ -33,13 +33,46 @@ sh Test/web.sh
 리포트 왼쪽의 내부 세션·턴을 선택하고 다음 내용을 확인한다.
 
 - **대화:** 실제 Doctor 발화·환자 답변·진찰 요청과 결과·거절·전달 미확인 요청.
+- **Note 상태:** 선택 구간의 마지막 관측 상태에서 S·O·A·P의 15개 필드에 저장된 기록과 별도 diagnosis. 기록의 완료 상태(`unasked`·`done`)와 임상 값(`present`·`absent`·`uncertain`·`unknown`), 이번 구간의 추가·변경, 개념 라벨·ID·취득 경로·원문 출처를 확인한다. 값이 없는 기록과 빈 필드도 표시한다.
 - **상태 변화:** 턴과 호출 예산, 추가·변경된 사실, 선택한 행동, 질문 계획, 해석 결과와 수용·거절, 노드별 변경분과 전체 상태.
 - **진단 근거:** 실제 후보 순서, 근거 점수·맥락 가산·모순 감점·주호소 포함률, 선택한 진단과 근거 기록.
 - **모델 호출:** 환자·진찰·Gateway 역할의 실제 messages와 응답, 호출 설정·사용량·오류·복구 이력.
 
 상단에서 최종 진단·SOAP·제출 수신·프로세스 종료와 실행 검사를 펼쳐 볼 수 있다. 시작 실패·시간 초과·중단도 결과로 남고, 부분 로그는 부분 수집으로 표시한다. 이전 실행에 내부 상태 로그가 없으면 기존 대화와 최종 결과만 표시한다. 로그의 원시 JSON과 모델 messages는 상세 영역을 펼칠 때 표시한다.
 
+**마지막 Note 상태 보기**를 누르면 마지막 관측 구간의 Note 탭으로 이동한다. `case.S/O/A/P`는 구조화된 원본 저장 상태이고, `interaction.submission_payload.note`는 그 시점에 실제 생성된 제출 문자열이다. 저장된 모든 기록이 SOAP에 들어가지는 않는다. 정정·상충을 반영한 실제 문구는 생성된 payload에서 확인하고, 최종 수신본과 수신 확인은 상단에서 별도로 확인한다. `case.diagnosis`는 `note.A` 안이 아닌 별도 `diagnosis` 필드에 제출한다. `patient_reports`에 미포함 원문 구간이 기록되어 있으면 S.hpi에 보존할 미구조화 환자 보고로 표시하며 새 구조화 근거를 만들지 않는다.
+
+저장된 실행을 웹에서 열면 현재 뷰어로 `report.html`을 다시 만든다. 테스트·모델 호출을 다시 실행하지 않는다. 이미 별도로 열어 둔 리포트는 새로고침한다. 내부 상태가 없는 과거 실행은 Note를 빈 상태로 추정하지 않고 미수집으로 표시하며 실제 최종 수신본만 제공한다.
+
 웹 서버는 기존 Test 이미지의 Python 표준 라이브러리를 사용하고 프론트엔드는 별도 패키지가 필요 없다. 웹 컨테이너는 출력 폴더만 읽고 쓰며, 작업 요청을 받은 호스트 셸이 기존 실행기를 호출한다. 웹 컨테이너에 Docker 소켓·개발 키·증례 원본 마운트를 전달하지 않는다. 웹 포트는 localhost에만 연결한다. 계정·DB·대기열·자동 재개는 두지 않는다.
+
+## LangSmith에서 검토하는 방법
+
+Docker에서 실행하는 테스트도 LangSmith로 추적할 수 있다. LangGraph는 환경변수로 추적을 활성화할 수 있고, 사용자 정의 SDK 호출은 별도 래퍼나 수동 span이 필요하다. NOVA SDK는 OpenAI 클라이언트가 아니므로 `wrap_openai`만 추가해서 환자·진찰·Gateway가 모두 수집되지는 않는다. [공식 LangGraph 추적 안내](https://docs.langchain.com/langsmith/trace-with-langgraph)
+
+현재 Test에는 LangSmith 전송 코드와 웹 연결 버튼이 없다. 에이전트는 내부 네트워크만 사용하고, Compose는 `LANGSMITH_*`를 전달하지 않는다. 루트 `.env`에 아래 값을 적는 것만으로 현재 테스트가 업로드되지는 않는다. 프로젝트 dev 이미지에는 기존 의존성을 통해 `langsmith 0.14.7`이 설치되어 있음을 확인했으며 이번 변경에서 패키지를 추가하지 않았다.
+
+현재 격리를 유지하려면 **테스트 종료 → 저장된 로그를 별도 Test 프로세스에서 내보내기 → 웹에서 해당 LangSmith trace 링크 열기**가 가장 얇은 연결 방식이다. `agent/trace.jsonl`의 초기 상태·변경분·실제 노드·SDK 요청과 `simulator/model-calls.jsonl`의 요청 ID를 연결하면 실행 → 세션·턴 → 노드 → SDK·역할 호출의 트리를 만들 수 있다. 노드의 입력·출력에 복원된 상태를 넣고 Note와 진단을 확인한다. `scripted` 응답은 실제 LLM 호출로 표시하지 않는다. LangSmith SDK의 `Client.create_run`으로 저장된 시작·종료 시각과 상위 실행 ID를 지정할 수 있다. 이 방식은 권장 연결안이며 내보내기 기능은 아직 구현하지 않았다. [공식 SDK 참조](https://reference.langchain.com/python/langsmith/client/Client/create_run)
+
+연동을 준비할 때는 다음 순서로 설정한다.
+
+1. [LangSmith](https://smith.langchain.com)에 로그인하고 사용할 워크스페이스와 계정 리전을 확인한다.
+2. **Settings → API Keys**에서 trace 기록용 키를 만든다. 해당 배포에서 지원하면 **Tracing Only**를 선택하고 대상 워크스페이스를 지정한다. 개인 도구에서 조회 등도 필요하면 해당 권한의 Personal Access Token을 사용한다.
+3. 추적 프로젝트 이름을 `ontoward-test`처럼 정한다. 키는 루트 `.env`에서만 관리하고 `submission/.env`·브라우저 JavaScript·리포트에 넣지 않는다.
+4. 연동 구현 시에는 네트워크를 사용하는 별도 Test 내보내기 프로세스에만 설정을 전달한다. 내보내기는 대화·Note·모델 messages를 지정한 LangSmith 서비스에 전송하는 동작이므로 로컬 오프라인 실행과 구분한다. 현재 웹 컨테이너나 에이전트에 키·외부 네트워크를 추가할 필요는 없다.
+
+설정 예시는 다음과 같다. 값은 사용자가 발급받은 키와 계정 리전에 맞춘다.
+
+```dotenv
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=<발급받은 LangSmith 키>
+LANGSMITH_PROJECT=ontoward-test
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
+# 키가 여러 워크스페이스에 속하는 경우에만 설정
+# LANGSMITH_WORKSPACE_ID=<대상 Workspace ID>
+```
+
+기본 API 주소는 GCP US다. EU 계정은 `https://eu.api.smith.langchain.com`처럼 해당 리전의 API 주소를 사용한다. 워크스페이스 ID는 키가 여러 워크스페이스에 속할 때 필요하며 Settings의 General에서 확인한다. `LANGSMITH_TRACING`은 자동 추적용 설정이고 수동 `Client.create_run` 내보내기는 명시적인 API 호출이다. NOVA 요청 한도와 LangSmith 로그 전송은 서로 다른 호출이며, 추적을 위해 별도 OpenAI 키를 만들 필요는 없다. [공식 키·리전·워크스페이스 설정](https://docs.langchain.com/langsmith/create-account-api-key), [프로젝트 설정](https://docs.langchain.com/langsmith/log-traces-to-project)
 
 ## 완전 오프라인 검증
 
@@ -54,6 +87,14 @@ sh Test/run.sh C10 scripted
 
 ```sh
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python Test/test_observer.py
+```
+
+Note 뷰어의 동작 검사는 `Test/test_viewer.js`가 실제 뷰어 코드를 텍스트 DOM 대역에서 실행하여 필드 매핑·턴별 상태·완료/임상 상태·출처·Unicode 구간·payload 구분·과거 및 부분 로그·키보드 탭을 확인한다. Node가 이미 있는 프로젝트 extraction 이미지가 준비되어 있으면 다음처럼 네트워크 없이 실행한다. 선택적으로 컨테이너에서 접근 가능한 `report.html` 경로를 인자로 주어 저장된 로그도 확인할 수 있다. 실제 브라우저 렌더링 검증과는 구분한다.
+
+```sh
+docker run --rm --pull never --network none --read-only --entrypoint node \
+  --mount type=bind,src="$(pwd)/Test",dst=/test,readonly \
+  ontology-extraction:local /test/test_viewer.js
 ```
 
 `scripted`는 외부 모델 대신 고정 환자 응답과 제공된 후보의 이름·원천 동의어를 비교하는 일반 대역을 사용한다. 증례별 검색 문자열이나 정답 개념 표는 없다. 이 대역은 한·영 자연어의 의미를 이해하는 실제 Gateway가 아니므로, 완료 여부를 주호소 매핑의 임상 정확도나 NOVA 성능으로 해석하지 않는다. 이전 C01·C03의 실패는 제거된 문자열 매처의 결함으로, 그래프에 필요한 개념이 없다는 증거가 아니다.
@@ -102,3 +143,7 @@ ready 이전에는 증례를 공개하지 않고 준비는 10분, ready 이후 �
 `nonempty_gateway_responses`와 SDK의 `doctor_successes`는 응답 문자열의 존재만 뜻하며 빈 사실 JSON도 포함한다. 실제 수용된 연결은 상태의 `model_history[].parser_result.linked_chief_facts`에서 확인한다. Test 부트스트랩은 원본 진입점을 실행하면서 메모리에서만 그래프와 SDK 경계를 감싸고 원래 함수를 한 번 호출한다. 원본 소스·질문·라우팅·점수·재시도·진단·SOAP는 바꾸지 않으며, 로그 쓰기 실패가 행동을 재실행하지 않는다. 비교용으로 `TEST_TRACE=0 sh Test/run.sh C10 scripted`를 실행하면 관측을 끌 수 있다. 각 실행의 trace_status는 complete·incomplete·not_collected로 구분한다.
 
 공식 점수·독립 임상 검증·실제 NOVA 연결 품질은 이 오프라인 결과로 확인할 수 없다. 재현 근거는 보존된 `assets/nova-devkit/nova_local.py`, `assets/nova-starter/nova_sdk.py`, `assets/nova-competition-2026/`와 [D27](../DECISION_STATE.md#D27)·[D29](../DECISION_STATE.md#D29)·[D31](../DECISION_STATE.md#D31)다.
+
+## Education 실행 자산
+
+D37부터 에이전트에는 기존 submission·출력 마운트와 함께 원본 가이드라인 폴더가 /opt/nova/guidelines에 읽기 전용으로 제공된다. NOVA_GUIDELINES_DIR이 이 경로를 가리키며 문서 자체는 제출 ZIP에 포함하지 않는다. education high 요청과 education_doctor medium 요청의 reasoning 값은 로컬 모델 브리지에서도 보존한다. scripted 모드의 계획·한국어 문장은 프로토콜 검증용 대역으로 실제 모델이나 임상 품질의 증거가 아니다.

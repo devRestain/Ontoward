@@ -8,6 +8,10 @@
     }
   ],
   "clinical_text_status": "patient_actions_prepared",
+  "guidelines": {
+    "path": "knowledge/guideline-index.json",
+    "sha256": "f6b7e631c62b06d335bbd8e4001c773b5b1d3dc540c8d29c0f1aa0cf1ba39907"
+  },
   "independent_clinical_validation": "not_run",
   "normalization_version": "v5.0.4-source-findings",
   "preparation_status": "admitted",

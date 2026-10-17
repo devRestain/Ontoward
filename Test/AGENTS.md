@@ -17,7 +17,8 @@
 - Give patient_script only to the patient role and examination rows only to examiner roles.
 - Exclude model_record files from all runtime inputs and prompts.
 - Keep NOVA_DEV_KEY in the NOVA simulator environment and use only session-free development chat for its model calls.
-- Keep the agent on the internal case network with only submission/ and its own output directory mounted.
+- Keep the agent on the internal case network with submission/ its own output and the read-only organizer guideline corpus mounted.
+- Expose the local guideline corpus at /opt/nova/guidelines through NOVA_GUIDELINES_DIR without adding originals to the submission ZIP.
 - Give the web container only run outputs; exclude the Docker socket development key original case mounts and submission mount.
 - Record model messages only at the existing simulator boundary and SDK bodies without authentication headers or environment dumps.
 
@@ -31,12 +32,15 @@
 - Observe the original run.py through Test-only in-memory graph and SDK wrappers; delegate once and preserve errors retries routing and all clinical decisions.
 - Store the initial state and reversible node changes with actual node names session turn request IDs and source labels; mark missing or partial traces explicitly.
 - Serve completed and failed runs through the same viewer and preserve a self-contained report.html for offline review.
+- Show each observed Note snapshot with all fifteen case fields separate diagnosis completion and value statuses source links and the actual generated SOAP payload; never infer missing state or rerun clinical logic for display.
+- Refresh saved report HTML from preserved logs when opened; keep LangSmith setup guidance distinct from an implemented exporter or authorized external upload.
 - Use the separate compose.nova.yaml overlay for explicitly scoped NOVA execution.
 - Preserve each run in a fresh root Tmp/test-evaluator directory and disable automatic resumption.
 - Preserve request identity, completed responses, refused turns, failed requests, and final submission receipts.
 - Preserve actual Gateway request bodies and responses in simulator output so transmitted candidates can be audited without exposing credentials.
 - Keep the scripted Gateway case-independent and limited to supplied source names and aliases; do not add case-to-concept fixtures or clinical synonym tables.
 - Handle D34 terminology and empathy request tasks in scripted doubles without adding clinical semantics or treating fixture responses as model-quality evidence.
+- Handle D37 education and education_doctor protocol fixtures and forward the requested reasoning effort through the model bridge.
 
 ## Evidence
 

@@ -13,6 +13,7 @@ SOAPField = Literal[
     "S.cc", "S.hpi", "S.pmh", "S.fh", "S.sh", "S.ros", "O.exam", "O.tests",
     "A.evidence", "A.differential", "P.tests", "P.treatment", "P.disposition", "P.follow_up", "P.education",
 ]
+PlanField = Literal["tests", "treatment", "disposition", "follow_up", "education"]
 
 
 class Model(BaseModel):
@@ -57,6 +58,14 @@ class RecordItem(Model):
     value: ClinicalValue | None = None
     source_refs: list[str] = Field(default_factory=list)
     context_refs: list[str] = Field(default_factory=list)
+    acquisition: Literal["initial", "SAY", "EXAM"] | None = None
+
+
+class FixedDiagnosis(Model):
+    kind: Literal["disease", "symptom"]
+    disease_id: str | None = None
+    name: str
+    evidence_ids: list[str] = Field(default_factory=list)
 
 
 class CaseState(Model):
@@ -67,6 +76,7 @@ class CaseState(Model):
     diagnosis: str | None = None
     diagnosis_kind: Literal["disease", "symptom"] | None = None
     diagnosis_evidence: list[str] = Field(default_factory=list)
+    fixed_diagnosis: FixedDiagnosis | None = None
     _locations: dict[str, tuple[str, str]] = PrivateAttr(default_factory=dict)
 
     @model_validator(mode="after")
@@ -110,9 +120,43 @@ class CaseState(Model):
     def unasked(self, scope: SessionName) -> list[RecordItem]:
         return [item for _, item in self.entries() if item.scope == scope and item.status == "unasked"]
 
+    @staticmethod
+    def evidence_key(value, target=None):
+        return (value.subject, value.observation_id, value.episode_id,
+                target if target is not None else tuple(sorted(value.concept_ids)),
+                value.attribute_id, value.time_context == "past")
+
+    def current_entries(self):
+        entries = list(self.entries())
+        groups = {}
+        for _, item in entries:
+            value = item.value
+            if (item.status != "done" or not item.source_refs or value is None
+                    or value.kind not in {"symptom", "finding", "attribute", "context"}):
+                continue
+            for target in value.concept_ids:
+                key = self.evidence_key(value, target)
+                # Missing occurrence IDs never join independent symptom episodes.
+                if value.kind != "context" and (not value.observation_id or not value.episode_id):
+                    key += (item.id,)
+                groups.setdefault(key, []).append(item)
+        conflicts = set()
+        for items in groups.values():
+            definite = [i for i in items if i.value.status in {"present", "absent"} and len(i.value.concept_ids) == 1]
+            statuses = {i.value.status for i in definite}
+            attributes = {(tuple(sorted(i.value.values)), i.value.measurement.model_dump_json() if i.value.measurement else None)
+                          for i in definite if i.value.kind == "attribute" and i.value.status == "present"}
+            if len(statuses) > 1 or len(attributes) > 1:
+                conflicts.update(i.id for i in items)
+        for field, item in entries:
+            if item.id in conflicts:
+                item = item.model_copy(deep=True)
+                item.value.status = "uncertain"
+            yield field, item
+
     def chief_complaints(self, *, confirmed=False) -> list[RecordItem]:
         statuses = {"present"} if confirmed else {"present", "uncertain"}
-        return [item for item in self.S["cc"].values() if item.status == "done" and item.source_refs
+        return [item for field, item in self.current_entries() if field == "S.cc" and item.status == "done" and item.source_refs
                 and item.value and item.value.kind == "symptom" and item.value.subject == "patient"
                 and item.value.time_context != "past" and item.value.status in statuses]
 
@@ -233,6 +277,7 @@ class Question(Model):
     affirmative_presence: bool = False
     answer_type: Literal["presence", "category", "quantity", "duration", "free_text"] = "free_text"
     selection_value: list[float] = Field(default_factory=list)
+    plan_sentence_id: str | None = None
 
     def semantic_key(self):
         import json
@@ -240,8 +285,20 @@ class Question(Model):
                            self.observation_id, self.episode_id], separators=(",", ":"))
 
 
+class EducationDelivery(Model):
+    question: Question
+    status: Literal["pending", "delivered", "undelivered"] = "pending"
+    reason: str | None = None
+    request_id: str | None = None
+
+    @property
+    def id(self):
+        return self.question.item_id
+
+
 class QuestionPlan(Model):
     questions: list[Question] = Field(default_factory=list)
+    education: list[EducationDelivery] = Field(default_factory=list)
     last_planned_revision: int = -1
     last_planned_scope: str = ""
     ros_targets: list[str] = Field(default_factory=list)
@@ -253,7 +310,7 @@ class ActionSpec(Model):
     question: Question
     content: str
     request_id: str
-    render_source: Literal["prepared", "empathy"] = "prepared"
+    render_source: Literal["prepared", "empathy", "education"] = "prepared"
     empathy_source_id: str | None = None
     ready: bool = False
 
@@ -281,6 +338,41 @@ class EmpathyEvent(EmpathySignal):
     request_id: str | None = None
 
 
+class PatientReport(Model):
+    source_id: str
+    text: str
+    covered_spans: list[tuple[int, int]] = Field(default_factory=list)
+    uncovered_spans: list[tuple[int, int]] = Field(default_factory=list)
+
+
+class SourceReference(Model):
+    document_id: str
+    quote: str = Field(min_length=1)
+    start_byte: int = Field(ge=0)
+    end_byte: int = Field(gt=0)
+
+
+class PlanSentence(Model):
+    id: str
+    field: PlanField
+    text: str = Field(min_length=1)
+    basis: Literal["guideline", "model_knowledge", "mixed"]
+    references: list[SourceReference] = Field(default_factory=list)
+    priority: Literal["safety", "routine"] = "routine"
+
+
+class EducationProgress(Model):
+    attempted: bool = False
+    status: Literal["not_started", "complete", "partial", "failed", "disabled"] = "not_started"
+    repairs: int = Field(default=0, ge=0, le=1)
+    sentences: list[PlanSentence] = Field(default_factory=list)
+    documents: list[dict[str, object]] = Field(default_factory=list)
+    notes: list[dict[str, object]] = Field(default_factory=list)
+    errors: list[str] = Field(default_factory=list)
+    rendering_attempted: bool = False
+    rendering_errors: dict[str, str] = Field(default_factory=dict)
+
+
 class InteractionState(Model):
     model_history: list[dict[str, object]] = Field(default_factory=list)
     history: list[InteractionEntry] = Field(default_factory=list)
@@ -300,10 +392,8 @@ class InteractionState(Model):
     parse_rejections: list[dict[str, object]] = Field(default_factory=list)
     parse_recoveries: list[dict[str, object]] = Field(default_factory=list)
     empathy_events: list[EmpathyEvent] = Field(default_factory=list)
-    diagnosis_revision: int = 0
-    explained_revision: int = -1
-    correction_required: bool = False
-    correction_count: int = 0
+    patient_reports: list[PatientReport] = Field(default_factory=list)
+    education: EducationProgress = Field(default_factory=EducationProgress)
 
     def dialogue(self) -> list[dict[str, object]]:
         turns = []
@@ -324,6 +414,17 @@ class WorkflowState(Model):
     questions: QuestionPlan = Field(default_factory=QuestionPlan)
     interaction: InteractionState = Field(default_factory=InteractionState)
 
+    def unasked(self, scope=None):
+        scope = scope or self.session.current
+        return [*self.case.unasked(scope), *([item for item in self.questions.education
+            if item.status == "pending"] if scope == "Education" else [])]
+
+    def pending_questions(self):
+        clinical = [q for q in self.questions.questions if (item := self.case.get(q.item_id))
+                    and item.scope == self.session.current and item.status == "unasked"]
+        return clinical + ([item.question for item in self.questions.education if item.status == "pending"]
+                           if self.session.current == "Education" else [])
+
     def stop(self, outcome: Literal["failed", "unknown", "expired", "closed"], reason: str) -> None:
         self.interaction.termination = outcome
         self.interaction.reason = reason
@@ -336,6 +437,7 @@ class Fact(Model):
     record_id: str | None = None
     context_refs: list[str] = Field(default_factory=list)
     repair_of: int | None = Field(default=None, ge=0)
+    correction: bool = False
 
 
 LookupTerm = Annotated[str, Field(min_length=1, max_length=80)]

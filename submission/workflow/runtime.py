@@ -29,7 +29,10 @@ class PreparedResources:
 
 def prepare() -> PreparedResources:
     config = TextConfig.load()
-    return PreparedResources(ClinicalKnowledge.load(knowledge_manifest()), config)
+    knowledge = ClinicalKnowledge.load(knowledge_manifest())
+    if config.education_enabled and knowledge.guidelines is None:
+        raise ValueError("Education requires a manifest-pinned guideline index")
+    return PreparedResources(knowledge, config)
 
 
 def assemble_consultation(client, resources, *, now=utc_now, sleep=None, new_request_id=None):
@@ -43,7 +46,7 @@ def assemble_consultation(client, resources, *, now=utc_now, sleep=None, new_req
     model = ModelClient(executor, budget, usage, new_request_id)
     interpreter = InputInterpreter(resources.config, model, questions, interactions)
     doctor = Doctor(executor, nova_session, usage, questions, interactions, new_request_id, model, resources.config, budget)
-    planner = InterviewPlanner(resources.knowledge, resources.config, questions, interactions, budget, usage)
+    planner = InterviewPlanner(resources.knowledge, resources.config, questions, interactions, budget, usage, model)
     reasoner = ClinicalReasoner(resources.knowledge)
     writer = SubmissionWriter(client, resources.knowledge, resources.config, executor, nova_session, interactions, new_request_id)
     return Consultation(client, interpreter, doctor, planner, reasoner, writer, nova_session, budget, questions, interactions)

@@ -65,6 +65,8 @@ def capture(name, options, observed, bad_path=False):
                     raise
             setattr(client, method, invoke)
         resources = fixture.resources()
+        if name == 'education':
+            resources = fixture.resources(config=fixture.CONFIG.model_copy(update={'education_enabled': True}))
         consultation = fixture.assemble_consultation(client, resources, now=lambda: fixed,
             sleep=delays.append, new_request_id=lambda: str(UUID(int=next(ids))))
         trace_path = OUTPUT / (name + ('.missing/trace.jsonl' if bad_path else '.jsonl'))
@@ -108,7 +110,7 @@ def reconstructed(path):
 def main():
     results = {}
     normal = None
-    for name, options in comparison.SCENARIOS.items():
+    for name, options in {**comparison.SCENARIOS, 'education': {}}.items():
         baseline, _ = capture(name, options, False)
         observed, path = capture(name, options, True)
         difference = comparison.first_difference(baseline, observed)

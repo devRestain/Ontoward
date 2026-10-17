@@ -149,6 +149,26 @@ class WebTests(unittest.TestCase):
         self.assertEqual(json.loads(raw)['transcript']['initial']['opening'], attack)
         self.assertEqual(packed['trace']['status'], 'not_collected')
 
+    def test_opening_saved_report_refreshes_note_view_without_running_case(self):
+        run = self.start()
+        path = self.runs.directory(run['id'])
+        self.runs.worker('finish', [run['id']])
+        write(path / 'report.html', 'old report')
+        (path / 'simulator').mkdir()
+        record = {'note': {'S': {'cc': '</script><script>patient()</script>'}}, 'diagnosis': 'saved diagnosis'}
+        write(path / 'simulator/record.json', json.dumps(record))
+        status_before = (path / 'status').read_bytes()
+        status, html = self.request(f"/runs/{run['id']}/report.html")
+        self.assertEqual(status, 200)
+        packed = json.loads(re.search(r'id="report-data">(.*?)</script>', html, re.S).group(1))
+        self.assertEqual(packed['record'], record)
+        self.assertEqual(packed['trace']['status'], 'not_collected')
+        self.assertNotIn(record['note']['S']['cc'], html)
+        self.assertEqual((path / 'status').read_bytes(), status_before)
+        self.assertFalse((self.runs.control / 'request').exists())
+        self.assertFalse(self.runs.lock.exists())
+        self.assertEqual((path / 'report.html').read_text(), html)
+
     def test_partial_trace_keeps_valid_events_and_marks_missing_tail(self):
         run = self.start()
         path = self.runs.directory(run['id'])

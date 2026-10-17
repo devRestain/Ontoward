@@ -15,8 +15,9 @@
 - Select clinical Markdown from catalog entries rather than a broad glob that would ingest local `AGENTS.md` files.
 - Apply D18: preserve original documents and catalogs and exclude guideline-derived ontology and education artifacts from the source-only rebuild.
 - Do not resume removed extraction batches or education drafts without a new user request.
-- Use `NOVA_GUIDELINES_DIR` as a provided source-location contract without requiring guideline-text retrieval during consultation.
-- Extract and review clinical relations before submission rather than during case-independent prepare() or consultation.
+- Use NOVA_GUIDELINES_DIR with the D37 document-relative index for read-only original-text retrieval after diagnosis is fixed.
+- Keep ontology relation extraction before submission and permit only D37 case-local management generation during Education.
+- Exclude original documents and transformed source copies from the submission ZIP while preserving per-document source metadata and hashes.
 - Preserve source document and section references and applicability with every extracted clinical relation.
 - Pin exact source hashes heading paths and inclusive line ranges for education excerpts and retain complete selected section subtrees.
 - Treat catalog document types as navigation metadata and verify the actual clinical role population and converted body before selecting a source section.

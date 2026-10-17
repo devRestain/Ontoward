@@ -4,23 +4,25 @@ import json
 from knowledge.graph import ClinicalKnowledge, OW, Plan
 
 from .clinical_reasoner import ClinicalReasoner
+from .education import generate_plan
 from .state.models import ClinicalValue, Question, RecordItem, WorkflowState
 from .rules.limits import LIMITS
 
 
 class InterviewPlanner:
-    def __init__(self, knowledge: ClinicalKnowledge, config, questions, interactions, budget, usage):
+    def __init__(self, knowledge: ClinicalKnowledge, config, questions, interactions, budget, usage, model):
         self.knowledge = knowledge
         self.config = config
         self.questions = questions
         self.interactions = interactions
         self.budget = budget
         self.usage = usage
+        self.model = model
 
     @staticmethod
     def has_resolved_evidence(state: WorkflowState, target, attribute=None, observation=None, episode=None,
                               subject="patient", time_context=None):
-        values = [item.value for _, item in state.case.entries() if item.status == "done" and item.source_refs
+        values = [item.value for _, item in state.case.current_entries() if item.status == "done" and item.source_refs
                   and item.value and target in item.value.concept_ids and item.value.attribute_id == attribute
                   and item.value.subject == subject
                   and (time_context is not None or item.value.kind == "context" or item.value.time_context != "past")
@@ -154,7 +156,7 @@ class InterviewPlanner:
         self.questions.register(state, Question(item_id=ident, **spec, order=order, priority=priority, selection_value=selection_value))
 
     def _occurrences(self, state, target):
-        values = [item.value for _, item in state.case.entries() if item.status == "done" and item.source_refs and item.value
+        values = [item.value for _, item in state.case.current_entries() if item.status == "done" and item.source_refs and item.value
                   and item.value.kind in {"symptom", "finding"} and target in item.value.concept_ids
                   and item.value.subject == "patient" and item.value.time_context != "past"]
         return list({(v.observation_id, v.episode_id, v.status, len(v.concept_ids)) for v in values})
@@ -165,7 +167,7 @@ class InterviewPlanner:
         outcomes, unlock, typicality = {}, 0, 0
         leading = next(iter(current), None)
         if spec["purpose"] == "context":
-            present = {(concept, item.value.subject) for _, item in state.case.entries()
+            present = {(concept, item.value.subject) for _, item in state.case.current_entries()
                        if item.status == "done" and item.source_refs and item.value
                        and item.value.kind == "context" and item.value.status == "present"
                        for concept in item.value.concept_ids}
@@ -351,13 +353,13 @@ class InterviewPlanner:
     def prepare_differential_questions(self, state):
         self.replan(state, force=True)
 
-    def prepare_education(self, state, *, replace=False, create_questions=True):
-        if not self.config.education_enabled and "education_skipped" not in state.interaction.issues:
+    def prepare_education(self, state, client):
+        if self.config.education_enabled:
+            generate_plan(state, client, self.knowledge, self.config, self.model)
+            return
+        state.interaction.education.status = "disabled"
+        if "education_skipped" not in state.interaction.issues:
             state.interaction.issues.append("education_skipped")
-        remaining = {q.item_id for q in state.questions.questions if q.purpose == "education"
-                     and (item := state.case.get(q.item_id)) and item.status == "unasked"}
-        if replace:
-            self.questions.discard_unasked(state, remaining)
         selected = state.differential.selected_id
         if state.case.diagnosis_kind == "symptom":
             plan = Plan(education=[self.config.texts.symptom_education])
@@ -379,28 +381,14 @@ class InterviewPlanner:
             if text:
                 state.case.put(f"P.{field}", RecordItem(id=item_id, scope="Education", status="done",
                     value=ClinicalValue(kind="plan", text=text, status="present", concept_ids=[selected] if selected else [])))
-        if not create_questions or not self.config.education_enabled:
-            return
-        texts = list(plan.education) or [self.config.texts.provisional_education]
-        delivered = {entry.request.get("content") for entry in state.interaction.history
-                     if entry.delivered and entry.question and entry.question.purpose == "education"}
-        texts = [text for text in texts if text not in delivered]
-        correction = state.interaction.correction_required
-        capacity = min(self.budget.action_capacity(state), self.budget.calls_left(state.session))
-        if correction:
-            texts.insert(0, self.config.texts.correction_education)
-        if capacity >= 2 and not correction:
-            reserve = int(capacity >= 3)
-            texts = texts[:max(0, capacity - reserve - 1)] + [self.config.texts.understanding_question]
-        for order, text in enumerate(texts[:capacity]):
-            correction = text == self.config.texts.correction_education
-            prefix = "correction" if correction else "explanation"
-            text_key = hashlib.sha256(text.encode()).hexdigest()[:12]
-            ident = f"Education:{prefix}:{state.interaction.diagnosis_revision}:{selected or 'symptom'}:{text_key}"
-            self.questions.register(state, Question(item_id=ident, field="P.education", purpose="education",
-                text=text, order=order, priority=LIMITS.clarification_priority if correction else capacity - order))
 
     def select_question(self, state):
+        if state.session.current == "Education":
+            questions = state.pending_questions()
+            if questions:
+                self.interactions.select_question(state, min(questions, key=lambda q: (-q.priority, q.order, q.item_id)))
+                state.interaction.selected.render_source = "education"
+            return
         unnecessary = {q.item_id for q in state.questions.questions
                        if (item := state.case.get(q.item_id)) and item.scope == state.session.current
                        and item.status == "unasked" and not self._useful(state, q.purpose, q.selection_value)}

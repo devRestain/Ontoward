@@ -31,7 +31,7 @@ class NovaModels:
         self.calls, self.stopped = 0, None
         self.lock = threading.Lock()
 
-    def complete(self, role, messages, max_tokens, request_id):
+    def complete(self, role, messages, max_tokens, request_id, *, reasoning_effort='medium'):
         with self.lock:
             if self.stopped:
                 raise NovaError(self.stopped, 503)
@@ -40,11 +40,11 @@ class NovaModels:
                 raise NovaError(self.stopped, 429)
             self.calls += 1
             entry = {'number': self.calls, 'request_id': request_id, 'role': role, 'model': MODEL,
-                     'max_tokens': max_tokens, 'status': 'reserved'}
+                     'max_tokens': max_tokens, 'reasoning_effort': reasoning_effort, 'status': 'reserved'}
             self.record(entry)
         try:
             # A local case ID must never become an official/sample NOVA session.
-            response = self.client.chat(messages, model=MODEL, reasoning_effort='medium',
+            response = self.client.chat(messages, model=MODEL, reasoning_effort=reasoning_effort,
                                         max_tokens=max_tokens, request_id=request_id)
         except NovaError as error:
             self.stopped = error.code
@@ -64,9 +64,19 @@ class ScriptedModels:
     def __init__(self, case):
         self.case, self.calls = case, 0
 
-    def complete(self, role, messages, max_tokens, request_id):
+    def complete(self, role, messages, max_tokens, request_id, *, reasoning_effort='medium'):
         self.calls += 1
         payload = json.loads(messages[-1]['content'])
+        if payload.get('task') == 'education':
+            phase = payload.get('repair_phase', payload.get('phase'))
+            if phase in {'read', 'combine'}:
+                return completion(json.dumps({'notes': []}))
+            return completion(json.dumps({'P': {field: [{'text': f'Review the {field.replace("_", " ")} plan with the patient.',
+                'basis': 'model_knowledge', 'references': [], 'priority': 'routine'}]
+                for field in ('tests', 'treatment', 'disposition', 'follow_up', 'education')}}))
+        if payload.get('task') == 'education_doctor':
+            return completion(json.dumps({'items': [{'id': row['id'], 'utterances': ['진료 계획을 함께 확인해요.']}
+                for row in payload['sentences']]}, ensure_ascii=False))
         if role == 'patient':
             utterance = payload['utterance']
             text = self.case['start_information']['opening'] if '불편' in utterance else '모르겠어요'

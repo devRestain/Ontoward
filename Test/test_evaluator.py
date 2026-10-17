@@ -21,7 +21,7 @@ class Replies:
     def __init__(self, *values):
         self.values, self.calls, self.roles = deque(values), 0, []
 
-    def complete(self, role, messages, max_tokens, request_id):
+    def complete(self, role, messages, max_tokens, request_id, *, reasoning_effort='medium'):
         self.calls += 1
         self.roles.append((role, messages))
         value = self.values.popleft()
@@ -107,7 +107,7 @@ class EvaluatorTests(unittest.TestCase):
 
     def test_pending_request_has_no_duplicate_effect(self):
         entered, release = threading.Event(), threading.Event()
-        def blocking(*args):
+        def blocking(*args, **kwargs):
             entered.set()
             release.wait(2)
             return completion('{"content":"네","effective_content":"괜찮으세요?"}')
@@ -190,6 +190,23 @@ class EvaluatorTests(unittest.TestCase):
                                       model='other')[1]['error']['code'], 'MODEL_NOT_ALLOWED')
         self.assertEqual(self.models.calls, 0)
 
+    def test_education_reasoning_reaches_the_nova_sdk_and_shares_case_usage(self):
+        models = NovaModels('https://nova.snubhai.org', 'test-key', self.temp.name, 2)
+        self.evaluation.models = models
+        with patch.object(models.client, '_request', return_value=completion('{"P":{}}')) as remote:
+            status, _ = self.request('/v1/chat/completions', session_id=self.evaluation.session_id,
+                model=MODEL, reasoning_effort='high', max_tokens=8000,
+                messages=[{'role': 'user', 'content': json.dumps({'task': 'education', 'phase': 'direct'})}])
+            self.assertEqual(status, 200)
+            body = remote.call_args.args[2]
+            self.assertEqual(body['reasoning_effort'], 'high')
+            self.assertEqual(body['max_tokens'], 8000)
+            self.assertNotIn('session_id', body)
+        self.assertEqual(self.evaluation.doctor_calls, 1)
+        self.assertEqual(self.evaluation.turns, 0)
+        row = json.loads((Path(self.temp.name) / 'model-calls.jsonl').read_text().splitlines()[0])
+        self.assertEqual(row['role'], 'education')
+
     def test_missing_process_evidence_is_failure(self):
         with redirect_stdout(io.StringIO()):
             self.assertEqual(report(self.temp.name), 1)
@@ -199,7 +216,7 @@ class EvaluatorTests(unittest.TestCase):
         self.assertFalse(result['checks']['no_development_key_in_agent'])
 
     def test_returned_usage_over_budget_is_not_success(self):
-        self.models.complete = lambda *args: completion('ok', prompt_tokens=500001)
+        self.models.complete = lambda *args, **kwargs: completion('ok', prompt_tokens=500001)
         self.assertEqual(self.chat()[1]['error']['code'], 'MODEL_TOKEN_BUDGET')
         self.assertEqual(self.evaluation.doctor_successes, 0)
         self.assertEqual(self.evaluation.input_tokens, 500001)

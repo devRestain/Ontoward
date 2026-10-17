@@ -60,6 +60,8 @@ class TextConfig(BaseModel):
     parser_prompt: str
     terminology_prompt: str
     empathy_prompt: str
+    education_prompt: str
+    education_doctor_prompt: str
     texts: Texts
     education_enabled: bool = False
 
@@ -68,14 +70,16 @@ class TextConfig(BaseModel):
         prompt = configured_path("ONTOWARD_PARSER_PROMPT", "config").read_text(encoding="utf-8").strip()
         terminology = configured_path("ONTOWARD_TERMINOLOGY_PROMPT", "config").read_text(encoding="utf-8").strip()
         empathy = configured_path("ONTOWARD_EMPATHY_PROMPT", "config").read_text(encoding="utf-8").strip()
+        education = configured_path("ONTOWARD_EDUCATION_PROMPT", "config").read_text(encoding="utf-8").strip()
+        education_doctor = configured_path("ONTOWARD_EDUCATION_DOCTOR_PROMPT", "config").read_text(encoding="utf-8").strip()
         texts = Texts.model_validate_json(configured_path("ONTOWARD_TEXTS", "config").read_text(encoding="utf-8"))
-        if not all((prompt, terminology, empathy)) or set(texts.status_labels) != {"present", "absent", "uncertain", "unknown"}:
+        if not all((prompt, terminology, empathy, education, education_doctor)) or set(texts.status_labels) != {"present", "absent", "uncertain", "unknown"}:
             raise ValueError("Missing parser prompt or clinical status labels")
         if (set(texts.subject_labels) != {"patient", "family"} or set(texts.time_labels) != {"current", "past", "unspecified"}
                 or set(texts.operator_labels) != {"eq", "lt", "le", "gt", "ge"}):
             raise ValueError("Missing clinical context or numeric labels")
         if (not {"cc", "hpi", "pain", "exam", "vitals", "tests", "treatment", "disposition", "follow_up",
-                 "education", "unknown", "unmapped"} <= texts.soap_labels.keys()
+                 "education", "unknown", "unmapped", "patient_report"} <= texts.soap_labels.keys()
                 or "TimeSinceOnset" not in texts.attribute_labels
                 or any(not label.strip() for labels in (texts.soap_labels, texts.attribute_labels, texts.record_labels)
                        for label in labels.values())):
@@ -107,4 +111,5 @@ class TextConfig(BaseModel):
         if any(content_error(text) for text in texts.clarification_questions.values()):
             raise ValueError("Invalid prepared clarification")
         return cls(parser_prompt=prompt, terminology_prompt=terminology, empathy_prompt=empathy,
+                   education_prompt=education, education_doctor_prompt=education_doctor,
                    texts=texts, education_enabled=education_enabled())

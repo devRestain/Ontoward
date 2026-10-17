@@ -111,6 +111,90 @@ function statePanel(group,before,after){
   root.append(jsonDetail('세션별 사용량과 전체 설정',next),jsonDetail('노드별 상태 변경분',group.events.filter(row=>row.patch)),jsonDetail('전체 상태 · 턴 전',before),jsonDetail('전체 상태 · 턴 후',after));
   return root;
 }
+const noteFields={
+  S:{cc:'주호소',hpi:'현병력',pmh:'과거력',fh:'가족력',sh:'사회력',ros:'계통 문진'},
+  O:{exam:'진찰',tests:'검사'},
+  A:{evidence:'판단 근거',differential:'감별 진단'},
+  P:{tests:'추가 검사',treatment:'치료',disposition:'처치 결정',follow_up:'추적',education:'환자 교육'}
+};
+const noteNames={S:'주관적 정보',O:'객관적 정보',A:'판단',P:'계획'};
+function soapNote(title,payload){
+  const box=el('details',null,'note-payload');box.append(el('summary',title));
+  box.append(kv([['diagnosis',payload.diagnosis??'미설정']]));
+  for(const [section,fields] of Object.entries(noteFields)){
+    const block=el('section',null,'record-block');block.append(el('h4',`${section} · ${noteNames[section]}`));
+    for(const [field,name] of Object.entries(fields)){
+      const value=payload.note?.[section]?.[field];
+      block.append(el('strong',`${section}.${field} · ${name}`),el('p',value===undefined?'(필드 미수집)':value===''?'(빈 문자열)':value,'note-text'));
+    }box.append(block);
+  }
+  box.append(jsonDetail('SOAP payload 원본',payload));return box;
+}
+function noteRecord(item,before,state){
+  const card=el('article',null,'note-record');
+  card.append(el('strong',item.value?.text||item.id));
+  const status=el('div',null,'note-status');
+  status.append(el('span',`${{done:'완료',unasked:'미질문'}[item.status]||'미수집'} · ${item.status??'—'}`,'badge'));
+  if(item.value){const value=item.value.status;status.append(el('span',`${{present:'양성',absent:'음성',uncertain:'불확실',unknown:'미확인'}[value]||'미수집'} · ${value??'—'}`,`badge ${value==='uncertain'||value==='unknown'?'warn':''}`));}
+  else status.append(el('span','값 미설정','badge'));
+  if(JSON.stringify(before)!==JSON.stringify(item))status.append(el('span',before?'이 구간에서 변경':'이 구간에서 추가','badge good'));
+  card.append(status,note(`기록 ID: ${item.id} · 내부 세션: ${scopes[item.scope]||item.scope||'미수집'}`));
+  const value=item.value;
+  card.append(kv([['취득 경로 · acquisition',item.acquisition??'미설정 / 미수집'],
+    ...(value?[['값 종류 · kind',value.kind],['주체 / 시점',`${value.subject??'—'} / ${value.time_context??'—'}`],
+    ['개념 · concept_ids',(value.concept_ids||[]).map(labeled).join('\n')||'없음'],
+    ['관찰 / 에피소드',`${value.observation_id??'—'} / ${value.episode_id??'—'}`]]:[])]));
+  if(value?.attribute_id)card.append(kv([['속성',labeled(value.attribute_id)],['속성 값',(value.values||[]).map(labeled).join('\n')||'없음']]));
+  if(value?.measurement)card.append(jsonDetail('수치 · 단위 · 범위',value.measurement));
+  if(value?.record_category)card.append(note(`의무기록 범주 · ${value.record_category}`));
+  for(const detail of value?.record_details||[]){card.append(el('p',detail.english,'note-text'),el('blockquote',detail.quote,'note-quote'));}
+  if(item.source_refs?.length){card.append(note('원문 출처 · source_refs'));evidence(card,item.source_refs,state);}
+  if(item.context_refs?.length){card.append(note('해석 문맥 · context_refs'));evidence(card,item.context_refs,state);}
+  card.append(jsonDetail('기록 원본 · 상태와 연결',item));return card;
+}
+function notePanel(group,before,after){
+  const root=panel('Note 상태 · S / O / A / P / diagnosis');
+  if(!after?.case){
+    root.append(note('이 실행에는 턴별 Note 내부 상태가 수집되지 않았습니다. 빈 Note로 추정하지 않습니다.'));
+    if(data.record.note)root.append(soapNote('최종 수신된 SOAP · 선택 턴의 상태가 아님',data.record));
+    return root;
+  }
+  const last=[...group.events].reverse().find(row=>row.kind==='node_end'||row.kind==='node_error'||row.kind==='initial');
+  root.append(note(`선택 구간의 마지막 관측 상태 · ${last?.node||last?.kind||'미확인'} · seq ${last?.seq??'—'}`),
+    note('case에 저장된 기록을 필드별로 표시합니다. 완료 상태와 임상 값 상태는 별개이며, 저장된 기록 모두가 최종 SOAP에 포함되는 것은 아닙니다. 정정·상충 처리 후의 실제 제출 문자열은 아래 SOAP payload에서 확인하세요.'));
+  for(const [section,fields] of Object.entries(noteFields)){
+    const block=el('section',null,'note-section');block.append(el('h4',`${section} · ${noteNames[section]}`),note(`상태 경로: case.${section} → note.${section}`));
+    for(const [field,name] of Object.entries(fields)){
+      const items=after.case[section]?.[field],rows=Object.values(items||{}),done=rows.filter(row=>row.status==='done').length;
+      const box=el('details',null,'note-field');box.open=done>0;
+      box.append(el('summary',`${section}.${field} · ${name} — ${items===undefined?'필드 미수집':`완료 ${done} / 전체 ${rows.length}건`}`));
+      if(!rows.length)box.append(note(items===undefined?'관측 로그에 이 필드가 없습니다.':'이 시점에 저장된 기록이 없습니다.'));
+      for(const row of rows)box.append(noteRecord(row,before?.case?.[section]?.[field]?.[row.id],after));
+      block.append(box);
+    }root.append(block);
+  }
+  const reports=(after.interaction?.patient_reports||[]).filter(report=>report.uncovered_spans?.length);
+  if(reports.length){
+    const block=el('section',null,'note-section');block.append(el('h4','S.hpi · 미구조화 환자 보고'),note('interaction.patient_reports의 미포함 원문 구간입니다. SOAP 작성 시 S.hpi에 보존하며 구조화된 소견이나 진단 근거를 추가하지 않습니다.'));
+    for(const report of reports){
+      const card=el('article',null,'note-record');card.append(note(`출처: ${report.source_id}`));
+      for(const [start,end] of report.uncovered_spans)card.append(el('blockquote',Array.from(report.text).slice(start,end).join(''),'note-quote'));
+      card.append(jsonDetail('원문 · 수용 인용 구간 · 미포함 구간',report));evidence(card,[report.source_id],after);block.append(card);
+    }root.append(block);
+  }
+  const diagnosis=el('section',null,'note-section');diagnosis.append(el('h4','diagnosis · 별도 제출 필드'),
+    note('case.diagnosis → submission_payload.diagnosis입니다. note.A와 별도로 제출합니다.'),
+    kv([['case.diagnosis',after.case.diagnosis??'아직 설정되지 않음'],['case.diagnosis_kind',after.case.diagnosis_kind??'미설정'],
+      ['선택된 질환 ID',after.differential?.selected_id?labeled(after.differential.selected_id):'미설정'],
+      ['고정된 진단',after.case.fixed_diagnosis?.name??'미설정 / 미수집']]));
+  diagnosis.append(note('진단 근거 · case.diagnosis_evidence'));evidence(diagnosis,after.case.diagnosis_evidence,after);
+  if(!after.case.diagnosis_evidence?.length)diagnosis.append(note('기록된 근거 ID가 없습니다.'));
+  diagnosis.append(jsonDetail('고정 진단 원본 · fixed_diagnosis',after.case.fixed_diagnosis??null));root.append(diagnosis);
+  const payload=after.interaction?.submission_payload;
+  if(payload?.note)root.append(soapNote('이 시점에 생성된 SOAP payload · 수신 확인과 별개',payload));
+  else root.append(note('이 시점에는 interaction.submission_payload.note가 아직 생성되지 않았습니다. 최종 제출 SOAP는 상단의 수신 기록에서 확인하세요.'));
+  return root;
+}
 function diagnosisPanel(before,after){
   const root=panel('기록된 진단 후보와 근거');
   if(!after){root.append(note('이 실행에는 후보와 선택 상태가 수집되지 않았습니다.'));return root;}
@@ -152,12 +236,12 @@ function detail(){
   for(const [text,offset] of [['이전',-1],['다음',1]]){const button=el('button',text);button.type='button';button.disabled=position+offset<0||position+offset>=indices.length;button.addEventListener('click',()=>select(indices[position+offset]));controls.append(button);}heading.append(controls);root.append(heading);
   root.append(el('p',`실제 내부 세션: ${group.session} · ${group.events.filter(row=>row.kind==='node_end').length}개 노드 처리`,'session-note'));
   const tabs=el('div',null,'tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','턴 상세 보기');
-  const choices=[['dialogue','대화'],['state','상태 변화'],['diagnosis','진단 근거'],['models','모델 호출']];
+  const choices=[['dialogue','대화'],['note','Note 상태'],['state','상태 변화'],['diagnosis','진단 근거'],['models','모델 호출']];
   for(const [id,title] of choices){const button=el('button',title);button.type='button';button.id=`tab-${id}`;button.setAttribute('role','tab');button.setAttribute('aria-selected',tab===id?'true':'false');button.setAttribute('aria-controls','detail-panel');button.tabIndex=tab===id?0:-1;
     button.addEventListener('click',()=>{tab=id;detail();$(`tab-${id}`).focus();});
     button.addEventListener('keydown',event=>{let index=choices.findIndex(row=>row[0]===id);if(event.key==='ArrowRight')index=(index+1)%choices.length;else if(event.key==='ArrowLeft')index=(index+choices.length-1)%choices.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=choices.length-1;else return;event.preventDefault();tab=choices[index][0];detail();$(`tab-${tab}`).focus();});tabs.append(button);}
   root.append(tabs);
-  const body=tab==='state'?statePanel(group,before,after):tab==='diagnosis'?diagnosisPanel(before,after):tab==='models'?modelPanel(group,before,after):conversation(group,after);
+  const body=tab==='note'?notePanel(group,before,after):tab==='state'?statePanel(group,before,after):tab==='diagnosis'?diagnosisPanel(before,after):tab==='models'?modelPanel(group,before,after):conversation(group,after);
   body.id='detail-panel';body.setAttribute('role','tabpanel');body.setAttribute('aria-labelledby',`tab-${tab}`);root.append(body);
   const nodes=el('div',null,'node-list');for(const row of group.events.filter(row=>row.kind==='node_end'||row.kind==='node_error'))nodes.append(el('span',row.node));root.append(nodes);
 }
@@ -171,8 +255,12 @@ if(finalState?.interaction?.reason){const outcome=el('p',`진료 종료: ${final
 for(const [title,value,warning] of [['로컬 실행 검사',result.status==='pass'?'통과':result.status==='fail'?'실패':'결과 없음',result.status!=='pass'],['최종 진단',data.record.diagnosis||finalState?.case?.diagnosis||'미제출',false],['사용한 턴',`${summary.turns??'—'} / 50`,false],['Gateway / 전체 모델',`${summary.doctor_calls??'—'} / ${summary.model_requests??'—'}`,false],['공식 채점','미실행 · not_scored',false]]){const box=el('div',null,'metric');box.append(el('small',title),el('strong',value,warning?'error-text':''));$('summary').append(box);}
 const final=$('final-record');
 final.append(kv([['진단',data.record.diagnosis||'제출 기록 없음'],['프로세스 종료',data.process.exit_code??data.process.status??'미수집'],['프로세스 경과 시간',data.process.seconds!==undefined?`${data.process.seconds}초`:'미수집'],['수신 확인',summary.receipt?.status||'없음'],['모드',summary.backend==='scripted'?'고정 응답 대역':summary.backend||data.run.backend||'미확인']]));
-for(const [section,fields] of Object.entries(data.record.note||{})){const block=el('div',null,'record-block');block.append(el('h3',section));for(const [field,value] of Object.entries(fields)){block.append(el('strong',`${section}.${field}`),el('p',value||'(비어 있음)','small'));}final.append(block);}
+if(data.record.note)final.append(soapNote('시뮬레이터에 수신된 최종 SOAP',data.record));
+else final.append(note('시뮬레이터에 수신된 최종 SOAP가 없습니다.'));
 final.append(jsonDetail('실행 검사 · 누락된 증거',result),jsonDetail('최종 제출 영수증',summary.receipt||null));
+const lastNote=el('button','마지막 Note 상태 보기');lastNote.type='button';lastNote.className='last-note';
+lastNote.addEventListener('click',()=>{$('session-filter').value='';tab='note';select(groups.length-1);$('tab-note').focus();$('turn-detail').scrollIntoView({block:'start'});});
+$('final-record').after(lastNote);
 for(const scope of [...new Set(groups.map(group=>group.session))]){const option=el('option',scopes[scope]?`${scopes[scope]} · ${scope}`:'내부 상태 미수집');option.value=scope;$('session-filter').append(option);}
 const settings=events.find(row=>row.kind==='settings');
 if(settings?.education_enabled===false)$('final-record').after(el('p','교육 세션: 공개 설정에서 비활성화되어 발화와 예약 턴을 사용하지 않습니다.','session-note'));
