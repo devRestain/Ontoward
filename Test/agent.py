@@ -25,7 +25,8 @@ def main():
     # The simulator separately starts the 30-minute clock at ready().
     try:
         with (output / 'stdout.log').open('w') as stdout, (output / 'stderr.log').open('w') as stderr:
-            process = subprocess.run([sys.executable, '/submission/run.py'], stdout=stdout, stderr=stderr, timeout=2400)
+            entry = '/submission/run.py' if os.getenv('TEST_TRACE') == '0' else '/test/observe.py'
+            process = subprocess.run([sys.executable, entry], stdout=stdout, stderr=stderr, timeout=2400)
         report.update(status='exited', exit_code=process.returncode)
     except subprocess.TimeoutExpired:
         report['status'] = 'timeout'

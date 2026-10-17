@@ -1,10 +1,14 @@
-# 공개 샘플 로컬 평가 환경
+# 웹에서 실행하는 공개 샘플 테스트
 
 `Test/`는 기존 `submission/run.py`와 SDK를 그대로 실행하면서, 공모전의 세션 API와 예선 컨테이너 제약을 로컬에서 재현한다. 공개 `C01`·`C03`·`C10`의 `case.json`을 읽으며 공식 서버의 비공개 구현이나 채점 기준을 재현하지 않는다. 모든 결과의 채점 상태는 `not_scored`다.
 
 에이전트 컨테이너에는 `submission/`과 자신의 출력 폴더만 연결한다. CPU 2코어·RAM 8GB·읽기 전용 루트와 제출 코드·512MB `/tmp`를 사용한다. 내부 네트워크에서 로컬 평가 API에 접근하며, 환자 대본·진찰표·개발 키와 시뮬레이터 출력은 읽을 수 없다. 테스트 하네스 코드는 컨테이너 이미지 안에 있다. 실행 입력은 ZIP 압축 해제본 대신 현재 `submission/` 디렉터리이므로 ZIP 구성 자체의 검증은 기존 package 서비스가 맡는다.
 
 시뮬레이터는 환자에게 초기 정보와 환자 대본을, 진찰 분류 모델에게 동작 이름만 전달한다. 등록된 진찰 결과는 원본 표에서 반환한다. 미등록 실제 진찰은 초기 정보·진찰표와 모순되지 않는 구체적 소견을 생성해 동일 동작에 재사용한다. `model_record`와 참조 진단은 어떤 실행 프롬프트에도 넣지 않는다.
+
+## 오프라인 프로젝트 흐름 지도
+
+실행 없이 프로젝트의 구조를 읽으려면 [프로젝트 흐름 지도](atlas.html)를 브라우저에서 직접 연다. HTML 한 파일에 스타일·도식을 담았으며, 서버·스크립트·외부 폰트·CDN 없이 오프라인에서 읽는다. 전체 지도·진료 흐름·Pattern 추론·질문 선택·준비 파이프라인·코드 위치를 목차로 탐색할 수 있고 브라우저 찾기와 인쇄를 사용할 수 있다. 원문 링크는 프로젝트 안의 상대 경로이며, 아래 빌드와 웹 실행은 흐름 지도를 읽는 데 필요하지 않다. 이 문서는 2026-10-17 기준의 정적 설명이고 실제 증례 리포트는 기존 웹 실행기에서 확인한다.
 
 ## 빌드
 
@@ -16,6 +20,27 @@ docker compose -f Test/compose.yaml build --pull=false test-simulator
 
 기반 이미지가 없는 경우 먼저 기존 프로젝트 절차인 `docker compose build dev`로 준비한다. 기반 이미지 준비에는 PyPI 다운로드가 필요할 수 있다. Test 이미지 빌드는 프로젝트의 로컬 기반 이미지에서 네트워크 없이 수행한다. Test 코드를 수정하면 이 이미지를 다시 빌드한다.
 
+## 웹에서 실행하고 결과 확인하기
+
+```sh
+sh Test/web.sh
+```
+
+터미널을 열어 둔 채 [http://127.0.0.1:8765](http://127.0.0.1:8765)에 접속한다. 공개 증례·응답 방식·요청 상한을 선택하고 **NOVA 테스트 실행** 버튼을 누른다. 기본은 **C10 / NOVA / 최대 200회**다. NOVA는 루트 `.env`의 개발 키와 개발 크레딧을 사용하며 환자·진찰·Gateway 호출을 모두 합쳐 상한을 적용한다. 외부 호출 없이 확인하려면 **오프라인 고정 응답**을 선택한다. 사이트에서 키를 입력하거나 저장하지 않는다.
+
+한 번에 한 증례만 실행한다. 실행 중에는 상태와 경과 시간을 표시하고, 완료되면 같은 페이지에 리포트를 띄운다. 새로고침하면 진행 중인 실행을 다시 읽는다. **저장된 실행**에서 이전 결과를 선택하거나 **별도 열기**로 리포트만 열 수 있다. 시작한 터미널에서 `Ctrl+C`를 누르면 해당 웹 실행기가 시작한 테스트와 사이트를 정리하고 저장한 결과는 남긴다. CLI와 웹은 같은 잠금을 사용하므로 동시에 새 증례를 실행하지 않는다.
+
+리포트 왼쪽의 내부 세션·턴을 선택하고 다음 내용을 확인한다.
+
+- **대화:** 실제 Doctor 발화·환자 답변·진찰 요청과 결과·거절·전달 미확인 요청.
+- **상태 변화:** 턴과 호출 예산, 추가·변경된 사실, 선택한 행동, 질문 계획, 해석 결과와 수용·거절, 노드별 변경분과 전체 상태.
+- **진단 근거:** 실제 후보 순서, 근거 점수·맥락 가산·모순 감점·주호소 포함률, 선택한 진단과 근거 기록.
+- **모델 호출:** 환자·진찰·Gateway 역할의 실제 messages와 응답, 호출 설정·사용량·오류·복구 이력.
+
+상단에서 최종 진단·SOAP·제출 수신·프로세스 종료와 실행 검사를 펼쳐 볼 수 있다. 시작 실패·시간 초과·중단도 결과로 남고, 부분 로그는 부분 수집으로 표시한다. 이전 실행에 내부 상태 로그가 없으면 기존 대화와 최종 결과만 표시한다. 로그의 원시 JSON과 모델 messages는 상세 영역을 펼칠 때 표시한다.
+
+웹 서버는 기존 Test 이미지의 Python 표준 라이브러리를 사용하고 프론트엔드는 별도 패키지가 필요 없다. 웹 컨테이너는 출력 폴더만 읽고 쓰며, 작업 요청을 받은 호스트 셸이 기존 실행기를 호출한다. 웹 컨테이너에 Docker 소켓·개발 키·증례 원본 마운트를 전달하지 않는다. 웹 포트는 localhost에만 연결한다. 계정·DB·대기열·자동 재개는 두지 않는다.
+
 ## 완전 오프라인 검증
 
 ```sh
@@ -24,6 +49,12 @@ sh Test/run.sh C10 scripted
 ```
 
 `verify`는 네트워크를 끈 컨테이너에서 실제 SDK의 HTTP 전송, ready, 입력 비공개, 준비·진료 제한 시간, NFC 길이, 거절 턴, TEST 차단, 요청 중복·처리 중 응답, 모델 한도, SOAP 형식과 완료 수신을 검증한다. NOVA 요청은 mock으로 대체한다.
+
+동일한 명령은 웹의 실행 생성·중복 차단·상태 복원·종료 결과·실행기 연결 끊김·저장된 리포트·경로 제한·HTML 문자열 처리를 함께 검사한다. 원본 워크플로와 관측 래퍼의 비교는 프로젝트 루트에서 다음 명령으로 수행한다. 합성 자산과 관측 결과는 `Tmp/test-web31/parity/`에만 만든다.
+
+```sh
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python Test/test_observer.py
+```
 
 `scripted`는 외부 모델 대신 고정 환자 응답과 제공된 후보의 이름·원천 동의어를 비교하는 일반 대역을 사용한다. 증례별 검색 문자열이나 정답 개념 표는 없다. 이 대역은 한·영 자연어의 의미를 이해하는 실제 Gateway가 아니므로, 완료 여부를 주호소 매핑의 임상 정확도나 NOVA 성능으로 해석하지 않는다. 이전 C01·C03의 실패는 제거된 문자열 매처의 결함으로, 그래프에 필요한 개념이 없다는 증거가 아니다.
 
@@ -45,20 +76,29 @@ NOVA 모드의 에이전트는 계속 내부 네트워크만 사용하지만 시
 
 ## 출력과 완료 기준
 
-실행마다 `Tmp/test-evaluator/<case>-<UTC시각>-<프로세스번호>/`를 새로 만든다.
+실행마다 `Tmp/test-evaluator/<case>-<UTC시각>-<고유 ID>/`를 새로 만든다. 기존 CLI의 고유 ID는 프로세스 번호이고 웹은 별도의 임의 ID를 사용한다.
 
 | 경로 | 내용 |
 |---|---|
 | `result.json` | 프로세스·제출 수신·격리 증거를 합친 실행 판정 |
+| `report.html` | 외부 파일 없이 열 수 있는 대화·상태·진단·모델 리포트 |
+| `run.json`, `run.args`, `status` | 웹의 선택 조건·실행기 입력·실행 상태; `run.json`은 웹 실행에만 생성 |
+| `started`, `ended`, `exit-code`, `runner.log` | 실행기 시작·종료·종료 코드·시작 오류와 Docker 실행 로그 |
 | `agent/process.json` | 종료 코드·시간·UID·메모리/CPU cgroup·마운트 관측 |
 | `agent/stdout.log`, `agent/stderr.log` | 제출 에이전트 원본 출력과 오류 |
+| `agent/trace.jsonl` | 초기 상태·노드별 복원 가능한 변경분·세션·턴·SDK 요청·응답·오류·종료 |
 | `simulator/summary.json` | 증례 해시·턴·모델 사용·정책 한도·제출 영수증 |
 | `simulator/transcript.json` | 초기 정보와 실제 SAY/EXAM·거절·DIAGNOSE 이력 |
 | `simulator/requests.json` | 요청 ID·payload 해시·Gateway 실제 요청 본문과 후보·처리 상태·응답 |
 | `simulator/record.json` | 15개 SOAP 문자열과 별도 주진단; 제출된 경우 생성 |
 | `simulator/nova-requests.jsonl` | NOVA 모드의 역할별 예약·응답·실패 기록 |
+| `simulator/model-calls.jsonl` | 역할별 실제 messages·응답·호출 설정·오류와 상위 행동 요청 ID |
 | `verification.json` | `verify` 명령의 오프라인 검사 결과 |
 
 ready 이전에는 증례를 공개하지 않고 준비는 10분, ready 이후 진료는 30분이다. SAY·EXAM은 최대 50턴·NFC 1–30자, TEST는 예선에서 차단한다. 모델은 Doctor/Gateway 호출 200회·입력 500,000·출력 100,000토큰을 별도로 추적한다. DIAGNOSE는 턴을 쓰지 않아 50번째 응답 이후에도 기한 내 제출할 수 있다.
 
-에이전트 종료 코드 0과 로컬 DIAGNOSE `completed` 영수증을 함께 확인해야 성공이다. 빈/잘못된 SOAP, 비어 있지 않은 Gateway 응답 누락, 실패 프로세스나 증거 누락은 성공으로 표시하지 않는다. `nonempty_gateway_responses`와 SDK의 `doctor_successes`는 응답 문자열의 존재만 뜻하며 빈 사실 JSON도 포함한다. 직접 `consult()`를 호출한 반환값과 오프라인 회귀에서는 `model_history[].parser_result.linked_chief_facts`로 실제 수용된 연결을 확인할 수 있다. SDK 진입점은 반환 상태를 파일로 쓰지 않으므로 Test 실행의 후보·모델 응답은 `simulator/requests.json`에서 확인한다. 공식 점수·독립 임상 검증·실제 NOVA 연결 품질은 이 오프라인 결과로 확인할 수 없다. 재현 근거는 보존된 `assets/nova-devkit/nova_local.py`, `assets/nova-starter/nova_sdk.py`, `assets/nova-competition-2026/`와 [D27](../DECISION_STATE.md#D27)·[D29](../DECISION_STATE.md#D29)다.
+에이전트 종료 코드 0과 로컬 DIAGNOSE `completed` 영수증을 함께 확인해야 상담 성공이다. 빈/잘못된 SOAP, 비어 있지 않은 Gateway 응답 누락, 실패 프로세스나 증거 누락은 성공으로 표시하지 않는다. 웹에서 실행이 종료되어 리포트를 받는 것과 상담 성공은 각각 확인한다. scripted 응답으로 확정할 근거가 없으면 `no_supported_diagnosis`와 실패 결과를 그대로 보여준다.
+
+`nonempty_gateway_responses`와 SDK의 `doctor_successes`는 응답 문자열의 존재만 뜻하며 빈 사실 JSON도 포함한다. 실제 수용된 연결은 상태의 `model_history[].parser_result.linked_chief_facts`에서 확인한다. Test 부트스트랩은 원본 진입점을 실행하면서 메모리에서만 그래프와 SDK 경계를 감싸고 원래 함수를 한 번 호출한다. 원본 소스·질문·라우팅·점수·재시도·진단·SOAP는 바꾸지 않으며, 로그 쓰기 실패가 행동을 재실행하지 않는다. 비교용으로 `TEST_TRACE=0 sh Test/run.sh C10 scripted`를 실행하면 관측을 끌 수 있다. 각 실행의 trace_status는 complete·incomplete·not_collected로 구분한다.
+
+공식 점수·독립 임상 검증·실제 NOVA 연결 품질은 이 오프라인 결과로 확인할 수 없다. 재현 근거는 보존된 `assets/nova-devkit/nova_local.py`, `assets/nova-starter/nova_sdk.py`, `assets/nova-competition-2026/`와 [D27](../DECISION_STATE.md#D27)·[D29](../DECISION_STATE.md#D29)·[D31](../DECISION_STATE.md#D31)다.

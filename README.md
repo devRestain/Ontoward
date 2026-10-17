@@ -4,6 +4,8 @@ Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수�
 
 [PRD](PRD.md)는 동작 요구사항, [결정 문서](DECISION_STATE.md)는 사용자 선택, 각 범위의 PROJECT_STATE.md는 관측된 진행과 다음 작업을 관리한다. 공모전 규칙은 [공모전 참고 자료](assets/nova-competition-2026/README.md)와 [현재 규칙 업데이트](assets/nova-competition-2026/CHANGES_2026-10-14.md)에서 확인한다.
 
+[프로젝트 흐름 지도](Test/atlas.html)는 브라우저에서 직접 여는 개인용 오프라인 안내서다. 전체 구조·다섯 내부 세션·공통 행동 루프·Pattern 추론·다음 질문 선택·지식 준비를 정적 도식으로 설명한다. `Test/atlas.html` 파일을 브라우저로 열면 되며 서버·빌드·패키지 설치는 필요 없다. 2026-10-17의 문서·구현 기준으로 작성했으며 자동 갱신하지 않는다.
+
 D26의 현재 제출 설정은 Education을 pass한다. 교육 행동과 보호 턴을 사용하지 않고 `P.education`을 비운 채 문진·진찰·해석·진단·SOAP·DIAGNOSE 확인까지 진행한다. 교육 검색은 후속 범위이며, 공식 서버 수락과 실제 점수는 별도 검증 대상이다.
 
 ## 구조
@@ -32,7 +34,7 @@ Ontoward/
 │   ├── catalog/    # 원본 경로 목록
 │   └── provenance/ # 출처 식별·저장 정리와 복원 영수증
 ├── assets/         # 주최자 원본과 공모전 참고 문서
-├── Test/           # 로컬 평가 API·NOVA 모의 환자·격리 컨테이너
+├── Test/           # 웹 실행기·진료 과정 리포트·NOVA 모의 환자·격리 컨테이너
 └── Tmp/
     ├── codex/      # 임시 Codex 출력
     └── packaging/  # 생성 ZIP
@@ -69,6 +71,8 @@ Dockerfile은 submission/requirements.txt의 고정 버전을 PyPI 휠로 설치
 ## 로컬 공개 샘플 테스트
 
 [Test 실행 안내](Test/README.md)에 SDK HTTP API와 예선 자원 제약을 재현하는 컨테이너를 둔다. `sh Test/run.sh verify`는 외부 모델 없는 API 경계 검사이고 `sh Test/run.sh C10 scripted`는 기존 제출 에이전트의 오프라인 실행이다. 별도 `nova` 모드는 루트 개발 키로 모의 환자·진찰·Gateway를 호출하며 시뮬레이터만 외부 네트워크를 사용한다. 환자 대본·진찰표·참조 SOAP·개발 키는 에이전트에 연결하지 않는다. 로컬 결과는 채점하지 않으며 공식 평가와 구분한다.
+
+`sh Test/web.sh`로 시작한 뒤 [로컬 테스트 사이트](http://127.0.0.1:8765)에서 증례와 실행 조건을 선택할 수 있다. 기본은 C10·NOVA·최대 200회 요청이며 실행 버튼을 누르면 테스트가 시작된다. 완료되면 같은 페이지에서 실제 대화·내부 세션·턴별 상태 변화·모델 요청·진단 근거와 최종 SOAP를 확인한다. 이전 실행도 다시 열 수 있고 실행별 `report.html`을 보존한다. 사이트는 submission 파일을 수정하지 않으며 실행 실패와 부분 로그도 보여준다. 자세한 관측·실행 경계는 [D31](DECISION_STATE.md#D31)을 따른다.
 
 [D29](DECISION_STATE.md#D29)는 실제 Input Gateway가 주호소를 기존 Symptom 하나에 매핑하도록 요구하고 원천의 한·영 라벨·동의어와 제한된 전체 색인 재검색을 사용한다. Test의 증례별 문자열 매처는 제거했다. 오프라인 회귀와 프로토콜 대역의 통과는 실제 NOVA의 자연어 해석 정확도와 구분한다.
 

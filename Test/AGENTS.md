@@ -4,6 +4,9 @@
 
 - Keep the local evaluation API, NOVA model bridge, container definitions, and harness checks in this directory.
 - Keep consultation algorithms and the unchanged SDK in root submission/.
+- Keep the D31 personal web entrypoint and standalone report in this directory without changing submission/ code settings knowledge or state.
+- Keep the D32 project atlas in atlas.html with embedded styles and static diagrams; support direct file opening without scripts network requests builds or a server.
+- Derive atlas explanations from project READMEs and current source; label the snapshot date illustrative examples runtime admission and deferred verification explicitly.
 - Read root D27 and the preserved devkit and competition references before changing simulator behavior.
 - Record operational progress in root PROJECT_STATE.md without creating another state scope.
 
@@ -15,12 +18,19 @@
 - Exclude model_record files from all runtime inputs and prompts.
 - Keep NOVA_DEV_KEY in the NOVA simulator environment and use only session-free development chat for its model calls.
 - Keep the agent on the internal case network with only submission/ and its own output directory mounted.
+- Give the web container only run outputs; exclude the Docker socket development key original case mounts and submission mount.
+- Record model messages only at the existing simulator boundary and SDK bodies without authentication headers or environment dumps.
 
 ## Workflow
 
 - Build the root dev image before building this directory's network-disabled derived image.
 - Use sh Test/run.sh verify for maintained offline API and model-boundary checks.
 - Use sh Test/run.sh C10 scripted for an isolated offline public-case consultation.
+- Use sh Test/web.sh for the localhost website and shell worker; share the same atomic execution lock with CLI runs.
+- Default the website to C10 NOVA and 200 total role requests; require an explicit start action and retain one active run without queuing or automatic resumption.
+- Observe the original run.py through Test-only in-memory graph and SDK wrappers; delegate once and preserve errors retries routing and all clinical decisions.
+- Store the initial state and reversible node changes with actual node names session turn request IDs and source labels; mark missing or partial traces explicitly.
+- Serve completed and failed runs through the same viewer and preserve a self-contained report.html for offline review.
 - Use the separate compose.nova.yaml overlay for explicitly scoped NOVA execution.
 - Preserve each run in a fresh root Tmp/test-evaluator directory and disable automatic resumption.
 - Preserve request identity, completed responses, refused turns, failed requests, and final submission receipts.
@@ -32,4 +42,6 @@
 - Require the real submission/run.py process, ready handshake, nonempty Gateway response, SOAP submission, and completed receipt for consultation success; distinguish linked-chief parser evidence from that transport count.
 - Mark scripted replies as test fixtures and all local results as unscored.
 - Record fixture and runtime hashes in the data-owned provenance receipt.
+- Run sh Test/run.sh verify for API and web controls and Test/test_observer.py in the root offline dev service for full workflow parity and trace reconstruction.
+- Keep C10 scripted clinical failure separate from successful website execution and result delivery; never tune fixtures to a case answer or alter submission for a green report.
 - Report authenticated NOVA calls, official API execution, clinical accuracy, and official scoring separately.

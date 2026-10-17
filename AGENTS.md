@@ -28,6 +28,8 @@
 - Keep pre-submission extraction, validation, RDF generation, and bundle preparation code and prompts in `Dev/`.
 - Keep disposable project scratch in `Tmp/` and durable preparation results in `data/`.
 - Keep the D27 local evaluation API, simulator model bridge, and isolated public-sample container harness in `Test/`.
+- Keep the D31 local website, shell execution bridge, and read-only workflow observation in Test/; preserve submission/ bytes.
+- Keep the D32 static project atlas in Test/atlas.html as a self-contained offline document; preserve runtime files and exclude execution controls and external assets.
 - Assign Dev, Test, and Tmp operational progress to root `PROJECT_STATE.md` without adding state scopes.
 - Preserve organizer packages in assets/ and permit only the D12 hash-pinned unchanged nova_sdk.py submission copy.
 - Keep project-authored directory contracts and human orientation in `assets/` separate from preserved upstream files.
@@ -113,6 +115,7 @@
 - Identify existing Docker resources through the Compose project and service labels plus the workspace mount before using them.
 - Keep extraction CLI state and credentials in a dedicated project-owned Docker volume outside disposable scratch and submission artifacts.
 - Use Test/compose.yaml for the network-isolated scripted evaluator and its separate compose.nova.yaml overlay for NOVA development chat.
+- Use sh Test/web.sh for the loopback-only Test frontend; keep its Docker execution in the host shell bridge and its key outside the web container.
 - Keep Test/ patient scripts and the development key outside the agent container and preserve the unchanged submission/run.py entrypoint.
 - Record image, package, and RDFLib execution availability only after observing the relevant container behavior.
 

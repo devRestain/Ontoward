@@ -14,6 +14,8 @@ services:
       TEST_BACKEND: scripted
       NOVA_RUN_TOKEN: ontoward-local-test
       NOVA_SESSION_ID: 00000000-0000-4000-8000-000000000001
+    labels:
+      io.ontoward.test-run: ${TEST_RUN_ID:-manual}
     volumes:
       - ../assets/nova-samples-2026:/cases:ro
       - ../submission/nova_sdk.py:/sdk/nova_sdk.py:ro
@@ -42,6 +44,7 @@ services:
       NOVA_SESSION_ID: 00000000-0000-4000-8000-000000000001
       NOVA_OUTPUT_DIR: /output
       PYTHONPATH: /submission
+      TEST_TRACE: ${TEST_TRACE:-1}
     volumes:
       - ../submission:/submission:ro
       - ${TEST_OUTPUT:-../Tmp/test-evaluator/manual}/agent:/output
@@ -67,6 +70,26 @@ services:
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
 
+  test-web:
+    profiles: [web]
+    image: ontoward-test:local
+    command: [python, /test/web.py]
+    user: "${ONTOWARD_TEST_UID:-501}:${ONTOWARD_TEST_GID:-20}"
+    ports: ["127.0.0.1:8765:8080"]
+    volumes:
+      - ../Tmp/test-evaluator:/runs
+    read_only: true
+    tmpfs: ["/tmp:size=64m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [test-web]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).close()"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+
 networks:
   test-case:
     internal: true
+  test-web: {}

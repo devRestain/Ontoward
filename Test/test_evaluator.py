@@ -14,6 +14,7 @@ from nova_sdk import Client, empty_record, NovaError
 from models import completion, MODEL, NovaModels, ScriptedModels
 from report import report
 from server import Evaluation, http_server, load_case
+from test_web import WebTests
 
 
 class Replies:
@@ -309,10 +310,26 @@ class EvaluatorTests(unittest.TestCase):
         self.assertEqual(json.loads(request['outcome'][1]['choices'][0]['message']['content']), {'facts': []})
         self.assertEqual(self.evaluation.doctor_successes, 1)
 
+    def test_model_observation_links_actual_messages_and_errors_without_replay(self):
+        self.models.values.append(NovaError('PROVIDER_UNAVAILABLE', 503))
+        request_id = str(uuid.uuid4())
+        for _ in range(2):
+            self.assertEqual(self.request(request_id=request_id, action='SAY', content='괜찮으세요?')[0], 503)
+        rows = [json.loads(line) for line in (Path(self.temp.name) / 'model-calls.jsonl').read_text().splitlines()]
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0]['parent_request_id'], request_id)
+        self.assertEqual(rows[0]['role'], 'patient')
+        self.assertIsNone(rows[0]['model'])
+        self.assertIsNone(rows[0]['reasoning_effort'])
+        self.assertIn('script', rows[0]['messages'][0]['content'])
+        self.assertEqual(rows[1]['error'], 'PROVIDER_UNAVAILABLE')
+        self.assertEqual(self.models.calls, 1)
+
 
 if __name__ == '__main__':
     stream = io.StringIO()
-    result = unittest.TextTestRunner(stream=stream, verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(EvaluatorTests))
+    suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromTestCase(cls) for cls in (EvaluatorTests, WebTests))
+    result = unittest.TextTestRunner(stream=stream, verbosity=2).run(suite)
     print(stream.getvalue())
     report = {'status': 'pass' if result.wasSuccessful() else 'fail', 'tests': result.testsRun,
               'failures': len(result.failures), 'errors': len(result.errors), 'actual_nova': 'not_run',

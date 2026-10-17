@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 import sys
 
+from viewer import collect, render
+
 
 def report(root):
     root = Path(root)
@@ -11,7 +13,11 @@ def report(root):
         if not path.exists():
             missing.append(name)
             return fallback
-        return json.loads(path.read_text())
+        try:
+            return json.loads(path.read_text())
+        except (OSError, ValueError):
+            missing.append(name + ':unreadable')
+            return fallback
     summary = read('simulator/summary.json', {'status': 'unknown', 'receipt': None, 'ready': False,
                    'doctor_successes': 0, 'turns': 0, 'backend': 'unknown', 'case_id': 'unknown',
                    'doctor_calls': 0, 'model_requests': 0, 'input_tokens': 0, 'output_tokens': 0})
@@ -36,7 +42,9 @@ def report(root):
               'model_requests': summary['model_requests'], 'checks': checks, 'score_status': 'not_scored',
               'actual_nova': 'run' if summary['backend'] == 'nova' and summary['model_requests'] else 'not_run',
               'official_submission': 'not_run', 'clinical_accuracy': 'not_evaluated'}
+    result['trace_status'] = collect(root)['trace']['status']
     (root / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+    render(root)
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result['status'] == 'pass' else 1
 

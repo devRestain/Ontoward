@@ -1,8 +1,10 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=7b13f05b094fce2999d32c61b1fdad12ff03867c dirty=true updated=2026-10-17T10:07:47+09:00
-/goal phase=current id=ROOT.GUIDELINES30 state=complete action="Implement reusable disease-to-guideline mapping with exact source evidence and bounded NOVA semantic review"
+/checkpoint revision=931a09310aa5bcc330ba6171303d61cb2164da2b dirty=true updated=2026-10-17T05:00:48+00:00
+/goal phase=current id=ROOT.ATLAS32 state=complete action="Provide a self-contained offline project atlas for workflow inference question selection and knowledge preparation"
+/goal phase=history id=ROOT.WEB31 state=complete action="Implement the local Test website workflow observation and per-turn diagnosis reports without changing submission"
+/goal phase=history id=ROOT.GUIDELINES30 state=complete action="Implement reusable disease-to-guideline mapping with exact source evidence and bounded NOVA semantic review"
 /goal phase=history id=ROOT.CHIEF29 state=complete action="Coordinate case-independent chief mapping evaluator correction offline acceptance and the D29 archive handoff"
 /goal phase=next id=ROOT.NOVA27 state=deferred action="Verify one explicitly authorized C10 local NOVA run using D29 with a fixed request ceiling and development-credit use"
 /goal phase=history id=ROOT.CONTEXT28 state=complete action="Coordinate D28 context failure recovery offline verification and a standalone submission archive handoff"
@@ -136,4 +138,28 @@
 /accept id=ROOT.WHITEPAPER02.A1 state=pass action="Reference application-owned whitepaper verification and preserve active D30 and deferred runtime handoffs" evidence=ROOT.WHITEPAPER02.E1
 /evidence id=ROOT.WHITEPAPER02.E1 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Reference APP.WHITEPAPER02 and review DECISION_STATE.md and data/PROJECT_STATE.md while preserving D30 preparation goals and the separate model and server verification boundaries"
 /scope id=ROOT.WHITEPAPER02.S1 state=in action="Record documentation coordination and Tmp verification ownership without replacing active guideline preparation"
-/handoff state=ready action="Use completed D30 preparation and data-owned applicability gaps for a separately bounded P extraction workset; preserve ROOT.NOVA27 and APP.REVALIDATE29 as separately deferred runtime verification"
+/accept id=ROOT.WEB31.A1 state=pass action="Preserve workflow behavior and reconstruct observed state across representative offline scenarios" evidence=ROOT.WEB31.E1
+/accept id=ROOT.WEB31.A2 state=pass action="Verify website execution status result delivery and unchanged submission bytes" evidence=ROOT.WEB31.E2,ROOT.WEB31.E3,ROOT.WEB31.E4,ROOT.WEB31.E5
+/accept id=ROOT.WEB31.A3 state=pass action="Reconcile Test instructions root requirements decisions and maintained handoffs" evidence=ROOT.WEB31.E6
+/evidence id=ROOT.WEB31.E1 class=runtime result=pass source=Tmp/test-web31/parity/verification.json observed="Match all SDK calls and 621 node updates across thirteen observer-enabled and observer-disabled scenarios and reconstruct every node state"
+/evidence id=ROOT.WEB31.E2 class=runtime result=pass source=Tmp/test-evaluator/verify-20261017T023017Z-34429/verification.json observed="Pass thirty-nine offline evaluator web API exclusivity failure publication trace reconstruction and HTML safety checks without external calls"
+/evidence id=ROOT.WEB31.E3 class=runtime result=pass source=Tmp/test-evaluator/C10-20261017T023132Z-335199912c/web-verification.json observed="Start C10 scripted through the website API preserve its identity reject a duplicate request capture 369 nodes and serve its failed consultation report over HTTP"
+/evidence id=ROOT.WEB31.E4 class=artifact result=pass source=Tmp/test-web31/audit.json observed="Match all forty-nine submission file hashes and retain identical C10 baseline actions fifty turns six Gateway calls fifty-six role calls and no_supported_diagnosis without altering the consultation result"
+/evidence id=ROOT.WEB31.E5 class=runtime result=pass source=Tmp/test-web31/verification.json observed="Verify missing-key startup failure with zero model calls and cancellation with a preserved incomplete report released locks and no remaining Test containers; confirm web credential socket submission and case mounts absent"
+/evidence id=ROOT.WEB31.E6 class=semantic result=pass source=DECISION_STATE.md observed="Record D31 in requirements root and Test contracts Korean instructions and root operational state while preserving unchanged child states and separate ROOT.NOVA27 and APP.REVALIDATE29 deferrals"
+/evidence id=ROOT.WEB31.E7 class=runtime result=not_run source=Tmp/test-web31/verification.json observed="Leave actual browser interaction unrun after finding no browser executable or automation package in the inspected project container"
+/evidence id=ROOT.WEB31.E8 class=external_service result=not_run source=Tmp/test-web31/verification.json observed="Leave authenticated NOVA calls official submission scoring and independent clinical accuracy unrun during offline implementation verification"
+/evidence id=ROOT.WEB31.E9 class=static result=pass source=Tmp/test-web31/verification.json observed="Pass shell syntax and both frontend JavaScript syntax checks using existing project tooling"
+/scope id=ROOT.WEB31.S1 state=in action="Own the Test website shell bridge shared lock runtime observation offline reports verification and root documentation"
+/scope id=ROOT.WEB31.S2 state=out action="Exclude submission and data mutation live-provider verification downloads new dependencies commits publication and deployment"
+/accept id=ROOT.ATLAS32.A1 state=pass action="Provide static workflow inference and preparation diagrams with offline navigation and local source references" evidence=ROOT.ATLAS32.E1,ROOT.ATLAS32.E2
+/accept id=ROOT.ATLAS32.A2 state=pass action="Preserve existing submission and Test implementation bytes without dependencies or execution controls" evidence=ROOT.ATLAS32.E3
+/accept id=ROOT.ATLAS32.A3 state=pass action="Reconcile D32 requirements contracts human instructions and root handoff while preserving child goals" evidence=ROOT.ATLAS32.E4
+/evidence id=ROOT.ATLAS32.E1 class=static result=pass source=Tmp/project-atlas-2026-10-17/verification.json observed="Validate six sections three embedded SVG diagrams fifty local links and fragments balanced elements zero scripts and zero external resources in the network-disabled project dev container"
+/evidence id=ROOT.ATLAS32.E2 class=semantic result=pass source=Test/atlas.html observed="Compare README explanations with graph.py clinical_reasoner.py interview_planner.py the admitted manifest and Education disabled setting; distinguish fit eligibility question heuristics and D30 preparation"
+/evidence id=ROOT.ATLAS32.E3 class=artifact result=pass source=Tmp/project-atlas-2026-10-17/verification.json observed="Match all forty-nine submission files twenty existing Test implementation files and data state against the pre-edit baseline; allow only Test guidance changes among baseline files"
+/evidence id=ROOT.ATLAS32.E4 class=semantic result=pass source=DECISION_STATE.md observed="Record D32 in PRD root and Test contracts Korean orientation and root state; review submission and data state without replacing their goals or deferred verification"
+/evidence id=ROOT.ATLAS32.E5 class=runtime result=not_run source=Tmp/project-atlas-2026-10-17/verification.json observed="Leave browser rendering desktop mobile and print visual inspection unrun after finding no browser executable or automation package in the project dev container; retain responsive and print styles as static evidence only"
+/scope id=ROOT.ATLAS32.S1 state=in action="Own Test/atlas.html static explanations local references root coordination and offline document verification"
+/scope id=ROOT.ATLAS32.S2 state=out action="Exclude runtime and data mutation execution controls new dependencies external applications network downloads model calls commits publication and deployment"
+/handoff state=ready action="Open Test/atlas.html directly in a browser for the offline guide; preserve ROOT.NOVA27 and APP.REVALIDATE29 as separately deferred verification"

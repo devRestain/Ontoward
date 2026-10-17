@@ -160,7 +160,25 @@ class Evaluation:
         return outcome
 
     def call_model(self, role, messages, max_tokens=2048, request_id=None):
-        response = self.models.complete(role, messages, max_tokens, request_id or str(uuid.uuid4()))
+        request_id = request_id or str(uuid.uuid4())
+        entry = {'request_id': request_id, 'parent_request_id': self.inflight, 'role': role,
+                 'messages': messages, 'max_tokens': max_tokens, 'backend': self.backend,
+                 'model': 'openai/gpt-6-luna' if self.backend == 'nova' else None,
+                 'reasoning_effort': 'medium' if self.backend == 'nova' else None, 'status': 'requested'}
+        def record(**values):
+            try:
+                with (self.output / 'model-calls.jsonl').open('a', encoding='utf-8') as stream:
+                    stream.write(json.dumps({**entry, **values}, ensure_ascii=False) + '\n')
+            except Exception:
+                pass
+        started = time.monotonic()
+        record()
+        try:
+            response = self.models.complete(role, messages, max_tokens, request_id)
+        except Exception as error:
+            record(status='error', error=getattr(error, 'code', type(error).__name__), seconds=time.monotonic() - started)
+            raise
+        record(status='received', response=response, seconds=time.monotonic() - started)
         try:
             text = response['choices'][0]['message']['content']
             usage = response['usage']
