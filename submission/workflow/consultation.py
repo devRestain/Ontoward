@@ -90,12 +90,27 @@ class Consultation:
     def check_budget(self, state: WorkflowState) -> None:
         decision = self.budget.evaluate(state)
         if decision.expired:
+            self.interactions.skip_empathy(state, "session_expired")
             state.stop("expired", "session_expired")
             return
         if decision.finalize:
+            self.interactions.skip_empathy(state, "finalization_budget")
             state.session.finalizing = True
             self.interactions.clear_selected(state)
         self.questions.discard_unasked(state, decision.discard)
+
+    def select_action(self, state: WorkflowState) -> None:
+        event = self.interactions.pending_empathy(state)
+        greeting_due = state.session.current == "Initiation" and not any(
+            entry.delivered and entry.question and entry.question.purpose == "chief" for entry in state.interaction.history)
+        if event and not greeting_due:
+            if self.budget.can_empathize(state):
+                self.doctor.prepare_empathy(state, self.client, event)
+                if state.interaction.selected or state.interaction.termination:
+                    return
+            else:
+                self.interactions.skip_empathy(state, "empathy_budget", event.source_id)
+        self.planner.select_question(state)
 
     def advance_session(self, state: WorkflowState) -> None:
         if not state.session.initialized or state.interaction.pending or state.case.unasked(state.session.current):

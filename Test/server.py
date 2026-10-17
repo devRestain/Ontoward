@@ -295,7 +295,14 @@ class Evaluation:
             raise NovaError('MODEL_CALL_LIMIT', 429)
         if self.input_tokens >= 500000 or self.output_tokens >= 100000:
             raise NovaError('MODEL_TOKEN_BUDGET', 429)
-        response, text = self.call_model('gateway', messages, min(max_tokens, 100000 - self.output_tokens), body['request_id'])
+        role = 'gateway'
+        try:
+            task = json.loads(messages[-1]['content'])
+            if isinstance(task, dict) and task.get('task') in {'gateway', 'terminology', 'empathy'}:
+                role = task['task']
+        except (ValueError, TypeError):
+            pass
+        response, text = self.call_model(role, messages, min(max_tokens, 100000 - self.output_tokens), body['request_id'])
         self.doctor_calls += 1
         if not text.strip():
             raise NovaError('PROVIDER_RESPONSE_INVALID', 503)

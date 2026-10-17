@@ -162,6 +162,7 @@ def verify(submission, output, candidate=None):
         case_started = time.perf_counter()
         result = consult(client, resources)
         state = WorkflowState.model_validate(result)
+        (output / f"case-{i}.json").write_text(state.model_dump_json(indent=2))
         assert state.interaction.termination == "submitted" and len(client.submissions) == 1
         assert frozenset(knowledge._graph) == original
         if case_target == target:
@@ -175,17 +176,21 @@ def verify(submission, output, candidate=None):
         assert state.session.usage["Education"].calls == 0
         assert not any(action["question"]["purpose"] == "education" for action in client.actions)
         assert state.interaction.submission_payload["note"]["P"]["education"] == ""
+        note = state.interaction.submission_payload["note"]
+        assert note["S"]["cc"].startswith("C.C: ")
+        assert all(": " in line for fields in note.values() for text in fields.values() for line in text.splitlines())
+        assert not any("가" <= char <= "힣" for text in note["S"].values() for char in text)
+        assert state.case.diagnosis == knowledge.label(state.differential.selected_id or case_target, language="en")
         if numeric:
             hpi = state.interaction.submission_payload["note"]["S"]["hpi"]
-            assert "2 개월" in hpi
+            assert "2 months" in hpi
         for exchange in state.interaction.model_history:
-            assert exchange["role"] == "gateway"
-            if exchange["role"] == "gateway":
+            assert exchange["role"] in {"gateway", "terminology", "empathy"}
+            if exchange["role"] in {"gateway", "terminology"}:
                 metrics = exchange["parser_payload"]
-                expanded = metrics["pass"] == "expansion"
+                expanded = metrics["pass"] != "primary"
                 assert metrics["vocabulary_count"] <= (1024 if expanded else 256)
                 assert metrics["vocabulary_bytes"] <= (131072 if expanded else 32768)
-        (output / f"case-{i}.json").write_text(state.model_dump_json(indent=2))
         cases.append({"target": case_target, "numeric": numeric, "actions": len(client.actions), "model_calls": state.session.doctor_calls,
                       "diagnosis_kind": state.case.diagnosis_kind, "termination": state.interaction.termination,
                       "unresolved_records": sum(item.value is not None and item.value.status == "unknown" for _, item in state.case.entries()),

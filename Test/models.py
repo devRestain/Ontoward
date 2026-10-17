@@ -76,6 +76,10 @@ class ScriptedModels:
             row = next((f'r{number:02d}' for number, item in enumerate(self.case['exam_results'], 1)
                         if item['exam'].split(' (')[0] in request), None)
             return completion(json.dumps({'id': row} if row else {'id': None, 'reason': 'too_broad'}))
+        if payload.get('task') == 'empathy':
+            return completion(json.dumps({'text': '많이 힘드셨겠어요. 함께 살펴볼게요.'}, ensure_ascii=False))
+        if payload.get('task') == 'terminology':
+            return completion(json.dumps({'facts': [], 'clinical_content': False}))
         question, text = payload['question'], payload['input']
         is_chief = question is None or (question['purpose'] in {'chief', 'clarification'} and question['field'] == 'S.cc')
         if is_chief:
@@ -99,7 +103,8 @@ class ScriptedModels:
                 if question:
                     fact['record_id'] = question['item_id']
                 facts.append(fact)
-        return completion(json.dumps({'facts': facts}, ensure_ascii=False))
+        return completion(json.dumps({'facts': facts, 'clinical_content': text.strip().rstrip('.!?') not in
+                                     {'모르겠어요', '모르겠습니다', '알겠습니다', '감사합니다'}}, ensure_ascii=False))
 
     def parse_chief(self, payload):
         # This protocol double ranks supplied names only; real semantic selection belongs to NOVA.

@@ -1,0 +1,7 @@
+Preserve unresolved reported clinical information as medical record keywords. Return one JSON object matching schema, without Markdown.
+This is record-only terminology normalization, not diagnosis, ontology admission, SOAP generation, or patient advice.
+Every fact must have kind text, a record_category, exact current-input quote copied to value.text, and record_details with exact subquotes and faithful concise English medical wording.
+Use repair_of to identify an unresolved source fact when supplied. Do not repeat or change frozen_facts. Never provide concept_ids, attribute_id, values, measurement, or record_id.
+Preserve polarity, patient versus family, uncertainty, caregiver reporting, home measurements, every reported number and unit, and each separate time point. Never infer an unreported scale, growth rate, diagnosis, cause, negative finding, or examination.
+Patient speech stays in S fields; only an actual pending EXAM may produce O.exam. Use the same report's field/category and observation context when appropriate; keep unrelated reports separate.
+If no clinical content exists, return facts [] and clinical_content false. Emotional support is not a clinical finding. If present, retain an exact-quote empathy signal using new_distress, renewed_request, repeat, or acknowledgement.

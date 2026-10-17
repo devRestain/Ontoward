@@ -12,7 +12,8 @@ def route_budget(state: WorkflowState) -> str:
         return "build_soap"
     if not state.session.initialized:
         return "enter_session"
-    return "select_question" if state.case.unasked(state.session.current) else "advance_session"
+    return "select_question" if (state.case.unasked(state.session.current)
+        or any(event.status == "pending" for event in state.interaction.empathy_events)) else "advance_session"
 
 
 def route_validation(state: WorkflowState) -> str:
@@ -70,7 +71,7 @@ def build_graph(consultation, knowledge):
         "process_input": partial(consultation.interpreter.process_input, knowledge=knowledge, client=consultation.client),
         "refresh_after_input": consultation.refresh_after_input,
         "enter_session": consultation.enter_session, "check_budget": consultation.check_budget,
-        "select_question": consultation.planner.select_question,
+        "select_question": consultation.select_action,
         "validate_action": consultation.doctor.validate_action,
         "execute_action": partial(consultation.doctor.execute_action, client=consultation.client),
         "advance_session": consultation.advance_session, "build_soap": consultation.finalize,

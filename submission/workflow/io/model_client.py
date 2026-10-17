@@ -13,8 +13,8 @@ class ModelClient:
 
     def complete(self, state, client, *, role, messages):
         session = state.session
-        if role not in {"gateway", "empathy"}:
-            raise ValueError("Only Gateway and empathy calls use the designated model")
+        if role not in {"gateway", "terminology", "empathy"}:
+            raise ValueError("Unsupported designated-model role")
         allowance = self.budget.model_allowance(session)
         if not allowance:
             state.interaction.issues.append(f"{role}_budget_exhausted")
@@ -40,8 +40,8 @@ class ModelClient:
                 content = ""
             if not isinstance(content, str):
                 raise ValueError("Invalid model content")
-            if content.strip() and role == "gateway":
-                self.usage.record_model_success(state)
+            if content.strip():
+                self.usage.record_model_success(state, role)
             return content
         except NovaError as error:
             exchange["error"] = error.code

@@ -2,13 +2,13 @@
 
 ## Ownership
 
-- Apply root PRD.md, D18 source-only knowledge ownership, D17 matching and parsing, and D33 interview budgets and continuation.
+- Apply root PRD.md, D18 source-only knowledge ownership, D17 matching and parsing, and D35 interview budgets and continuation.
 - Keep run.py limited to SDK callbacks from workflow/runtime.py.
 - Assemble immutable knowledge and configuration in PreparedResources and initialize case-owned collaborators and WorkflowState for each consult call.
 - Keep Consultation as the sole coordinator for Initiation, ChiefComplaint, ContextFactor, DifferentialDiagnosis, Education, and finalization.
 - Apply D26 ONTOWARD_EDUCATION_ENABLED=false by default; pass Education without actions or reserved turns and leave P.education empty while preserving other admitted plan fields.
 - Keep graph.py limited to assembly, pure routing, and the existing deep-copy/Pydantic boundary.
-- Assign prepared SAY validation and SAY/EXAM execution to Doctor, response interpretation and facts to InputInterpreter, questions and education to InterviewPlanner, Pattern evaluation and diagnosis to ClinicalReasoner, and SOAP/submission to SubmissionWriter.
+- Assign prepared SAY validation empathy generation and SAY/EXAM execution to Doctor, facts and empathy signals to InputInterpreter, clinical questions and education to InterviewPlanner, reasoning to ClinicalReasoner, and SOAP/submission to SubmissionWriter.
 - Assign question registration/discard to QuestionLifecycle, transcript/projection/delivery to InteractionLifecycle, and counters to UsageAccounting.
 - Keep pure decisions in workflow/rules and model/session/identical-request transport in workflow/io.
 - Preserve the five case-local state owners without a generic agent base, registry, or session subclasses.
@@ -17,7 +17,7 @@
 
 ## Prepared Interviews
 
-- Use prepared text for interview and education SAY and every EXAM; keep empathy generation and triggers outside the D33 accounting slice.
+- Use prepared text for clinical SAY and EXAM; permit only D34 empathy statements as generated patient-facing text.
 - Validate text during prepare and independently after NFC normalization immediately before delivery; require 1–30 codepoints including whitespace and punctuation and never truncate.
 - Use the manifest-pinned QuestionTemplate answer_type, affirmative, interviewable, and reason fields.
 - Block direct questions about diagnosis-qualified Targets without an approved observable mapping.
@@ -37,7 +37,7 @@
 ## Gateway and Evidence
 
 - Route every SAY/EXAM reply through InputInterpreter, including education replies.
-- Use openai/gpt-6-luna for Gateway interpretation and the shared-budget empathy caller interface; always parse the first substantive patient statement with Gateway even after a successful empathy model call.
+- Use openai/gpt-6-luna for gateway terminology and empathy roles; track the first substantive Gateway interpretation separately from other model successes.
 - Apply D29 to require one best supplied Symptom per reported current chief; mark approximate interpretation uncertain and retain its exact patient quote.
 - Expose source labels and aliases, restrict initial chief candidates to Symptoms, and use bounded model lookup terms to search the full source index within the existing one-call recovery allowance.
 - Keep the chief schema enum synchronized with the transmitted candidates, reject multiple chief IDs and unqualified diagnostic composites, and record linked-chief counts separately from nonempty model responses.
@@ -48,9 +48,15 @@
 - Preserve the complete current input outside the past-context limit and allow only supplied record/dialogue references in model output.
 - Require nonempty exact current quotations for every accepted fact; never turn Doctor speech into patient findings.
 - Separate accepted facts, rejected facts, and unresolved links; quarantine invalid observation dependencies and conflicting corrections without discarding independent valid facts.
-- Allow one combined context/link/fact recovery call per reply and retain first-pass valid facts if recovery fails.
+- Allow one combined context/link/fact recovery and one final record-only terminology call per reply; freeze accepted independent facts and retain every original rejection and recovery result.
 - Include malformed or empty Gateway JSON in that same one-call recovery allowance without admitting ungrounded facts.
 - Use fixed parsing only for complete replies matching an explicit prepared answer contract; send compound, temporal, and subject-changing replies to Gateway.
+- Bind current answers to the supplied Target Attribute allowed values subject and episode; recover empty substantive answers and incomplete attributes without forcing incompatible meanings.
+- Preserve unsupported measurements as quoted subjective medical text without fabricated numeric attributes examination findings or score support.
+- Detect exact-quote emotional signals in all sessions; prioritize one empathy SAY after the required greeting and before the next clinical question.
+- Keep empathy events outside SOAP placeholders and education completion; suppress repeated concerns and acknowledgements while permitting new distress and explicit renewed requests.
+- Validate generated empathy as one NFC 1-30 codepoint statement and use the prepared fallback after empty malformed or invalid generation.
+- Reserve a reply-model allowance and finalization time before empathy generation and record undelivered events when budgets prevent delivery.
 - Bound primary vocabulary to 256 concepts/32 KiB and expansion to 1024 concepts/128 KiB.
 - Preserve question Target/Attribute identifiers, prioritize chief lookup terms and current wording before optional Target-specific values, and stop candidate construction at the count limit.
 - Apply D28 whole-message UTF-8 JSON caps of 12 KiB primary, 16 KiB expansion, and 8 KiB after a context rejection; include system instructions, schema, current input, question, vocabulary, and past context.
@@ -80,7 +86,7 @@
 
 ## Budgets, Recovery, and Submission
 
-- Apply D33 interview target/cap pairs of Initiation 1/1, ChiefComplaint 7/16, ContextFactor 2/7, and DifferentialDiagnosis 3/12 without borrowing unused capacity.
+- Apply D35 interview target/cap pairs of Initiation 1/1, ChiefComplaint 7/16, ContextFactor 2/7, and DifferentialDiagnosis 3/12 without borrowing unused capacity.
 - Treat targets as conditional coverage goals and skip filler; cap Education at 0 by default and target 2/cap 3 only when explicitly enabled.
 - Require positive rank-change, spread, or unlock utility for optional questions; after the target require rank-change or spread, or positive unlock while no Disease has diagnostic eligibility.
 - Recheck utility during selection even without a new clinical revision; exempt core HPI before Open Inquiry, Open Inquiry, clarification, education, and empathy from this optional-question filter.
@@ -98,6 +104,10 @@
 - Use only admitted plans and prepared common provisional wording; keep missing disease plans visible and apply D18's deletion of prior education drafts.
 - Serialize exactly fifteen SOAP string fields plus separate diagnosis, keep O.tests empty, and retain acquisition provenance and meaningful clinical context.
 - Keep A.evidence limited to actual obtained findings used in diagnosis and exclude unasked/unperformed findings and internal identifiers.
+- Apply D33 English source labels and fixed Category: Content lines to every populated SOAP field; keep C.C onset and pain assessment tied to the same chief observation and episode.
+- Render history and ROS presence as (+) or (-), keep unknown and uncertain explicit, and never expand a general history denial into individual disease negatives.
+- Keep additional record keywords anchored to exact patient quotes in the existing Gateway pass; prefer admitted typed values and require explicit NRS scale evidence.
+- Render Diagnosis and Evidence categories plus source-supported r/o entries; keep all fifteen SDK fields and the separate English diagnosis unchanged in shape.
 - Preserve acquired negative findings used by diagnosis penalties and include obtained supporting findings beside each differential diagnosis.
 - Reconstruct an invalid SOAP record once and finish only after the submitted DIAGNOSE returns completed.
 - Distinguish failed, unknown, closed, expired, and confirmed submitted outcomes.

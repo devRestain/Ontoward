@@ -1,7 +1,7 @@
 import json
 
 from ..rules.limits import LIMITS
-from .models import ActionSpec, ClinicalValue, InteractionEntry
+from .models import ActionSpec, ClinicalValue, EmpathyEvent, InteractionEntry
 
 
 class InteractionLifecycle:
@@ -22,7 +22,33 @@ class InteractionLifecycle:
         action = state.interaction.selected
         state.interaction.selected = None
         state.interaction.pending = action
+        if action.empathy_source_id:
+            event = next(event for event in state.interaction.empathy_events if event.source_id == action.empathy_source_id)
+            event.status = "attempted"
+            event.request_id = action.request_id
         return action
+
+    @staticmethod
+    def queue_empathy(state, signal, source_id):
+        events = state.interaction.empathy_events
+        if any(event.source_id == source_id for event in events):
+            return
+        repeat = signal.intent in {"repeat", "acknowledgement"} or (
+            signal.intent != "renewed_request" and any(event.quote == signal.quote
+                and event.status in {"pending", "attempted", "delivered"} for event in events))
+        events.append(EmpathyEvent(**signal.model_dump(), source_id=source_id,
+            status="skipped" if repeat else "pending", reason="repetition_or_acknowledgement" if repeat else None))
+
+    @staticmethod
+    def pending_empathy(state):
+        return next((event for event in state.interaction.empathy_events if event.status == "pending"), None)
+
+    @staticmethod
+    def skip_empathy(state, reason, source_id=None):
+        for event in state.interaction.empathy_events:
+            if event.status in {"pending", "attempted"} and (source_id is None or event.source_id == source_id):
+                event.status = "skipped"
+                event.reason = reason
 
     @staticmethod
     def record_action_attempt(state, action):
@@ -46,6 +72,10 @@ class InteractionLifecycle:
         entry.turn = response.turn
         entry.delivered = True
         self.receive_input(state, raw)
+        if action.empathy_source_id:
+            event = next(event for event in state.interaction.empathy_events if event.source_id == action.empathy_source_id)
+            event.status = "delivered"
+            event.request_id = action.request_id
         if action.question.purpose == "education":
             item = state.case.get(action.question.item_id)
             if item:

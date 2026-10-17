@@ -120,13 +120,15 @@ class ClinicalKnowledge:
         knowledge.validate_question_assets()
         return knowledge
 
-    def label(self, concept_id: str) -> str:
-        if concept_id in self._labels:
-            return self._labels[concept_id]
+    def label(self, concept_id: str, *, language="ko") -> str:
+        key = (concept_id, language)
+        if key in self._labels:
+            return self._labels[key]
         labels = list(self._graph.objects(URIRef(concept_id), RDFS.label))
-        value = self.labels.get(concept_id) or str(next((label for label in labels if label.language == "ko"),
-                        next((label for label in labels if label.language == "en"), concept_id)))
-        self._labels[concept_id] = value
+        preferred = self.labels.get(concept_id) if language == "ko" else None
+        value = preferred or str(next((label for label in labels if label.language == language),
+            next((label for label in labels if label.language is None), next(iter(labels), concept_id))))
+        self._labels[key] = value
         return value
 
     def has_type(self, concept_id: str, kind: str) -> bool:

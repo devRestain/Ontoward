@@ -19,6 +19,11 @@ class Model(BaseModel):
     model_config = ConfigDict(extra="forbid", validate_assignment=True)
 
 
+class RecordDetail(Model):
+    quote: str = Field(min_length=1, max_length=160)
+    english: str = Field(min_length=1, max_length=160, pattern=r"^[^\r\n]+$")
+
+
 class ClinicalValue(Model):
     kind: Literal["symptom", "finding", "context", "attribute", "text", "plan", "education"]
     text: str
@@ -31,6 +36,10 @@ class ClinicalValue(Model):
     measurement: ExpectedValue | None = None
     subject: Literal["patient", "family"] = "patient"
     time_context: Literal["current", "past", "unspecified"] = "unspecified"
+    record_category: Literal["onset", "duration", "course", "quality", "aggravating_factor", "relieving_factor",
+        "associated_symptoms", "previous_care", "presentation", "medical_history", "medication", "allergy",
+        "surgery", "family_history", "smoking", "alcohol", "occupation", "other"] | None = None
+    record_details: list[RecordDetail] = Field(default_factory=list, max_length=8)
 
     @model_validator(mode="after")
     def validate_measurement(self):
@@ -127,6 +136,7 @@ class SessionContext(Model):
     allowed_actions: list[str] = Field(default_factory=lambda: ["SAY", "EXAM", "DIAGNOSE"])
     doctor_calls: int = 0
     doctor_successes: int = 0
+    gateway_successes: int = 0
     input_tokens: int = 0
     output_tokens: int = 0
     call_limit: int = LIMITS.model_calls
@@ -243,7 +253,8 @@ class ActionSpec(Model):
     question: Question
     content: str
     request_id: str
-    render_source: Literal["prepared"] = "prepared"
+    render_source: Literal["prepared", "empathy"] = "prepared"
+    empathy_source_id: str | None = None
     ready: bool = False
 
 
@@ -256,6 +267,18 @@ class InteractionEntry(Model):
     delivered: bool = False
     question: Question | None = None
     attempts: list[dict[str, object]] = Field(default_factory=list)
+
+
+class EmpathySignal(Model):
+    quote: str = Field(min_length=1)
+    intent: Literal["new_distress", "renewed_request", "repeat", "acknowledgement"]
+
+
+class EmpathyEvent(EmpathySignal):
+    source_id: str
+    status: Literal["pending", "attempted", "delivered", "skipped"] = "pending"
+    reason: str | None = None
+    request_id: str | None = None
 
 
 class InteractionState(Model):
@@ -275,6 +298,8 @@ class InteractionState(Model):
     submission_repairs: int = Field(default=0, ge=0, le=LIMITS.submission_repairs)
     submission_error: str | None = None
     parse_rejections: list[dict[str, object]] = Field(default_factory=list)
+    parse_recoveries: list[dict[str, object]] = Field(default_factory=list)
+    empathy_events: list[EmpathyEvent] = Field(default_factory=list)
     diagnosis_revision: int = 0
     explained_revision: int = -1
     correction_required: bool = False
@@ -310,6 +335,7 @@ class Fact(Model):
     quote: str = Field(min_length=1)
     record_id: str | None = None
     context_refs: list[str] = Field(default_factory=list)
+    repair_of: int | None = Field(default=None, ge=0)
 
 
 LookupTerm = Annotated[str, Field(min_length=1, max_length=80)]
@@ -319,6 +345,8 @@ class ParsedInput(Model):
     facts: list[Fact] = Field(default_factory=list)
     needs_context: bool = False
     lookup_terms: list[LookupTerm] = Field(default_factory=list, max_length=8)
+    clinical_content: bool = True
+    empathy: EmpathySignal | None = None
 
 
 class ParseResult(Model):
@@ -328,3 +356,7 @@ class ParseResult(Model):
     needs_context: bool = False
     context_limited: bool = False
     lookup_terms: list[LookupTerm] = Field(default_factory=list, max_length=8)
+    clinical_content: bool = True
+    empathy: EmpathySignal | None = None
+    binding_unresolved: bool = False
+    recovery_history: list[dict[str, object]] = Field(default_factory=list)

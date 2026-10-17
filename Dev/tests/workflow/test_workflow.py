@@ -221,6 +221,10 @@ class FakeSDK:
     def chat(self, messages, **kwargs):
         self.calls.append({"messages": messages, **kwargs})
         payload = json.loads(messages[1]["content"])
+        if payload.get("task") == "empathy":
+            return self.completion(json.dumps({"text": CONFIG.texts.empathy_fallback}, ensure_ascii=False))
+        if payload.get("task") == "terminology":
+            return self.completion(json.dumps({"facts": [], "clinical_content": False}))
         q, text = payload["question"], payload["input"]
         facts = []
         if not q or q["purpose"] in {"chief", "clarification"}:
@@ -236,7 +240,7 @@ class FakeSDK:
             facts = [fact("S.pmh", "context", OW.Context, text, q=q, status="absent" if text == "아니요" else "present")]
         elif q["purpose"] == "ros":
             facts = [fact("S.ros", "symptom", q["target_id"], text, q=q, status="absent" if text == "없어요" else "present")]
-        content = "{bad json" if self.malformed else json.dumps({"facts": facts}, ensure_ascii=False)
+        content = "{bad json" if self.malformed else json.dumps({"facts": facts, "clinical_content": bool(facts)}, ensure_ascii=False)
         return self.completion(content)
 
     @staticmethod
@@ -570,7 +574,7 @@ class Verification(unittest.TestCase):
         self.assertEqual(s.session.clarifications, 2)
         self.assertFalse(s.differential.hypotheses)
         self.assertEqual(client.submissions[0]["note"]["P"]["treatment"], "")
-        self.assertIn("원인 미확정", client.submissions[0]["note"]["A"]["evidence"])
+        self.assertIn("Cause undetermined", client.submissions[0]["note"]["A"]["evidence"])
 
     def test_pure_routes_initialization_and_current_scope(self):
         s = state()
@@ -676,7 +680,7 @@ class Verification(unittest.TestCase):
         q = question(s, purpose="context", target=OW.Context, field="S.pmh")
         pending(s, q)
         gateway = make_interpreter(CONFIG)
-        s.session.doctor_successes = 1
+        s.session.gateway_successes = s.session.doctor_successes = 1
         self.assertEqual(fixed_reply(CONFIG, s, "아니요.").facts[0].value.status, "absent")
         self.assertIsNone(fixed_reply(CONFIG, s, "아니요, 하지만 어제는 있었어요"))
         self.assertEqual(fixed_reply(CONFIG, s, "모르겠어요").facts, [])
@@ -699,7 +703,7 @@ class Verification(unittest.TestCase):
         make_interpreter(CONFIG).process_input(s, knowledge(), client)
         self.assertFalse(s.case.S["cc"])
         self.assertEqual(s.interaction.history[0].response["opening"], "가상증상이 있어요")
-        self.assertEqual(len(client.calls), 2)
+        self.assertEqual(len(client.calls), 3)
         self.assertIn("invalid_gateway_output", s.interaction.issues)
 
     def test_fact_grounding_and_correction_boundary(self):
@@ -789,7 +793,7 @@ class Verification(unittest.TestCase):
         self.assertEqual(sum(a["kind"] == "EXAM" for a in client.actions), 1)
         refused = client.submissions[0]["note"]["O"]["exam"]
         self.assertIn("가상소견", refused)
-        self.assertIn(": 미확인", refused)
+        self.assertIn("(Unknown)", refused)
         self.assertNotIn("가상소견", client.submissions[0]["note"]["A"]["evidence"])
         self.assertFalse(any(item.value.kind == "finding" and str(OW.ExamX) in item.value.concept_ids
                              for _, item in s.case.entries() if item.value))
@@ -827,7 +831,7 @@ class Verification(unittest.TestCase):
         make_consultation(FakeSDK(), resources()).finalize(s)
         self.assertEqual(s.interaction.reason, "no_supported_diagnosis")
         s = state("DifferentialDiagnosis", True, turns=1)
-        s.session.doctor_successes = 1
+        s.session.gateway_successes = s.session.doctor_successes = 1
         s.differential.initialized = True
         record(s)
         client = FakeSDK()
@@ -845,7 +849,7 @@ class Verification(unittest.TestCase):
         self.assertEqual(s.interaction.termination, "submitted")
 
         self.assertEqual(s.case.diagnosis, "가상질환B")
-        self.assertIn("턴 50", s.interaction.submission_payload["note"]["O"]["exam"])
+        self.assertIn("turn 50", s.interaction.submission_payload["note"]["O"]["exam"])
 
     def test_soap_exact_fields_bytes_and_doctor_requirement(self):
         s, _ = self.run_flow()
@@ -1207,6 +1211,11 @@ class Verification(unittest.TestCase):
         alternate_text.write_text(json.dumps(texts, ensure_ascii=False), encoding="utf-8")
         with patch.dict(os.environ, {"ONTOWARD_TEXTS": "config/review-texts.json"}):
             with self.assertRaises(ValueError): TextConfig.load()
+        texts = CONFIG.texts.model_dump()
+        del texts["soap_labels"]["cc"]
+        alternate_text.write_text(json.dumps(texts, ensure_ascii=False), encoding="utf-8")
+        with patch.dict(os.environ, {"ONTOWARD_TEXTS": "config/review-texts.json"}):
+            with self.assertRaisesRegex(ValueError, "SOAP category"): TextConfig.load()
 
     def test_new_fact_during_education_changes_remaining_delivery(self):
         k = knowledge()
@@ -1374,20 +1383,20 @@ class Verification(unittest.TestCase):
         changed.value.values = [str(OW.Right)]
         self.assertNotEqual(left, writer._describe_record(changed))
         changed.value.time_context, changed.value.subject = "past", "family"
-        self.assertIn("가족 · 과거", writer._describe_record(changed))
+        self.assertIn("Family · Past", writer._describe_record(changed))
         self.assertNotIn("private-", left)
         measured = item.model_copy(deep=True)
         measured.value.values, measured.value.attribute_id = [], str(OW.EpisodeDuration)
         measured.value.measurement = ExpectedValue(kind="interval", lower=1.0, upper=2.0, unit="month", upper_unit="year", upper_inclusive=False)
-        self.assertIn("[1 개월, 2 년)", writer._describe_record(measured))
+        self.assertIn("[1 month, 2 years)", writer._describe_record(measured))
         s = state("Education", True)
         s.case.put("S.hpi", item)
         measured.id, measured.value.episode_id = "another-record", "another-private-episode"
         s.case.put("S.hpi", measured)
         writer.build_soap(s)
         rendered = s.interaction.submission_payload["note"]["S"]["hpi"]
-        self.assertIn("발현 1", rendered)
-        self.assertIn("발현 2", rendered)
+        self.assertIn("Episode 1", rendered)
+        self.assertIn("Episode 2", rendered)
 
     def test_differential_shares_support_policy_and_excludes_primary(self):
         s, k = state("Education", True), knowledge()
@@ -1399,12 +1408,15 @@ class Verification(unittest.TestCase):
         writer.build_soap(s)
         self.assertEqual(s.interaction.submission_payload["note"]["A"]["differential"], "")
         from rdflib import RDFS
+        record(s)
         for i in range(7):
             ident = str(OW[f"Alternative{i}"])
             k._graph.add((URIRef(ident), RDFS.label, Literal(f"대안{i}", lang="ko")))
-            s.differential.hypotheses.append(Hypothesis(disease_id=ident, evidence_score=0.25, chief_coverage=1))
+            s.differential.hypotheses.append(Hypothesis(disease_id=ident, evidence_score=0.25, chief_coverage=1, evidence_ids=["chief"]))
         writer.build_soap(s)
-        self.assertEqual(s.interaction.submission_payload["note"]["A"]["differential"].splitlines(), [f"대안{i}" for i in range(5)])
+        lines = s.interaction.submission_payload["note"]["A"]["differential"].splitlines()
+        self.assertEqual(len(lines), 5)
+        self.assertTrue(all(line.startswith(f"r/o 대안{i}: ") and "가상증상 (+)" in line for i, line in enumerate(lines)))
 
     def test_parser_vocabulary_bounds_and_required_question_values(self):
         k, s = knowledge(), state("ChiefComplaint", True)
@@ -1484,7 +1496,7 @@ class Verification(unittest.TestCase):
                 self.assertEqual(linked.value.status, "present")
                 self.assertEqual(linked.value.concept_ids, [str(OW.Complaint)])
                 self.assertEqual(other.value.concept_ids, [far] if mode == "resolve" else [])
-                self.assertEqual(len(payloads), 1 if mode == "budget" else 2)
+                self.assertEqual(len(payloads), 1 if mode == "budget" else 2 if mode in {"resolve", "context_limit"} else 3)
                 self.assertTrue(all("parser_payload" in entry for entry in s.interaction.model_history))
                 self.assertEqual(s.session.doctor_calls, len(payloads))
 
@@ -1652,7 +1664,7 @@ class Verification(unittest.TestCase):
             bad = fact("S.cc", "symptom", OW.Composite, "두통 있어요", status=status)
             parsed = make_interpreter(CONFIG)._validate_facts({"facts": [bad]}, s, k, "두통 있어요")
             self.assertFalse(parsed.accepted_facts)
-        s.session.doctor_successes = 1
+        s.session.gateway_successes = s.session.doctor_successes = 1
         q = question(s, target=OW.Complaint, attribute=OW.TimeSinceOnset)
         q.answer_type = "duration"
         pending(s, q)
@@ -1671,7 +1683,7 @@ class Verification(unittest.TestCase):
     def test_d17_uncertain_chief_confirmation_keeps_its_episode(self):
         k, s, client = knowledge(), state("DifferentialDiagnosis", True), FakeSDK()
         record(s, status="uncertain")
-        s.session.doctor_successes = 1
+        s.session.gateway_successes = s.session.doctor_successes = 1
         w = make_consultation(client, resources(k))
         w.reasoner.retrieve_candidates(s)
         w.planner.replan(s)
@@ -1705,7 +1717,7 @@ class Verification(unittest.TestCase):
 
     def test_d17_education_leaves_and_uses_correction_turn(self):
         s, client = state("Education", True, turns=3), FakeSDK()
-        s.session.doctor_successes = 1
+        s.session.gateway_successes = s.session.doctor_successes = 1
         client.remaining = 3
         s.case.diagnosis_kind = "disease"
         s.differential.selected_id = str(OW.Beta)
@@ -1771,7 +1783,7 @@ class Verification(unittest.TestCase):
         client.chat = Mock(return_value=client.completion("{invalid"))
         s.interaction.incoming = {"initial": {"opening": "가상증상이 있어요"}}
         make_interpreter(CONFIG).process_input(s, knowledge(), client)
-        self.assertEqual(client.chat.call_count, 2)
+        self.assertEqual(client.chat.call_count, 3)
         self.assertFalse(s.case.chief_complaints())
         self.assertTrue(s.interaction.needs_clarification)
 
@@ -1877,11 +1889,11 @@ class Verification(unittest.TestCase):
         s.interaction.incoming = {"initial": {"opening": text}}
         client.chat = Mock(return_value=client.completion('{"facts":[]}'))
         make_interpreter(CONFIG).process_input(s, knowledge(), client)
-        self.assertEqual(client.chat.call_count, 2)
-        self.assertEqual(s.session.doctor_successes, 2)
+        self.assertEqual(client.chat.call_count, 3)
+        self.assertEqual(s.session.doctor_successes, 3)
         self.assertFalse(s.case.chief_complaints())
         self.assertTrue(s.interaction.needs_clarification)
-        self.assertEqual([e["parser_result"]["linked_chief_facts"] for e in s.interaction.model_history], [0, 0])
+        self.assertEqual([e["parser_result"]["linked_chief_facts"] for e in s.interaction.model_history], [0, 0, 0])
         self.assertEqual(s.interaction.dialogue()[0]["patient"], text)
 
     def test_chief_selection_is_one_supplied_symptom_after_bounded_recovery(self):
@@ -1894,14 +1906,14 @@ class Verification(unittest.TestCase):
             payload = json.loads(messages[1]["content"])
             requests.append(payload)
             self.assertTrue(payload["chief_mapping_required"])
-            self.assertTrue(all(c["kind"] == "Symptom" for c in payload["vocabulary"]))
+            self.assertTrue(any(c["kind"] == "Symptom" for c in payload["vocabulary"]))
             selected = payload["schema"]["anyOf"][0]["properties"]["facts"]["contains"]
             ids = selected["properties"]["value"]["properties"]["concept_ids"]
             self.assertEqual((ids["minItems"], ids["maxItems"]), (1, 1))
-            self.assertEqual(set(ids["items"]["enum"]), {c["id"] for c in payload["vocabulary"]})
+            self.assertEqual(set(ids["items"]["enum"]), {c["id"] for c in payload["vocabulary"] if c["kind"] == "Symptom"})
             if payload["parser_pass"] == "primary":
                 return client.completion(json.dumps({"facts": [ambiguous]}, ensure_ascii=False))
-            self.assertEqual(len(payload["schema"]["anyOf"]), 1)
+            self.assertEqual(len(payload["schema"]["anyOf"]), 2)
             fixed = copy.deepcopy(ambiguous)
             fixed["value"]["concept_ids"] = [str(OW.Complaint)]
             return client.completion(json.dumps({"facts": [fixed]}, ensure_ascii=False))
@@ -1974,7 +1986,7 @@ class Verification(unittest.TestCase):
             return client.completion('{"facts":[],"needs_context":true}')
         client.chat = Mock(side_effect=chat)
         make_interpreter(CONFIG).process_input(s, k, client)
-        self.assertEqual(client.chat.call_count, 2)
+        self.assertEqual(client.chat.call_count, 3)
         chief = s.case.chief_complaints()[0]
         self.assertEqual(chief.value.text, text)
         self.assertEqual(chief.value.concept_ids, [])
@@ -2051,11 +2063,11 @@ class Verification(unittest.TestCase):
         alternative.contradiction_ids = ["negative"]
         make_writer(FakeSDK(), k, CONFIG).build_soap(s)
         assessment = s.interaction.submission_payload["note"]["A"]
-        self.assertIn("별도증상 / 환자", assessment["evidence"])
-        self.assertIn(": 없음;", assessment["evidence"])
-        self.assertIn("근거:", assessment["differential"])
-        self.assertIn("별도증상 / 환자", assessment["differential"])
-        self.assertIn(": 없음;", assessment["differential"])
+        self.assertIn("별도증상 (-)", assessment["evidence"])
+        self.assertTrue(assessment["evidence"].startswith("Diagnosis: #1. "))
+        self.assertIn("\nEvidence: ", assessment["evidence"])
+        self.assertTrue(assessment["differential"].startswith("r/o "))
+        self.assertIn("별도증상 (-)", assessment["differential"])
         self.assertNotIn("urn:", json.dumps(assessment))
 
     def test_session_hard_caps_stop_actions_without_borrowing(self):
@@ -2172,7 +2184,8 @@ class Verification(unittest.TestCase):
         w = make_consultation(client)
         self.assertEqual(w.interpreter.model.complete(s, client, role="empathy", messages=[]), "많이 힘드셨겠어요")
         self.assertEqual((s.session.doctor_calls, s.session.input_tokens, s.session.output_tokens), (1, 20, 10))
-        self.assertEqual(s.session.doctor_successes, 0)
+        self.assertEqual(s.session.doctor_successes, 1)
+        self.assertEqual(s.session.gateway_successes, 0)
         q = question(s, purpose="empathy", target=None)
         w.interactions.select_question(s, q)
         w.doctor.validate_action(s)
@@ -2203,7 +2216,8 @@ class Verification(unittest.TestCase):
         self.assertIsNone(result.interaction.pending)
         self.assertEqual(result.session.usage["DifferentialDiagnosis"].empathy_actions, 1)
         self.assertEqual(len(client.submissions), 1)
-        self.assertIn("별도증상도 있어요", client.submissions[0]["note"]["S"]["ros"])
+        self.assertIn("별도증상: (+)", client.submissions[0]["note"]["S"]["ros"])
+        self.assertTrue(any(item.value and item.value.text == "별도증상도 있어요" for item in result.case.S["ros"].values()))
         self.assertEqual(client.submissions[0]["note"]["P"]["education"], "")
 
     def test_exhausted_transient_gateway_stops_without_actions_or_submission(self):
@@ -2232,6 +2246,165 @@ class Verification(unittest.TestCase):
         call.assert_called_once()
         w.doctor.executor.sleep.assert_not_called()
         self.assertEqual(client.timeout, 120)
+
+    def test_english_soap_cough_keywords_and_confirmed_submission(self):
+        from rdflib import RDFS
+        k, s = knowledge(), state("Education", True)
+        for concept, kind, english, korean in (
+            (OW.Cough, OW.Symptom, "Cough", "기침"), (OW.Dyspnea, OW.Symptom, "Dyspnea", "호흡곤란"),
+            (OW.Sputum, OW.Symptom, "Sputum", "가래"), (OW.Smoking, OW.ContextFactor, "Current smoker", "흡연")):
+            k._graph.add((concept, RDF.type, kind))
+            k._graph.add((concept, RDFS.label, Literal(english, lang="en")))
+            k._graph.add((concept, RDFS.label, Literal(korean, lang="ko")))
+        record(s, target=OW.Cough)
+        s.case.get("chief").value.text = "기침이 나서 왔어요."
+        for ident, attribute, measurement in (
+            ("onset", OW.TimeSinceOnset, ExpectedValue(kind="quantity", value=3, unit="day")),
+            ("duration", OW.EpisodeDuration, ExpectedValue(kind="interval", lower=1, upper=2, unit="min"))):
+            record(s, ident, OW.Cough, kind="attribute", field="S.hpi", attribute=attribute)
+            s.case.get(ident).value.measurement = measurement
+        for ident, field, category, status, quote, details in (
+            ("night", "S.hpi", "aggravating_factor", "present", "밤에 더 심해요.", [{"quote": "밤에", "english": "At night"}]),
+            ("pmh", "S.pmh", "medical_history", "absent", "진단받은 만성질환은 없어요.", []),
+            ("medication", "S.pmh", "medication", "absent", "복용 중인 약은 없어요.", [])):
+            s.case.put(field, RecordItem(id=ident, scope="ChiefComplaint", status="done", source_refs=["source"],
+                value=ClinicalValue(kind="text", text=quote, status=status, record_category=category, record_details=details)))
+        record(s, "smoking", OW.Smoking, kind="context", field="S.sh", status="absent")
+        record(s, "dyspnea", OW.Dyspnea, field="S.ros", status="absent")
+        record(s, "sputum", OW.Sputum, field="S.ros", status="absent")
+        s.case.put("O.exam", RecordItem(id="initial:vitals", scope="Initiation", status="done", source_refs=["initial"],
+            value=ClinicalValue(kind="finding", text=json.dumps({"temperature":"36.8 °C", "pulse":"78/min",
+                "respiratory_rate":"16/min", "oxygen_saturation":"98%"}), status="present")))
+        ClinicalReasoner(k).select_diagnosis(s)
+        client, s.session.doctor_successes = FakeSDK(), 1
+        s.session.gateway_successes = 1
+        writer = make_writer(client, k, CONFIG)
+        writer.build_soap(s)
+        payload = copy.deepcopy(s.interaction.submission_payload)
+        note = payload["note"]
+        self.assertEqual(payload["diagnosis"], "Cough")
+        self.assertEqual(note["S"]["cc"], "C.C: Cough\nOnset: 3 days before presentation")
+        self.assertEqual(note["S"]["hpi"], "P.I: Cough (+)\nOnset: 3 days before presentation\nDuration: 1–2 min\nAggravating factor: At night")
+        self.assertEqual(note["S"]["pmh"], "PMH: (-)\nMedicine history: (-)")
+        self.assertEqual(note["S"]["sh"], "Smoking: (-)")
+        self.assertEqual(note["S"]["ros"], "Dyspnea: (-)\nSputum: (-)")
+        self.assertEqual(note["S"]["fh"], "")
+        self.assertEqual(note["O"]["exam"], "V/S: BT 36.8 °C; PR 78/min; RR 16/min; SpO2 98% (initial information)")
+        self.assertEqual(note["O"]["tests"], "")
+        self.assertTrue(note["A"]["evidence"].startswith("Diagnosis: #1. Cough\nEvidence: Cough (+)"))
+        self.assertEqual(note["P"]["education"], "")
+        self.assertTrue(all(": " in line for fields in note.values() for text in fields.values() for line in text.splitlines()))
+        self.assertFalse(any("가" <= char <= "힣" for char in json.dumps(payload, ensure_ascii=False)))
+        self.assertNotIn("DM", note["S"]["pmh"])
+        self.assertNotIn("HTN", note["S"]["pmh"])
+        writer.submit_diagnosis(s)
+        writer.confirm_submission(s)
+        self.assertEqual(s.interaction.termination, "submitted")
+        self.assertEqual(len(client.submissions), 1)
+        (HERE / "soap-cough.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def test_pain_assessment_uses_reported_scale_and_same_episode_only(self):
+        from rdflib import RDFS
+        k, s = knowledge(), state("Education", True)
+        for concept, label in ((OW.Pain, "Chest pain"), (OW.Here, "Chest"), (OW.Dull, "Dull")):
+            k._graph.add((concept, RDFS.label, Literal(label, lang="en")))
+        k._graph.add((OW.Pain, RDF.type, OW.Symptom))
+        record(s, target=OW.Pain)
+        for ident, attribute, values, measurement in (
+            ("location", OW.Location, [OW.Here], None), ("quality", OW.PainQuality, [OW.Dull], None),
+            ("duration", OW.EpisodeDuration, [], ExpectedValue(kind="quantity", value=30, unit="min")),
+            ("score", OW.Severity, [], ExpectedValue(kind="quantity", value=6, unit="NRS"))):
+            record(s, ident, OW.Pain, kind="attribute", field="S.hpi", attribute=attribute, values=values)
+            s.case.get(ident).value.measurement = measurement
+        record(s, "old-score", OW.Pain, kind="attribute", field="S.hpi", attribute=OW.Severity, episode="old")
+        s.case.get("old-score").value.measurement = ExpectedValue(kind="quantity", value=9, unit="NRS")
+        s.case.get("old-score").value.time_context = "past"
+        writer = make_writer(FakeSDK(), k, CONFIG)
+        writer.build_soap(s)
+        cc = s.interaction.submission_payload["note"]["S"]["cc"]
+        self.assertIn("Pain assessment: Location: Chest; Quality: Dull; Duration: 30 min; Severity: NRS 6", cc)
+        self.assertNotIn("NRS 9", cc)
+        s.case.get("score").value.measurement = ExpectedValue(kind="quantity", value=6, unit="score")
+        writer.build_soap(s)
+        self.assertNotIn("NRS", s.interaction.submission_payload["note"]["S"]["cc"])
+        s.case.remove({"score", "location", "quality", "duration"})
+        writer.build_soap(s)
+        self.assertIn("Pain assessment: Unknown", s.interaction.submission_payload["note"]["S"]["cc"])
+
+    def test_history_english_source_terms_negatives_unknowns_and_unasked(self):
+        from rdflib import RDFS
+        k, s = knowledge(), state("Education", True)
+        for concept, label in ((OW.DM, "Diabetes mellitus"), (OW.FamilyDM, "Family history of diabetes")):
+            k._graph.add((concept, RDFS.label, Literal(label, lang="en")))
+        record(s, "dm", OW.DM, kind="context", field="S.pmh", status="absent")
+        record(s, "family-dm", OW.FamilyDM, kind="context", field="S.fh", status="present")
+        s.case.get("family-dm").value.subject = "family"
+        record(s, "allergy", OW.Context, kind="context", field="S.pmh", status="unknown")
+        s.case.get("allergy").value.concept_ids = []
+        s.case.get("allergy").value.record_category = "allergy"
+        s.case.put("S.pmh", RecordItem(id="unasked-htn", scope="ContextFactor"))
+        make_writer(FakeSDK(), k, CONFIG).build_soap(s)
+        note = s.interaction.submission_payload["note"]["S"]
+        self.assertIn("DM: (-)", note["pmh"])
+        self.assertIn("Allergy: (Unknown)", note["pmh"])
+        self.assertNotIn("Allergy: (-)", note["pmh"])
+        self.assertNotIn("HTN", note["pmh"])
+        self.assertTrue(note["fh"].startswith("DM: (+)"))
+        self.assertEqual(note["sh"], "")
+
+    def test_record_keywords_require_quotes_categories_and_explicit_nrs(self):
+        k, s = knowledge(), state("ChiefComplaint", True)
+        gateway = make_interpreter(CONFIG)
+        raw = {"field":"S.sh", "quote":"술은 주 2회 마셔요.", "value":{"kind":"text", "text":"술은 주 2회 마셔요.",
+            "status":"present", "record_category":"alcohol", "record_details":[{"quote":"주 2회", "english":"Twice/week"}]}}
+        parsed = gateway._validate_facts({"facts":[raw]}, s, k, raw["quote"])
+        self.assertEqual(len(parsed.accepted_facts), 1)
+        gateway._apply_facts(s, parsed, "reported")
+        make_writer(FakeSDK(), k, CONFIG).build_soap(s)
+        self.assertEqual(s.interaction.submission_payload["note"]["S"]["sh"], "Alcohol: (+); Twice/week")
+        forged = copy.deepcopy(raw)
+        forged["value"]["record_details"][0]["quote"] = "주 3회"
+        self.assertTrue(gateway._validate_facts({"facts":[forged]}, s, k, raw["quote"]).rejected_facts)
+        forged = copy.deepcopy(raw)
+        forged["value"]["record_category"] = "allergy"
+        self.assertTrue(gateway._validate_facts({"facts":[forged]}, s, k, raw["quote"]).rejected_facts)
+        forged = copy.deepcopy(raw)
+        del forged["value"]["record_category"]
+        self.assertTrue(gateway._validate_facts({"facts":[forged]}, s, k, raw["quote"]).rejected_facts)
+        record(s)
+        k._graph.add((OW.Complaint, OW.hasAttribute, OW.Severity))
+        k._graph.add((OW.Severity, RDF.type, OW.FindingAttribute))
+        score = fact("S.hpi", "attribute", OW.Complaint, "6점", attribute=OW.Severity, values=[])
+        score["value"]["measurement"] = {"kind":"quantity", "value":6, "unit":"NRS"}
+        self.assertTrue(gateway._validate_facts({"facts":[score]}, s, k, "6점").rejected_facts)
+        score["quote"] = score["value"]["text"] = "NRS 6점"
+        self.assertEqual(len(gateway._validate_facts({"facts":[score]}, s, k, "NRS 6점").accepted_facts), 1)
+        raw_onset = {"field":"S.hpi", "quote":"3일 전부터", "value":{"kind":"text", "text":"3일 전부터",
+            "status":"present", "record_category":"onset", "observation_id":"obs1", "episode_id":"episode1",
+            "record_details":[{"quote":"3일 전부터", "english":"3 days before presentation"}]}}
+        parsed = gateway._validate_facts({"facts":[raw_onset]}, s, k, raw_onset["quote"])
+        self.assertEqual(len(parsed.accepted_facts), 1)
+        gateway._apply_facts(s, parsed, "reported-onset")
+        make_writer(FakeSDK(), k, CONFIG).build_soap(s)
+        self.assertIn("Onset: 3 days before presentation", s.interaction.submission_payload["note"]["S"]["cc"])
+
+    def test_record_keywords_preserve_reasoning_and_multiple_chief_hpi_links(self):
+        k, s = knowledge(), state("DifferentialDiagnosis", True)
+        record(s)
+        reasoner = ClinicalReasoner(k)
+        reasoner.retrieve_candidates(s)
+        before = (s.differential.clinical_revision, s.differential.refreshes, s.differential.model_dump())
+        s.case.get("chief").value.record_details = [{"quote":"synthetic", "english":"Reported symptom"}]
+        reasoner.refresh_hypotheses(s)
+        self.assertEqual((s.differential.clinical_revision, s.differential.refreshes, s.differential.model_dump()), before)
+        record(s, "other-chief", OW.Other)
+        record(s, "first-location", kind="attribute", field="S.hpi", attribute=OW.Location, values=[OW.Here])
+        record(s, "other-location", OW.Other, kind="attribute", field="S.hpi", attribute=OW.Location, values=[OW.Elsewhere])
+        make_writer(FakeSDK(), k, CONFIG).build_soap(s)
+        note = s.interaction.submission_payload["note"]["S"]
+        self.assertIn("Location: 가상증상 - 가상부위", note["hpi"])
+        self.assertIn("Location: 별도증상 - 다른부위", note["hpi"])
+        self.assertNotIn("Episode", note["cc"])
 
 
 if __name__ == "__main__":

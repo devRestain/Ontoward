@@ -325,7 +325,7 @@
         <li><span class="step-dot">4</span><div class="session-name"><strong>DifferentialDiagnosis</strong><span>감별을 위한 정보수집</span></div><div class="session-body"><p>가상 답에서 순위를 바꿀 수 있는 질문·진찰을 고르고, 실제 응답 뒤에 추론과 미전송 질문을 갱신합니다.</p><p class="small">속성 문진은 같은 관찰·발현의 Target 존재가 확인되어야 합니다. EXAM 거절·오류는 획득 소견으로 기록하지 않습니다.</p></div></li>
         <li><span class="step-dot skip-dot">5</span><div class="session-name"><strong>Education</strong><span>기본 설정에서 생략</span></div><div class="session-body"><p>진단을 선택하고 교육 행동 없이 최종화로 진행합니다.</p><p class="small">현재 <code>ONTOWARD_EDUCATION_ENABLED=false</code>. 명시적으로 활성화한 경로의 설명·이해 확인·정정은 현재 기본 실행에 포함되지 않습니다.</p></div></li>
       </ol>
-      <div class="note"><p><strong>D33 문진 목표 / 상한:</strong> Initiation 1/1 · ChiefComplaint 7/16 · ContextFactor 2/7 · DifferentialDiagnosis 3/12 · Education 0/0. 유용한 질문이 없으면 최소 목표 전에도 종료하고 남은 횟수를 다른 세션에 넘기지 않습니다. 문진은 최대 36회이며 공감 SAY는 별도로 집계하면서 공통 50턴·모델 예산을 사용합니다. 14턴은 고정 공감 할당량이 아닙니다.</p></div>
+      <div class="note"><p><strong>D35 문진 목표 / 상한:</strong> Initiation 1/1 · ChiefComplaint 7/16 · ContextFactor 2/7 · DifferentialDiagnosis 3/12 · Education 0/0. 유용한 질문이 없으면 최소 목표 전에도 종료하고 남은 횟수를 다른 세션에 넘기지 않습니다. 문진은 최대 36회이며 공감 SAY는 별도로 집계하면서 공통 50턴·모델 예산을 사용합니다. 14턴은 고정 공감 할당량이 아닙니다.</p></div>
       <h3>매 질문에서 반복하는 공통 루프</h3>
       <ol class="loop">
         <li><span class="order">01 / select_question</span><h4>미전송 질문 선택</h4><p>InterviewPlanner가 현재 단계와 사실에서 준비된 질문을 고릅니다.</p></li>
@@ -438,7 +438,7 @@
         <div><h3>한 질문의 계산 예</h3><p>현재 A의 fit=4, B의 fit=3이라고 가정합니다. 어떤 답이 A에는 0, B에는 +2를 만들고 미해결 조건이 하나라면 B의 추정 fit은 5가 됩니다.</p><p class="small">이 시나리오에서 순위 변경=1, 변화량 차이=2, 조건 해소 가치=2가 될 수 있습니다. 같은 변화를 여는 조건이 두 개면 조건 해소 가치는 1로 줄어들 수 있습니다.</p></div>
         <div><h3>선택을 제한하는 실제 규칙</h3><ul class="list"><li><strong>Context 가점은 최대 +1</strong><p>상한을 이미 채운 Context는 가점 가치가 소진됩니다. 단, 필수 적용 조건을 해결하는 역할은 남을 수 있습니다.</p></li><li><strong>미전송 계획만 새로 만듭니다</strong><p>대기 행동·완료 사실·실제 전달 이력은 유지합니다. 명료화는 증례 전체 2회 한도를 따릅니다.</p></li></ul></div>
       </div>
-      <div class="note ochre"><p><strong>D33 종료 규칙:</strong> 선택적 질문은 앞의 세 가치 중 양수가 있어야 합니다. 최소 목표 이후에는 순위 변경이나 변화량 차이가 양수이거나, 적격 Disease가 없으면서 조건 해소 가치가 양수여야 계속합니다. 핵심 HPI·Open Inquiry·명료화·교육·공감은 가치 필터 예외이며 자원 한도는 따릅니다. 이는 확신도나 확률 기반 정보이득을 계산한 정책은 아닙니다.</p></div>
+      <div class="note ochre"><p><strong>D35 종료 규칙:</strong> 선택적 질문은 앞의 세 가치 중 양수가 있어야 합니다. 최소 목표 이후에는 순위 변경이나 변화량 차이가 양수이거나, 적격 Disease가 없으면서 조건 해소 가치가 양수여야 계속합니다. 핵심 HPI·Open Inquiry·명료화·교육·공감은 가치 필터 예외이며 자원 한도는 따릅니다. 이는 확신도나 확률 기반 정보이득을 계산한 정책은 아닙니다.</p></div>
       <p class="source">근거: <a href="../submission/README.md#question-selection">백서 §6 질문 선택</a><a href="../submission/workflow/interview_planner.py">interview_planner.py</a><a href="../submission/workflow/rules/budget.py">예산 판단</a></p>
     </section>
 

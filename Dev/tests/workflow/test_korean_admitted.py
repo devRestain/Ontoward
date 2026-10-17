@@ -68,6 +68,9 @@ def verify(submission, output):
 
         def chat(self, messages, **kwargs):
             payload = json.loads(messages[1]['content'])
+            if payload.get('task') == 'terminology':
+                return {'choices':[{'message':{'content':'{"facts":[],"clinical_content":false}'}}],
+                        'usage':{'prompt_tokens':20, 'completion_tokens':10}}
             question, text = payload['question'], payload['input']
             facts = []
             available = {entry['id'] for entry in payload['vocabulary']}
@@ -98,7 +101,7 @@ def verify(submission, output):
                 if question:
                     fact['record_id'] = question['item_id']
                 facts.append(fact)
-            parsed = {'facts': facts}
+            parsed = {'facts': facts, 'clinical_content': text != '모르겠어요'}
             if any(item['field'] == 'S.cc' and not item['value']['concept_ids'] for item in facts):
                 parsed.update(needs_context=True, lookup_terms=[knowledge.label(target)])
             return {'choices':[{'message':{'content':json.dumps(parsed, ensure_ascii=False)}}],
@@ -158,11 +161,11 @@ def verify(submission, output):
         require(all(h.context_bonus in {0, 1} for h in outcome.differential.hypotheses), 'context_bonus_cap:' + context_status)
         require(any(h.context_bonus == 1 for h in outcome.differential.hypotheses) if context_status == 'present' and contexts else
                 all(h.context_bonus == 0 for h in outcome.differential.hypotheses), 'context_polarity_semantics:' + context_status)
-        require(all(exchange['role'] == 'gateway' for exchange in outcome.interaction.model_history)
-                and outcome.session.doctor_successes > 0, 'gateway_only_model_use:' + context_status)
+        require(all(exchange['role'] in {'gateway', 'terminology', 'empathy'} for exchange in outcome.interaction.model_history)
+                and outcome.session.gateway_successes > 0, 'bounded_designated_model_roles:' + context_status)
         for exchange in outcome.interaction.model_history:
             metrics = exchange['parser_payload']
-            expanded = metrics['pass'] == 'expansion'
+            expanded = metrics['pass'] != 'primary'
             require(metrics['vocabulary_count'] <= (1024 if expanded else 256) and
                     metrics['vocabulary_bytes'] <= (131072 if expanded else 32768), 'bounded_gateway_projection:' + context_status)
             require(metrics['request_bytes'] <= metrics['request_byte_limit'] <= (16384 if expanded else 12288),

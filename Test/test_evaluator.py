@@ -310,6 +310,28 @@ class EvaluatorTests(unittest.TestCase):
         self.assertEqual(json.loads(request['outcome'][1]['choices'][0]['message']['content']), {'facts': []})
         self.assertEqual(self.evaluation.doctor_successes, 1)
 
+    def test_d34_roles_share_doctor_budget_and_preserve_audit_role(self):
+        for task in ('gateway', 'terminology', 'empathy'):
+            self.models.values.append({'text': '걱정되셨겠어요.'} if task == 'empathy' else {'facts': []})
+            status, _ = self.request('/v1/chat/completions', session_id=self.evaluation.session_id, model=MODEL,
+                messages=[{'role': 'user', 'content': json.dumps({'task': task, 'input': 'reported input'})}])
+            self.assertEqual(status, 200)
+        self.assertEqual([role for role, _ in self.models.roles], ['gateway', 'terminology', 'empathy'])
+        self.assertEqual(self.evaluation.doctor_calls, 3)
+        self.assertEqual(self.evaluation.turns, 0)
+
+    def test_scripted_d34_tasks_handle_record_only_and_empathy_without_case_access(self):
+        model = ScriptedModels({})
+        for task in ('terminology', 'empathy'):
+            response = model.complete(task, [{'role': 'user', 'content': json.dumps({'task': task, 'input': 'reported input'})}],
+                                      2048, str(uuid.uuid4()))
+            result = json.loads(response['choices'][0]['message']['content'])
+            if task == 'terminology':
+                self.assertEqual(result, {'facts': [], 'clinical_content': False})
+            else:
+                self.assertEqual(set(result), {'text'})
+                self.assertTrue(1 <= len(result['text']) <= 30)
+
     def test_model_observation_links_actual_messages_and_errors_without_replay(self):
         self.models.values.append(NovaError('PROVIDER_UNAVAILABLE', 503))
         request_id = str(uuid.uuid4())
