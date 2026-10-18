@@ -15,7 +15,8 @@ def verify(submission, output):
     from workflow.runtime import prepare, assemble_consultation
     from workflow.graph import build_graph
     from workflow.state.models import WorkflowState, Question
-    from workflow.clinical_reasoner import ClinicalReasoner
+    from workflow.rules.assessment import graph_candidates
+    from brain_double import clinical_response
     resources=prepare()
     k,config=resources.knowledge,resources.config
     original=frozenset(k._graph)
@@ -31,8 +32,7 @@ def verify(submission, output):
     locations=[k.term(feature.expected.concept) for feature in k.get_pattern_features(detailed.id)
                if feature.attribute==str(f.OW.Location) and feature.expected and feature.expected.kind=='concept']
     fallback=next(c['id'] for c in k.concepts() if c['kind']=='Symptom' and k.questions[c['id']].interviewable
-        and k.get_patterns_by_target(c['id']) and all(p.applicability or any(feature.expected for feature in k.get_pattern_features(p.id))
-            for p in k.get_patterns_by_target(c['id'])))
+        and not k.get_patterns_by_target(c['id']))
     class SDK(f.FakeSDK):
         def __init__(self,target_id,numeric=False,context='unknown'):
             super().__init__(target=k.term(target_id),context=context)
@@ -40,6 +40,11 @@ def verify(submission, output):
         def chat(self,messages,**kwargs):
             payload=json.loads(messages[-1]['content'])
             self.requests.append(payload)
+            clinical=clinical_response(payload)
+            if clinical is not None:
+                require(kwargs['reasoning_effort']=='high','Brain_high_effort')
+                require(len(json.dumps(messages,ensure_ascii=False,separators=(',',':')).encode())<=65536,'Brain_whole_message_cap')
+                return self.completion(clinical)
             education=education_response(payload)
             if education is not None:
                 return self.completion(education)
@@ -94,40 +99,40 @@ def verify(submission, output):
         require(len(state.case.plan)==5,'one_final_plan')
         require(state.session.usage['Education'].actions>=5,'Korean_education_delivered')
         if target_id==target:
-            snapshot=c.reasoner.refresh_hypotheses(state)
-            score=next(h.evidence_score for h in snapshot.hypotheses if h.disease_id==disease)
-            require(score==4,'original_refined_source_score')
-            require(state.case.diagnosis.kind=='disease','supported_disease')
+            require(state.case.assessment.frozen,'frozen_disease_assessment')
+            require(state.case.primary().kind=='disease','supported_disease')
         else:
-            require(state.case.diagnosis.kind=='symptom','honest_symptom_fallback')
+            require(state.case.primary().kind=='symptom','honest_symptom_fallback')
         if numeric:
             require('approximately 2 months' in client.submissions[0]['note']['S']['hpi'],'approximate_registered_number')
         require(frozenset(k._graph)==original,'read_only_RDF')
         (output/f'case-{len(cases)}.json').write_text(state.model_dump_json(indent=2))
         cases.append(dict(target=k.term(target_id),numeric=numeric,actions=len(client.actions),calls=state.session.doctor_calls,
-            diagnosis=state.case.diagnosis.name,kind=state.case.diagnosis.kind,seconds=time.perf_counter()-started))
+            diagnosis=state.case.primary().name,kind=state.case.primary().kind,seconds=time.perf_counter()-started))
         c.release()
     selected=[]
     for status in ('present','absent','unknown'):
         client=SDK(target,context=status)
         c=assemble_consultation(client,resources,now=lambda:f.FIXED,sleep=lambda n:None)
         state=c.nova_session.initialize_case(client)
-        c.interpreter.process_input(state,k,client)
+        c.ear.process_input(state,k,client)
         state.interview.current,state.interview.status='ContextFactor','collecting'
-        snapshot=c.reasoner.refresh_hypotheses(state)
-        context=next(context for h in snapshot.hypotheses for context in k.get_supporting_context(h.disease_id)
+        candidates=graph_candidates(state.case,k)
+        context=next(context for disease in candidates for context in k.get_supporting_context(disease)
                      if k.questions[context['id']].interviewable)
         subject='family' if context['type']=='family_history' else 'patient'
-        spec=c.planner._spec(state,context['id'],purpose='context',field='S.fh' if subject=='family' else 'S.pmh',subject=subject,time_context='unspecified')
-        c.planner._register(state,spec,0,1)
-        c.planner.select_question(state)
-        c.doctor.validate_action(state)
-        c.doctor.execute_action(state,client)
-        c.interpreter.process_input(state,k,client)
+        spec=c.brain._spec(state,context['id'],purpose='context',field='S.fh' if subject=='family' else 'S.pmh',subject=subject,time_context='unspecified')
+        c.brain._register(state,spec,0,1)
+        c.brain.select_question(state)
+        c.mouth.validate_action(state)
+        c.mouth.execute_action(state,client)
+        c.ear.process_input(state,k,client)
         require(any(fact.target==k.term(context['id']) and fact.status==status for fact in state.case.facts.values()) if status!='unknown'
                 else state.interview.answers[-1].outcome=='unknown','selected_context_polarity_'+status)
-        h=c.reasoner.refresh_hypotheses(state).hypotheses
-        require(any(row.context_bonus for row in h) if status=='present' else all(row.context_bonus==0 for row in h),'context_bonus_'+status)
+        candidates=graph_candidates(state.case,k)
+        refs=[ref for candidate in candidates.values() for ref in candidate.entry.supports
+            if ref.graph_ref.kind=='context' and ref.graph_ref.id==context['id']]
+        require(bool(refs) if status=='present' else not refs,'context_support_'+status)
         c.finalize(state)
         c.writer.submit_diagnosis(state)
         c.writer.confirm_submission(state)
@@ -137,13 +142,13 @@ def verify(submission, output):
     client=SDK(target)
     c=assemble_consultation(client,resources,now=lambda:f.FIXED,sleep=lambda n:None)
     state=c.nova_session.initialize_case(client)
-    c.interpreter.process_input(state,k,client)
+    c.ear.process_input(state,k,client)
     state.interview.current,state.interview.status='DifferentialDiagnosis','collecting'
-    c.planner._register(state,c.planner._spec(state,exam,episode='one'),0,1)
-    c.planner.select_question(state)
-    c.doctor.validate_action(state)
-    c.doctor.execute_action(state,client)
-    c.interpreter.process_input(state,k,client)
+    c.brain._register(state,c.brain._spec(state,exam,episode='one'),0,1)
+    c.brain.select_question(state)
+    c.mouth.validate_action(state)
+    c.mouth.execute_action(state,client)
+    c.ear.process_input(state,k,client)
     require(any(fact.kind=='finding' and fact.target==k.term(exam) and fact.acquisition=='EXAM' for fact in state.case.facts.values()),'actual_exam_acquisition')
     c.finalize(state)
     c.writer.submit_diagnosis(state)

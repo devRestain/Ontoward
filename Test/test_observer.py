@@ -47,7 +47,7 @@ def capture(name,observed):
     with context:
         initial=c.nova_session.initialize_case(client)
         from workflow import graph
-        updates=list(graph.build_graph(c,c.planner.knowledge).stream(initial.model_dump(mode='json'),
+        updates=list(graph.build_graph(c,c.brain.knowledge).stream(initial.model_dump(mode='json'),
             {'recursion_limit':c.budget.graph_step_limit(initial)},stream_mode='updates'))
     return plain({'initial':initial.model_dump(mode='json'),'updates':updates,'wire':wire}),path
 
@@ -96,7 +96,7 @@ def verify():
                     reconstructed.append(copy.deepcopy(current))
             expected=[next(iter(update.values())) for update in observed['updates']]
             assert reconstructed==expected,name
-            assert any(row['kind']=='audit' for row in rows) or name in {'closed','expired'},name
+            assert any(row['kind']=='call_end' for row in rows) or name in {'closed','expired'},name
         scenarios.append(dict(name=name,termination=end.session.termination,nodes=len(observed['updates'])))
     report=dict(status='pass',scenarios=scenarios,node_updates=sum(row['nodes'] for row in scenarios),
                 recording_failure='nonfatal_no_replay',network='none',actual_models='not_run')

@@ -22,8 +22,8 @@ def note_fact(statement, source, index, turn, question=None):
                                   or value.startswith(('urn:', 'http://', 'https://'))):
         return None
     acquisition = question.kind if question else 'initial'
-    if category == 'objective_observation' and not objective(acquisition, source):
-        raise ValueError('Objective note requires objective acquisition')
+    if category == 'objective_observation' and (statement.subject!='patient' or not objective(acquisition, source)):
+        return None
     return NoteFact(id=f'{source}:note:{index}', category=category, value=value, measurement=statement.measurement,
         status=statement.assertion, subject=statement.subject, subject_member=statement.subject_member,
         reported_by=statement.reported_by, time_context=statement.time_context,

@@ -10,6 +10,8 @@ def validate_payload(state):
     if not payload or set(payload) != {"note", "diagnosis"}:
         raise ValueError("invalid_submission_payload")
     note, diagnosis = payload["note"], payload["diagnosis"]
+    if diagnosis != state.case.primary().name:
+        raise ValueError('diagnosis_differs_from_frozen_assessment')
     if not isinstance(note, dict) or set(note) != set(RECORD_FIELDS):
         raise ValueError("invalid_soap_fields")
     for section, fields in RECORD_FIELDS.items():

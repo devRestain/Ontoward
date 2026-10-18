@@ -64,7 +64,7 @@
 - Run python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py' for maintained lifecycle binding reasoning delivery and transport behavior.
 - Run python -B -m unittest discover -s Dev/tests/workflow -p test_binding.py for D44 exact binding selective forced completion notes and information preservation.
 - Run python -B Dev/tests/workflow/test_intake_soap.py for D40 C03 input custody semantic SOAP protected collection and record-only Education.
-- Run python -B -m unittest discover -s Dev/tests/workflow -p test_reasoning.py for matching delta equivalence prerequisites and joint question value.
+- Run python -B -m unittest discover -s Dev/tests/workflow -p test_brain.py for D46 matching candidate retention ranking action repair scope and frozen submission.
 - Use tests/workflow/compare_algorithms.py with a frozen baseline submission and its original fixtures for the bounded D38 comparison.
 - Run python -B Dev/tests/workflow/test_input_empathy.py for D41 typed empathy generation response reservations and last-reply delivery behavior.
 - Run python -B Dev/tests/workflow/test_education.py for D37 full-document context fixed diagnosis English plans and bounded Korean delivery.
@@ -78,5 +78,7 @@
 - Report only performed checks and reconcile root, submission, and data states before handoff.
 - Keep the D17 review adoption record in architecture/D17_REVIEW_ADOPTION.md and leave diagnostic performance claims outside offline acceptance.
 
-- Maintain D44 lifecycle binding reasoning delivery and transport behavioral checks in tests/workflow; use compare_algorithms.py for frozen D43 scoring and fixed-input cost comparison and replay_c03.py for saved-response reproduction.
+- Maintain D46 lifecycle binding brain record delivery and transport checks in tests/workflow and use Test/compare_d46.py with explicit frozen baseline inputs for current comparison.
 - Use the existing ontoward-dev image with tests/workflow/compose.offline.yaml for network-disabled verification without an implicit dependency build.
+
+- Keep source feature contribution export in ontology/contributions.py outside the submission runtime and preserve its prepared metadata contract.

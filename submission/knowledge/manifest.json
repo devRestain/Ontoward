@@ -1,5 +1,5 @@
 {
-  "algorithm_version": "d44.2",
+  "algorithm_version": "d46.1",
   "approval_basis": "explicit_user_candidate_acceptance",
   "build_id": "6501f157bde1e2c367f4e7adc0266578c858d97eb3855de6981a4f31b682b2b7",
   "bundles": [
@@ -19,10 +19,6 @@
   "questions": {
     "path": "knowledge/83afd0b132a07941-questions.ko.json",
     "sha256": "911a9249fec89a494234912f21ba46cfe3747a01ebbddaef4f3b453a08541e6d"
-  },
-  "reasoning_policy": {
-    "path": "knowledge/83afd0b132a07941-reasoning_policy.json",
-    "sha256": "b23681158479aaa5471808f8950dd88d136a41340900e6b8ef3cc2d36044bb8a"
   },
   "registry_version": "532045c55a94675d8a1bc383ef73726b1cedb358297c163528253eeab1ceec29",
   "review_receipt_sha256": "83afd0b132a079411ce29c751dc4acd87aa7d2b2ee7bbf4fce9a54678fa2034f",

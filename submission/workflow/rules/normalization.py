@@ -67,7 +67,7 @@ def candidate_contracts(knowledge, statement, question, *, expanded=False, compl
     if (statement.measurement and statement.record_category in {"course", "recurrence", "previous_care"}
             and not exact_attributes and not (question and qattribute)):
         return []
-    is_exam = bool(question and question.kind == "EXAM")
+    is_exam = bool(question and question.kind == "EXAM" or statement.input_segment == 'vital_signs')
     history = statement.record_category in {"medical_history", "medication", "allergy", "surgery",
         "family_history", "smoking", "alcohol", "occupation", "social_history", "developmental_history"}
     kinds = ("ExamFinding",) if is_exam else (("ContextFactor", "Symptom") if history else ("Symptom", "ContextFactor"))

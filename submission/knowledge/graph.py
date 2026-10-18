@@ -11,7 +11,7 @@ from rdflib import Graph, Namespace, RDF, RDFS, SKOS, URIRef
 from settings import ROOT, knowledge_path
 from .guidelines import GuidelineLibrary
 
-from .conditions import Applicability, AssociationProfile, ExpectedValue, FeatureCondition, FeatureContribution, QuestionTemplate, ReasoningPolicy, ScoringPolicy, numeric_match
+from .conditions import Applicability, AssociationProfile, ExpectedValue, FeatureCondition, QuestionTemplate, ScoringPolicy, numeric_match
 
 OW = Namespace("urn:ontoward:")
 HPI_ORDER = tuple(str(OW[name]) for name in (
@@ -34,7 +34,6 @@ class Manifest(BaseModel):
     source_snapshots: list[dict[str, object]] = Field(min_length=1)
     scoring_policy_version: str = Field(min_length=1)
     scoring_policy: Asset
-    reasoning_policy: Asset
     schema_asset: Asset = Field(alias="schema")
     vocabulary: Asset
     bundles: list[Asset] = Field(min_length=1)
@@ -55,15 +54,13 @@ class Plan(BaseModel):
 
 class ClinicalKnowledge:
     def __init__(self, graph: Graph, questions: dict[str, QuestionTemplate] | None = None, plans: dict[str, Plan] | None = None,
-                 policy: ScoringPolicy | None = None, labels: dict[str, str] | None = None, reasoning=None):
+                 policy: ScoringPolicy | None = None, labels: dict[str, str] | None = None):
         self._graph = graph
         self.questions = questions or {}
         self.plans = plans or {}
         self.guidelines = None
         self.policy = policy or ScoringPolicy.load_default()
-        self.reasoning = reasoning or ReasoningPolicy()
         self.labels = labels or {}
-        self._contributions: dict[str, list[FeatureContribution]] = {}
         self._feature_cache = {}
         self._profile_cache = {}
         self._refinement_cache = {}
@@ -120,8 +117,7 @@ class ClinicalKnowledge:
         policy = ScoringPolicy.model_validate_json(read(manifest.scoring_policy, ".json"))
         if policy.version != manifest.scoring_policy_version:
             raise ValueError("Scoring policy version differs from the manifest")
-        reasoning = ReasoningPolicy.model_validate_json(read(manifest.reasoning_policy, ".json"))
-        knowledge = cls(graph, questions, {key: Plan.model_validate(value) for key, value in raw_plans.items()}, policy, labels, reasoning)
+        knowledge = cls(graph, questions, {key: Plan.model_validate(value) for key, value in raw_plans.items()}, policy, labels)
         knowledge.validate_graph()
         knowledge.validate_question_assets()
         knowledge.prepare_terms()
@@ -304,9 +300,6 @@ class ClinicalKnowledge:
                                               expected=expected, status=self._optional(feature, OW.expectedStatus)))
         self._feature_cache[pattern_id] = features
         return list(features)
-
-    def get_feature_contributions(self, association_id: str) -> list[FeatureContribution]:
-        return list(self._contributions.get(association_id, []))
 
     def value_matches(self, observed: str, expected: str, *, hierarchy=False) -> bool:
         if observed == expected:
@@ -543,30 +536,13 @@ class ClinicalKnowledge:
                         values = [feature.expected.concept] if feature.expected.kind == "concept" else feature.expected.concepts
                         target_values.setdefault((target, feature.attribute), set()).update(values)
         self._target_values = {key: sorted(values) for key, values in target_values.items()}
-        self._contributions = {}
-        grouped = {}
         targets = {}
         for profile in profiles:
-            key = (profile.disease_id, profile.target, tuple(c.model_dump_json() for c in profile.applicability))
-            grouped.setdefault(key, []).append(profile)
-            targets.setdefault(profile.target, set()).add(profile.id)
+            targets.setdefault(profile.target,set()).add(profile.id)
         parents = {}
         for patterns in targets.values():
-            for child, parent in self._refinement_edges(sorted(patterns)):
-                parents.setdefault(child, set()).add(parent)
-        grouped = {key: {p.id:p for p in values} for key,values in grouped.items()}
-        for child in profiles:
-            child_features = self.get_pattern_features(child.id)
-            contributions = []
-            key = (child.disease_id, child.target, tuple(c.model_dump_json() for c in child.applicability))
-            for parent_id in parents.get(child.id, set()) & grouped[key].keys():
-                parent = grouped[key][parent_id]
-                signatures = {f.signature() for f in self.get_pattern_features(parent.id)}
-                changed = [f.id for f in child_features if f.signature() not in signatures]
-                contributions.append(FeatureContribution(baseline_association=parent.association_id,
-                    refined_association=child.association_id, changed_feature_ids=changed,
-                    delta_score=child.score-parent.score, kind="atomic" if len(changed) == 1 else "joint", policy_version=self.policy.version))
-            self._contributions[child.association_id] = sorted(contributions, key=lambda c: c.baseline_association)
+            for child,parent in self._refinement_edges(sorted(patterns)):
+                parents.setdefault(child,set()).add(parent)
         self._refinement_parents = parents
         context_types = {"past_medical_history", "surgical_history", "medication_history", "allergy_history",
                          "family_history", "social_history", "occupational_history", "psychosocial_history",

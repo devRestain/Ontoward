@@ -390,9 +390,24 @@ class EvaluatorTests(unittest.TestCase):
         self.assertEqual(self.models.calls, 1)
 
 
+class BrainProtocolTests(unittest.TestCase):
+    def test_scripted_brain_supports_rank_and_action_only_contracts(self):
+        from models import ScriptedModels
+        model=ScriptedModels({})
+        payload=dict(task='clinical_decision',required=[],stage='DifferentialDiagnosis',prior_order=['d_2'],
+            candidates=[{'ref':'d_1'},{'ref':'d_2'}],questions=[{'ref':'q_1','kind':'EXAM'}])
+        result=model.complete('doctor',[{'role':'user','content':json.dumps(payload)}],4096,'rank',reasoning_effort='high')
+        value=json.loads(result['choices'][0]['message']['content'])
+        self.assertEqual(value['ranked_disease_refs'],['d_2','d_1'])
+        self.assertEqual(value['next_action'],{'kind':'ask','question_ref':'q_1'})
+        payload.update(task='clinical_action',questions=[])
+        result=model.complete('doctor',[{'role':'user','content':json.dumps(payload)}],4096,'action',reasoning_effort='high')
+        self.assertEqual(json.loads(result['choices'][0]['message']['content']),{'next_action':{'kind':'finish_collection'}})
+
+
 if __name__ == '__main__':
     stream = io.StringIO()
-    suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromTestCase(cls) for cls in (EvaluatorTests, WebTests))
+    suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromTestCase(cls) for cls in (EvaluatorTests, WebTests, BrainProtocolTests))
     result = unittest.TextTestRunner(stream=stream, verbosity=2).run(suite)
     print(stream.getvalue())
     report = {'status': 'pass' if result.wasSuccessful() else 'fail', 'tests': result.testsRun,

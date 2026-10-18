@@ -157,3 +157,11 @@ compactPage.get('tab-state').click();assert.match(compactPage.text(),/D44/);
 compactPage.get('tab-diagnosis').click();assert.match(compactPage.text(),/reasoner/);
 assert.equal(JSON.stringify(compactData.trace.events[0].state),JSON.stringify(compact));
 console.log('PASS: D44 resident owners, disposable turn, typed facts and notes, final diagnosis and legacy trace separation');
+
+const brainState=JSON.parse(JSON.stringify(compact));
+delete brainState.case.diagnosis;
+brainState.case.assessment={differential:[{kind:'disease',name:'Brain primary',supports:[],against:[],unresolved:[]}],based_on_case_revision:1,based_on_chief_fact_id:'f1',frozen:true,limitations:[]};
+const brainPage=load({...data,trace:{status:'complete',events:[{seq:1,kind:'initial',session:'DifferentialDiagnosis',turn:10,state:brainState}]}});
+brainPage.get('tab-diagnosis').click();assert.match(brainPage.text(),/CaseState.assessment/);assert.match(brainPage.text(),/Brain primary/);
+brainPage.get('tab-note').click();assert.match(brainPage.text(),/Brain primary/);
+console.log('PASS: D46 current assessment ranking and frozen evidence display');

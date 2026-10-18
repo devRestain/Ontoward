@@ -13,6 +13,7 @@ sys.path.insert(0,str(ROOT))
 sys.path.insert(0,str(ROOT/'submission'))
 
 from Dev.ontology.database import SourceDatabase,file_hash
+from Dev.ontology.contributions import feature_contributions
 from Dev.ontology.v5 import write
 from knowledge.graph import ClinicalKnowledge,OW
 from knowledge.conditions import ScoringPolicy
@@ -82,8 +83,8 @@ def verify(directory,output=None):
         upper=next(p for p in locations if p.score==1 and len([f for f in features[p.association_id] if f.expected])==1)
         detailed=next(p for p in locations if p.score==4 and knowledge.pattern_refines(p.id,upper.id))
         require((baseline.score,upper.score,detailed.score)==(2,1,4),'real_source_refinement_weights')
-        require(any(c.delta_score==-1 and c.kind=='atomic' for c in knowledge.get_feature_contributions(upper.association_id)) and
-                any(c.delta_score==2 and c.kind=='joint' for c in knowledge.get_feature_contributions(detailed.association_id)),'atomic_and_joint_contributions')
+        require(any(c.delta_score==-1 and c.kind=='atomic' for c in feature_contributions(knowledge,upper.association_id)) and
+                any(c.delta_score==2 and c.kind=='joint' for c in feature_contributions(knowledge,detailed.association_id)),'atomic_and_joint_contributions')
         state=WorkflowState(session=SessionContext(session_id='synthetic-full-db-check',deadline=datetime.now(timezone.utc)+timedelta(minutes=5),turns_remaining=50,current='DifferentialDiagnosis',initialized=True))
         def observe(ident,attribute=None,expected=None,episode='one',status='present'):
             state.case.put('S.hpi' if attribute else 'S.cc',RecordItem(id=ident,scope='DifferentialDiagnosis',status='done',source_refs=['synthetic:'+ident],

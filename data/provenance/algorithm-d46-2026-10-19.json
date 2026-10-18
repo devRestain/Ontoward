@@ -1,0 +1,673 @@
+{
+  "decision": "D46",
+  "algorithm_version": "d46.1",
+  "status": "offline_acceptance_pass",
+  "created_at": "2026-10-18T16:50:17.160123+00:00",
+  "source_basis": {
+    "user_approved_plan": "DoctorEar DoctorBrain DoctorMouth and four graph-constrained algorithms",
+    "context_document": "01_ONTOWARD_LLM_Decision_Context-2.md v4",
+    "head_at_start": "01c244f093dc1af511ac12485625614f74a2c9bf",
+    "head_at_handoff": "203e787411c80bb32c75a607b85ff7c9cece0cf0",
+    "agent_commits": 0,
+    "baseline_snapshot": "Tmp/d46-2026-10-19/baseline",
+    "baseline_diff": "Tmp/d46-2026-10-19/before.diff",
+    "concurrent_head_note": "HEAD advanced during this task; preserve the observed commit and dirty work without reset or commit"
+  },
+  "ownership": {
+    "input": "DoctorEar",
+    "clinical_and_english_plan": "DoctorBrain",
+    "patient_expression": "DoctorMouth",
+    "lifecycle": "Consultation",
+    "soap_and_submission": "SubmissionWriter",
+    "observation_and_comparison": "Test"
+  },
+  "models": {
+    "model": "openai/gpt-6-luna",
+    "ear": "medium",
+    "brain": "high",
+    "mouth": "medium",
+    "clinical_request_bytes": 65536,
+    "clinical_normal_output_tokens": 4096,
+    "clinical_repair_output_tokens": 8000
+  },
+  "artifact": {
+    "archive": "Tmp/d46-2026-10-19/ontoward-submission-d46.zip",
+    "sha256": "e810f750d966c7d1fd516bb33170872f8c9e5f5ee104de3cf86bbb0e46aa04e9",
+    "bytes": 1664522,
+    "files": 54,
+    "expanded_bytes": 16350726,
+    "all_members_match_current_source": true,
+    "member_sha256": {
+      ".env": "ed20b91794e3929ca0206b2bd665dd3ebc7dfe17c9305ca0dd48cb9f7ff34059",
+      "config/brain.txt": "aedd5707d86f955d3e9964dfc57287132434d7fda4d2a279c0a28d9f82dcaaf9",
+      "config/education.txt": "973681e925d5ff6c0310c40ac3a1b533361e6ca0da7ea9dc49c2632c20b74d0f",
+      "config/education_doctor.txt": "5a2b6d64fec4cf239de824058a28faa6049f3c8a37de6796e412d42b9e581dfa",
+      "config/empathy.txt": "f27b80ff1dcf2c155cf1125fd70122ff37963d94a1f961b2badfb3f85b0ef645",
+      "config/input_parser.txt": "5f33adae0b1376bfd7bc00b89a4d4256a9daa2394efa83e741eae4977bf0bb42",
+      "config/normalization.txt": "91ab807a1225ea6aa22c459d13c2d333995ae513c3b0a07f11e1f0dbe9f7dda7",
+      "config/texts.ko.json": "4c08b549a577580c7bc9f1fa8c86660c4f7c8ce4eec46c5cdea97a59a2992bba",
+      "knowledge/83afd0b132a07941-clinical.ttl": "a5b5f3d94e0cba1048735cb61a3ed56d5e8622c4540c6a3737186061cfad769f",
+      "knowledge/83afd0b132a07941-guideline-index.json": "408f7d14d459e282df7b9230eca8f5474ce401353c2abdf2a6e7e307ba2f7bfa",
+      "knowledge/83afd0b132a07941-questions.ko.json": "911a9249fec89a494234912f21ba46cfe3747a01ebbddaef4f3b453a08541e6d",
+      "knowledge/83afd0b132a07941-scoring_policy.json": "4bf15b5fc5cee84fdb2911435ad31e1a6b63d1e90afdc009676873f12f3baf17",
+      "knowledge/83afd0b132a07941-vocabulary.ttl": "28bb51976edc258367a50ad909b423aba47a7e88a0da7bc02e364054f4676ed8",
+      "knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "knowledge/conditions.py": "a636ec8c88b0f351b0358b9f77e73ca4c2f84f93c6aa52ec0691a736a3021bee",
+      "knowledge/graph.py": "cd75fe19185796e82e1e1db95599503673f3e3b6996b9b6bb06e7acb21294b1a",
+      "knowledge/guidelines.py": "199c4e08ad41de657d564cf5d35845d6a020de53aa4c3b231b75b201a4d243c8",
+      "knowledge/manifest.json": "a6c745667c6f23b54d67d8309e6c1aefd17f0ef566e359e484337e24b997413f",
+      "knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+      "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+      "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+      "settings.py": "12fb45fcf402d120db5d09a33a127a58fbb981f3d146e2bb55a2d97b94abc566",
+      "workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/consultation.py": "95aa4a2ba406f45aa0c8ab23e99625d8db78ff6b24522f4e56faa7d5daa3be36",
+      "workflow/doctor_brain.py": "de8714af68dafb5e6db314f69f62f5f86683d30fcbbe8053a5d8fba59d094333",
+      "workflow/doctor_ear.py": "830d6ca9a4fec7e2735577ffe18c49b78d75cca1595c1ba3eadbfada6927dca3",
+      "workflow/doctor_mouth.py": "e9f9c8795135caebad339a9a526be4234cbf8766fa5d92859a92e8f83514566e",
+      "workflow/education.py": "3d63a1776aa69fdfd0dd43fe387effdee9ab4887b4c0ebabcc05ab5e263c3eed",
+      "workflow/graph.py": "882aac3b1d6938077be2d687e4b079aba116509b4d32e50eee9eb06bf059db6c",
+      "workflow/input_types.py": "a04eb68b0087b06f802a91821edc52e4d7f5267e8f50d0a7e6467ca6a9113392",
+      "workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/io/model_client.py": "422ad802f27d8e9a6bd7b520c3f6275acb7d5e656fda2d4b142cbdf25ab8a490",
+      "workflow/io/nova_session.py": "fdc87d856e74f78215e6b67627f9ab56ff8e5618fa9214c586964b57a69b9281",
+      "workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+      "workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/rules/action.py": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb",
+      "workflow/rules/assessment.py": "4924ac13aad1ec8db5fcce9523961279b7c8dd9829da50414459720d5bc8d048",
+      "workflow/rules/budget.py": "1fb28295c2bb0921cfe79f8cef6cee1af6b1763353879d0da035c4f44948a71a",
+      "workflow/rules/collection.py": "b56f4348a37dcfe4806f23ca83dcf4a3c635c7eac87a63bb58d0796d20004ce2",
+      "workflow/rules/input.py": "e932725d91a60cdc502215f5db63a1ac4b36b99a0a0fe3a352e9a71fe94861e9",
+      "workflow/rules/limits.py": "20aace08d84f5397cc4bba0d0dd75b0d5846b0c295e262027f16d6a9b63b97d8",
+      "workflow/rules/normalization.py": "69a648eb61f571c96a9b5a4ae99fd51c4938b24a4245da5c0a73e1ca8d4e11ed",
+      "workflow/rules/submission.py": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267",
+      "workflow/runtime.py": "f2d626c4f8a1ee057be9b4b92c8a4243fed0fb5f818eb693d8e156bdd2305664",
+      "workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/state/evidence.py": "e5bad2335cd3320c495837dc4e697de2869ca712564098f861b4ccdd941f33c3",
+      "workflow/state/interactions.py": "0ed1c3ecc9bf8fb793b417310ae71feda2ccb187bdd6fac8144a09e76f3ec44d",
+      "workflow/state/models.py": "e7ecd00710e38a27c3a07bc259b8460750105456d4fe734e23c5434d216cb6b2",
+      "workflow/state/questions.py": "01ac8ccb16dfa068daa33777740aaba5f998a604d2ad2b628fdc79a87e321830",
+      "workflow/state/usage.py": "177d81e25b8488434c19d9f065cd68a258e4c603177bc6af885bc78b81fdd1cd",
+      "workflow/submission_writer.py": "f27c8a0f979384e730b5e7bacbd4bd019ff81bfed5af6ebb032b34985f6ea446",
+      "workflow/text_config.py": "2ad22d8198257a0d1bdf5fd9f66c94207889ba0d92126d08d2b3ece3137ecf6f"
+    },
+    "old_runtime_names_included": false,
+    "trace_tests_credentials_and_original_documents_included": false
+  },
+  "preservation": {
+    "manifest_changed_fields": [
+      "algorithm_version",
+      "reasoning_policy"
+    ],
+    "manifest_sha256": "a6c745667c6f23b54d67d8309e6c1aefd17f0ef566e359e484337e24b997413f",
+    "build_id": "6501f157bde1e2c367f4e7adc0266578c858d97eb3855de6981a4f31b682b2b7",
+    "review_receipt_sha256": "83afd0b132a079411ce29c751dc4acd87aa7d2b2ee7bbf4fce9a54678fa2034f",
+    "clinical_asset_pins": "unchanged",
+    "protected_unchanged_sha256": {
+      "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+      "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+      "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "config/texts.ko.json": "4c08b549a577580c7bc9f1fa8c86660c4f7c8ce4eec46c5cdea97a59a2992bba",
+      "config/education.txt": "973681e925d5ff6c0310c40ac3a1b533361e6ca0da7ea9dc49c2632c20b74d0f",
+      "config/education_doctor.txt": "5a2b6d64fec4cf239de824058a28faa6049f3c8a37de6796e412d42b9e581dfa",
+      "knowledge/83afd0b132a07941-reasoning_policy.json": "b23681158479aaa5471808f8950dd88d136a41340900e6b8ef3cc2d36044bb8a",
+      "knowledge/83afd0b132a07941-scoring_policy.json": "4bf15b5fc5cee84fdb2911435ad31e1a6b63d1e90afdc009676873f12f3baf17",
+      "knowledge/5b44871b970f5e98-vocabulary.ttl": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88",
+      "knowledge/d40-reasoning_policy.json": "8bd6c2cb190c760bbeeecca4b8ad5519626e47ae77adc9a18a03a953c6ef0118",
+      "knowledge/d38-reasoning_policy.json": "e3f59dd1cc1b9c5450be9c4f43981b87acd9ab514ee409dbc1c1d2b640c5359f",
+      "knowledge/reasoning_policy.json": "8bd6c2cb190c760bbeeecca4b8ad5519626e47ae77adc9a18a03a953c6ef0118",
+      "knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+      "knowledge/5b44871b970f5e98-questions.ko.json": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687",
+      "knowledge/83afd0b132a07941-clinical.ttl": "a5b5f3d94e0cba1048735cb61a3ed56d5e8622c4540c6a3737186061cfad769f",
+      "knowledge/83afd0b132a07941-vocabulary.ttl": "28bb51976edc258367a50ad909b423aba47a7e88a0da7bc02e364054f4676ed8",
+      "knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "knowledge/guideline-index.json": "f6b7e631c62b06d335bbd8e4001c773b5b1d3dc540c8d29c0f1aa0cf1ba39907",
+      "knowledge/83afd0b132a07941-questions.ko.json": "911a9249fec89a494234912f21ba46cfe3747a01ebbddaef4f3b453a08541e6d",
+      "knowledge/5b44871b970f5e98-reasoning_policy.json": "f272b4fc0fc70bbd2d368a7daac457d0111040bf03705ed5ccf02b4ebe74fbfc",
+      "knowledge/d41-reasoning_policy.json": "b23681158479aaa5471808f8950dd88d136a41340900e6b8ef3cc2d36044bb8a",
+      "knowledge/83afd0b132a07941-guideline-index.json": "408f7d14d459e282df7b9230eca8f5474ce401353c2abdf2a6e7e307ba2f7bfa",
+      "knowledge/5b44871b970f5e98-clinical.ttl": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a",
+      "workflow/io/nova_session.py": "fdc87d856e74f78215e6b67627f9ab56ff8e5618fa9214c586964b57a69b9281",
+      "workflow/state/usage.py": "177d81e25b8488434c19d9f065cd68a258e4c603177bc6af885bc78b81fdd1cd",
+      "workflow/rules/action.py": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb"
+    },
+    "source_snapshots_digest": "0d6a1679c827e2105cbb7f5ba2d40d16b9f1863c720b01631f73244878160726",
+    "prior_d45_archive": {
+      "path": "Tmp/packaging/turn-budget45-2026-10-18-final/ontoward-submission.zip",
+      "sha256": "ed667370d4483a495c269b58f1e2727b1d4daed5669b8eef95d85fd7d2cf64b1",
+      "verified_unchanged": true
+    },
+    "prior_receipts": {
+      "data/provenance/common-complaints-d42-2026-10-18.json": "111725995139e9363ead5b40661f1d116c8ec2405aff597f2d31435e39ea3b0f",
+      "data/provenance/state-lifecycle-d44-2026-10-18.json": "9d84047b1b75dc41691a0568f247f55a7587136b911db95e282578d553af6f34",
+      "data/provenance/education-provider-fix-d44-2026-10-18.json": "54efea5821a3de617246e9700a900ad475dd6197e9baa9a2849a73f23977a741",
+      "data/provenance/education-flow-d44-2-2026-10-18.json": "06309d05257c3807018f72e5c5a92287412b79951f01dd9c3805d528ad4d6f6e",
+      "data/provenance/turn-budget-d45-2026-10-18.json": "4d4e3528b9579db2f8332b7588052c23f2e7865b36868b5940e275112d078c2c"
+    }
+  },
+  "runtime": {
+    "source_workflow": {
+      "path": "Tmp/d46-2026-10-19/evidence/workflow-final.log",
+      "sha256": "d067c21b91c87d934bd9a7c637fce67d522a9d3531c2e7b58c0dd90aa330c6de",
+      "status": "pass",
+      "tests": 116
+    },
+    "isolated_workflow": {
+      "path": "Tmp/d46-2026-10-19/evidence/isolated-workflow.log",
+      "sha256": "45e5a78c0f258f675a72067fd53feadb911ac783643856ca4c49d04bc2bf165c",
+      "status": "pass",
+      "tests": 116
+    },
+    "source_admitted": {
+      "path": "Tmp/d46-2026-10-19/evidence/source-admitted/verification.json",
+      "sha256": "d673c672973486b96cbda44cdd71ca25f319f6ea66fcbc9d8fd572ca49743e79",
+      "result": {
+        "status": "pass",
+        "cases": [
+          {
+            "target": "Abdominal pain",
+            "numeric": false,
+            "actions": 44,
+            "calls": 69,
+            "diagnosis": "Irritable bowel syndrome",
+            "kind": "disease",
+            "seconds": 7.786037482961547
+          },
+          {
+            "target": "Abdominal pain",
+            "numeric": true,
+            "actions": 44,
+            "calls": 70,
+            "diagnosis": "Irritable bowel syndrome",
+            "kind": "disease",
+            "seconds": 7.918869518034626
+          },
+          {
+            "target": "Unintentional weight loss in the last three months",
+            "numeric": false,
+            "actions": 18,
+            "calls": 15,
+            "diagnosis": "Unintentional weight loss in the last three months",
+            "kind": "symptom",
+            "seconds": 0.17718447896186262
+          }
+        ],
+        "selected_context": [
+          {
+            "status": "present",
+            "target": "chronic stress"
+          },
+          {
+            "status": "absent",
+            "target": "chronic stress"
+          },
+          {
+            "status": "unknown",
+            "target": "chronic stress"
+          }
+        ],
+        "exam": "Duroziez's murmur",
+        "checks": 479,
+        "graph_triples": 113062,
+        "associations": 9955,
+        "network": "none",
+        "model_responses": "scripted",
+        "actual_luna": "not_run",
+        "clinical_accuracy": "not_run",
+        "official_evaluation": "not_run",
+        "manifest_sha256": "a6c745667c6f23b54d67d8309e6c1aefd17f0ef566e359e484337e24b997413f"
+      }
+    },
+    "isolated_admitted": {
+      "path": "Tmp/d46-2026-10-19/isolated/admitted/verification.json",
+      "sha256": "1a428a40188b23d2019cb94559a31fe80eaed4b33e6269cedf8dcbda2687820e",
+      "result": {
+        "status": "pass",
+        "cases": [
+          {
+            "target": "Abdominal pain",
+            "numeric": false,
+            "actions": 44,
+            "calls": 69,
+            "diagnosis": "Irritable bowel syndrome",
+            "kind": "disease",
+            "seconds": 6.966946884000208
+          },
+          {
+            "target": "Abdominal pain",
+            "numeric": true,
+            "actions": 44,
+            "calls": 70,
+            "diagnosis": "Irritable bowel syndrome",
+            "kind": "disease",
+            "seconds": 7.37648250994971
+          },
+          {
+            "target": "Unintentional weight loss in the last three months",
+            "numeric": false,
+            "actions": 18,
+            "calls": 15,
+            "diagnosis": "Unintentional weight loss in the last three months",
+            "kind": "symptom",
+            "seconds": 0.16947656800039113
+          }
+        ],
+        "selected_context": [
+          {
+            "status": "present",
+            "target": "chronic stress"
+          },
+          {
+            "status": "absent",
+            "target": "chronic stress"
+          },
+          {
+            "status": "unknown",
+            "target": "chronic stress"
+          }
+        ],
+        "exam": "Duroziez's murmur",
+        "checks": 479,
+        "graph_triples": 113062,
+        "associations": 9955,
+        "network": "none",
+        "model_responses": "scripted",
+        "actual_luna": "not_run",
+        "clinical_accuracy": "not_run",
+        "official_evaluation": "not_run",
+        "manifest_sha256": "a6c745667c6f23b54d67d8309e6c1aefd17f0ef566e359e484337e24b997413f"
+      }
+    },
+    "isolated_environment": {
+      "path": "Tmp/d46-2026-10-19/evidence/isolation.json",
+      "sha256": "17c4c43bc55664ccff1c823307d4c4d41c4bb448ca883e705ecbc61902617c7e",
+      "result": {
+        "parent_data_visible": false,
+        "root_key_file_visible": false,
+        "case_scripts_visible": false,
+        "development_key_present": false,
+        "cpu_max": "200000 100000",
+        "memory_max": "8589934592",
+        "root_mount": "ro,relatime",
+        "submission_mount": "ro,relatime",
+        "network_interfaces": [
+          "lo"
+        ]
+      }
+    },
+    "original_sdk_http": {
+      "path": "Tmp/d46-2026-10-19/http-final-budget/verification.json",
+      "sha256": "8f744862a93ba0e88570d107dc957025d326c82afc139717838ce91bbf8a14bf",
+      "result": {
+        "status": "pass",
+        "synthetic_fixture": true,
+        "fixture_notice": "C10 is a harness key for synthetic abdominal pain, not the public C10 clinical case",
+        "archive_sha256": "e810f750d966c7d1fd516bb33170872f8c9e5f5ee104de3cf86bbb0e46aa04e9",
+        "ready": true,
+        "termination": "submitted",
+        "receipt": {
+          "record_digest": "d81eff95e6db0a2a62b0fa13673dbb87533c97022452a69d3afc26f55d85dc1c",
+          "score_status": "not_scored",
+          "status": "completed",
+          "turn": 44
+        },
+        "process": {
+          "status": "exited",
+          "exit_code": 0,
+          "seconds": 25.155,
+          "uid": 501,
+          "development_key_present": false,
+          "samples_visible": false,
+          "sandbox": {
+            "cpu_max": "200000 100000",
+            "memory_max": "8589934592",
+            "root_read_only": true,
+            "submission_read_only": true,
+            "tmp_options": [
+              "rw",
+              "nosuid",
+              "nodev",
+              "noexec",
+              "relatime",
+              "size=524288k",
+              "inode64"
+            ],
+            "output_writable": true
+          }
+        },
+        "turns": 44,
+        "doctor_calls": 69,
+        "soap_strings": 15,
+        "diagnosis": "Irritable bowel syndrome",
+        "frozen_clinical_nodes": 51,
+        "frozen_clinical_information_unchanged": true,
+        "network": "ontoward_test-case internal=true",
+        "model_responses": "scripted",
+        "actual_luna": "not_run",
+        "clinical_accuracy": "not_evaluated",
+        "official_api": "not_run"
+      }
+    }
+  },
+  "test_integration": {
+    "evaluator": {
+      "path": "Tmp/test-evaluator/verify-d46-final-20261019/verification.json",
+      "sha256": "553fbc48143a63244355e840de059c9f26c9ceb2e5da2d80f15279644f8d27d5",
+      "status": "pass",
+      "tests": 47
+    },
+    "observer": {
+      "path": "Tmp/d46-2026-10-19/evidence/observer/verification.json",
+      "sha256": "7042f90b120138706a20be9d261bfc5249f2dff5427914ef5233633c32d41216",
+      "result": {
+        "status": "pass",
+        "scenarios": [
+          {
+            "name": "normal",
+            "termination": "submitted",
+            "nodes": 118
+          },
+          {
+            "name": "negative_context",
+            "termination": "submitted",
+            "nodes": 118
+          },
+          {
+            "name": "unknown_context",
+            "termination": "submitted",
+            "nodes": 118
+          },
+          {
+            "name": "education",
+            "termination": "submitted",
+            "nodes": 158
+          },
+          {
+            "name": "transient_model",
+            "termination": "submitted",
+            "nodes": 118
+          },
+          {
+            "name": "model_limit",
+            "termination": "failed",
+            "nodes": 4
+          },
+          {
+            "name": "malformed_context",
+            "termination": "failed",
+            "nodes": 52
+          },
+          {
+            "name": "expired",
+            "termination": "expired",
+            "nodes": 4
+          },
+          {
+            "name": "closed",
+            "termination": "closed",
+            "nodes": 4
+          },
+          {
+            "name": "soap_repair",
+            "termination": "submitted",
+            "nodes": 121
+          },
+          {
+            "name": "unconfirmed",
+            "termination": "unknown",
+            "nodes": 118
+          },
+          {
+            "name": "refusal",
+            "termination": "submitted",
+            "nodes": 118
+          },
+          {
+            "name": "action_format",
+            "termination": "submitted",
+            "nodes": 118
+          },
+          {
+            "name": "recording_failure",
+            "termination": "submitted",
+            "nodes": 118
+          }
+        ],
+        "node_updates": 1287,
+        "recording_failure": "nonfatal_no_replay",
+        "network": "none",
+        "actual_models": "not_run"
+      }
+    },
+    "text_dom_viewer": {
+      "path": "Tmp/d46-2026-10-19/evidence/viewer.log",
+      "sha256": "d777afa6f14bccc30e442b6ad562eb147997814e6947788f97cb175a8191fb77",
+      "status": "pass",
+      "checks": 5,
+      "browser_visual_qa": "not_run"
+    },
+    "comparison": {
+      "path": "Tmp/d46-2026-10-19/evidence/comparison.json",
+      "sha256": "d9eaa69a4f7215283e23dc332728c35339ff4815ddd276dd7ccaa7c833e92b3c",
+      "same_fixed_facts": true,
+      "preparation_contributions_equal": true,
+      "contributions": 3738,
+      "ranking_quality": "not_measured",
+      "current_candidate_counts": [
+        {
+          "case": "chief_only",
+          "retrieved": 105,
+          "sent": 105,
+          "normal_clinical_calls": 1,
+          "graph_state_bytes": 14719
+        },
+        {
+          "case": "chief_and_attribute",
+          "retrieved": 105,
+          "sent": 105,
+          "normal_clinical_calls": 1,
+          "graph_state_bytes": 15641
+        },
+        {
+          "case": "chief_and_context",
+          "retrieved": 145,
+          "sent": 145,
+          "normal_clinical_calls": 1,
+          "graph_state_bytes": 19926
+        },
+        {
+          "case": "unknown_chief",
+          "retrieved": 105,
+          "sent": 105,
+          "normal_clinical_calls": 1,
+          "graph_state_bytes": 10440
+        }
+      ],
+      "runtime_python_files": {
+        "before": 39,
+        "after": 37
+      },
+      "runtime_python_bytes": {
+        "before": 283898,
+        "after": 269420
+      },
+      "state_size_note": "Assessment adds persistent evidence; no memory or speed improvement claim"
+    },
+    "initial_information_projection": {
+      "path": "Test/initial_reports.json",
+      "sha256": "2b5219b83dbf62a064db0765e2e98c4262e2930d59542b8fa8b238be2665f834",
+      "only_public_start_information": true,
+      "source_files": {
+        "C01": {
+          "path": "assets/nova-samples-2026/C01/case.json",
+          "sha256": "0f38a63265017667fe91828ede0271a9c0f5575bc164d81a1f05540445586b71"
+        },
+        "C03": {
+          "path": "assets/nova-samples-2026/C03/case.json",
+          "sha256": "907dc541535dd939ec63fb19547f0d200e1f24264479729610c5d4bdf5343e07"
+        },
+        "C10": {
+          "path": "assets/nova-samples-2026/C10/case.json",
+          "sha256": "570a87bdf976a4c99052120aacee6a7af9777ca23226f41e97d211f404067311"
+        }
+      },
+      "patient_scripts_and_reference_records": false
+    },
+    "initial_record_checks": "Actual C03 and C10 openings with controlled typed replies; C01 and C10 condition examples use controlled received-report data"
+  },
+  "source_changes": {
+    ".env": {
+      "before": "e47a0db1192d4c376d189f25e17a82fa531a3a118db75bf773525eb5f26a854f",
+      "after": "ed20b91794e3929ca0206b2bd665dd3ebc7dfe17c9305ca0dd48cb9f7ff34059"
+    },
+    "settings.py": {
+      "before": "912ca57613fafb2b285ad4b341af7ed0632515dafffcf1a0fd70d96e9f9ec92e",
+      "after": "12fb45fcf402d120db5d09a33a127a58fbb981f3d146e2bb55a2d97b94abc566"
+    },
+    "config/brain.txt": {
+      "before": null,
+      "after": "aedd5707d86f955d3e9964dfc57287132434d7fda4d2a279c0a28d9f82dcaaf9"
+    },
+    "config/input_parser.txt": {
+      "before": "17e3548bbbc20c450570b9853a6a405f787e0b2b137292a37e391e6a43b3f98b",
+      "after": "5f33adae0b1376bfd7bc00b89a4d4256a9daa2394efa83e741eae4977bf0bb42"
+    },
+    "knowledge/graph.py": {
+      "before": "0de6e3e85daf90a4237852af63aaaff4070998ba66505e5e9d423440d4808509",
+      "after": "cd75fe19185796e82e1e1db95599503673f3e3b6996b9b6bb06e7acb21294b1a"
+    },
+    "knowledge/conditions.py": {
+      "before": "5226331815960f33864da6d9dbe304d52c43724adcf03fba2a41bd758855c9c6",
+      "after": "a636ec8c88b0f351b0358b9f77e73ca4c2f84f93c6aa52ec0691a736a3021bee"
+    },
+    "knowledge/manifest.json": {
+      "before": "259cad6c5755699aebb44df5ee1cd4d04b20a3f1b6250f5ce32c03c7f159ba7c",
+      "after": "a6c745667c6f23b54d67d8309e6c1aefd17f0ef566e359e484337e24b997413f"
+    },
+    "workflow/consultation.py": {
+      "before": "0631081fdf378fefc3555e4fd5897eb81a0a25f473700530d2a1b4c762e2c581",
+      "after": "95aa4a2ba406f45aa0c8ab23e99625d8db78ff6b24522f4e56faa7d5daa3be36"
+    },
+    "workflow/doctor_mouth.py": {
+      "before": null,
+      "after": "e9f9c8795135caebad339a9a526be4234cbf8766fa5d92859a92e8f83514566e"
+    },
+    "workflow/doctor_ear.py": {
+      "before": null,
+      "after": "830d6ca9a4fec7e2735577ffe18c49b78d75cca1595c1ba3eadbfada6927dca3"
+    },
+    "workflow/input_types.py": {
+      "before": "85d9ed1f6ae4a343989ad896fc7f2e5186b41dfdbc2817b256b81024e31ae6f5",
+      "after": "a04eb68b0087b06f802a91821edc52e4d7f5267e8f50d0a7e6467ca6a9113392"
+    },
+    "workflow/graph.py": {
+      "before": "a336c6933681272400263a1ab8ab2a81bc3c5977a1712e7ad0fee385a39c9688",
+      "after": "882aac3b1d6938077be2d687e4b079aba116509b4d32e50eee9eb06bf059db6c"
+    },
+    "workflow/text_config.py": {
+      "before": "e5c12c2bd1838edbb7e3a90aaacd1ba985bf5f3a8ce2c3d1d220ae80a5267d5b",
+      "after": "2ad22d8198257a0d1bdf5fd9f66c94207889ba0d92126d08d2b3ece3137ecf6f"
+    },
+    "workflow/education.py": {
+      "before": "242f4cb785ef6f28d6579ab42b95b63a8bfd2f4d22f264d5ffa6791e5d380733",
+      "after": "3d63a1776aa69fdfd0dd43fe387effdee9ab4887b4c0ebabcc05ab5e263c3eed"
+    },
+    "workflow/submission_writer.py": {
+      "before": "c04f65152803535bf8f8fcdf9b5cc46117a6a90abcfa3495a07a521b55f25c32",
+      "after": "f27c8a0f979384e730b5e7bacbd4bd019ff81bfed5af6ebb032b34985f6ea446"
+    },
+    "workflow/runtime.py": {
+      "before": "101cf6433f21cea957e8e93d270c56d171291a557c392fd9dafb19f327f90688",
+      "after": "f2d626c4f8a1ee057be9b4b92c8a4243fed0fb5f818eb693d8e156bdd2305664"
+    },
+    "workflow/doctor_brain.py": {
+      "before": null,
+      "after": "de8714af68dafb5e6db314f69f62f5f86683d30fcbbe8053a5d8fba59d094333"
+    },
+    "workflow/io/model_client.py": {
+      "before": "efa1036c089a248eadadef607aac68d5da5ff3e76f9dacb157393d8c5614d184",
+      "after": "422ad802f27d8e9a6bd7b520c3f6275acb7d5e656fda2d4b142cbdf25ab8a490"
+    },
+    "workflow/state/models.py": {
+      "before": "1d7a18ab75f5f310fc883a24c075dc108c05374644c08bdab9c276b5d9291307",
+      "after": "e7ecd00710e38a27c3a07bc259b8460750105456d4fe734e23c5434d216cb6b2"
+    },
+    "workflow/state/evidence.py": {
+      "before": "4513d09907466b4617dd2c90a1ffd7be16cca30e47c0b95061d64f36e2c8b0db",
+      "after": "e5bad2335cd3320c495837dc4e697de2869ca712564098f861b4ccdd941f33c3"
+    },
+    "workflow/rules/assessment.py": {
+      "before": null,
+      "after": "4924ac13aad1ec8db5fcce9523961279b7c8dd9829da50414459720d5bc8d048"
+    },
+    "workflow/rules/limits.py": {
+      "before": "bd879c63cdf3e7399db016e889165033ee463a30b869b2854387cd5db2d0da5a",
+      "after": "20aace08d84f5397cc4bba0d0dd75b0d5846b0c295e262027f16d6a9b63b97d8"
+    },
+    "workflow/rules/budget.py": {
+      "before": "defbb63e70326223dd68fe3b45da6fd901b9d71c41aa3221ca0ce1342c0eddc7",
+      "after": "1fb28295c2bb0921cfe79f8cef6cee1af6b1763353879d0da035c4f44948a71a"
+    },
+    "workflow/rules/submission.py": {
+      "before": "7bb06accc6083c6c73cdb6c45af74c5b58f3e3edda45b40a0b19a128954098ae",
+      "after": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267"
+    },
+    "workflow/rules/input.py": {
+      "before": "b60c15bc44bb7a9f63329c53246aebc4774f926eb858b19f52552cad459aca16",
+      "after": "e932725d91a60cdc502215f5db63a1ac4b36b99a0a0fe3a352e9a71fe94861e9"
+    },
+    "workflow/rules/collection.py": {
+      "before": "a61d7d4e3d0439d032cb509a9eb6b1ce58989e710b4cd5ff91a98265ff123d54",
+      "after": "b56f4348a37dcfe4806f23ca83dcf4a3c635c7eac87a63bb58d0796d20004ce2"
+    },
+    "workflow/rules/normalization.py": {
+      "before": "2421a6f9909068dd8469cdbb439eb1a369beafe5b77eb9f2cec1651083acb18b",
+      "after": "69a648eb61f571c96a9b5a4ae99fd51c4938b24a4245da5c0a73e1ca8d4e11ed"
+    }
+  },
+  "deleted_submission_files": [
+    "workflow/audit.py",
+    "workflow/clinical_reasoner.py",
+    "workflow/doctor.py",
+    "workflow/input_interpreter.py",
+    "workflow/interview_planner.py",
+    "workflow/rules/selection.py"
+  ],
+  "containers": {
+    "dev": "sha256:0999f2b28fd11f6783b849e94ff0c59b3c791a8afb49034b6e57fee225395da7",
+    "test": "sha256:cae85f523d0a3e2f43b1bd0466794a3d86b39714564ef9c092cc7fbea871b810",
+    "package": "sha256:f250f54eeb6bb466720b32bc967946bd1588b52daaf6c3f41a9f0e21b2e73248",
+    "downloads": "none",
+    "host_dependency_installation": "none",
+    "sdk_network": "ontoward_test-case internal=true"
+  },
+  "resolved_attempts": [
+    {
+      "path": "Tmp/d46-2026-10-19/http",
+      "classification": "stale evaluator image",
+      "result": "failed before final declared test-simulator rebuild; preserved without resume"
+    },
+    {
+      "path": "Tmp/d46-2026-10-19/evidence/isolation-unlimited-dev.json",
+      "classification": "initial dev probe had no CPU or memory quota",
+      "result": "final archive rerun enforces and observes two CPUs eight GB"
+    }
+  ],
+  "maintained_state_documents": [
+    "PROJECT_STATE.md",
+    "submission/PROJECT_STATE.md",
+    "data/PROJECT_STATE.md"
+  ],
+  "decision_document": "DECISION_STATE.md",
+  "not_run": [
+    "fresh actual Luna interpretation ranking planning and Korean semantic quality",
+    "full public C01 C03 C10 consultations with actual models",
+    "independent clinical accuracy",
+    "real NOVA official session validation upload evaluation and scoring",
+    "browser visual rendering",
+    "new corpus build admission downloads publication deployment and agent commits"
+  ],
+  "next_bounded_action": "One separately authorized real-model case using this archive within a confirmed shared request and credit ceiling"
+}

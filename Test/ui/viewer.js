@@ -175,7 +175,8 @@ function compactNotePanel(group,before,after){
     if(!Object.keys(rows||{}).length)block.append(note('이 시점에는 저장된 항목이 없습니다.'));
     root.append(block);
   }
-  root.append(jsonDetail('대표 주호소 fact ID',after.case.chief_fact_id),jsonDetail('고정 진단 · 단일 정본',after.case.diagnosis),
+  if(after.case.assessment)root.append(kv([['현재 1위',after.case.assessment.differential?.[0]?.name??'미결정'],['평가 고정',after.case.assessment.frozen?'고정됨':'수집 중']]));
+  root.append(jsonDetail('대표 주호소 fact ID',after.case.chief_fact_id),jsonDetail('현재 감별 평가 · 단일 정본',after.case.assessment??after.case.diagnosis),
     jsonDetail('최종 영어 계획 · 단일 정본',after.case.plan));
   if(after.turn?.kind==='submission'&&after.turn.payload?.note)root.append(soapNote('현재 제출 작업의 SOAP',after.turn.payload));
   else root.append(note('현재 턴에 SOAP payload가 없습니다. 수신된 최종 SOAP는 상단에서 확인합니다.'));
@@ -228,8 +229,9 @@ function notePanel(group,before,after){
 function diagnosisPanel(before,after){
   if(after?.interview){
     const root=panel('최종 진단과 근거');
-    root.append(jsonDetail('CaseState.diagnosis',after.case.diagnosis));
-    root.append(note('실제 추론 캐시는 증례별 reasoner에 있으며 그래프 상태에 저장하지 않습니다. 관측된 반환값은 정보 흐름에서 확인합니다.'));
+    if(after.case.assessment)root.append(kv([['현재 1위',after.case.assessment.differential?.[0]?.name??'미결정'],['평가 고정',after.case.assessment.frozen?'고정됨':'수집 중'],['후보 수',after.case.assessment.differential.length]]));
+    root.append(jsonDetail(after.case.assessment?'CaseState.assessment':'CaseState.diagnosis',after.case.assessment??after.case.diagnosis));
+    root.append(note('D46은 CaseState.assessment에 현재 감별 순위와 근거를 보관하고 DD 종료에서 고정합니다. 이전 D44 reasoner 기록은 원래 형식으로 표시합니다.'));
     return root;
   }
   const root=panel('기록된 진단 후보와 근거');
@@ -288,7 +290,7 @@ $('report-meta').textContent=`${known(result.case_id,summary.case_id,data.run.ca
 $('trace-status').textContent={complete:'내부 상태 수집 완료',incomplete:'내부 상태 일부 수집',not_collected:'내부 상태 미수집'}[data.trace.status];
 $('trace-status').classList.add(data.trace.status==='complete'?'good':'warn');
 if(finalState?.interaction?.reason){const outcome=el('p',`진료 종료: ${finalState.interaction.termination} · ${finalState.interaction.reason}`,'inline-error');$('summary').before(outcome);}
-for(const [title,value,warning] of [['로컬 실행 검사',result.status==='pass'?'통과':result.status==='fail'?'실패':'결과 없음',result.status!=='pass'],['최종 진단',data.record.diagnosis||finalState?.case?.diagnosis?.name||finalState?.case?.diagnosis||'미제출',false],['사용한 턴',`${summary.turns??'—'} / 50`,false],['Gateway / 전체 모델',`${summary.doctor_calls??'—'} / ${summary.model_requests??'—'}`,false],['공식 채점','미실행 · not_scored',false]]){const box=el('div',null,'metric');box.append(el('small',title),el('strong',value,warning?'error-text':''));$('summary').append(box);}
+for(const [title,value,warning] of [['로컬 실행 검사',result.status==='pass'?'통과':result.status==='fail'?'실패':'결과 없음',result.status!=='pass'],['최종 진단',data.record.diagnosis||finalState?.case?.assessment?.differential?.[0]?.name||finalState?.case?.diagnosis?.name||finalState?.case?.diagnosis||'미제출',false],['사용한 턴',`${summary.turns??'—'} / 50`,false],['Gateway / 전체 모델',`${summary.doctor_calls??'—'} / ${summary.model_requests??'—'}`,false],['공식 채점','미실행 · not_scored',false]]){const box=el('div',null,'metric');box.append(el('small',title),el('strong',value,warning?'error-text':''));$('summary').append(box);}
 const final=$('final-record');
 final.append(kv([['진단',data.record.diagnosis||'제출 기록 없음'],['프로세스 종료',data.process.exit_code??data.process.status??'미수집'],['프로세스 경과 시간',data.process.seconds!==undefined?`${data.process.seconds}초`:'미수집'],['수신 확인',summary.receipt?.status||'없음'],['모드',summary.backend==='scripted'?'고정 응답 대역':summary.backend||data.run.backend||'미확인']]));
 if(data.record.note)final.append(soapNote('시뮬레이터에 수신된 최종 SOAP',data.record));

@@ -50,7 +50,7 @@ class BudgetPolicy:
                 remaining = 0
                 for attribute in self.knowledge.get_symptom_attributes(target):
                     name = self.knowledge.term(attribute)
-                    key = ('SAY', chief.target, name, 'patient', chief.time_context, chief.observation_id or '', chief.episode_id or '')
+                    key = ('SAY', chief.target, name, 'patient', '', chief.time_context, chief.observation_id or '', chief.episode_id or '')
                     acquired = any(f.target == chief.target and f.attribute == name and f.subject == 'patient'
                         and f.observation_id == chief.observation_id and f.episode_id == chief.episode_id
                         and f.time_context == chief.time_context and f.status in {'present','absent'} for f in state.case.current_facts())
@@ -86,12 +86,20 @@ class BudgetPolicy:
         shared = self.shared_action_capacity(state, purpose=purpose)
         return shared if purpose == 'empathy' else max(0, min(shared, self.interview_limits(state)[1] - self.interview_actions(state)))
 
+    def collection_calls(self, state):
+        return 4 + (2 if self.education_enabled and state.interview.education_status=='not_started' else 0)
+
+    def collection_tokens(self, state):
+        return 3 * LIMITS.gateway_tokens + LIMITS.gateway_recovery_tokens + (
+            LIMITS.education_tokens + LIMITS.education_doctor_tokens
+            if self.education_enabled and state.interview.education_status=='not_started' else 0)
+
     def collection_available(self, state):
         session = state.session
         education = state.interview.current == 'Education' and self.education_enabled
-        return (not session.finalizing and session.turns_remaining > 0 and (education or self.calls_left(session) >= 2)
+        return (not session.finalizing and session.turns_remaining > 0 and (education or self.calls_left(session) >= self.collection_calls(state))
             and self.seconds_left(session) > session.reserve_seconds + LIMITS.response_seconds
-            and (education or session.output_token_limit - session.output_tokens >= 2 * LIMITS.gateway_tokens))
+            and (education or session.output_token_limit - session.output_tokens >= self.collection_tokens(state)))
 
     def can_start_action(self, state, *, purpose=None):
         return self.collection_available(state) and self.action_capacity(state, purpose=purpose) > 0
@@ -105,7 +113,7 @@ class BudgetPolicy:
     def can_clarify(self, state):
         return state.session.clarifications < LIMITS.clarifications and self.can_start_action(state)
 
-    def model_allowance(self, session, role='gateway', *, maximum=None):
+    def model_allowance(self, session, role='gateway', *, maximum=None, state=None):
         if not self.calls_left(session):
             return 0
         maximum = min(maximum or {'education':LIMITS.education_tokens,
@@ -113,13 +121,24 @@ class BudgetPolicy:
         reserve = LIMITS.education_doctor_tokens if role == 'education' and not session.finalizing else 0
         if reserve and self.calls_left(session) < 2:
             return 0
+        if state and state.interview.current != 'Education' and role in {'gateway','clinical','empathy'}:
+            pending = self.education_enabled and state.interview.education_status=='not_started'
+            calls = 2 if pending else 0
+            reserve = LIMITS.education_tokens + LIMITS.education_doctor_tokens if pending else 0
+            if role == 'gateway' and not (state.case.assessment and state.case.assessment.frozen):
+                calls += 2
+                reserve += LIMITS.gateway_tokens + LIMITS.gateway_recovery_tokens
+            if role == 'empathy':
+                calls, reserve = self.collection_calls(state), self.collection_tokens(state)
+            if self.calls_left(session) <= calls:
+                return 0
         return max(0, min(maximum, session.output_token_limit - session.output_tokens - reserve))
 
     def can_empathize(self, state):
         session = state.session
         return (not session.finalizing and state.interview.current != 'Education' and self.can_start_action(state, purpose='empathy')
-            and 'SAY' in session.allowed_actions and self.calls_left(session) >= 3
-            and session.output_token_limit - session.output_tokens >= 3 * LIMITS.gateway_tokens)
+            and 'SAY' in session.allowed_actions and self.calls_left(session) >= self.collection_calls(state) + 1
+            and session.output_token_limit - session.output_tokens >= self.collection_tokens(state) + LIMITS.gateway_tokens)
 
     def evaluate(self, state):
         if state.session.termination:
@@ -130,7 +149,7 @@ class BudgetPolicy:
             session = state.session
             reason = ('collection_complete' if session.finalizing else 'turn_budget' if not session.turns_remaining
                 else 'time_budget' if self.seconds_left(session) <= session.reserve_seconds + LIMITS.response_seconds
-                else 'model_call_budget' if self.calls_left(session) < 2 else 'model_token_budget')
+                else 'model_call_budget' if self.calls_left(session) < self.collection_calls(state) else 'model_token_budget')
             return BudgetDecision(finalize=True, discard=frozenset(q.item_id for q in state.interview.queue), reason=reason)
         if state.interview.status == 'uninitialized':
             return BudgetDecision()
@@ -148,10 +167,10 @@ class BudgetPolicy:
                     current -= len(group)
         else:
             for q in sorted(state.interview.queue, key=lambda q:(-q.priority, q.order, q.item_id)):
-                if shared > 0 and calls >= 2 and (q.purpose == 'empathy' or current > 0):
+                if shared > 0 and calls >= self.collection_calls(state) and (q.purpose == 'empathy' or current > 0):
                     keep.add(q.item_id)
                     shared -= 1
-                    calls -= 2
+                    calls -= 3
                     current -= q.purpose != 'empathy'
         return BudgetDecision(discard=frozenset(q.item_id for q in state.interview.queue) - keep)
 

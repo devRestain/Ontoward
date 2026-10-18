@@ -13,12 +13,11 @@ OUTPUT = Path("/output/ontoward-submission.zip")
 REQUIRED = {
     "run.py", "settings.py", "nova_sdk.py", "requirements.txt", ".env",
     'workflow/__init__.py',
-    'workflow/clinical_reasoner.py',
     'workflow/consultation.py',
-    'workflow/doctor.py',
+    'workflow/doctor_mouth.py',
     'workflow/graph.py',
-    'workflow/input_interpreter.py',
-    'workflow/interview_planner.py',
+    'workflow/doctor_ear.py',
+    'workflow/doctor_brain.py',
     'workflow/io/__init__.py',
     'workflow/io/model_client.py',
     'workflow/io/nova_session.py',
@@ -27,7 +26,7 @@ REQUIRED = {
     'workflow/rules/action.py',
     'workflow/rules/budget.py',
     'workflow/rules/input.py',
-    'workflow/rules/selection.py',
+    'workflow/rules/assessment.py',
     'workflow/rules/limits.py',
     'workflow/rules/submission.py',
     'workflow/runtime.py',
@@ -50,7 +49,7 @@ def main() -> None:
 
     settings = packaged_settings()
     text_files = {contained_path(settings[key], "config").relative_to(SOURCE).as_posix()
-                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_NORMALIZATION_PROMPT", "ONTOWARD_EMPATHY_PROMPT",
+                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_NORMALIZATION_PROMPT", "ONTOWARD_BRAIN_PROMPT", "ONTOWARD_EMPATHY_PROMPT",
                               "ONTOWARD_EDUCATION_PROMPT", "ONTOWARD_EDUCATION_DOCTOR_PROMPT", "ONTOWARD_TEXTS")}
     manifest_path = knowledge_path(settings[SETTING])
     knowledge_files = {manifest_path.relative_to(SOURCE).as_posix()}

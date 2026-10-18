@@ -1,20 +1,17 @@
-import re
-
 from nova_sdk import RECORD_FIELDS, NovaError
 
-from .audit import emit
 from .rules.action import failure_outcome
 from .rules.collection import CATEGORY_FIELDS
 from .rules.limits import LIMITS
 from .rules.submission import validate_payload
+from .rules.input import objective
 from .state.models import TurnContext
 
 
 class SubmissionWriter:
-    def __init__(self, client, knowledge, config, executor, nova_session, new_request_id, reasoner, audit=None):
+    def __init__(self, client, knowledge, config, executor, nova_session, new_request_id):
         self.client, self.knowledge, self.config = client, knowledge, config
         self.executor, self.nova_session, self.new_request_id = executor, nova_session, new_request_id
-        self.reasoner, self.audit = reasoner, audit
 
     def _line(self, category, content):
         content = '; '.join(line.strip() for line in str(content).splitlines() if line.strip())
@@ -69,7 +66,7 @@ class SubmissionWriter:
         return f'{fact.target} ({status})' + self._context(fact, episodes)
 
     def _destination(self, fact):
-        if fact.kind == 'finding':
+        if objective(fact.acquisition,fact.source_ref) and (fact.kind=='finding' or fact.kind=='attribute'):
             return 'O.exam'
         if fact.subject == 'family':
             return 'S.fh'
@@ -83,103 +80,130 @@ class SubmissionWriter:
             return 'S.pmh'
         return 'S.hpi' if fact.attribute else 'S.ros'
 
-    def _fact_line(self, field, fact, episodes):
+    def build_record_view(self, case):
         texts = self.config.texts
-        if field == 'S.hpi' and (fact.attribute or fact.category):
-            category = fact.attribute or texts.record_labels.get(fact.category, texts.soap_labels['hpi'])
-            content = self._details(fact)
-            if fact.attribute and (self.knowledge.term_id(fact.attribute, 'FindingAttribute') or '').endswith(':TimeSinceOnset') and fact.measurement:
-                content = texts.onset_format.format(duration=content)
-            if fact.status != 'present':
-                content = f'({texts.status_labels[fact.status]})' + ('; ' + content if content else '')
-            return self._line(category, fact.target + ' - ' + (content or f'({texts.status_labels[fact.status]})')) + self._context(fact, episodes)
-        if field == 'O.exam':
-            text = self._line(texts.soap_labels['exam'], self._describe(fact, episodes))
-            return texts.initial_exam_format.format(text=text) if fact.acquisition == 'initial' else texts.exam_turn_format.format(text=text, turn=fact.turn)
-        label = fact.target
-        if field in {'S.pmh', 'S.fh', 'S.sh'}:
-            for prefix in texts.history_prefixes:
-                if label.casefold().startswith(prefix.casefold()):
-                    label = label[len(prefix):]
-                    break
-            label = texts.term_abbreviations.get(label.casefold(), label)
-        content = f'({texts.status_labels[fact.status]})' + ('; ' + self._details(fact) if self._details(fact) else '')
-        return self._line(label, content) + self._context(fact, episodes)
+        fields = {f'{section}.{name}':[] for section,names in RECORD_FIELDS.items() for name in names}
+        references, episodes, groups = {}, {}, {}
+        facts = case.current_facts()
+        for fact in facts:
+            if fact.episode_id:
+                episodes.setdefault((fact.subject,fact.target,fact.episode_id),len(episodes)+1)
+        chief = case.chief(confirmed=True)
+        if chief:
+            fields['S.cc'].append(self._line(texts.soap_labels['cc'],chief.target))
+        used = set()
+        for key, label in [('age','Age'),('sex','Sex'),('reporter','Historian')]:
+            for note in case.notes.values():
+                if note.context_key!=key or note.subject!='patient':
+                    continue
+                content = self._measurement(note.measurement) if note.measurement else note.value
+                if note.status!='present':
+                    content += f' ({texts.status_labels[note.status]})'
+                fields['S.hpi'].append(self._line(label,content)); used.add(note.id)
+        for fact in facts:
+            destination = ('S.hpi' if chief and fact.id==chief.id else self._destination(fact))
+            if chief and destination not in {'O.exam','S.fh'} and (
+                fact.target,fact.observation_id,fact.episode_id,fact.time_context)==(
+                chief.target,chief.observation_id,chief.episode_id,chief.time_context):
+                destination = 'S.hpi'
+            acquired = (fact.acquisition,fact.source_ref,fact.turn) if destination=='O.exam' else ()
+            key = (destination,fact.subject,fact.subject_member,fact.target,fact.observation_id,
+                fact.episode_id,fact.time_context,fact.polarity_scope,acquired)
+            groups.setdefault(key,[]).append(fact)
+        ordered = sorted(groups.items(),key=lambda pair:(pair[0][0],
+            not any(chief and f.id==chief.id for f in pair[1]),min(f.turn for f in pair[1]),pair[1][0].id))
+        for key, members in ordered:
+            destination = key[0]
+            parts = []
+            for fact in sorted(members,key=lambda f:(bool(f.attribute),f.turn,f.id)):
+                phrase = self._describe(fact,episodes)
+                if fact.polarity_scope=='qualified':
+                    conditions=[n.value for n in case.notes.values() if n.value and (n.subject,n.subject_member,n.observation_id,n.episode_id,n.time_context)==(fact.subject,fact.subject_member,fact.observation_id,fact.episode_id,fact.time_context)]
+                    if conditions:
+                        phrase += ' ('+'; '.join(dict.fromkeys(conditions))+')'
+                if destination=='O.exam':
+                    phrase = (texts.initial_exam_format.format(text=phrase) if fact.acquisition=='initial'
+                        else texts.exam_turn_format.format(text=phrase,turn=fact.turn))
+                references[fact.id] = phrase
+                if phrase not in parts:
+                    parts.append(phrase)
+            fields[destination].append(self._line(texts.soap_labels['exam'] if destination=='O.exam' else
+                texts.soap_labels['hpi'] if destination=='S.hpi' else members[0].target,'; '.join(parts)))
+        for note in case.notes.values():
+            if note.id in used:
+                continue
+            if note.category=='objective_observation' and objective(note.acquisition,note.source_ref):
+                destination='O.exam'
+            else:
+                destination='S.fh' if note.subject=='family' else CATEGORY_FIELDS.get(note.category,'S.hpi')
+            content = '; '.join(filter(None,(note.value,self._measurement(note.measurement) if note.measurement else '')))
+            phrase = content + f' ({texts.status_labels[note.status]})' + self._context(note,episodes)
+            if destination=='O.exam':
+                phrase = (texts.initial_exam_format.format(text=phrase) if note.acquisition=='initial'
+                    else texts.exam_turn_format.format(text=phrase,turn=note.turn))
+            fields[destination].append(self._line(texts.record_labels.get(note.category,'Patient report'),phrase))
+        return fields, references
+
+    def _assessment_text(self, entry, references):
+        parts = []
+        for label, refs in [('Supporting findings',entry.supports),('Less compatible findings',entry.against)]:
+            whole, partial = [], []
+            for ref in refs:
+                if any(i not in references for i in ref.fact_ids):
+                    raise ValueError('dangling_frozen_evidence')
+                phrases = [references[i] for i in ref.fact_ids]
+                (partial if ref.graph_ref.kind=='feature' and label=='Supporting findings' else whole).extend(phrases)
+            if whole:
+                parts.append(self._line(label,'; '.join(dict.fromkeys(whole))))
+            if partial:
+                parts.append(self._line('Partially compatible findings','; '.join(dict.fromkeys(partial))))
+        unresolved = []
+        for ref in entry.unresolved:
+            if ref.scope:
+                _,target,attribute,subject,member,timing,_,_ = ref.scope
+                description = target + (' - '+attribute if attribute else '')
+                if subject=='family': description += ' (family'+(': '+member if member else '')+')'
+                if timing=='past': description += ' (past)'
+                unresolved.append(description+': '+ref.reason)
+        if unresolved:
+            parts.append(self._line('Unconfirmed','; '.join(dict.fromkeys(unresolved))))
+        return self.config.texts.record_separator.join(parts)
 
     def build_soap(self, state):
         if state.session.termination:
             return
-        if state.turn and state.turn.kind != 'submission':
-            state.stop('unknown', 'pending_action_at_finalization')
-            return
-        facts = state.case.current_facts()
-        current = {f.id:f for f in facts}
-        diagnosis = state.case.diagnosis
-        if diagnosis is None:
-            state.stop('failed', 'diagnosis_missing')
-            return
-        texts, episodes = self.config.texts, {}
-        for f in facts:
-            if f.episode_id:
-                episodes.setdefault((f.subject, f.target, f.episode_id), len(episodes)+1)
-        note = {section:{field:'' for field in fields} for section,fields in RECORD_FIELDS.items()}
-        chief = state.case.chief()
-        if chief:
-            note['S']['cc'] = self._line(texts.soap_labels['cc'], chief.target + self._context(chief, episodes))
-            note['S']['hpi'] = self._line(texts.soap_labels['hpi'], self._describe(chief, episodes))
-            target = self.knowledge.term_id(chief.target, 'Symptom')
-            pain = any(a.endswith(':PainQuality') for a in self.knowledge.get_symptom_attributes(target)) or re.search(r'\b(?:pain|headache)\b', chief.target, re.I)
-            if pain:
-                parts = [self._line(f.attribute, self._details(f)) for f in facts if f.attribute
-                    and (f.target, f.subject, f.observation_id, f.episode_id, f.time_context) ==
-                        (chief.target, chief.subject, chief.observation_id, chief.episode_id, chief.time_context)
-                    and (self.knowledge.term_id(f.attribute, 'FindingAttribute') or '').rsplit(':',1)[-1] in
-                        {'Severity', 'Location', 'Laterality', 'PainQuality', 'Quality', 'EpisodeDuration'}]
-                note['S']['hpi'] += texts.record_separator + self._line(texts.soap_labels['pain'], '; '.join(parts) or texts.soap_labels['unknown'])
-        def add(field, text):
-            section, name = field.split('.')
-            if text and text not in note[section][name].split(texts.record_separator):
-                note[section][name] += (texts.record_separator if note[section][name] else '') + text
-        for f in facts:
-            if chief and f.id == chief.id:
-                continue
-            add(self._destination(f), self._fact_line(self._destination(f), f, episodes))
-        for item in state.case.notes.values():
-            field = 'S.fh' if item.subject == 'family' else CATEGORY_FIELDS.get(item.category, 'S.hpi')
-            value = '; '.join(filter(None, (item.value, self._measurement(item.measurement) if item.measurement else '')))
-            content = value + f' ({texts.status_labels[item.status]})'
-            add(field, self._line(texts.record_labels.get(item.category, 'Patient report'), content) + self._context(item, episodes))
-        evidence = [current[i] for i in diagnosis.evidence_ids if i in current and current[i].status in {'present','absent'}
-                    and current[i].evidence_use == 'reasoning']
-        evidence_text = '; '.join(dict.fromkeys(self._describe(f, episodes) for f in evidence))
-        if diagnosis.kind == 'symptom':
-            evidence_text = '; '.join(filter(None, (evidence_text, texts.symptom_assessment)))
-        note['A']['evidence'] = texts.assessment_format.format(diagnosis=diagnosis.name, evidence=evidence_text)
-        add('A.evidence', self._line('Certainty', 'Working diagnosis'))
-        if diagnosis.unresolved:
-            add('A.evidence', self._line('Incomplete assessment', '; '.join(diagnosis.unresolved)))
-        snapshot = self.reasoner.refresh_hypotheses(state)
-        alternatives = []
-        for h in self.reasoner.supported_hypotheses(snapshot):
-            name = self.knowledge.term(h.disease_id)
-            if name == diagnosis.name:
-                continue
-            support = [current[i] for i in dict.fromkeys([*h.evidence_ids, *h.contradiction_ids]) if i in current
-                       and current[i].status in {'present','absent'} and current[i].evidence_use == 'reasoning']
-            if support:
-                alternatives.append(texts.differential_format.format(diagnosis=name,
-                    evidence=texts.label_separator.join(self._describe(f, episodes) for f in support)))
-            if len(alternatives) >= LIMITS.differential_display:
-                break
-        note['A']['differential'] = texts.record_separator.join(alternatives)
+        if state.turn and state.turn.kind!='submission':
+            state.stop('unknown','pending_action_at_finalization'); return
+        primary = state.case.primary()
+        assessment = state.case.assessment
+        if (assessment.based_on_case_revision,assessment.based_on_chief_fact_id)!=(state.case.revision,state.case.chief_fact_id):
+            raise ValueError('stale_frozen_assessment')
+        fields, references = self.build_record_view(state.case)
+        texts = self.config.texts
+        fields['A.evidence'] = [self._line('Diagnosis','#1. '+primary.name),self._line('Certainty','Working diagnosis'),
+            self._assessment_text(primary,references)]
+        if primary.kind=='symptom':
+            fields['A.evidence'].append(self._line('Assessment',texts.symptom_assessment))
+        if assessment.limitations:
+            fields['A.evidence'].append(self._line('Incomplete assessment','; '.join(assessment.limitations)))
+        fields['A.differential'] = [self._line('r/o '+entry.name,self._assessment_text(entry,references))
+            for entry in assessment.differential[1:]]
         for sentence in state.case.plan:
-            if sentence.field != 'education' or self.config.education_enabled:
-                add('P.' + sentence.field, self._line(texts.soap_labels[sentence.field], sentence.text))
-        payload = {'note':note, 'diagnosis':diagnosis.name}
+            if sentence.field=='education' and not self.config.education_enabled:
+                continue
+            label = texts.soap_labels[sentence.field]
+            if sentence.field=='education':
+                answers = [a for a in state.interview.answers if a.plan_sentence_id==sentence.id]
+                delivered = bool(answers) and all(a.outcome=='delivered' for a in answers)
+                label = 'Education delivered' if delivered else 'Education planned (not delivered)'
+            fields['P.'+sentence.field].append(self._line(label,sentence.text))
+        note = {section:{name:texts.record_separator.join(filter(None,fields[f'{section}.{name}']))
+            for name in names} for section,names in RECORD_FIELDS.items()}
+        payload = {'note':note,'diagnosis':primary.name}
         if state.turn is None:
-            state.turn = TurnContext(kind='submission', stage='ready', payload=payload)
+            state.turn = TurnContext(kind='submission',stage='ready',payload=payload)
         else:
-            state.turn.payload, state.turn.error = payload, None
+            state.turn.payload,state.turn.error = payload,None
 
     def validate_submission(self, state):
         if state.session.termination:
@@ -208,7 +232,6 @@ class SubmissionWriter:
             attempts = []
             turn.response = self.executor.execute(state, self.client, self.client.diagnose, request, attempts, final=True)
             turn.stage = 'received'
-            emit(self.audit, 'submission_exchange', request=request, response=turn.response, attempts=attempts)
         except NovaError as error:
             if error.code == 'INVALID_RECORD_FIELDS' and state.turn and state.turn.repairs < LIMITS.submission_repairs:
                 state.turn.error = error.code

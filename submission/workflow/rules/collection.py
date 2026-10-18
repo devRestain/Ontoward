@@ -29,6 +29,6 @@ def answered(state, slot):
         if answer.category != slot or answer.outcome == 'undelivered':
             continue
         if slot not in INTAKE or not chief or answer.key and (
-                answer.key[1], answer.key[5], answer.key[6]) == (chief.target, chief.observation_id or '', chief.episode_id or ''):
+                answer.key[1], answer.key[6], answer.key[7]) == (chief.target, chief.observation_id or '', chief.episode_id or ''):
             return True
     return slot in state.interview.collection

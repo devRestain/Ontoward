@@ -67,13 +67,13 @@ def run_node(state, operation):
 def build_graph(consultation, knowledge):
     graph = StateGraph(WorkflowState)
     operations = {
-        "process_initial_input": partial(consultation.interpreter.process_input, knowledge=knowledge, client=consultation.client),
-        "process_input": partial(consultation.interpreter.process_input, knowledge=knowledge, client=consultation.client),
+        "process_initial_input": partial(consultation.ear.process_input, knowledge=knowledge, client=consultation.client),
+        "process_input": partial(consultation.ear.process_input, knowledge=knowledge, client=consultation.client),
         "refresh_after_input": consultation.refresh_after_input,
         "enter_session": consultation.enter_session, "check_budget": consultation.check_budget,
         "select_question": consultation.select_action,
-        "validate_action": consultation.doctor.validate_action,
-        "execute_action": partial(consultation.doctor.execute_action, client=consultation.client),
+        "validate_action": consultation.mouth.validate_action,
+        "execute_action": partial(consultation.mouth.execute_action, client=consultation.client),
         "advance_session": consultation.advance_session, "build_soap": consultation.finalize,
         "validate_submission": consultation.writer.validate_submission,
         "repair_submission": consultation.repair_submission,

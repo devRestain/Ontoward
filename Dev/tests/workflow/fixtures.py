@@ -21,6 +21,8 @@ from workflow.state.evidence import EvidenceIndex, EvidenceRecord
 from workflow.text_config import TextConfig
 from nova_sdk import NovaError, RECORD_FIELDS
 from education_fixtures import education_response
+sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'Test'))
+from brain_double import clinical_response, attach_sink
 
 FIXED = datetime(2026, 10, 18, tzinfo=timezone.utc)
 CONFIG = TextConfig.load().model_copy(update={'education_enabled':False})
@@ -100,6 +102,9 @@ class FakeSDK:
             reply = self.chat_handler(payload)
             if reply is not None:
                 return reply if isinstance(reply,dict) and 'choices' in reply else self.completion(reply)
+        clinical = clinical_response(payload)
+        if clinical is not None:
+            return self.completion(clinical)
         education = education_response(payload)
         if education is not None:
             return self.completion(education)
@@ -143,10 +148,9 @@ class FakeSDK:
 def consultation(client=None, prepared=None, *, audit=None, cache=True):
     ids = itertools.count(1)
     c = assemble_consultation(client or FakeSDK(), prepared or resources(), now=lambda:FIXED,
-        sleep=lambda delay:None,new_request_id=lambda:f'request-{next(ids)}',audit=audit)
-    if not cache:
-        original = c.reasoner.refresh_hypotheses
-        c.reasoner.refresh_hypotheses = lambda s,**kw:original(s,force=True)
+        sleep=lambda delay:None,new_request_id=lambda:f'request-{next(ids)}')
+    if audit:
+        attach_sink(c,audit)
     return c
 
 
@@ -155,7 +159,7 @@ def run(client=None, prepared=None, *, audit=None, cache=True):
     c = consultation(client, prepared, audit=audit, cache=cache)
     s = c.nova_session.initialize_case(c.client)
     snapshots = []
-    for update in build_graph(c,c.planner.knowledge).stream(s.model_dump(mode='json'),
+    for update in build_graph(c,c.brain.knowledge).stream(s.model_dump(mode='json'),
             {'recursion_limit':c.budget.graph_step_limit(s)},stream_mode='updates'):
         name, raw = next(iter(update.items()))
         snapshots.append((name,copy.deepcopy(raw)))
@@ -179,7 +183,7 @@ def interpret(rows, *, s=None, q=None, k=None, text=None, audit=None, responses=
         s.turn.stage,s.turn.response = 'received', {'content':text,'result':text,'turn':1}
     else:
         s.turn = TurnContext(kind='initial',response={'opening':text})
-    c.interpreter.process_input(s,k,client)
+    c.ear.process_input(s,k,client)
     return s,c,client
 
 
@@ -209,3 +213,8 @@ def add_pattern(k,name,target,expectations,*,disease=OW.Beta,applicability=None)
     k.validate_graph()
     k.prepare_terms()
     return pattern
+
+def freeze(state, *, kind='disease', name='Disease alpha'):
+    from workflow.state.models import Assessment, DifferentialEntry
+    state.case.assessment = Assessment(differential=(DifferentialEntry(kind=kind,name=name),),
+        based_on_case_revision=state.case.revision,based_on_chief_fact_id=state.case.chief_fact_id,frozen=True)

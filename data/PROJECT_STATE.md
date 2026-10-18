@@ -1,9 +1,9 @@
 /state version=1
 /project id=ontoward-data
 /status value=active
-/checkpoint revision=01c244f093dc1af511ac12485625614f74a2c9bf dirty=true updated=2026-10-18T13:38:36Z
-/goal phase=current id=DATA.D46 state=active action="Implement and verify graph constrained DoctorEar DoctorBrain DoctorMouth consultation under D46"
-/goal phase=history id=DATA.BUDGET45 state=complete action="Record D45 budget archive runtime evidence and unchanged admitted asset custody"
+/checkpoint revision=203e787411c80bb32c75a607b85ff7c9cece0cf0 dirty=true updated=2026-10-18T16:51:36.856582Z
+/goal phase=current id=DATA.D46 state=complete action="Preserve clinical pins and record the D46 source independent ZIP and verification custody"
+/goal phase=history id=DATA.BUDGET45 state=complete action="Record D46 archive runtime evidence and unchanged admitted asset custody"
 /goal phase=history id=DATA.EDUFLOW44 state=complete action="Pin d44.2 Education archive captured C01 failure and combined runtime custody"
 /goal phase=history id=DATA.EDUFIX44 state=complete action="Record repaired Education archive saved C10 evidence and unchanged clinical custody"
 /goal phase=history id=DATA.D44 state=complete action="Preserve clinical admission and record D44 source archive and verification custody"
@@ -186,5 +186,12 @@
 /evidence id=DATA.BUDGET45.E1 class=artifact result=pass source=provenance/turn-budget-d45-2026-10-18.json observed="Pin the fifty-six-file 1667861-byte final ZIP ed667370d4483a495c269b58f1e2727b1d4daed5669b8eef95d85fd7d2cf64b1 and exact source hashes; preserve SDK entrypoint requirements settings public environment clinical assets manifest Education work and prior archives"
 /evidence id=DATA.BUDGET45.E2 class=runtime result=pass source=../submission/PROJECT_STATE.md observed="Reference APP.BUDGET45 final budget source and isolated workflow admitted consultations and original SDK HTTP evidence"
 /evidence id=DATA.BUDGET45.E3 class=external_service result=not_run source=provenance/turn-budget-d45-2026-10-18.json observed="Record zero fresh external model requests and leave real NOVA clinical accuracy official evaluation upload commit and deployment unrun"
-/accept id=DATA.D46.A1 state=not_run action="Verify the complete D46 source and independent artifact slice" evidence=none
-/handoff state=incomplete action="Complete D46 implementation and project container acceptance"
+/accept id=DATA.D46.A1 state=pass action="Preserve clinical custody and bind the complete D46 source and independent archive to observed evidence" evidence=DATA.D46.E1,DATA.D46.E2,DATA.D46.E3
+/evidence id=DATA.D46.E1 class=artifact result=pass source=provenance/algorithm-d46-2026-10-19.json observed="Pin the fifty-four-file 1664522-byte independent ZIP Tmp/d46-2026-10-19/ontoward-submission-d46.zip with SHA256 e810f750d966c7d1fd516bb33170872f8c9e5f5ee104de3cf86bbb0e46aa04e9 and match every member to current submission bytes"
+/evidence id=DATA.D46.E2 class=artifact result=pass source=provenance/algorithm-d46-2026-10-19.json observed="Match twenty-six protected SDK entrypoint requirements D45 transport and usage Education configuration clinical RDF vocabulary source policy questions guidelines and historical policy files to the initial snapshot; change only algorithm_version and removal of inactive reasoning_policy reference in the manifest while retaining clinical build and admission pins"
+/evidence id=DATA.D46.E3 class=artifact result=pass source=provenance/algorithm-d46-2026-10-19.json observed="Preserve the verified D45 archive ed667370d4483a495c269b58f1e2727b1d4daed5669b8eef95d85fd7d2cf64b1 and prior receipts baseline dirty diff failed stale-image attempt and initial unbounded-dev probe; record both observed Git revisions without agent commits reset or corpus changes"
+/evidence id=DATA.D46.E4 class=runtime result=pass source=../submission/PROJECT_STATE.md observed="Reference APP.D46 for source and exact isolated artifact consultation input freeze official budget Education SOAP and original SDK HTTP evidence"
+/evidence id=DATA.D46.E5 class=external_service result=not_run source=provenance/algorithm-d46-2026-10-19.json observed="Record zero new external model requests and leave new corpus admission actual model quality clinical accuracy official validation upload scoring publication deployment and agent commits unrun"
+/scope id=DATA.D46.S1 state=in action="Own D46 runtime and artifact hashes preserved clinical admission baseline previous acceptance receipts and evidence custody"
+/scope id=DATA.D46.S2 state=out action="Exclude new source acquisition corpus expansion clinical re-admission paid models official evaluation and publication"
+/handoff state=ready action="Retain the D46 archive and existing admitted clinical assets; bind evidence from any future separately authorized real-model case without replacing prior receipts"

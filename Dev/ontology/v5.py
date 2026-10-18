@@ -7,6 +7,7 @@ from pathlib import Path
 from rdflib import Graph, Literal, Namespace, RDF, RDFS, SKOS, URIRef
 
 from submission.knowledge.conditions import ExpectedValue, ScoringPolicy
+from .contributions import feature_contributions
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -252,6 +253,6 @@ class PreviewBuilder:
         write(output / "registry.json", {"version": registry_version, "entries": list(self.registry.values()), "review_status": "candidate"})
         write_sources(output / "sources.json", self.assertions, dispositions)
         write(output / "report.json", report)
-        write(output / "feature-contributions.json", [c.model_dump() for key in sorted(knowledge._contributions)
-                                                      for c in knowledge.get_feature_contributions(key)])
+        write(output / "feature-contributions.json", [c.model_dump() for key in sorted(knowledge._profile_cache)
+                                                      for c in feature_contributions(knowledge,key)])
         return report

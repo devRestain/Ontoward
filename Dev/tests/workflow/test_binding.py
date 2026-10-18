@@ -27,7 +27,7 @@ class BindingTests(unittest.TestCase):
         self.assertEqual(len(s.case.facts),1)
         self.assertEqual(len(s.case.notes),2)
         self.assertEqual([p['task'] for p in client.requests],['input_context'])
-        c.freeze_diagnosis(s)
+        c.close_collection(s)
         c.writer.build_soap(s)
         self.assertIn('No previous treatment (-)',s.turn.payload['note']['S']['hpi'])
         self.assertIn('Watchful observation only (+)',s.turn.payload['note']['S']['hpi'])
@@ -51,7 +51,7 @@ class BindingTests(unittest.TestCase):
     def test_two_presenting_targets_require_primary_choice(self):
         s,c,_ = f.interpret([f.statement('Complaint'),f.statement('Other',target_terms=['Other symptom'])])
         self.assertIsNone(s.case.chief())
-        c.planner.prepare_chief_complaint(s)
+        c.brain.prepare_chief_complaint(s)
         self.assertTrue(s.interview.queue[0].primary_choice)
         self.assertEqual(len(s.case.facts),2)
 
@@ -104,7 +104,7 @@ class BindingTests(unittest.TestCase):
     def test_conditional_negative_is_not_general_absence(self):
         s,c,_ = f.interpret([f.statement('Current'),f.statement('Only sometimes absent',assertion='absent',
             polarity_scope='qualified',observation_id=None)])
-        records = EvidenceIndex.from_case(s.case,c.planner.knowledge).entries
+        records = EvidenceIndex.from_case(s.case,c.brain.knowledge).entries
         self.assertTrue(any(record.status=='present' for record in records))
         self.assertFalse(any(record.status=='absent' for record in records))
 
@@ -152,7 +152,7 @@ class BindingTests(unittest.TestCase):
         self.assertEqual(len(s.case.notes),1)
         self.assertEqual(next(iter(s.case.notes.values())).measurement.unit,'cm/year')
         self.assertTrue(next(iter(s.case.notes.values())).measurement.approximate)
-        self.assertFalse(EvidenceIndex.from_case(s.case,c.planner.knowledge).entries)
+        self.assertFalse(EvidenceIndex.from_case(s.case,c.brain.knowledge).entries)
         self.assertEqual(len(client.requests),1)
 
     def test_orphan_registered_attribute_is_record_only(self):
@@ -160,7 +160,7 @@ class BindingTests(unittest.TestCase):
         s,c,_ = f.interpret([row])
         attr = next(iter(s.case.facts.values()))
         self.assertEqual(attr.evidence_use,'record_only')
-        self.assertFalse(EvidenceIndex.from_case(s.case,c.planner.knowledge).entries)
+        self.assertFalse(EvidenceIndex.from_case(s.case,c.brain.knowledge).entries)
         self.assertIsNone(s.case.chief())
 
     def test_explicit_correction_preserves_channel_scope_and_audit(self):
@@ -203,8 +203,8 @@ class BindingTests(unittest.TestCase):
             return {'statements':[f.statement('Complaint')],
                 'patient_context':[{'key':'age','value':'7 years','quote':'7 years'}]}
         s,c,_ = f.interpret([],text='7 years Complaint',responses=response)
-        self.assertEqual(c.interpreter.patient_context,{'age':'7 years'})
-        self.assertNotIn('7 years',s.model_dump_json())
+        self.assertEqual({n.context_key:n.value for n in s.case.notes.values()},{'age':'7 years'})
+        self.assertFalse(hasattr(c.ear,'patient_context'))
         self.assertNotIn('Complaint',str(s.case.notes))
 
     def test_initial_chief_focused_recovery_is_independent(self):
@@ -239,7 +239,7 @@ class NumericAndScopeTests(unittest.TestCase):
         self.assertFalse(attr.measurement.upper_inclusive)
         self.assertTrue(attr.measurement.approximate)
         self.assertEqual(len(client.requests),1)
-        c.freeze_diagnosis(s)
+        c.close_collection(s)
         c.writer.build_soap(s)
         self.assertIn('approximately',s.turn.payload['note']['S']['hpi'])
         self.assertNotIn('urn:',s.turn.payload['note']['S']['hpi'])
@@ -268,7 +268,7 @@ class NumericAndScopeTests(unittest.TestCase):
         self.assertEqual(note.measurement.upper_unit,'month')
         self.assertFalse(note.measurement.upper_inclusive)
         self.assertFalse(s.case.facts)
-        c.reasoner.select_diagnosis(s)
+        c.close_collection(s)
         self.assertEqual(s.session.termination,'failed')
 
     def test_bad_correction_cannot_change_target_subject_or_episode(self):
@@ -287,7 +287,7 @@ class NumericAndScopeTests(unittest.TestCase):
                    time_context='current',observation_id='obs2',episode_id='episode2')
         s,c,_=f.interpret([f.statement('Past only',target_terms=['Other symptom'],time_context='past')],q=q)
         self.assertEqual(s.interview.answers[-1].outcome,'unknown')
-        self.assertFalse(c.planner.has_resolved_evidence(s,'Other symptom',time_context='current'))
+        self.assertFalse(c.brain.has_resolved_evidence(s,'Other symptom',time_context='current'))
         self.assertTrue(any(fact.target=='Other symptom' and fact.time_context=='past' for fact in s.case.facts.values()))
 
     def test_clarification_resolves_only_its_matching_acquired_uncertainty(self):

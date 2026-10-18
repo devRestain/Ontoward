@@ -3,7 +3,6 @@ from dataclasses import dataclass
 
 from nova_sdk import NovaError
 
-from ..audit import emit
 from ..rules.action import failure_outcome
 from ..rules.limits import LIMITS, TRANSIENT_ERRORS
 
@@ -16,23 +15,23 @@ class ModelResult:
 
 
 class ModelClient:
-    def __init__(self, executor, budget, usage, new_request_id, audit=None):
+    def __init__(self, executor, budget, usage, new_request_id):
         self.executor, self.budget, self.usage = executor, budget, usage
-        self.new_request_id, self.audit = new_request_id, audit
+        self.new_request_id = new_request_id
 
     def complete(self, state, client, *, role, messages, max_tokens=None):
         session = state.session
-        if role not in {'gateway', 'empathy', 'education', 'education_doctor'}:
+        if role not in {'gateway', 'clinical', 'empathy', 'education', 'education_doctor'}:
             raise ValueError('Unsupported designated-model role')
-        allowance = self.budget.model_allowance(session, role, maximum=max_tokens)
+        allowance = self.budget.model_allowance(session, role, maximum=max_tokens, state=state)
         size = len(json.dumps(messages, ensure_ascii=False, separators=(',', ':')).encode())
-        if role.startswith('education') and (size > LIMITS.education_request_bytes
+        if (role.startswith('education') or role == 'clinical') and (size > LIMITS.education_request_bytes
                 or size > session.input_token_limit - session.input_tokens):
             return ModelResult(error='INPUT_BUDGET_EXHAUSTED')
         if not allowance:
             return ModelResult(error='MODEL_UNAVAILABLE')
         request = {'messages':messages, 'model':LIMITS.model, 'request_id':self.new_request_id(),
-                   'max_tokens':allowance, 'reasoning_effort':'high' if role == 'education' else LIMITS.gateway_reasoning}
+                   'max_tokens':allowance, 'reasoning_effort':'high' if role in {'education','clinical'} else LIMITS.gateway_reasoning}
         attempts, response, accounted = [], None, False
         self.usage.record_model_request(state)
         try:
@@ -64,6 +63,4 @@ class ModelClient:
             if not accounted:
                 self.usage.disable_models(state)
             result = ModelResult(error='invalid_model_response', request_id=request['request_id'])
-        emit(self.audit, 'model_exchange', role=role, request=request, response=response,
-             error=result.error, attempts=attempts)
         return result

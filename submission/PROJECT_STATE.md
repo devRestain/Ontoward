@@ -1,8 +1,8 @@
 /state version=1
 /project id=ontoward-submission
 /status value=active
-/checkpoint revision=01c244f093dc1af511ac12485625614f74a2c9bf dirty=true updated=2026-10-18T13:38:36Z
-/goal phase=current id=APP.D46 state=active action="Implement and verify graph constrained DoctorEar DoctorBrain DoctorMouth consultation under D46"
+/checkpoint revision=203e787411c80bb32c75a607b85ff7c9cece0cf0 dirty=true updated=2026-10-18T16:51:36.856582Z
+/goal phase=current id=APP.D46 state=complete action="Implement and verify Ear Brain Mouth graph decisions frozen Assessment and Python SOAP through completed submission"
 /goal phase=history id=APP.BUDGET45 state=complete action="Use authoritative session turns for budget checks and reconcile attempted action costs under D45"
 /goal phase=history id=APP.EDUFLOW44 state=complete action="Deliver the fixed diagnosis first and recover Korean Education without bypassing normal routing"
 /goal phase=history id=APP.EDUFIX44 state=complete action="Preserve Education provider errors recover once and shorten the configured greeting"
@@ -22,7 +22,7 @@
 /goal phase=history id=APP.SOAP33 state=complete action="Render English Category Content SOAP with source terms quote-backed keywords explicit polarity and same-episode pain assessment"
 /goal phase=history id=APP.CHIEF29 state=complete action="Require one existing Symptom for chief mapping with source aliases bounded lookup recovery and explicit semantic evidence"
 /goal phase=history id=APP.INTEGRATE36 state=complete action="Verify D36 against the combined D37 runtime and independent archive"
-/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify real Luna interpretation English planning Korean delivery and completed submission from the D45 budget archive after separate external execution authorization"
+/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify real Luna interpretation English planning Korean delivery and completed submission from the D46 archive after separate external execution authorization"
 /goal phase=history id=APP.CONTEXT28 state=complete action="Bound complete Gateway requests and recover context rejection once while preserving consultation and submission behavior"
 /goal phase=history id=APP.TEST27 state=complete action="Verify unchanged D26 callbacks through the D27 local HTTP API with the scripted C10 fixture"
 /goal phase=history id=APP.READINESS26 state=complete action="Pass Education and complete diagnostic acquisition Gateway recovery assessment and confirmed submission under D26"
@@ -274,5 +274,15 @@
 /evidence id=APP.BUDGET45.E5 class=runtime result=pass source=../Tmp/turn-budget45-2026-10-18/isolated-final/workflow.log observed="Pass all 102 maintained workflow tests against the final read-only extracted archive with network disabled and only test and own output mounts"
 /evidence id=APP.BUDGET45.E6 class=runtime result=pass source=../Tmp/turn-budget45-2026-10-18/isolated-final/admitted/verification.json observed="Pass 380 admitted-knowledge checks and three confirmed scripted consultations from the final independent archive without parent workspace data"
 /evidence id=APP.BUDGET45.E7 class=external_service result=not_run source=../data/provenance/turn-budget-d45-2026-10-18.json observed="Leave real NOVA fresh model quality clinical accuracy official evaluation upload commit and deployment unrun"
-/accept id=APP.D46.A1 state=not_run action="Verify the complete D46 source and independent artifact slice" evidence=none
-/handoff state=incomplete action="Complete D46 implementation and project container acceptance"
+/accept id=APP.D46.A1 state=pass action="Implement the three LLM owners graph-bound evidence ranking executable questions frozen Assessment and Python SOAP through confirmed termination" evidence=APP.D46.E1,APP.D46.E2,APP.D46.E4
+/accept id=APP.D46.A2 state=pass action="Verify the exact independent archive without parent data or network and preserve official action accounting" evidence=APP.D46.E3,APP.D46.E5
+/evidence id=APP.D46.E1 class=runtime result=pass source=../Tmp/d46-2026-10-19/evidence/workflow-final.log observed="Pass 116 maintained behavior tests including partial and mismatched patterns applicability refinement repeated-source and episode isolation protected candidates valid-ranking action-only repair scoped completion actual C03 C10 initial records last response freeze Education recovery deterministic SOAP and seventeen official and protected-resource budget checks"
+/evidence id=APP.D46.E2 class=runtime result=pass source=../Tmp/d46-2026-10-19/evidence/source-admitted/verification.json observed="Pass 479 checks on 113062 admitted triples and 9955 Associations through three scripted Korean consultations in forty-four forty-four and eighteen actions including English P fixed disease and symptom assessments Context polarity acquired EXAM fifteen SOAP strings and completed DIAGNOSE"
+/evidence id=APP.D46.E3 class=runtime result=pass source=../Tmp/d46-2026-10-19/evidence/isolated-workflow.log observed="Pass the same 116 tests against the final extracted archive and 479 checks in ../Tmp/d46-2026-10-19/isolated/admitted/verification.json with identical scripted consultation outcomes"
+/evidence id=APP.D46.E4 class=runtime result=pass source=../Tmp/d46-2026-10-19/http-final-budget/verification.json observed="Execute unchanged run.py and original SDK from the final ZIP over the internal project HTTP harness with ready zero process exit completed receipt forty-four turns sixty-nine Doctor calls and unchanged frozen facts notes chief revision and rank across fifty-one final nodes; use a synthetic abdominal-pain fixture whose C10 route is not the public C10 clinical case"
+/evidence id=APP.D46.E5 class=runtime result=pass source=../Tmp/d46-2026-10-19/evidence/isolation.json observed="Observe two CPUs eight GB read-only root and submission loopback-only network and absent parent data root key file case scripts and development key in final archive checks"
+/evidence id=APP.D46.E6 class=semantic result=pass source=../data/provenance/algorithm-d46-2026-10-19.json observed="Pin d46.1 and one Assessment; remove old owner aliases scoring selectors simulated answers and runtime audit while preserving D45 and Education provider and text recovery; refer Test integration to ROOT.D46"
+/evidence id=APP.D46.E7 class=external_service result=not_run source=../data/provenance/algorithm-d46-2026-10-19.json observed="Leave fresh Luna ranking interpretation plan and Korean semantic quality full public actual-model consultations independent clinical accuracy official NOVA validation scoring upload publication and deployment unrun"
+/scope id=APP.D46.S1 state=in action="Own thin consultation input graph decisions action delivery freeze deterministic SOAP and unchanged SDK callback and wire boundaries"
+/scope id=APP.D46.S2 state=out action="Exclude runtime comparison trace replay costs new corpus clinical validation paid execution and deployment"
+/handoff state=ready action="Use the exact D46 offline-verified archive; any real-model case remains separately authorized and must preserve the current clinical pins and shared request ceiling"

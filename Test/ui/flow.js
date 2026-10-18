@@ -8,6 +8,7 @@ const stateObjects = {
   interaction: ['InteractionState', '입출력과 전달', '입력, 선택 행동, 대화, 파서 결과, 제출 payload']
 };
 const roleNames = {
+  DoctorEar: '입력 해석', DoctorBrain: '임상 판단', DoctorMouth: '환자 전달',
   InputInterpreter: '해석', ClinicalKnowledge: 'DB 조회', ClinicalReasoner: '추론',
   InterviewPlanner: '계획', Doctor: '행동', SubmissionWriter: '제출',
   Consultation: '조정', ModelClient: '모델', RequestExecutor: '전송',

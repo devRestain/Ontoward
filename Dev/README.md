@@ -17,7 +17,7 @@ v5.0 준비는 전체 원천 SQLite 수집과 결정론적 투영이 기본이�
 프로젝트 루트에서 전체 흐름을 확인하거나 ZIP을 생성한다.
 
 ```sh
-docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm -T --no-deps --pull never dev python -B Dev/tests/workflow/test_workflow.py
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm -T --no-deps --pull never dev python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py'
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml build --pull=false package
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm -T --no-deps --pull never package
 ```
@@ -26,4 +26,6 @@ ZIP은 Tmp/packaging/ontoward-submission.zip에 만들어진다. 공개 설정·
 
 유지 중인 상담 행동 검증과 실제 원천 후보·한국어 자산을 이용한 격리 상담을 구분한다. D18에서 이전 실행 배치를 철회했으므로 실제 prepare가 실패하는 상태를 빈 Graph나 자동 승인으로 우회하지 않는다. 한국어 준비·검증·재실행 명령은 [온톨로지 도구](ontology/README.md)에 있다.
 
-D18에서 이전 v4.2·seed·임상 배치·번역·승인·지침 교육 초안과 임시 사본을 삭제했다. 원본 자료와 일반 상담 동작은 보존한다. D37로 대체된 고정 교육 발췌 도구와 해당 테스트는 제거했다. 현재 교육 원문 연결은 [guidelines/](guidelines/README.md), 진단 후 계획·한국어 안내와 행동 검증은 submission/workflow/와 tests/workflow/test_education.py가 담당한다. 현재 운영 사실은 [루트 상태](../PROJECT_STATE.md)에 기록한다.
+D18에서 이전 v4.2·seed·임상 배치·번역·승인·지침 교육 초안과 임시 사본을 삭제했다. 원본 자료와 일반 상담 동작은 보존한다. D37로 대체된 고정 교육 발췌 도구와 해당 테스트는 제거했다. 현재 교육 원문 연결은 [guidelines/](guidelines/README.md), 진단 후 계획·한국어 안내와 행동 검증은 submission/workflow/와 tests/workflow/test_delivery.py가 담당한다. 현재 운영 사실은 [루트 상태](../PROJECT_STATE.md)에 기록한다.
+
+D46은 Ear·Brain·Mouth의 통합 상담을 유지 회귀로 검사한다. test_brain.py는 그래프 근거·수용 순위·질문·freeze를, test_record.py는 typed 인구 정보·관찰·SOAP를, test_budget.py는 공식 턴과 마지막 판단·교육 예약을 검사한다. 원천 점수 차분은 ontology/contributions.py의 준비 기능으로 옮겼고 비교·프로토콜 Brain 대역·상세 관측은 Test가 소유한다. 이전 점수·가상 답변 알고리즘은 동결된 이전 산출물로만 비교한다.

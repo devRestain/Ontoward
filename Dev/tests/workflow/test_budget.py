@@ -8,6 +8,33 @@ from workflow.state.models import Question
 
 
 class OfficialBudgetTests(unittest.TestCase):
+    def test_input_repairs_cannot_spend_final_judgment_and_enabled_delivery_reserves(self):
+        from workflow.rules.limits import LIMITS
+        for enabled,protected in ((False,2),(True,4)):
+            c=f.consultation(prepared=f.resources(education=enabled));s=f.chief(f.state('DifferentialDiagnosis'))
+            s.session.doctor_calls=s.session.call_limit-protected
+            c.client.chat=Mock(return_value=f.FakeSDK.completion('{}'))
+            result=c.ear.model.complete(s,c.client,role='gateway',messages=[])
+            self.assertEqual(result.error,'MODEL_UNAVAILABLE');c.client.chat.assert_not_called()
+            for _ in range(2):
+                self.assertIsNone(c.brain.model.complete(s,c.client,role='clinical',messages=[]).error)
+            if enabled:
+                self.assertIsNone(c.brain.model.complete(s,c.client,role='education',messages=[]).error)
+                self.assertIsNone(c.mouth.model.complete(s,c.client,role='education_doctor',messages=[]).error)
+            self.assertEqual(c.budget.calls_left(s.session),0)
+            s.session.doctor_calls=0
+            reserve=LIMITS.gateway_tokens+LIMITS.gateway_recovery_tokens+(16000 if enabled else 0)
+            s.session.output_tokens=s.session.output_token_limit-reserve
+            self.assertEqual(c.budget.model_allowance(s.session,'gateway',state=s),0)
+
+    def test_empathy_preserves_response_judgment_repair_and_optional_delivery(self):
+        for enabled in (False,True):
+            c=f.consultation(prepared=f.resources(education=enabled));s=f.chief(f.state('DifferentialDiagnosis'))
+            s.session.doctor_calls=s.session.call_limit-c.budget.collection_calls(s)
+            self.assertFalse(c.budget.can_empathize(s))
+            s.session.doctor_calls-=1
+            self.assertTrue(c.budget.can_empathize(s))
+
     def ready_action(self, *, kind='SAY', purpose='feature', turns=50, education=False):
         c = f.consultation(prepared=f.resources(education=education))
         s = f.chief(f.state('Education' if education else 'DifferentialDiagnosis', turns=turns, initialized=True))
@@ -16,7 +43,7 @@ class OfficialBudgetTests(unittest.TestCase):
                      text='증상이 있나요?' if kind == 'SAY' else '복부 청진하겠습니다')
         c.questions.register(s, q)
         c.interactions.select_question(s, q)
-        c.doctor.validate_action(s)
+        c.mouth.validate_action(s)
         return c, s
 
     def test_budget_checkpoint_uses_session_remaining_without_charging_reads(self):
@@ -32,10 +59,11 @@ class OfficialBudgetTests(unittest.TestCase):
         self.assertFalse(c.client.actions)
 
     def test_model_calls_and_internal_session_changes_leave_action_turns_unchanged(self):
-        c, s = f.consultation(), f.state()
+        c, s = f.consultation(), f.chief(f.state())
+        f.freeze(s)
         c.client.chat = Mock(return_value=f.FakeSDK.completion('{}'))
         for _ in range(3):
-            result = c.interpreter.model.complete(s, c.client, role='gateway', messages=[])
+            result = c.ear.model.complete(s, c.client, role='gateway', messages=[])
             self.assertIsNone(result.error)
         for _ in range(4):
             c.advance_session(s)
@@ -46,7 +74,7 @@ class OfficialBudgetTests(unittest.TestCase):
         self.assertEqual(sum(u.actions for u in s.session.usage.values()), 0)
 
     def test_server_model_limits_remain_separate_from_turns(self):
-        c, s = f.consultation(), f.state()
+        c, s = f.consultation(), f.chief(f.state())
         snapshot = c.client.session()
         snapshot.update(turns_remaining=41, doctor_calls_remaining=0,
                         input_tokens_remaining=100, output_tokens_remaining=100)
@@ -99,7 +127,7 @@ class OfficialBudgetTests(unittest.TestCase):
         for kind in ('SAY', 'EXAM'):
             with self.subTest(kind=kind):
                 c, s = self.ready_action(kind=kind)
-                c.doctor.execute_action(s, c.client)
+                c.mouth.execute_action(s, c.client)
                 for _ in range(2):
                     c.nova_session.refresh_snapshot(s, c.client)
                 self.assertEqual(s.session.turns_remaining, 49)
@@ -116,7 +144,7 @@ class OfficialBudgetTests(unittest.TestCase):
                     c.client.remaining -= cost
                     raise f.NovaError(code)
                 setattr(c.client, 'say' if kind == 'SAY' else 'exam', Mock(side_effect=refuse))
-                c.doctor.execute_action(s, c.client)
+                c.mouth.execute_action(s, c.client)
                 self.assertEqual(s.session.turns_remaining, 50 - cost)
                 self.assertEqual(s.session.usage['DifferentialDiagnosis'].actions, cost)
                 self.assertEqual(s.turn.response, {'error': code})
@@ -128,7 +156,7 @@ class OfficialBudgetTests(unittest.TestCase):
             with self.subTest(code=code):
                 c, s = self.ready_action()
                 c.client.say = Mock(side_effect=f.NovaError(code))
-                c.doctor.execute_action(s, c.client)
+                c.mouth.execute_action(s, c.client)
                 c.client.say.assert_called_once()
                 self.assertEqual(s.session.turns_remaining, 50)
                 self.assertEqual(s.session.usage['DifferentialDiagnosis'].actions, 0)
@@ -136,7 +164,7 @@ class OfficialBudgetTests(unittest.TestCase):
 
     def test_empathy_charges_a_turn_separately_from_interview_capacity(self):
         c, s = self.ready_action(purpose='empathy')
-        c.doctor.execute_action(s, c.client)
+        c.mouth.execute_action(s, c.client)
         self.assertEqual(s.session.turns_remaining, 49)
         self.assertEqual((s.session.usage['DifferentialDiagnosis'].actions,
                           s.session.usage['DifferentialDiagnosis'].empathy_actions), (1, 1))
@@ -152,7 +180,7 @@ class OfficialBudgetTests(unittest.TestCase):
                 raise f.NovaError('INVALID_API_RESPONSE')
             return saved[0]
         c.client.say = say
-        c.doctor.execute_action(s, c.client)
+        c.mouth.execute_action(s, c.client)
         self.assertEqual(attempts[0], attempts[1])
         self.assertEqual(len(c.client.actions), 1)
         self.assertEqual(s.session.turns_remaining, 49)
@@ -167,7 +195,7 @@ class OfficialBudgetTests(unittest.TestCase):
                 original(**request)
             raise f.NovaError('API_UNAVAILABLE')
         c.client.say = unavailable
-        c.doctor.execute_action(s, c.client)
+        c.mouth.execute_action(s, c.client)
         self.assertEqual(attempts[0], attempts[1])
         self.assertEqual(s.session.termination, 'unknown')
         self.assertEqual(s.session.turns_remaining, 49)
@@ -185,7 +213,7 @@ class OfficialBudgetTests(unittest.TestCase):
                         c.client.remaining += 1
                     return result
                 c.client.say = Mock(side_effect=malformed)
-                c.doctor.execute_action(s, c.client)
+                c.mouth.execute_action(s, c.client)
                 c.client.say.assert_called_once()
                 self.assertEqual(s.session.termination, 'unknown')
                 self.assertEqual(s.session.turns_remaining, 50 - cost)
@@ -194,14 +222,14 @@ class OfficialBudgetTests(unittest.TestCase):
     def test_fiftieth_reply_is_processed_and_diagnose_is_free(self):
         c, s = self.ready_action(turns=1, purpose='education', education=True)
         c.client.chat = Mock(return_value=f.FakeSDK.completion('{}'))
-        c.interpreter.model.complete(s, c.client, role='gateway', messages=[])
-        c.doctor.execute_action(s, c.client)
+        c.ear.model.complete(s, c.client, role='gateway', messages=[])
+        c.mouth.execute_action(s, c.client)
         self.assertEqual(s.session.turns_remaining, 0)
-        c.interpreter.process_input(s, c.planner.knowledge, c.client)
+        c.ear.process_input(s, c.brain.knowledge, c.client)
         self.assertIsNone(s.turn)
         c.check_budget(s)
         self.assertTrue(s.session.finalizing)
-        c.freeze_diagnosis(s)
+        c.close_collection(s)
         c.writer.build_soap(s)
         c.writer.submit_diagnosis(s)
         c.writer.confirm_submission(s)

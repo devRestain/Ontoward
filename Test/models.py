@@ -47,7 +47,7 @@ class NovaModels:
             response = self.client.chat(messages, model=MODEL, reasoning_effort=reasoning_effort,
                                         max_tokens=max_tokens, request_id=request_id)
         except NovaError as error:
-            if not (role in {'education', 'education_doctor'} and error.code == 'PROVIDER_RESPONSE_INVALID'):
+            if not (role in {'education', 'education_doctor', 'clinical_decision', 'clinical_action'} and error.code == 'PROVIDER_RESPONSE_INVALID'):
                 self.stopped = error.code
             self.record({**entry, 'status': 'failed_or_unknown', 'error': error.code})
             raise
@@ -59,6 +59,9 @@ class NovaModels:
             stream.write(json.dumps(value, ensure_ascii=False) + '\n')
 
 
+from brain_double import clinical_response
+
+
 class ScriptedModels:
     """Exercise transport and completion with fixed replies; provide no clinical quality evidence."""
 
@@ -68,6 +71,9 @@ class ScriptedModels:
     def complete(self, role, messages, max_tokens, request_id, *, reasoning_effort='medium'):
         self.calls += 1
         payload = json.loads(messages[-1]['content'])
+        clinical = clinical_response(payload)
+        if clinical is not None:
+            return completion(json.dumps(clinical))
         if payload.get('task') == 'education':
             phase = payload.get('repair_phase', payload.get('phase'))
             if phase in {'read', 'combine'}:

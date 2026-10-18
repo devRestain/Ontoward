@@ -53,6 +53,7 @@ class Texts(BaseModel):
 
 
 class TextConfig(BaseModel):
+    brain_prompt: str
     parser_prompt: str
     normalization_prompt: str
     empathy_prompt: str
@@ -63,13 +64,14 @@ class TextConfig(BaseModel):
 
     @classmethod
     def load(cls):
+        brain = configured_path('ONTOWARD_BRAIN_PROMPT', 'config').read_text(encoding='utf-8').strip()
         prompt = configured_path("ONTOWARD_PARSER_PROMPT", "config").read_text(encoding="utf-8").strip()
         normalization = configured_path("ONTOWARD_NORMALIZATION_PROMPT", "config").read_text(encoding="utf-8").strip()
         empathy = configured_path("ONTOWARD_EMPATHY_PROMPT", "config").read_text(encoding="utf-8").strip()
         education = configured_path("ONTOWARD_EDUCATION_PROMPT", "config").read_text(encoding="utf-8").strip()
         education_doctor = configured_path("ONTOWARD_EDUCATION_DOCTOR_PROMPT", "config").read_text(encoding="utf-8").strip()
         texts = Texts.model_validate_json(configured_path("ONTOWARD_TEXTS", "config").read_text(encoding="utf-8"))
-        if not all((prompt, normalization, empathy, education, education_doctor)) or set(texts.status_labels) != {"present", "absent", "uncertain", "unknown"}:
+        if not all((brain, prompt, normalization, empathy, education, education_doctor)) or set(texts.status_labels) != {"present", "absent", "uncertain", "unknown"}:
             raise ValueError("Missing parser prompt or clinical status labels")
         if (set(texts.subject_labels) != {"patient", "family"} or set(texts.time_labels) != {"current", "past", "unspecified"}
                 or set(texts.operator_labels) != {"eq"}):
@@ -113,6 +115,6 @@ class TextConfig(BaseModel):
         if any(content_error(text) for text in [*texts.clarification_questions.values(),
                 *texts.intake_questions.values(), *texts.history_questions.values()]):
             raise ValueError("Invalid prepared clarification")
-        return cls(parser_prompt=prompt, normalization_prompt=normalization, empathy_prompt=empathy,
+        return cls(brain_prompt=brain, parser_prompt=prompt, normalization_prompt=normalization, empathy_prompt=empathy,
                    education_prompt=education, education_doctor_prompt=education_doctor,
                    texts=texts, education_enabled=education_enabled())

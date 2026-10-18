@@ -55,3 +55,5 @@
 - Report only performed checks and preserve exact unresolved coverage and the next bounded action.
 
 - Keep D44 algorithm-only archive and lifecycle verification custody in provenance/state-lifecycle-d44-2026-10-18.json while preserving D42 clinical admission and every accepted receipt byte-for-byte.
+
+- Preserve D42 clinical and prior archive custody while recording D46 source hashes archive identity unchanged pins and bounded offline evidence in provenance.

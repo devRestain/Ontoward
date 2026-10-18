@@ -8,7 +8,7 @@
 
 ## 오프라인 프로젝트 흐름 지도
 
-실행 없이 프로젝트의 구조를 읽으려면 [프로젝트 흐름 지도](atlas.html)를 브라우저에서 직접 연다. HTML 한 파일에 스타일·도식을 담았으며, 서버·스크립트·외부 폰트·CDN 없이 오프라인에서 읽는다. 전체 지도·진료 흐름·Pattern 추론·질문 선택·준비 파이프라인·코드 위치를 목차로 탐색할 수 있고 브라우저 찾기와 인쇄를 사용할 수 있다. 원문 링크는 프로젝트 안의 상대 경로이며, 아래 빌드와 웹 실행은 흐름 지도를 읽는 데 필요하지 않다. 이 문서는 2026-10-18 D40 기준의 정적 설명이고 실제 증례 리포트는 기존 웹 실행기에서 확인한다.
+실행 없이 프로젝트의 구조를 읽으려면 [프로젝트 흐름 지도](atlas.html)를 브라우저에서 직접 연다. HTML 한 파일에 스타일·도식을 담았으며, 서버·스크립트·외부 폰트·CDN 없이 오프라인에서 읽는다. 전체 지도·진료 흐름·Pattern 추론·질문 선택·준비 파이프라인·코드 위치를 목차로 탐색할 수 있고 브라우저 찾기와 인쇄를 사용할 수 있다. 원문 링크는 프로젝트 안의 상대 경로이며, 아래 빌드와 웹 실행은 흐름 지도를 읽는 데 필요하지 않다. 이 문서는 D40 기준으로 보존한 정적 설명이다. 현재 D46의 LLM 순위·질문·freeze·SOAP는 [워크플로우 백서](../submission/README.md)를 따른다.
 
 <a id="knowledge-viewer"></a>
 ## 데이터베이스·온톨로지 지식 뷰어
@@ -59,24 +59,24 @@ sh Test/web.sh
 리포트 왼쪽의 내부 세션·턴을 선택하고 다음 내용을 확인한다.
 
 - **정보 흐름:** 기본 화면이다. 그래프 노드를 위에서 아래로 따라가며 **내부 호출과 전달**을 펼친다. 객체·메서드 이름을 누르면 오른쪽에서 호출자, 인스턴스 경로, 실제 인자와 자료형, 반환값, 직접 바뀐 인자와 상태 경로를 본다. `return None`인 메서드도 상태에 기록한 결과를 따로 표시한다. SDK 행은 실제 전송 body와 응답을 보여주며 JSON 문자열은 원문과 해독한 구조를 함께 펼칠 수 있다. 그래프 사이 화살표는 `WorkflowState → 검증된 dict → 다음 노드` 경계를 나타낸다.
-- **객체 탐색:** D44의 `CaseState`·`InterviewState`·`SessionContext`·`TurnContext`를 고르고 같은 객체의 턴 이전·이후 트리와 필드별 변경을 비교한다. 변경 경로·값을 검색하거나 객체가 바뀐 턴 번호를 눌러 이동한다. 지역 `InputResult`, `ModelResult`, `EvidenceIndex` 등 임시 반환 데이터는 해당 턴의 반환 객체와 정보 흐름에서 확인한다. 트리는 값 전체를 보존하며 펼칠 때 하위 항목을 만든다.
+- **객체 탐색:** 현재 D46의 `CaseState`·`InterviewState`·`SessionContext`·`TurnContext`를 고르고 같은 객체의 턴 이전·이후 트리와 필드별 변경을 비교한다. 변경 경로·값을 검색하거나 객체가 바뀐 턴 번호를 눌러 이동한다. 지역 `InputResult`, `ModelResult`, `EvidenceIndex` 등 임시 반환 데이터는 해당 턴의 반환 객체와 정보 흐름에서 확인한다. 트리는 값 전체를 보존하며 펼칠 때 하위 항목을 만든다.
 - **대화:** 실제 Doctor 발화·환자 답변·진찰 요청과 결과·거절·전달 미확인 요청.
 - **Note 상태:** 선택 구간의 마지막 관측 상태에서 S·O·A·P의 15개 필드에 저장된 기록과 별도 diagnosis. 기록의 완료 상태(`unasked`·`done`)와 임상 값(`present`·`absent`·`uncertain`·`unknown`), 이번 구간의 추가·변경, 개념 라벨·ID·취득 경로·원문 출처를 확인한다. 값이 없는 기록과 빈 필드도 표시한다.
 - **상태 변화:** 턴과 호출 예산, 추가·변경된 사실, 선택한 행동, 질문 계획, 해석 결과와 수용·거절, 노드별 변경분과 전체 상태.
-- **진단 근거:** 실제 후보 순서, 근거 점수·맥락 가산·모순 감점·주호소 포함률, 선택한 진단과 근거 기록.
-- **모델 호출:** 환자·진찰·Gateway 역할의 실제 messages와 응답, 호출 설정·사용량·오류·복구 이력.
+- **진단 근거:** 현재 Assessment의 순서·기반 revision·chief·frozen 여부, 코드가 연결한 supports·against·unresolved와 한계. 과거 점수 형식은 당시 로그의 값으로 표시한다.
+- **모델 호출:** 환자·진찰·Ear·Brain·Mouth 역할의 실제 messages와 응답, 호출 설정·사용량·오류·복구 이력.
 
 상단에서 최종 진단·SOAP·제출 수신·프로세스 종료와 실행 검사를 펼쳐 볼 수 있다. 시작 실패·시간 초과·중단도 결과로 남고, 부분 로그는 부분 수집으로 표시한다. 이전 실행에 내부 상태 로그가 없으면 기존 대화와 최종 결과만 표시한다. 로그의 원시 JSON과 모델 messages는 상세 영역을 펼칠 때 표시한다.
 
-**마지막 Note 상태 보기**를 누르면 마지막 관측 구간의 Note 탭으로 이동한다. `case.S/O/A/P`는 구조화된 원본 저장 상태이고, `interaction.submission_payload.note`는 그 시점에 실제 생성된 제출 문자열이다. 저장된 모든 기록이 SOAP에 들어가지는 않는다. 정정·상충을 반영한 실제 문구는 생성된 payload에서 확인하고, 최종 수신본과 수신 확인은 상단에서 별도로 확인한다. `case.diagnosis`는 `note.A` 안이 아닌 별도 `diagnosis` 필드에 제출한다. `patient_reports`는 전체 원문·포함 구간을 보존하고 clinical_spans만 의미에 맞는 S 필드의 미해결 보고로 표출한다. Education 답변은 대화 이력만 유지하며 새 구조화 근거를 만들지 않는다.
+**마지막 Note 상태 보기**를 누르면 마지막 관측 구간으로 이동한다. D46은 `case.facts/notes/assessment/plan`을 보관하며 SOAP는 `turn.payload.note`에 제출 작업 중만 존재한다. 최종 수신본과 completed는 상단에서 별도로 확인한다. `case.assessment.differential[0]`과 별도 제출 diagnosis가 일치해야 한다. facts의 수집 상태·임상 상태·범위를 구별하며 Education 응답은 대화만 유지한다. 과거 `case.S/O/A/P`, `case.diagnosis`, `patient_reports`는 해당 저장 형식의 역사적 필드로만 읽는다.
 
 저장된 실행을 웹에서 열면 현재 뷰어로 `report.html`을 다시 만든다. 테스트·모델 호출을 다시 실행하지 않는다. 이미 별도로 열어 둔 리포트는 새로고침한다. 내부 상태가 없는 과거 실행은 Note를 빈 상태로 추정하지 않고 미수집으로 표시하며 실제 최종 수신본만 제공한다.
 
-새 수집 형식은 주요 실행 객체, 파서 단계, canonical snapshot, evidence index, 일부 DB dictionary 조회와 SDK 경계를 기록한다. 가상 분기별 내부 점수 계산 루프와 Python heap 전체는 범위 밖이다. 메서드 입력으로 받은 상태와 실제 쓰기 결과를 구분하며, 특정 필드를 읽었다거나 별개 메서드의 같은 값이 같은 Python 인스턴스라는 추정은 하지 않는다. 내부 메서드 기록이 없는 과거 실행은 그래프 노드·SDK 전송·상태 복원만 제공하고 미수집 안내를 표시한다. 원본 `submission/` 파일을 수정하지 않고 Test 메모리 래퍼를 실행 후 복원한다.
+새 수집 형식은 Ear·Brain·Mouth·Consultation·Writer의 실제 메서드, 입력 수용·그래프 후보·증거 지역값, 일부 DB 조회, LangGraph와 SDK 경계를 외부 래퍼로 기록한다. Submission에 audit sink나 상세 이벤트를 주입하지 않으며 Python heap 전체를 수집하지 않는다. 메서드 입력으로 받은 상태와 실제 쓰기 결과를 구분하며, 특정 필드를 읽었다거나 별개 메서드의 같은 값이 같은 Python 인스턴스라는 추정은 하지 않는다. 내부 메서드 기록이 없는 과거 실행은 그래프 노드·SDK 전송·상태 복원만 제공하고 미수집 안내를 표시한다. 원본 `submission/` 파일을 수정하지 않고 Test 메모리 래퍼를 실행 후 복원한다.
 
 웹 서버는 기존 Test 이미지의 Python 표준 라이브러리를 사용하고 프론트엔드는 별도 패키지가 필요 없다. 웹 컨테이너는 출력 폴더만 읽고 쓰며, 작업 요청을 받은 호스트 셸이 기존 실행기를 호출한다. 웹 컨테이너에 Docker 소켓·개발 키·증례 원본 마운트를 전달하지 않는다. 웹 포트는 localhost에만 연결한다. 계정·DB·대기열·자동 재개는 두지 않는다.
 
-현재 D44 로그에서는 typed facts·note·최종 진단·계획과 일시적인 제출 작업을 표시한다. 과거 다섯 객체 형식의 저장 로그는 해당 기록대로 읽는다. 처리된 응답과 모델 교환·복구는 그래프 상태 대신 관측 event에서 확인한다. SOAP는 실제 제출 작업과 시뮬레이터 수신 결과를 구분하며 존재하지 않는 필드를 추정하지 않는다.
+현재 D46 로그에서는 typed facts·note·단일 Assessment·영어 계획과 일시적인 제출 작업을 표시한다. 과거 다섯 객체 형식의 저장 로그는 해당 기록대로 읽는다. 처리된 응답과 모델 교환·복구는 그래프 상태 대신 관측 event에서 확인한다. SOAP는 실제 제출 작업과 시뮬레이터 수신 결과를 구분하며 존재하지 않는 필드를 추정하지 않는다.
 
 ## LangSmith에서 검토하는 방법
 
@@ -141,11 +141,11 @@ docker run --rm --pull never --network none --read-only --entrypoint node \
 TEST_MAX_NOVA_REQUESTS=200 sh Test/run.sh C10 nova
 ```
 
-`C01` 또는 `C03`을 지정해 다른 공개 증례를 실행할 수 있다. 한 번에 한 증례만 진행한다. NOVA 모드는 시뮬레이터에만 외부 네트워크를 추가하고 `https://nova.snubhai.org/v1/chat/completions`의 세션 밖 개발 호출을 사용한다. 모델은 `openai/gpt-6-luna`, reasoning은 `medium`이다. 환자·진찰 분류·미등록 소견·Gateway 요청을 모두 합쳐 기본 200회로 제한하며 팀 개발 크레딧과 세션 밖 호출 한도를 사용한다. 실제 계정 잔여량은 조회하거나 추정하지 않는다.
+`C01` 또는 `C03`을 지정해 다른 공개 증례를 실행할 수 있다. 한 번에 한 증례만 진행한다. NOVA 모드는 시뮬레이터에만 외부 네트워크를 추가하고 `https://nova.snubhai.org/v1/chat/completions`의 세션 밖 개발 호출을 사용한다. 모델은 `openai/gpt-6-luna`다. 에이전트가 요청한 Brain 임상 판단·영어 계획은 `high`, Ear·Mouth는 `medium`을 보존한다. 환자·진찰 대역은 기존 `medium` 설정을 사용한다. 환자·진찰 분류·미등록 소견·Gateway 요청을 모두 합쳐 기본 200회로 제한하며 팀 개발 크레딧과 세션 밖 호출 한도를 사용한다. 실제 계정 잔여량은 조회하거나 추정하지 않는다.
 
 NOVA 모드의 에이전트는 계속 내부 네트워크만 사용하지만 시뮬레이터는 외부 모델에 연결한다. 네트워크가 전혀 없는 환경에서는 `scripted`를 사용한다. 공식 또는 서버 샘플 세션 생성, 업로드, 공식 진단 제출·채점은 수행하지 않는다.
 
-각 외부 요청 전에 ID·역할·상한을 대장에 예약하고 응답·오류를 보존한다. 통신·서비스 오류 후에는 추가 외부 요청을 중단한다. `education`·`education_doctor`의 `PROVIDER_RESPONSE_INVALID`는 실행기의 응답 복구 1회가 새 ID로 공급자에 도달하도록 허용하며 실패 예약도 공유 요청 상한에 포함한다. 한국어 변환은 처음부터 출력 상한 최대 8,000을 사용하고 응답 복구와 문구 검증 복구를 각각 1회씩 구별한다. 다른 역할·오류와 요청 상한의 중단은 유지한다. 환자·진찰 JSON 형식이 잘못되면 역할별로 최대 두 번 판정을 시도한다. 재시작으로 같은 세션을 재개하지 않으며, 같은 로컬 요청 ID와 payload의 재전송은 결과를 재생하거나 `REQUEST_PENDING`을 반환하여 외부 요청을 중복하지 않는다. 동일 ID의 다른 payload는 거절한다.
+각 외부 요청 전에 ID·역할·상한을 대장에 예약하고 응답·오류를 보존한다. 통신·서비스 오류 후에는 추가 외부 요청을 중단한다. `clinical_decision`·`clinical_action`·`education`·`education_doctor`의 `PROVIDER_RESPONSE_INVALID`는 실행기의 응답 복구 1회가 새 ID로 공급자에 도달하도록 허용하며 실패 예약도 공유 요청 상한에 포함한다. 한국어 변환은 처음부터 출력 상한 최대 8,000을 사용하고 응답 복구와 문구 검증 복구를 각각 1회씩 구별한다. 다른 역할·오류와 요청 상한의 중단은 유지한다. 환자·진찰 JSON 형식이 잘못되면 역할별로 최대 두 번 판정을 시도한다. 재시작으로 같은 세션을 재개하지 않으며, 같은 로컬 요청 ID와 payload의 재전송은 결과를 재생하거나 `REQUEST_PENDING`을 반환하여 외부 요청을 중복하지 않는다. 동일 ID의 다른 payload는 거절한다.
 
 ## 출력과 완료 기준
 
@@ -172,10 +172,18 @@ ready 이전에는 증례를 공개하지 않고 준비는 10분, ready 이후 �
 
 에이전트 종료 코드 0과 로컬 DIAGNOSE `completed` 영수증을 함께 확인해야 상담 성공이다. 빈/잘못된 SOAP, 비어 있지 않은 Gateway 응답 누락, 실패 프로세스나 증거 누락은 성공으로 표시하지 않는다. 웹에서 실행이 종료되어 리포트를 받는 것과 상담 성공은 각각 확인한다. scripted 응답으로 확정할 근거가 없으면 `no_supported_diagnosis`와 실패 결과를 그대로 보여준다.
 
-`nonempty_gateway_responses`와 SDK의 `doctor_successes`는 응답 문자열의 존재만 뜻하며 빈 사실 JSON도 포함한다. 실제 수용된 연결은 D44의 `case.facts`, 입력 수용 audit event와 해석 함수 반환값에서 확인한다. 과거 로그의 model_history는 당시 저장 자료다. Test 부트스트랩은 원본 진입점을 실행하면서 메모리에서만 그래프와 SDK 경계를 감싸고 원래 함수를 한 번 호출한다. 원본 소스·질문·라우팅·점수·재시도·진단·SOAP는 바꾸지 않으며, 로그 쓰기 실패가 행동을 재실행하지 않는다. 비교용으로 `TEST_TRACE=0 sh Test/run.sh C10 scripted`를 실행하면 관측을 끌 수 있다. 각 실행의 trace_status는 complete·incomplete·not_collected로 구분한다.
+`nonempty_gateway_responses`와 SDK의 `doctor_successes`는 응답 문자열의 존재만 뜻하며 빈 사실 JSON도 포함한다. 실제 수용된 연결은 `case.facts`, Test가 감싼 입력 수용 함수의 인자·반환·상태 변화에서 확인한다. 과거 로그의 model_history는 당시 저장 자료다. Test 부트스트랩은 원본 진입점을 실행하면서 메모리에서만 그래프와 SDK 경계를 감싸고 원래 함수를 한 번 호출한다. 원본 소스·질문·라우팅·순위·재시도·진단·SOAP는 바꾸지 않으며, 로그 쓰기 실패가 행동을 재실행하지 않는다. 비교용으로 `TEST_TRACE=0 sh Test/run.sh C10 scripted`를 실행하면 관측을 끌 수 있다. 각 실행의 trace_status는 complete·incomplete·not_collected로 구분한다.
 
 공식 점수·독립 임상 검증·실제 NOVA 연결 품질은 이 오프라인 결과로 확인할 수 없다. 재현 근거는 보존된 `assets/nova-devkit/nova_local.py`, `assets/nova-starter/nova_sdk.py`, `assets/nova-competition-2026/`와 [D27](../DECISION_STATE.md#D27)·[D29](../DECISION_STATE.md#D29)·[D31](../DECISION_STATE.md#D31)다.
 
 ## Education 실행 자산
 
 D37부터 에이전트에는 기존 submission·출력 마운트와 함께 원본 가이드라인 폴더가 /opt/nova/guidelines에 읽기 전용으로 제공된다. NOVA_GUIDELINES_DIR이 이 경로를 가리키며 문서 자체는 제출 ZIP에 포함하지 않는다. education high 요청과 education_doctor medium 요청의 reasoning 값은 로컬 모델 브리지에서도 보존한다. scripted 모드의 계획·한국어 문장은 프로토콜 검증용 대역으로 실제 모델이나 임상 품질의 증거가 아니다.
+
+## D46 Brain 대역과 고정 이전 산출물 비교
+
+`Test/brain_double.py`는 제공된 질환·질문 참조를 반환하는 프로토콜 대역이다. `ScriptedModels`는 순위+행동과 행동만 복구하는 요청을 구별한다. 임상 정답이나 실제 모델의 질환 판단을 흉내 내는 검증은 아니다. 유지 행동 회귀는 `Dev/tests/workflow`에 두며 비교 알고리즘을 제출 코드에 남기지 않는다.
+
+`Test/compare_d46.py --baseline <동결된 submission> --submission <현재 submission> --output <증빙 JSON>`은 별도 Python 프로세스에서 동일한 수용 사실 네 묶음을 실행한다. 후보 회수·정상 판단 호출·요청에 포함된 후보·현재 상태 크기를 측정하고 임상 핀·SDK·준비용 원천 점수 차분의 동일성을 검사한다. 이전 점수 순위와 새 대역 순위가 같아야 한다는 검사는 하지 않는다. 소스 baseline과 결과는 `Tmp/d46-2026-10-19/`에 보존하고 신원은 [D46 증빙](../data/provenance/algorithm-d46-2026-10-19.json)에 연결한다.
+
+D46 SDK HTTP 검증의 C10 경로는 **합성 복통 fixture의 하네스 식별자**다. 실제 공개 C10의 자연어·임상 품질 검증과 구별한다. Test/initial_reports.json은 공개 C01·C03·C10의 start_information만 복사한다. C03의 실제 시작 문구로 환자·보호자 인구 정보를, C10의 실제 시작 문구로 보고 체중·객관 맥박 구간을 검사한다. C01·C10의 조건·시점 보존은 별도 통제 응답으로 확인한다. 숨은 대본·진찰표·모범 기록을 입력에 넣지 않으며 Ear·Brain 응답은 프로토콜 대역이다.

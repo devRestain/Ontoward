@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Annotated, Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from .state.models import ClinicalFact, Model, NoteFact, ObservedNumber, RecordCategory
 
@@ -22,6 +22,16 @@ class PatientContextFact(Model):
     subject_member: str | None = None
     measurement: ObservedNumber | None = None
     correction: bool = False
+
+    @model_validator(mode='after')
+    def demographic_scope(self):
+        if self.subject=='patient' and self.subject_member is not None:
+            raise ValueError('Patient demographics cannot name a family member')
+        if self.measurement and (self.key!='age' or self.measurement.unit not in {'year','month','week','day'}
+                or self.measurement.upper_unit not in {None,'year','month','week','day'}
+                or any(v is not None and v<0 for v in (self.measurement.value,self.measurement.lower,self.measurement.upper))):
+            raise ValueError('Age requires a nonnegative reported age unit')
+        return self
 
 
 class ContextStatement(Model):
@@ -52,7 +62,7 @@ class ContextStatement(Model):
 
 class ContextInput(Model):
     statements: list[ContextStatement] = Field(default_factory=list)
-    patient_context: list[PatientContextFact] = Field(default_factory=list, max_length=3)
+    patient_context: list[PatientContextFact] = Field(default_factory=list, max_length=8)
     empathy: EmpathySignal | None = None
 
 

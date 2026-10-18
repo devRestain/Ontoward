@@ -90,7 +90,7 @@ class Trace:
             except Exception as error:
                 self.emit('observation_error', error=type(error).__name__)
             self.stack.append(call_id)
-            scoring = owner == 'InterviewPlanner' and name == 'replan'
+            scoring = owner == 'DoctorBrain' and name == 'replan'
             if scoring:
                 self.scoring_depth += 1
             try:
@@ -125,12 +125,12 @@ class Trace:
 
     def attach(self, consultation, knowledge):
         selected = {
-            'InputInterpreter': {'process_input', '_context', '_read_context', '_mapping_payload', '_map_batch',
+            'DoctorEar': {'process_input', '_context', '_read_context', '_mapping_payload', '_map_batch',
                                  '_parse_text', '_apply_facts', '_fit_request', '_validate_facts'},
-            'ClinicalReasoner': {'retrieve_candidates', 'refresh_hypotheses', 'select_diagnosis'},
-            'InterviewPlanner': {'prepare_initiation', 'prepare_chief_complaint', 'prepare_open_inquiry',
+
+            'DoctorBrain': {'prepare_initiation', 'prepare_chief_complaint', 'prepare_open_inquiry',
                                  'prepare_clarification', 'replan', 'prepare_context_questions',
-                                 'prepare_differential_questions', 'prepare_education', 'select_question'},
+                                 'prepare_differential_questions', 'prepare_education', 'select_question', 'refresh_assessment', 'decide', '_payload', 'close_differential'},
             'BudgetPolicy': {'evaluate', 'can_start_action', 'can_empathize', 'model_allowance'},
             'ClinicalKnowledge': {'search_concepts', 'resolve_concept', 'get_symptom_attributes', 'concepts',
                                   'get_target_values', 'get_exam_methods'},
@@ -153,24 +153,13 @@ class Trace:
                 self.restore.append((obj, name, previous, had_value))
                 methods.append(name)
             self.objects.append({'id': path, 'type': owner, 'methods': methods})
-            for name in ('interpreter', 'doctor', 'planner', 'reasoner', 'writer', 'nova_session', 'budget',
+            for name in ('ear', 'brain', 'mouth', 'writer', 'nova_session', 'budget',
                          'questions', 'interactions', 'model', 'executor', 'usage'):
                 child = getattr(obj, name, None)
                 if child is not None and type(child).__module__.startswith('workflow.'):
                     visit(child, f'{path}.{name}')
         visit(consultation, 'consultation')
         visit(knowledge, 'knowledge')
-        def audit(event, **data):
-            self.emit('audit', event=event, data=self.value(data))
-        for obj in (consultation.interpreter, consultation.interpreter.model, consultation.doctor,
-                    consultation.planner, consultation.reasoner, consultation.writer):
-            previous = obj.audit
-            def record(event, _previous=previous, **data):
-                audit(event, **data)
-                if _previous is not None:
-                    _previous(event, **data)
-            self.restore.append((obj, 'audit', previous, True))
-            obj.audit = record
         from workflow.state.evidence import EvidenceIndex
         for cls, names in ((EvidenceIndex, ('from_case',)),):
             for name in names:
