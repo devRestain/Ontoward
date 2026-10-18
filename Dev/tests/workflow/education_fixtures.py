@@ -26,6 +26,8 @@ def education_response(payload):
                                "priority": "safety" if field in {"follow_up", "disposition"} else "routine"}]
                       for field, text in TEXT.items()}}
     if task == "education_doctor":
+        if payload.get('announcement'):
+            return {'items':[{'id':'diagnosis','utterances':['가상 질환이 의심됩니다.']}]}
         return {"items": [{"id": row["id"], "utterances": [KOREAN[row["id"].split(":")[1]]]}
                           for row in payload["sentences"]]}
     return None

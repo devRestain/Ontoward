@@ -1,8 +1,12 @@
 /state version=1
 /project id=ontoward-submission
-/status value=complete
-/checkpoint revision=fe235c160a49fda900438ab3567e50a8de25e9ec dirty=true updated=2026-10-18T11:45:44.206360+00:00
-/goal phase=current id=APP.D44 state=complete action="Implement three resident owners and one disposable turn with typed clinical facts"
+/status value=active
+/checkpoint revision=01c244f093dc1af511ac12485625614f74a2c9bf dirty=true updated=2026-10-18T13:38:36Z
+/goal phase=current id=APP.D46 state=active action="Implement and verify graph constrained DoctorEar DoctorBrain DoctorMouth consultation under D46"
+/goal phase=history id=APP.BUDGET45 state=complete action="Use authoritative session turns for budget checks and reconcile attempted action costs under D45"
+/goal phase=history id=APP.EDUFLOW44 state=complete action="Deliver the fixed diagnosis first and recover Korean Education without bypassing normal routing"
+/goal phase=history id=APP.EDUFIX44 state=complete action="Preserve Education provider errors recover once and shorten the configured greeting"
+/goal phase=history id=APP.D44 state=complete action="Implement three resident owners and one disposable turn with typed clinical facts"
 /goal phase=history id=APP.D43 state=complete action="Preserve independent input facts and extract the chief with incidental information at turn zero"
 /goal phase=history id=APP.D42 state=complete action="Consume D42 common complaint assets through the completed D41 canonical input path"
 /goal phase=history id=APP.D41 state=complete action="Implement two-stage DB normalization forced completion and raw-free canonical consumers"
@@ -18,7 +22,7 @@
 /goal phase=history id=APP.SOAP33 state=complete action="Render English Category Content SOAP with source terms quote-backed keywords explicit polarity and same-episode pain assessment"
 /goal phase=history id=APP.CHIEF29 state=complete action="Require one existing Symptom for chief mapping with source aliases bounded lookup recovery and explicit semantic evidence"
 /goal phase=history id=APP.INTEGRATE36 state=complete action="Verify D36 against the combined D37 runtime and independent archive"
-/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify real Luna interpretation English planning Korean delivery and completed submission from the D44 archive after separate external execution authorization"
+/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify real Luna interpretation English planning Korean delivery and completed submission from the D45 budget archive after separate external execution authorization"
 /goal phase=history id=APP.CONTEXT28 state=complete action="Bound complete Gateway requests and recover context rejection once while preserving consultation and submission behavior"
 /goal phase=history id=APP.TEST27 state=complete action="Verify unchanged D26 callbacks through the D27 local HTTP API with the scripted C10 fixture"
 /goal phase=history id=APP.READINESS26 state=complete action="Pass Education and complete diagnostic acquisition Gateway recovery assessment and confirmed submission under D26"
@@ -244,4 +248,31 @@
 /evidence id=APP.D44.E7 class=external_service result=not_run source=../data/provenance/state-lifecycle-d44-2026-10-18.json observed="Leave fresh Luna C03 interpretation Korean meaning quality clinical accuracy real NOVA official evaluation and deployment unrun"
 /scope id=APP.D44.S1 state=in action="Own typed fact note and result state current-session question lifecycle shared reasoner selective normalization Education and submission lifetimes without runtime compatibility adapters"
 /scope id=APP.D44.S2 state=out action="Exclude clinical RDF changes source weights SDK changes new dependencies corpus expansion remote writes and actual model execution"
-/handoff state=blocked action="Retain completed D44 local slice and defer APP.REVALIDATE29 until exact external model authorization"
+/accept id=APP.EDUFIX44.A1 state=pass action="Verify single bounded Education recovery exact failure reasons and preserved English SOAP" evidence=APP.EDUFIX44.E1,APP.EDUFIX44.E2
+/accept id=APP.EDUFIX44.A2 state=pass action="Complete Korean Education and confirmed submission with the repaired isolated runtime" evidence=APP.EDUFIX44.E3,APP.EDUFIX44.E4
+/evidence id=APP.EDUFIX44.E1 class=runtime result=pass source=../Tmp/education-provider-fix-2026-10-18/evidence/isolated-workflow.log observed="Pass seventy-eight maintained tests in source and the read-only network-disabled archive; verify provider and truncation recovery repeated failure English plan preservation and the exact twenty-one-codepoint first greeting"
+/evidence id=APP.EDUFIX44.E2 class=runtime result=pass source=../Tmp/education-provider-fix-2026-10-18/evidence/c10-replay.json observed="Replay saved C10 state with nine final English sentences and controlled provider errors; recover delivery or retain the real cause after two attempts without changing patient facts diagnosis or plan"
+/evidence id=APP.EDUFIX44.E3 class=runtime result=pass source=../Tmp/education-provider-fix-2026-10-18/evidence/isolated/admitted/verification.json observed="Pass 372 admitted-RDF checks and three complete Korean Education SOAP consultations from source and the independent archive while preserving clinical pins"
+/evidence id=APP.EDUFIX44.E4 class=runtime result=pass source=../Tmp/education-provider-fix-2026-10-18/http/result.json observed="Complete the original SDK and unchanged entrypoint from the repaired archive in forty-one turns and forty Doctor calls with ready confirmed submission zero exit and no key or sample mount in the agent"
+/evidence id=APP.EDUFIX44.E5 class=runtime result=pass source=../Tmp/education-provider-fix-2026-10-18/evidence/observer/verification.json observed="Match observed and unobserved execution across fourteen scenarios and 1282 node updates with nonfatal observation failures"
+/evidence id=APP.EDUFIX44.E6 class=external_service result=not_run source=../data/provenance/education-provider-fix-d44-2026-10-18.json observed="Leave fresh NOVA provider recovery Korean semantic quality clinical accuracy official evaluation uploads commits and deployment unrun"
+/accept id=APP.EDUFLOW44.A1 state=pass action="Verify symptom plans and independent response and text validation recovery through submission" evidence=APP.EDUFLOW44.E1,APP.EDUFLOW44.E2
+/accept id=APP.EDUFLOW44.A2 state=pass action="Verify diagnosis notice normal Education routing budget stops and admitted archive behavior" evidence=APP.EDUFLOW44.E1,APP.EDUFLOW44.E3,APP.EDUFLOW44.E4
+/evidence id=APP.EDUFLOW44.E1 class=runtime result=pass source=../Tmp/education-flow-fix-2026-10-18/evidence/isolated-workflow.log observed="Pass 102 maintained tests in source and frozen read-only network-disabled archive including independent recovery exact NFC feedback sibling freezing first diagnosis delivery symptom planning resource routing fatal error guards and concurrent turn-budget checks"
+/evidence id=APP.EDUFLOW44.E2 class=runtime result=pass source=../Tmp/education-flow-fix-2026-10-18/evidence/archive-c01-replay.json observed="Replay exact captured C01 English P and overlong Korean output with controlled provider failure and valid repair; deliver ten Education SAYs and preserve facts notes chief revision fixed symptom diagnosis and all five English P fields"
+/evidence id=APP.EDUFLOW44.E3 class=runtime result=pass source=../Tmp/education-flow-fix-2026-10-18/evidence/isolated/admitted/verification.json observed="Pass 380 admitted-RDF checks and complete three consultations in forty-four forty-four and nineteen actions with disease and symptom diagnoses Korean Education SOAP and confirmed submission"
+/evidence id=APP.EDUFLOW44.E4 class=runtime result=pass source=../Tmp/education-flow-fix-2026-10-18/http/result.json observed="Complete original SDK and unchanged entrypoint from the isolated ZIP on the internal HTTP harness in forty-two turns with confirmed submission zero exit read-only runtime and no sample or key mount in the agent"
+/evidence id=APP.EDUFLOW44.E5 class=runtime result=pass source=../Tmp/education-flow-fix-2026-10-18/evidence/observer/verification.json observed="Match observed and unobserved behavior across fourteen scenarios and 1292 node updates while retaining nonfatal observation failures"
+/evidence id=APP.EDUFLOW44.E6 class=external_service result=not_run source=../data/provenance/education-flow-d44-2-2026-10-18.json observed="Leave fresh provider recovery Korean wording semantics clinical accuracy official evaluation uploads commits and deployment unrun"
+/accept id=APP.BUDGET45.A1 state=pass action="Verify official session turn authority and once-only action costs through model calls failures refusals and final submission" evidence=APP.BUDGET45.E1,APP.BUDGET45.E2
+/accept id=APP.BUDGET45.A2 state=pass action="Preserve full source workflow and admitted knowledge consultations" evidence=APP.BUDGET45.E3,APP.BUDGET45.E4
+/accept id=APP.BUDGET45.A3 state=pass action="Verify the final archive without parent workspace data credentials or network" evidence=APP.BUDGET45.E5,APP.BUDGET45.E6
+/evidence id=APP.BUDGET45.E1 class=runtime result=pass source=../Tmp/turn-budget45-2026-10-18/budget-final.log observed="Pass fifteen budget checks including charged and free malformed responses server refusals server errors same-request replay zero-cost model and session work and DIAGNOSE at zero remaining"
+/evidence id=APP.BUDGET45.E2 class=runtime result=pass source=../Tmp/turn-budget45-2026-10-18/http-final/verification.json observed="Pass sixteen original SDK HTTP checks on container loopback including GET session authority refusal and server-format cost reconciliation and confirmed submission at the seeded last-turn boundary"
+/evidence id=APP.BUDGET45.E3 class=runtime result=pass source=../Tmp/turn-budget45-2026-10-18/workflow-final.log observed="Pass all 102 maintained source workflow tests including the fifteen D45 budget checks"
+/evidence id=APP.BUDGET45.E4 class=runtime result=pass source=../Tmp/turn-budget45-2026-10-18/source-admitted-final/verification.json observed="Pass 380 admitted-knowledge checks and complete three scripted consultations in forty-four forty-four and nineteen actions with Korean Education English SOAP and confirmed submission"
+/evidence id=APP.BUDGET45.E5 class=runtime result=pass source=../Tmp/turn-budget45-2026-10-18/isolated-final/workflow.log observed="Pass all 102 maintained workflow tests against the final read-only extracted archive with network disabled and only test and own output mounts"
+/evidence id=APP.BUDGET45.E6 class=runtime result=pass source=../Tmp/turn-budget45-2026-10-18/isolated-final/admitted/verification.json observed="Pass 380 admitted-knowledge checks and three confirmed scripted consultations from the final independent archive without parent workspace data"
+/evidence id=APP.BUDGET45.E7 class=external_service result=not_run source=../data/provenance/turn-budget-d45-2026-10-18.json observed="Leave real NOVA fresh model quality clinical accuracy official evaluation upload commit and deployment unrun"
+/accept id=APP.D46.A1 state=not_run action="Verify the complete D46 source and independent artifact slice" evidence=none
+/handoff state=incomplete action="Complete D46 implementation and project container acceptance"

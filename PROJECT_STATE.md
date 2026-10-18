@@ -1,8 +1,12 @@
 /state version=1
 /project id=ontoward
-/status value=complete
-/checkpoint revision=fe235c160a49fda900438ab3567e50a8de25e9ec dirty=true updated=2026-10-18T11:45:44.205551+00:00
-/goal phase=current id=ROOT.D44 state=complete action="Coordinate D44 lifecycle refactoring observer integration and isolated acceptance"
+/status value=active
+/checkpoint revision=01c244f093dc1af511ac12485625614f74a2c9bf dirty=true updated=2026-10-18T13:38:36Z
+/goal phase=current id=ROOT.D46 state=active action="Implement and verify graph constrained DoctorEar DoctorBrain DoctorMouth consultation under D46"
+/goal phase=history id=ROOT.BUDGET45 state=complete action="Coordinate official session based action budgets and independent runtime acceptance under D45"
+/goal phase=history id=ROOT.EDUFLOW44 state=complete action="Repair saved C01 Education validation and route collection completion through diagnosis delivery"
+/goal phase=history id=ROOT.EDUFIX44 state=complete action="Repair saved C10 Education response failure and verify the requested greeting in project containers"
+/goal phase=history id=ROOT.D44 state=complete action="Coordinate D44 lifecycle refactoring observer integration and isolated acceptance"
 /goal phase=history id=ROOT.FLOW31 state=complete action="Expose turn-by-turn object methods typed data transfers and state changes in the Test frontend"
 /goal phase=history id=ROOT.D43 state=complete action="Repair saved C03 input failures and verify explicit turn-zero interpretation"
 /goal phase=history id=ROOT.D42 state=complete action="Coordinate the local common complaint rebuild and D41 consumer acceptance under D42"
@@ -25,7 +29,7 @@
 /goal phase=history id=ROOT.GUIDELINES30 state=complete action="Implement reusable disease-to-guideline mapping with exact source evidence and bounded NOVA semantic review"
 /goal phase=history id=ROOT.CHIEF29 state=complete action="Coordinate case-independent chief mapping evaluator correction offline acceptance and the D29 archive handoff"
 /goal phase=history id=ROOT.INTEGRATE36 state=complete action="Verify D36 with concurrent Education changes in the D37 standalone archive"
-/goal phase=next id=ROOT.NOVA27 state=deferred action="Run one separately authorized D44 archive case against real NOVA models within a confirmed shared request and credit ceiling"
+/goal phase=next id=ROOT.NOVA27 state=deferred action="Run one separately authorized D45 budget archive case against real NOVA models within a confirmed shared request and credit ceiling"
 /goal phase=history id=ROOT.CONTEXT28 state=complete action="Coordinate D28 context failure recovery offline verification and a standalone submission archive handoff"
 /goal phase=history id=ROOT.TEST27 state=complete action="Implement and verify the D27 isolated public-sample evaluator and NOVA development-chat bridge"
 /goal phase=history id=ROOT.READINESS26 state=complete action="Complete D26 submission readiness with Education pass offline verification and an independent runtime ZIP"
@@ -360,4 +364,25 @@
 /evidence id=ROOT.D44.E3 class=runtime result=pass source=Tmp/d44-2026-10-18/http-final/result.json observed="Complete the original SDK and unchanged entrypoint from the final ZIP on the internal Docker network with ready SOAP completed receipt and zero process exit in forty-one turns and forty Doctor calls without sample files or development key in the agent"
 /evidence id=ROOT.D44.E4 class=external_service result=not_run source=data/provenance/state-lifecycle-d44-2026-10-18.json observed="Leave fresh model quality real NOVA clinical accuracy official evaluation commits publication deployment and browser visual rendering unrun"
 /scope id=ROOT.D44.S1 state=in action="Own D44 coordination Test observer viewer isolated packaging and documentation integration; defer runtime and custody detail to submission and data states"
-/handoff state=blocked action="Retain completed D44 offline acceptance and await separate exact authorization for ROOT.NOVA27 on the pinned D44 archive"
+/accept id=ROOT.EDUFIX44.A1 state=pass action="Reproduce the saved provider and local latch failures and verify bounded Education recovery" evidence=ROOT.EDUFIX44.E1,ROOT.EDUFIX44.E2
+/accept id=ROOT.EDUFIX44.A2 state=pass action="Coordinate repaired runtime archive and state custody without new external model calls" evidence=ROOT.EDUFIX44.E3,ROOT.EDUFIX44.E4
+/evidence id=ROOT.EDUFIX44.E1 class=runtime result=pass source=Tmp/education-provider-fix-2026-10-18/evidence/c10-replay.json observed="Reconstruct saved C10 state and reproduce one upstream error plus a locally latched repair; recover nine controlled Korean groups after the fix and preserve the provider cause plus English P after repeated failure"
+/evidence id=ROOT.EDUFIX44.E2 class=runtime result=pass source=Tmp/test-evaluator/verify-education-provider-20261018/verification.json observed="Pass forty-six evaluator and web checks while preserving failed reservations request ceilings and other service stop boundaries"
+/evidence id=ROOT.EDUFIX44.E3 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.EDUFIX44 for maintained source archive admitted workflow observer and original SDK HTTP completion"
+/evidence id=ROOT.EDUFIX44.E4 class=artifact result=pass source=data/PROJECT_STATE.md observed="Reference DATA.EDUFIX44 for repaired archive hashes saved C10 custody unchanged clinical assets and preserved D44 acceptance"
+/evidence id=ROOT.EDUFIX44.E5 class=external_service result=not_run source=data/provenance/education-provider-fix-d44-2026-10-18.json observed="Review existing NOVA error evidence without new billable calls; leave rejected provider body fresh model quality clinical accuracy official evaluation upload commits and deployment unverified or unrun"
+/accept id=ROOT.EDUFLOW44.A1 state=pass action="Reproduce C01 causes and verify source and isolated end-to-end Education behavior" evidence=ROOT.EDUFLOW44.E1,ROOT.EDUFLOW44.E2,ROOT.EDUFLOW44.E3
+/accept id=ROOT.EDUFLOW44.A2 state=pass action="Preserve prior work and coordinate new archive custody and state handoff" evidence=ROOT.EDUFLOW44.E4
+/evidence id=ROOT.EDUFLOW44.E1 class=runtime result=pass source=Tmp/education-flow-fix-2026-10-18/evidence/archive-c01-replay.json observed="Reproduce seven overlong utterances invalidating all five groups after provider recovery; complete ten controlled Education SAYs with fixed diagnosis first unchanged patient information English P and confirmed submission from the frozen archive"
+/evidence id=ROOT.EDUFLOW44.E2 class=runtime result=pass source=Tmp/test-evaluator/verify-education-flow-20261018/verification.json observed="Pass forty-six evaluator and web checks without new NOVA calls"
+/evidence id=ROOT.EDUFLOW44.E3 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.EDUFLOW44 for 102 maintained source and isolated tests 380 admitted checks fourteen observer scenarios and original SDK HTTP completion"
+/evidence id=ROOT.EDUFLOW44.E4 class=artifact result=pass source=data/PROJECT_STATE.md observed="Reference DATA.EDUFLOW44 for source-matched d44.2 archive unchanged clinical pins preserved prior work and separately identified concurrent turn-budget changes"
+/evidence id=ROOT.EDUFLOW44.E5 class=external_service result=not_run source=data/provenance/education-flow-d44-2-2026-10-18.json observed="Leave fresh NOVA rendering semantics actual provider recovery clinical accuracy official evaluation upload commit and deployment unrun after reviewing existing saved model evidence"
+/accept id=ROOT.BUDGET45.A1 state=pass action="Coordinate server turn authority and separate model budgets across runtime and requirements" evidence=ROOT.BUDGET45.E1,ROOT.BUDGET45.E3
+/accept id=ROOT.BUDGET45.A2 state=pass action="Preserve prior completed work and bind final isolated archive custody" evidence=ROOT.BUDGET45.E2
+/evidence id=ROOT.BUDGET45.E1 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.BUDGET45 for authoritative session checks action reconciliation zero-cost internal work and final source and isolated acceptance"
+/evidence id=ROOT.BUDGET45.E2 class=artifact result=pass source=data/PROJECT_STATE.md observed="Reference DATA.BUDGET45 for the final source-matched archive unchanged clinical assets and preserved Education work and earlier archives"
+/evidence id=ROOT.BUDGET45.E3 class=semantic result=pass source=DECISION_STATE.md observed="Apply D45 to PRD and the submission whitepaper using the supplied competition quotation without external access"
+/evidence id=ROOT.BUDGET45.E4 class=external_service result=not_run source=data/provenance/turn-budget-d45-2026-10-18.json observed="Leave real NOVA official evaluation clinical accuracy new external model requests upload commit and deployment unrun"
+/accept id=ROOT.D46.A1 state=not_run action="Verify the complete D46 source and independent artifact slice" evidence=none
+/handoff state=incomplete action="Complete D46 implementation and project container acceptance"

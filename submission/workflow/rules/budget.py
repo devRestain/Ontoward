@@ -14,6 +14,7 @@ class BudgetDecision:
     expired: bool = False
     finalize: bool = False
     discard: frozenset[str] = frozenset()
+    reason: str | None = None
 
 
 class BudgetPolicy:
@@ -95,6 +96,12 @@ class BudgetPolicy:
     def can_start_action(self, state, *, purpose=None):
         return self.collection_available(state) and self.action_capacity(state, purpose=purpose) > 0
 
+    def education_available(self, state):
+        session = state.session
+        return (self.education_enabled and 'SAY' in session.allowed_actions and session.turns_remaining > 0
+            and self.seconds_left(session) > session.reserve_seconds + LIMITS.response_seconds
+            and session.usage['Education'].actions - session.usage['Education'].empathy_actions < SESSION_INTERVIEW_LIMITS['Education'][1])
+
     def can_clarify(self, state):
         return state.session.clarifications < LIMITS.clarifications and self.can_start_action(state)
 
@@ -120,7 +127,11 @@ class BudgetPolicy:
         if self.seconds_left(state.session) <= 0:
             return BudgetDecision(expired=True)
         if not self.collection_available(state):
-            return BudgetDecision(finalize=True, discard=frozenset(q.item_id for q in state.interview.queue))
+            session = state.session
+            reason = ('collection_complete' if session.finalizing else 'turn_budget' if not session.turns_remaining
+                else 'time_budget' if self.seconds_left(session) <= session.reserve_seconds + LIMITS.response_seconds
+                else 'model_call_budget' if self.calls_left(session) < 2 else 'model_token_budget')
+            return BudgetDecision(finalize=True, discard=frozenset(q.item_id for q in state.interview.queue), reason=reason)
         if state.interview.status == 'uninitialized':
             return BudgetDecision()
         shared, current, calls = self.shared_action_capacity(state), self.action_capacity(state), self.calls_left(state.session)
@@ -128,7 +139,8 @@ class BudgetPolicy:
         if state.interview.current == 'Education':
             groups = {}
             for q in sorted(state.interview.queue, key=lambda q:q.order):
-                groups.setdefault(q.plan_sentence_id or q.item_id, []).append(q)
+                group = q.plan_sentence_id or (q.item_id.rsplit(':', 1)[0] if q.item_id.startswith('Education:diagnosis:') else q.item_id)
+                groups.setdefault(group, []).append(q)
             for group in groups.values():
                 if len(group) <= min(shared, current):
                     keep.update(q.item_id for q in group)

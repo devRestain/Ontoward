@@ -8,6 +8,11 @@ from .rules.action import content_error
 class Texts(BaseModel):
     model_config = ConfigDict(extra="forbid")
     greeting: str
+    diagnosis_announcement: str
+    diagnosis_announcement_short: str
+    symptom_announcement: str
+    symptom_announcement_short: str
+    symptom_cause_unknown: str
     intake_questions: dict[str, str]
     history_questions: dict[str, str]
     primary_chief_question: str
@@ -82,6 +87,10 @@ class TextConfig(BaseModel):
         ):
             raise ValueError("Fixed clinical replies must be nonempty and unambiguous")
         for name, expected in {"exam_turn_format": {"text", "turn"},
+                               "diagnosis_announcement": {"diagnosis"},
+                               "diagnosis_announcement_short": {"diagnosis"},
+                               "symptom_announcement": {"diagnosis"},
+                               "symptom_announcement_short": {"diagnosis"},
                                "initial_exam_format": {"text"},
                                "differential_format": {"diagnosis", "evidence"},
                                "assessment_format": {"diagnosis", "evidence"}, "category_format": {"category", "content"},
@@ -95,7 +104,7 @@ class TextConfig(BaseModel):
                 raise ValueError(f"Invalid text placeholders: {name}")
             if any(spec or conversion for _, _, spec, conversion in parts):
                 raise ValueError(f"Text placeholders do not support format conversions: {name}")
-        for name in ('primary_chief_question', 'greeting', 'open_question', 'clarification_question', 'empathy_fallback'):
+        for name in ('primary_chief_question', 'greeting', 'open_question', 'clarification_question', 'empathy_fallback', 'symptom_cause_unknown'):
             if content_error(getattr(texts, name)):
                 raise ValueError(f"Invalid prepared utterance: {name}")
         from .rules.collection import INTAKE, HISTORY

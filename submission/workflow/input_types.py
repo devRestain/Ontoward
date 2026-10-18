@@ -18,10 +18,15 @@ class PatientContextFact(Model):
     key: Literal['age', 'sex', 'reporter']
     value: str = Field(min_length=1, max_length=80)
     quote: str = Field(min_length=1)
+    subject: Literal['patient', 'family'] = 'patient'
+    subject_member: str | None = None
+    measurement: ObservedNumber | None = None
+    correction: bool = False
 
 
 class ContextStatement(Model):
     quote: str = Field(min_length=1)
+    input_segment: Literal['opening', 'vital_signs'] | None = None
     role: Literal['clinical', 'nonclinical', 'question', 'emotion', 'conditional', 'uncertain', 'unknown', 'not_applicable']
     focus: Literal['target', 'attribute'] = 'target'
     assertion: Literal['present', 'absent', 'uncertain', 'unknown'] = 'unknown'

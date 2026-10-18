@@ -133,14 +133,17 @@ def _request(state, client, model, config, progress, payload, parser):
             return accepted, False
         response = model.complete(state, client, role='education', messages=request)
         content = response.content
-        if response.error and response.error != 'PROVIDER_RESPONSE_INVALID':
-            progress.errors.append(f'education_model_error:{response.error}')
-            return accepted, False
-        try:
-            raw = json.loads(content)
-        except (TypeError, ValueError):
-            raw = None
-        values, errors = parser(raw)
+        if response.error:
+            values, errors = [], [f'education_model_error:{response.error}']
+            if response.error != 'PROVIDER_RESPONSE_INVALID':
+                progress.errors.extend(errors)
+                return accepted, False
+        else:
+            try:
+                raw = json.loads(content)
+            except (TypeError, ValueError):
+                raw = None
+            values, errors = parser(raw)
         accepted.extend(value for value in values if value not in accepted)
         if not errors:
             return accepted, True
@@ -150,7 +153,9 @@ def _request(state, client, model, config, progress, payload, parser):
             return accepted, False
         progress.repairs += 1
         payload = {**payload, "phase": "repair", "repair_phase": payload["phase"],
-                   "validation_errors": errors, "accepted": accepted}
+                   "validation_errors": [] if response.error else errors, "accepted": accepted}
+        if response.error:
+            payload['generation_error'] = response.error
     return accepted, False
 
 

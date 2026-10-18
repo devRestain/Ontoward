@@ -1,5 +1,10 @@
 {
-  "greeting": "안녕하세요. 병원 오시는 길이 불편하진 않으셨나요?",
+  "greeting": "병원 오시는 길이 불편하진 않으셨나요?",
+  "diagnosis_announcement": "지금까지 확인한 결과 {diagnosis} 질환이 의심됩니다.",
+  "diagnosis_announcement_short": "{diagnosis} 의심됩니다.",
+  "symptom_announcement": "지금까지 확인한 결과 {diagnosis} 증상이 확인됩니다.",
+  "symptom_announcement_short": "{diagnosis} 증상입니다.",
+  "symptom_cause_unknown": "원인 질환은 아직 확인되지 않았습니다.",
   "intake_questions": {
     "onset": "언제부터 불편하셨어요?",
     "course": "불편한 것이 점점 심해지나요?",

@@ -5,6 +5,14 @@ from ..state.models import ClinicalFact, NoteFact
 from .collection import ATTRIBUTE_CATEGORIES
 
 
+def initial_objective(source):
+    return source == 'initial:vital_signs'
+
+
+def objective(acquisition, source):
+    return acquisition == 'EXAM' or acquisition == 'initial' and initial_objective(source)
+
+
 def note_fact(statement, source, index, turn, question=None):
     category = statement.record_category or (question.category if question else None) or 'other'
     value = statement.note_value or '; '.join(dict.fromkeys(statement.target_terms + statement.value_terms))
@@ -13,11 +21,15 @@ def note_fact(statement, source, index, turn, question=None):
     if value and (not re.search('[A-Za-z]', value) or re.search('[가-힣]', value)
                                   or value.startswith(('urn:', 'http://', 'https://'))):
         return None
+    acquisition = question.kind if question else 'initial'
+    if category == 'objective_observation' and not objective(acquisition, source):
+        raise ValueError('Objective note requires objective acquisition')
     return NoteFact(id=f'{source}:note:{index}', category=category, value=value, measurement=statement.measurement,
         status=statement.assertion, subject=statement.subject, subject_member=statement.subject_member,
         reported_by=statement.reported_by, time_context=statement.time_context,
         observation_id=statement.observation_id or (question.observation_id if question else None),
-        episode_id=statement.episode_id or (question.episode_id if question else None), source_ref=source, turn=turn)
+        episode_id=statement.episode_id or (question.episode_id if question else None), source_ref=source, turn=turn,
+        acquisition=acquisition)
 
 
 def make_fact(case, knowledge, statement, decoded, *, source, index, offset, turn, question, forced=False):
@@ -25,7 +37,7 @@ def make_fact(case, knowledge, statement, decoded, *, source, index, offset, tur
     target_id = next((ident for kind in ('Symptom', 'ContextFactor', 'ExamFinding')
                       if (ident := knowledge.term_id(target, kind))), None)
     kind = 'attribute' if attribute else 'context' if knowledge.has_type(target_id, 'ContextFactor') else (
-        'finding' if question and question.kind == 'EXAM' else 'symptom')
+        'finding' if knowledge.has_type(target_id, 'ExamFinding') else 'symptom')
     contract = knowledge.questions.get(target_id)
     if contract and not contract.interviewable and status == 'present':
         names = [knowledge.term(target_id), *next(iter(knowledge.concepts([target_id])), {}).get('aliases', [])]
@@ -34,7 +46,7 @@ def make_fact(case, knowledge, statement, decoded, *, source, index, offset, tur
             raise ValueError('Unqualified wording cannot establish a diagnostic composite')
     if kind == 'context' and (knowledge.get_context_type(target_id) == 'family_history') != (statement.subject == 'family'):
         raise ValueError('Context subject does not match its meaning')
-    same = question and question.target == target and question.subject == statement.subject
+    same = question and question.target == target and (question.subject, question.subject_member) == (statement.subject, statement.subject_member)
     observation = statement.observation_id or (question.observation_id if same else None)
     episode = statement.episode_id or (question.episode_id if same else None)
     if attribute and not observation:
@@ -78,7 +90,7 @@ def make_fact(case, knowledge, statement, decoded, *, source, index, offset, tur
             raise ValueError('Correction must preserve its target subject attribute occurrence and time')
         if previous.acquisition == 'initial' or previous.acquisition != acquisition:
             raise ValueError('Correction must preserve its acquisition channel')
-    if knowledge.has_type(target_id, 'ExamFinding') and acquisition != 'EXAM':
+    if knowledge.has_type(target_id, 'ExamFinding') and not objective(acquisition, source):
         raise ValueError('Finding requires an actual examination')
     return fact
 

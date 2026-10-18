@@ -10,7 +10,7 @@ from ..rules.limits import LIMITS, SESSION_ORDER, SessionName
 RecordCategory = Literal['onset', 'duration', 'course', 'quality', 'aggravating_factor', 'relieving_factor',
     'associated_symptoms', 'previous_care', 'presentation', 'medical_history', 'medication', 'allergy',
     'surgery', 'family_history', 'smoking', 'alcohol', 'occupation', 'patient_context', 'recurrence',
-    'measurement', 'social_history', 'developmental_history', 'review_of_systems', 'other']
+    'measurement', 'social_history', 'developmental_history', 'review_of_systems', 'objective_observation', 'other']
 PlanField = Literal['tests', 'treatment', 'disposition', 'follow_up', 'education']
 Status = Literal['present', 'absent', 'uncertain', 'unknown']
 
@@ -103,7 +103,8 @@ class ClinicalFact(Model):
     def key(self):
         return (self.subject, self.subject_member, self.observation_id, self.episode_id,
                 self.target, self.attribute, self.time_context, self.polarity_scope,
-                self.acquisition if self.kind == 'finding' else 'patient_report')
+                self.acquisition if self.kind == 'finding' or self.kind == 'attribute' and self.acquisition == 'EXAM'
+                else 'patient_report')
 
 
 class NoteFact(Model):
@@ -119,16 +120,46 @@ class NoteFact(Model):
     time_context: Literal['current', 'past', 'unspecified'] = 'unspecified'
     observation_id: str | None = None
     episode_id: str | None = None
+    context_key: Literal['age', 'sex', 'reporter'] | None = None
+    acquisition: Literal['initial', 'SAY', 'EXAM'] | None = None
     source_ref: str
     turn: int = 0
 
 
-class Diagnosis(Model):
+class GraphRef(Model):
+    model_config = ConfigDict(extra='forbid', frozen=True)
+    kind: Literal['association', 'feature', 'context', 'symptom']
+    id: str
+    association_id: str | None = None
+
+
+class EvidenceRef(Model):
+    model_config = ConfigDict(extra='forbid', frozen=True)
+    graph_ref: GraphRef
+    fact_ids: tuple[str, ...]
+
+
+class UnresolvedRef(EvidenceRef):
+    scope: tuple[str, ...] = ()
+    reason: str = 'unasked'
+
+
+class DifferentialEntry(Model):
+    model_config = ConfigDict(extra='forbid', frozen=True)
     kind: Literal['disease', 'symptom']
     name: str
-    evidence_ids: tuple[str, ...] = ()
-    certainty: Literal['working'] = 'working'
-    unresolved: tuple[str, ...] = ()
+    supports: tuple[EvidenceRef, ...] = ()
+    against: tuple[EvidenceRef, ...] = ()
+    unresolved: tuple[UnresolvedRef, ...] = ()
+
+
+class Assessment(Model):
+    model_config = ConfigDict(extra='forbid', frozen=True)
+    differential: tuple[DifferentialEntry, ...] = ()
+    based_on_case_revision: int
+    based_on_chief_fact_id: str | None
+    frozen: bool = False
+    limitations: tuple[str, ...] = ()
 
 
 class SourceReference(Model):
@@ -150,9 +181,20 @@ class CaseState(Model):
     facts: dict[str, ClinicalFact] = Field(default_factory=dict)
     notes: dict[str, NoteFact] = Field(default_factory=dict)
     chief_fact_id: str | None = None
-    diagnosis: Diagnosis | None = None
+    assessment: Assessment | None = None
     plan: list[PlanSentence] = Field(default_factory=list)
     revision: int = 0
+
+    def primary(self):
+        if not self.assessment or not self.assessment.frozen or not self.assessment.differential:
+            raise ValueError('A frozen assessment with a primary diagnosis is required')
+        return self.assessment.differential[0]
+
+    def fixed_diagnosis(self):
+        primary = self.primary()
+        return dict(kind=primary.kind, name=primary.name, certainty='working',
+            evidence_ids=sorted({i for ref in (*primary.supports, *primary.against) for i in ref.fact_ids}),
+            unresolved=list(self.assessment.limitations))
 
     def active_facts(self):
         suppressed = {ref for f in self.facts.values() if f.status in {'present', 'absent'} for ref in f.resolves
@@ -189,6 +231,8 @@ class CaseState(Model):
                     candidates[0] if len(candidates) == 1 else None)
 
     def select_primary(self, preferred=None):
+        if self.assessment and self.assessment.frozen:
+            raise ValueError('Clinical information is frozen')
         current = {f.id: f for f in self.chief_candidates()}
         if preferred in current:
             self.chief_fact_id = preferred
@@ -197,12 +241,16 @@ class CaseState(Model):
         return self.chief()
 
     def apply(self, facts=(), notes=(), *, preferred=None):
-        changed = any(self.facts.get(f.id) != f for f in facts)
+        if self.assessment and self.assessment.frozen:
+            if facts or notes or preferred is not None:
+                raise ValueError('Clinical information is frozen')
+            return
+        changed = any(self.facts.get(f.id) != f and (f.evidence_use == 'reasoning'
+            or self.facts.get(f.id) and self.facts[f.id].evidence_use == 'reasoning') for f in facts)
         self.facts.update((f.id, f) for f in facts)
         self.notes.update((n.id, n) for n in notes)
         before = self.chief_fact_id
-        if not self.diagnosis:
-            self.select_primary(preferred)
+        self.select_primary(preferred)
         if changed or before != self.chief_fact_id:
             self.revision += 1
 
@@ -219,6 +267,7 @@ class Question(Model):
     observation_id: str | None = None
     episode_id: str | None = None
     subject: Literal['patient', 'family'] = 'patient'
+    subject_member: str | None = None
     time_context: Literal['current', 'past', 'unspecified'] = 'unspecified'
     affirmative_presence: bool = False
     answer_type: Literal['presence', 'category', 'quantity', 'duration', 'free_text'] = 'free_text'
@@ -230,7 +279,7 @@ class Question(Model):
     empathy_key: str | None = None
 
     def semantic_key(self):
-        return (self.kind, self.target or '', self.attribute or '', self.subject, self.time_context,
+        return (self.kind, self.target or '', self.attribute or '', self.subject, self.subject_member or '', self.time_context,
                 self.observation_id or '', self.episode_id or '')
 
 

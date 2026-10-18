@@ -47,6 +47,7 @@
 - Keep the scripted Gateway case-independent and limited to supplied source names and aliases; do not add case-to-concept fixtures or clinical synonym tables.
 - Handle D44 compact term-bound questions and input_context and input_mapping tasks plus typed empathy in scripted doubles without treating protocol fixtures as semantic-quality evidence.
 - Handle D37 education and education_doctor protocol fixtures and forward the requested reasoning effort through the model bridge.
+- Permit the runtime's single bounded Education response repair after PROVIDER_RESPONSE_INVALID within the shared request ceiling; preserve the failed reservation and keep other service and uncertain failures stopped.
 - Return D41 context statements and database dictionary batches while keeping scripted patient replies case-independent without clinical synonym tables.
 - Label isolated synthetic archive acceptance separately from public-sample consultation and keep its patient fixture outside the agent container.
 

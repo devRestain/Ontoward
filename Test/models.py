@@ -47,7 +47,8 @@ class NovaModels:
             response = self.client.chat(messages, model=MODEL, reasoning_effort=reasoning_effort,
                                         max_tokens=max_tokens, request_id=request_id)
         except NovaError as error:
-            self.stopped = error.code
+            if not (role in {'education', 'education_doctor'} and error.code == 'PROVIDER_RESPONSE_INVALID'):
+                self.stopped = error.code
             self.record({**entry, 'status': 'failed_or_unknown', 'error': error.code})
             raise
         self.record({**entry, 'status': 'received', 'response': response})

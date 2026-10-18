@@ -1,4 +1,7 @@
-from .rules.limits import SESSION_ORDER
+from nova_sdk import NovaError
+
+from .rules.action import failure_outcome
+from .rules.limits import LIMITS, SESSION_ORDER
 
 
 class Consultation:
@@ -23,6 +26,10 @@ class Consultation:
             self.interactions.skip_empathy(state, 'education_record_only')
             self.freeze_diagnosis(state)
             if not state.session.termination:
+                if self.planner.config.education_enabled:
+                    notice = self.doctor.prepare_diagnosis(state, self.client, self.planner.knowledge)
+                    if notice or state.session.termination:
+                        return
                 self.planner.prepare_education(state, self.client)
                 if self.planner.config.education_enabled and not state.session.termination:
                     self.doctor.prepare_education(state, self.client)
@@ -57,6 +64,17 @@ class Consultation:
             self.planner.replan(state)
 
     def check_budget(self, state):
+        if state.session.termination:
+            return
+        if self.budget.seconds_left(state.session) > state.session.reserve_seconds + LIMITS.response_seconds:
+            try:
+                self.nova_session.refresh_snapshot(state, self.client)
+            except NovaError as error:
+                state.stop(failure_outcome(error), error.code)
+            except (TypeError, ValueError):
+                state.stop('unknown', 'invalid_session_budget')
+            if state.session.termination:
+                return
         decision = self.budget.evaluate(state)
         if decision.expired:
             self.interactions.skip_empathy(state, 'session_expired')
@@ -64,8 +82,18 @@ class Consultation:
             return
         if decision.finalize:
             self.interactions.skip_empathy(state, 'finalization_budget')
-            state.session.finalizing = True
+            state.interview.collection[f'{state.interview.current}:completion'] = decision.reason
             self.interactions.clear_selected(state)
+            self.questions.discard_unasked(state, decision.discard, reason=decision.reason)
+            if state.interview.current != 'Education':
+                previous = state.interview.current
+                state.interview.current = 'Education'
+                if self.budget.education_available(state):
+                    state.session.finalizing = False
+                    state.interview.status = 'uninitialized'
+                    return
+                state.interview.current = previous
+            state.session.finalizing = True
         self.questions.discard_unasked(state, decision.discard)
 
     def select_action(self, state):
@@ -90,7 +118,10 @@ class Consultation:
             self.enter_session(state)
             return
         if state.interview.current == 'Education':
-            state.session.finalizing = True
+            if self.planner.config.education_enabled and state.interview.education_status == 'not_started':
+                state.interview.status = 'uninitialized'
+            else:
+                state.session.finalizing = True
         else:
             state.interview.current = SESSION_ORDER[SESSION_ORDER.index(state.interview.current) + 1]
             state.interview.status = 'uninitialized'

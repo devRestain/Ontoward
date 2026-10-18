@@ -16,10 +16,10 @@ class Limits:
     turns: int = 50
     finalization_seconds: int = 120
     response_seconds: int = 120
-    education_turns: int = 5
+    education_turns: int = 7
     education_request_bytes: int = 65536
     education_tokens: int = 8000
-    education_doctor_tokens: int = 4000
+    education_doctor_tokens: int = 8000
     model_calls: int = 200
     input_tokens: int = 500000
     output_tokens: int = 100000

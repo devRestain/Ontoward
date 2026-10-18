@@ -26,10 +26,6 @@ class UsageAccounting:
             usage.empathy_actions += consumed
 
     @staticmethod
-    def exhaust_turns(state):
-        state.session.turns_remaining = 0
-
-    @staticmethod
     def record_clarification(state):
         state.session.clarifications += 1
 

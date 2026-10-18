@@ -58,7 +58,7 @@
 - Keep explicit unknown and false prerequisite paths distinct from useful answer regions and incomplete computation distinct from no useful question.
 - Require completely evaluated positive utility for optional questions; compute utility before enqueueing without retaining assessments or hypothetical answers.
 - Preserve conditional target/cap pairs 5/7, 7/14, 7/9, 3/10, and 5/10 without borrowing session capacity.
-- Protect future collection minimums and five enabled Education turns within fifty shared SAY/EXAM turns.
+- Protect future collection minimums and seven enabled Education turns for a diagnosis notice, symptom uncertainty, and five plan fields within fifty shared SAY/EXAM turns.
 - Count empathy actions separately from interview caps while charging shared turns, tokens, calls, and time; reserve three model calls before empathy.
 - Reserve two model calls and 8192 output tokens plus 120-second response and finalization windows before ordinary collection.
 - Process received responses before the next budget decision and allow prepared Education delivery without reply-model reservation.
@@ -75,6 +75,10 @@
 - Read large sources in complete sequential fragments, validate local exact quotations, and retain only final English sentences and minimal document/byte references.
 - Preserve guideline, model_knowledge, and mixed provenance, source applicability, conditional treatment, and one plan-format repair.
 - Generate with Luna high and render Korean with the designated medium effort within shared budgets.
+- Start Korean rendering with at most 8000 output tokens; keep one response recovery independent from one text validation repair per batch and freeze accepted siblings within shared budgets.
+- Report actual NFC codepoint counts and per-sentence utterance budgets in render repair feedback; never truncate or transmit invalid text.
+- Deliver the fixed diagnosis before plan generation with the configured full phrase or a shorter complete sentence naming the same diagnosis; distinguish symptom diagnosis from an established cause.
+- Route collection completion and collection-only model exhaustion through normal Education when action time and turns remain; retain exact reasons for hard resource finalization and missing chief-compatible paths.
 - Use the current interview queue for Korean delivery, reference final PlanSentence IDs, and withhold whole invalid or unaffordable groups.
 - Preserve English P when rendering or delivery fails and retain minimal undelivered receipts.
 - Honor explicit ONTOWARD_EDUCATION_ENABLED=false without Education actions, reserved turns, or P.education.
@@ -87,7 +91,7 @@
 
 - Resolve runtime assets within submission and use package-relative imports without host data access or new dependencies.
 - Preserve the unchanged SDK, clinical RDF, source weights, question assets, guideline index, and prior admission receipts.
-- Pin the runtime algorithm as d44.1 independently from clinical asset admission.
+- Pin the runtime algorithm as d44.2 independently from clinical asset admission.
 - Keep maintained behavioral fixtures in Dev/tests/workflow, evidence in Tmp, and durable artifact custody in data/provenance.
 - Verify information preservation, correction/acquisition, cache parity, observer parity, Korean delivery, Education, and confirmed SOAP submission in project containers.
 - Verify the independent archive with no parent project data, no development key, and network disabled; test original SDK HTTP only on the project-internal network.

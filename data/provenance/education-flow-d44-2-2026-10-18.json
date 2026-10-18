@@ -1,0 +1,526 @@
+{
+  "status": "pass",
+  "decision": "D44",
+  "slice": "C01 Education flow and fixed diagnosis notice",
+  "algorithm_version": "d44.2",
+  "created_at": "2026-10-18T13:26:58.522024+00:00",
+  "baseline_revision": "01c244f093dc1af511ac12485625614f74a2c9bf",
+  "source_run": "Tmp/test-evaluator/C01-20261018T123152Z-dc7a25ed7b",
+  "source_trace_sha256": "ebdbcbdd6330f66e446b5a9e5a4e89a6038625f6454cefd3a2fedd16191e35e2",
+  "observed_causes": {
+    "symptom_diagnosis": "Difficulty sleeping",
+    "chief_disease_patterns": 0,
+    "chief_covered_hypotheses": 0,
+    "other_hypotheses": 102,
+    "general_English_plan_fields": 5,
+    "premature_finalizing_in_saved_run": false,
+    "first_render_error": "PROVIDER_RESPONSE_INVALID",
+    "first_render_output_limit": 4000,
+    "recovered_completion_tokens": 5438,
+    "invalid_utterances": 7,
+    "total_utterances": 10,
+    "rejected_atomic_groups": 5,
+    "captured_codepoints": {
+      "plan:education:0": [
+        34,
+        31
+      ],
+      "plan:tests:0": [
+        28,
+        32
+      ],
+      "plan:treatment:0": [
+        31,
+        30
+      ],
+      "plan:disposition:0": [
+        30,
+        32
+      ],
+      "plan:follow_up:0": [
+        32,
+        31
+      ]
+    },
+    "demonstrated_failure": "provider_recovery_exhausted_text_validation_repair",
+    "exact_upstream_first_response_cause": "unknown_no_rejected_body_or_finish_reason_saved"
+  },
+  "behavior": {
+    "initial_render_max_tokens": 8000,
+    "response_recoveries_per_batch": 1,
+    "text_repairs_per_batch": 1,
+    "max_semantic_requests_per_batch": 3,
+    "exact_NFC_count_feedback": true,
+    "accepted_siblings_frozen": true,
+    "per_sentence_utterance_budgets": true,
+    "diagnosis_notice_before_plan": true,
+    "long_name_preference": "short_complete_sentence_including_same_diagnosis",
+    "symptom_cause_remains_undetermined": true,
+    "protected_education_turns": 7,
+    "education_turn_cap": 10,
+    "collection_completion_enters_normal_education": true,
+    "hard_time_and_turn_stops_preserved": true
+  },
+  "verification": {
+    "workflow_tests": 102,
+    "isolated_archive_workflow_tests": 102,
+    "admitted_checks": 380,
+    "isolated_admitted_checks": 380,
+    "representative_cases": [
+      {
+        "target": "Abdominal pain",
+        "numeric": false,
+        "actions": 44,
+        "calls": 41,
+        "diagnosis": "Viral hepatitis",
+        "kind": "disease",
+        "seconds": 11.969883436977398
+      },
+      {
+        "target": "Abdominal pain",
+        "numeric": true,
+        "actions": 44,
+        "calls": 43,
+        "diagnosis": "Viral hepatitis",
+        "kind": "disease",
+        "seconds": 12.334533841989469
+      },
+      {
+        "target": "Pain of joint of knee",
+        "numeric": false,
+        "actions": 19,
+        "calls": 16,
+        "diagnosis": "Pain of joint of knee",
+        "kind": "symptom",
+        "seconds": 0.2146363479550928
+      }
+    ],
+    "evaluator_tests": 46,
+    "observer_scenarios": 14,
+    "observer_node_updates": 1292,
+    "saved_C01_replay": [
+      {
+        "scenario": "before",
+        "render_calls": 2,
+        "max_tokens": [
+          4000,
+          8000
+        ],
+        "education_actions": 0,
+        "reason": "require_standalone_NFC_1_30_Korean_statements"
+      },
+      {
+        "scenario": "after_captured_failure",
+        "render_calls": 3,
+        "max_tokens": [
+          8000,
+          8000,
+          8000
+        ],
+        "education_actions": 10,
+        "education_status": "complete",
+        "differential_actions": 0,
+        "termination": "submitted",
+        "patient_information_unchanged": true,
+        "English_plan_unchanged": true,
+        "first_SAY": "수면곤란 증상이 확인됩니다.",
+        "measured_render_feedback": {
+          "plan:education:0": {
+            "code": "require_standalone_NFC_1_30_Korean_statements",
+            "utterances": [
+              "기상 일정히, 졸릴 때 취침; 못 자면 침대 밖 조용히 활동.",
+              "불안은 잠을 어렵게 해도 원인이라고 단정할 수 없습니다."
+            ],
+            "codepoints": [
+              34,
+              31
+            ],
+            "max_codepoints": 30,
+            "max_utterances": 2
+          },
+          "plan:tests:0": {
+            "code": "require_standalone_NFC_1_30_Korean_statements",
+            "utterances": [
+              "원인 미정; 수면·낮 영향·약·물질·질환을 봅니다.",
+              "혈압·맥박·심폐 확인; 불규칙 시 심전도, 검사는 소견별."
+            ],
+            "codepoints": [
+              28,
+              32
+            ],
+            "max_codepoints": 30,
+            "max_utterances": 2
+          },
+          "plan:treatment:0": {
+            "code": "require_standalone_NFC_1_30_Korean_statements",
+            "utterances": [
+              "평가로 만성 불면 확인 시 불면 인지행동치료를 권합니다.",
+              "원인·약 위험·치료 필요성 검토 전 수면약은 미룹니다."
+            ],
+            "codepoints": [
+              31,
+              30
+            ],
+            "max_codepoints": 30,
+            "max_utterances": 2
+          },
+          "plan:disposition:0": {
+            "code": "require_standalone_NFC_1_30_Korean_statements",
+            "utterances": [
+              "불규칙 맥박·숨참·고혈압 보고로 오늘 진료를 받으세요.",
+              "심한/악화 숨참·흉통·실신·지속 빠른/불규칙맥은 응급실로."
+            ],
+            "codepoints": [
+              30,
+              32
+            ],
+            "max_codepoints": 30,
+            "max_utterances": 1
+          },
+          "plan:follow_up:0": {
+            "code": "require_standalone_NFC_1_30_Korean_statements",
+            "utterances": [
+              "초기 평가와 필요 검사를 마친 뒤 2~4주 내 재진합니다.",
+              "수면과 계획 반응을 점검하고, 악화되면 더 일찍 오세요."
+            ],
+            "codepoints": [
+              32,
+              31
+            ],
+            "max_codepoints": 30,
+            "max_utterances": 1
+          }
+        }
+      },
+      {
+        "scenario": "after_initial_8000",
+        "render_calls": 2,
+        "max_tokens": [
+          8000,
+          8000
+        ],
+        "education_actions": 10,
+        "education_status": "complete",
+        "differential_actions": 0,
+        "termination": "submitted",
+        "patient_information_unchanged": true,
+        "English_plan_unchanged": true,
+        "first_SAY": "수면곤란 증상이 확인됩니다.",
+        "measured_render_feedback": {
+          "plan:education:0": {
+            "code": "require_standalone_NFC_1_30_Korean_statements",
+            "utterances": [
+              "기상 일정히, 졸릴 때 취침; 못 자면 침대 밖 조용히 활동.",
+              "불안은 잠을 어렵게 해도 원인이라고 단정할 수 없습니다."
+            ],
+            "codepoints": [
+              34,
+              31
+            ],
+            "max_codepoints": 30,
+            "max_utterances": 2
+          },
+          "plan:tests:0": {
+            "code": "require_standalone_NFC_1_30_Korean_statements",
+            "utterances": [
+              "원인 미정; 수면·낮 영향·약·물질·질환을 봅니다.",
+              "혈압·맥박·심폐 확인; 불규칙 시 심전도, 검사는 소견별."
+            ],
+            "codepoints": [
+              28,
+              32
+            ],
+            "max_codepoints": 30,
+            "max_utterances": 2
+          },
+          "plan:treatment:0": {
+            "code": "require_standalone_NFC_1_30_Korean_statements",
+            "utterances": [
+              "평가로 만성 불면 확인 시 불면 인지행동치료를 권합니다.",
+              "원인·약 위험·치료 필요성 검토 전 수면약은 미룹니다."
+            ],
+            "codepoints": [
+              31,
+              30
+            ],
+            "max_codepoints": 30,
+            "max_utterances": 2
+          },
+          "plan:disposition:0": {
+            "code": "require_standalone_NFC_1_30_Korean_statements",
+            "utterances": [
+              "불규칙 맥박·숨참·고혈압 보고로 오늘 진료를 받으세요.",
+              "심한/악화 숨참·흉통·실신·지속 빠른/불규칙맥은 응급실로."
+            ],
+            "codepoints": [
+              30,
+              32
+            ],
+            "max_codepoints": 30,
+            "max_utterances": 1
+          },
+          "plan:follow_up:0": {
+            "code": "require_standalone_NFC_1_30_Korean_statements",
+            "utterances": [
+              "초기 평가와 필요 검사를 마친 뒤 2~4주 내 재진합니다.",
+              "수면과 계획 반응을 점검하고, 악화되면 더 일찍 오세요."
+            ],
+            "codepoints": [
+              32,
+              31
+            ],
+            "max_codepoints": 30,
+            "max_utterances": 1
+          }
+        }
+      }
+    ],
+    "SDK_HTTP": {
+      "status": "pass",
+      "backend": "scripted",
+      "case_id": "C10",
+      "turns": 42,
+      "doctor_calls": 40,
+      "nonempty_gateway_responses": 40,
+      "sandbox": {
+        "cpu_max": "200000 100000",
+        "memory_max": "8589934592",
+        "root_read_only": true,
+        "submission_read_only": true,
+        "tmp_options": [
+          "rw",
+          "nosuid",
+          "nodev",
+          "noexec",
+          "relatime",
+          "size=524288k",
+          "inode64"
+        ],
+        "output_writable": true
+      },
+      "missing_evidence": [],
+      "model_requests": 82,
+      "checks": {
+        "agent_exit_zero": true,
+        "confirmed_submission": true,
+        "ready_handshake": true,
+        "nonempty_gateway_response": true,
+        "within_turn_limit": true,
+        "within_model_limits": true,
+        "no_development_key_in_agent": true,
+        "no_samples_in_agent": true,
+        "root_read_only": true,
+        "submission_read_only": true,
+        "output_writable": true
+      },
+      "score_status": "not_scored",
+      "actual_nova": "not_run",
+      "official_submission": "not_run",
+      "clinical_accuracy": "not_evaluated",
+      "trace_status": "complete"
+    }
+  },
+  "archive": {
+    "status": "pass",
+    "archive": "Tmp/education-flow-fix-2026-10-18/ontoward-submission-d44-2-education-flow.zip",
+    "sha256": "9a06136a4a06b92effc23863218025f2db029c04ff74fc2422781b1306c7428f",
+    "file_count": 56,
+    "bytes": 1667861,
+    "algorithm_version": "d44.2",
+    "runtime_sha256": {
+      ".env": "e47a0db1192d4c376d189f25e17a82fa531a3a118db75bf773525eb5f26a854f",
+      "config/education.txt": "973681e925d5ff6c0310c40ac3a1b533361e6ca0da7ea9dc49c2632c20b74d0f",
+      "config/education_doctor.txt": "5a2b6d64fec4cf239de824058a28faa6049f3c8a37de6796e412d42b9e581dfa",
+      "config/empathy.txt": "f27b80ff1dcf2c155cf1125fd70122ff37963d94a1f961b2badfb3f85b0ef645",
+      "config/input_parser.txt": "17e3548bbbc20c450570b9853a6a405f787e0b2b137292a37e391e6a43b3f98b",
+      "config/normalization.txt": "91ab807a1225ea6aa22c459d13c2d333995ae513c3b0a07f11e1f0dbe9f7dda7",
+      "config/texts.ko.json": "4c08b549a577580c7bc9f1fa8c86660c4f7c8ce4eec46c5cdea97a59a2992bba",
+      "knowledge/83afd0b132a07941-clinical.ttl": "a5b5f3d94e0cba1048735cb61a3ed56d5e8622c4540c6a3737186061cfad769f",
+      "knowledge/83afd0b132a07941-guideline-index.json": "408f7d14d459e282df7b9230eca8f5474ce401353c2abdf2a6e7e307ba2f7bfa",
+      "knowledge/83afd0b132a07941-questions.ko.json": "911a9249fec89a494234912f21ba46cfe3747a01ebbddaef4f3b453a08541e6d",
+      "knowledge/83afd0b132a07941-reasoning_policy.json": "b23681158479aaa5471808f8950dd88d136a41340900e6b8ef3cc2d36044bb8a",
+      "knowledge/83afd0b132a07941-scoring_policy.json": "4bf15b5fc5cee84fdb2911435ad31e1a6b63d1e90afdc009676873f12f3baf17",
+      "knowledge/83afd0b132a07941-vocabulary.ttl": "28bb51976edc258367a50ad909b423aba47a7e88a0da7bc02e364054f4676ed8",
+      "knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "knowledge/conditions.py": "5226331815960f33864da6d9dbe304d52c43724adcf03fba2a41bd758855c9c6",
+      "knowledge/graph.py": "0de6e3e85daf90a4237852af63aaaff4070998ba66505e5e9d423440d4808509",
+      "knowledge/guidelines.py": "199c4e08ad41de657d564cf5d35845d6a020de53aa4c3b231b75b201a4d243c8",
+      "knowledge/manifest.json": "259cad6c5755699aebb44df5ee1cd4d04b20a3f1b6250f5ce32c03c7f159ba7c",
+      "knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+      "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+      "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+      "settings.py": "912ca57613fafb2b285ad4b341af7ed0632515dafffcf1a0fd70d96e9f9ec92e",
+      "workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/audit.py": "d7901d8d0057808dd43b8cb27ae16f688d77b0ca4807cad5c4b38a6ad70c45e8",
+      "workflow/clinical_reasoner.py": "c0190e83c2d0e51b8d91896a49d7e6d06ed66e19ee70589dc7ad6a7bca87b12b",
+      "workflow/consultation.py": "0631081fdf378fefc3555e4fd5897eb81a0a25f473700530d2a1b4c762e2c581",
+      "workflow/doctor.py": "cb198be80690f2b1c48cd2cee50b12739ca7d7512bc8495172def9bded097934",
+      "workflow/education.py": "242f4cb785ef6f28d6579ab42b95b63a8bfd2f4d22f264d5ffa6791e5d380733",
+      "workflow/graph.py": "a336c6933681272400263a1ab8ab2a81bc3c5977a1712e7ad0fee385a39c9688",
+      "workflow/input_interpreter.py": "0702b4628f817ee9c6ca8791b260be12db5ee075a7d6dc6646d9d970fbe7f648",
+      "workflow/input_types.py": "85d9ed1f6ae4a343989ad896fc7f2e5186b41dfdbc2817b256b81024e31ae6f5",
+      "workflow/interview_planner.py": "13b07fb9e1622ae2d5beb22f3ed1562fcc2bba0f853453ea59f869b7762e5f63",
+      "workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/io/model_client.py": "efa1036c089a248eadadef607aac68d5da5ff3e76f9dacb157393d8c5614d184",
+      "workflow/io/nova_session.py": "fdc87d856e74f78215e6b67627f9ab56ff8e5618fa9214c586964b57a69b9281",
+      "workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+      "workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/rules/action.py": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb",
+      "workflow/rules/budget.py": "defbb63e70326223dd68fe3b45da6fd901b9d71c41aa3221ca0ce1342c0eddc7",
+      "workflow/rules/collection.py": "a61d7d4e3d0439d032cb509a9eb6b1ce58989e710b4cd5ff91a98265ff123d54",
+      "workflow/rules/input.py": "b60c15bc44bb7a9f63329c53246aebc4774f926eb858b19f52552cad459aca16",
+      "workflow/rules/limits.py": "bd879c63cdf3e7399db016e889165033ee463a30b869b2854387cd5db2d0da5a",
+      "workflow/rules/normalization.py": "2421a6f9909068dd8469cdbb439eb1a369beafe5b77eb9f2cec1651083acb18b",
+      "workflow/rules/selection.py": "e093327f2cbc28d07d8d156efa9c9248cca3b148926aee3e94f2481d22ca47ad",
+      "workflow/rules/submission.py": "7bb06accc6083c6c73cdb6c45af74c5b58f3e3edda45b40a0b19a128954098ae",
+      "workflow/runtime.py": "101cf6433f21cea957e8e93d270c56d171291a557c392fd9dafb19f327f90688",
+      "workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/state/evidence.py": "4513d09907466b4617dd2c90a1ffd7be16cca30e47c0b95061d64f36e2c8b0db",
+      "workflow/state/interactions.py": "0ed1c3ecc9bf8fb793b417310ae71feda2ccb187bdd6fac8144a09e76f3ec44d",
+      "workflow/state/models.py": "1d7a18ab75f5f310fc883a24c075dc108c05374644c08bdab9c276b5d9291307",
+      "workflow/state/questions.py": "01ac8ccb16dfa068daa33777740aaba5f998a604d2ad2b628fdc79a87e321830",
+      "workflow/state/usage.py": "177d81e25b8488434c19d9f065cd68a258e4c603177bc6af885bc78b81fdd1cd",
+      "workflow/submission_writer.py": "c04f65152803535bf8f8fcdf9b5cc46117a6a90abcfa3495a07a521b55f25c32",
+      "workflow/text_config.py": "e5c12c2bd1838edbb7e3a90aaacd1ba985bf5f3a8ce2c3d1d220ae80a5267d5b"
+    },
+    "changed_since_prior_fix": [
+      "config/education_doctor.txt",
+      "config/texts.ko.json",
+      "knowledge/manifest.json",
+      "workflow/consultation.py",
+      "workflow/doctor.py",
+      "workflow/interview_planner.py",
+      "workflow/io/nova_session.py",
+      "workflow/rules/action.py",
+      "workflow/rules/budget.py",
+      "workflow/rules/limits.py",
+      "workflow/state/usage.py",
+      "workflow/text_config.py"
+    ],
+    "concurrent_budget_files_preserved": [
+      "workflow/io/nova_session.py",
+      "workflow/rules/action.py",
+      "workflow/state/usage.py"
+    ],
+    "shared_files_with_preserved_budget_changes": [
+      "workflow/consultation.py",
+      "workflow/doctor.py"
+    ],
+    "protected_sha256": {
+      "knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "knowledge/83afd0b132a07941-vocabulary.ttl": "28bb51976edc258367a50ad909b423aba47a7e88a0da7bc02e364054f4676ed8",
+      "knowledge/83afd0b132a07941-scoring_policy.json": "4bf15b5fc5cee84fdb2911435ad31e1a6b63d1e90afdc009676873f12f3baf17",
+      "knowledge/83afd0b132a07941-reasoning_policy.json": "b23681158479aaa5471808f8950dd88d136a41340900e6b8ef3cc2d36044bb8a",
+      "knowledge/83afd0b132a07941-questions.ko.json": "911a9249fec89a494234912f21ba46cfe3747a01ebbddaef4f3b453a08541e6d",
+      "knowledge/83afd0b132a07941-guideline-index.json": "408f7d14d459e282df7b9230eca8f5474ce401353c2abdf2a6e7e307ba2f7bfa",
+      "knowledge/83afd0b132a07941-clinical.ttl": "a5b5f3d94e0cba1048735cb61a3ed56d5e8622c4540c6a3737186061cfad769f",
+      "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+      ".env": "e47a0db1192d4c376d189f25e17a82fa531a3a118db75bf773525eb5f26a854f",
+      "knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea"
+    },
+    "clinical_manifest_changed_keys": [
+      "algorithm_version"
+    ],
+    "frozen_tests_sha256": {
+      "test_reasoning.py": "cc7c85434e07ded0c5ef41ef4e0c30e1ded44c59b8040c701bc8b3f1a66f2415",
+      "test_lifecycle.py": "5448736fd788cfc0f7a7d925463b144144035683c6c6e89d0ce8eb52507c7a7f",
+      "replay_c03.py": "1f8732524f0d8edb586835e21175a97f76bc3d2823e819121711208019c37648",
+      "compose.offline.yaml": "81cdc10cd7b17215a0cc8f089408afc7157bd2e7b859731c158e2031b5d24825",
+      "test_admitted.py": "d807052390f571b999815e4eec697b879e971c94b1dd64f3ee3c02c017521c28",
+      "test_delivery.py": "412db72918e0407d739573b63ccae0aa9f1d76eecef1d98d0f22e4339fc6534b",
+      "education_fixtures.py": "4cfcc0db8f7b56c12fad107c065b96117ece15b60c0452cf393d43b43e09ca3b",
+      "test_transport.py": "63310b02c81fb93dfd4602658b85fd3a207f85ed546f6c789fd4bf1c3c23ed71",
+      "compare_algorithms.py": "7c0fa8555059ecfeee21a8b095e4f91cb4e80edd9a2b01e796c8df5e87a21fd8",
+      "test_budget.py": "fe91323154c6d16d55c2529dddfb33692390af52d99547578b3dd70be3258da4",
+      "fixtures.py": "5fb05922afb9bbd0f7dc029d29d68bd3fffbebb905386023d71ff1dfe2d80f1b",
+      "test_binding.py": "29dfadf6473976a4a8bdeaaac40d3faea0a30753ed0eac50063a005433a695ef"
+    },
+    "independent_execution": "pass",
+    "source_matches_all_members": true,
+    "execution_evidence": [
+      "Tmp/education-flow-fix-2026-10-18/evidence/isolated-workflow.log",
+      "Tmp/education-flow-fix-2026-10-18/evidence/isolated/admitted/verification.json",
+      "Tmp/education-flow-fix-2026-10-18/evidence/archive-c01-replay.json",
+      "Tmp/education-flow-fix-2026-10-18/http/result.json"
+    ]
+  },
+  "preserved_prior_archive_sha256": "82838a4423b9ed8fc52414e35baf6d3f9e24dcbef0a5a4052d3b5dd65633ba75",
+  "concurrency": {
+    "budget_task": "separate_workspace_turn_budget_work",
+    "preserved_files": [
+      "workflow/io/nova_session.py",
+      "workflow/rules/action.py",
+      "workflow/state/usage.py"
+    ],
+    "shared_files": [
+      "workflow/consultation.py",
+      "workflow/doctor.py"
+    ],
+    "acceptance": "combined_snapshot_verified_without_overwriting_concurrent_edits"
+  },
+  "evidence_sha256": {
+    "Tmp/education-flow-fix-2026-10-18/evidence/c01-replay.log": "7504f661a26680e330b59543839a54b61f02f56c5de4ee4b6c454f9ed741e723",
+    "Tmp/education-flow-fix-2026-10-18/evidence/archive.json": "6d89a53b2059bb07ecb588d2ef21ed6e9463221e7df1a90ef22a37196860fb37",
+    "Tmp/education-flow-fix-2026-10-18/evidence/admitted.log": "6471c61cec56d2960ad137c6104cbf306335191b8ed4e649f1787d8fa37c1d01",
+    "Tmp/education-flow-fix-2026-10-18/evidence/workflow.log": "b6c553e4a38c1d9364cc765a4aacb9c599cd0b1fa49fa9d98ac02815e06851ed",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer.log": "94aa7d807fa829644889800be174083a2918d1bde5f621562e51fcaeeb2a29d3",
+    "Tmp/education-flow-fix-2026-10-18/evidence/c01-replay.json": "a3f72715f01195a8c1b935139054d9dd8735b57d55ea2788741e29a932d67d45",
+    "Tmp/education-flow-fix-2026-10-18/evidence/combined-workflow.log": "9daf9bb7a1a4e4c62ad2e3d36d74952e98a454de9032c9d548732f524ee49c8e",
+    "Tmp/education-flow-fix-2026-10-18/evidence/probe.log": "896761779c0fec08fb427e114a547494c5505f0cfe766586741c28e11ce1dc7c",
+    "Tmp/education-flow-fix-2026-10-18/evidence/evaluator.log": "769241386131798386c4a214008ecdc8d68c98fc8f8e38801d6e5e8b1f689eee",
+    "Tmp/education-flow-fix-2026-10-18/evidence/combined-c01-replay.json": "a3f72715f01195a8c1b935139054d9dd8735b57d55ea2788741e29a932d67d45",
+    "Tmp/education-flow-fix-2026-10-18/evidence/archive-c01-replay.log": "c0884f54db4f9fd24c88f8e2d3b52d8f80760c5a701e3c5fa6037310075e5ccf",
+    "Tmp/education-flow-fix-2026-10-18/evidence/first-workflow.log": "a8b8515962091da29effa1be377618c82e1f6d6207aabfe763abd0ff61df84ee",
+    "Tmp/education-flow-fix-2026-10-18/evidence/isolated-admitted.log": "e228a859bdc9a8874805c3a0be310ff9041c5e897266345239a8fd3959a9d786",
+    "Tmp/education-flow-fix-2026-10-18/evidence/probe.json": "7b8cc2a0fa3d6ec4c65427dc1fa9ced54d013187927d6cf99dd206c20338ba1c",
+    "Tmp/education-flow-fix-2026-10-18/evidence/http.log": "e2c824bc248faedb28f0d5b8b75e683bc4f046b97cef462376b855f009c593d5",
+    "Tmp/education-flow-fix-2026-10-18/evidence/state-Education-Doctor.json": "8edb270b8d0339b6a1a29492b223608aa06a3ccfeb260bb6c75cd8a424b279af",
+    "Tmp/education-flow-fix-2026-10-18/evidence/isolated-workflow.log": "53bd8ec9c38d0954256ca4fcbcb216d5cd81beaf581471d6c155d17f12939901",
+    "Tmp/education-flow-fix-2026-10-18/evidence/state-Education-Consultation.json": "aa6782639b8650d7c8f746841ab2209887f19d7b6664470518c8631bccb1edc7",
+    "Tmp/education-flow-fix-2026-10-18/evidence/combined-c01-replay.log": "c9fe453bd88ba5c0f133e6896b036a68767b7aabc7d7a2e05042435ccf9099b8",
+    "Tmp/education-flow-fix-2026-10-18/evidence/archive.log": "60c9553960d4da2c458fd42eae0291dd1347c7ed2f76180200f6a778e8417021",
+    "Tmp/education-flow-fix-2026-10-18/evidence/state-DifferentialDiagnosis-Consultation.json": "45ab0d945f0df1064137727ef8204163359f0fb985eef833a512a213bf9d8eb0",
+    "Tmp/education-flow-fix-2026-10-18/evidence/archive-c01-replay.json": "a3f72715f01195a8c1b935139054d9dd8735b57d55ea2788741e29a932d67d45",
+    "Tmp/education-flow-fix-2026-10-18/evidence/package.log": "b1326e1d4ac663996d45419177c5ecdf42352fa90c6b680a4898f032b570ac67",
+    "Tmp/education-flow-fix-2026-10-18/evidence/admitted/case-0.json": "e93da001f8b32de56b65f0def05d81eba249651905fea38f2263c861d6bb61be",
+    "Tmp/education-flow-fix-2026-10-18/evidence/admitted/case-1.json": "1d1cc8d3a7169b14764b5e044c0a06e419bc183fbcd286ffeca79eac5f05185f",
+    "Tmp/education-flow-fix-2026-10-18/evidence/admitted/verification.json": "5570586b5d6508f68d64e6f644fa7f0886c087bc393981862cfd5edf6121b4d8",
+    "Tmp/education-flow-fix-2026-10-18/evidence/admitted/case-2.json": "b8e3145efa650cdc158ed2d88cb5a262ab3ebf5df707ed9a73c6a8018e6df05a",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/unknown_context.jsonl": "fb2321a32a452c4eb44f49c0591b858d4c5fc6c9b94aecb440d9c256898e8742",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/soap_repair.jsonl": "1cde82a1ab9b6ef637c6ab07b53a77ee1bfa13eb207e1563deeb15a6142d13d1",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/transient_model.jsonl": "b04a48975fa1fe2ae1f56d72b8dc1bceeed6150a16dd00d6e6be97409febdc16",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/unconfirmed.jsonl": "6e5c9353cded4b71354b156b283ddefb3f01e1570779f0388794e3b6b92b6bb7",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/malformed_context.jsonl": "f371549d553d3ca1479fe1efb57a94ed2c820857c20b35f535d80ee4925e30b8",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/refusal.jsonl": "1bcb2941ff7e38afccc89bd3a7fdd30bd7ee39ac3891e58695859e3655bcda08",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/normal.jsonl": "be61adbbbfc0959a168bed1ce6863055bb42e239c16a626db95e50114864d035",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/negative_context.jsonl": "faa862f80e6f4a5e4d0261e2f246a52a1b833cfa1c082764014426c769f6d901",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/action_format.jsonl": "ed5dc977cdb722c2f4948792fcfd56a17d81312f2e1ed1cb7a9756d120a48900",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/verification.json": "d1c731d56eac22fd21a2c1ffbf37f17c75287073aa7854d5536c18f34d4f8eb3",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/education.jsonl": "15871d9329538c53b5fa6f510a21a19d36e8f9cafdb2a796875e8dbc33d56290",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/closed.jsonl": "7a0d10d89ae899db3a05c5f2c3de983f2c7d3ef8121b679f3971be23c8430a0f",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/model_limit.jsonl": "7f98c2ef690dfa51a7c6587ce7dd07a61bb3861bd5575d1ae1aa75ce9eb7b449",
+    "Tmp/education-flow-fix-2026-10-18/evidence/observer/expired.jsonl": "c977b900a1db3429a44e89b00ab237837beae11d9d6bcd0721f72cc6453f2405",
+    "Tmp/education-flow-fix-2026-10-18/evidence/isolated/admitted/case-0.json": "9aae6309cfa7a3571fdfd63d65b57bc05eb97d6c15c1a2aa294058917aacc91c",
+    "Tmp/education-flow-fix-2026-10-18/evidence/isolated/admitted/case-1.json": "40a0cc8091dd9ac2e2ad6628d5110d4397066bdbd6ff18e39b80ca0f7a453de2",
+    "Tmp/education-flow-fix-2026-10-18/evidence/isolated/admitted/verification.json": "e947d3667fd961190659245bd01411bfbf0530a04689f14ad2df0af4083d9646",
+    "Tmp/education-flow-fix-2026-10-18/evidence/isolated/admitted/case-2.json": "526e46b99a5b1e662de8b3fa46839f3ea79b07a215321628091e580b7610d18a",
+    "Tmp/education-flow-fix-2026-10-18/analysis.md": "2f5ed1959f2446d711e89d9e93e299a62649ed55086ed961b1aa5cd09dc6c369",
+    "Tmp/education-flow-fix-2026-10-18/replay.py": "0bf0355cf6e518b77fca8328a43de6e3dbcdaaf959fb69ca33dbacf7f71166a6",
+    "Tmp/education-flow-fix-2026-10-18/http/result.json": "445fb7a974c622d4a5e4fe3c07dce77e63b51347d111567a900cf5f0e13fefc6",
+    "Tmp/education-flow-fix-2026-10-18/http/simulator/record.json": "52212c5e8f273441b49193dbce5231f1fe4679dd46e30aad6eaaf6d120a4f1e1"
+  },
+  "execution_boundaries": {
+    "saved_NOVA_test": "reviewed_existing_evidence",
+    "fresh_NOVA": "not_run",
+    "new_billable_requests": 0,
+    "fresh_Korean_semantics": "not_run",
+    "clinical_accuracy": "not_run",
+    "official_evaluation": "not_run",
+    "upload": "not_run",
+    "commit": "not_run",
+    "deployment": "not_run"
+  }
+}

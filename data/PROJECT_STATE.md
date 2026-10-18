@@ -1,8 +1,12 @@
 /state version=1
 /project id=ontoward-data
-/status value=complete
-/checkpoint revision=fe235c160a49fda900438ab3567e50a8de25e9ec dirty=true updated=2026-10-18T11:45:44.207055+00:00
-/goal phase=current id=DATA.D44 state=complete action="Preserve clinical admission and record D44 source archive and verification custody"
+/status value=active
+/checkpoint revision=01c244f093dc1af511ac12485625614f74a2c9bf dirty=true updated=2026-10-18T13:38:36Z
+/goal phase=current id=DATA.D46 state=active action="Implement and verify graph constrained DoctorEar DoctorBrain DoctorMouth consultation under D46"
+/goal phase=history id=DATA.BUDGET45 state=complete action="Record D45 budget archive runtime evidence and unchanged admitted asset custody"
+/goal phase=history id=DATA.EDUFLOW44 state=complete action="Pin d44.2 Education archive captured C01 failure and combined runtime custody"
+/goal phase=history id=DATA.EDUFIX44 state=complete action="Record repaired Education archive saved C10 evidence and unchanged clinical custody"
+/goal phase=history id=DATA.D44 state=complete action="Preserve clinical admission and record D44 source archive and verification custody"
 /goal phase=history id=DATA.D43 state=complete action="Preserve admitted D42 assets and record D43 input recovery evidence and archive custody"
 /goal phase=history id=DATA.D42 state=complete action="Build and pin the local source and author common complaint batch under D42"
 /goal phase=history id=DATA.D41 state=complete action="Pin D41 policy runtime archive and statement-level acceptance custody without changing clinical admission"
@@ -166,4 +170,21 @@
 /evidence id=DATA.D44.E2 class=artifact result=pass source=../Tmp/d44-2026-10-18/evidence/final-verification.json observed="Pin the final ZIP SHA256 55ead6a43ee32f8c185a3f8819aaf41fa4a645f4721946c04a0632df56de3bbd and store exact runtime hashes saved C03 response custody fixed-input measurements offline acceptance evidence and the unexpected first Compose build download incident"
 /evidence id=DATA.D44.E3 class=external_service result=not_run source=provenance/state-lifecycle-d44-2026-10-18.json observed="Leave new clinical admission fresh model quality clinical validation actual NOVA official evaluation publication and deployment unrun"
 /scope id=DATA.D44.S1 state=in action="Own algorithm-only D44 provenance hashes acceptance receipts and unchanged clinical admission custody"
-/handoff state=ready action="Use the pinned D44 provenance and ZIP for the next separately authorized runtime verification without modifying clinical custody"
+/accept id=DATA.EDUFIX44.A1 state=pass action="Pin repaired runtime archive and preserve prior D44 clinical and artifact custody" evidence=DATA.EDUFIX44.E1
+/accept id=DATA.EDUFIX44.A2 state=pass action="Record saved provider failure and separate controlled recovery from fresh model quality" evidence=DATA.EDUFIX44.E2
+/evidence id=DATA.EDUFIX44.E1 class=artifact result=pass source=provenance/education-provider-fix-d44-2026-10-18.json observed="Pin the fifty-six-file 1665942-byte ZIP 82838a4423b9ed8fc52414e35baf6d3f9e24dcbef0a5a4052d3b5dd65633ba75; match all runtime members and preserve clinical manifest RDF vocabulary source scores reasoning policy questions guidelines SDK requirements public settings and the frozen D44 archive"
+/evidence id=DATA.EDUFIX44.E2 class=semantic result=pass source=../Tmp/education-provider-fix-2026-10-18/analysis.md observed="Distinguish the saved NOVA provider rejection from the local repair latch and fabricated ID error; preserve the trace hash and mark the upstream response cause unknown because no rejected body or finish reason was saved"
+/evidence id=DATA.EDUFIX44.E3 class=runtime result=pass source=../submission/PROJECT_STATE.md observed="Reference APP.EDUFIX44 for source and archive behavior admitted consultations saved C10 controlled replay observer parity and original SDK HTTP completion"
+/evidence id=DATA.EDUFIX44.E4 class=external_service result=not_run source=provenance/education-provider-fix-d44-2026-10-18.json observed="Record zero fresh billable requests and leave actual provider recovery model and Korean semantic quality clinical accuracy official evaluation uploads commits and deployment unrun"
+/accept id=DATA.EDUFLOW44.A1 state=pass action="Preserve clinical and prior artifact custody while pinning d44.2 runtime and observed verification" evidence=DATA.EDUFLOW44.E1,DATA.EDUFLOW44.E2
+/evidence id=DATA.EDUFLOW44.E1 class=artifact result=pass source=provenance/education-flow-d44-2-2026-10-18.json observed="Pin the fifty-six-file 1667861-byte ZIP 9a06136a4a06b92effc23863218025f2db029c04ff74fc2422781b1306c7428f and source-matched runtime hashes; preserve SDK requirements public settings clinical RDF vocabulary source weights reasoning policy questions guideline index and prior accepted archives"
+/evidence id=DATA.EDUFLOW44.E2 class=semantic result=pass source=../Tmp/education-flow-fix-2026-10-18/analysis.md observed="Separate zero chief-compatible patterns successful general symptom planning actual normal Education entry and seven overlong utterances from the unknown upstream first-response reason; retain exact source trace and separately identify concurrent budget ownership"
+/evidence id=DATA.EDUFLOW44.E3 class=runtime result=pass source=../submission/PROJECT_STATE.md observed="Reference APP.EDUFLOW44 combined source frozen tests admitted consultations C01 replay observer parity and original SDK HTTP completion"
+/evidence id=DATA.EDUFLOW44.E4 class=external_service result=not_run source=provenance/education-flow-d44-2-2026-10-18.json observed="Record zero fresh billable requests and leave real model rendering semantics clinical accuracy official evaluation publication commit and deployment unrun"
+/accept id=DATA.BUDGET45.A1 state=pass action="Pin final D45 archive runtime hashes and unchanged admitted assets without replacing earlier custody" evidence=DATA.BUDGET45.E1
+/accept id=DATA.BUDGET45.A2 state=pass action="Bind final source isolated and SDK HTTP evidence to the archive" evidence=DATA.BUDGET45.E2
+/evidence id=DATA.BUDGET45.E1 class=artifact result=pass source=provenance/turn-budget-d45-2026-10-18.json observed="Pin the fifty-six-file 1667861-byte final ZIP ed667370d4483a495c269b58f1e2727b1d4daed5669b8eef95d85fd7d2cf64b1 and exact source hashes; preserve SDK entrypoint requirements settings public environment clinical assets manifest Education work and prior archives"
+/evidence id=DATA.BUDGET45.E2 class=runtime result=pass source=../submission/PROJECT_STATE.md observed="Reference APP.BUDGET45 final budget source and isolated workflow admitted consultations and original SDK HTTP evidence"
+/evidence id=DATA.BUDGET45.E3 class=external_service result=not_run source=provenance/turn-budget-d45-2026-10-18.json observed="Record zero fresh external model requests and leave real NOVA clinical accuracy official evaluation upload commit and deployment unrun"
+/accept id=DATA.D46.A1 state=not_run action="Verify the complete D46 source and independent artifact slice" evidence=none
+/handoff state=incomplete action="Complete D46 implementation and project container acceptance"

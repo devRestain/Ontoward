@@ -127,7 +127,8 @@ class LifecycleTests(unittest.TestCase):
         s = f.chief(f.state(turns=0))
         q = Question(item_id='last',purpose='hpi',text='어떤 느낌인가요?',target='Test complaint',attribute='Quality',
             observation_id='obs1',episode_id='episode1',time_context='current')
-        s,c,_ = f.interpret([f.statement('dull',focus='attribute',attribute_terms=['Quality'],value_terms=['dull'])],s=s,q=q)
+        s,c,client = f.interpret([f.statement('dull',focus='attribute',attribute_terms=['Quality'],value_terms=['dull'])],s=s,q=q)
+        client.remaining = 0
         self.assertTrue(any(fact.values==('dull',) for fact in s.case.facts.values()))
         c.check_budget(s)
         self.assertTrue(s.session.finalizing)
@@ -142,6 +143,48 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(s.model_dump(),before)
         kept = [q for q in s.interview.queue if q.item_id not in decision.discard]
         self.assertTrue(any(q.purpose=='open_inquiry' for q in kept))
+
+    def test_collection_completion_routes_through_normal_education(self):
+        from workflow.graph import build_graph
+        from workflow.state.models import WorkflowState
+        c = f.consultation(prepared=f.resources(education=True))
+        s = f.chief(f.state('DifferentialDiagnosis',initialized=True))
+        s.session.finalizing = True
+        result = build_graph(c,c.planner.knowledge).invoke(s.model_dump(mode='json'),
+            {'recursion_limit':c.budget.graph_step_limit(s)})
+        done = WorkflowState.model_validate(result)
+        self.assertEqual(done.session.termination, 'submitted')
+        self.assertGreaterEqual(done.session.usage['Education'].actions, 6)
+        self.assertEqual(done.interview.collection['DifferentialDiagnosis:completion'], 'collection_complete')
+        self.assertTrue(c.client.actions[0]['content'].endswith('질환이 의심됩니다.'))
+        self.assertTrue(all(c.client.submissions[0]['note']['P'].values()))
+
+    def test_model_budget_stop_still_allows_prepared_diagnosis_notice(self):
+        from workflow.graph import build_graph
+        from workflow.state.models import WorkflowState
+        c = f.consultation(prepared=f.resources(education=True))
+        s = f.chief(f.state('DifferentialDiagnosis',initialized=True))
+        s.session.models_available = False
+        s.session.doctor_successes = 1
+        result = build_graph(c,c.planner.knowledge).invoke(s.model_dump(mode='json'),
+            {'recursion_limit':c.budget.graph_step_limit(s)})
+        done = WorkflowState.model_validate(result)
+        self.assertEqual(done.session.termination, 'submitted')
+        self.assertEqual(done.interview.collection['DifferentialDiagnosis:completion'], 'model_call_budget')
+        self.assertEqual(len(c.client.actions), 1)
+        self.assertTrue(c.client.actions[0]['content'].endswith('질환이 의심됩니다.'))
+
+    def test_time_or_turn_budget_stop_does_not_start_education_actions(self):
+        for turns, seconds in ((0, 500), (20, 200)):
+            with self.subTest(turns=turns):
+                from datetime import timedelta
+                c,s = f.consultation(prepared=f.resources(education=True)),f.chief(f.state('DifferentialDiagnosis',turns=turns,initialized=True))
+                s.session.deadline = f.FIXED + timedelta(seconds=seconds)
+                c.client.remaining, c.client.deadline = turns, s.session.deadline
+                c.check_budget(s)
+                self.assertTrue(s.session.finalizing)
+                self.assertEqual(route_budget(s), 'build_soap')
+                self.assertFalse(c.client.actions)
 
     def test_chief_change_invalidates_old_question_binding(self):
         s,c = f.chief(f.state('ChiefComplaint',initialized=True)),f.consultation()

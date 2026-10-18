@@ -65,6 +65,9 @@ class NovaSessionClient:
         elif value.status not in {"active", "ready", "in_progress"}:
             state.stop("failed", "invalid_session_status")
 
-    def refresh_snapshot(self, state: WorkflowState, client, *, final=False) -> None:
+    def refresh_snapshot(self, state: WorkflowState, client, *, final=False, action_purpose=None) -> None:
+        previous = state.session.turns_remaining
         raw = self.executor.execute(state, client, client.session, {}, [], final=final)
         self.apply_snapshot(state, SessionInput.model_validate(raw))
+        if action_purpose is not None:
+            self.usage.record_actions(state, previous, state.session.turns_remaining, purpose=action_purpose)

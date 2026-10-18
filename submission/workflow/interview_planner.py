@@ -388,7 +388,11 @@ class InterviewPlanner:
                 break
             if used >= self.knowledge.reasoning.simulation_limit or cohort == sorted(compatible):
                 break
-        emit(self.audit, 'question_selection', reason='selected' if selected else 'computation_limit' if limited else 'no_useful_question',
+        reason = ('selected' if selected else 'computation_limit' if limited else
+                  'no_chief_compatible_path' if not compatible else 'no_useful_question')
+        if not selected:
+            state.interview.collection[f'{state.interview.current}:completion'] = reason
+        emit(self.audit, 'question_selection', reason=reason,
              selected=selected, simulations=used, policy=self.knowledge.reasoning.version)
         if selected and (state.interview.current != 'ContextFactor' or self.knowledge.has_type(selected['target_id'], 'ContextFactor')):
             if selected['purpose'] == 'clarification':

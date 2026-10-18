@@ -274,6 +274,31 @@ class EvaluatorTests(unittest.TestCase):
         entries = [json.loads(line) for line in (Path(self.temp.name) / 'nova-requests.jsonl').read_text().splitlines()]
         self.assertEqual([entry['status'] for entry in entries], ['reserved', 'failed_or_unknown'])
 
+    def test_nova_education_response_failure_allows_explicit_repair_within_ceiling(self):
+        models = NovaModels('https://nova.snubhai.org', 'test-key', self.temp.name, 2)
+        first, repair = str(uuid.uuid4()), str(uuid.uuid4())
+        with patch.object(models.client, 'chat', side_effect=[NovaError('PROVIDER_RESPONSE_INVALID', 503), completion('ok')]) as remote:
+            with self.assertRaises(NovaError):
+                models.complete('education_doctor', [], 4000, first)
+            result = models.complete('education_doctor', [], 8000, repair)
+            self.assertEqual(result['choices'][0]['message']['content'], 'ok')
+            self.assertEqual([call.kwargs['request_id'] for call in remote.call_args_list], [first, repair])
+            with self.assertRaises(NovaError) as caught:
+                models.complete('education_doctor', [], 8000, str(uuid.uuid4()))
+            self.assertEqual(caught.exception.code, 'MODEL_CALL_LIMIT')
+            self.assertEqual(remote.call_count, 2)
+        entries = [json.loads(line) for line in (Path(self.temp.name) / 'nova-requests.jsonl').read_text().splitlines()]
+        self.assertEqual([entry['status'] for entry in entries], ['reserved', 'failed_or_unknown', 'reserved', 'received'])
+        self.assertEqual(entries[1]['error'], 'PROVIDER_RESPONSE_INVALID')
+
+    def test_nova_non_education_response_failure_keeps_stop_boundary(self):
+        models = NovaModels('https://nova.snubhai.org', 'test-key', self.temp.name, 5)
+        with patch.object(models.client, 'chat', side_effect=NovaError('PROVIDER_RESPONSE_INVALID', 503)) as remote:
+            for _ in range(2):
+                with self.assertRaises(NovaError):
+                    models.complete('patient', [], 2048, str(uuid.uuid4()))
+            self.assertEqual(remote.call_count, 1)
+
     def test_all_public_cases_are_read_only_inputs(self):
         for case_id in ('C01', 'C03', 'C10'):
             case, digest = load_case(case_id)
