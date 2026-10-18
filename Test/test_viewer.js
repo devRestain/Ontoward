@@ -144,3 +144,16 @@ for(const path of process.argv.slice(2)){
   }
   console.log(`PASS: saved report ${saved.run_id} (${saved.trace.events.length} trace events)`);
 }
+
+const compact={case:{facts:{f1:{id:'f1',kind:'symptom',target:'Headache',status:'present',source_ref:'source-1'}},notes:{n1:{id:'n1',category:'previous_care',value:'No treatment',status:'absent'}},chief_fact_id:'f1',diagnosis:{kind:'symptom',name:'Headache',evidence_ids:['f1']},plan:[],revision:1},
+  interview:{current:'ChiefComplaint',queue:[],answers:[],collection:{}},session:{turns_remaining:40,doctor_calls:3,input_tokens:60,output_tokens:30,termination:null},turn:null};
+const compactData={...data,trace:{status:'complete',events:[{seq:1,kind:'initial',session:'ChiefComplaint',turn:10,state:compact}]}};
+const compactPage=load(compactData);
+compactPage.get('tab-objects').click();
+for(const name of ['CaseState','InterviewState','SessionContext','TurnContext'])assert.match(compactPage.text(),new RegExp(name));
+for(const name of ['DifferentialState','QuestionPlan','InteractionState'])assert.doesNotMatch(compactPage.text(),new RegExp(name));
+compactPage.get('tab-note').click();assert.match(compactPage.text(),/Headache/);assert.match(compactPage.text(),/previous_care/);
+compactPage.get('tab-state').click();assert.match(compactPage.text(),/D44/);
+compactPage.get('tab-diagnosis').click();assert.match(compactPage.text(),/reasoner/);
+assert.equal(JSON.stringify(compactData.trace.events[0].state),JSON.stringify(compact));
+console.log('PASS: D44 resident owners, disposable turn, typed facts and notes, final diagnosis and legacy trace separation');

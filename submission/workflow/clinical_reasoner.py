@@ -1,67 +1,96 @@
 import hashlib
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from knowledge.conditions import numeric_match
-from knowledge.graph import ClinicalKnowledge
 
-from .state.models import AssociationMatch, ChiefAnchor, Hypothesis, PatternMatch, ScoreContribution, WorkflowState
+from .state.models import Diagnosis
 from .state.evidence import EvidenceIndex
 
 
+@dataclass(frozen=True)
+class Hypothesis:
+    disease_id: str
+    evidence_score: float = 0
+    chief_score: float = 0
+    context_bonus: int = 0
+    contradiction_penalty: float = 0
+    chief_coverage: float = 0
+    evidence_ids: list = field(default_factory=list)
+    contradiction_ids: list = field(default_factory=list)
+    unresolved_conditions: list = field(default_factory=list)
+    contradicted_conditions: list = field(default_factory=list)
+
+    @property
+    def score(self):
+        return self.evidence_score + self.context_bonus - self.contradiction_penalty
+
+
+@dataclass(frozen=True)
+class PatternMatch:
+    pattern_id: str
+    observation_id: str
+    episode_id: str
+    time_context: str
+    fingerprint: str
+    status: str
+    contradicted: list = field(default_factory=list)
+    unresolved: list = field(default_factory=list)
+    evidence_ids: list = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class AssociationMatch:
+    association_id: str
+    pattern_key: str
+    applicability: str
+    evidence_ids: list
+
+
+@dataclass(frozen=True)
+class _Contribution:
+    score: float
+    evidence_ids: list
+
+
 def fingerprint(items):
-    values = [(item.id, item.value.model_dump(exclude={"text", "record_category", "record_details"}))
-              for item in sorted(items, key=lambda i: i.id)]
-    return hashlib.sha256(json.dumps(values, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+    return hashlib.sha256(json.dumps([i.signature() for i in sorted(items, key=lambda i:i.id)],
+                                    sort_keys=True).encode()).hexdigest()
 
 
 class ClinicalReasoner:
-    def __init__(self, knowledge: ClinicalKnowledge):
+    def __init__(self, knowledge, audit=None):
         self.knowledge = knowledge
+        self.audit = audit
+        self._key = None
+        self._snapshot = None
 
-    def retrieve_candidates(self, state):
-        state.differential.initialized = True
-        self.refresh_hypotheses(state)
-
-    @staticmethod
-    def anchor(case):
+    def anchor(self, case, evidence=None):
         chief = case.chief(confirmed=True)
-        if chief is None or len(chief.value.concept_ids) != 1:
-            return None
-        return ChiefAnchor(record_id=chief.id, target_id=chief.value.concept_ids[0],
-            observation_id=chief.value.observation_id or chief.id, episode_id=chief.value.episode_id or chief.id,
-            time_context=chief.value.time_context)
+        evidence = evidence or EvidenceIndex.from_case(case, self.knowledge)
+        return next((r for r in evidence.entries if chief and r.id == chief.id), None)
 
     def refresh_hypotheses(self, state, *, force=False):
-        if state.case.fixed_diagnosis or not state.differential.initialized:
-            return
-        state.case.select_primary()
-        evidence, chief = EvidenceIndex.from_case(state.case), self.anchor(state.case)
-        signature = evidence.fingerprint + (chief.model_dump_json() if chief else "")
-        differential = state.differential
-        if not force and signature == differential.last_fingerprint:
-            return
-        if signature != differential.last_fingerprint and differential.last_scored_revision == differential.clinical_revision:
-            differential.clinical_revision += 1
-        snapshot = self.evaluate(evidence, chief, previous=None if force else differential.pattern_matches)
-        differential.hypotheses = list(snapshot.hypotheses)
-        differential.pattern_matches = snapshot.pattern_matches
-        differential.association_matches = list(snapshot.association_matches)
-        differential.pattern_evaluations += snapshot.evaluations
-        differential.refreshes += 1
-        differential.last_fingerprint = signature
-        differential.last_scored_revision = differential.clinical_revision
+        key = (state.case.revision, state.case.chief_fact_id)
+        if not force and self._key == key and self._snapshot is not None:
+            return self._snapshot
+        evidence = EvidenceIndex.from_case(state.case, self.knowledge)
+        previous = self._snapshot.pattern_matches if self._snapshot and not force else None
+        self._snapshot = self.evaluate(evidence, self.anchor(state.case, evidence), previous=previous)
+        self._key = key
+        return self._snapshot
+
+    def clear(self):
+        self._key, self._snapshot = None, None
 
     def evaluate_delta(self, snapshot, evidence_patch):
-        changed = [item for _, item in evidence_patch]
+        changed = [item for item in evidence_patch]
         replaced = {item.id for item in changed}
-        changed += [item for _, item in snapshot.evidence.raw if item.id in replaced]
+        changed += [item for item in snapshot.evidence.raw if item.id in replaced]
         affected = set()
         for item in changed:
-            value = item.value
-            if value is None:
-                continue
-            for target in value.concept_ids:
+            value = item
+            for target in (value.target,):
                 if value.kind == "context":
                     affected.update(p.disease_id for p in self.knowledge.associations_by_context.get(
                         (target, value.subject, value.time_context), []))
@@ -80,25 +109,25 @@ class ClinicalReasoner:
         evaluations = 0
         evaluated, associations, by_disease, diseases = {}, [], {}, set()
         present_targets = {c for group in groups.values() for item in group["base"]
-                           if item.value.status == "present" for c in item.value.concept_ids}
-        chiefs = {(chief_anchor.observation_id, chief_anchor.episode_id, chief_anchor.target_id,
+                           if item.status == "present" for c in (item.target,)}
+        chiefs = {(chief_anchor.observation_id, chief_anchor.episode_id, chief_anchor.target,
                    chief_anchor.time_context)} if chief_anchor else set()
         chief_episodes = {episode for _, episode, _, _ in chiefs}
         context_index = {}
         for item in contexts:
-            for concept in item.value.concept_ids:
-                key = (concept, item.value.subject, item.value.time_context)
+            for concept in (item.target,):
+                key = (concept, item.subject, item.time_context)
                 context_index.setdefault(key, []).append(item)
         applicability_cache = {}
         for (observation, episode, timing), group in groups.items():
-            targets = {c for item in group["base"] for c in item.value.concept_ids}
+            targets = {c for item in group["base"] for c in (item.target,)}
             group_signature = fingerprint(group["base"] + group["attributes"])
             for target in sorted(targets):
-                bases = [item for item in group["base"] if target in item.value.concept_ids]
-                if any(item.value.status in {"present", "uncertain"} for item in bases):
+                bases = [item for item in group["base"] if target in (item.target,)]
+                if any(item.status in {"present", "uncertain"} for item in bases):
                     diseases.update(p.disease_id for p in self.knowledge.get_patterns_by_target(target))
-                statuses = {item.value.status for item in bases}
-                status = next(iter(statuses)) if len(statuses) == 1 and all(len(item.value.concept_ids) == 1 for item in bases) else "uncertain"
+                statuses = {item.status for item in bases}
+                status = next(iter(statuses)) if len(statuses) == 1 and all(len((item.target,)) == 1 for item in bases) else "uncertain"
                 for pattern in self.knowledge.get_target_patterns(target):
                     key = json.dumps([pattern, observation, episode, timing], separators=(",", ":"))
                     result = previous.get(key)
@@ -110,7 +139,6 @@ class ClinicalReasoner:
                         result = PatternMatch(pattern_id=pattern, observation_id=observation, episode_id=episode,
                             time_context=timing, fingerprint=group_signature,
                             status="contradicted" if contradicted else "incomplete" if unresolved else "matched",
-                            matched=[fid for fid, check, _ in checks if check == "matched"],
                             contradicted=contradicted, unresolved=unresolved,
                             evidence_ids=sorted({ref for _, _, refs in checks for ref in refs} | {i.id for i in bases}))
                         evaluations += 1
@@ -135,46 +163,39 @@ class ClinicalReasoner:
                 if result.status == "matched" and applies == "matched":
                     key = (result.observation_id, result.episode_id, profile.target, result.time_context)
                     complete.setdefault(key, []).append((profile, result, refs))
-            contributions, covered, incomparable = {}, set(), []
+            contributions, covered = {}, set()
             chief_contribution = None
             for (observation, episode, target, timing), matches in complete.items():
                 maximal = [item for item in matches if not any(
                     self.knowledge.pattern_refines(other[0].id, item[0].id) for other in matches)]
-                if len(maximal) > 1:
-                    incomparable.append(sorted(p.association_id for p, _, _ in maximal))
                 for profile, result, context_refs in sorted(maximal, key=lambda item: (-item[0].score, item[0].association_id)):
                     is_chief = (observation, episode, target, timing) in chiefs
                     if is_chief and profile.score > 0:
                         covered.add((observation, episode, target))
                     if is_chief or target not in contributions or profile.score > contributions[target].score:
-                        matched_ids = {p.association_id for p, _, _ in matches}
-                        contribution = ScoreContribution(
-                            association_id=profile.association_id, pattern_id=profile.id, target_id=target,
-                            score=profile.score, evidence_ids=sorted(set(result.evidence_ids) | set(context_refs)),
-                            weight_basis=profile.weight_basis, policy_version=self.knowledge.policy.version,
-                            feature_deltas=[c for c in self.knowledge.get_feature_contributions(profile.association_id)
-                                            if c.baseline_association in matched_ids])
+                        contribution = _Contribution(score=profile.score,
+                            evidence_ids=sorted(set(result.evidence_ids) | set(context_refs)))
                         if is_chief:
                             if chief_contribution is None or contribution.score > chief_contribution.score:
                                 chief_contribution = contribution
-                        elif not chief_anchor or target != chief_anchor.target_id:
+                        elif not chief_anchor or target != chief_anchor.target:
                             contributions[target] = contribution
             penalties, negative_refs = {}, set()
             for profile, result, applies, _, bases in rows:
                 features = self.knowledge.get_pattern_features(profile.id)
                 if (applies != "matched" or result.status != "contradicted" or profile.target in present_targets
                         or result.episode_id not in chief_episodes or not all(f.status == "present" and not f.expected for f in features)
-                        or not bases or not all(i.value.status == "absent" and i.value.time_context == "current"
-                                               and i.value.polarity_scope == "general" for i in bases)):
+                        or not bases or not all(i.status == "absent" and i.time_context == "current"
+                                               and i.polarity_scope == "general" for i in bases)):
                     continue
                 penalty = policy.absence_penalties.get(profile.typicality, 0)
                 if penalty:
                     penalties[profile.target] = max(penalties.get(profile.target, 0), min(policy.per_target_cap, penalty))
                     negative_refs.update(i.id for i in bases)
             supporting = {item["id"]: item["type"] for item in self.knowledge.get_supporting_context(disease)}
-            context_refs = [item.id for item in contexts if item.value.status == "present" and any(
-                concept in supporting and (supporting[concept] == "family_history") == (item.value.subject == "family")
-                for concept in item.value.concept_ids)]
+            context_refs = [item.id for item in contexts if item.status == "present" and any(
+                concept in supporting and (supporting[concept] == "family_history") == (item.subject == "family")
+                for concept in (item.target,))]
             context_bonus = int(bool(context_refs))
             selected = list(contributions.values())
             auxiliary = sum(c.score for c in selected)
@@ -182,19 +203,14 @@ class ClinicalReasoner:
             if chief_contribution:
                 selected.append(chief_contribution)
             hypotheses.append(Hypothesis(disease_id=disease,
-                pattern_ids=sorted({p.id for p, *_ in rows}), association_ids=sorted({p.association_id for p, *_ in rows}),
-                feature_ids=sorted({f.id for p, *_ in rows for f in self.knowledge.get_pattern_features(p.id)}),
                 evidence_score=chief_score + min(policy.supporting_cap, auxiliary), chief_score=chief_score,
-                supporting_raw=auxiliary, supporting_score=min(policy.supporting_cap, auxiliary),
-                context_bonus=context_bonus, contributions=selected,
+                context_bonus=context_bonus,
                 contradiction_penalty=min(policy.total_cap, sum(penalties.values())),
                 contradiction_ids=sorted(negative_refs), chief_coverage=len(covered) / len(chiefs) if chiefs else 0,
                 unresolved_conditions=sorted({fid for _, result, _, _, _ in rows for fid in result.unresolved}
                     | {condition.concept_id for p, _, applies, _, _ in rows if applies == "unknown" for condition in p.applicability}),
                 contradicted_conditions=sorted({fid for _, result, _, _, _ in rows for fid in result.contradicted}
                     | {condition.concept_id for p, _, applies, _, _ in rows if applies == "contradicted" for condition in p.applicability}),
-                potential_patterns=sorted({p.id for p, r, a, _, _ in rows if r.status == "incomplete" or a == "unknown"}),
-                incomparable_matches=incomparable,
                 evidence_ids=sorted({ref for c in selected if c.score > 0 for ref in c.evidence_ids} | set(context_refs))))
         hypotheses.sort(key=lambda h: (-h.score, -h.chief_score, len(h.contradicted_conditions), h.disease_id))
         return ReasoningSnapshot(evidence_index, chief_anchor, policy, tuple(hypotheses), evaluated,
@@ -205,7 +221,7 @@ class ClinicalReasoner:
         refs, unknown = [], False
         for condition in conditions:
             records = index.get((condition.concept_id, condition.subject, condition.time_context), [])
-            statuses = {item.value.status for item in records}
+            statuses = {item.status for item in records}
             if len(statuses) == 1 and statuses <= {"present", "absent"} and statuses != {condition.status}:
                 return "contradicted", [i.id for i in records]
             if statuses != {condition.status}:
@@ -220,12 +236,12 @@ class ClinicalReasoner:
                           "matched" if status == feature.status else "contradicted")
             refs.extend(item.id for item in bases)
         if feature.expected:
-            records = [item for item in attributes if item.value.attribute_id == feature.attribute
-                       and item.value.concept_ids == [target]]
+            records = [item for item in attributes if item.attribute == feature.attribute
+                       and (item.target,) == (target,)]
             expected = feature.expected
             if expected.kind in {"quantity", "interval"}:
-                outcomes = [(numeric_match(expected, item.value.measurement), item.id) for item in records
-                            if item.value.status == "present" and item.value.measurement]
+                outcomes = [(numeric_match(expected, item.measurement), item.id) for item in records
+                            if item.status == "present" and item.measurement]
                 states = {result for result, _ in outcomes}
                 result = next(iter(states)) if len(states) == 1 else "unknown"
                 refs.extend(ref for result, ref in outcomes if result == "matched")
@@ -234,10 +250,10 @@ class ClinicalReasoner:
                 outcomes = []
                 for concept in concepts:
                     matching = [item for item in records if any(self.knowledge.value_matches(v, concept,
-                                hierarchy=expected.match == "subsumption") for v in item.value.values)]
-                    states = {item.value.status for item in matching}
+                                hierarchy=expected.match == "subsumption") for v in item.values)]
+                    states = {item.status for item in matching}
                     outcomes.append("matched" if states == {"present"} else "contradicted" if states == {"absent"} else "unknown")
-                    refs.extend(item.id for item in matching if item.value.status == "present")
+                    refs.extend(item.id for item in matching if item.status == "present")
                 if expected.kind == "concept_set" and expected.selection == "any_of":
                     result = "matched" if "matched" in outcomes else "contradicted" if set(outcomes) == {"contradicted"} else "unknown"
                 else:
@@ -251,48 +267,31 @@ class ClinicalReasoner:
 
 
     @staticmethod
-    def supported_hypotheses(state):
-        return [h for h in state.differential.hypotheses if h.evidence_score > 0 and h.score > 0 and h.chief_coverage == 1]
+    def supported_hypotheses(snapshot):
+        return [h for h in snapshot.hypotheses if h.evidence_score > 0 and h.score > 0 and h.chief_coverage == 1]
 
     def select_diagnosis(self, state):
-        fixed = state.case.fixed_diagnosis
-        if fixed:
-            state.case.diagnosis_kind, state.case.diagnosis = fixed.kind, fixed.name
-            state.case.diagnosis_evidence = list(fixed.evidence_ids)
-            state.differential.selected_id = fixed.disease_id
+        if state.case.diagnosis:
             return
-        state.differential.initialized = True
-        self.refresh_hypotheses(state)
-        if state.interaction.termination:
-            return
-        supported = self.supported_hypotheses(state)
-        if not supported:
-            state.differential.selected_id = None
+        supported = self.supported_hypotheses(self.refresh_hypotheses(state))
+        if supported:
+            selected = supported[0]
+            state.case.diagnosis = Diagnosis(kind='disease', name=self.knowledge.term(selected.disease_id),
+                evidence_ids=tuple(sorted(set(selected.evidence_ids + selected.contradiction_ids))))
+        else:
             chief = state.case.chief(confirmed=True)
             if chief is None:
-                state.case.diagnosis = None
-                state.case.diagnosis_kind = None
-                state.case.diagnosis_evidence = []
-                state.stop("failed", "no_supported_diagnosis")
-                return
-            concepts = chief.value.concept_ids
-            state.case.diagnosis = self.knowledge.label(concepts[0], language="en")
-            state.case.diagnosis_kind = "symptom"
-            state.case.diagnosis_evidence = [chief.id]
-            return
-        chosen = supported[0]
-        state.differential.selected_id = chosen.disease_id
-        state.case.diagnosis = self.knowledge.label(chosen.disease_id, language="en")
-        state.case.diagnosis_kind = "disease"
-        state.case.diagnosis_evidence = sorted(set(chosen.evidence_ids + chosen.contradiction_ids))
+                state.stop('failed', 'no_supported_diagnosis')
+            else:
+                state.case.diagnosis = Diagnosis(kind='symptom', name=chief.target, evidence_ids=(chief.id,))
 
 
 @dataclass(frozen=True)
 class ReasoningSnapshot:
     evidence: EvidenceIndex
-    chief: ChiefAnchor | None
+    chief: object
     policy: object
-    hypotheses: tuple[Hypothesis, ...]
-    pattern_matches: dict[str, PatternMatch]
-    association_matches: tuple[AssociationMatch, ...]
+    hypotheses: tuple
+    pattern_matches: dict
+    association_matches: tuple
     evaluations: int

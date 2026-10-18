@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=7ee06ec410f8dbe3a6c1c2e2575e05997e5e440b dirty=true updated=2026-10-18T08:13:55.433157+00:00
-/goal phase=current id=ROOT.FLOW31 state=complete action="Expose turn-by-turn object methods typed data transfers and state changes in the Test frontend"
+/checkpoint revision=fe235c160a49fda900438ab3567e50a8de25e9ec dirty=true updated=2026-10-18T11:45:44.205551+00:00
+/goal phase=current id=ROOT.D44 state=complete action="Coordinate D44 lifecycle refactoring observer integration and isolated acceptance"
+/goal phase=history id=ROOT.FLOW31 state=complete action="Expose turn-by-turn object methods typed data transfers and state changes in the Test frontend"
 /goal phase=history id=ROOT.D43 state=complete action="Repair saved C03 input failures and verify explicit turn-zero interpretation"
 /goal phase=history id=ROOT.D42 state=complete action="Coordinate the local common complaint rebuild and D41 consumer acceptance under D42"
 /goal phase=history id=ROOT.D41 state=complete action="Coordinate D41 DB normalization canonical consumers offline acceptance and isolated packaging"
@@ -24,7 +25,7 @@
 /goal phase=history id=ROOT.GUIDELINES30 state=complete action="Implement reusable disease-to-guideline mapping with exact source evidence and bounded NOVA semantic review"
 /goal phase=history id=ROOT.CHIEF29 state=complete action="Coordinate case-independent chief mapping evaluator correction offline acceptance and the D29 archive handoff"
 /goal phase=history id=ROOT.INTEGRATE36 state=complete action="Verify D36 with concurrent Education changes in the D37 standalone archive"
-/goal phase=next id=ROOT.NOVA27 state=deferred action="Run one separately authorized D43 archive case against real NOVA models within a confirmed shared request and credit ceiling"
+/goal phase=next id=ROOT.NOVA27 state=deferred action="Run one separately authorized D44 archive case against real NOVA models within a confirmed shared request and credit ceiling"
 /goal phase=history id=ROOT.CONTEXT28 state=complete action="Coordinate D28 context failure recovery offline verification and a standalone submission archive handoff"
 /goal phase=history id=ROOT.TEST27 state=complete action="Implement and verify the D27 isolated public-sample evaluator and NOVA development-chat bridge"
 /goal phase=history id=ROOT.READINESS26 state=complete action="Complete D26 submission readiness with Education pass offline verification and an independent runtime ZIP"
@@ -352,4 +353,11 @@
 /evidence id=ROOT.FLOW31.E9 class=runtime result=pass source=Tmp/test-flow-2026-10-18/http.json observed="Serve the loopback entrypoint assets and four refreshed saved reports with HTTP 200 from the project web container; observe an online worker fourteen saved runs and no active test"
 /scope id=ROOT.FLOW31.S1 state=in action="Own Test-only observation the object-flow frontend offline verification local web startup report refresh and root documentation"
 /scope id=ROOT.FLOW31.S2 state=out action="Exclude submission data and original asset edits the Python heap inner hypothetical scoring loops real browser downloads external models commits and deployment"
-/handoff state=ready action="Inspect the completed local object-flow report and retain ROOT.NOVA27 as deferred until exact external execution authorization"
+/accept id=ROOT.D44.A1 state=pass action="Coordinate typed runtime observer artifact and custody owners under D44" evidence=ROOT.D44.E1
+/accept id=ROOT.D44.A2 state=pass action="Verify Test observation and isolated original SDK completion" evidence=ROOT.D44.E2,ROOT.D44.E3
+/evidence id=ROOT.D44.E1 class=semantic result=pass source=data/provenance/state-lifecycle-d44-2026-10-18.json observed="Align root contracts PRD D44 selection submission lifecycle whitepaper maintained rule index and child state custody with the completed slice"
+/evidence id=ROOT.D44.E2 class=runtime result=pass source=Tmp/d44-2026-10-18/evidence/isolated/observer/verification.json observed="Pass fourteen observer parity and reconstruction scenarios across 1282 node updates with nonfatal recording failure; also pass forty-four local evaluator and web checks and the legacy plus D44 viewer DOM double"
+/evidence id=ROOT.D44.E3 class=runtime result=pass source=Tmp/d44-2026-10-18/http-final/result.json observed="Complete the original SDK and unchanged entrypoint from the final ZIP on the internal Docker network with ready SOAP completed receipt and zero process exit in forty-one turns and forty Doctor calls without sample files or development key in the agent"
+/evidence id=ROOT.D44.E4 class=external_service result=not_run source=data/provenance/state-lifecycle-d44-2026-10-18.json observed="Leave fresh model quality real NOVA clinical accuracy official evaluation commits publication deployment and browser visual rendering unrun"
+/scope id=ROOT.D44.S1 state=in action="Own D44 coordination Test observer viewer isolated packaging and documentation integration; defer runtime and custody detail to submission and data states"
+/handoff state=blocked action="Retain completed D44 offline acceptance and await separate exact authorization for ROOT.NOVA27 on the pinned D44 archive"

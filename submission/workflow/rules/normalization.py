@@ -1,6 +1,6 @@
 import json
 
-from knowledge.conditions import ExpectedValue
+from ..state.models import ObservedNumber
 
 
 def strict_json(content):
@@ -52,6 +52,9 @@ def concept_rank(knowledge, terms, kinds):
 
 
 def candidate_contracts(knowledge, statement, question, *, expanded=False, complete=False):
+    qtarget = next((v for kind in ('Symptom', 'ContextFactor', 'ExamFinding')
+                    if question and (v := knowledge.term_id(question.target, kind))), None)
+    qattribute = knowledge.term_id(question.attribute, 'FindingAttribute') if question and question.attribute else None
     if statement.assertion_scope == "domain" or statement.record_category == "patient_context":
         return []
     if statement.record_category == "previous_care" and not any(
@@ -62,7 +65,7 @@ def candidate_contracts(knowledge, statement, question, *, expanded=False, compl
         for attribute in ([term] if term.startswith(("urn:", "http://", "https://")) else knowledge.resolve_concept(term))
         if knowledge.has_type(attribute, "FindingAttribute")}
     if (statement.measurement and statement.record_category in {"course", "recurrence", "previous_care"}
-            and not exact_attributes and not (question and question.attribute_id)):
+            and not exact_attributes and not (question and qattribute)):
         return []
     is_exam = bool(question and question.kind == "EXAM")
     history = statement.record_category in {"medical_history", "medication", "allergy", "surgery",
@@ -70,15 +73,17 @@ def candidate_contracts(knowledge, statement, question, *, expanded=False, compl
     kinds = ("ExamFinding",) if is_exam else (("ContextFactor", "Symptom") if history else ("Symptom", "ContextFactor"))
     terms = [*statement.target_terms, statement.quote]
     ranked = concept_rank(knowledge, terms, kinds)
-    direct = bool(question and question.target_id and statement.subject == question.subject
-                  and (not statement.target_terms or question.target_id in ranked[:8]))
-    if direct and any(knowledge.has_type(question.target_id, kind) for kind in kinds):
-        ranked = [question.target_id, *ranked]
-    if complete:
-        ranked.extend(c["id"] for c in knowledge.iter_concepts() if c["kind"] in kinds)
+    exact_targets = {target for term in statement.target_terms for target in knowledge.resolve_concept(term)
+                     if any(knowledge.has_type(target, kind) for kind in ('Symptom', 'ExamFinding', 'ContextFactor'))}
+    if exact_targets:
+        ranked = [target for target in ranked if target in exact_targets]
+    direct = bool(question and qtarget and statement.subject == question.subject
+                  and (not statement.target_terms or qtarget in ranked[:8]))
+    if direct and any(knowledge.has_type(qtarget, kind) for kind in kinds):
+        ranked = [qtarget, *ranked]
     feature = bool(statement.focus == "attribute" or statement.measurement or direct and (
-        question.attribute_id or question.record_category in {"onset", "course", "recurrence", "previous_care"}
-        and statement.record_category == question.record_category))
+        qattribute or question.category in {"onset", "course", "recurrence", "previous_care"}
+        and statement.record_category == question.category))
     attribute_rank = concept_rank(knowledge, statement.attribute_terms, ("FindingAttribute",)) if feature else []
     value_rank = concept_rank(knowledge, [*statement.value_terms, statement.quote], ("AttributeValue",)) if feature else []
     result = []
@@ -97,8 +102,8 @@ def candidate_contracts(knowledge, statement, question, *, expanded=False, compl
         if feature:
             allowed = knowledge.get_symptom_attributes(target)
             matched = [a for a in attribute_rank if a in allowed]
-            if direct and question.attribute_id:
-                matched.insert(0, question.attribute_id)
+            if direct and qattribute:
+                matched.insert(0, qattribute)
             if statement.measurement:
                 matched = [a for a in matched if statement.measurement.unit in knowledge.numeric_units(target, a)]
                 if not matched:
@@ -110,14 +115,14 @@ def candidate_contracts(knowledge, statement, question, *, expanded=False, compl
                 values = knowledge.get_attribute_values(attribute)
                 ordered = [v for v in value_rank if v in values]
                 ordered = list(dict.fromkeys([*ordered, *values]))
-                attrs.append({"id": attribute, "label": knowledge.label(attribute, language="en"),
-                    "values": [{"id": v, "label": knowledge.label(v, language="en")} for v in ordered[:32 if expanded else 8]],
+                attrs.append({"id": knowledge.term(attribute),
+                    "values": [{"id": knowledge.term(v)} for v in ordered[:32 if expanded else 8]],
                     "units": knowledge.numeric_units(target, attribute)})
                 if len(attrs) >= (4 if expanded else 2):
                     break
             if not attrs:
                 continue
-        result.append({"id": target, "label": knowledge.label(target, language="en"),
+        result.append({"id": knowledge.term(target),
                        "kind": next(k for k in kinds if knowledge.has_type(target, k)), "attributes": attrs})
         if len(result) >= (32 if expanded else 8):
             break
@@ -142,7 +147,10 @@ def numeric_schema(units=None):
 def measurement_value(measured):
     keys = {"kind", "value", "unit", "operator", "approximate"} if measured.kind == "quantity" else {
         "kind", "lower", "upper", "unit", "upper_unit", "lower_inclusive", "upper_inclusive", "approximate"}
-    return {key: value for key, value in measured.model_dump(exclude_none=True).items() if key in keys}
+    value = {key: value for key, value in measured.model_dump(exclude_none=True).items() if key in keys}
+    if measured.kind == 'quantity':
+        value['operator'] = 'eq'
+    return value
 
 
 def mapping_schema(contracts):
@@ -205,7 +213,7 @@ def validate_mapping(mapping, statement, contracts):
             required = {"kind", "value", "unit", "operator"} if selected["kind"] == "quantity" else {"kind", "unit"}
             if not required <= set(selected):
                 raise ValueError("missing_numeric_fields")
-            measurement = ExpectedValue.model_validate(selected)
+            measurement = ObservedNumber.model_validate(selected)
             if (measurement.unit not in spec["units"] or measurement.upper_unit not in {None, *spec["units"]}
                     or measurement.kind == "quantity" and measurement.operator != "eq"
                     or statement.measurement is None or measurement_value(measurement) != measurement_value(statement.measurement)
@@ -241,3 +249,45 @@ def force_mapping(statement, contracts):
                 selected = attribute["values"][0]["id"]
                 return {target["id"]: {attribute["id"]: selected if sign == "(+)" else {selected: sign}}}
     return {}
+
+
+def exact_mapping(knowledge, statement, contracts, question):
+    if statement_outcome(statement) or not contracts:
+        return None
+    terms = statement.target_terms
+    exact = {knowledge.term(ident) for term in terms for ident in knowledge.resolve_concept(term)
+             if any(knowledge.has_type(ident, kind) for kind in ('Symptom', 'ExamFinding', 'ContextFactor'))}
+    if question and question.target and statement.subject == question.subject and not terms:
+        exact.add(question.target)
+    targets = [c for c in contracts if c['id'] in exact]
+    if len(targets) != 1:
+        return None
+    target = targets[0]
+    sign = '(+)' if statement.assertion == 'present' else '(-)'
+    if not target['attributes']:
+        return {target['id']: sign}
+    attributes = {knowledge.term(ident) for term in statement.attribute_terms for ident in knowledge.resolve_concept(term)
+                  if knowledge.has_type(ident, 'FindingAttribute')}
+    if question and question.attribute and not statement.attribute_terms:
+        attributes.add(question.attribute)
+    choices = [a for a in target['attributes'] if a['id'] in attributes]
+    if len(choices) != 1:
+        return None
+    attribute = choices[0]
+    if statement.measurement:
+        mapping = {target['id']: {attribute['id']: measurement_value(statement.measurement)}}
+    else:
+        aid = knowledge.term_id(attribute['id'], 'FindingAttribute')
+        allowed = set(knowledge.get_attribute_values(aid))
+        selected = {knowledge.term(ident) for term in statement.value_terms for ident in knowledge.resolve_concept(term)
+                    if ident in allowed}
+        if not selected:
+            return None
+        values = sorted(selected)
+        value = values[0] if len(values) == 1 and sign == '(+)' else dict.fromkeys(values, sign)
+        mapping = {target['id']: {attribute['id']: value}}
+    try:
+        validate_mapping(mapping, statement, [target])
+        return mapping
+    except ValueError:
+        return None

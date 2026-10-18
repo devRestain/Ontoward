@@ -96,12 +96,12 @@ class ScriptedModels:
             nonclinical = text.strip().rstrip('.!?') in {'안녕하세요', '알겠습니다', '감사합니다'}
             row = {'quote': text, 'role': 'unknown' if unknown else 'nonclinical' if nonclinical else 'clinical',
                    'assertion': 'unknown' if unknown or nonclinical else 'absent' if text.strip() in {'아니요', '없어요'} else 'present',
-                   'target_terms': [text[:80]], 'subject': question['subject'] if question else 'patient',
-                   'time_context': question['time_context'] if question else 'current'}
-            if question and question['target_id']:
-                row['target_terms'] = [question['target_id']]
-            if question and question['attribute_id']:
-                row['attribute_terms'] = [question['attribute_id']]
+                   'target_terms': [text[:80]], 'subject': question.get('subject','patient') if question else 'patient',
+                   'time_context': question.get('time_context','unspecified') if question else 'current'}
+            if question and question.get('target', question.get('target_id')):
+                row['target_terms'] = [question.get('target', question.get('target_id'))]
+            if question and question.get('attribute', question.get('attribute_id')):
+                row['attribute_terms'] = [question.get('attribute', question.get('attribute_id'))]
             return completion(json.dumps({'statements': [row]}, ensure_ascii=False))
         if payload.get('task') == 'input_mapping':
             mappings = []
@@ -125,14 +125,14 @@ class ScriptedModels:
             return self.wire_completion(self.parse_chief(payload))
         facts = []
         if payload['parser_pass'] != 'expansion':
-            concept = question['target_id']
+            concept = question.get('target', question.get('target_id'))
             if concept:
-                attribute = question['attribute_id'] if question else None
+                attribute = question.get('attribute', question.get('attribute_id')) if question else None
                 purpose = question['purpose'] if question else 'chief'
                 value = {'kind': 'context' if purpose == 'context' else 'attribute' if attribute else 'symptom',
                          'text': text, 'status': 'present' if purpose == 'chief' else 'unknown',
-                         'concept_ids': [concept], 'subject': question['subject'] if question else 'patient',
-                         'time_context': question['time_context'] if question else 'current'}
+                         'concept_ids': [concept], 'subject': question.get('subject','patient') if question else 'patient',
+                         'time_context': question.get('time_context','unspecified') if question else 'current'}
                 if purpose != 'context':
                     value.update(observation_id=(question['observation_id'] if question else None) or 'sample-chief',
                                  episode_id=(question['episode_id'] if question else None) or 'current')

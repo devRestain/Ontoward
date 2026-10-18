@@ -59,7 +59,7 @@ sh Test/web.sh
 리포트 왼쪽의 내부 세션·턴을 선택하고 다음 내용을 확인한다.
 
 - **정보 흐름:** 기본 화면이다. 그래프 노드를 위에서 아래로 따라가며 **내부 호출과 전달**을 펼친다. 객체·메서드 이름을 누르면 오른쪽에서 호출자, 인스턴스 경로, 실제 인자와 자료형, 반환값, 직접 바뀐 인자와 상태 경로를 본다. `return None`인 메서드도 상태에 기록한 결과를 따로 표시한다. SDK 행은 실제 전송 body와 응답을 보여주며 JSON 문자열은 원문과 해독한 구조를 함께 펼칠 수 있다. 그래프 사이 화살표는 `WorkflowState → 검증된 dict → 다음 노드` 경계를 나타낸다.
-- **객체 탐색:** `CaseState`·`SessionContext`·`DifferentialState`·`QuestionPlan`·`InteractionState`를 고르고 같은 객체의 턴 이전·이후 트리와 필드별 변경을 비교한다. 변경 경로·값을 검색하거나 객체가 바뀐 턴 번호를 눌러 이동한다. 파서 `ParseResult`, `CanonicalSnapshot`, `EvidenceIndex` 등 임시 반환 데이터는 해당 턴의 반환 객체와 정보 흐름에서 확인한다. 트리는 값 전체를 보존하며 펼칠 때 하위 항목을 만든다.
+- **객체 탐색:** D44의 `CaseState`·`InterviewState`·`SessionContext`·`TurnContext`를 고르고 같은 객체의 턴 이전·이후 트리와 필드별 변경을 비교한다. 변경 경로·값을 검색하거나 객체가 바뀐 턴 번호를 눌러 이동한다. 지역 `InputResult`, `ModelResult`, `EvidenceIndex` 등 임시 반환 데이터는 해당 턴의 반환 객체와 정보 흐름에서 확인한다. 트리는 값 전체를 보존하며 펼칠 때 하위 항목을 만든다.
 - **대화:** 실제 Doctor 발화·환자 답변·진찰 요청과 결과·거절·전달 미확인 요청.
 - **Note 상태:** 선택 구간의 마지막 관측 상태에서 S·O·A·P의 15개 필드에 저장된 기록과 별도 diagnosis. 기록의 완료 상태(`unasked`·`done`)와 임상 값(`present`·`absent`·`uncertain`·`unknown`), 이번 구간의 추가·변경, 개념 라벨·ID·취득 경로·원문 출처를 확인한다. 값이 없는 기록과 빈 필드도 표시한다.
 - **상태 변화:** 턴과 호출 예산, 추가·변경된 사실, 선택한 행동, 질문 계획, 해석 결과와 수용·거절, 노드별 변경분과 전체 상태.
@@ -75,6 +75,8 @@ sh Test/web.sh
 새 수집 형식은 주요 실행 객체, 파서 단계, canonical snapshot, evidence index, 일부 DB dictionary 조회와 SDK 경계를 기록한다. 가상 분기별 내부 점수 계산 루프와 Python heap 전체는 범위 밖이다. 메서드 입력으로 받은 상태와 실제 쓰기 결과를 구분하며, 특정 필드를 읽었다거나 별개 메서드의 같은 값이 같은 Python 인스턴스라는 추정은 하지 않는다. 내부 메서드 기록이 없는 과거 실행은 그래프 노드·SDK 전송·상태 복원만 제공하고 미수집 안내를 표시한다. 원본 `submission/` 파일을 수정하지 않고 Test 메모리 래퍼를 실행 후 복원한다.
 
 웹 서버는 기존 Test 이미지의 Python 표준 라이브러리를 사용하고 프론트엔드는 별도 패키지가 필요 없다. 웹 컨테이너는 출력 폴더만 읽고 쓰며, 작업 요청을 받은 호스트 셸이 기존 실행기를 호출한다. 웹 컨테이너에 Docker 소켓·개발 키·증례 원본 마운트를 전달하지 않는다. 웹 포트는 localhost에만 연결한다. 계정·DB·대기열·자동 재개는 두지 않는다.
+
+현재 D44 로그에서는 typed facts·note·최종 진단·계획과 일시적인 제출 작업을 표시한다. 과거 다섯 객체 형식의 저장 로그는 해당 기록대로 읽는다. 처리된 응답과 모델 교환·복구는 그래프 상태 대신 관측 event에서 확인한다. SOAP는 실제 제출 작업과 시뮬레이터 수신 결과를 구분하며 존재하지 않는 필드를 추정하지 않는다.
 
 ## LangSmith에서 검토하는 방법
 
@@ -170,7 +172,7 @@ ready 이전에는 증례를 공개하지 않고 준비는 10분, ready 이후 �
 
 에이전트 종료 코드 0과 로컬 DIAGNOSE `completed` 영수증을 함께 확인해야 상담 성공이다. 빈/잘못된 SOAP, 비어 있지 않은 Gateway 응답 누락, 실패 프로세스나 증거 누락은 성공으로 표시하지 않는다. 웹에서 실행이 종료되어 리포트를 받는 것과 상담 성공은 각각 확인한다. scripted 응답으로 확정할 근거가 없으면 `no_supported_diagnosis`와 실패 결과를 그대로 보여준다.
 
-`nonempty_gateway_responses`와 SDK의 `doctor_successes`는 응답 문자열의 존재만 뜻하며 빈 사실 JSON도 포함한다. 실제 수용된 연결은 상태의 `model_history[].parser_result.linked_chief_facts`에서 확인한다. Test 부트스트랩은 원본 진입점을 실행하면서 메모리에서만 그래프와 SDK 경계를 감싸고 원래 함수를 한 번 호출한다. 원본 소스·질문·라우팅·점수·재시도·진단·SOAP는 바꾸지 않으며, 로그 쓰기 실패가 행동을 재실행하지 않는다. 비교용으로 `TEST_TRACE=0 sh Test/run.sh C10 scripted`를 실행하면 관측을 끌 수 있다. 각 실행의 trace_status는 complete·incomplete·not_collected로 구분한다.
+`nonempty_gateway_responses`와 SDK의 `doctor_successes`는 응답 문자열의 존재만 뜻하며 빈 사실 JSON도 포함한다. 실제 수용된 연결은 D44의 `case.facts`, 입력 수용 audit event와 해석 함수 반환값에서 확인한다. 과거 로그의 model_history는 당시 저장 자료다. Test 부트스트랩은 원본 진입점을 실행하면서 메모리에서만 그래프와 SDK 경계를 감싸고 원래 함수를 한 번 호출한다. 원본 소스·질문·라우팅·점수·재시도·진단·SOAP는 바꾸지 않으며, 로그 쓰기 실패가 행동을 재실행하지 않는다. 비교용으로 `TEST_TRACE=0 sh Test/run.sh C10 scripted`를 실행하면 관측을 끌 수 있다. 각 실행의 trace_status는 complete·incomplete·not_collected로 구분한다.
 
 공식 점수·독립 임상 검증·실제 NOVA 연결 품질은 이 오프라인 결과로 확인할 수 없다. 재현 근거는 보존된 `assets/nova-devkit/nova_local.py`, `assets/nova-starter/nova_sdk.py`, `assets/nova-competition-2026/`와 [D27](../DECISION_STATE.md#D27)·[D29](../DECISION_STATE.md#D29)·[D31](../DECISION_STATE.md#D31)다.
 

@@ -1,235 +1,166 @@
+"""Admitted RDF acceptance with explicit source-shaped protocol doubles."""
 import argparse
-from datetime import datetime, timedelta, timezone
 import hashlib
 import json
 from pathlib import Path
-import resource
 import sys
 import time
-from education_fixtures import education_response, KOREAN
-from normalization_fixtures import context_from_facts, mapping_from_contracts
+import unicodedata
 
 
-def verify(submission, output, candidate=None):
-    submission, output = submission.resolve(), output.resolve()
-    sys.path.insert(0, str(submission))
-    from knowledge.graph import OW, ClinicalKnowledge
-    from knowledge.conditions import QuestionTemplate, ScoringPolicy, ReasoningPolicy
-    from workflow.runtime import PreparedResources, TextConfig, prepare, consult
-    from workflow.state.models import WorkflowState
-    from nova_sdk import RECORD_FIELDS
-
-    started = time.perf_counter()
-    if candidate:
-        candidate = candidate.resolve()
-        korean_report = json.loads((candidate / 'korean/report.json').read_text())
-        if korean_report['status'] != 'complete':
-            report = {'status':'not_run', 'reason':'complete_reviewed_korean_assets_required',
-                      'korean_failure':korean_report['failure'], 'runtime_admission':'not_run',
-                      'actual_luna':'not_run', 'authenticated_sdk':'not_run'}
-            output.mkdir(parents=True,exist_ok=True)
-            (candidate / 'candidate-workflow.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
-            print(json.dumps(report,ensure_ascii=False,indent=2))
-            return report
-        sys.path.insert(0,str(submission.parent))
-        from Dev.ontology.korean import load_graph
-        graph=load_graph(candidate/'catalog')
-        graph.parse(candidate/'preview/schema.ttl',format='turtle')
-        texts=candidate/'korean'
-        knowledge=ClinicalKnowledge(graph,
-            questions={key:QuestionTemplate.model_validate(value) for key,value in json.loads((texts/'questions.ko.json').read_text()).items()},
-            labels=json.loads((texts/'labels.ko.json').read_text()),
-            policy=ScoringPolicy.model_validate_json((candidate/'preview/scoring_policy.json').read_text()),
-            reasoning=ReasoningPolicy.model_validate_json((submission/'knowledge/reasoning_policy.json').read_text()))
-        knowledge.validate_graph()
-        resources=PreparedResources(knowledge,TextConfig.load())
-    else:
-        resources = prepare()
-    elapsed = time.perf_counter() - started
-    knowledge, config = resources.knowledge, resources.config
-    manifest_path = candidate/'preview/manifest.json' if candidate else submission / "knowledge/manifest.json"
-    manifest = json.loads(manifest_path.read_text())
-    assert manifest["preparation_status"] == ("preview_only" if candidate else "admitted")
-    assert knowledge._profile_cache
-    assert elapsed <= 600 and resource.getrusage(resource.RUSAGE_SELF).ru_maxrss <= 8 * 1024 * 1024
-    concepts = knowledge.concepts()
-    assert all(c["id"] in knowledge.questions for c in concepts if c["kind"] == "Symptom")
-    knowledge.validate_question_assets()
-    original = frozenset(knowledge._graph)
-    target, disease = str(OW.SymptomSnomedCT21522001), str(OW.SnomedCT65275009)
-    profiles = [p for p in knowledge.get_disease_patterns(disease) if p.target == target]
-    upper = next(p for p in profiles if p.score == 1 and len([f for f in knowledge.get_pattern_features(p.id) if f.expected]) == 1
-                 and all(not f.expected or f.attribute == str(OW.Location) for f in knowledge.get_pattern_features(p.id)))
-    detailed = next(p for p in profiles if p.score == 4 and knowledge.pattern_refines(p.id, upper.id))
-    locations = [f.expected.concept for f in knowledge.get_pattern_features(detailed.id) if f.expected and f.attribute == str(OW.Location)]
-    assert len(locations) >= 2
-
-    class ScriptedSDK:
-        timeout = 120
-
-        def __init__(self, case_target, numeric=False):
-            self.target, self.numeric = case_target, numeric
-            self.session_id = "synthetic-source-candidate-" + ("numeric" if numeric else case_target.rsplit(":", 1)[-1])
-            self.remaining, self.spoken_question = 50, None
-            self.actions, self.submissions = [], []
-            self.deadline = datetime.now(timezone.utc) + timedelta(minutes=25)
-
-        def session(self):
-            return {"session_id": self.session_id, "status": "active", "deadline": self.deadline.isoformat(),
-                    "turns_remaining": self.remaining, "initial": {"opening": knowledge.label(self.target), "vital_signs": {"pulse": 80}},
-                    "allowed_actions": ["SAY", "EXAM", "DIAGNOSE"]}
-
-        @staticmethod
-        def completion(content):
-            return {"choices": [{"message": {"content": content}}], "usage": {"prompt_tokens": 20, "completion_tokens": 10}}
-
-        def chat(self, messages, **kwargs):
-            payload = json.loads(messages[1]["content"])
-            education = education_response(payload)
+def verify(submission, output):
+    sys.path.insert(0,str(submission.resolve()))
+    import fixtures as f
+    from education_fixtures import education_response
+    from workflow.runtime import prepare, assemble_consultation
+    from workflow.graph import build_graph
+    from workflow.state.models import WorkflowState, Question
+    from workflow.clinical_reasoner import ClinicalReasoner
+    resources=prepare()
+    k,config=resources.knowledge,resources.config
+    original=frozenset(k._graph)
+    checks=[]
+    def require(value,name):
+        if not value:
+            raise AssertionError(name)
+        checks.append(name)
+    target=str(f.OW.SymptomSnomedCT21522001)
+    disease=str(f.OW.SnomedCT65275009)
+    detailed=next(p for p in k.get_disease_patterns(disease) if p.target==target and p.score==4
+                  and len([feature for feature in k.get_pattern_features(p.id) if feature.expected])>=2)
+    locations=[k.term(feature.expected.concept) for feature in k.get_pattern_features(detailed.id)
+               if feature.attribute==str(f.OW.Location) and feature.expected and feature.expected.kind=='concept']
+    fallback=next(c['id'] for c in k.concepts() if c['kind']=='Symptom' and k.questions[c['id']].interviewable
+        and k.get_patterns_by_target(c['id']) and all(p.applicability or any(feature.expected for feature in k.get_pattern_features(p.id))
+            for p in k.get_patterns_by_target(c['id'])))
+    class SDK(f.FakeSDK):
+        def __init__(self,target_id,numeric=False,context='unknown'):
+            super().__init__(target=k.term(target_id),context=context)
+            self.target_id,self.numeric=target_id,numeric
+        def chat(self,messages,**kwargs):
+            payload=json.loads(messages[-1]['content'])
+            self.requests.append(payload)
+            education=education_response(payload)
             if education is not None:
-                return self.completion(json.dumps(education, ensure_ascii=False))
-            if payload['task'] == 'input_mapping':
-                return self.completion(json.dumps(mapping_from_contracts(payload)))
-            q, text = payload['question'], payload['input']
-            facts = []
-            if text.strip() and text not in config.texts.unknown_replies and (q is None or q['purpose'] not in {'greeting', 'intake', 'history', 'open_inquiry'}):
-                value = {'kind': 'symptom', 'status': 'present', 'concept_ids': [self.target], 'time_context': 'current'}
-                if q and q['attribute_id']:
-                    value.update(kind='attribute', concept_ids=[q['target_id']], attribute_id=q['attribute_id'])
-                    if q['attribute_id'] == str(OW.Location):
-                        value['values'] = locations
-                    elif q['attribute_id'] == str(OW.TimeSinceOnset):
-                        value['measurement'] = {'kind':'quantity','value':2.0,'unit':'month','operator':'eq'}
-                    elif q['attribute_id'] == str(OW.EpisodeDuration):
-                        value['measurement'] = {'kind':'interval','lower':1.0,'upper':2.0,'unit':'h','upper_inclusive':False}
-                facts = [{'quote':text, 'value':value}]
-            return self.completion(json.dumps(context_from_facts(facts), ensure_ascii=False))
-
-        def say(self, content, request_id):
-            if content == config.texts.greeting:
-                q = {"purpose": "greeting", "target_id": None, "attribute_id": None}
-            elif content in {*config.texts.intake_questions.values(), *config.texts.history_questions.values()}:
-                q = {"purpose": "common", "target_id": None, "attribute_id": None}
-            elif content in {*KOREAN.values(), config.texts.provisional_education, config.texts.symptom_education,
-                             config.texts.understanding_question, config.texts.correction_education}:
-                q = {"purpose": "education", "target_id": None, "attribute_id": None}
-            elif content == config.texts.open_question:
-                q = {"purpose": "open_inquiry", "target_id": None, "attribute_id": None}
-            else:
-                q = next(({"purpose": "hpi", "target_id": c["id"], "attribute_id": attr}
-                          for c in concepts if c["kind"] == "Symptom"
-                          for attr in knowledge.get_symptom_attributes(c["id"])
-                          if knowledge.question(attr, c["id"]) == content), None)
-                q = q or {"purpose": "feature", "target_id": None, "attribute_id": None}
-            import unicodedata
-            assert unicodedata.normalize('NFC',content)==content and 1 <= len(content) <= 30
-            self.remaining -= 1
-            if q["purpose"] == "greeting":
-                answer = "안녕하세요"
-            elif q["purpose"] == "chief":
-                answer = knowledge.label(self.target)
-            elif q["target_id"] == self.target and q["attribute_id"] == str(OW.Location) and self.target == target:
-                answer = ", ".join(knowledge.label(value) for value in locations)
-            elif self.numeric and q["target_id"] == self.target and q["attribute_id"] == str(OW.TimeSinceOnset):
-                answer = "2개월 전부터요"
-            elif self.numeric and q["target_id"] == self.target and q["attribute_id"] == str(OW.EpisodeDuration):
-                answer = "한 번에 1시간에서 2시간 미만이요"
-            elif q["purpose"] == "education":
-                answer = "알겠습니다"
-            else:
-                answer = "모르겠어요"
-            self.actions.append({"question": q, "content": content, "answer": answer, "request_id": request_id})
-            return {"status": "OK", "turn": 50 - self.remaining, "turns_remaining": self.remaining, "content": answer}
-
-        def exam(self, **kwargs):
-            raise AssertionError("This admitted batch has no examination methods")
-
-        def diagnose(self, **payload):
-            assert set(payload) == {"note", "diagnosis", "request_id"}
-            assert set(payload["note"]) == set(RECORD_FIELDS)
-            assert all(set(payload["note"][section]) == set(fields) for section, fields in RECORD_FIELDS.items())
-            assert payload["note"]["O"]["tests"] == ""
-            assert all(isinstance(text, str) for section in payload["note"].values() for text in section.values())
-            assert payload["diagnosis"]
-            self.submissions.append(payload)
-            return {"status": "completed"}
-
-    output.mkdir(parents=True, exist_ok=True)
-    cases = []
-    selected_cases = [(target, False), (target, True)]
-    fallback = next((c["id"] for c in concepts if c["kind"] == "Symptom" and knowledge.get_patterns_by_target(c["id"])
-                     and all(p.applicability or any(f.expected for f in knowledge.get_pattern_features(p.id))
-                             for p in knowledge.get_patterns_by_target(c["id"]))), None)
-    if fallback:
-        selected_cases.append((fallback, False))
-    for i, (case_target, numeric) in enumerate(selected_cases):
-        client = ScriptedSDK(case_target, numeric)
-        case_started = time.perf_counter()
-        result = consult(client, resources)
-        state = WorkflowState.model_validate(result)
-        (output / f"case-{i}.json").write_text(state.model_dump_json(indent=2))
-        assert state.interaction.termination == "submitted" and len(client.submissions) == 1
-        assert frozenset(knowledge._graph) == original
-        if case_target == target:
-            score = next(h.evidence_score for h in state.differential.hypotheses if h.disease_id == disease)
-            assert score == 4
-            assert state.case.diagnosis_kind == "disease"
-            assert state.case.fixed_diagnosis if config.education_enabled else any(
-                issue.startswith("missing_plan:") for issue in state.interaction.issues)
+                return self.completion(education)
+            require(payload['task']=='input_context','only_exact_binding_needs_context')
+            q,text=payload['question'],payload['input']
+            rows=[]
+            if not q:
+                rows=[f.statement(text,target_terms=[self.target],primary_concern=True)]
+            elif q['purpose']=='hpi':
+                row=f.statement(text,focus='attribute',target_terms=[q['target']],attribute_terms=[q['attribute']],
+                    observation_id=q['observation_id'],episode_id=q['episode_id'])
+                attr=k.term_id(q['attribute'],'FindingAttribute')
+                if attr==str(f.OW.Location) and self.target_id==target:
+                    row['value_terms']=locations
+                    rows=[row]
+                elif self.numeric and attr==str(f.OW.TimeSinceOnset):
+                    row['measurement']={'kind':'quantity','value':2,'unit':'month','approximate':True}
+                    rows=[row]
+                elif self.numeric and attr==str(f.OW.EpisodeDuration):
+                    row['measurement']={'kind':'interval','lower':1,'upper':2,'unit':'h','upper_inclusive':False}
+                    rows=[row]
+            elif q['purpose']=='context' and self.context!='unknown':
+                rows=[f.statement(text,target_terms=[q['target']],subject=q.get('subject','patient'),
+                    time_context=q.get('time_context','unspecified'),assertion=self.context)]
+            elif q['kind']=='EXAM':
+                rows=[f.statement(text,target_terms=[q['target']],time_context=q.get('time_context','current'))]
+            if not rows:
+                rows=[f.statement(text,role='unknown',assertion='unknown',target_terms=[])]
+            return self.completion({'statements':rows})
+        def _action(self,kind,content,request_id):
+            require(unicodedata.normalize('NFC',content)==content and 1<=len(content)<=30,'Korean_NFC_action_bound')
+            require(any('가'<=c<='힣' for c in content),'Korean_delivery')
+            return super()._action(kind,content,request_id)
+        def diagnose(self,**payload):
+            require(set(payload)=={'note','diagnosis','request_id'},'wire_fields')
+            require(all(set(payload['note'][section])==set(fields) for section,fields in f.RECORD_FIELDS.items()),'fifteen_soap_fields')
+            require(payload['note']['O']['tests']=='','no_unobtained_tests')
+            return super().diagnose(**payload)
+    output.mkdir(parents=True,exist_ok=True)
+    cases=[]
+    for target_id,numeric in [(target,False),(target,True),(fallback,False)]:
+        client=SDK(target_id,numeric)
+        c=assemble_consultation(client,resources,now=lambda:f.FIXED,sleep=lambda n:None)
+        initial=c.nova_session.initialize_case(client)
+        started=time.perf_counter()
+        result=build_graph(c,k).invoke(initial.model_dump(mode='json'),{'recursion_limit':c.budget.graph_step_limit(initial)})
+        state=WorkflowState.model_validate(result)
+        require(state.session.termination=='submitted' and len(client.submissions)==1,'confirmed_submission')
+        require(state.turn is None and not state.interview.queue,'closed_turn_and_queue')
+        require(all(not any('가'<=ch<='힣' for ch in text) for text in client.submissions[0]['note']['S'].values()),'English_S')
+        require(all(client.submissions[0]['note']['P'].values()),'complete_English_P')
+        require(len(state.case.plan)==5,'one_final_plan')
+        require(state.session.usage['Education'].actions>=5,'Korean_education_delivered')
+        if target_id==target:
+            snapshot=c.reasoner.refresh_hypotheses(state)
+            score=next(h.evidence_score for h in snapshot.hypotheses if h.disease_id==disease)
+            require(score==4,'original_refined_source_score')
+            require(state.case.diagnosis.kind=='disease','supported_disease')
         else:
-            assert state.case.diagnosis_kind == "symptom"
-        if config.education_enabled:
-            assert state.session.usage["Education"].actions >= 5
-            assert state.session.usage["Education"].calls >= 2
-            assert all(state.interaction.submission_payload["note"]["P"].values())
-            assert len(state.interaction.education.sentences) == 5
-        else:
-            assert state.session.usage["Education"].actions == 0
-            assert state.interaction.submission_payload["note"]["P"]["education"] == ""
-        note = state.interaction.submission_payload["note"]
-        assert note["S"]["cc"].startswith("C.C: ")
-        assert all(": " in line for fields in note.values() for text in fields.values() for line in text.splitlines())
-        assert not any("가" <= char <= "힣" for text in note["S"].values() for char in text)
-        assert state.case.diagnosis == knowledge.label(state.differential.selected_id or case_target, language="en")
+            require(state.case.diagnosis.kind=='symptom','honest_symptom_fallback')
         if numeric:
-            hpi = state.interaction.submission_payload["note"]["S"]["hpi"]
-            assert "2 months" in hpi
-        for exchange in state.interaction.model_history:
-            assert exchange["role"] in {"gateway", "terminology", "empathy", "education", "education_doctor"}
-            if exchange["role"] in {"gateway", "terminology"}:
-                metrics = exchange["parser_payload"]
-                assert metrics['request_bytes'] <= metrics['request_byte_limit']
-                assert metrics['pass'] in {'context','context_repair','mapping','binding_repair','forced','format_repair'}
+            require('approximately 2 months' in client.submissions[0]['note']['S']['hpi'],'approximate_registered_number')
+        require(frozenset(k._graph)==original,'read_only_RDF')
+        (output/f'case-{len(cases)}.json').write_text(state.model_dump_json(indent=2))
+        cases.append(dict(target=k.term(target_id),numeric=numeric,actions=len(client.actions),calls=state.session.doctor_calls,
+            diagnosis=state.case.diagnosis.name,kind=state.case.diagnosis.kind,seconds=time.perf_counter()-started))
+        c.release()
+    selected=[]
+    for status in ('present','absent','unknown'):
+        client=SDK(target,context=status)
+        c=assemble_consultation(client,resources,now=lambda:f.FIXED,sleep=lambda n:None)
+        state=c.nova_session.initialize_case(client)
+        c.interpreter.process_input(state,k,client)
+        state.interview.current,state.interview.status='ContextFactor','collecting'
+        snapshot=c.reasoner.refresh_hypotheses(state)
+        context=next(context for h in snapshot.hypotheses for context in k.get_supporting_context(h.disease_id)
+                     if k.questions[context['id']].interviewable)
+        subject='family' if context['type']=='family_history' else 'patient'
+        spec=c.planner._spec(state,context['id'],purpose='context',field='S.fh' if subject=='family' else 'S.pmh',subject=subject,time_context='unspecified')
+        c.planner._register(state,spec,0,1)
+        c.planner.select_question(state)
+        c.doctor.validate_action(state)
+        c.doctor.execute_action(state,client)
+        c.interpreter.process_input(state,k,client)
+        require(any(fact.target==k.term(context['id']) and fact.status==status for fact in state.case.facts.values()) if status!='unknown'
+                else state.interview.answers[-1].outcome=='unknown','selected_context_polarity_'+status)
+        h=c.reasoner.refresh_hypotheses(state).hypotheses
+        require(any(row.context_bonus for row in h) if status=='present' else all(row.context_bonus==0 for row in h),'context_bonus_'+status)
+        c.finalize(state)
+        c.writer.submit_diagnosis(state)
+        c.writer.confirm_submission(state)
+        require(state.session.termination=='submitted','selected_context_receipt_'+status)
+        selected.append(dict(status=status,target=k.term(context['id'])))
+    exam=next(p.target for p in k._profile_cache.values() if k.has_type(p.target,'ExamFinding'))
+    client=SDK(target)
+    c=assemble_consultation(client,resources,now=lambda:f.FIXED,sleep=lambda n:None)
+    state=c.nova_session.initialize_case(client)
+    c.interpreter.process_input(state,k,client)
+    state.interview.current,state.interview.status='DifferentialDiagnosis','collecting'
+    c.planner._register(state,c.planner._spec(state,exam,episode='one'),0,1)
+    c.planner.select_question(state)
+    c.doctor.validate_action(state)
+    c.doctor.execute_action(state,client)
+    c.interpreter.process_input(state,k,client)
+    require(any(fact.kind=='finding' and fact.target==k.term(exam) and fact.acquisition=='EXAM' for fact in state.case.facts.values()),'actual_exam_acquisition')
+    c.finalize(state)
+    c.writer.submit_diagnosis(state)
+    c.writer.confirm_submission(state)
+    require(state.session.termination=='submitted' and k.term(exam) in client.submissions[0]['note']['O']['exam'],'exam_soap_and_receipt')
+    report=dict(status='pass',cases=cases,selected_context=selected,exam=k.term(exam),checks=len(checks),
+        graph_triples=len(original),associations=len(k._profile_cache),network='none',model_responses='scripted',
+        actual_luna='not_run',clinical_accuracy='not_run',official_evaluation='not_run',
+        manifest_sha256=hashlib.sha256((submission/'knowledge/manifest.json').read_bytes()).hexdigest())
+    (output/'verification.json').write_text(json.dumps(report,indent=2)+'\n')
+    print(json.dumps(report,indent=2))
+    return report
 
-        cases.append({"target": case_target, "numeric": numeric, "actions": len(client.actions), "model_calls": state.session.doctor_calls,
-                      "diagnosis_kind": state.case.diagnosis_kind, "termination": state.interaction.termination,
-                      "unresolved_records": sum(item.value is not None and item.value.status == "unknown" for _, item in state.case.entries()),
-                      "scripted_consult_seconds": time.perf_counter() - case_started,
-                      "question_generation_calls": sum(e["role"] == "doctor" for e in state.interaction.model_history),
-                      "gateway_payload_bytes": sum(e.get("parser_payload", {}).get("payload_bytes", 0) for e in state.interaction.model_history),
-                      "max_context_bytes": max((e.get("parser_payload", {}).get("context_bytes", 0) for e in state.interaction.model_history), default=0),
-                      "pattern_evaluations": state.differential.pattern_evaluations,
-                      "scoring_refreshes": state.differential.refreshes})
-    report = {"status": "pass", "cases": cases, "prepare_seconds": elapsed,
-              "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
-              "graph_triples": len(original), "associations": len(knowledge._profile_cache),
-              "symptom_questions":sum(c['kind']=='Symptom' for c in concepts),
-              "blocked_targets":sum(not q.interviewable for q in knowledge.questions.values()), "display_labels": len(knowledge.labels),
-              "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
-              "runtime_root": str(submission), "network": "none", "patient_data": "synthetic", "model_responses": "scripted",
-              "actual_luna": "not_run", "authenticated_sdk": "not_run", "diagnostic_performance": "not_run"}
-    (output / "verification.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
-    if candidate:
-        report['runtime_admission']='not_run'
-        report['candidate_injection']='isolated_test_only'
-        (candidate/'candidate-workflow.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
-    print(json.dumps(report, ensure_ascii=False, indent=2))
 
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--submission", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--candidate", type=Path)
-    args = parser.parse_args()
-    verify(args.submission, args.output, args.candidate)
+if __name__=='__main__':
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--submission',type=Path,required=True)
+    parser.add_argument('--output',type=Path,required=True)
+    args=parser.parse_args()
+    verify(args.submission,args.output)

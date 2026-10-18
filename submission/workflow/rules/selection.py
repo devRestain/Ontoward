@@ -6,7 +6,8 @@ from dataclasses import dataclass
 
 from knowledge.conditions import ExpectedValue
 
-from ..state.models import ClinicalValue, RecordItem
+from ..state.evidence import EvidenceRecord
+from ..audit import emit
 
 
 def question_key(spec):
@@ -52,12 +53,10 @@ def answer_patch(spec, *, status="present", values=(), measurement=None, suffix=
     ident = "simulation:" + hashlib.sha256(key.encode()).hexdigest()[:24] + suffix
     kind = "attribute" if spec["attribute_id"] else "context" if spec["field"] in {"S.pmh", "S.fh", "S.sh"} else (
         "finding" if spec["kind"] == "EXAM" else "symptom")
-    value = ClinicalValue(kind=kind, text="Hypothetical answer", status=status, concept_ids=[spec["target_id"]],
-        attribute_id=spec["attribute_id"], values=list(values), measurement=measurement,
-        observation_id=spec["observation_id"] or ident, episode_id=spec["episode_id"] or ident,
-        subject=spec["subject"], time_context=spec["time_context"])
-    return (spec["field"], RecordItem(id=ident, scope="DifferentialDiagnosis", status="done", value=value,
-                                    source_refs=[ident], acquisition=spec["kind"]))
+    return EvidenceRecord(id=ident, kind=kind, status=status, target=spec['target_id'],
+        attribute=spec['attribute_id'], values=tuple(values), measurement=measurement,
+        observation_id=spec['observation_id'] or ident, episode_id=spec['episode_id'] or ident,
+        subject=spec['subject'], time_context=spec['time_context'])
 
 
 def answer_regions(spec, knowledge, reasoner, pattern_ids, limit):
@@ -79,7 +78,7 @@ def answer_regions(spec, knowledge, reasoner, pattern_ids, limit):
     regions = {}
 
     def add(patch):
-        records = [item for _, item in patch]
+        records = list(patch)
         signature = tuple(reasoner._match(f, spec["target_id"], "present", [], records)[0] for f in predicates)
         regions.setdefault(signature, patch)
 
@@ -124,7 +123,6 @@ class QuestionPath:
     profile: object | None
     disease_id: str
     pattern_id: str | None
-    evidence_ids: tuple
 
 
 class QuestionEvaluation:
@@ -135,7 +133,7 @@ class QuestionEvaluation:
         self.cache = {}
 
     def simulate(self, snapshot, patch):
-        key = (snapshot.evidence.fingerprint, tuple((field, item.value.model_dump_json()) for field, item in patch))
+        key = (snapshot.evidence.fingerprint, tuple(item.signature() for item in patch))
         if key in self.cache:
             return self.cache[key]
         if self.used >= self.policy.simulation_limit:
@@ -151,8 +149,8 @@ class QuestionEvaluation:
             return True
         index = {}
         for item in snapshot.evidence.contexts:
-            for concept in item.value.concept_ids:
-                index.setdefault((concept, item.value.subject, item.value.time_context), []).append(item)
+            for concept in (item.target,):
+                index.setdefault((concept, item.subject, item.time_context), []).append(item)
         if self.reasoner._applicability(path.profile.applicability, index)[0] == "contradicted":
             return False
         return not any(m.status == "contradicted" and m.pattern_id == path.pattern_id
@@ -185,29 +183,17 @@ class QuestionEvaluation:
             d, e = decision_value(self.base, [s for _, s in after], self.candidates, self.policy) if complete else (0, 0)
             value = d + self.policy.eligibility_weight * e
             one_step[key] = (after, complete)
-            assessments[key] = {"policy_version": self.policy.version, "complete": complete,
-                "direct_value": value if complete else None, "discrimination": d if complete else None,
-                "eligibility": e if complete else None, "utility": value if complete else None,
-                "plan_value": 0.0, "cost": 1, "paths": [],
-                "outcomes": [{"answer": [i.value.model_dump(exclude={"text", "record_details"}) for _, i in patch],
-                              "scores": {h.disease_id: {"score": h.score, "chief_score": h.chief_score,
-                                         "supporting_score": h.supporting_score, "context_bonus": h.context_bonus,
-                                         "penalty": h.contradiction_penalty, "eligible": eligible(h),
-                                         "contributions": [c.model_dump() for c in h.contributions],
-                                         "contradiction_ids": h.contradiction_ids,
-                                         "incomparable_matches": h.incomparable_matches}
-                                         for h in result.hypotheses if h.disease_id in self.candidates}}
-                             for patch, result in after], "unknown": "no_clinical_change"}
+            assessments[key] = {'complete':complete, 'direct_value':value if complete else None,
+                                'utility':value if complete else None, 'plan_value':0.0}
+            if self.reasoner.audit is not None:
+                emit(self.reasoner.audit, 'question_evaluation', key=key, complete=complete, utility=value,
+                    outcomes=[{'answer':[r.signature() for r in patch],
+                               'scores':{h.disease_id:h.score for h in result.hypotheses if h.disease_id in self.candidates}}
+                              for patch,result in after])
         for path in sorted(paths, key=lambda p: (len(p.specs), p.disease_id, p.pattern_id or "")):
             keys = [question_key(spec) for spec in path.specs]
             root = keys[0]
             assessment = assessments[root]
-            assessment["paths"].append({"disease_id": path.disease_id, "pattern_id": path.pattern_id,
-                "association_id": path.profile.association_id if path.profile else None,
-                "evidence_ids": list(path.evidence_ids), "remaining": keys,
-                "conditions": [f.id for f in self.reasoner.knowledge.get_pattern_features(path.pattern_id)]
-                    if path.pattern_id else [],
-                "prerequisites": [c.model_dump() for c in path.profile.applicability] if path.profile else []})
             if len(keys) == 1 or len(keys) > self.policy.plan_questions:
                 continue
             leaves, branches, frontier, complete = [], {}, [(self.base, 0, None)], True
@@ -223,7 +209,7 @@ class QuestionEvaluation:
                 if spec["attribute_id"] and spec["kind"] == "SAY":
                     records = snapshot.evidence.records(spec["target_id"], observation=spec["observation_id"],
                         episode=spec["episode_id"], subject=spec["subject"], timing=spec["time_context"])
-                    if not any(i.value.status == "present" and len(i.value.concept_ids) == 1 for i in records):
+                    if not any(i.status == "present" and len((i.target,)) == 1 for i in records):
                         leaves.append(snapshot)
                         if first is not None:
                             branches.setdefault(first.evidence.fingerprint, (first, []))[1].append(snapshot)
@@ -244,7 +230,6 @@ class QuestionEvaluation:
                     break
             if not complete:
                 assessment["plan_incomplete"] = True
-                assessment["paths"][-1]["evaluation"] = "incomplete"
                 self.limited = True
                 continue
             d, e = decision_value(self.base, leaves, self.candidates, self.policy)
@@ -260,14 +245,4 @@ class QuestionEvaluation:
             assessment["plan_value"] = max(assessment["plan_value"], value)
             assessment["utility"] = max(assessment["utility"] or 0, value)
             assessment["complete"] = True
-            joint_outcomes = {}
-            for leaf in leaves:
-                scores = {h.disease_id: {"score": h.score, "eligible": eligible(h)}
-                          for h in leaf.hypotheses if h.disease_id in self.candidates}
-                signature = json.dumps(scores, sort_keys=True)
-                joint_outcomes.setdefault(signature, {"scores": scores, "answers": [
-                    item.value.model_dump(exclude={"text", "record_details", "record_category"})
-                    for _, item in leaf.evidence.raw if item.id.startswith("simulation:")]})
-            assessment["paths"][-1].update(evaluation="complete", joint_value=joint, utility=value,
-                                            outcomes=list(joint_outcomes.values()))
         return assessments

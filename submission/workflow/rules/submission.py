@@ -6,7 +6,7 @@ from .limits import LIMITS
 
 
 def validate_payload(state):
-    payload = state.interaction.submission_payload
+    payload = state.turn.payload if state.turn and state.turn.kind == 'submission' else None
     if not payload or set(payload) != {"note", "diagnosis"}:
         raise ValueError("invalid_submission_payload")
     note, diagnosis = payload["note"], payload["diagnosis"]

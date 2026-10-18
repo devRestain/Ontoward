@@ -1,8 +1,20 @@
 import json
 import re
+from dataclasses import dataclass, field
 
 from .rules.limits import LIMITS, PLAN_FIELDS
-from .state.models import ClinicalValue, PlanSentence, RecordItem, SourceReference
+from .state.models import PlanSentence, SourceReference
+from .state.evidence import patient_payload
+from .audit import emit
+
+
+@dataclass
+class _EducationWork:
+    repairs: int = 0
+    sentences: list = field(default_factory=list)
+    documents: list = field(default_factory=list)
+    notes: list = field(default_factory=list)
+    errors: list = field(default_factory=list)
 
 
 def messages(prompt, payload):
@@ -28,8 +40,8 @@ def references(raw, contexts):
             position = text.find(quote)
             if position >= 0:
                 offset = start + len(text[:position].encode("utf-8"))
-                accepted.append(SourceReference(document_id=document_id, quote=quote,
-                    start_byte=offset, end_byte=offset + len(quote.encode("utf-8"))))
+                accepted.append(dict(document_id=document_id, quote=quote,
+                    start_byte=offset, end_byte=offset + len(quote.encode('utf-8'))))
                 break
         else:
             raise ValueError("reference is outside the supplied source context")
@@ -63,7 +75,7 @@ def parse_notes(raw, contexts):
             refs = references(note["references"], contexts)
             if not refs:
                 raise ValueError("source notes require references")
-            accepted.append({"text": text.strip(), "references": [ref.model_dump() for ref in refs]})
+            accepted.append({"text": text.strip(), "references": refs})
         except (TypeError, ValueError) as error:
             errors.append(f"note {index}: {error}")
     return accepted, errors
@@ -99,7 +111,9 @@ def parse_plan(raw, contexts, progress):
                 if (field, text.strip()) in existing:
                     continue
                 sentence = PlanSentence(id=f"plan:{field}:{sum(s.field == field for s in progress.sentences)}",
-                    field=field, text=text.strip(), basis=row["basis"], references=refs, priority=row["priority"])
+                    field=field, text=text.strip(), basis=row['basis'],
+                    references=tuple(SourceReference(**{k:v for k,v in ref.items() if k != 'quote'}) for ref in refs),
+                    priority=row['priority'])
                 progress.sentences.append(sentence)
                 accepted.append(sentence.model_dump())
                 existing.add((field, sentence.text))
@@ -110,22 +124,18 @@ def parse_plan(raw, contexts, progress):
     return accepted, errors
 
 
-def _request(state, client, model, config, payload, parser):
-    progress = state.interaction.education
+def _request(state, client, model, config, progress, payload, parser):
     accepted = []
     for attempt in range(2):
         request = messages(config.education_prompt, payload)
         if message_bytes(request) > LIMITS.education_request_bytes:
             progress.errors.append("education_context_overflow")
             return accepted, False
-        before = len(state.interaction.model_history)
-        content = model.complete(state, client, role="education", messages=request)
-        if content is None:
-            exchange = state.interaction.model_history[-1] if len(state.interaction.model_history) > before else {}
-            error = exchange.get("error")
-            if not exchange or error not in {None, "PROVIDER_RESPONSE_INVALID"}:
-                progress.errors.append(f"education_model_error:{error}" if exchange else "education_model_unavailable")
-                return accepted, False
+        response = model.complete(state, client, role='education', messages=request)
+        content = response.content
+        if response.error and response.error != 'PROVIDER_RESPONSE_INVALID':
+            progress.errors.append(f'education_model_error:{response.error}')
+            return accepted, False
         try:
             raw = json.loads(content)
         except (TypeError, ValueError):
@@ -134,7 +144,7 @@ def _request(state, client, model, config, payload, parser):
         accepted.extend(value for value in values if value not in accepted)
         if not errors:
             return accepted, True
-        if (attempt or progress.repairs or state.interaction.termination
+        if (attempt or progress.repairs or state.session.termination
                 or not model.budget.model_allowance(state.session, "education")):
             progress.errors.extend(f"{payload['phase']}: {error}" for error in errors)
             return accepted, False
@@ -168,15 +178,14 @@ def _fragments(document, base, prompt):
         cursor, offset = cursor + length, end
 
 
-def generate_plan(state, client, knowledge, config, model):
-    from .state.canonical import CanonicalSnapshot
-    progress = state.interaction.education
-    if progress.attempted:
+def generate_plan(state, client, knowledge, config, model, sink=None):
+    if state.interview.education_status != 'not_started':
         return
-    progress.attempted = True
-    fixed = state.case.fixed_diagnosis
+    state.interview.education_status = 'failed'
+    progress = _EducationWork()
+    fixed = state.case.diagnosis
     base = {"task": "education", "fixed_diagnosis": fixed.model_dump(),
-            "patient": CanonicalSnapshot.from_case(state.case).payload(),
+            "patient": patient_payload(state.case),
             "delivery_turn_budget": model.budget.action_capacity(state),
             }
     documents = []
@@ -184,7 +193,7 @@ def generate_plan(state, client, knowledge, config, model):
         if knowledge.guidelines is None:
             progress.errors.append("guideline_index_unavailable")
         else:
-            documents, failures = knowledge.guidelines.read(fixed.disease_id)
+            documents, failures = knowledge.guidelines.read(knowledge.term_id(fixed.name, 'Disease'))
             progress.documents.extend(failures)
             progress.errors.extend(f"guideline_unavailable:{item['document_id']}" for item in failures)
     for document in documents:
@@ -194,7 +203,7 @@ def generate_plan(state, client, knowledge, config, model):
     direct = {**base, "phase": "direct", "documents": documents}
     if message_bytes(messages(config.education_prompt, direct)) <= LIMITS.education_request_bytes:
         contexts = {doc["document_id"]: [(0, doc["text"])] for doc in documents}
-        _, valid = _request(state, client, model, config, direct, lambda raw: parse_plan(raw, contexts, progress))
+        _, valid = _request(state, client, model, config, progress, direct, lambda raw: parse_plan(raw, contexts, progress))
         for doc in documents:
             audit = audits[doc["document_id"]]
             audit["reads"] = [{"start_byte": 0, "end_byte": audit["bytes"], "accepted": valid}]
@@ -206,13 +215,13 @@ def generate_plan(state, client, knowledge, config, model):
                 audit = audits[document["document_id"]]
                 for fragment in _fragments(document, base, config.education_prompt):
                     contexts = {document["document_id"]: [(fragment["start_byte"], fragment["text"])]}
-                    notes, valid = _request(state, client, model, config,
+                    notes, valid = _request(state, client, model, config, progress,
                         {**base, "phase": "read", "documents": [fragment]}, lambda raw: parse_notes(raw, contexts))
                     progress.notes.extend(note for note in notes if note not in progress.notes)
                     audit["reads"].append({"start_byte": fragment["start_byte"], "end_byte": fragment["end_byte"], "accepted": valid})
                     if not valid:
                         complete = False
-                    if (state.interaction.termination or not model.budget.model_allowance(state.session, "education")
+                    if (state.session.termination or not model.budget.model_allowance(state.session, "education")
                             or any(error.startswith(("education_model_error:", "education_model_unavailable")) for error in progress.errors)):
                         raise ValueError("education_reading_incomplete")
                 audit["status"] = "read" if all(row["accepted"] for row in audit["reads"]) else "partial"
@@ -225,7 +234,7 @@ def generate_plan(state, client, knowledge, config, model):
                         if not batch:
                             raise ValueError("education_notes_overflow")
                         contexts = note_context(batch)
-                        values, valid = _request(state, client, model, config,
+                        values, valid = _request(state, client, model, config, progress,
                             {**base, "phase": "combine", "notes": wire_notes(batch)}, lambda raw: parse_notes(raw, contexts))
                         if not valid or not values:
                             raise ValueError("education_combination_failed")
@@ -234,7 +243,7 @@ def generate_plan(state, client, knowledge, config, model):
                     batch.append(note)
                 if batch:
                     contexts = note_context(batch)
-                    values, valid = _request(state, client, model, config,
+                    values, valid = _request(state, client, model, config, progress,
                         {**base, "phase": "combine", "notes": wire_notes(batch)}, lambda raw: parse_notes(raw, contexts))
                     if not valid or not values:
                         raise ValueError("education_combination_failed")
@@ -242,9 +251,9 @@ def generate_plan(state, client, knowledge, config, model):
                 if len(json.dumps(reduced)) >= len(json.dumps(notes)):
                     raise ValueError("education_combination_not_smaller")
                 notes = reduced
-            if not state.interaction.termination:
+            if not state.session.termination:
                 contexts = note_context(notes)
-                _request(state, client, model, config, {**base, "phase": "synthesize", "notes": wire_notes(notes)},
+                _request(state, client, model, config, progress, {**base, "phase": "synthesize", "notes": wire_notes(notes)},
                          lambda raw: parse_plan(raw, contexts, progress))
             if not complete:
                 progress.errors.append("education_source_processing_partial")
@@ -264,12 +273,10 @@ def generate_plan(state, client, knowledge, config, model):
         audit["unread_ranges"] = unread
         if unread:
             audit["status"] = "partial" if cursor else "not_read"
-    for sentence in progress.sentences:
-        state.case.put(f"P.{sentence.field}", RecordItem(id=sentence.id, scope="Education", status="done",
-            value=ClinicalValue(kind="plan", text=sentence.text, status="present",
-                                concept_ids=[fixed.disease_id] if fixed.disease_id else [])))
+    state.case.plan = progress.sentences
     populated = {sentence.field for sentence in progress.sentences}
-    progress.status = ("complete" if populated == set(PLAN_FIELDS) and not progress.errors else
-                       "partial" if populated else "failed")
-    if progress.status != "complete":
-        state.interaction.issues.append(f"education_generation_{progress.status}")
+    state.interview.education_status = ('complete' if populated == set(PLAN_FIELDS) and not progress.errors else
+                                       'partial' if populated else 'failed')
+    state.interview.education_reason = progress.errors[0] if progress.errors else None
+    emit(sink, 'education_generation', documents=progress.documents, notes=progress.notes,
+         errors=progress.errors, status=state.interview.education_status)

@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-submission
-/status value=active
-/checkpoint revision=7ee06ec410f8dbe3a6c1c2e2575e05997e5e440b dirty=true updated=2026-10-18T08:02:48.372661+00:00
-/goal phase=current id=APP.D43 state=complete action="Preserve independent input facts and extract the chief with incidental information at turn zero"
+/status value=complete
+/checkpoint revision=fe235c160a49fda900438ab3567e50a8de25e9ec dirty=true updated=2026-10-18T11:45:44.206360+00:00
+/goal phase=current id=APP.D44 state=complete action="Implement three resident owners and one disposable turn with typed clinical facts"
+/goal phase=history id=APP.D43 state=complete action="Preserve independent input facts and extract the chief with incidental information at turn zero"
 /goal phase=history id=APP.D42 state=complete action="Consume D42 common complaint assets through the completed D41 canonical input path"
 /goal phase=history id=APP.D41 state=complete action="Implement two-stage DB normalization forced completion and raw-free canonical consumers"
 /goal phase=history id=APP.RUNTIME_REVIEW18 state=complete action="Review current consultation contracts and public chief selection failures"
@@ -17,7 +18,7 @@
 /goal phase=history id=APP.SOAP33 state=complete action="Render English Category Content SOAP with source terms quote-backed keywords explicit polarity and same-episode pain assessment"
 /goal phase=history id=APP.CHIEF29 state=complete action="Require one existing Symptom for chief mapping with source aliases bounded lookup recovery and explicit semantic evidence"
 /goal phase=history id=APP.INTEGRATE36 state=complete action="Verify D36 against the combined D37 runtime and independent archive"
-/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify real Luna interpretation English planning Korean delivery and completed submission from the D43 archive after separate external execution authorization"
+/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify real Luna interpretation English planning Korean delivery and completed submission from the D44 archive after separate external execution authorization"
 /goal phase=history id=APP.CONTEXT28 state=complete action="Bound complete Gateway requests and recover context rejection once while preserving consultation and submission behavior"
 /goal phase=history id=APP.TEST27 state=complete action="Verify unchanged D26 callbacks through the D27 local HTTP API with the scripted C10 fixture"
 /goal phase=history id=APP.READINESS26 state=complete action="Pass Education and complete diagnostic acquisition Gateway recovery assessment and confirmed submission under D26"
@@ -230,4 +231,17 @@
 /evidence id=APP.D43.E5 class=external_service result=not_run source=../data/provenance/input-recovery-d43-2026-10-18.json observed="Leave fresh Luna interpretation of C03 revised prompts live NOVA semantic and clinical accuracy official validation scoring upload commits and deployment unrun"
 /scope id=APP.D43.S1 state=in action="Own explicit initial node compact context focus row repair typed normalization rejection feedback chief routing registered orphan measurements and source audit positions"
 /scope id=APP.D43.S2 state=out action="Exclude clinical vocabulary expansion source weights SDK changes patient raw downstream fallback and live model execution"
-/handoff state=blocked action="D43 offline acceptance complete; defer APP.REVALIDATE29 on the final D43 ZIP until exact external authorization"
+/accept id=APP.D44.A1 state=pass action="Keep three resident owners one disposable turn and one canonical fact and result store" evidence=APP.D44.E1,APP.D44.E2
+/accept id=APP.D44.A2 state=pass action="Preserve semantic scopes acquisition corrections typed notes and selective normalization" evidence=APP.D44.E1,APP.D44.E3
+/accept id=APP.D44.A3 state=pass action="Complete admitted Korean Education SOAP and confirmed submission from the final isolated artifact" evidence=APP.D44.E4,APP.D44.E5
+/accept id=APP.D44.A4 state=pass action="Document retained fields and measure fixed input costs without changing scoring or clinical pins" evidence=APP.D44.E2,APP.D44.E6
+/evidence id=APP.D44.E1 class=runtime result=pass source=../Tmp/d44-2026-10-18/evidence/isolated-workflow.log observed="Pass seventy-four maintained lifecycle binding reasoning delivery and transport tests in source and the read-only network-disabled two-CPU eight-GiB archive environment; replace obsolete type-coupled tests without claiming the old 204-test suite ran on D44"
+/evidence id=APP.D44.E2 class=semantic result=pass source=README.md observed="Explain every resident field owner creation consumer disposal and necessity plus local interpretation calculations and Education work; remove old state types mapping copies SOAP stores diagnostic histories and unused prepared text fields"
+/evidence id=APP.D44.E3 class=runtime result=pass source=../Tmp/d44-2026-10-18/evidence/c03.json observed="Replay the unchanged saved C03 turn-four context response and preserve two past mother-reported previous-care notes without changing chief polarity or making a mapping call; keep revised prompt live quality unrun"
+/evidence id=APP.D44.E4 class=runtime result=pass source=../Tmp/d44-2026-10-18/evidence/isolated/admitted/verification.json observed="Pass 372 admitted-RDF checks across three full consultations three selected Context polarities and actual EXAM acquisition through Korean delivery English SOAP Education and confirmed completion; preserve 113062 triples and 9955 associations"
+/evidence id=APP.D44.E5 class=runtime result=pass source=../Tmp/d44-2026-10-18/http-final/result.json observed="Complete the unchanged entrypoint and original SDK on the project-internal HTTP harness from the final isolated ZIP with a completed receipt and no patient fixture or key mount in the agent"
+/evidence id=APP.D44.E6 class=runtime result=pass source=../Tmp/d44-2026-10-18/evidence/comparison/comparison.json observed="Match complete scores and evidence for four fixed accepted assertions and compare 31 local copy and validation samples; reduce graph state from 286302 to 2691 bytes and identical two-statement input from three calls and 24278 request bytes to one call and 8477 bytes while preserving both facts"
+/evidence id=APP.D44.E7 class=external_service result=not_run source=../data/provenance/state-lifecycle-d44-2026-10-18.json observed="Leave fresh Luna C03 interpretation Korean meaning quality clinical accuracy real NOVA official evaluation and deployment unrun"
+/scope id=APP.D44.S1 state=in action="Own typed fact note and result state current-session question lifecycle shared reasoner selective normalization Education and submission lifetimes without runtime compatibility adapters"
+/scope id=APP.D44.S2 state=out action="Exclude clinical RDF changes source weights SDK changes new dependencies corpus expansion remote writes and actual model execution"
+/handoff state=blocked action="Retain completed D44 local slice and defer APP.REVALIDATE29 until exact external model authorization"

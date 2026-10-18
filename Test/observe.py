@@ -62,7 +62,7 @@ class Trace:
     def object_snapshot(self, state):
         if state is None:
             return {}
-        value = plain(state.model_dump())
+        value = plain(state.model_dump(mode='json'))
         result = {'object_state': value} if self.object_state is None else {'object_patch': changes(self.object_state, value)}
         self.object_state = value
         return result
@@ -73,7 +73,7 @@ class Trace:
         def call(*args, **kwargs):
             if self.failed:
                 return operation(*args, **kwargs)
-            if self.scoring_depth and owner in {'CanonicalSnapshot', 'EvidenceIndex', 'ClinicalKnowledge', 'BudgetPolicy'}:
+            if self.scoring_depth and owner in {'EvidenceIndex', 'ClinicalKnowledge', 'BudgetPolicy'}:
                 self.suppressed[f'{owner}.{name}'] += 1
                 return operation(*args, **kwargs)
             self.calls += 1
@@ -82,7 +82,7 @@ class Trace:
             try:
                 arguments = signature.bind(*args, **kwargs).arguments
                 state = next((item for item in arguments.values() if type(item).__name__ == 'WorkflowState'), None)
-                before = plain(state.model_dump()) if state is not None else None
+                before = plain(state.model_dump(mode='json')) if state is not None else None
                 inputs = {key: {'type': 'WorkflowState', 'state_reference': True} if item is state and state is not None
                           else self.value(item) for key, item in arguments.items()}
                 self.emit('call_start', call_id=call_id, parent_call_id=parent, object_id=object_id,
@@ -97,7 +97,7 @@ class Trace:
                 result = operation(*args, **kwargs)
             except BaseException as error:
                 try:
-                    after = plain(state.model_dump()) if state is not None else None
+                    after = plain(state.model_dump(mode='json')) if state is not None else None
                     self.emit('call_error', call_id=call_id, owner=owner, method=name,
                               error=type(error).__name__, message=str(error),
                               writes=changes(before, after) if before is not None else [], **self.object_snapshot(state))
@@ -106,7 +106,7 @@ class Trace:
                 raise
             else:
                 try:
-                    after = plain(state.model_dump()) if state is not None else None
+                    after = plain(state.model_dump(mode='json')) if state is not None else None
                     arguments_after = {key: {'type': 'WorkflowState', 'state_reference': True} if item is state and state is not None
                                        else self.value(item) for key, item in arguments.items()}
                     argument_writes = changes(inputs, arguments_after)
@@ -160,9 +160,19 @@ class Trace:
                     visit(child, f'{path}.{name}')
         visit(consultation, 'consultation')
         visit(knowledge, 'knowledge')
-        from workflow.state.canonical import CanonicalSnapshot
+        def audit(event, **data):
+            self.emit('audit', event=event, data=self.value(data))
+        for obj in (consultation.interpreter, consultation.interpreter.model, consultation.doctor,
+                    consultation.planner, consultation.reasoner, consultation.writer):
+            previous = obj.audit
+            def record(event, _previous=previous, **data):
+                audit(event, **data)
+                if _previous is not None:
+                    _previous(event, **data)
+            self.restore.append((obj, 'audit', previous, True))
+            obj.audit = record
         from workflow.state.evidence import EvidenceIndex
-        for cls, names in ((CanonicalSnapshot, ('from_case', 'payload')), (EvidenceIndex, ('from_case',))):
+        for cls, names in ((EvidenceIndex, ('from_case',)),):
             for name in names:
                 original = vars(cls)[name]
                 operation = original.__func__ if isinstance(original, classmethod) else original
@@ -187,7 +197,7 @@ class Trace:
             self.sequence += 1
             current = self.object_state if kind.startswith(('call_', 'sdk_')) else self.state
             session = (current or {}).get('session', {})
-            context = {'session': session['current'], 'turn': 50 - session['turns_remaining']} if 'turns_remaining' in session else {}
+            context = {'session': (current or {}).get('interview', {}).get('current', session.get('current')), 'turn': 50 - session['turns_remaining']} if 'turns_remaining' in session else {}
             with self.path.open('a', encoding='utf-8') as stream:
                 stream.write(json.dumps({'seq': self.sequence, 'seconds': round(time.monotonic() - self.started, 6),
                                          'kind': kind, 'node': self.node, **context, **data}, ensure_ascii=False, default=str) + '\n')
@@ -198,7 +208,7 @@ class Trace:
     def snapshot(self, kind, state, **metadata):
         try:
             value = plain(state)
-            context = {'session': value['session']['current'], 'turn': 50 - value['session']['turns_remaining']}
+            context = {'session': value.get('interview', {}).get('current', value['session'].get('current')), 'turn': 50 - value['session']['turns_remaining']}
             if self.state is None:
                 self.emit('initial', state=value, **context, **metadata)
             else:
@@ -243,7 +253,7 @@ def observing(path):
             trace.node = get_config().get('metadata', {}).get('langgraph_node')
         except RuntimeError:
             trace.node = None
-        trace.snapshot('node_input', state.model_dump())
+        trace.snapshot('node_input', state.model_dump(mode='json'))
         target = operation.func if isinstance(operation, partial) else operation
         trace.emit('node_start', operation=getattr(target, '__qualname__', str(type(target).__name__)))
         try:

@@ -1,7 +1,6 @@
-import json
+import hashlib
 
-from ..rules.limits import LIMITS
-from .models import ActionSpec, EmpathyEvent, InteractionEntry
+from .models import PendingEmpathy, TurnContext
 
 
 class InteractionLifecycle:
@@ -9,138 +8,25 @@ class InteractionLifecycle:
         self.new_request_id = new_request_id
 
     def select_question(self, state, question):
-        state.interaction.selected = ActionSpec(question=question, content=question.text, request_id=self.new_request_id())
+        state.turn = TurnContext(kind='action', question_id=question.item_id,
+                                 request_id=self.new_request_id(), stage='selected')
 
     @staticmethod
-    def clear_selected(state, ids=None):
-        selected = state.interaction.selected
-        if ids is None or (selected and selected.question.item_id in ids):
-            state.interaction.selected = None
-
-    @staticmethod
-    def begin_action(state):
-        action = state.interaction.selected
-        state.interaction.selected = None
-        state.interaction.pending = action
-        if action.empathy_source_id:
-            event = next(event for event in state.interaction.empathy_events if event.source_id == action.empathy_source_id)
-            event.status = "attempted"
-            event.request_id = action.request_id
-        return action
-
-    @staticmethod
-    def queue_empathy(state, signal, source_id):
-        events = state.interaction.empathy_events
-        if any(event.source_id == source_id for event in events):
+    def queue_empathy(state, signal, source_ref):
+        key = hashlib.sha256(signal.quote.encode()).hexdigest()
+        if signal.intent in {'repeat', 'acknowledgement'} or (signal.intent != 'renewed_request' and (
+                state.interview.empathy and state.interview.empathy.key == key
+                or any(a.empathy_key == key and a.outcome == 'delivered' for a in state.interview.answers))):
             return
-        repeat = signal.intent in {"repeat", "acknowledgement"} or (
-            signal.intent != "renewed_request" and any(event.quote == signal.quote
-                and event.status in {"pending", "attempted", "delivered"} for event in events))
-        events.append(EmpathyEvent(**signal.model_dump(), source_id=source_id,
-            status="skipped" if repeat else "pending", reason="repetition_or_acknowledgement" if repeat else None))
-
-    @staticmethod
-    def pending_empathy(state):
-        return next((event for event in state.interaction.empathy_events if event.status == "pending"), None)
+        state.interview.empathy = PendingEmpathy(source_ref=source_ref, emotion=signal.emotion,
+                                                intent=signal.intent, key=key)
 
     @staticmethod
     def skip_empathy(state, reason, source_id=None):
-        for event in state.interaction.empathy_events:
-            if event.status in {"pending", "attempted"} and (source_id is None or event.source_id == source_id):
-                event.status = "skipped"
-                event.reason = reason
+        if state.interview.empathy and (source_id is None or state.interview.empathy.source_ref == source_id):
+            state.interview.empathy = None
 
     @staticmethod
-    def record_action_attempt(state, action):
-        entry = InteractionEntry(id=action.request_id, kind=action.question.kind,
-            question=action.question.model_copy(deep=True),
-            request={"request_id": action.request_id, "action": action.question.kind, "content": action.content})
-        state.interaction.history.append(entry)
-        return entry
-
-    @staticmethod
-    def record_submission_attempt(state, request):
-        entry = InteractionEntry(id=request["request_id"], kind="DIAGNOSE", request=request)
-        state.interaction.history.append(entry)
-        return entry
-
-    @staticmethod
-    def receive_input(state, raw):
-        state.interaction.incoming = raw
-
-    def record_delivery(self, state, action, entry, response, raw):
-        entry.turn = response.turn
-        entry.delivered = True
-        self.receive_input(state, raw)
-        if action.empathy_source_id:
-            event = next(event for event in state.interaction.empathy_events if event.source_id == action.empathy_source_id)
-            event.status = "delivered"
-            event.request_id = action.request_id
-        if action.question.purpose == "education":
-            delivery = next(item for item in state.questions.education if item.id == action.question.item_id)
-            delivery.status, delivery.request_id = "delivered", entry.id
-
-    @staticmethod
-    def project_context(state, question, concepts, *, expanded=False):
-        record_limit = LIMITS.expanded_context_records if expanded else LIMITS.context_records
-        turn_limit = LIMITS.expanded_context_turns if expanded else LIMITS.context_turns
-        byte_limit = LIMITS.expanded_context_bytes if expanded else LIMITS.context_bytes
-        ranks = {entry.id: index for index, entry in enumerate(state.interaction.history)}
-        candidates = []
-        for field, item in state.case.entries():
-            if not field.startswith(("S.", "O.")):
-                continue
-            current = question is not None and item.id == question.item_id
-            related = bool(item.value and ((question and question.observation_id
-                        and item.value.observation_id == question.observation_id
-                        and item.value.episode_id == question.episode_id)
-                        or (question and not question.observation_id and question.target_id in item.value.concept_ids
-                            and question.subject == item.value.subject)
-                        or set(item.value.concept_ids) & set(concepts)))
-            recency = max((ranks.get(ref, -1) for ref in item.source_refs), default=-1)
-            if current or related or expanded or recency >= len(ranks) - 2:
-                candidates.append((not current, not related, -recency, item.id, field, item))
-        projected = {"records": [], "dialogue": []}
-        refs = []
-        def append(kind, item):
-            proposed = {**projected, kind: [*projected[kind], item]}
-            if len(json.dumps(proposed, ensure_ascii=False, separators=(",", ":")).encode("utf-8")) <= byte_limit:
-                projected[kind].append(item)
-                return True
-            return False
-        for *_, field, item in sorted(candidates):
-            if len(projected["records"]) >= record_limit:
-                break
-            if append("records", {"field": field, **item.model_dump()}):
-                refs.extend([*item.source_refs, *item.context_refs])
-        dialogue = state.interaction.dialogue()
-        current_id = state.interaction.pending.request_id if state.interaction.pending else "initial"
-        priority = list(dict.fromkeys([*refs, *(turn["id"] for turn in reversed(dialogue[-2:]))]))
-        if expanded:
-            priority.extend(turn["id"] for turn in reversed(dialogue) if turn["id"] not in priority)
-        by_id = {turn["id"]: turn for turn in dialogue}
-        for ident in priority:
-            if len(projected["dialogue"]) >= turn_limit:
-                break
-            if ident in by_id and ident != current_id:
-                append("dialogue", by_id[ident])
-        return projected
-
-    @staticmethod
-    def record_initial(state, raw):
-        state.interaction.history.append(InteractionEntry(id="initial", kind="initial", response=raw))
-
-    @staticmethod
-    def consume_input(state):
-        state.interaction.pending = None
-        state.interaction.incoming = None
-
-    @staticmethod
-    def request_clarification(state, question):
-        state.interaction.needs_clarification = True
-        state.interaction.clarification_target = question.model_copy(deep=True) if question else None
-
-    @staticmethod
-    def consume_clarification(state):
-        state.interaction.needs_clarification = False
-        state.interaction.clarification_target = None
+    def clear_selected(state, ids=None):
+        if state.turn and state.turn.kind == 'action' and (ids is None or state.turn.question_id in ids):
+            state.turn = None

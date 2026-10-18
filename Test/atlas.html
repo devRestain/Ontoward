@@ -424,7 +424,7 @@
         <tr><td>Pattern·원천 지지·진단 자격</td><td>ClinicalReasoner · 지식 reader</td><td><a href="../submission/workflow/clinical_reasoner.py">clinical_reasoner.py</a> · <a href="../submission/knowledge/graph.py">knowledge/graph.py</a></td></tr>
         <tr><td>진단 후 영어 P·한국어 전달</td><td>InterviewPlanner · 교육 생성 함수 · Doctor</td><td><a href="../submission/workflow/education.py">education.py</a> · <a href="../submission/knowledge/guidelines.py">원문 reader</a></td></tr>
         <tr><td>15개 SOAP와 제출 영수증</td><td>SubmissionWriter</td><td><a href="../submission/workflow/submission_writer.py">submission_writer.py</a></td></tr>
-        <tr><td>한 환자의 사실과 현재 계획</td><td>CaseState · SessionContext · DifferentialState · QuestionPlan · InteractionState</td><td><a href="../submission/workflow/state/models.py">state/models.py</a></td></tr>
+        <tr><td>한 환자의 사실과 현재 계획</td><td>CaseState · InterviewState · SessionContext · TurnContext (현재 작업만)</td><td><a href="../submission/workflow/state/models.py">state/models.py</a></td></tr>
         <tr><td>실제 지식·원천 행을 따라가기</td><td>D39 읽기 전용 지식 뷰어</td><td><a href="README.md#knowledge-viewer">지식 뷰어 안내</a> · <a href="knowledge.py">knowledge.py</a></td></tr>
         <tr><td>실제 실행에서 일어난 대화·변화</td><td>Test 실행기 · 관측 리포트</td><td><a href="README.md">Test/README.md</a> · 실행별 report.html</td></tr>
       </tbody></table></div>

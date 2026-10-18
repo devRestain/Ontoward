@@ -2,6 +2,8 @@
 
 ## Project Philosophy and Anti-Slop
 
+- Apply D44 three resident owners and disposable turn boundaries before older object layouts; keep D38 scoring D40 budgets D42 clinical pins and D43 initial interpretation.
+
 - Treat competition submission as the project endpoint.
 - Implement only capabilities required by the selected competition workflow and the documented acceptance slice.
 - Reject speculative features, reusable platforms, and extension points for hypothetical future use.
@@ -41,7 +43,7 @@
 - Keep generated directories and upstream archive internals under their existing owner.
 - Apply D17 prepared interviews Pattern-first fit bounded parsing and adaptive budgets while preserving D11 session and submission boundaries.
 - Apply D38 to one primary chief full attribute collection shared pure reasoning residual graph questions and versioned policy with D40 budgets and Education response boundaries.
-- Apply D41 always-called context analysis DB-only normalization forced completion and canonical consumers with D40 protected collection budgets and transcript-only Education replies.
+- Apply D44 always-called context analysis exact Python binding selective DB normalization forced completion and typed consumers with D40 protected collection budgets and transcript-only Education replies.
 - Apply D42 to source-bound common complaints local DDXPlus metadata and explicit authored JSONL through a new v5.0 admission while preserving D41 canonical consumers and frozen acceptance.
 - Apply D43 explicit turn-zero interpretation compact target-versus-attribute context independent row recovery and chief-bound intake while preserving D42 clinical pins and raw-free consumers.
 - Apply D17 prepared Doctor delivery and designated-model Gateway interpretation; keep selection in InterviewPlanner and submission in SubmissionWriter.
@@ -57,7 +59,7 @@
 - Apply D29 for case-independent chief mapping to one supplied Symptom, source-backed bilingual aliases, and one bounded full-index lookup recovery.
 - Preserve D30 source mappings and apply D37 manifest-pinned navigation to the organizer guideline mount without packaging original documents.
 - Generate D37 English P sentences with Luna high and render independent NFC 1-30 Korean Doctor statements while retaining source and model-knowledge provenance.
-- Apply D33 English Category: Content SOAP using D41 admitted labels values and typed metadata without patient-original spans or free record summaries.
+- Apply D33 English Category: Content SOAP from D44 admitted clinical fields and typed notes without patient-original spans.
 - Apply D36 resolved-destination acquisition checks and D40 shared current evidence for chief selection question resolution reasoning SOAP and symptom fallback.
 - Apply D41 per-statement DB binding bounded semantic and format repairs and forced completion while retaining separate budgeted D34 empathy SAY.
 - Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep maintained workflow tests in Dev/tests/workflow and generated synthetic assets and evidence in Tmp.
@@ -87,7 +89,7 @@
 - Keep runtime Turtle, required JSON schemas, and their manifest inside submission/knowledge/ for both execution and tests.
 - Use package-relative imports within runtime packages and settings.py for file-relative submission data paths.
 - Apply D13 responsibility names and keep Consultation as the sole internal-session coordinator.
-- Keep pure workflow decisions in workflow/rules and cross-state question interaction and usage operations in their designated workflow/state owners.
+- Keep pure workflow decisions in workflow/rules and lifecycle operations in workflow/state; keep the single reasoner cache outside WorkflowState.
 - Run maintained offline workflow checks with Dev/tests/workflow/compose.offline.yaml and exclude tests and synthetic assets from the submission.
 - Require D08 v5.0 alignment before generating or admitting new clinical artifacts.
 - Use Dev/ontology/source_projection.py build/export/admit, database.py, model_normalization.py, admission.py, and v5.py for full source ingestion, candidate projection, and pinned batch admission.

@@ -78,6 +78,8 @@ class ClinicalKnowledge:
         self._target_values = {}
         self._types = None
         self._supporting_cache = {}
+        self._term_ids = {}
+        self._value_ids = {}
 
     @classmethod
     def load(cls, manifest_path: Path) -> ClinicalKnowledge:
@@ -122,10 +124,41 @@ class ClinicalKnowledge:
         knowledge = cls(graph, questions, {key: Plan.model_validate(value) for key, value in raw_plans.items()}, policy, labels, reasoning)
         knowledge.validate_graph()
         knowledge.validate_question_assets()
+        knowledge.prepare_terms()
         if manifest.guidelines:
             knowledge.guidelines = GuidelineLibrary.load(read(manifest.guidelines, ".json"),
                 raw_manifest.get("build_id"), {str(node) for node in graph.subjects(RDF.type, OW.Disease)})
         return knowledge
+
+    def prepare_terms(self):
+        terms, values = {}, {}
+        for kind in ('Symptom', 'ExamFinding', 'ContextFactor', 'FindingAttribute', 'Disease'):
+            for node in self._graph.subjects(RDF.type, OW[kind]):
+                ident = str(node)
+                name = self.label(ident, language='en')
+                key = (kind, name)
+                if name == ident or key in terms and terms[key] != ident:
+                    raise ValueError(f'Ambiguous or missing clinical term: {kind}: {name}')
+                terms[key] = ident
+        for (kind, name), attribute in terms.items():
+            if kind != 'FindingAttribute':
+                continue
+            for ident in self.get_attribute_values(attribute):
+                value = self.label(ident, language='en')
+                key = (name, value)
+                if value == ident or key in values and values[key] != ident:
+                    raise ValueError(f'Ambiguous attribute value: {name}: {value}')
+                values[key] = ident
+        self._term_ids, self._value_ids = terms, values
+
+    def term_id(self, term, kind):
+        return self._term_ids.get((kind, term))
+
+    def value_id(self, attribute, value):
+        return self._value_ids.get((attribute, value))
+
+    def term(self, ident):
+        return self.label(ident, language='en')
 
     def label(self, concept_id: str, *, language="ko") -> str:
         key = (concept_id, language)

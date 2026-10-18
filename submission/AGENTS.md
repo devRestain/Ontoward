@@ -1,155 +1,94 @@
 # Application Contract
 
-## Ownership
+## Ownership and Lifetime
 
-- Apply root PRD.md, D38 chief anchored inference and graph question selection, D18 source custody, and D40 non-borrowing collection and Education budgets.
-- Keep run.py limited to SDK callbacks from workflow/runtime.py.
-- Assemble immutable knowledge and configuration in PreparedResources and initialize case-owned collaborators and WorkflowState for each consult call.
-- Keep Consultation as the sole coordinator for Initiation, ChiefComplaint, ContextFactor, DifferentialDiagnosis, Education, and finalization.
-- Apply D37 ONTOWARD_EDUCATION_ENABLED=true by default and retain explicit false as the D26 bypass.
-- Fix diagnosis kind Disease identity and name before Education and reuse them during finalization and SOAP repair.
-- Keep graph.py limited to assembly, pure routing, and the existing deep-copy/Pydantic boundary.
-- Assign prepared SAY validation empathy generation and SAY/EXAM execution to Doctor, facts and empathy signals to InputInterpreter, clinical questions and education to InterviewPlanner, reasoning to ClinicalReasoner, and SOAP/submission to SubmissionWriter.
-- Assign question registration/discard to QuestionLifecycle, transcript/projection/delivery to InteractionLifecycle, and counters to UsageAccounting.
-- Keep pure decisions in workflow/rules and model/session/identical-request transport in workflow/io.
-- Preserve the five case-local state owners without a generic agent base, registry, or session subclasses.
-- Keep runtime knowledge inside submission/knowledge and patient facts outside the read-only Graph.
-- Leave source projection, asset preparation, and admission to root Dev and data owners.
-- Consume D42 source and author extensions only through pinned v5.0 assets; retain D41 dictionary binding raw-free consumers and original source weight meanings.
+- Apply root PRD.md and D44 for information ownership while preserving D38 reasoning, D40 budgets, D42 asset pins, and D43 initial interpretation.
+- Keep run.py limited to SDK callbacks from workflow/runtime.py and Consultation as the sole five-session coordinator.
+- Prepare patient-free knowledge, term indexes, question wording, policy, and configuration once in PreparedResources.
+- Keep exactly case, interview, session, and optional turn in WorkflowState; preserve deep-copy and Pydantic isolation between LangGraph nodes.
+- Keep acquired facts, notes, chief fact ID, final diagnosis, final English plan, and clinical revision in CaseState.
+- Keep current-session pending questions, compact answer receipts, necessary collection interruptions, and pending emotional codes in InterviewState.
+- Keep external constraints, latest limits, once-only usage, termination, and the completed receipt in SessionContext.
+- Keep only the current question ID, request ID, execution stage, response, and submission payload/repair in TurnContext; clear it after input acceptance or termination.
+- Keep ModelResult, InputResult, context rows, candidates, mappings, errors, repairs, and source documents local to their calling operation.
+- Keep one ClinicalReasoner per consultation, inject it into planner and writer, and replace its latest actual cache on clinical revision or chief changes.
+- Keep hypothetical patches, paths, and simulation caches local to one question evaluation; never attach them to queued questions or graph state.
+- Keep actual dialogue once in InputInterpreter for reference resolution and clear dialogue and reasoner caches in consult's finally boundary.
+- Send detailed exchanges, rejected rows, replaced facts, and generation work to optional Test observation; never read audit back for execution.
+- Make observation failures nonfatal and preserve original request identity and errors without replaying completed actions.
+- Do not restore removed state shapes, compatibility properties, patient placeholders, ClinicalValue wrappers, or CanonicalSnapshot copies.
 
-## Prepared Interviews
+## Input and Accepted Patient Information
 
-- Use prepared interview SAY and EXAM text and permit validated D34 empathy and D37 Education statements as generated patient-facing text.
-- Validate text during prepare and independently after NFC normalization immediately before delivery; require 1–30 codepoints including whitespace and punctuation and never truncate.
-- Use the manifest-pinned QuestionTemplate answer_type, affirmative, interviewable, and reason fields.
-- Block direct questions about diagnosis-qualified Targets without an approved observable mapping.
-- Never map an unqualified complaint to a cause-qualified concept or restore a qualifier removed from the question.
-- Start with the D40 greeting and collect unresolved onset course recurrence and related previous care before chief attributes.
-- Collect five basic history domains and protect up to two unanswered related ContextFactor objects independently of diagnostic utility.
-- Select one patient-prioritized primary chief and process its entire get_symptom_attributes list in stable source order.
-- Record acquired unknown not_applicable blocked_asset and budget_stopped outcomes separately and reserve the last available collection slot for one Open Inquiry.
-- Freeze ROS systems from the primary chief and ask at most six useful presence questions without chaining from additional symptoms.
-- Do not use BodySystem to filter Disease recall.
-- Require confirmed Target presence in the same observation/episode before asking SAY attributes; retain EXAM as a separate acquisition action.
-- Use semantic keys including Target Attribute subject occurrence and exact time context; preserve delivered history and pending actions.
-- Use at most two primary clarifications and stop primary_chief_unresolved instead of choosing an arbitrary first report.
-- Rebuild chief collection and ROS on explicit primary correction while preserving delivered history; replan on evidence question history session chief or budget changes.
-- Apply supporting-Context utility after protected basic history and Context coverage without treating a saturated bonus as complete history.
-- Never ordinarily repeat a delivered question; keep clarification case-wide at two and preserve unresolved values.
-- Remove unasked placeholders and references together and retain completed facts, delivered explanations, and plans.
+- Run process_initial_input before the first SAY and always analyze each collection SAY or EXAM reply with the designated model.
+- Use exact current quotations and validate supplied correction, observation, episode, subject, and relationship references at input acceptance.
+- Preserve independent valid context rows and repair only failed row indices once; retain the focused initial-chief recovery for genuine cause-versus-existence uncertainty.
+- Bind exact admitted labels and aliases in Python before requesting normalization; send only unresolved clinical statements with nonempty compatible candidates.
+- Use official English clinical terms in clinical fields and mapping keys; resolve RDF IDs through prepared kind-specific term indexes and attribute-scoped value indexes.
+- Validate target-attribute relationships, scoped values, polarity, finite reported numbers, bounds, units, and approximation before constructing facts.
+- Keep patient ObservedNumber separate from graph ExpectedValue; never invent NRS, calendar conversion, growth rate, thresholds, or symptom presence from a number.
+- Keep registered orphan attributes record_only until a confirmed same-occurrence target exists; exclude them and notes from diagnostic evidence.
+- Use ordinary mapping and final forced mapping with one batch format repair; freeze accepted siblings and remove binding_repair.
+- Force only explicit clinical assertions with compatible supplied candidates, preserve acquisition and scope, and retain a minimal forced marker on the fact.
+- Preserve useful unsupported information as NoteFact in existing categories with concise English values and separate typed measurements; never copy patient quotations into SOAP.
+- Preserve previous treatment denial and watchful observation as previous_care notes without negating or affirming the chief symptom.
+- Preserve family members, reporters, time points, observations, episodes, nonexclusive values, qualified negation, and independent fact IDs.
+- Replace acquired facts only through validated same-target, subject, attribute, occurrence, time, and acquisition corrections; audit the replaced value.
+- Reject patient SAY corrections of initial or EXAM evidence and require actual EXAM acquisition for finding facts and finding attributes.
+- Keep unknown, conflict, nonclinical, not_applicable, unsupported, recorded, and mapped answer outcomes distinct.
+- Keep domain history denial in notes rather than inventing individual disease negatives.
+- Use accepted clinical facts alone for reasoning, question selection, Education patient payloads, and empathy clinical context; use notes for SOAP and collection coverage only.
+- Keep Education replies in actual dialogue and delivery receipts without clinical interpretation, empathy generation, or replanning.
 
-## Gateway and Evidence
+## Questions, Reasoning, and Budgets
 
-- Apply D41 context analysis followed by database-only normalization for every initial input and collection SAY or EXAM reply.
-- Execute D43 process_initial_input before the first SAY and preserve the opening chief and independent clinical details at turn zero.
-- Keep compact observed-number schemas separate from graph-condition schemas and preserve valid context rows while repairing only invalid indices once.
-- Allow one additional focused review of an explicitly prioritized unresolved initial observation without promoting genuine unknown existence to positive.
-- Distinguish target assertions from attribute assertions; use feature hints for retrieval without turning them into mandatory target attributes.
-- Bind common intake to the known chief and retain standalone registered numeric reports as record-only without inventing symptom presence or converting changes to absolute measurements.
-- Keep Education replies transcript-only without interpretation, empathy, clinical updates, or replanning.
-- Use openai/gpt-6-luna through the pinned SDK and keep routing, diagnosis scores, question selection, and SOAP serialization in Python.
-- Preserve the complete actual transcript and raw model exchanges in case-local audit storage only.
-- Restrict patient-original context to InputInterpreter model requests and exclude failed drafts and undelivered speech from dialogue.
-- Extract atomic statements with exact current spans and typed subject, reporter, time, episode, assertion, correction, and emotional intent.
-- Use only supplied existing observation, episode, and correction references and keep family relationship tokens closed.
-- Separate unknown, uncertain, nonclinical, domain denials, conditional negation, inapplicability, and acquired facts.
-- Search each statement independently using source labels, aliases, and context-generated retrieval hints without hypothesis filtering.
-- Bind normalization batches to admitted Target, Attribute, AttributeValue, polarity, and registered numeric formats.
-- Reject unknown identifiers, invalid relationships, duplicate JSON keys, nonfinite numbers, unsupported units, and invented measurements.
-- Allow one context repair, three normalization stages, and one additional format repair per mapping batch inside shared case budgets.
-- Freeze independent valid mappings and repair only unresolved statements while preserving original rejection evidence.
-- Force the closest compatible admitted mapping at the final semantic stage and complete remaining valid-context mappings deterministically when necessary.
-- Preserve polarity, subject, scope, and acquisition during forced completion and record forced_by without excluding otherwise eligible evidence.
-- Keep unsupported details in typed outcomes and audit storage without adding record codes, clinical graph relations, or free SOAP summaries.
-- Separate fact identifiers from question identifiers and connect every acquired question answer through answered_fact_ids.
-- Preserve nonexclusive values and separate subjects, observations, conditions, and time points; replace facts only through validated corrections.
-- Restrict acquired O corrections to a new EXAM result for the same target and occurrence.
-- Use CanonicalSnapshot for downstream patient data and EvidenceIndex for its graph-eligible reasoning subset.
-- Keep raw quotations, free English record details, and unregistered quantities outside canonical patient payloads.
-- Derive question acquisition and retry behavior from typed outcomes and facts rather than patient wording.
-- Detect empathy through the context pass and provide only emotional codes and canonical facts to empathy generation.
-- Validate empathy independently as one NFC 1-30 Korean statement and preserve the prepared fallback.
-- Preserve D28 whole-message caps of 12 KiB primary, 16 KiB recovery, and 8 KiB after context rejection.
-- Split normalization batches rather than deleting independent statements and retain required current input and bound identifiers.
-- Preserve oversized input in audit without transmitting an oversized request or manufacturing a clinical fact.
+- Use prepared Korean SAY and EXAM wording, independently normalize NFC, and require 1-30 codepoints before actual transmission without truncation.
+- Preserve observable-target qualification guards and admitted QuestionTemplate answer_type, affirmative, interviewable, and reason contracts.
+- Ask the greeting and unresolved chief-bound onset, course, recurrence, and previous care before chief attributes.
+- Require one patient-prioritized confirmed chief; ask at most two primary clarifications and fail primary_chief_unresolved instead of choosing an arbitrary report.
+- Collect the chief's full admitted attribute list in source order, reserve Open Inquiry, and ask at most six useful ROS targets from the chief's systems without chaining.
+- Derive chief progress, ROS targets, and Context coverage from facts, knowledge, and compact answer receipts rather than duplicate counters.
+- Prepare only the current session's queue; remove answered questions and discard stale bindings after chief changes or session exit.
+- Collect unresolved five-domain history and protect up to two related Context targets independently of optional diagnostic utility.
+- Preserve one pure scoring kernel for actual and hypothetical evidence, exact chief occurrence, applicability, refinement replacement, and source weights.
+- Aggregate each Disease-Target once; calculate chief support plus capped auxiliary support plus one Context bonus minus bounded source-typicality penalties.
+- Require matched positive exact-chief support and positive fit for disease selection; otherwise use the confirmed chief symptom or fail without one.
+- Compare eight current and four structurally diverse potential candidates before widening to all chief-compatible candidates.
+- Preserve D plus 0.25 E with score gap scale four, 0.5 future discount, six-question paths, and 512 hypothetical evaluations per selection.
+- Keep explicit unknown and false prerequisite paths distinct from useful answer regions and incomplete computation distinct from no useful question.
+- Require completely evaluated positive utility for optional questions; compute utility before enqueueing without retaining assessments or hypothetical answers.
+- Preserve conditional target/cap pairs 5/7, 7/14, 7/9, 3/10, and 5/10 without borrowing session capacity.
+- Protect future collection minimums and five enabled Education turns within fifty shared SAY/EXAM turns.
+- Count empathy actions separately from interview caps while charging shared turns, tokens, calls, and time; reserve three model calls before empathy.
+- Reserve two model calls and 8192 output tokens plus 120-second response and finalization windows before ordinary collection.
+- Process received responses before the next budget decision and allow prepared Education delivery without reply-model reservation.
+- Share 200 designated-model calls, 500000 input tokens, and 100000 output tokens; count unique semantic requests and consumed server turns once.
+- Preserve whole-message caps 12 KiB primary, 16 KiB recovery, 8 KiB compact recovery, and 64 KiB Education; split independent mapping batches without deleting statements.
+- Return truncation as ModelResult.error without partial semantic success and allow one bounded larger recovery up to 8000 output tokens.
+- Replay a transient once after two seconds with the same ID and payload and bounded timeout; stop unknown after unresolved replay.
+- Preserve explicit response-format, refusal, closed, expired, failed, and unknown boundaries without editing the SDK.
 
-## Pattern Reasoning
+## Education and Submission
 
-- Retrieve shared Patterns from current positive or supported uncertain Targets, evaluate each Pattern per observation/episode, then apply Disease Association conditions and weights.
-- Preserve matched, contradicted, and incomplete Pattern states and separate applicability status; let explicit contradiction dominate unknown.
-- Activate support only after complete Feature/applicability matching; never merge episodes or count uncertain alternatives as independent confirmation.
-- Replace matched ancestors with matching refinements even when support decreases, retain fractional/zero source weights, and aggregate once per Disease–Target.
-- Record incomparable matches without fabricating a combined-source weight.
-- Preserve nonexclusive categorical positives and distinguish explicit value negation from numeric conflict.
-- Restrict chief support to the anchored occurrence and exclude another occurrence of the same Target from auxiliary support.
-- Preserve source Association weights and hash-pin the separate d41.1 reasoning policy without changing source graph or action assets.
-- Apply bounded absence penalties only to basic presence Patterns with matched applicability, high/very_high source typicality, and explicit current absence in the active chief episode.
-- Cap penalties at one per Target and two per Disease; do not penalize unknown, missing relations, detailed mismatch, or another episode's absence.
-- Calculate fit as exact-chief support plus min(4, other Target support) plus positive Context capped at one minus bounded contradiction.
-- Require positive exact-chief support matched applicability and positive fit; rank eligible diagnoses by fit chief support conflicts and URI.
-- Preserve broad candidate recall and use incomplete conditions for question utility rather than confirmed diagnostic support.
-- Keep public indexes/refinement caches in PreparedResources and patient search/matching caches only in case state.
-- Preserve full diagnostic recall and compare eight current plus four structurally diverse potential candidates before expanding to all chief-compatible candidates.
-- Compare typed answer regions with D plus 0.25 E using gap scale four and action cost one; exclude unknown replies from information-branch weighting.
-- Discount feasible future paths by 0.5 per step up to six questions and enforce 512 hypothetical evaluations per selection.
-- Record incomplete computation separately from no useful information and retain selected paths outcomes runner-ups and actual post-answer results.
-- Evaluate actual and isolated hypothetical evidence through the same pure kernel and dependency indexes; score Context from acquisition independently of session.
-- Select a separately typed confirmed chief-symptom diagnosis if no eligible Disease remains and fail explicitly without supported chief evidence.
+- Fix one working Diagnosis and retain minimal unresolved assessment before Education; never create a second diagnosis wrapper.
+- Resolve disease guideline IDs only at knowledge access and read originals through the hash-pinned organizer guideline mount.
+- Read large sources in complete sequential fragments, validate local exact quotations, and retain only final English sentences and minimal document/byte references.
+- Preserve guideline, model_knowledge, and mixed provenance, source applicability, conditional treatment, and one plan-format repair.
+- Generate with Luna high and render Korean with the designated medium effort within shared budgets.
+- Use the current interview queue for Korean delivery, reference final PlanSentence IDs, and withhold whole invalid or unaffordable groups.
+- Preserve English P when rendering or delivery fails and retain minimal undelivered receipts.
+- Honor explicit ONTOWARD_EDUCATION_ENABLED=false without Education actions, reserved turns, or P.education.
+- Generate SOAP only in the submission TurnContext from facts, notes, final diagnosis, and plan; never store SOAP copies in CaseState.
+- Preserve fifteen English SOAP string fields and separate diagnosis, semantic categories, same-episode pain details, family context, numeric bounds, and acquisition provenance.
+- Keep O.tests empty and O.exam restricted to valid objective acquisition; exclude hypothetical and unperformed findings from A and differential evidence.
+- Reconstruct invalid SOAP at most once and finish only after DIAGNOSE returns completed; then clear the submission turn and retain its small receipt.
 
-## Budgets, Recovery, and Submission
+## Assets and Verification
 
-- Apply D40 conditional target/cap pairs of Initiation 5/7 ChiefComplaint 7/14 ContextFactor 7/9 DifferentialDiagnosis 3/10 and Education 5/10 without borrowing capacity.
-- Treat interview targets as conditional coverage goals and skip filler while reserving five shared turns before enabled Education.
-- Protect future conditional collection minimums and current mandatory work before optional questions or empathy within fifty shared turns.
-- Deliver Education within its ten-action cap and preserve whole PlanSentence delivery groups without mandatory understanding questions.
-- Require fully evaluated positive structural decision utility for optional questions and budgeted binding clarifications; exclude resolved unknown unavailable or false-prerequisite paths.
-- Preserve compulsory primary selection full chief collection and Open Inquiry while comparing optional presence attributes Context and EXAM with the shared kernel.
-- Keep Usage.actions as total consumed server turns and empathy_actions as its empathy subset; count actions minus empathy_actions against interview caps.
-- Charge empathy SAY and model calls to the common 50-turn and model/token budgets without an independent empathy quota; preserve queued empathy across replanning and interpret its reply before continuation.
-- Preserve empathy dialogue and accepted clinical facts without inserting an unlinked acknowledgement into SOAP.
-- Reserve two Gateway calls and 8192 output tokens before collection actions while retaining response and finalization windows of 120 seconds each.
-- Allow prepared Education delivery without a reply-model reservation and retain response and finalization time windows.
-- Classify finish_reason length as truncation and use the existing single recovery with at most 8000 tokens without counting truncated responses as success.
-- Process every received reply immediately after execution and let interpretation consume its reserved window; do not route budget checks back to pending recovery.
-- Share 200 model calls, 500000 input tokens, and 100000 output tokens case-wide; count unique requests and successful actions once.
-- Keep one graph budget evaluation and a lightweight capacity/model/time gate before transmission; distinguish graph steps from SDK turns and enforce server constraints.
-- Replay transient errors once after two seconds with the exact payload/request ID and timeout bounded by 240 seconds and the remaining phase reserve; stop unknown if unresolved.
-- Preserve patient/exam response-format errors as unresolved without a new-ID automatic retry; never edit the pinned SDK.
-- Preserve Education replies only in the transcript without clinical extraction terminology clarification empathy or replanning.
-- Treat the fixed selection as a working diagnosis and preserve unresolved assessment and treatment prerequisites in A and P.
-- Keep English P sentences separate from Korean delivery queues and retain exact undelivered reasons.
-- Read every mapped original document through the pinned index and organizer mount and retain document relation scope and source hashes.
-- Include only canonical patient facts and typed outcomes in every Education generation request within a whole-messages 64-KiB cap.
-- Read oversized documents in complete sequential fragments and combine verified quote-backed notes before synthesis.
-- Require five nonempty English P sentence arrays on success and distinguish guideline model_knowledge and mixed provenance.
-- Allow one case-wide plan-format repair and one Doctor repair for each invalid batch while preserving accepted items.
-- Use education high with up to 8000 output tokens and education_doctor medium with up to 4000 inside shared budgets.
-- Reject missing changed and escaping sources and retain retrieval errors without treating model knowledge as source evidence.
-- Serialize exactly fifteen SOAP string fields plus separate diagnosis, keep O.tests empty, and retain acquisition provenance and meaningful clinical context.
-- Keep A.evidence limited to actual obtained findings used in diagnosis and exclude unasked/unperformed findings and internal identifiers.
-- Apply D33 English source labels and fixed Category: Content lines to populated SOAP fields; keep the representative complaint in S.cc and onset and pain assessment in S.hpi tied to the same observation and episode.
-- Render history and ROS presence as (+) or (-), keep unknown and uncertain explicit, and never expand a general history denial into individual disease negatives.
-- Render patient facts from admitted labels, values, and numeric formats; require explicit NRS scale evidence.
-- Preserve numeric approximation and mark qualified assertions in SOAP without inserting the patient's original condition text.
-- Keep unmapped spans, greetings, acknowledgements, and future promises in audit storage without adding them to SOAP.
-- Render Diagnosis and Evidence categories plus source-supported r/o entries; keep all fifteen SDK fields and the separate English diagnosis unchanged in shape.
-- Preserve acquired negative findings used by diagnosis penalties and include obtained supporting findings beside each differential diagnosis.
-- Reconstruct an invalid SOAP record once and finish only after the submitted DIAGNOSE returns completed.
-- Distinguish failed, unknown, closed, expired, and confirmed submitted outcomes.
-
-## Configuration and Acceptance
-
-- Read public .env settings with runtime environment precedence and keep runner credentials separate.
-- Resolve manifest assets within knowledge and Gateway/text configuration within config; reject external/parent/symlink escapes and missing assets.
-- Require manifest-pinned schema, vocabulary, clinical bundles, source policy, reasoning policy, and optional labels/questions/plans.
-- Reject the D18-withdrawn runtime manifest until a new pinned source-only batch and its wording are admitted.
-- Recognize D20 graph_admitted_text_pending as approved graph data and reject consultation until its pinned action text is complete.
-- Consume D23 admitted D22 patient actions through strict prepare; preserve D20 graph and policy semantics and use only exact prepared SAY and EXAM wording.
-- Keep require_action_assets=False confined to offline graph preparation and validation; use full graph and question validation during prepare.
-- Use package-relative runtime imports and settings.py for file-relative paths.
-- Run maintained D41 normalization intake SOAP algorithm empathy evidence Education and admitted-RDF checks through root Dev/tests/workflow.
-- Compare frozen pre-D38 and D38 synthetic consultations with identical source fixtures and budgets without public-case tuning.
-- Keep synthetic fixtures and evidence in Tmp and verify the extracted ZIP without parent data/assets or network.
-- Package only active manifest knowledge assets and required runtime defaults; exclude superseded unreferenced knowledge files without deleting their source custody.
-- Reconcile D18 in requirements, contracts, decisions, and all three maintained operational states before completion.
-- Distinguish offline runtime/artifact checks from independent clinical validation, real Luna, authenticated SDK, official submission/evaluation, and deployment.
+- Resolve runtime assets within submission and use package-relative imports without host data access or new dependencies.
+- Preserve the unchanged SDK, clinical RDF, source weights, question assets, guideline index, and prior admission receipts.
+- Pin the runtime algorithm as d44.1 independently from clinical asset admission.
+- Keep maintained behavioral fixtures in Dev/tests/workflow, evidence in Tmp, and durable artifact custody in data/provenance.
+- Verify information preservation, correction/acquisition, cache parity, observer parity, Korean delivery, Education, and confirmed SOAP submission in project containers.
+- Verify the independent archive with no parent project data, no development key, and network disabled; test original SDK HTTP only on the project-internal network.
+- Distinguish scripted replay and local runtime/artifact evidence from fresh model quality, clinical validation, real NOVA, official evaluation, commits, and deployment.

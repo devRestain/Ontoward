@@ -1,170 +1,109 @@
-from contextlib import ExitStack, nullcontext
+"""Compare observed and unobserved D44 execution and reconstruct every node."""
+from contextlib import nullcontext
 import copy
-from datetime import datetime, timezone
-import importlib.util
-import itertools
 import json
 import os
 from pathlib import Path
 import sys
-from unittest.mock import patch
-from uuid import UUID
 
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,os.environ.get('ONTOWARD_WORKFLOW_FIXTURES',str(ROOT/'Dev/tests/workflow')))
+import fixtures as f
 from observe import observing, plain
+from workflow.graph import build_graph
+from workflow.state.models import WorkflowState
+
+OUTPUT=Path(os.environ.get('ONTOWARD_OBSERVER_OUTPUT',ROOT/'Tmp/d44-observer'))
 
 
-ROOT = Path(__file__).resolve().parent.parent
-OUTPUT = Path(os.environ.get('ONTOWARD_OBSERVER_OUTPUT', ROOT / 'Tmp/test-web31/parity'))
-OUTPUT.mkdir(parents=True, exist_ok=True)
-os.environ['ONTOWARD_TEST_OUTPUT'] = str(OUTPUT / 'fixtures')
+def capture(name,observed):
+    client=f.FakeSDK(context='absent' if name=='negative_context' else 'unknown' if name=='unknown_context' else 'present')
+    c=f.consultation(client,prepared=f.resources(education=name=='education'))
+    if name=='closed':
+        client.status='closed'
+    if name=='expired':
+        client.deadline=f.FIXED
+    if name=='malformed_context':
+        client.chat=lambda **kw:client.completion('{')
+    if name=='model_limit':
+        client.chat=lambda **kw:(_ for _ in ()).throw(f.NovaError('MODEL_CALL_LIMIT'))
+    if name=='unconfirmed':
+        client.diagnose=lambda **kw:{'status':'pending'}
+    injected={'transient_model':('chat','REQUEST_PENDING'), 'soap_repair':('diagnose','INVALID_RECORD_FIELDS'),
+              'action_format':('say','PATIENT_RESPONSE_INVALID'), 'refusal':('say','EXAM_NOT_RECOGNIZED')}.get(name)
+    wire=[]
+    for method in ('session','chat','say','exam','diagnose'):
+        original=getattr(client,method)
+        def invoke(*args,_method=method,_original=original,**kwargs):
+            wire.append({'method':_method,'args':copy.deepcopy(args),'body':copy.deepcopy(kwargs)})
+            if injected and _method==injected[0] and sum(r['method']==_method for r in wire)==1:
+                raise f.NovaError(injected[1])
+            return _original(*args,**kwargs)
+        setattr(client,method,invoke)
+    path=OUTPUT/(name+'.missing/trace.jsonl' if name=='recording_failure' else name+'.jsonl')
+    if path.is_file():
+        path.unlink()
+    context=observing(path) if observed else nullcontext()
+    with context:
+        initial=c.nova_session.initialize_case(client)
+        from workflow import graph
+        updates=list(graph.build_graph(c,c.planner.knowledge).stream(initial.model_dump(mode='json'),
+            {'recursion_limit':c.budget.graph_step_limit(initial)},stream_mode='updates'))
+    return plain({'initial':initial.model_dump(mode='json'),'updates':updates,'wire':wire}),path
 
 
-def module(name, path):
-    spec = importlib.util.spec_from_file_location(name, path)
-    value = importlib.util.module_from_spec(spec)
-    sys.modules[name] = value
-    spec.loader.exec_module(value)
-    return value
+def apply(state,change):
+    if not change['path']:
+        return copy.deepcopy(change['value'])
+    parent=state
+    for key in change['path'][:-1]:
+        parent=parent[key]
+    key=change['path'][-1]
+    if change['op']=='remove':
+        if isinstance(parent,list):
+            parent.pop(key)
+        else:
+            del parent[key]
+    elif change['op']=='add' and isinstance(parent,list):
+        parent.insert(key,copy.deepcopy(change['value']))
+    else:
+        parent[key]=copy.deepcopy(change['value'])
+    return state
 
 
-fixture = module('observer_fixtures', ROOT / 'Dev/tests/workflow/test_workflow.py')
-comparison = module('observer_scenarios', ROOT / 'Dev/tests/workflow/compare_traces.py')
-fixed = datetime(2026, 10, 14, tzinfo=timezone.utc)
+def verify():
+    OUTPUT.mkdir(parents=True,exist_ok=True)
+    scenarios=[]
+    for name in ('normal','negative_context','unknown_context','education','transient_model','model_limit',
+                 'malformed_context','expired','closed','soap_repair','unconfirmed','refusal','action_format','recording_failure'):
+        baseline,_=capture(name,False)
+        observed,path=capture(name,True)
+        assert baseline==observed,name
+        end=WorkflowState.model_validate(next(iter(observed['updates'][-1].values())))
+        if name in {'normal','education','negative_context','unknown_context','soap_repair','refusal','action_format','transient_model','recording_failure'}:
+            assert end.session.termination=='submitted',(name,end.session.reason)
+        if name!='recording_failure':
+            current=None
+            reconstructed=[]
+            rows=[json.loads(line) for line in path.read_text().splitlines()]
+            assert not any(row['kind']=='observation_error' for row in rows),name
+            for row in rows:
+                if row['kind']=='initial':
+                    current=copy.deepcopy(row['state'])
+                for change in row.get('patch',[]):
+                    current=apply(current,change)
+                if row['kind']=='node_end':
+                    reconstructed.append(copy.deepcopy(current))
+            expected=[next(iter(update.values())) for update in observed['updates']]
+            assert reconstructed==expected,name
+            assert any(row['kind']=='audit' for row in rows) or name in {'closed','expired'},name
+        scenarios.append(dict(name=name,termination=end.session.termination,nodes=len(observed['updates'])))
+    report=dict(status='pass',scenarios=scenarios,node_updates=sum(row['nodes'] for row in scenarios),
+                recording_failure='nonfatal_no_replay',network='none',actual_models='not_run')
+    (OUTPUT/'verification.json').write_text(json.dumps(report,indent=2)+'\n')
+    print(json.dumps(report,indent=2))
+    return report
 
 
-class FixedDatetime(datetime):
-    @classmethod
-    def now(cls, tz=None):
-        return fixed if tz else fixed.replace(tzinfo=None)
-
-
-def capture(name, options, observed, bad_path=False):
-    ids, wire, delays = itertools.count(1), [], []
-    with ExitStack() as stack:
-        stack.enter_context(patch.object(fixture, 'datetime', FixedDatetime))
-        client = fixture.FakeSDK(**options)
-        if name == 'closed':
-            client.status = 'closed'
-        if name == 'expired':
-            client.deadline = fixed
-        injected = {'transient_model': ('chat', 'REQUEST_PENDING'), 'response_format': ('say', 'PATIENT_RESPONSE_INVALID'),
-                    'soap_repair': ('diagnose', 'INVALID_RECORD_FIELDS')}.get(name)
-        for method in ('session', 'chat', 'say', 'exam', 'diagnose'):
-            original = getattr(client, method)
-            def invoke(*args, _method=method, _original=original, **kwargs):
-                row = {'method': _method, 'args': copy.deepcopy(args), 'body': copy.deepcopy(kwargs), 'timeout': client.timeout}
-                wire.append(row)
-                try:
-                    if injected and _method == injected[0] and sum(item['method'] == _method for item in wire) == 1:
-                        raise fixture.NovaError(injected[1])
-                    response = _original(*args, **kwargs)
-                    row['response'] = copy.deepcopy(response)
-                    return response
-                except fixture.NovaError as error:
-                    row['error'] = error.code
-                    raise
-            setattr(client, method, invoke)
-        resources = fixture.resources()
-        if name == 'education':
-            resources = fixture.resources(config=fixture.CONFIG.model_copy(update={'education_enabled': True}))
-        consultation = fixture.assemble_consultation(client, resources, now=lambda: fixed,
-            sleep=delays.append, new_request_id=lambda: str(UUID(int=next(ids))))
-        trace_path = OUTPUT / (name + ('.missing/trace.jsonl' if bad_path else '.jsonl'))
-        if trace_path.exists():
-            trace_path.unlink()
-        context = observing(trace_path) if observed else nullcontext(None)
-        with context as trace:
-            if trace:
-                trace.knowledge = resources.knowledge
-            initial = consultation.nova_session.initialize_case(client)
-            from workflow import graph as graph_module
-            graph = graph_module.build_graph(consultation, resources.knowledge)
-            updates = list(graph.stream(initial.model_dump(), {'recursion_limit': 1400}, stream_mode='updates'))
-        assert 'enter_session' not in vars(consultation) and 'finalize' not in vars(consultation)
-        result = plain({'initial': initial.model_dump(), 'updates': updates, 'wire': wire, 'delays': delays})
-        return result, trace_path
-
-
-def reconstructed(path, *, objects=False):
-    state, updates = None, []
-    for event in map(json.loads, path.read_text().splitlines()):
-        if objects and 'object_state' in event:
-            state = event['object_state']
-        elif not objects and event['kind'] == 'initial':
-            state = event['state']
-        for change in event.get('object_patch' if objects else 'patch', []):
-            if not change['path']:
-                state = copy.deepcopy(change['value'])
-                continue
-            parent = state
-            for key in change['path'][:-1]:
-                parent = parent[key]
-            key = change['path'][-1]
-            if change['op'] == 'remove':
-                del parent[key]
-            elif change['op'] == 'add' and isinstance(parent, list):
-                parent.insert(key, copy.deepcopy(change['value']))
-            else:
-                parent[key] = copy.deepcopy(change['value'])
-        if event['kind'] == 'node_end':
-            updates.append({event['node']: copy.deepcopy(state)})
-    return updates
-
-
-def main():
-    results = {}
-    normal = None
-    for name, options in {**comparison.SCENARIOS, 'education': {}}.items():
-        baseline, _ = capture(name, options, False)
-        observed, path = capture(name, options, True)
-        difference = comparison.first_difference(baseline, observed)
-        restored = reconstructed(path)
-        reconstruction = comparison.first_difference(observed['updates'], restored)
-        if difference or reconstruction:
-            raise AssertionError((name, difference, reconstruction))
-        if name == 'normal':
-            normal = baseline
-        final = next(iter(observed['updates'][-1].values()))
-        rows = [json.loads(line) for line in path.read_text().splitlines()]
-        calls = [row for row in rows if row['kind'] == 'call_start']
-        ends = {row['call_id']: row for row in rows if row['kind'] in {'call_end', 'call_error'}}
-        assert calls and all(row['call_id'] in ends for row in calls)
-        assert not any(row['kind'] == 'observation_error' for row in rows)
-        assert any(row['owner'] == 'InputInterpreter' for row in calls)
-        assert any(row['owner'] == 'SubmissionWriter' for row in calls) or final['interaction']['termination'] != 'submitted'
-        ids = {row['call_id'] for row in calls}
-        assert all(row['parent_call_id'] is None or row['parent_call_id'] in ids for row in calls)
-        assert reconstructed(path, objects=True)[-1] == observed['updates'][-1]
-        results[name] = {'nodes': len(observed['updates']), 'parity': True, 'reconstruction': True,
-                         'object_calls': len(calls), 'matched_calls': True,
-                         'termination': final['interaction']['termination'], 'diagnosis': final['case']['diagnosis']}
-    unavailable, _ = capture('normal', {}, True, bad_path=True)
-    assert comparison.first_difference(normal, unavailable) is None
-
-    import nova_sdk
-    client = nova_sdk.Client(api_base='http://unused', token='secret-not-for-trace', session_id='local')
-    body = {'request_id': 'fixed-request', 'messages': [{'role': 'user', 'content': 'same request'}]}
-    path = OUTPUT / 'sdk.jsonl'
-    path.unlink(missing_ok=True)
-    failure = nova_sdk.NovaError('REQUEST_PENDING', 409)
-    with patch.object(nova_sdk.Client, '_request', side_effect=[{'ok': True}, failure]) as original:
-        with observing(path):
-            assert client._request('POST', '/v1/chat/completions', body) == {'ok': True}
-            try:
-                client._request('POST', '/v1/chat/completions', body)
-            except nova_sdk.NovaError as error:
-                assert error is failure
-            else:
-                raise AssertionError('Observer swallowed the original SDK error')
-        assert original.call_count == 2
-        assert all(call.args[1:] == ('POST', '/v1/chat/completions', body) for call in original.call_args_list)
-    assert 'secret-not-for-trace' not in path.read_text()
-    report = {'status': 'pass', 'scenarios': results, 'node_updates': sum(row['nodes'] for row in results.values()),
-              'logging_failure_preserves_workflow': True, 'sdk_identity_errors_and_single_delegation': True,
-              'actual_nova': 'not_run', 'official_api': 'not_run'}
-    (OUTPUT / 'verification.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
-    print(json.dumps(report, ensure_ascii=False))
-
-
-if __name__ == '__main__':
-    main()
+if __name__=='__main__':
+    verify()

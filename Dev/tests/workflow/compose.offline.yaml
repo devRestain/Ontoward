@@ -1,5 +1,7 @@
 services:
   dev:
+    image: ontoward-dev:latest
+    build: !reset null
     network_mode: none
     environment:
       NOVA_DEV_KEY: ""

@@ -6,63 +6,62 @@ from .state.models import WorkflowState
 
 
 def route_budget(state: WorkflowState) -> str:
-    if state.interaction.termination:
+    if state.session.termination:
         return "abort"
     if state.session.finalizing:
         return "build_soap"
-    if not state.session.initialized:
+    if state.interview.status == 'uninitialized':
         return "enter_session"
-    return "select_question" if (state.unasked()
-        or any(event.status == "pending" for event in state.interaction.empathy_events)) else "advance_session"
+    return "select_question" if (state.interview.queue or state.interview.empathy) else "advance_session"
 
 
 def route_validation(state: WorkflowState) -> str:
-    if state.interaction.termination:
+    if state.session.termination:
         return "abort"
-    action = state.interaction.selected
+    action = state.turn
     if action is None:
         return "check_budget"
-    return "execute_action" if action.ready else "check_budget"
+    return "execute_action" if action.stage == 'ready' else "check_budget"
 
 
 def route_after_action(state: WorkflowState) -> str:
-    if state.interaction.termination:
+    if state.session.termination:
         return "abort"
-    return "process_input" if state.interaction.incoming is not None else "check_budget"
+    return "process_input" if state.turn and state.turn.stage == 'received' else "check_budget"
 
 
 def route_soap(state: WorkflowState) -> str:
-    return "abort" if state.interaction.termination else "validate_submission"
+    return "abort" if state.session.termination else "validate_submission"
 
 
 def route_submission(state: WorkflowState) -> str:
-    if state.interaction.termination:
+    if state.session.termination:
         return "abort"
-    return "repair_submission" if state.interaction.submission_error else "submit_diagnosis"
+    return "repair_submission" if (state.turn and state.turn.error) else "submit_diagnosis"
 
 
 def route_after_submit(state: WorkflowState) -> str:
-    return "repair_submission" if state.interaction.submission_error and not state.interaction.termination else "confirm_submission"
+    return "repair_submission" if (state.turn and state.turn.error) and not state.session.termination else "confirm_submission"
 
 
 def route_confirmation(state: WorkflowState) -> str:
-    return "finish" if state.interaction.termination == "submitted" else "abort"
+    return "finish" if state.session.termination == "submitted" else "abort"
 
 
 def finish(state: WorkflowState) -> None:
-    if state.interaction.termination != "submitted":
+    if state.session.termination != "submitted":
         raise ValueError("Normal finish requires confirmed diagnosis submission")
 
 
 def abort(state: WorkflowState) -> None:
-    if state.interaction.termination not in {"failed", "unknown", "expired", "closed"}:
+    if state.session.termination not in {"failed", "unknown", "expired", "closed"}:
         raise ValueError("Abort requires an explicit unsuccessful outcome")
 
 
 def run_node(state, operation):
     updated = state.model_copy(deep=True)
     operation(updated)
-    return WorkflowState.model_validate(updated.model_dump()).model_dump()
+    return WorkflowState.model_validate(updated.model_dump()).model_dump(mode='json')
 
 
 def build_graph(consultation, knowledge):

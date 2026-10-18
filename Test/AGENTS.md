@@ -34,18 +34,18 @@
 - Default the website to C10 NOVA and 200 total role requests; require an explicit start action and retain one active run without queuing or automatic resumption.
 - Observe the original run.py through Test-only in-memory graph and SDK wrappers; delegate once and preserve errors retries routing and all clinical decisions.
 - Store the initial state and reversible node changes with actual node names session turn request IDs and source labels; mark missing or partial traces explicitly.
-- Observe case collaborator methods parser stages canonical snapshots evidence indexes dictionary lookups and SDK payloads with matched parent calls typed arguments returns and state deltas; preserve each original call exception and method binding once.
-- Lead reports with selectable execution flow and a five-owner WorkflowState explorer; expose exact paths before and after values returned temporary objects and JSON string formatting without inferring field reads or unrecorded historical calls.
+- Observe case collaborator methods parser stages typed input results evidence indexes dictionary lookups and SDK payloads with matched parent calls typed arguments returns and state deltas; preserve each original call exception and method binding once.
+- Lead reports with selectable execution flow and a schema-aware WorkflowState explorer for D44 three resident owners plus the disposable turn and preserved legacy traces; expose exact paths before and after values returned temporary objects and JSON string formatting without inferring field reads or unrecorded historical calls.
 - Keep inner hypothetical scoring loops and the Python heap outside observation and declare collector coverage; preserve service references without serializing credentials or arbitrary service dictionaries.
 - Serve completed and failed runs through the same viewer and preserve a self-contained report.html for offline review.
-- Show each observed Note snapshot with all fifteen case fields separate diagnosis completion and value statuses source links and the actual generated SOAP payload; never infer missing state or rerun clinical logic for display.
+- Show typed facts notes final diagnosis plan and current submission work for D44; keep old fifteen-case-field traces readable and distinguish saved state from received SOAP without rerunning clinical logic.
 - Refresh saved report HTML from preserved logs when opened; keep LangSmith setup guidance distinct from an implemented exporter or authorized external upload.
 - Use the separate compose.nova.yaml overlay for explicitly scoped NOVA execution.
 - Preserve each run in a fresh root Tmp/test-evaluator directory and disable automatic resumption.
 - Preserve request identity, completed responses, refused turns, failed requests, and final submission receipts.
 - Preserve actual Gateway request bodies and responses in simulator output so transmitted candidates can be audited without exposing credentials.
 - Keep the scripted Gateway case-independent and limited to supplied source names and aliases; do not add case-to-concept fixtures or clinical synonym tables.
-- Handle D41 input_context and input_mapping tasks plus typed empathy in scripted doubles without treating protocol fixtures as semantic-quality evidence.
+- Handle D44 compact term-bound questions and input_context and input_mapping tasks plus typed empathy in scripted doubles without treating protocol fixtures as semantic-quality evidence.
 - Handle D37 education and education_doctor protocol fixtures and forward the requested reasoning effort through the model bridge.
 - Return D41 context statements and database dictionary batches while keeping scripted patient replies case-independent without clinical synonym tables.
 - Label isolated synthetic archive acceptance separately from public-sample consultation and keep its patient fixture outside the agent container.

@@ -61,19 +61,22 @@
 
 - Use the proven project dev container with tests/workflow/compose.offline.yaml for current projection and checks; keep dependencies off the host.
 - Preserve the existing extraction image and dedicated authentication volume; use the declared extraction service for the explicitly requested Korean run without downloading dependencies.
-- Run python -B Dev/tests/workflow/test_workflow.py for the complete offline consultation flow.
-- Run python -B -m unittest discover -s Dev/tests/workflow -p test_normalization.py for D41 dictionary binding forced completion loss prevention and raw invariance.
+- Run python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py' for maintained lifecycle binding reasoning delivery and transport behavior.
+- Run python -B -m unittest discover -s Dev/tests/workflow -p test_binding.py for D44 exact binding selective forced completion notes and information preservation.
 - Run python -B Dev/tests/workflow/test_intake_soap.py for D40 C03 input custody semantic SOAP protected collection and record-only Education.
-- Run python -B Dev/tests/workflow/test_algorithm.py for D38 matching delta equivalence chief collection and decision invariants.
+- Run python -B -m unittest discover -s Dev/tests/workflow -p test_reasoning.py for matching delta equivalence prerequisites and joint question value.
 - Use tests/workflow/compare_algorithms.py with a frozen baseline submission and its original fixtures for the bounded D38 comparison.
 - Run python -B Dev/tests/workflow/test_input_empathy.py for D41 typed empathy generation response reservations and last-reply delivery behavior.
 - Run python -B Dev/tests/workflow/test_education.py for D37 full-document context fixed diagnosis English plans and bounded Korean delivery.
 - Run python -B Dev/tests/workflow/test_evidence_consistency.py for acquisition-safe corrections shared evidence and raw-free SOAP through confirmed submission.
 - Run python -B Dev/tests/workflow/test_admitted.py --submission PATH --output PATH for actual admitted knowledge and archive isolation with scripted patient and model responses.
-- Run python -B Dev/tests/workflow/test_korean_admitted.py --submission PATH --output PATH for exact prepared Korean delivery, Context polarity, and separate examination acquisition through SOAP and confirmed submission.
+- Run python -B Dev/tests/workflow/test_admitted.py --submission PATH --output PATH for exact prepared Korean delivery, Context polarity, and separate examination acquisition through SOAP and confirmed submission.
 - Run python -B Dev/tests/ontology/test_database.py for source/approval/quota/Korean behavior and verify_database.py plus verify_catalog.py for real-source coverage, graph semantics, provenance, Korean coverage, and resource evidence.
 - Use tests/ontology/compose.build.yaml with the root dev image for two-CPU eight-GB builds and isolated prepare checks; keep source mounts read-only.
 - Run the isolated package Compose service for actual ZIP evidence.
 - Keep synthetic workflow results, real-source structural projection, clinical review, runtime admission, authenticated SDK execution, and diagnostic performance distinct.
 - Report only performed checks and reconcile root, submission, and data states before handoff.
 - Keep the D17 review adoption record in architecture/D17_REVIEW_ADOPTION.md and leave diagnostic performance claims outside offline acceptance.
+
+- Maintain D44 lifecycle binding reasoning delivery and transport behavioral checks in tests/workflow; use compare_algorithms.py for frozen D43 scoring and fixed-input cost comparison and replay_c03.py for saved-response reproduction.
+- Use the existing ontoward-dev image with tests/workflow/compose.offline.yaml for network-disabled verification without an implicit dependency build.

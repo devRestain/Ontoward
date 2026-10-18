@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-data
 /status value=complete
-/checkpoint revision=7ee06ec410f8dbe3a6c1c2e2575e05997e5e440b dirty=true updated=2026-10-18T08:02:48.372661+00:00
-/goal phase=current id=DATA.D43 state=complete action="Preserve admitted D42 assets and record D43 input recovery evidence and archive custody"
+/checkpoint revision=fe235c160a49fda900438ab3567e50a8de25e9ec dirty=true updated=2026-10-18T11:45:44.207055+00:00
+/goal phase=current id=DATA.D44 state=complete action="Preserve clinical admission and record D44 source archive and verification custody"
+/goal phase=history id=DATA.D43 state=complete action="Preserve admitted D42 assets and record D43 input recovery evidence and archive custody"
 /goal phase=history id=DATA.D42 state=complete action="Build and pin the local source and author common complaint batch under D42"
 /goal phase=history id=DATA.D41 state=complete action="Pin D41 policy runtime archive and statement-level acceptance custody without changing clinical admission"
 /goal phase=history id=DATA.RUNTIME_REVIEW18 state=complete action="Record runtime review source fixture and archive custody"
@@ -160,4 +161,9 @@
 /evidence id=DATA.D43.E3 class=runtime result=pass source=../submission/PROJECT_STATE.md observed="Reference APP.D43 source archive admitted Korean baseline observer and original SDK HTTP evidence while leaving fresh model semantic and clinical evaluation unrun"
 /scope id=DATA.D43.S1 state=in action="Own D43 preserved source hashes code prompt manifest artifact replay and verification custody"
 /scope id=DATA.D43.S2 state=out action="Exclude source data changes new vocabulary or relations admission rewrites corpus expansion clinical accuracy paid models and publication"
-/handoff state=ready action="D43 custody complete; preserve D42 admission and wait for the next selected data slice"
+/accept id=DATA.D44.A1 state=pass action="Preserve clinical source custody and pin D44 runtime archive and evidence" evidence=DATA.D44.E1,DATA.D44.E2
+/evidence id=DATA.D44.E1 class=artifact result=pass source=provenance/state-lifecycle-d44-2026-10-18.json observed="Match all fifty-six final ZIP members to runtime source and preserve original SDK requirements public environment schema vocabulary clinical RDF source scores reasoning policy questions guideline index and prior admission receipts; change only algorithm_version in the clinical manifest"
+/evidence id=DATA.D44.E2 class=artifact result=pass source=../Tmp/d44-2026-10-18/evidence/final-verification.json observed="Pin the final ZIP SHA256 55ead6a43ee32f8c185a3f8819aaf41fa4a645f4721946c04a0632df56de3bbd and store exact runtime hashes saved C03 response custody fixed-input measurements offline acceptance evidence and the unexpected first Compose build download incident"
+/evidence id=DATA.D44.E3 class=external_service result=not_run source=provenance/state-lifecycle-d44-2026-10-18.json observed="Leave new clinical admission fresh model quality clinical validation actual NOVA official evaluation publication and deployment unrun"
+/scope id=DATA.D44.S1 state=in action="Own algorithm-only D44 provenance hashes acceptance receipts and unchanged clinical admission custody"
+/handoff state=ready action="Use the pinned D44 provenance and ZIP for the next separately authorized runtime verification without modifying clinical custody"

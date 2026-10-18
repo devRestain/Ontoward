@@ -35,30 +35,33 @@ def prepare() -> PreparedResources:
     return PreparedResources(knowledge, config)
 
 
-def assemble_consultation(client, resources, *, now=utc_now, sleep=None, new_request_id=None):
+def assemble_consultation(client, resources, *, now=utc_now, sleep=None, new_request_id=None, audit=None):
     new_request_id = new_request_id if new_request_id is not None else lambda: str(uuid4())
     budget = BudgetPolicy(now, education_enabled=resources.config.education_enabled, knowledge=resources.knowledge)
     usage = UsageAccounting()
     interactions = InteractionLifecycle(new_request_id)
-    questions = QuestionLifecycle(resources.config, interactions)
+    questions = QuestionLifecycle(interactions)
     executor = RequestExecutor(budget, sleep)
     nova_session = NovaSessionClient(executor, budget, usage, interactions)
-    model = ModelClient(executor, budget, usage, new_request_id)
-    interpreter = InputInterpreter(resources.config, model, questions, interactions)
-    doctor = Doctor(executor, nova_session, usage, questions, interactions, new_request_id, model, resources.config, budget)
-    planner = InterviewPlanner(resources.knowledge, resources.config, questions, interactions, budget, usage, model)
-    reasoner = ClinicalReasoner(resources.knowledge)
-    writer = SubmissionWriter(client, resources.knowledge, resources.config, executor, nova_session, interactions, new_request_id)
+    model = ModelClient(executor, budget, usage, new_request_id, audit)
+    interpreter = InputInterpreter(resources.config, model, questions, interactions, audit)
+    doctor = Doctor(executor, nova_session, usage, questions, interactions, model, resources.config, budget, interpreter, audit)
+    reasoner = ClinicalReasoner(resources.knowledge, audit)
+    planner = InterviewPlanner(resources.knowledge, resources.config, questions, interactions, budget, usage, model, reasoner, audit)
+    writer = SubmissionWriter(client, resources.knowledge, resources.config, executor, nova_session, new_request_id, reasoner, audit)
     return Consultation(client, interpreter, doctor, planner, reasoner, writer, nova_session, budget, questions, interactions)
 
 
 def consult(client, resources: PreparedResources):
     consultation = assemble_consultation(client, resources)
     state = consultation.nova_session.initialize_case(client)
-    result = build_graph(consultation, resources.knowledge).invoke(
-        state.model_dump(), {"recursion_limit": consultation.budget.graph_step_limit(state)}
-    )
-    outcome = result["interaction"]
-    if outcome["termination"] != "submitted":
-        raise RuntimeError(f"Consultation {outcome['termination']}: {outcome['reason']}")
-    return result
+    try:
+        result = build_graph(consultation, resources.knowledge).invoke(
+            state.model_dump(mode='json'), {'recursion_limit': consultation.budget.graph_step_limit(state)}
+        )
+        outcome = result['session']
+        if outcome['termination'] != 'submitted':
+            raise RuntimeError(f"Consultation {outcome['termination']}: {outcome['reason']}")
+        return result
+    finally:
+        consultation.release()

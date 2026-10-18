@@ -1,897 +1,273 @@
 # Ontoward 진료 워크플로우 백서
 
-이 문서는 **2026-10-18의 D43 초기·독립 문맥 복구, D41 정규화·원문 없는 하류, D42 일반 호소 데이터와 D40 수집 예산**을 기준으로 진료 순서·추론·질문 선택·교육·제출을 설명한다. 코드와 수용 지식·정책을 설명의 기준으로 삼으며 사용자 선택은 [결정 문서](../DECISION_STATE.md), 수행된 검증과 남은 경계는 [제출 상태](PROJECT_STATE.md)가 소유한다. 과거 스냅샷과 현재 D38 결과는 각각의 증빙으로 구분한다.
+이 문서는 2026-10-18의 **D44·d44.1 구현**을 설명한다. [사용자 결정](../DECISION_STATE.md#D44), [요구사항](../PRD.md), [실제 상태 정의](workflow/state/models.py)를 기준으로 읽는다. 지식과 점수는 기존 D42 수용 자산, 질문 효용은 D38 정책, 수집과 Education 예산은 D40을 유지한다. 수행 결과와 미실행 경계는 [제출 상태](PROJECT_STATE.md)와 [D44 증빙](../data/provenance/state-lifecycle-d44-2026-10-18.json)에 연결한다.
 
-핵심 흐름은 **turn 0 초기 주호소·부수 정보 정규화 → 준비 질문 선택 → Doctor 검증·전달 → 실제 응답 보존 → 문맥 분석·DB 정규화 → Python 추론·다음 질문 → 진단 고정 → 가이드라인·canonical 사실 기반 영어 P → Doctor 한국어 전달 → SOAP·진단 제출**이다. Python이 진단을 결정하며 모델은 문맥 분석·DB 정규화·공감과 D37 계획·한국어 변환을 맡는다. 진단 추론은 수용된 읽기 전용 RDF를 사용하고 교육은 별도 원문 마운트를 읽는다.
-
-| 현재 동작을 정한 결정 | 백서에서 확인할 내용 |
-|---|---|
-| D08·D38 | 공유 Pattern·조건부 원천 지지, 대표 CC, 보강 상한, 실제 추론 기반 질문 선택 |
-| D13·D14·D15 | 책임·상태 소유권, 제출 내부 자산, 원문·관찰·SOAP 정보 보존 |
-| D20·D22·D23 | 원천 그래프 연결과 한국어 환자 행동의 수용 |
-| D26 | 명시적 Education 비활성화 우회와 Context·진단 자격 보완; 현재 기본 교육은 D37 |
-| D28 | Gateway 전체 요청 크기 제한과 더 작은 요청으로 한 번 복구 |
-| D29 | 증례별 규칙 없이 기존 Symptom 하나를 고르는 주호소 매핑 |
-| D30·D37 | 질환별 원문 연결, manifest 인덱스, 진단 고정 후 영어 계획·한국어 교육 |
-| D33 | 영어 용어·키워드와 `Category: Content` 기반 초진 기록 |
-| D34·D40·D41·D43 | turn 0 초기 분석·독립 행 복구·항상 문맥 분석·DB dictionary 바인딩·강제 복구·수집 세션 공감 SAY |
-| D35 | 세션 문진 목표·상한, 질문 가치에 따른 종료, 공감 공유 예산과 1회 재전송 |
-| D36 | 최종 저장 필드·취득 경로 검증, 공통 현재 근거, 철회·충돌 처리와 원문 감사 보존 |
-
-**현재 제출 설정(D37):** `ONTOWARD_EDUCATION_ENABLED=true`이다. 앞선 수집에서 5턴을 보호하고 Education은 남은 공통 턴 안에서 계획을 전달한다. 진단 종류·Disease ID·진단명을 고정하고, 이후 환자 진술은 보존하되 재진단·계획 재생성은 하지 않는다. 명시적 false는 교육 행동·보호 턴 없이 우회하고 P.education을 비운다.
-
-**실행 전제:** D23에서 D20 그래프와 D22의 한국어 환자 행동을 함께 실행 수용했다. 현재 [지식 manifest](knowledge/manifest.json)는 `admitted`이며 `prepare()`가 문진·진찰 문구까지 검증한다. D18의 철회와 D20의 `graph_admitted_text_pending`은 이전 준비 단계이고, 현재 실행 자산을 다시 승인 대기 상태로 해석하지 않는다. 원래 영수증은 [문구 수용 결과](../data/preparation/v5/runtime-text-2026-10-16/README.md)에, D28·D29의 오프라인 검증과 한계는 [문맥 복구 증빙](../data/provenance/context-limit-2026-10-17.json)과 [주호소 매핑 증빙](../data/provenance/chief-mapping-2026-10-17.json)에 연결되어 있다. 이 백서의 개정은 실제 모델·공식 서버 재검증을 수행했다는 뜻이 아니다.
-
-원하는 관점부터 읽어도 된다.
-
-- [전체 그래프와 분기](#workflow-graph)
-- [다섯 세션과 최종화의 세부 파이프라인](#session-pipelines)
-- [역할과 환자 상태의 읽는 법](#roles-and-state)
-- [주호소 매핑·Gateway 검증·복구](#gateway)
-- [추론 알고리즘과 점수 계산 예제](#reasoning)
-- [다음 질문을 고르는 알고리즘](#question-selection)
-- [v5.0의 14개 클래스와 관계](#ontology-schema)
-- [원천 추출·환자 행동 준비·실행 수용](#extraction-pipeline)
-- [예산·오류 복구·제출 의미](#budgets-and-submission)
-- [설정·검증·제출 ZIP](#configuration)
-- [실행 시작과 실제 대화 순서로 보는 흐름](#runtime-dialogue)
-- [수정할 책임과 확인할 경계](#change-guide)
-
-전체 흐름을 먼저 알고 싶다면 1·2·9절을, 판단 방식을 검토하려면 3절의 상태 구분을 읽은 뒤 4·5·6절을 이어 읽으면 된다. 아래의 숫자 예제와 가상 대화는 알고리즘 설명용이며 새 임상 지식이나 실제 진료 결과를 추가하지 않는다.
+Python은 질문·추론·진단·SOAP 직렬화를 결정한다. 지정 모델은 문맥 분석, 모호한 진술의 DB 연결, 공감, 진단 후 계획과 한국어 전달을 맡는다. 수용된 사실은 처음부터 canonical한 작은 typed fields로 저장한다. 원문을 복사한 상태를 매번 정리하는 투영 계층은 없다.
 
 <a id="workflow-graph"></a>
-
-## 1. 전체 그래프 워크플로우
-
-### 그래프와 내부 세션을 함께 읽는 방법
-
-하나의 공식 NOVA 세션 안에 다섯 내부 세션이 있다. `Consultation` 하나가 순서를 조정하며 D35의 조건부 최소 목표와 세션별 문진 상한을 적용한다. 내부 세션은 “지금 무엇을 확인하는가”를 나타내고, 그래프 노드는 “응답 처리·질문 선택·전송 중 어떤 작업을 하는가”를 나타낸다. 세션이 바뀌어도 같은 질문·응답 루프를 사용하고 유용한 질문이 없으면 목표 전에 종료한다.
-
-| 내부 세션 | 하는 일 |
-|---|---|
-| Initiation | 초기 구조화·인사·미확인 공통 네 슬롯 |
-| ChiefComplaint | 대표 CC 하나의 전체 속성, Open Inquiry 한 번, 유용한 ROS·선택적 추가 상세 |
-| ContextFactor | 현재 후보의 관련 병력·적용 조건을 확인 |
-| DifferentialDiagnosis | 현재 근거에서 가치 있는 특징·진찰을 선택하고 새 답에 따라 재계획 |
-| Education | 진단 고정·가이드라인 원문·영어 P 생성·한국어 변환·실제 SAY 전달 |
-| 최종화 | 확보 사실로 SOAP를 만들고 DIAGNOSE의 completed를 확인 |
-
-### 현재 LangGraph의 노드와 분기
-
-아래 이름은 [graph.py](workflow/graph.py)의 실제 노드 이름이다. 사각형은 작업, 마름모는 작업 후 상태에 따라 이동할 곳이 달라지는 지점이다. `check_budget`은 세션과 공통 자원을 판단하고 `execute_action` 내부에서 전송 직전 경량 검사를 수행한다.
-
-실제 작업 노드는 16개이며 START·END를 포함하면 18개다. D43은 turn 0의 `process_initial_input`을 수집 응답의 `process_input`과 구분한다. [오프라인 지도](../Test/atlas.html#consultation)는 이 노드와 전이를 SVG로 보여준다. Education은 `enter_session`과 기존 행동 루프 안에서 수행하는 내부 세션이다.
+## 1. 실행 흐름과 소유권
 
 ```mermaid
 flowchart TD
-    START([시작]) --> process_initial_input["process_initial_input<br/>turn 0 초기 주호소·부수 정보 정규화"]
-    process_initial_input --> refresh_after_input
-    subgraph Loop["현재 내부 세션에서 반복하는 진료 작업"]
-        process_input["process_input<br/>수집 응답 해석·정규화"] --> refresh_after_input["refresh_after_input<br/>추론 갱신과 미전송 질문 재계획"]
-        refresh_after_input --> check_budget{"check_budget<br/>예산과 현재 상태 확인"}
-        check_budget -->|현재 세션 진입 준비 필요| enter_session["enter_session<br/>현재 세션 질문 준비"]
-        enter_session --> check_budget
-        check_budget -->|미전송 질문 있음| select_question["select_question<br/>현재 계획에서 다음 질문 선택"]
-        check_budget -->|현재 세션 질문 끝| advance_session["advance_session<br/>다음 세션 또는 최종화로 전환"]
-        advance_session --> check_budget
-        select_question --> validate_action{"validate_action<br/>준비 문구와 허용 행동 검증"}
-        validate_action -->|선택 없음 또는 검증 거절| check_budget
-        validate_action -->|전송 준비 완료| execute_action["execute_action<br/>경량 검사·SAY 또는 EXAM·응답 기록"]
-        execute_action -->|응답 수신| process_input
-        execute_action -->|자원 부족으로 전송 생략| check_budget
-    end
-    check_budget -->|최종화 조건 충족| build_soap
-    subgraph Submission["진단과 기록의 최종 제출"]
-        build_soap["build_soap<br/>고정 진단·저장 계획으로 SOAP 구성"] -->|구성 가능| validate_submission{"validate_submission<br/>필드·크기·제출 조건 검증"}
-        validate_submission -->|수정 가능한 오류| repair_submission["repair_submission<br/>한 번 재구성"]
-        repair_submission --> validate_submission
-        validate_submission -->|검증 통과| submit_diagnosis["submit_diagnosis<br/>서버 상태 재확인 후 DIAGNOSE"]
-        submit_diagnosis -->|수정 가능한 기록 오류| repair_submission
-        submit_diagnosis -->|결과 확인 단계| confirm_submission{"confirm_submission<br/>completed 응답 확인"}
-    end
-    check_budget -->|명시적 종료 사유| abort
-    validate_action -->|명시적 종료 사유| abort
-    execute_action -->|명시적 종료 사유| abort
-    build_soap -->|진단 또는 기록 구성 실패| abort
-    validate_submission -->|복구 불가 또는 한도 소진| abort
-    confirm_submission -->|제출 확인됨| finish["finish<br/>정상 종료"]
-    confirm_submission -->|실패·불명·만료·폐쇄| abort["abort<br/>비정상 결과를 명시"]
-    finish --> END([그래프 종료])
-    abort --> END
+    P["prepare: 읽기 전용 지식·용어 인덱스·문구·정책"] --> I["process_initial_input: turn 0 초기 정보 해석"]
+    I --> R["refresh_after_input: 최신 실제 추론"]
+    R --> B{"check_budget"}
+    B --> S["enter_session: 현재 세션 준비"]
+    S --> B
+    B --> Q["select_question → validate_action → execute_action"]
+    Q --> A["process_input: 지역 해석·수용·질문 완료·turn 해제"]
+    A --> R
+    B --> N["advance_session"]
+    N --> B
+    B --> F["build_soap: 진단·계획 확정과 제출 작업"]
+    F --> V["validate_submission"]
+    V --> D["submit_diagnosis → confirm_submission"]
+    V --> X["repair_submission: 전체 1회"]
+    X --> V
+    D --> E["completed 확인 → turn 해제 → finish"]
 ```
 
-한 번의 대화는 `select_question → validate_action → execute_action → process_input → refresh_after_input` 순으로 돈다. 문구를 확인한 뒤 행동 종류별 남은 용량·모델·시간을 경량 검사하고 전달한다. 답을 받으면 새 사실과 미전송 질문을 갱신한다. 행동 사용량은 그래프 이동과 구분하며 서버가 알려 준 SAY·EXAM의 남은 턴 변화를 반영한다.
+[graph.py](workflow/graph.py)의 실제 작업 노드는 16개이며 START·END를 포함하면 18개다. 실패·만료·닫힘·불확실 전송은 `abort`로 종료한다. 각 노드는 이전 상태를 깊은 복사하고 작업한 뒤 Pydantic으로 검증한다. 복사·검증 대상은 상주 상태 3개와 현재 턴 작업뿐이다. 과거 원문·모델 응답·가상 평가·추론 캐시는 이 경계를 통과하지 않는다.
 
-`check_budget`의 이동 우선순위는 **명시적 종료 → 최종화 → 세션 진입 → 질문 선택 또는 세션 전환**이다. 동기 실행은 응답 수신 직후 해석을 완료하므로 예산 검사에서 pending 복구로 돌아가지 않는다. 세션 문진 상한은 다음 세션으로 이동하는 조건이고 공통 행동·모델·시간 부족은 최종화 조건이다. 마지막 응답도 처리한 뒤 판단하며 기한이 이미 끝나면 만료로 종료한다.
-
-`advance_session`은 현재 세션을 초기화했고, 대기 응답과 미전송 질문이 없을 때 다음 단계로 이동한다. 대표 CC를 확인하지 못하면 허용된 명료화 안에서 확인하며 임의의 첫 증상을 고르지 않는다. 확인된 대표 CC에 적격 Disease가 없으면 증상 진단으로 진행한다. 세션을 다섯 번 새로 열거나 이전 세션으로 자동 되돌아가는 방식은 아니다.
-
-마지막의 `END`는 그래프 실행이 끝났다는 뜻이다. 성공은 `confirm_submission`이 DIAGNOSE 응답의 `completed`를 확인하여 `submitted`로 기록했을 때만 성립한다. 수정 가능한 SOAP 오류에는 전체 흐름에서 한 번의 재구성을 허용하며, 복구할 수 없는 실패와 결과 불명은 각각 명시한다.
-
-각 노드는 상태를 깊은 복사한 뒤 작업하고 Pydantic으로 다시 검증한다. 환자 사실·예산·질문·전달 이력이 정의된 경계를 유지하는지 확인하는 장치이며, 임상적으로 올바른 진단을 보증하는 절차는 아니다.
+| 실행 책임 | 소유 코드 | 정보 경계 |
+|---|---|---|
+| 준비·상담 조립 | [runtime.py](workflow/runtime.py) | `PreparedResources` 재사용, 상담마다 실행 객체 생성, 종료 시 대화·reasoner 캐시 해제 |
+| 세션 조정 | [consultation.py](workflow/consultation.py) | 다섯 내부 세션과 최종화만 조정 |
+| 해석·수용 | [input_interpreter.py](workflow/input_interpreter.py) | 실제 원문 문맥의 유일한 실행 소비자, 지역 `InputResult`를 적용 |
+| 문구 검증·행동 | [doctor.py](workflow/doctor.py) | 준비 질문·공감·교육 전달과 실제 SAY/EXAM |
+| 질문 선택 | [interview_planner.py](workflow/interview_planner.py) | 현재 세션 대기열과 작은 완료 기록을 이용 |
+| 실제·가상 추론 | [clinical_reasoner.py](workflow/clinical_reasoner.py), [selection.py](workflow/rules/selection.py) | 같은 순수 커널, 실제 캐시 한 벌과 선택 중 지역 캐시 |
+| SOAP·제출 | [submission_writer.py](workflow/submission_writer.py) | 최종 직렬화와 확인, SOAP 사본을 CaseState에 저장하지 않음 |
+| 수명·사용량 | [state/](workflow/state/), [budget.py](workflow/rules/budget.py) | 질문 완료·폐기·현재 턴과 한번씩 계산하는 예산 |
+| 모델·세션·전송 | [io/](workflow/io/) | 직접 `ModelResult`, 최신 서버 제약, 동일 요청의 제한된 재시도 |
 
 <a id="session-pipelines"></a>
+## 2. 다섯 세션과 질문의 수명
 
-## 2. 세션별 파이프라인
+하나의 공식 세션 안에서 다음 순서로 진행한다. 미래 세션의 질문은 미리 저장하지 않는다.
 
-아래 도식은 한 내부 세션의 준비·반복·종료를 풀어 쓴 것이다. 도식의 “공통 실행 루프”는 앞의 질문 선택, Doctor 검증·전송, InputInterpreter 응답 처리, 추론 갱신을 묶어 표현한다. 별도의 LangGraph나 세션별 실행 클래스를 추가한 것은 아니다.
+| 세션 | 현재 세션에서 준비할 일 | 조건부 목표 / 최대 문진 |
+|---|---|---:|
+| Initiation | 초기 호소를 재질문하지 않고 인사와 미확인 onset·course·recurrence·previous_care 수집 | 5 / 7 |
+| ChiefComplaint | 환자가 우선시한 CC 하나, 전체 등록 속성, Open Inquiry, 유용한 집중 ROS | 7 / 14 |
+| ContextFactor | 기본 병력 다섯 영역과 관련 Context 최대 두 개의 보호 수집, 이후 효용 비교 | 7 / 9 |
+| DifferentialDiagnosis | 새 근거에서 판단을 바꾸는 증상·속성·Context·EXAM 선택 | 3 / 10 |
+| Education | working diagnosis 고정, 영어 계획, 조건을 포함한 한국어 안내; 답변은 대화 기록 전용 | 5 / 10 |
 
-### 2.1 Initiation — 진료 시작과 주호소 확보
+`Question` 등록은 환자 기록을 만들지 않는다. 선택된 질문 ID를 현재 턴에서 참조하고, 실제 실행 응답을 해석한 뒤 사실·note와 `Answer`를 각각 반영한다. 완료 질문은 대기열에서 제거하고 `turn=None`으로 닫는다. 주호소가 바뀌면 이전 관찰에 묶인 대기 질문을 버린다. 완료된 질문 문구·응답 전체는 상태에 남기지 않는다.
 
-```mermaid
-flowchart TD
-    I0["NOVA 초기 정보와 세션 조건 수신"] --> I1["turn 0 process_initial_input<br/>초기 원문·활력징후 보존·문맥 분석·DB 정규화"]
-    I1 --> I2["새 인사·미확인 공통 네 슬롯 등록"]
-    I2 --> I3["공통 실행 루프로 SAY 전달"]
-    I3 --> I4["응답의 증상·주체·시점·발현 구분"]
-    I4 --> I5["ChiefComplaint 진입 시 주호소 확인"]
-    I5 -->|확인됨| I6["대표 CC 전체 속성 준비"]
-    I5 -->|미해결이고 명료화 가능| I7["준비 문구로 제한적 재확인"]
-    I7 --> I5
-    I5 -->|지원되는 주호소 확보 불가| I8["실패 사유 기록"]
-```
+최소 목표는 기확인·모름·자산 부족을 무시하고 질문을 채우라는 뜻이 아니다. 현재 필수 수집, 뒤 세션의 조건부 최소량, 활성화된 교육 5턴을 보호한다. 주호소의 마지막 수집 슬롯은 Open Inquiry에 남긴다. 집중 ROS 대상은 대표 CC의 계통에서 매번 계산하며 다른 증상으로 연쇄 확장하지 않는다.
 
-첫 SAY는 “안녕하세요. 병원 오시는 길이 불편하진 않으셨나요?”다. 초기 정보를 먼저 처리한 뒤 미확인 onset·course·recurrence·previous_care를 순서대로 확인한다. 질문은 각각 “언제부터 불편하셨어요?”, “불편한 것이 점점 심해지나요?”, “이전에도 이렇게 불편하신 적 있으셨어요?”, “이전에는 어떻게 치료받으셨나요?”다. 이미 해결된 슬롯은 생략한다. 질문에는 확보된 주호소를 바인딩하지만, 수용 DB가 표현하지 못하는 답은 감사·처리 상태로 닫는다. 초기 활력징후와 보호자 가정 측정을 구별한다.
-
-초기 `opening`에 실질적인 진술이 있으면 이를 먼저 지정 모델로 해석한다. 초기 진술이 비어 있어도 문맥 분석 호출은 수행하며, 인사 후 받은 답도 같은 경계에서 해석한다. 이후 단계에서 주호소를 확보하지 못했을 때는 증례 전체 두 번의 명료화 범위에서 확인하며, 지원되는 주호소가 끝내 없으면 임의 진단으로 채우지 않는다.
-
-현재 주호소는 수용된 Symptom 하나에 연결하며 원천의 한국어·영어 라벨과 동의어를 사용한다. 진술별 기본 8개·확장 32개 후보를 전송하고 미해결 진술만 바인딩 복구·강제 연결로 진행한다. Python은 실제 전송한 ID·속성 소속·값·단위·인용·주체·시점과 취득 조건을 검증한다. exact와 forced 및 forced_by를 임상 존재 상태와 구분하며, 증례별 매처나 임상 동의어 표를 두지 않는다.
-
-### 2.2 ChiefComplaint — 대표 CC 전체 속성, 열린 질문, 집중 ROS
-
-```mermaid
-flowchart TD
-    C0["환자가 우선시한 대표 CC 하나 확정"] --> C1["연결된 전체 속성의 현재 처리 상태 확인"]
-    C1 --> C2{"미처리 속성과 Open Inquiry 전 여유 있음"}
-    C2 -->|예| C3["속성 질문 하나 전달·같은 답의 여러 사실 반영"]
-    C3 --> C1
-    C2 -->|없음| C4["미처리 예산 중단 표시·Open Inquiry 한 번"]
-    C4 --> C5["실제 답까지 반영한 공유 추론"]
-    C5 --> C6["대표 CC 계통의 ROS와 필요한 추가 상세 비교"]
-    C6 --> C7{"양수 완전 평가와 예산 있음"}
-    C7 -->|예| C8["질문 하나 전달 후 다시 계산"]
-    C8 --> C5
-    C7 -->|없음| C9["ContextFactor로 전환"]
-```
-
-여러 증상이 보고되어도 **대표 CC 하나만** 전수 기술한다. 환자의 명시적 우선순위를 따르고 모호하면 기존 증례 전체 2회 명료화 안에서 확인한다. 결정하지 못하면 primary_chief_unresolved로 종료한다. 다른 증상과 원문은 추가 근거로 남는다.
-
-고정 여섯 슬롯 대신 get_symptom_attributes()의 전체 목록을 사용한다. 기존 속성 순서 뒤 목록 밖 항목은 URI 순서로 둔다. 각 속성은 미질문·값 확보·모름·명시적 적용 불가·질문 자산 차단·예산 중단으로 관리한다. 같은 관찰에서 확보한 값은 건너뛰고 모름도 처리 결과로 인정한다. 처리율과 실제 값 확보율은 서로 다른 지표다. 현재 수용 그래프는 CC당 최대 11개 속성이며 진단 한정 개념의 13개 차단 쌍은 기존 이유를 유지한다.
-
-TimeSinceOnset은 시작 후 경과, EpisodeDuration은 한 번의 발현 지속 시간이다. 월·년을 고정 일수로 환산하지 않으며 한 답변에서 여러 속성을 함께 얻을 수 있다. 마지막 가용 문진 슬롯은 Open Inquiry에 남기고 예산 때문에 못 물은 속성을 값 확보로 표시하지 않는다.
-
-Open Inquiry의 답까지 반영한 뒤 선택적 문진을 시작한다. ROS는 대표 CC의 원래 BodySystem 안에서 최대 여섯 번이며 새 증상으로 계통을 늘리지 않는다. 추가 증상은 필요한 상세 하나를 다시 선택할 수 있으나 전체 속성 큐를 만들지 않는다. 대표 CC 정정은 속성·후보·ROS 기준을 재구성하며 전달 이력과 이미 수행한 Open Inquiry를 보존한다.
-
-### 2.3 ContextFactor — 배경 지지와 Association 적용 조건
-
-D40은 과거력·약물력·알레르기·가족력·사회력의 미확인 기본 영역을 먼저 확인한다. 이후 관련 ContextFactor 최대 두 개는 utility 0이나 Context 가산점 포화와 무관하게 보호한다. 미확인 전제, utility, 새로운 병력 영역, URI 순으로 선택하며 기본 문진의 포괄적 음성은 개별 객체를 부정하지 않는다. 보호 수집 뒤에 추가 판단 가치를 비교한다.
-
-더 가치 있는 증상·속성·EXAM이 나오면 추가 Context 행동 없이 감별 단계로 간다. 필요한 Context는 감별에서도 같은 선택기로 비교한다. 확인된 CC에 Disease 후보가 없다는 이유만으로 자동 명료화를 소비하지 않는다. 적격 Disease가 끝내 없으면 대표 CC의 증상 수준 잠정진단을 사용한다.
-
-### 2.4 DifferentialDiagnosis — 판단을 바꿀 질문과 진찰
-
-```mermaid
-flowchart TD
-    D0["현재 사실과 Context로 Pattern·Association 적합도 갱신"] --> D1["후보 특징·미해결 적용 조건·진찰 요청 수집"]
-    D1 --> D2["이미 확보한 사실과 일반 전달 질문 제외<br/>부재 증상의 속성 질문 제외"]
-    D2 --> D3["가상 답을 공유 커널로 평가·상대 판단과 자격 변화 비교"]
-    D3 --> D4{"적격 질문·진찰과 실행 예산이 있음"}
-    D4 -->|예| D5["공통 실행 루프로 SAY 또는 EXAM"]
-    D5 --> D6["실제 응답만 반영하고 미전송 질문 재계획"]
-    D6 --> D0
-    D4 -->|없음| D7["Education으로 전환하여 진단 선택"]
-```
-
-이 단계는 증상 존재·필요한 속성·Context·EXAM을 같은 계산기로 비교한다. 완전히 계산한 양수 구조적 판별 가치 질문만 전달한다. 임상 근거·질문 이력·모름·대표 CC·세션·예산이 바뀌면 다시 계산한다. 계산 한계와 유용한 질문 없음은 다른 사유이며 어느 쪽도 임상 확신도나 정보수집 최적성의 보증은 아니다.
-
-SAY로 속성을 물으려면 같은 주체·관찰·에피소드·시점에서 해당 증상이 있다는 사실이 확인되어야 한다. 일반 전달 질문은 반복하지 않으며, 명시적 모름은 반복하지 않고 바인딩 실패의 명료화는 신규 질문과 같은 비용으로 비교한다. EXAM은 승인된 소견·진찰 방법·준비 요청문이 있을 때 별도 획득 행동으로 실행한다. 거절이나 오류는 진찰 소견이 아니다.
-
-Pattern은 관찰·에피소드별로 매칭하고 질환 Association의 조건·원천 가중치를 적용한다. 점수는 확률이 아니다. 교육 전 진단 선택을 working diagnosis로 고정하고 미완료 평가를 보존한다. 교육 응답은 대화 원문만 기록하며 임상 반영·해석·공감·재진단·계획 재생성을 하지 않는다.
-
-### 2.5 Education — 고정 진단의 계획과 한국어 안내
-
-```mermaid
-flowchart TD
-    E0["질환 또는 증상 수준 잠정진단 선택·고정"] --> Enabled{"Education 활성화"}
-    Enabled -->|false| Skip["교육 행동·보호 턴 없이 우회"]
-    Enabled -->|기본 true| E1["Disease 연결 인덱스와 제공 원문 조회·해시 검증"]
-    E1 --> E2["canonical 환자 사실·typed outcome·고정 진단 주입"]
-    E2 --> Size{"전체 messages 64 KiB 이내"}
-    Size -->|예| E3["Luna high: 영어 P 다섯 항목 생성"]
-    Size -->|아니오| Read["모든 원문 조각 읽기·검증 인용 결합"]
-    Read --> E3
-    E3 --> P["영어 문장·근거 유형·원문 참조 보존"]
-    P --> Doctor["Doctor medium: 문장별 한국어 변환"]
-    Doctor --> Validate["NFC 1–30자 독립 검증"]
-    Validate --> Say["핵심 안내 우선·최대 10턴·묶음 단위 SAY"]
-    Say --> Reply["응답 원문만 기록; 해석·공감 없음"]
-    Reply --> More{"대기 발화와 예산이 남음"}
-    More -->|예| Say
-    More -->|아니오| Final["미독·실패·미전달 기록 후 최종화"]
-    Skip --> Final
-```
-
-대표 CC의 양성 지지·적용 조건·양수 적합도 자격을 만족하는 질환을 선택하고 진단 종류·Disease ID·진단명을 고정한다. 적격 Disease가 없으면 확인된 주호소의 증상 진단을 고정하며 질환 문서 조회 없이 원인 미확정 상태에 맞는 계획을 생성한다. 뒷받침된 주호소도 없으면 기존 명시적 실패를 유지한다.
-
-문서 연결은 [런타임 인덱스](knowledge/guideline-index.json)가 소유한다. 원문은 `NOVA_GUIDELINES_DIR` 기본 `/opt/nova/guidelines`에 상대 경로를 결합해 읽고 ZIP에 넣지 않는다. 연결된 모든 문서의 해시·관계·적용 범위를 확인하며 좁은 하위 질환이나 background_only 문서를 보편 치료 근거로 승격하지 않는다. 조회 오류는 별도로 남기고 사용 가능한 검증 원문과 모델 지식으로 생성한다.
-
-Education에는 D41 canonical 환자 정보만 제공한다. 전체 messages 64 KiB를 넘는 지침은 연속 조각으로 모두 읽고 지침 인용을 검증한 뒤 결합한다. 문서 ID·해시·바이트 범위와 미독 범위를 보존하며 환자 원문은 계획과 한국어 변환 요청에 보내지 않는다.
-
-영어 P의 tests·treatment·disposition·follow_up·education은 정상 생성 시 각각 한 문장 이상이다. 가이드라인에 관련 내용이 없으면 일반 의학 지식으로 보완하며 문장별 guideline·model_knowledge·mixed와 정확한 인용을 내부적으로 구분한다. 불필요한 처치는 불필요함을 설명할 수 있지만 미확인 환자 사실을 채우지는 않는다. 계획 형식 복구는 전체 단계에서 한 번이고 실패 후에도 유효 문장을 보존한다.
-
-Doctor는 각 영어 문장을 한 개 이상의 한국어 문장으로 바꾸고 NFC 정규화 후 공백·문장부호 포함 1–30 codepoint를 검증한다. 잘못된 묶음은 한 번만 재생성하고 절단하지 않는다. 영어 P와 한국어 발화·전달 이력을 분리하며 실패한 변환·미전달은 영어 계획을 지우지 않는다. 진단 의미·불확실성, 다음 행동, 조건부 치료, 추적과 안전 안내를 우선한다. 선행 조건과 치료는 같은 영어 문장에 두며 한국어 묶음 전체의 검증·용량을 확보한 뒤 연속 전달한다. 환자 답변은 원문으로만 기록하고 임상 해석·공감·재진단·재계획을 실행하지 않는다.
-
-### 2.6 최종화 — 확보한 사실을 제출하고 결과 확인
-
-```mermaid
-flowchart TD
-    F0["대기 응답 처리 완료"] --> F1["고정 진단과 저장된 영어 계획 재사용<br/>새 환자 행동은 만들지 않음"]
-    F1 --> F2["15개 SOAP 문자열 필드와 별도 diagnosis 구성"]
-    F2 --> F3{"필드·크기·근거·제출 조건 검증"}
-    F3 -->|통과| F4["세션 상태 재확인 후 DIAGNOSE"]
-    F3 -->|수정 가능한 오류| F5{"재구성 한 번이 남음"}
-    F4 -->|수정 가능한 기록 오류| F5
-    F5 -->|예| F6["보존 사실에서 재구성 후 재검증"]
-    F6 --> F3
-    F5 -->|아니오| F8["실패 기록"]
-    F3 -->|복구 불가| F8
-    F4 --> F7{"응답 status가 completed"}
-    F7 -->|예| F9["submitted 정상 종료"]
-    F7 -->|아니오| F10["실패·불명·만료·폐쇄 구분"]
-```
-
-최종화는 제출 단계다. 고정 진단과 저장된 영어 P를 재사용하고 받은 마지막 응답까지 SOAP에 반영한다. 앞서 Education 준비를 수행하지 못했다면 확보한 사실에서 진단을 선택·고정하고 남은 모델 예산 안에서 계획을 준비한다. 환자 대화는 추가하지 않으며 주관 보고·실제 진찰·미시행·계획을 구분한다.
-
-SOAP의 `S` 6개, `O` 2개, `A` 2개, `P` 5개 필드는 모두 문자열이며 주진단 `diagnosis`는 별도다. 예선의 `O.tests`는 비우고 계획 검사는 `P.tests`에 둔다. 로컬 검증 통과와 서버 수락은 다른 단계이며, 마지막 DIAGNOSE의 `completed` 응답을 확인해야 정상 종료한다.
+공감은 네 수집 세션에서만 허용한다. 감정·요청 코드와 원문 대신 중복 억제용 해시를 보관한다. 실제 전달과 답변은 같은 행동 루프를 거친다. Education에서는 임상 해석·공감·재진단을 수행하지 않는다.
 
 <a id="roles-and-state"></a>
+## 3. 남긴 객체와 모든 필드의 수명
 
-## 3. 역할과 환자 상태를 읽는 법
+```text
+WorkflowState
+├─ case       상담 중 유지: 환자 사실·note·대표 fact 참조·최종 결과
+├─ interview  상담 중 유지: 현재 단계·작은 대기열·완료와 중단 결과
+├─ session    상담 중 유지: 서버 제약·실제 사용량·종료 증빙
+└─ turn       현재 행동/초기 입력/제출 동안만 유지, 처리 후 None
+```
 
-| 코드와 주요 함수 | 책임 |
-|---|---|
-| [runtime.py](workflow/runtime.py)의 prepare·consult | 지식/설정 준비와 증례별 실행 객체·상태 조립 |
-| [Consultation](workflow/consultation.py)의 enter_session·refresh_after_input·advance_session·finalize | 내부 세션 전환, 입력 뒤 추론·재계획, 최종화 |
-| [Doctor](workflow/doctor.py)의 prepare_education·validate_action·execute_action | 영어 계획의 한국어 변환, 발화의 독립 검증, SAY/EXAM 전달과 응답 기록 |
-| [InputInterpreter](workflow/input_interpreter.py)의 process_input·_context·_parse_text·_apply_facts | 문맥 분석·DB 정규화, 진술별 검증·복구·강제 완료·반영 |
-| [InterviewPlanner](workflow/interview_planner.py)의 prepare_chief_complaint·replan·select_question·prepare_education | 질문 선택, 고정 진단의 영어 계획 생성, 교육 전달 순서 결정 |
-| [ClinicalReasoner](workflow/clinical_reasoner.py)의 evaluate·evaluate_delta·refresh_hypotheses·select_diagnosis | 공유 Pattern 평가, Association 적용, 적합도와 진단 |
-| [SubmissionWriter](workflow/submission_writer.py)의 build_soap·submit_diagnosis·confirm_submission | 기록 조립·검증·한 번의 재구성·확인된 제출 |
-| [graph.py](workflow/graph.py)의 build_graph·run_node | 노드·분기와 기존 깊은 복사/검증 경계 |
-| [rules](workflow/rules)의 BudgetPolicy·validate_facts | 순수 예산 판단과 외부 사실 경계 |
-| [state](workflow/state)의 QuestionLifecycle·InteractionLifecycle·UsageAccounting | 질문·원문/전달·사용량 변경 연산 |
+아래 표에서 같은 생성·소비·폐기 이유를 가진 필드는 함께 적었다. 이름은 실제 코드 필드이며 별도 호환 필드가 없다. 상담 종료는 `consult()`의 `finally`에서 실행 객체의 환자 문맥과 캐시를 해제하는 시점이다. 반환된 최종 상태는 호출자/Test가 보유하는 결과다.
 
-이 객체들은 서로 다른 모델 에이전트를 호출하는 팀이 아니라 하나의 진료 프로그램 안에서 책임을 나눈 Python 객체다. 공유 `PreparedResources`에는 지식과 설정을 두고, `consult()`마다 실행 객체와 아래 다섯 상태를 새로 만든다.
+| 객체·필드 | 소유자 | 생성 시점 | 소비자 | 폐기·교체 시점 | 필요한 이유 |
+|---|---|---|---|---|---|
+| `PreparedResources.knowledge`, `config` | prepare | 준비 | 해석·질문·추론·행동·제출 | 준비 자원 수명 종료 | 여러 상담에 환자 없는 읽기 전용 자원 재사용 |
+| `WorkflowState.case`, `interview`, `session` | Consultation | 상담 시작 | 그래프 노드 | 상담 결과 반환 | 서로 다른 상주 책임 구분 |
+| `WorkflowState.turn` | 행동/제출 작업 | 초기 입력·행동 선택·최종화 | 다음 실행·처리 노드 | 입력 반영·완료·실패 | 노드 사이 현재 작업만 연결 |
+| `CaseState.facts` | InputInterpreter | 검증된 임상 주장 수용 | 주호소·질문·reasoner·SOAP·모델 환자 문맥 | 유효 정정 또는 상담 종료 | 획득한 임상 사실의 단일 정본 |
+| `CaseState.notes` | InputInterpreter | DB로 표현 못 하는 유용한 정보 수용 | SOAP·수집 판단 | 상담 종료 | 치료력·관찰·미등록 수치 보존, 진단 점수 제외 |
+| `CaseState.chief_fact_id` | 주호소 선택 | 우선 호소 확정 | 질문·reasoner·SOAP | 선택 변경·정정 | 대상·관찰·에피소드를 복제하지 않고 참조 |
+| `CaseState.diagnosis` | reasoner/Consultation | Education 진입 또는 최종화 | 계획·한국어 변환·SOAP | 상담 종료 | 한 번 고정한 working 진단의 정본 |
+| `CaseState.plan` | 교육 생성 | 검증된 최종 영어 문장 생성 | Doctor·SOAP | 상담 종료 | 최종 계획 한 벌과 최소 출처 연결 |
+| `CaseState.revision` | 사실 수용 | 사실·주호소 변경 | 실제 추론 캐시·재계획 | 변경 때 증가 | 최신 결과가 유효한지 판단 |
+| `ClinicalFact.id` | 입력 수용 | 각 독립 주장 | 정정·주호소·근거·완료 기록 | 정정·상담 종료 | 질문과 다른 사실 신원 |
+| `ClinicalFact.kind`, `target`, `attribute`, `values`, `measurement`, `status` | 입력 수용 | DB 관계·값·수치 검증 후 | 임상 소비자 | 유효 정정 | 단일 주장을 중첩 mapping 없이 표현 |
+| `ClinicalFact.subject`, `subject_member`, `reported_by`, `time_context` | 입력 수용 | 문맥 검증 | 해석·충돌·추론·SOAP·교육 문맥 | 유효 정정 | 가족·보고자·과거와 현재 구분 |
+| `ClinicalFact.observation_id`, `episode_id` | 입력 수용 | 참조 확인 또는 새 관찰 생성 | 속성 연결·질문·추론·SOAP | 유효 정정 | 다른 발현의 세부사항을 합치지 않음 |
+| `ClinicalFact.category` | 입력 수용 | 의미 범주 결정 | 주호소·수집·SOAP | 유효 정정 | 저장 위치 대신 의미로 SOAP 배치 |
+| `ClinicalFact.acquisition`, `source_ref`, `turn` | 입력 수용 | 실제 초기 입력·SAY·EXAM | 정정 검증·출처·SOAP | 유효 정정 | 환자 발화가 진찰을 대체하지 않게 함 |
+| `ClinicalFact.polarity_scope`, `evidence_use`, `binding`, `resolves` | 입력 수용 | 조건부 부정·고립 속성·근사·명료화 수용 | 현재 사실·reasoner·질문·미해결 평가 | 유효 정정 | 한정 부정·record_only·강제 근사·해결된 불확실성을 구별 |
+| `ObservedNumber.kind`, `value`, `unit` | 입력 수용 | 수치 검증 | 비교·SOAP | 소유 사실/note 수명 종료 | 실제 수량과 보고 단위 |
+| `ObservedNumber.lower`, `upper`, `upper_unit`, `lower_inclusive`, `upper_inclusive`, `approximate` | 입력 수용 | 구간·근사 검증 | 수치 비교·SOAP | 소유 사실/note 수명 종료 | 경계·서로 다른 단위·근사 의미 보존 |
+| `NoteFact.id`, `category`, `value`, `measurement`, `status` | 입력 수용 | note 수용 | 수집·SOAP | 상담 종료 | 기존 범주·영어 값과 별도 수치, polarity 보존 |
+| `NoteFact.subject`, `subject_member`, `reported_by`, `time_context`, `observation_id`, `episode_id`, `source_ref`, `turn` | 입력 수용 | note 문맥 수용 | 수집·SOAP·감사 연결 | 상담 종료 | 기록용 정보의 주체·시간·출처 구별 |
+| `Diagnosis.kind`, `name`, `evidence_ids`, `certainty`, `unresolved` | 최종 선택 | 진단 고정 | 계획·SOAP·결과 검토 | 상담 종료 | 질환/증상·working 상태·실제 근거·평가 한계 |
+| `PlanSentence.id`, `field`, `text`, `basis`, `references`, `priority` | 교육 생성 | 문장 검증 | Korean 대기열·SOAP | 상담 종료 | 영어 P 정본과 provenance·안전 우선순위 |
+| `SourceReference.document_id`, `start_byte`, `end_byte` | 교육 검증 | 정확한 인용 확인 | 최종 계획 출처 검토 | 문장 수명 종료 | 원문 전체와 인용 사본 없이 출처 위치 보존 |
+| `InterviewState.current`, `status` | Consultation | 상담 시작·단계 준비 | 예산·라우팅·planner | 단계 전환 | 현재 단계와 명료화 뒤 준비 재개 |
+| `InterviewState.queue` | planner/Doctor | 현재 세션 준비·재계획·교육 변환 | 선택·실행·입력 수용 | 완료·부적합·주호소 변경·세션 종료 | 지금 전달 가능한 작은 대기열 |
+| `InterviewState.answers` | 질문 완료 | 실제 답 처리·전달 중단 | 반복 방지·수집·종료·교육 결과 | 상담 종료 | 완료 객체 전체 대신 작은 결과 |
+| `InterviewState.collection` | planner/예산 | 자산 차단·예산 중단 | 필수 수집·재계획 | 상담 종료 | 답변 기록으로 구할 수 없는 중단만 저장 |
+| `InterviewState.empathy` | 입력 수용 | 새 감정·요청 검증 | 공감 선택·중복 억제 | 전달·억제·Education 진입 | 처리할 감정 코드 한 건 |
+| `InterviewState.education_status`, `education_reason` | 계획/변환 | 생성 종료 | 중복 생성 방지·결과 검토 | 상담 종료 | 성공·부분·실패·비활성 구분과 최소 사유 |
+| `Question.item_id`, `kind`, `purpose`, `text`, `order`, `priority` | planner/Doctor | 대기열 등록 | 예산·행동 | 답 처리·취소 | 실행 문구·행동·목적·순서·보호 우선순위 |
+| `Question.target`, `attribute`, `observation_id`, `episode_id`, `subject`, `time_context` | planner | 질문 바인딩 | 중복·해결 판단·해석 | 답 처리·취소 | 묻는 대상과 취득 범위 |
+| `Question.affirmative_presence`, `answer_type`, `primary_choice`, `category`, `coverage`, `clarifies_id` | planner | 질문 계약 준비 | 해석·수집·명료화 | 답 처리·취소 | 질문 의미와 필수 수집·불확실성 연결 |
+| `Question.plan_sentence_id`, `empathy_key` | Doctor | 교육/공감 등록 | 전달 결과 | 답 처리·취소 | 영어 문장/감정 중복 식별만 연결 |
+| `Answer.question_id`, `source_ref`, `scope`, `purpose`, `key`, `outcome` | 질문 수명 | 답 처리·미전달 | 반복 방지·예산·수집 | 상담 종료 | 의미 키와 처리 결과, 원문 사본 제외 |
+| `Answer.fact_ids`, `category`, `turn`, `coverage` | 질문 수명 | 답 처리 | 획득·질문/증거 연결·Context 보호 | 상담 종료 | 실제 획득과 모름을 구별 |
+| `Answer.plan_sentence_id`, `reason`, `empathy_key` | 질문 수명 | 교육/공감 처리·미전달 | 결과·중복 억제 | 상담 종료 | 전달·중단의 최소 연결 |
+| `PendingEmpathy.source_ref`, `emotion`, `intent`, `key` | 입력 수용 | 감정 검증 | Doctor·중복 억제 | 전달·억제 | 원문을 넘기지 않고 공감 작업 유지 |
+| `SessionContext.session_id`, `deadline`, `turns_remaining`, `allowed_actions` | NovaSessionClient | 상담·최신 서버 조회 | 전송·예산·종료 | 최신 값으로 교체 | 공식 세션 제약 |
+| `SessionContext.finalizing`, `reserve_seconds` | Consultation/예산 | 시작·자원 부족 | 라우팅·모델·전송 | 상담 종료 | 수집 종료와 최종 제출 시간 확보 |
+| `SessionContext.usage` → `Usage.actions`, `empathy_actions` | 사용량 계산 | 소비된 행동 수신 | 세션 상한·공통 보호 | 상담 종료 | 총 실제 턴과 공감 부분집합 |
+| `SessionContext.doctor_calls`, `doctor_successes`, `input_tokens`, `output_tokens` | ModelClient | 요청·응답 수신 | 모델 한도·SDK 제출 조건 | 상담 종료 | 중복 없는 실제 사용량 |
+| `SessionContext.call_limit`, `input_token_limit`, `output_token_limit`, `models_available` | NovaSessionClient/ModelClient | 시작·최신 제약·모델 중단 | 모델/행동 예산 | 최신 제약으로 감소 | 불명확한 사용량 이후 수집 방지 |
+| `SessionContext.clarifications` | planner | 명료화 예약 | 전체 최대 2회 | 상담 종료 | 미전달 예약까지 포함한 한도 |
+| `SessionContext.termination`, `reason`, `receipt` | 종료·제출 확인 | 명시적 실패·completed | 그래프 종료·호출자 | 상담 결과 반환 | 결과와 최소 status/request ID 증빙 |
+| `TurnContext.kind`, `question_id`, `request_id`, `stage` | 선택·제출 | 현재 작업 시작 | 다음 노드·동일 요청 복구 | 처리 완료·종료 | 행동 사본 없이 현재 작업 연결 |
+| `TurnContext.response`, `payload`, `repairs`, `error` | Doctor/제출 | 수신·SOAP 구성·형식 검사 | 해석·제출·1회 복구 | 처리 완료·제출 확인·종료 | 응답과 SOAP를 필요한 동안만 유지 |
 
-| 상태 | 주요 내용 | 코드를 읽을 때 확인할 것 |
-|---|---|---|
-| `CaseState` | 구조화된 S/O/A/P, `diagnosis`, `diagnosis_kind`, `diagnosis_evidence`, `fixed_diagnosis`, `primary_chief` | 어떤 사실과 고정 진단이 실제 기록에 들어갔는가 |
-| `SessionContext` | 현재 내부 세션, 남은 턴·시간·모델 예산, 명료화 수 | 다음 행동을 할 여유가 있는가 |
-| `DifferentialState` | 후보·기여·반증, Pattern/Association 매칭, 임상 개정·증례 캐시 | 무엇이 맞았고 왜 그 점수가 되었는가 |
-| `QuestionPlan` | 전체 CC 속성 상태·처리/확보 수, 구조화된 평가·선택 기록, ROS 기준과 별도 교육 전달 대기열 | 무엇을 아직 묻거나 전달할 수 있는가 |
-| `InteractionState` | 실제 요청·응답·모델 기록, 원문, 영어 계획의 근거·읽기 범위·변환 오류, 전달·거절·종료 결과 | 무엇을 읽고 생성하고 실제로 전달하거나 받았는가 |
+### 그래프 밖에서만 존재하는 정보
 
-### 3.1 처리 완료와 임상적 확정을 구분한다
+| 객체·필드 | 소유자·생성 | 소비·필요 이유 | 폐기 시점 |
+|---|---|---|---|
+| `ModelResult(content,error,request_id)` | ModelClient 현재 호출 | 호출자가 잘림·실패를 직접 분기 | 현재 호출 처리 후 |
+| `ContextInput(statements,patient_context,empathy)`와 `ContextStatement` | 문맥 분석 | 인용·의미·주체·시점·참조·수치·note 값·정정의 단회 수용 검증 | 현재 입력 반영 후 |
+| `EmpathySignal(quote,intent,emotion)`, `PatientContextFact(key,value,quote)` | 문맥 분석 | 현재 원문으로 감정·인구학 검증 | 감정 코드·해석기 문맥 반영 후 |
+| `InputResult(facts,notes,outcomes,empathy,preferred)` | 해석 지역값 | 사실·note·완료·대표 fact ID 반영 | process_input 반환 |
+| 문맥 후보·매핑 dictionary·행별 오류·형식 복구 | 해석 지역값 | 미해결 부분의 제한된 복구 | 현재 입력 반영 후 |
+| `InputInterpreter.dialogue`, `patient_context` | 실제 입력/전달 | 후속 지시어·환자/보고자 문맥 해석 | 상담 종료 |
+| `ClinicalReasoner._key`, `_snapshot` | 실제 평가 | 최신 임상 개정/주호소의 결과 재사용 | 사실·주호소 변경 시 교체, 상담 종료 시 clear |
+| `ReasoningSnapshot(evidence,chief,policy,hypotheses,pattern_matches,association_matches,evaluations)` | reasoner | 실제 점수와 다음 질문에 필요한 최신 계산 | 최신 실제 캐시 교체 |
+| `EvidenceIndex(raw,entries,groups,contexts,fingerprint)`, 내부 `EvidenceRecord` | 실제 또는 가상 평가 | 내부 URI와 사실 신원·수치·범위로 순수 계산, 임상 상태에 직렬화하지 않음 | 소유 실제/가상 평가 종료 |
+| `Hypothesis(disease_id,evidence_score,chief_score,context_bonus,contradiction_penalty,chief_coverage,evidence_ids,contradiction_ids,unresolved_conditions,contradicted_conditions)` | reasoner | 적격 판단·순위·SOAP 감별·추가 질문 | 최신 실제 캐시 교체 |
+| `PatternMatch(pattern_id,observation_id,episode_id,time_context,fingerprint,status,contradicted,unresolved,evidence_ids)`, `AssociationMatch(association_id,pattern_key,applicability,evidence_ids)` | reasoner | 공유 매칭 재사용과 실제/가상 일치 | 소유 평가/캐시 교체 |
+| `QuestionPath(specs,profile,disease_id,pattern_id)`, `QuestionEvaluation`의 답변 영역·cache·used·limited·scalar utility | 질문 평가 | 경로 가능성과 선택 수식 계산 | 선택 완료 |
+| `InterviewPlanner._last_plan_key` | 재계획 | 같은 실제 사실·질문 결과·예산에서 반복 계산 억제 | 다음 재계획으로 교체·상담 종료 |
+| `_EducationWork(repairs,sentences,documents,notes,errors)`와 인용 원문 | 교육 생성 | 순차 원문 읽기·정확한 인용·형식 복구 | 검증된 최종 문장과 위치만 Case.plan에 전달 후 |
+| 한국어 변환의 batch·rendered·failures | Doctor | 독립 문장 검증·전체 묶음 예약 | 대기열/미전달 receipt 반영 후 |
+| 감사 event와 SDK 요청·응답 | Test 관측 | 원인 검토·재현·산출물 증빙 | Test 출력 보존 정책; 실행에서 다시 읽지 않음 |
 
-`RecordItem.status`의 `unasked/done`은 처리 상태이고, 그 안의 `ClinicalValue.status`는 사실의 의미다. “모르겠어요”를 받고 질문을 `done`으로 닫아도 해당 증상을 음성으로 확정한 것이 아니다.
+읽기 전용 `TextConfig`는 `parser_prompt`, `normalization_prompt`, `empathy_prompt`, `education_prompt`, `education_doctor_prompt`, `texts`, `education_enabled`를 보관한다. 사용하지 않던 준비 문구·표시 형식 필드 14개를 제거했다. 이 자원은 그래프 노드마다 복사하지 않는다.
 
-| 값 | 의미 | 추론에서의 역할 |
-|---|---|---|
-| `present` | 해당 내용이 있다고 확인 | 완전 매칭의 재료가 될 수 있음 |
-| `absent` | 해당 내용이 없다고 명시 | 조건의 반증 또는 제한된 부재 감점의 재료 |
-| `uncertain` | 임상 존재가 아직 불확실 | 후보 검색에 쓸 수 있으나 존재 조건은 미확정 |
-| `unknown` | 답으로 해결하지 못함 | 확인한 양성·음성으로 바꾸지 않음 |
-| `unasked` 또는 실제 EXAM 미수행 | 아직 획득하지 않은 내용 | 환자 근거로 사용하지 않음 |
+`RecordItem`, `ClinicalValue`, `ChiefAnchor`, `DifferentialState`, `QuestionPlan`, `InteractionState`, 별도 교육 진행 객체, `CanonicalSnapshot`, `ParsedInput`, `PatientReport`와 사용되지 않던 span·누적 진단 보고서는 삭제했다. 상충·모름·미등록이 사실 확보를 의미하지 않는다는 구분은 작은 완료 결과와 현재 사실에서 유지한다.
 
-`was_asked()`는 실제 전달 이력으로 반복 질문을 막고, `has_resolved_evidence()`는 출처가 있으며 상태·대상·속성 값이 해결되었는지 확인한다. 둘은 같지 않다. 명시적 모름은 다시 묻지 않고 바인딩 실패만 증례 전체 두 번의 명료화 안에서 신규 질문과 비교한다.
-
-`CaseState.chief_complaints(confirmed=True)`는 **공통 현재 근거에서 충돌이 없는 처리 완료 S.cc 중 출처가 있으며 환자 본인의 `present` 증상이고 과거로 표시되지 않은 것**을 반환한다. 코드상 `time_context=unspecified`도 과거가 아닌 쪽에 포함된다. 대표 CC는 이 집합에서 환자 우선순위로 하나를 선택해 `primary_chief`에 고정한다. mapping_status는 존재와 분리하며 ambiguous·unmapped는 현재 근거에서 지지 불가로 투영한다. Symptom ID 하나를 얻었어도 `uncertain`이거나 같은 관찰의 양성·음성 보고가 충돌하면 확정 주호소 집합에 들어가지 않는다. “모델이 무언가 반환함”, “개념이 연결됨”, “진단 근거가 확정됨”은 각각 확인해야 한다.
-
-### 3.2 관찰과 발현을 섞지 않는다
-
-`observation_id`는 어느 증상·소견을 말하는지, `episode_id`는 그 증상·소견의 어느 발현인지를 구분한다. 같은 부위 통증이라도 지난번 발현의 위치와 이번 발현의 기간을 합쳐 하나의 완전 Pattern을 만들면 안 된다. 환자와 가족, 현재와 과거도 별도 필드다.
-
-환자 원문은 상호작용 이력과 별도 환자 보고에 남고 구조화 사실의 `source_refs`가 그 입력을 가리킨다. 정정은 `record_id`로 기존 기록을 지정하면서 관찰·발현 신원을 보존한다. D36에서 명시적 정정인데 ID가 없으면 `correction=true`와 완전한 동일 근거 키로 유일한 기록을 찾는다. 여러 기록이나 불완전한 발현은 임의로 마지막 값을 채택하지 않는다. 같은 키의 상충 보고는 원본을 남기고 공통 현재 근거에서 불확실하게 취급하므로, 예전 양성만 주호소나 증상 진단으로 다시 선택하지 않는다. 새로운 발현과 기존 값의 정정을 구분하는 책임은 Gateway 해석과 Python 검증이 함께 맡는다. Graph에는 일반 지식을 두고 이 환자의 사실을 쓰지 않는다.
-
-### 3.3 Doctor와 준비된 질문
-
-문진·진찰에는 manifest의 질문 계약과 config의 고정 문구를 사용한다. D34 공감과 D37 교육 한국어는 지정 모델로 생성하며 모든 발화는 전달 직전 NFC 1–30자를 독립 확인한다. 공감 오류는 준비 공감 문구로 처리하고 교육 변환 오류는 해당 묶음 한 번 복구 후 미전달로 남긴다. 어느 경로도 문장을 자르지 않는다.
-
-질문 계약에는 text, answer_type, affirmative, interviewable, reason이 있다. 대상 URI 또는 속성 URI가 키이며 대상|속성 예외가 우선한다. {symptom}은 실제 한국어 표시 이름으로 대입한 결과까지 prepare에서 검증한다.
-
-현재 질문 JSON의 계약 1,532개 중 `interviewable=true` 문진은 1,517개, 차단 계약은 15개다. 별도 ExamMethod의 실행 가능한 진찰 요청은 2개이며 계약 총수와 실제 환자 행동 문구 수를 구분한다. D42는 이력으로 해결한 귀 통증, 일반 구어·원천 동의어, DDXPlus metadata, 명시적 신장·체중 슬롯을 추가했다. 원천에서 해결하지 못한 복합 조건·범주 번역·Context 속성은 준비 영역에 보류한다.
-
-원인을 전제하는 Target은 승인된 관찰 가능한 매핑 없이 직접 질문하지 않는다. 예를 들어 일반적인 두통에 대한 긍정을 “종양에 의한 두통”으로 연결하지 않는다. 현재 질문은 D23에서 수용한 manifest의 계약을 기준으로 사용하며, `interviewable=false`인 Target의 차단은 속성별 예외보다 우선한다. 준비 문구의 길이 검증과 의미의 적절성은 별도 문제다.
+지역 `ContextStatement`의 `quote`, `role`, `focus`, `assertion`, `target_terms`, `attribute_terms`, `value_terms`, `subject`, `subject_member`, `reported_by`, `time_context`, `observation_id`, `episode_id`, `anchor`, `record_category`, `primary_concern`, `correction_id`, `polarity_scope`, `assertion_scope`, `measurement`, `note_value`는 현재 입력 검증·바인딩에만 필요하다. 해석 함수 반환 뒤 문맥 객체 전체를 버리고 수용한 사실·note·작은 질문 결과만 반영한다.
 
 <a id="gateway"></a>
-
-## 4. D43 초기·독립 문맥 복구와 D41 DB dictionary 정규화
-
-초기 입력과 수집 세션의 모든 SAY·EXAM 답변은 [InputInterpreter](workflow/input_interpreter.py)의 문맥 분석 호출을 거친다. 단순 예·아니오·모름·수긍·빈 입력에 대한 0회 단축 경로는 없다. Education 답변은 기존 기록 전용 경로로 소비한다. 모델은 현재 원문과 실제 질문·관련 대화를 읽을 수 있지만, 그 원문은 이후 임상 알고리즘이나 생성 모델에 전달하지 않는다.
+## 4. 문맥 분석과 필요한 정규화만 남기는 입력 경로
 
 ```mermaid
 flowchart LR
-    Raw["환자 원문·실제 질문·관련 대화"] --> Context["문맥 분석 LLM: 원자적 진술·주체·시점·부정·검색어"]
-    Raw --> Audit["InteractionState 감사·재현 저장"]
-    Context --> Search["진술별 수용 DB 후보 검색"]
-    Search --> Map["정규화 LLM: DB dictionary만 반환"]
-    Map --> Validate["엄격한 검증·제한 복구·강제 완료"]
-    Validate --> Canonical["CanonicalSnapshot: DB 사실·타입 메타데이터·처리 상태"]
-    Canonical --> Reason["EvidenceIndex·Python 진단"]
-    Canonical --> Question["질문 해결·선택"]
-    Canonical --> SOAP["SOAP·교육·한국어 변환·공감"]
+    Raw["실제 현재 입력·관련 대화"] --> C["항상 문맥 분석"]
+    C --> Exact["Python 정확 바인딩"]
+    Exact -->|확정| Validate["관계·값·단위·취득·정정 검증"]
+    Exact -->|모호하고 후보 있음| Map["일반 매핑 → 필요 시 최종 강제 매핑"]
+    Map --> Validate
+    C -->|유용하지만 DB 미표현| Note["기존 범주의 typed note"]
+    Validate --> Facts["ClinicalFact 적용"]
+    Facts --> Done["작은 Answer 반영·완료 질문 제거·turn=None"]
+    Note --> Done
 ```
 
-### 문맥과 의학 용어 출력의 분리
+문맥의 인용은 현재 실제 입력에 있어야 한다. 기존 fact·관찰·발현 참조는 전송한 문맥에 있는 것만 허용한다. 독립 유효 행을 고정하고 잘못된 행만 한 번 복구한다. turn 0에서 관찰 존재와 원인 불확실성을 혼동한 우선 호소는 추가 집중 검토를 허용하며 진짜 모름을 양성으로 강제하지 않는다.
 
-문맥 응답의 `statements`는 정확한 현재 인용, clinical/nonclinical/question/emotion/conditional/uncertain/unknown/not_applicable 역할, 존재·부재, 환자·가족·보고자, 시점·관찰·에피소드, 정정과 검색 힌트를 담는다. 같은 발화의 속성은 `anchor`로 부모 진술에 연결한다. 가족 관계는 고정 영문 관계 토큰을 사용하고 서로 다른 가족·시점·조건을 합치지 않는다. 일반 병력 부정은 domain 범위로 구분한다.
+정식 영어 명칭과 동의어는 준비 인덱스로 정확히 연결한다. `Location → head`는 속성의 허용 값 범위에서 식별한다. 같은 값 이름의 전역 중복은 다른 속성으로 이어지지 않는다. 환자 사실에는 용어와 URI를 함께 저장하지 않는다. URI 변환은 EvidenceIndex·질문 계산·지침 조회 등 지식 경계에서만 수행한다.
 
-`focus=target`은 존재·부재, `focus=attribute`는 세부 범주·수치를 뜻한다. `attribute_terms`·`value_terms`는 검색 힌트이며 target 진술에 필수 속성을 강제하지 않는다. 현재 환자의 양성 주호소는 S.cc에, 독립 부수 정보는 의미에 맞는 필드에 보존한다. 아직 양성 부모 증상이 없는 등록 수치는 record_only 속성으로 남기며, 증상 양성이나 진단 근거를 만들지 않는다.
+모호한 임상 진술만 후보 8개/확장 32개와 등록 속성·값·단위를 제공해 매핑한다. `binding_repair`는 없다. 일반→최종 강제 단계와 배치당 형식 복구 1회가 남는다. 독립 수용 행을 재전송하지 않으며 빈 후보 매핑 호출은 하지 않는다. 정확한 DB 대상이 알려진 진술을 획득 방식이 다른 대상이나 수치 슬롯이 우연히 맞는 다른 호소로 옮기지 않는다.
 
-정규화 응답은 Python이 정한 진술 순서에 대응하는 dictionary 배열이다. 다음은 설명용 형식이며 실제 key와 범주값은 요청에 공급된 DB URI만 허용한다.
+유효한 정정은 같은 대상·주체·속성·관찰·에피소드·시점·취득 경로에만 적용한다. 대체 전 값은 감사 event로 내보낸다. SAY로 초기/EXAM 사실을 교체할 수 없다. 고립된 등록 속성은 record_only이며 진단 근거가 아니다. 검증한 사실을 하류에서 다시 파싱하거나 원문 필드를 반복 삭제하지 않는다.
 
-```json
-[
-  {"<Target URI>": "(+)"},
-  {"<Target URI>": {"<Attribute URI>": "<AttributeValue URI>"}},
-  {"<Target URI>": {"<Attribute URI>": {"<AttributeValue URI>": "(-)"}}}
-]
-```
+DB로 표현하지 못한 유용한 진술은 기존 범주의 `NoteFact`로 보존한다. 영어 값과 수치를 분리해 구간 경계·단위·근사를 잃지 않는다. note는 진단 점수·교육 환자 사실에 들어가지 않는다. 인사·수긍·질문·미래 의도는 임상 주장으로 만들지 않는다. 포괄적 병력 부정은 개별 질환 음성으로 확장하지 않는다.
 
-등록된 숫자 속성만 quantity/interval과 허용 단위를 받는다. 숫자·구간은 문맥 분석에서 얻은 값과 일치해야 하며 NRS·단위·임계값·월/년의 고정 일수 변환을 만들지 않는다. 모름·불확실·비임상·비적용은 (+)/(-) 대신 typed outcome과 빈 dictionary로 표현한다.
+### C03 Turn 04의 재현 범위
 
-[정규화 규칙](workflow/rules/normalization.py)은 전송 후보의 정확한 소속, Target–Attribute–Value 관계, 숫자 형식, 부정 범위를 검증한다. 중복 JSON key, NaN/Infinity, 미등록 단위·ID·값을 거부한다. SDK에는 서버 측 response_format 인자가 없으므로 동적 스키마·검증·복구·Python 직렬화로 정본의 형식을 보장한다.
-
-### 후보 검색과 단계별 복구
-
-진술마다 원천 라벨·별칭과 문맥 분석의 영문 검색어를 사용한다. 기본은 Target 8개·속성 2개·값 8개, 확장은 Target 32개·속성 4개·값 32개다. 현재 진단 가설은 새 호소를 제외하는 필터가 아니다. 한 진술의 후보가 다른 진술을 없애지 않도록 정규화 요청을 배치로 나눈다.
-
-| 단계 | 호출·실패 처리 |
-|---|---|
-| 문맥 분석 | 기본 4096토큰, 형식·잘림 또는 무효 행 복구 1회 최대 8000토큰; 유효 행은 고정 |
-| 초기 우선 호소 | 관찰 보고와 원인 불확실성을 혼동한 경우에만 집중 문맥 검토 1회 추가; 실제 모름은 유지 |
-| 정규화 | 기본 매핑 → 미해결 바인딩 복구 → 가장 가까운 유효 DB 강제 연결 |
-| 형식 복구 | 정규화 배치당 추가 1회, 이미 수용된 다른 진술은 재출력하지 않음 |
-| Python 완료 | 검증된 문맥과 호환 후보로 남은 dictionary를 완성하고 forced_by=deterministic 기록 |
-
-문맥 행은 각각 검증한다. 무효 행만 원래 index로 복구하고 유효한 형제 진술을 고정한다. 그래프 기대 조건에만 쓰이는 빈 기본 필드는 관측 수치에서 제거하되 숫자·단위·경계를 바꾸지 않는다. 정규화 복구에는 실제 검증 실패 사유를 전달한다. 감사에는 source_ref와 원문 위치를 보존한다.
-
-정규화의 마지막 의미 단계에서 얻은 결과는 `forced_by=model`로 구분한다. 강제 결과도 기존 취득·주체·시점 요건을 만족하면 진단·질문·SOAP에 사용하며 평가의 미완료 사항에 근사 연결이 있음을 남긴다. 호환 슬롯 없는 수치, 일반 병력 부정, 모름·비임상 발화를 임의의 질환·증상으로 만들지는 않는다.
-
-전체 messages는 기본 12 KiB·복구 16 KiB이며 문맥 한도 거절 후에는 8 KiB로 줄인다. 관련 대화·선택 후보를 조절하고 현재 입력을 임의 절단하지 않는다. 최소 요청 자체가 넘치면 원문과 처리 사유를 감사에 남기며 잘못된 요청이나 소견을 만들지 않는다. 실제 서버 모델·토큰·시간 한도는 계속 적용한다.
-
-### 사실 저장과 하류 경계
-
-질문 ID는 사실 ID로 사용하지 않는다. 하나의 질문에서 얻은 여러 사실은 고유 ID로 저장하고 `answered_fact_ids`에 모두 연결한다. 같은 속성의 비배타적 값은 함께 남고 다른 주체·시점·조건은 분리한다. 명시적 정정만 같은 근거를 대체하며 실제 EXAM 소견은 같은 취득 경로의 재진찰로만 정정한다.
-
-`mapped / forced / unknown / nonclinical / not_applicable / unsupported / conflict`를 분리한다. 응답을 처리했다는 이유로 속성값을 획득했다고 표시하지 않는다. [CanonicalSnapshot](workflow/state/canonical.py)은 원문·자유 record_details·미등록 quantities를 제외하고 DB mapping과 검증된 메타데이터를 제공한다. EvidenceIndex는 그중 진단 관계와 취득 조건이 맞는 부분집합이다.
-
-D42는 저신장 호소의 신장 `cm`와 체중 감소 호소의 체중 `kg`를 등록된 수치 슬롯으로 보존한다. D43은 유효 부모 관찰이 없는 등록 수치도 record_only로 기록하되 진단용 EvidenceIndex에서 제외한다. 수치만으로 증상 존재·질환 임계값·진찰 소견을 만들지 않으며 미등록 변화량을 절대 측정값으로 바꾸지 않는다. 가족 측정 등 미등록 조합은 여전히 SOAP에서 제외될 수 있다. 원문과 해석 경과는 감사에 남지만 자유 문장으로 우회 삽입하지 않는다. 같은 canonical 사실과 처리 상태에서 원문만 바꾸면 진단·질문·SOAP·Education 환자 payload는 같아야 한다.
-
-공감은 문맥 분석의 감정·요청 코드와 canonical 사실로 생성한다. 환자 인용은 공감 모델에 보내지 않으며, 필수 수집과 다음 답변의 문맥·정규화 2회분을 먼저 보호한다. Education의 진단 고정·답변 기록 전용 정책은 유지한다.
+저장된 문맥 응답을 바꾸지 않고 재현하면 `previous treatment (-)`와 `observation; monitoring (+)`가 `previous_care` note로 남는다. 저신장 자체의 양성·음성으로 바꾸지 않는다. 이전 세 매핑 요청은 후보가 비어 있었고 이번 경로는 문맥 1회, 매핑 0회다. [재현 결과](../Tmp/d44-2026-10-18/evidence/c03.json)는 저장 응답의 처리 경로 증거다. 수정 프롬프트의 실제 Luna 의미 품질은 미실행이다.
 
 <a id="reasoning"></a>
+## 5. 임상 추론과 실제 캐시
 
-## 5. 추론 알고리즘: 관찰에서 질환 적합도까지
+D38 점수 정책과 수용 원천 가중치를 유지한다. 현재 사실의 상태 충돌과 해결된 불확실성을 반영하고 patient·현재 관찰을 episode와 정확한 time context로 묶는다. 가족·과거 정보는 맞는 Context 조건에서 사용한다. note·record_only·한정된 일반 부정은 진단용 EvidenceIndex에서 제외한다.
 
-이 절의 기준은 [ClinicalReasoner](workflow/clinical_reasoner.py), [지식 reader](knowledge/graph.py), [조건 모델과 비교 함수](knowledge/conditions.py)다. 추론은 기존 지식과 관찰의 규칙 기반 비교다. 모델의 내부 사고를 읽거나 새 임상 관계를 생성하는 단계는 없다.
-
-### 5.1 Target·Pattern·Feature·Association의 관계
-
-| 개념 | 쉬운 설명 | 점수를 소유하는가 |
-|---|---|---|
-| `Target` | 확인하려는 증상 또는 신체진찰 소견 | 아니오 |
-| `ClinicalPattern` | 하나의 Target에 대해 함께 맞아야 하는 조건 묶음 | 아니오; 여러 질환이 공유 |
-| `ClinicalFeature` | 존재 여부, 위치, 양상, 기간 등 원자적 조건 | 아니오; Pattern에 귀속 |
-| `DiseasePatternAssociation` | 특정 질환과 특정 Pattern의 연결 및 적용 조건·출처 | 질환별 원천 가중치를 결정 |
-| `PatternMatch` | 이 환자의 어느 관찰·발현이 Pattern과 얼마나 맞는지 | 매칭 상태와 근거만 보존 |
-| `ScoreContribution` | 완전 매칭 뒤 선택한 질환–Target 지지 | 실제 선택 점수와 근거를 보존 |
-
-예를 들어 “증상 T가 있고 특정 위치·기간을 만족한다”는 Pattern을 두 질환이 공유해도, 그 표현이 각 질환을 얼마나 지지하는지는 서로 다른 Association에 둔다. 따라서 Feature마다 임의의 중요도를 더하지 않는다.
-
-ClinicalReasoner는 관찰 Target의 공유 Pattern을 먼저 평가하고, 그 결과에 질환별 Association 조건과 가중치를 적용한다.
-
-```mermaid
-flowchart LR
-    Observation[주호소와 추가 관찰] --> Target[Target 색인]
-    Target --> Pattern[공유 ClinicalPattern]
-    Pattern --> Features[ClinicalFeature 조건 평가]
-    Features --> Match[일치·반증·미완성]
-    Match --> Association[DiseasePatternAssociation 적용 조건과 원천 점수]
-    Association --> Fit[Disease 지지·반증·주호소 설명력]
-    Fit --> Question[다음 질문 가치]
-    Fit --> Diagnosis[자격을 충족한 진단]
-```
-
-### 5.2 첫 번째: 관찰별로 나누고 후보를 넓게 검색한다
-
-`EvidenceIndex`는 CanonicalSnapshot 중 진단에 사용할 수 있는 사실을 골라 환자 본인·과거가 아닌 symptom/finding/attribute를 `(observation_id, episode_id, time_context)`로 묶는다. 각 묶음에는 증상·소견의 기본 기록과 그 속성을 따로 둔다. Context는 별도 적용 조건으로 사용한다. 초기 활력징후처럼 원문만 있고 DB Target이 없는 정보는 감사에 남으며 SOAP나 Pattern을 만들지 않는다.
-
-후보 질환은 현재 묶음의 **present 또는 uncertain Target**이 연결된 Association의 질환 합집합이다. 속성을 모두 맞춰야 후보가 되는 것은 아니다. 따라서 “후보로 검색됨”과 “확정 지지 점수가 생김”은 다르다. `absent`만으로 새 질환 후보를 만들지 않고, BodySystem으로 검색 범위를 자르지도 않는다. 원천에 관계가 없다는 사실은 이 환자에게 질환이 없다는 근거가 아니다.
-
-같은 Target에 해석 후보가 여럿이거나 상태가 충돌하면 존재 상태를 `uncertain`으로 취급한다. 단일 개념의 명확한 present/absent 기록이 있으면 그 기록을 우선하여 존재 상태를 정한다. 불확실한 여러 해석을 여러 번 확인한 양성처럼 더하지 않는다.
-
-### 5.3 두 번째: 공유 Pattern의 Feature를 평가한다
-
-평가 단위는 `(Pattern, observation, episode, time_context)`다. 같은 Pattern을 여러 질환이 공유해도 이 단위의 Feature 비교는 한 번 수행한다. 다음 조건 비교 결과를 모아 `PatternMatch`를 만든다.
-
-| 조건 | matched | contradicted | unknown |
-|---|---|---|---|
-| 존재·부재 | 확인 상태가 기대 상태와 같음 | present/absent가 기대와 반대 | uncertain·unknown 등 |
-| 단일 개념 값 | 기대 값 또는 허용된 ValueMatch 경로의 값이 명시적으로 있음 | 기대 값이 명시적으로 없다고 확인 | 기대 값의 존재·부재를 결정할 수 없음 |
-| `concept_set any_of` | 하나 이상 일치 | 모든 선택지가 반증 | 그 외 |
-| `concept_set all_of` | 모든 조건이 일치 | 하나 이상 반증 | 그 외 |
-| 수치·구간 | 관찰 구간 전체가 기대 구간 안에 있음 | 두 구간이 완전히 분리됨 | 일부만 겹치거나 단위가 비교 불가 |
-
-예상 위치가 A인데 환자가 B라고 했다는 이유만으로 A의 명시적 부재를 자동 생성하지 않는다. 현재 범주 비교는 기대 값에 대응하는 양성·음성 기록을 찾으며, 대응하는 값이 없으면 대개 unknown이다. 수치 비교도 일부 겹침을 억지로 일치나 반증으로 정하지 않는다.
-
-예를 들어 기대 범위가 **5–14일**이면 `168시간`은 7일이어서 matched, `20일`은 contradicted, `10–20일`은 일부 겹쳐 unknown이다. `1개월`과 `30일`도 unknown이다. 초·분·시간·일·주는 고정 시간 단위로, 월·년은 달력 단위로 비교하지만 두 계열을 임의 환산하지 않는다. `TimeSinceOnset`과 `EpisodeDuration`은 단위가 같아도 다른 속성이다.
-
-여러 Feature는 모두 맞아야 한다. 결과에 contradicted가 하나라도 있으면 Pattern은 `contradicted`, 그렇지 않고 unknown이 있으면 `incomplete`, 전부 맞으면 `matched`다. **명시적 반증은 다른 조건의 unknown에 가려지지 않는다.** 다만 상세 Pattern의 반증이 곧 질환 점수 감점은 아니다.
-
-ValueMatch는 수용된 `is_a`, `regional_part`, `approved_region` 경로를 이용하는 제한된 값 비교다. 환자가 말하지 않은 상위 위치를 새 관찰로 기록하거나 질환 계층을 따라 무제한 추론하는 기능은 아니다.
-
-### 5.4 세 번째: 질환별 Association의 적용 조건을 확인한다
-
-Pattern 자체가 맞아도 Association에 “환자 본인의 특정 현재 Context가 존재해야 한다”는 조건이 있으면 그것까지 확인해야 한다. `_applicability()`는 `(Context 개념, subject, time_context)`가 정확히 맞는 기록을 찾고 요구된 present/absent와 비교한다.
-
-반대 상태가 명확하면 `contradicted`, 필요한 상태를 확정할 수 없으면 `unknown`, 모든 조건을 만족하면 `matched`다. 조건이 없는 Association은 적용 조건을 통과한다. **Pattern matched + applicability matched**인 경우만 다음 원천 지지 계산에 들어간다. 적용 조건이 unknown인 후보도 질문을 만드는 데에는 사용할 수 있다.
-
-여기서의 적용 조건과 뒤의 Context 가점은 역할이 다르다. 적용 조건은 지지를 활성화하는 문턱이고, Context 가점은 별도로 확인한 지지 배경에 대한 최대 1점의 보완이다.
-
-### 5.5 네 번째: 원천 가중치를 선택한다
-
-[scoring_policy.json](knowledge/scoring_policy.json)의 `v5.0.1`은 원천 라벨을 정렬용 점수로 변환한다. manifest가 실제 사용 정책의 해시를 고정한다.
-
-| BODHI `condition_given_symptom`의 라벨 | zero | rare | low | medium | high | very_high |
-|---|---:|---:|---:|---:|---:|---:|
-| 지지 점수 | 0 | 0.5 | 1 | 2 | 3 | 4 |
-
-해당 표현·범위에 방향성 라벨이 없을 때는 원천 관계에 따라 직접 `due_to=2`, `associated_with=1`, `subtype_intersection=0.5`를 사용하고, 조건을 보존한 일반화는 0.5를 쓴다. 유효한 `zero`는 “가중치 없음”이 아니므로 다른 점수로 대체하지 않는다.
-
-반대 방향인 `symptom_given_condition`의 라벨은 `typicality`로 보존하며 제한 반증에 사용한다. 질문 가치는 커널이 계산한 판단 변화를 사용한다. `strong_predictor`를 추가 가산하지 않는다. 이 숫자들은 프로젝트의 정렬 정책이며 확률·우도비·유병률 보정값이 아니다.
-
-### 5.6 다섯 번째: 정교화 대체 후 Disease–Target을 한 번만 집계한다
-
-같은 질환·Target·관찰·발현·시점에서 적용 조건까지 성립한 완전 매칭들을 모은다. 그중 더 구체적으로 맞은 Pattern이 있으면 그 조상 Pattern을 제거한다. 정교화는 부모의 모든 조건을 유지하면서 조건을 추가하거나 값·범위를 더 좁힌 표현이다. **점수가 내려가더라도 구체적인 표현을 채택한다.**
-
-다음은 가상 질환 A와 Target T의 설명용 예다. 기본 존재 2점, 위치 조건까지 맞는 정교화 1점, 위치와 양상까지 맞는 정교화 4점이 원천에 있다고 가정한다.
-
-| 현재까지 확인한 사실 | T에서 채택하는 표현 | T의 지지 점수 |
-|---|---|---:|
-| 존재만 확인 | 기본 존재 Pattern | 2 |
-| 같은 발현의 위치까지 확인 | 위치 정교화가 기본 표현을 대체 | 1 |
-| 같은 발현의 양상까지 확인 | 위치+양상 정교화가 이전 표현을 대체 | 4 |
-| 양상이 다른 발현의 정보였음 | 현재 발현에서는 위치 정교화까지만 완성 | 1 |
-
-2→1→4는 새 표현의 점수로 바뀌는 과정이며 2+1+4를 더하지 않는다. 새 정교화가 0점이어도 2점을 유지하는 식으로 우회하지 않는다. `FeatureContribution`은 정교화 점수−기준 점수의 차분을 기록한다. 여러 조건이 함께 바뀐 `joint` 차분을 개별 질문이나 Feature의 독립 점수로 나누지 않는다. 실제 합산은 선택한 Association 점수로 한다.
-
-어느 쪽도 다른 쪽의 정교화가 아닌 완전 매칭들이 남으면 `incomparable_matches`에 함께 기록하고 점수는 최대값 한 번만 사용한다. 대표 CC는 정확히 고정한 관찰·발현·시점의 기여만 사용한다. 같은 Target의 다른 관찰을 추가 보강으로 계산하지 않는다. 다른 Target은 관찰별 결과에서 최대 기여 하나씩 선택하고 총 보강 상한 4를 적용한다. 출처와 반복 보고 수를 더하지 않는다.
-
-### 5.7 여섯 번째: Context와 제한 반증을 반영한다
-
-질환 D의 적합도는 다음과 같다.
+공유 Pattern의 모든 Feature와 Association 적용 조건이 맞아야 지지가 활성화된다. matched 정교화는 ancestor를 대체하며 점수가 낮아져도 기존의 높은 점수를 합하지 않는다. Disease–Target별 지지는 한 번만 집계한다.
 
 ```text
-evidence_score(D) = chief_score(D) + min(4, supporting_raw(D))
-fit(D) = evidence_score(D) + context_bonus(D) - contradiction_penalty(D)
+fit = exact chief support + min(4, other Target support)
+      + min(1, positive supporting Context) - bounded contradiction
 ```
 
-**Context 가점:** 질환의 `hasSupportingContext`에 연결된 개념이 양성으로 확인되고 가족력/환자 본인의 주체가 맞으면 1, 아니면 0이다. 여러 Context가 있어도 1을 넘지 않는다. 부재나 unknown으로 감점하지 않는다. 이 가점 확인은 Association 적용 조건처럼 정확한 time_context 일치를 추가로 요구하는 절차는 아니다. 확보된 시점부터 세션에 관계없이 같은 값을 사용하므로 가상 평가와 실제 다음 세션의 값이 어긋나지 않는다.
+부재 감점은 적용 조건이 맞는 기본 존재 Pattern, 활성 chief episode의 명시적 현재 부정과 원천 typicality에만 적용한다. Target당 최대 1, 질환당 최대 2이며 모름·누락·상세 불일치는 감점하지 않는다. 적격 질환은 양수의 정확한 chief 지지·맞는 적용 조건·양수 fit을 요구한다. 적격 질환이 없으면 확인한 chief의 증상 진단으로 제출하고, 확인한 chief도 없으면 명시적으로 실패한다.
 
-**제한 반증:** [reasoning_policy](knowledge/d41-reasoning_policy.json)의 `d41.1`을 별도로 적용한다. 아래 조건을 모두 만족하는 기본 존재 Pattern에만 감점한다.
-
-- Association 적용 조건이 matched이고 Pattern이 contradicted다.
-- Pattern의 Feature가 상세 기대 값 없이 존재를 요구하는 조건이다.
-- 해당 Target의 명시적인 `absent` 기록이 `time_context=current`이며 확정 주호소의 활성 발현에 속한다.
-- 현재 추론 관찰들에 같은 Target의 present 기록이 없다.
-- 원천 typicality가 high 또는 very_high다.
-
-high는 0.5, very_high는 1이다. 같은 Target은 최대 1, 질환 전체는 최대 2를 뺀다. 예를 들어 매우 전형적인 증상 세 개를 명시적으로 부정했어도 합계 감점은 2다. 상세 위치의 불일치, 다른 발현의 부재, unknown, 미질문과 원천 연결 누락은 이 감점을 만들지 않는다. 코드에서는 다른 관찰에 같은 Target의 양성이 있으면 부재 감점을 막으므로, 발현 신원과 양성·음성 상태를 함께 살펴야 한다.
-
-### 5.8 일곱 번째: 대표 CC 설명과 최종 진단 자격
-
-후보는 fit 내림차순, chief_score 내림차순, 명시적 충돌 수 오름차순, Disease URI 순으로 정렬한다. 최종 질환 자격은 대표 CC의 양성 원천 지지와 적용 조건, 양수 fit을 요구한다. chief_coverage는 이 정확한 대표 관찰을 설명하면 1, 아니면 0이다. 추가 증상으로 회수됐다는 이유로 CC 설명 자격을 얻지 않는다.
-
-| 설명용 후보 | CC 지지 | 추가 지지 합계→반영 | Context | 반증 | fit | 자격 |
-|---|---:|---:|---:|---:|---:|---|
-| A | 3 | 2→2 | 1 | 1.5 | 4.5 | 가능 |
-| B | 0 | 7→4 | 1 | 0 | 5 | 불가: 대표 CC 미설명 |
-| C | 4 | 0→0 | 0 | 0.5 | 3.5 | 가능 |
-
-전체 목록에서 B가 먼저여도 적격 목록의 첫 번째 A를 선택한다. C는 감별 후보가 될 수 있다. 주진단과 최대 다섯 감별은 같은 자격을 쓰며 실제 획득 근거를 SOAP에 표시한다. 미완성 Pattern과 미래 완성 경로는 실제 지지가 아니다.
-
-적격 Disease가 없으면 **확정된 대표 CC**를 증상 잠정진단으로 선택한다. 첫 보고를 임의로 고르지 않으며 주호소가 끝내 미확정이면 명시적으로 실패한다.
-
-### 5.9 실제와 가상 답변이 같은 계산을 사용한다
-
-```python
-snapshot = reasoner.evaluate(evidence_index, chief_anchor, policy)
-after = reasoner.evaluate_delta(snapshot, evidence_patch)
-```
-
-두 함수는 같은 매칭·적용 조건·정교화·중복 제거·반증·자격 계산을 사용한다. 실제 입력은 검증 후 현재 근거에 적용하고, 가상 입력은 격리된 EvidenceIndex에만 반영한다. 가상 평가로 환자 기록·질문 이력·사용량·SOAP·SDK를 바꾸지 않는다. 원문 표현만 달라지고 구조화 의미가 같으면 반복 점수 계산을 건너뛴다.
-
-의존 색인은 입력→Pattern/Feature, Context→Association/지지 Disease와 refinement를 연결한다. 변경된 관찰의 Pattern과 영향을 받는 Disease를 갱신하고 다른 결과는 재사용한다. 검증에서는 증분 가상 평가와 같은 typed 패치를 적용한 격리 전체 평가의 매칭·기여·반증·자격·점수가 일치하는지 비교한다. 공유 지식에는 환자 사실을 저장하지 않는다.
+증례별 reasoner 하나를 planner와 writer에 주입한다. 최신 임상 revision·chief fact ID의 실제 결과 한 벌만 유지한다. 가상 답변은 immutable 내부 evidence patch로 같은 커널에 적용하며 실제 상태·실제 캐시를 바꾸지 않는다. [고정 입력 비교](../Tmp/d44-2026-10-18/evidence/comparison/comparison.json)는 D43과 D44의 전체 해당 후보 점수·근거 일치를 확인한다.
 
 <a id="question-selection"></a>
+## 6. 질문 효용과 지역 계산
 
-## 6. 다음 질문을 고르는 알고리즘
-
-[InterviewPlanner](workflow/interview_planner.py)의 `_frontier`, `_comparison`, `replan`이 질문 경로·비교 후보·전달 대상을 만들고 [selection.py](workflow/rules/selection.py)가 답변 영역과 판별 가치를 계산한다. 진단 점수는 ClinicalReasoner에 위임한다. 대표 CC 전체 속성과 Open Inquiry의 답까지 받은 뒤 정밀 비교를 시작한다. 선택용 LLM 호출은 없다.
-
-```mermaid
-flowchart LR
-    Actual["실제 현재 근거와 대표 CC"] --> Residual["그래프 잔여 조건·전제 경로"]
-    Residual --> Candidate["8개 현재·4개 다양한 잠재 후보"]
-    Candidate --> Answer["가능한 typed 답변 영역"]
-    Answer --> Kernel["격리된 공유 추론 커널"]
-    Kernel --> Value["상대 판단·자격 변화 / 비용"]
-    Value --> One["완전 평가한 양수 가치 질문 하나"]
-    One --> Actual
-```
-
-### 6.1 잔여 조건과 질문 자격
-
-현재 관찰→Pattern→Association에서 충족·반증·미확인 조건을 추적한다. 동일 `(행동, Target, Attribute, 주체, 시점, 관찰, 발현)`은 질문 하나로 묶는다. 여러 Feature의 같은 기간 조건도 질문 한 번이다. 명시적으로 거짓인 적용 조건은 경로를 없애고 미확인 Context와 증상 존재는 선행 질문으로 둔다.
-
-해결·명시적 모름·차단 자산은 일반 후보에서 제외한다. 속성 SAY는 동일 관찰·발현·주체·시점의 존재가 확인되어야 한다. EXAM은 수용된 실제 획득 방법이 있어야 한다. 바인딩 실패의 명료화는 비용 1과 전체 2회 한도 안에서 신규 질문과 비교한다.
-
-전체 회수 후보는 보존한다. 정밀 비교는 CC 설명을 갖춘 현재 후보 최대 8개와 서로 다른 잔여 구조의 잠재 후보 최대 4개로 시작한다. 잠재 후보는 남은 질문 수·완성 가능한 CC 점수·URI 순이다. 양수 질문이 없으면 전체 CC 양립 후보로 확대하며 새 단서로 이전 제외 후보가 재진입할 수 있다.
-
-### 6.2 실제 가능한 답변을 만든다
-
-존재는 양성·음성, 수치는 관련 임계값·포함 경계·단위별 점과 구간, 범주는 승인된 동치·계층과 양립하는 긍정·명시적 부정 조합을 만든다. 같은 조건 평가 결과를 만드는 동의어·중복 영역은 합친다. 달력 단위와 고정 시간을 임의 환산하지 않는다. cardinality가 없는 다른 양성 범주값을 음성으로 만들지 않는다.
-
-모름·거절·해석 실패는 임상 음성이 아니며 유효 정보 답변과 같은 확률의 분기로 넣지 않는다. 각 typed 패치를 커널에 적용해 실제 Association·정교화·Target 기여·반증·자격·점수 결과를 얻는다.
-
-### 6.3 상대 판단과 자격 변화
-
-후보 쌍이 모두 적격이면 `r=clip((F_i−F_j)/4,−1,1)`, 한쪽만 적격이면 ±1, 둘 다 부적격이면 0이다. 서로 다른 유효 답변 사이의 r 변화량을 평균해 D를 구한다. 현재 적격 쌍은 `1/(1+abs(F_i−F_j)/4)`로 가중하고 나머지 쌍은 1이다. E는 현재와 비교해 자격이 바뀌는 후보 비율의 답변 평균이다.
+실제 근거에서 아직 남은 Feature·전제의 경로를 만든다. 대상 존재는 양성/음성, 범주는 명시적 긍정/부정 조합, 수치는 조건의 임계값·경계·단위별 구간으로 평가한다. 모름을 임상 음성이나 같은 확률의 유효 분기로 넣지 않는다. 현재 후보 8개와 구조가 다른 잠재 후보 4개를 먼저 비교하고 필요하면 chief와 양립하는 전체 후보로 넓힌다.
 
 ```text
-U1(q) = (D(q) + 0.25 E(q)) / cost(q)     cost=1
-Uplan = 0.5^(m−1) × Vjoint / m          m<=6
+직접 효용 = D + 0.25 E
+후속 경로 = 0.5^(질문 수−1) × 공동 가치 / 질문 수
 ```
 
-예를 들어 적격 A=4, B=3이고 두 답변 결과가 (A=4,B=5), (A=4,B=3)이면 r은 −0.25와 +0.25다. 차이를 2로 정규화한 D=0.25, 자격 변화 E=0이므로 직접 가치 0.25다. 두 후보를 똑같이 +1 보강하는 질문은 상대 판단이 같아 구별 가치가 없다. 이 값은 구조적 판별 정책 점수이며 진단확률이나 EIG가 아니다.
+D는 후보 쌍의 상대 판단 변화이며 두 적격 후보의 점수 차를 scale 4로 제한한다. E는 적격 여부의 변화다. 최대 6질문 경로·512 가상 평가를 유지하며 완전하게 평가한 양수 가치 질문만 등록한다. 지금 점수가 변하지 않아도 존재→속성처럼 뒤에 판별력이 생기는 경로를 평가한다. 거짓 전제·모름·없는 자산·세션 용량으로 불가능한 경로를 제외한다.
 
-### 6.4 지금 점수가 변하지 않는 선행 질문도 평가한다
-
-존재 확인 후 속성 하나, 전제 확인 후 마지막 속성처럼 두 질문이 필요한 경로는 첫 답변별 후속 가치를 0.5 할인해 두 행동 비용으로 나눈다. 세 질문 이상도 남은 세션 용량 안에서 최대 여섯 질문으로 완성 가능한 경로만 일관된 공동 답변으로 평가한다. 직접·두 단계·완성 경로 값 중 최대를 사용한다. 실제로는 첫 질문 하나만 전달하고 새 답 뒤 다시 계산한다. 음성·모름으로 불가능해진 경로를 계속 밀지 않으며 미래 지지를 실제 진단 점수로 가산하지 않는다.
-
-### 6.5 계산 한도, 선택 기록, 세션 전환
-
-선택당 가상 평가 상한은 512회다. 짧고 영향을 주는 후보가 많은 직접 질문부터 평가하고 나머지로 완성 경로를 검토한다. 불완전 답변 영역·경로는 별도 표시하며 완전히 계산한 양수 질문 중 최선을 고른다. 그런 질문이 없고 계산이 제한됐다면 computation_limit으로 진행한다. no_useful_question과 구분하며 정보 소진으로 주장하지 않는다.
-
-선택 기록은 실제 근거→Pattern→Association 경로, 조건·전제, 답변별 점수 분해·기여·자격, 비용·가치·차점·제외 사유·정책 버전과 실제 답 뒤 결과를 남긴다. 기록을 위한 정보가 Gateway 요청으로 재전송되지는 않는다.
-
-ChiefComplaint의 ROS는 최대 여섯 번이며 Context와 EXAM은 후속 세션에서 비교한다. ContextFactor의 기본·보호 수집 뒤에는 비Context 질문의 가치가 높으면 감별로 진행한다. 상한·모델·시간은 세션별 잔여 용량을 지키며 다른 세션의 미사용 횟수를 빌리지 않는다. 근거·질문 이력·모름·대표 CC·세션·예산 변경을 모두 재계획 키에 반영한다.
+가상 patch·경로·시뮬레이션 결과는 선택 함수 지역값이다. 대기 질문에는 실행 바인딩·목적·순서·우선순위만 들어간다. 관측이 꺼져 있으면 답변별 점수 보고 dictionary를 만들지 않는다. 관측이 켜지면 선택·가상 평가 event를 Test로 보내고, 실제 최신 reasoner 반환값과 함께 검토한다. 상태에는 선택 보고서나 가상 응답을 보존하지 않는다.
 
 <a id="budgets-and-submission"></a>
+## 7. 예산·Education·SOAP·완료
 
-### D41 입력과 현재 기록
+공통 50 SAY/EXAM 턴, 지정 모델 200회, 입력 500,000·출력 100,000토큰을 유지한다. 새 수집 전 문맥·매핑 최소 2회와 8,192 출력토큰, 응답 처리 120초·최종화 120초를 남긴다. 공감은 생성까지 3회분을 확보한다. 준비된 Education 전달은 답변 모델 예약이 없다. 서버 제약이 줄면 최신 제한을 반영한다.
 
-D41은 문맥 분석의 원문·검색 힌트와 DB dictionary를 분리한다. 사실 ID와 질문 ID를 나누고 acquired와 처리 완료·모름·미등록을 구분한다. 공통 현재 투영은 정정·충돌·서로 다른 취득을 보존하며 임상 소비자는 canonical 사실만 읽는다.
+모델 요청은 전체 messages로 크기를 잰다. 문맥 기본 12 KiB·복구 16 KiB·문맥 초과 뒤 8 KiB, 교육은 64 KiB다. 잘린 출력은 `ModelResult.error`이고 부분 의미 성공으로 사용하지 않는다. 일시 전송 오류는 2초 뒤 같은 ID·payload로 한 번 재시도한다. 해결되지 않으면 unknown으로 종료하며 기록 실패 때문에 행동을 재실행하지 않는다.
 
-독립 유효 mapping을 고정하고 실패한 진술만 복구한다. 강제 연결도 DB 형식과 취득 조건을 검증하며 원문·자유 영어 문구는 SOAP로 보내지 않는다.
+Education에서는 진단을 working 상태로 고정한다. 지침은 상대 경로·해시·관계 범위를 확인하고 원본 마운트에서 읽는다. 큰 원문은 연속 조각을 모두 읽고 정확한 인용을 검증한 지역 노트로 결합한다. 최종 문장과 document ID·바이트 위치만 남긴다. 영어 계획 생성은 high·최대 8,000, 한국어 변환은 medium·최대 4,000 토큰이며 동일 예산을 쓴다. 원문 근거/모델 지식/혼합을 구분하고 조건과 치료를 한 문장에 유지한다.
 
-선택 진단은 확진이 아닌 working 상태다. P는 현재 평가와 확인 이후 치료를 구별하고 전달 가능한 턴 수를 생성·변환에 제공한다. 진단 의미·다음 행동·조건부 관리·추적·안전을 먼저 배치하고 조건과 치료를 같은 PlanSentence에 보존한다. 한국어 묶음 전체가 검증·예약되지 않으면 일부만 전달하지 않는다. 교육 답변은 이력에만 기록한다.
+한국어는 NFC 1–30자 독립 문장으로 검증한다. 묶음 일부가 잘못되거나 전체를 전달할 용량이 없으면 그 묶음을 전달하지 않고 작은 미전달 결과만 남긴다. 영어 P는 보존한다. 명시적 `ONTOWARD_EDUCATION_ENABLED=false`는 교육 행동·보호 턴·P.education을 생략한다.
 
-## 7. 예산·오류 복구·SOAP 제출
+SOAP는 사실·note·고정 진단·최종 계획에서 Python이 결정론적으로 만든다. `CaseState.S/O/A/P`는 없으며 전송 payload는 제출 작업에만 존재한다.
 
-### 7.1 새 행동을 시작할 수 있는 조건
-
-현재 한도는 [limits.py](workflow/rules/limits.py), 순수 예산 판단은 [budget.py](workflow/rules/budget.py)에 있다. D40 세션 상한과 수집 중 공감 행동이 공통 풀을 공유하며 서버의 남은 양이 더 작으면 그 값을 반영한다.
-
-| 내부 세션 | 조건부 최소 목표 | 최대 문진 횟수 |
-|---|---:|---:|
-| Initiation | 5 | 7 |
-| ChiefComplaint | 7 | 14 |
-| ContextFactor | 7 | 9 |
-| DifferentialDiagnosis | 3 | 10 |
-| Education | 5 | 10 |
-
-D40 최소치는 조건부 목표다. 기확인 정보·모름·자산 부족을 구별하고 반복 질문으로 목표를 채우지 않는다. 뒤 세션의 조건부 최소량과 교육 5턴을 보호하며 상한 차용은 없다. 명료화·소비된 거절은 문진에 포함한다. Education 최대 10턴은 전체 검증을 통과한 PlanSentence 묶음으로 전달한다.
-
-공감 SAY는 앞선 네 수집 세션에서 문진 상한 밖의 공통 턴·모델 예산을 사용한다. 현재 필수 수집과 미래 최소량을 침범하지 않으며 Education에서는 생성·전달하지 않는다. Usage.actions는 총 소비 턴이고 empathy_actions는 그 부분집합이다.
-
-| 자원·보호량 | 현재 구현 |
-|---|---|
-| SAY·EXAM | 공통 최대 50턴; DIAGNOSE는 수집 행동과 별도 |
-| 지정 모델 | 증례 전체 최대 200회, 입력 500,000·출력 100,000토큰 |
-| 새 수집 행동 전 모델 여유 | 문맥 분석·정규화 최소 2회·8192 출력토큰; 공감은 생성 포함 3회·12288; Education은 해석 모델 예약 없음 |
-| 새 행동 전 시간 여유 | 응답 처리 120초 + 최종화 120초 초과 |
-| 명료화 | 증례 전체 최대 2회 |
-| 교육 보호 턴 | 기본 활성화; 앞선 수집 단계에서 5턴 보호 |
-| SOAP 재구성 | 로컬·서버 오류를 합쳐 최대 1회 |
-
-이 정책은 문맥 분석·정규화 최소 2회분을 남기며 추가 의미·형식 복구의 최악 호출 수까지 보장하지는 않는다. 복구는 실제 남은 예산에서 수행하고 검증된 문맥의 마지막 정규화는 Python이 완료한다. 입력 토큰은 이미 사용한 양과 서버 잔여량을 추적하며 새 요청의 실제 토큰 수를 로컬에서 정확히 예측하는 구조는 아니다.
-
-전송 직전에는 전체 예산 정책을 재실행하지 않고 경량 검사만 수행한다. 새 질문을 시작할 여유가 없어도 이미 받은 응답은 동기 경로에서 해석한 뒤 최종화한다. 그래프 이동 횟수·서버가 소비한 SAY/EXAM 턴·모델 호출 수는 다른 값이다. Education 이외의 수집 답변은 짧은 답도 문맥 분석 호출을 거친다.
-
-### 7.2 교육 설정과 복구의 의미
-
-기본 true에서는 가이드라인과 canonical 환자 사실로 계획을 생성하고 전달한다. explicit false는 D26 우회이며 교육 행동·보호 턴과 P.education을 사용하지 않는다. 생성 성공·원문 전체 처리·한국어 변환·실제 SAY 전달은 별도 상태다. 계획 형식 복구는 전체 단계에서 1회, 변환 복구는 각 잘못된 묶음에 1회다. 미해결 전송은 D35의 동일 요청 1회 재전송 뒤 unknown 종료를 유지한다.
-
-원문 읽기·결합·계획·변환·Gateway·공감은 같은 모델·토큰·시간 한도를 사용한다. Education은 Luna high 최대 8000 출력 토큰, 한국어 변환은 medium 최대 4000을 요청하되 남은 예산과 응답 여유를 따른다. 예산이나 형식 실패 후에는 보존된 유효 문장으로 고정 진단을 제출하며 빈 항목·미독·미전달을 완료로 바꾸지 않는다. D18에서 삭제한 옛 교육 초안은 복원하지 않는다.
-
-
-### 7.3 무엇이 SOAP에 들어가는가
-
-[SubmissionWriter](workflow/submission_writer.py)는 현재 사실과 선택 진단의 근거 ID를 읽어 결정론적으로 기록한다. Gateway나 별도 요약 모델에 SOAP를 작성시키지 않는다.
-
-| 구역 | 전송 필드 | 내용과 획득 경계 |
+| SDK 구역 | 문자열 필드 | 내용 |
 |---|---|---|
-| S | `cc`, `hpi`, `pmh`, `fh`, `sh`, `ros` | 영어 용어·키워드, 범주·내용, (+)/(-), 필요한 주체·시점·발현 구분 |
-| O | `exam`, `tests` | 초기 제공 활력징후와 실제 EXAM 결과; 예선 `tests`는 빈 문자열 |
-| A | `evidence`, `differential` | 선택 진단에 사용한 실제 양성·음성 근거와 적격 감별 최대 다섯 개 |
-| P | `tests`, `treatment`, `disposition`, `follow_up`, `education` | 고정 진단의 영어 계획; 한국어 실제 전달 이력은 별도 보존 |
-| 별도 인수 | `diagnosis` | 비어 있지 않은 주진단 문자열 하나 |
+| S | cc, hpi, pmh, fh, sh, ros | 대표 호소, 의미 범주별 임상 사실·note, 가족·과거·필요한 발현 구별 |
+| O | exam, tests | 실제 objective 취득; 예선 tests는 빈 문자열 |
+| A | evidence, differential | 고정 진단과 실제 근거, 적격 감별과 확보한 지지/반증 |
+| P | tests, treatment, disposition, follow_up, education | 최종 영어 계획, 실제 한국어 전달 결과와 구별 |
+| 별도 인수 | diagnosis | 최종 진단명 하나 |
 
-S·O는 처리 완료·출처가 있는 canonical 사실의 DB label·속성값·등록 수치를 Category: Content로 표현한다. 환자 원문 span과 text fallback은 삽입하지 않는다. 일반 병력 부정과 미등록 수치는 처리 상태·감사에 남으며 실제 EXAM과 초기 취득을 구별한다.
+영어 `Category: Content`·polarity·등록 값·수치·근사·구간 경계를 유지한다. 통증 세부사항은 같은 주호소·관찰·episode·시점의 확보 값만 사용한다. 환자 원문과 내부 URI·요청 ID는 SOAP에 넣지 않는다. 미시행 검사·미래 계획을 실제 O로 만들지 않는다. SOAP 100,000바이트와 진단명 500바이트, 실제 Doctor 성공 호출 조건을 검증하고 로컬/서버 형식 오류를 합쳐 1회 재구성한다.
 
-예를 들어 기침 사례는 `S.cc`에 `C.C: Cough`, `S.hpi`에 `P.I: Cough (+)`·`Onset: 3 days before presentation`·`Duration: 1–2 min`·`Aggravating factor: At night`를 쓴다. 병력·ROS는 `Medicine history: (-)`·`Smoking: (-)`·`Dyspnea: (-)`처럼 표시한다. 일반적인 만성질환 부재를 개별 DM·HTN 음성으로 확장하지 않고, 모른다는 답은 `(Unknown)`이며 미질문은 추가하지 않는다. 통증이면 같은 관찰·발현에서 얻은 점수·부위·양상·기간을 S.hpi의 `Pain assessment:`로 모으고, NRS 척도는 명시된 경우만 쓴다.
-
-구조화된 개념·속성·값·수치만 사용하며 추가 원문을 자유 영어로 바꿔 넣는 경로는 제거했다. DB 공백은 별도 typed outcome으로 확인하며 점수·O 소견을 임의로 만들지 않는다.
-
-A.evidence는 `diagnosis_evidence` 중 실제 확보한 present/absent만 사용하고, 제한 반증에 사용한 음성 소견도 남긴다. `Diagnosis: #1. ...`·`Evidence: ...`로 구성하며, 감별은 확보 근거가 있는 `r/o Diagnosis: reason`만 표시한다. 내부 URI·request_id를 노출하지 않고 EXAM은 `PE:`와 획득 턴을, 초기 활력징후는 `V/S:`와 초기 제공 사실임을 표시한다. 가족·과거·여러 발현의 구분이 필요할 때만 주체·시간·발현을 붙이며 수치·단위·구간 경계를 보존한다.
-
-모든 칸은 문자열이고 없는 내용은 빈 문자열이다. `note.A.diagnosis`를 추가하지 않으며 note와 별도로 진단을 보낸다. note의 JSON 크기는 UTF-8 100,000바이트 이내, diagnosis는 500바이트 이내여야 한다. 30자 한도는 SAY·EXAM 발화에 적용하며 SOAP 전체에 적용하지 않는다.
-
-현재 manifest의 guidelines 인덱스는 문서 탐색을 고정하고 P는 증례별로 생성한다. 정상 생성은 다섯 항목에 영어 문장이 있으며 원문 근거와 모델 지식을 구분한다. 생성 실패 후에는 빈 항목이 남을 수 있고 오프라인 형식·전달 검증은 실제 모델의 계획 품질이나 점수를 입증하지 않는다.
-
-[D30](../DECISION_STATE.md#D30)의 매핑과 [D37](../DECISION_STATE.md#D37)의 런타임 계획은 서로 다른 산출물이다. 문서가 연결되어도 해당 환자에게 모든 권고를 적용하지 않으며 관계 범위·원문 조건·background_only를 유지한다. D20–D23 그래프·문진 자산은 그대로 사용한다.
-
-### 7.4 언제 성공이라고 기록하는가
-
-`validate_submission()`은 필드·자료형·크기·비어 있지 않은 기록·진단뿐 아니라 `doctor_successes >= 1`과 DIAGNOSE 허용 여부도 검사한다. 이 최소 모델 조건 역시 의미 매핑의 정확도를 검증하는 장치는 아니다. 최종 전송 직전 세션 상태를 새로 확인하고, 로컬 또는 서버의 수정 가능한 기록 오류는 보존 사실에서 한 번 재구성한다.
-
-`client.diagnose(note=..., diagnosis=..., request_id=...)`의 응답이 `status == "completed"`일 때만 `termination=submitted`다. 그래프 END, stdout 출력, 로컬 파일 저장만으로 제출 완료가 되지 않는다. `failed`, `unknown`, `expired`, `closed`는 별도로 남기고 `consult()`도 확인된 제출이 아니면 오류로 반환한다.
+성공은 `DIAGNOSE` 응답이 `completed`일 때다. 확인 뒤 SOAP·응답 전체를 해제하고 최소 status/request ID receipt와 `termination=submitted`를 남긴다. 단순히 질문이 끝나거나 진단명이 생긴 것을 성공으로 기록하지 않는다.
 
 <a id="configuration"></a>
-
 ## 8. 설정·검증·독립 ZIP
 
-```dotenv
-ONTOWARD_KNOWLEDGE_MANIFEST=knowledge/manifest.json
-ONTOWARD_PARSER_PROMPT=config/input_parser.txt
-ONTOWARD_NORMALIZATION_PROMPT=config/normalization.txt
-ONTOWARD_EMPATHY_PROMPT=config/empathy.txt
-ONTOWARD_EDUCATION_PROMPT=config/education.txt
-ONTOWARD_EDUCATION_DOCTOR_PROMPT=config/education_doctor.txt
-ONTOWARD_TEXTS=config/texts.ko.json
-ONTOWARD_EDUCATION_ENABLED=true
-```
+[.env](.env)는 공개 경로와 교육 설정만 갖는다. [settings.py](settings.py)는 config와 knowledge 경로를 제출 내부로 제한한다. 모델 키는 패키지에 없다. [manifest](knowledge/manifest.json)의 알고리즘 표지는 d44.1이고 임상 RDF·어휘·원천 가중치·질문·지침 인덱스·기존 수용 receipt는 보존한다. 새 의존성을 추가하지 않았다.
 
-공개 .env는 ZIP에 포함한다. 같은 환경변수가 우선하며 manifest는 knowledge, 프롬프트·문구는 config 안의 상대 경로여야 한다. 개발 키가 있는 root .env와 부모 data의 준비 DB·후보는 런타임 입력이 아니다. D37 원문은 별도 `NOVA_GUIDELINES_DIR` 마운트에서 읽으며 원본을 ZIP에 복사하지 않는다.
-
-아래는 유지 오프라인 검증 절차다. 합성 워크플로우·명시적 교육 비활성화 회귀·D37 원문과 계획·한국어 변환·실제 수용 RDF·Context 극성·진찰·SOAP·completed를 구분하여 검증한다. 모델과 환자 응답은 대역이며 실제 수행 결과는 상태 문서의 증빙을 따른다.
+기본 오프라인 회귀는 미리 준비한 프로젝트 dev 이미지에서 실행한다. 오프라인 overlay는 암묵적 이미지 빌드를 막고 네트워크와 개발 키를 끈다.
 
 ```sh
-docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_workflow.py
-docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_algorithm.py
-docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_input_empathy.py
-docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_evidence_consistency.py
-docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_education.py
-docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_admitted.py --submission /workspace/submission --output /workspace/Tmp/admitted-verification
-docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_korean_admitted.py --submission /workspace/submission --output /workspace/Tmp/korean-verification
-docker compose --profile tools run --rm --no-deps --pull never -T package
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py'
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python -B Dev/tests/workflow/test_admitted.py --submission submission --output Tmp/d44-admitted
 ```
 
-ZIP은 실행 Python·고정 requirements·공개 .env·지정 config·필요 지식만 포함한다. README·AGENTS·운영 상태·테스트·합성 자료·캐시는 제외한다. 코드/합성 검증, 승인 RDF와 스크립트 환자의 실행, 독립 ZIP 실행, 실제 Luna·공식 API·임상 성능은 각각 다른 증거다.
+회귀는 수명·독립 사실·가족·수치·정정·취득·충돌·강제 연결·전송·교육·완료와 캐시/관측 일치를 검증한다. 이전 타입에 결합된 테스트는 이 행동별 회귀로 재구성했으며 이전 204개 테스트를 그대로 실행했다고 주장하지 않는다. 수용 RDF의 별도 검증은 세 상담과 Context polarity·실제 EXAM을 포함한다. 독립 ZIP은 부모 프로젝트 데이터나 개발 키 없이 두 CPU·8 GiB·읽기 전용·네트워크 없음 환경에서 검증한다. 원본 SDK의 로컬 HTTP는 프로젝트 내부 Docker 네트워크에서 검증한다.
 
-D27의 로컬 HTTP 평가 환경은 [Test](../Test/README.md)가 소유한다. 에이전트의 `run.py`와 SDK를 그대로 실행하면서 환자 대본·개발 키를 평가 측에 분리한다. 기본 scripted 모드는 전송·상태·SOAP 계약을 확인하는 대역이며 실제 자연어 해석 품질을 증명하지 않는다. 외부 NOVA 모델을 쓰는 모드는 별도 실행 범위다. 로컬 completed와 공식 서버의 completed, 공식 채점은 각각 다른 증거다.
-
-구조를 그림으로 읽으려면 서버 없이 여는 [정적 atlas](../Test/atlas.html)를, 실제 지식 노드·양방향 관계·준비 SQLite의 원천 행을 따라가려면 [D39 읽기 전용 지식 뷰어](../Test/README.md#knowledge-viewer)를 사용한다. 뷰어는 별도 localhost 컨테이너 도구이며 submission의 상담 실행·지식 수용·ZIP에 포함하지 않는다.
+관측기·viewer 검증은 실제 브라우저의 시각 검증과 구분한다. 저장 C03 응답 재현은 새 모델 품질 검증과 다르다. 실제 Luna 해석·한국어 의미 품질·임상 정확도·실제 NOVA·공식 점수·게시·배포는 미실행이다. 수치 비교와 산출물 해시는 D44 증빙에 측정 범위와 함께 남긴다.
 
 <a id="runtime-dialogue"></a>
+## 9. 한 턴을 읽는 예
 
-## 9. 실행 환경에서의 대화별 흐름
+1. planner가 현재 세션의 질문을 등록한다. 환자 사실은 바뀌지 않는다.
+2. `turn.question_id`와 새 request ID로 한 질문을 선택한다. 문구는 대기열에 한 번만 있다.
+3. Doctor가 준비 문구·예산을 확인하고 실제 SAY/EXAM 응답을 받는다.
+4. 원문 대화는 해석기 문맥에 한 번 보관한다. 문맥·후보·mapping·복구는 지역값이다.
+5. 검증한 fact/note를 적용하고 해당 질문을 작은 완료 결과로 바꾼다.
+6. 대기 질문과 TurnContext를 제거하고, 임상 revision이 바뀐 경우만 최신 실제 추론을 교체한다.
 
-이 절은 현재 수용된 지식과 문구를 사용하는 제출물의 동작을 시간순으로 설명한다. 앞의 그래프는 “프로그램이 어디로 이동하는가”, 세션 도식은 “각 단계에서 무엇을 확인하는가”를 보여 주었다. 여기서는 “실행기가 시작한 뒤 어떤 요청과 답이 오가는가”를 따라간다. **환자 발언 예시는 이해를 위한 가상 대화이며 실행 로그나 새 임상 자산이 아니다.**
-
-### 9.1 시작 준비 — 환자 접근 전에 지식과 문구 확인
-
-```mermaid
-flowchart TD
-    R0["실행기가 run.py 시작"] --> R1["SDK run_agent가 Client 생성 후 prepare 호출"]
-    R1 --> R2["공개 설정·Gateway 프롬프트·고정 문구 로드"]
-    R2 --> R3{"manifest와 고정 자산을 로드·검증할 수 있음"}
-    R3 -->|철회·누락·경로 또는 해시 오류| R4["준비 실패<br/>ready와 환자 진료로 진행하지 않음"]
-    R3 -->|통과| R5["PreparedResources 구성<br/>읽기 전용 지식과 설정"]
-    R5 --> R6["SDK client.ready 준비 완료 통지"]
-    R6 --> R7["consult에서 증례 전용 실행 객체 조립"]
-    R7 --> R8["client.session으로 초기 정보·마감·예산 수신"]
-    R8 --> R9["새 WorkflowState 구성 후 그래프 시작"]
-```
-
-[run.py](run.py)는 SDK에 `prepare`와 `consult`를 전달하는 얇은 진입점이다. `prepare()`에서는 환자를 보지 않고 사용할 설정과 지식의 파일 경계·해시·문구 계약을 확인한다. 지식은 하나의 RDFLib Graph로 읽으며 환자의 관찰을 그 Graph에 쓰지 않는다. 이 단계에서 실패하면 준비 완료 통지를 보내거나 빈 지식으로 계속하지 않는다.
-
-준비가 끝나면 SDK가 `client.ready()`를 호출하고 `consult(client, resources)`로 들어간다. `consult`는 Doctor·입력 해석·질문 계획·추론·제출 객체와 증례별 상태를 새로 만든다. `client.session()`에서 받은 초기 정보, 마감 시각, 남은 턴, 허용 행동과 서버 예산을 사용한다. 준비 지식과 설정에 이전 환자의 대화나 후보를 쌓지 않는다.
-
-### 9.2 대화 한 번 — 선택부터 응답 반영까지
-
-```mermaid
-sequenceDiagram
-    participant C as Consultation·그래프
-    participant P as InterviewPlanner
-    participant D as Doctor
-    participant N as NOVA SDK·환자 환경
-    participant I as InputInterpreter
-    C->>P: 현재 세션의 다음 미전송 질문 선택
-    P-->>C: 준비 문구와 질문 계약
-    C->>D: validate_action
-    D-->>C: NFC 1–30자·허용 행동 확인
-    C->>C: 전송 직전 턴·모델·시간 예산 재확인
-    C->>D: execute_action
-    D->>N: client.say 또는 client.exam
-    N-->>D: 실제 응답과 남은 턴
-    D->>D: 전달·사용량 기록과 대기 응답 보관
-    D-->>C: 응답 처리 준비
-    C->>I: process_input
-    alt Education 답변
-        I->>I: 원문·전달 완료 기록 후 소비
-    else 초기 입력 또는 수집 답변
-        I->>N: client.chat 문맥 분석
-        Note over I,N: 현재 응답·실제 질문·관련 원문
-        N-->>I: 원자적 진술·타입 메타데이터·검색 힌트
-        I->>I: 현재 인용·참조·주체·시점 검증과 후보 검색
-        I->>N: 진술별 DB 정규화 배치
-        N-->>I: DB key/value dictionary 배열
-        opt 독립 미해결 mapping과 남은 예산
-            I->>N: 바인딩 복구·강제 매핑·제한된 형식 복구
-            N-->>I: 추가 dictionary 또는 실패
-        end
-        I->>I: 독립 유효 mapping 보존·필요한 강제 완료
-    end
-    I-->>C: canonical 사실·typed outcome·감사 참조
-    C->>C: ClinicalReasoner로 변경 근거의 추론 갱신
-    C->>P: 현재 단계에 필요한 질문 재계획 또는 설명 갱신
-    P-->>C: 다음 행동 계획 또는 현재 세션 완료
-    C->>C: 예산 확인 후 다음 대화·세션 전환·최종화
-```
-
-환자에게 보이는 문진 뒤에는 **문구 검증 → 실제 전송 → 원문 보존 → 사실 해석 → 추론 갱신 → 다음 질문 재계획**이 이어진다. Doctor는 진단이나 임상 질문을 선택하지 않으며 수집 중 공감·교육 한국어를 생성한다. Education 답변은 원문 수신과 전달 완료만 기록하며 해석·공감·재진단·재계획을 실행하지 않는다.
-
-“네”처럼 짧은 답도 현재 질문과 함께 문맥 분석 LLM으로 보낸다. “아니요, 작년에는 있었어요”는 현재 부재와 과거 존재를 별도 진술로 유지한다. D43은 문맥 행과 mapping을 각각 독립 검증해 다른 유효 진술을 보존한다. 문맥 분석은 기본·복구 최대 2회이며 초기 우선 호소에는 필요한 경우 집중 검토 1회를 추가한다. 정규화 배치는 세 의미 단계와 추가 형식 복구 최대 1회를 사용한다. 공감 생성은 별도 호출이며 같은 증례 예산을 공유한다.
-
-실제 전송이 성공한 뒤에만 전달 이력을 만든다. 질문 후보에만 있었던 문구, 거절된 초안, 전송 오류는 환자와 나눈 대화가 아니다. 다음 수집 질문은 마지막 응답을 처리한 뒤 선택한다. 대표 CC 전체 속성까지는 준비한 순서를 따르고 Open Inquiry 뒤에는 새 근거로 재계획한다. Education은 고정한 계획의 유효한 한국어 묶음을 연속 전달하며 환자 원문은 임상 상태를 바꾸지 않는다.
-
-### 9.3 첫 인사부터 제출까지 따라가는 예시
-
-아래에서 `Python 진료 흐름`은 Consultation·InterviewPlanner·ClinicalReasoner·SubmissionWriter의 협력을 묶은 표현이다. `NOVA 환경`은 SDK가 연결하는 환자 응답·진찰·제출 인터페이스다. 초기 `opening`에서 “배가 아파요”라는 주호소를 얻은 경우를 가정한다. HPI·ROS·병력·진찰은 현재 수용 자산에 해당 질문·연결이 있고 실행 자격을 통과했을 때 수행한다.
-
-```mermaid
-sequenceDiagram
-    participant N as NOVA 환경
-    participant D as Doctor
-    participant C as Python 진료 흐름
-    participant I as InputInterpreter
-    N->>I: 초기 opening·활력징후·환자 맥락
-    I-->>C: 초기 주호소·구조화 사실·미확인 항목
-    C->>D: Initiation의 인사·미확인 공통 문진
-    D->>N: SAY 안녕하세요. 병원 오시는 길이 불편하진 않으셨나요?
-    N-->>D: 인사에 대한 응답
-    D-->>C: 실제 전달과 응답 기록
-    C->>I: 수신 원문·발화 역할 보존
-    loop Initiation 미확인 onset·course·recurrence·previous_care
-        C->>D: 준비된 공통 질문 하나
-        D->>N: SAY 공통 슬롯 확인
-        N-->>I: 환자 응답
-        I-->>C: DB dictionary·typed outcome
-    end
-    loop 대표 CC의 연결된 전체 속성 처리
-        C->>D: 대표 CC의 현재 속성 승인 질문
-        D->>N: SAY 위치·양상·기간·심각도 등 한 질문
-        N-->>D: 해당 질문에 대한 환자 응답
-        D-->>C: 실제 응답
-        C->>I: 답에 담긴 사실과 정정 처리
-        I-->>C: 같은 관찰·발현에 연결한 정보
-    end
-    C->>D: Open Inquiry 한 번
-    D->>N: SAY 그 밖에 불편한 증상이 있나요?
-    N-->>D: 추가 불편 또는 없다는 응답
-    D-->>C: 실제 응답
-    C->>I: 추가 증상과 원문 해석
-    I-->>C: 수용 사실과 미해결 의미
-    loop 적격 질문과 예산이 남은 집중 ROS·나머지 속성
-        C->>D: 현재 가치로 선택한 승인 질문
-        D->>N: SAY 준비된 질문
-        N-->>D: 환자 응답
-        D-->>C: 실제 응답
-        C->>I: 응답 해석
-        I-->>C: 추론·재계획에 반영할 사실
-    end
-    Note over N,C: 집중 ROS는 원래 주호소 계통 안에서 총 6회 이내
-    loop ContextFactor의 기본 5영역·관련 객체 최대 2개 보호 수집
-        C->>D: 관련 Context의 승인 질문
-        D->>N: SAY 병력 또는 적용 조건 확인
-        N-->>D: 주체와 시점을 포함한 응답
-        D-->>C: 실제 응답
-        C->>I: Context 사실 처리
-        I-->>C: 조건·후보 갱신과 다음 질문 재계획
-    end
-    opt DifferentialDiagnosis에 적격 미해결 질문·진찰이 있음
-        C->>D: 후보를 구분할 승인 질문 또는 진찰 요청
-        D->>N: SAY 또는 EXAM
-        N-->>D: 환자 응답 또는 실제 진찰 결과
-        D-->>C: 획득 출처와 응답
-        C->>I: 주관 보고와 실제 소견을 구분하여 처리
-        I-->>C: 적합도·근거 갱신과 미전송 질문 재계획
-    end
-    Note over N,C: Context와 감별도 필요한 동안 공통 루프를 반복
-    C->>C: Education 진입·진단 고정
-    Note over N,C: 기본 true; false는 교육 행동 없이 우회
-    opt ONTOWARD_EDUCATION_ENABLED=true
-    C->>C: 지침 원문·canonical 환자 사실·고정 진단으로 영어 P 생성
-    C->>D: 영어 문장별 한국어 변환·NFC 1–30 검증
-    loop 대기 발화와 공유 예산이 남음
-        D->>N: SAY 검증된 한국어 설명
-        N-->>D: 환자 응답
-        D-->>C: 영어 P와 분리한 전달 이력
-        C->>I: 원문 수신·입력 소비·전달 완료
-        I-->>C: 임상 상태·고정 진단·계획 유지
-    end
-    end
-    C->>C: 대기 응답 해소·고정 진단·저장 계획으로 SOAP 구성
-    C->>N: 세션 재확인 후 DIAGNOSE
-    N-->>C: 제출 결과
-    opt 수정 가능한 기록 오류이고 재구성 한 번이 남음
-        C->>C: 보존 사실에서 재구성·재검증
-        C->>N: 새 요청 ID로 DIAGNOSE
-        N-->>C: 제출 결과
-    end
-    alt status가 completed
-        C->>C: submitted로 기록하고 정상 종료
-    else 실패·불명·만료·폐쇄
-        C->>C: 해당 결과와 사유를 기록하고 비정상 종료
-    end
-```
-
-초기 정보에서 “배가 아파요”라는 주호소를 얻으면 초기 원문과 연결한 뒤 인사·미확인 공통 문진부터 진행한다. 다음 CC에서 위치·양상 등 남은 속성을 확인하고 기본 병력과 관련 Context를 수집한다. 새 인사는 주호소를 다시 유도하지 않는다. 이 예시는 새 임상 지식이나 고정 정답 경로를 추가하지 않는다.
-
-ContextFactor와 DifferentialDiagnosis는 새로운 공식 세션을 만드는 시점이 아니다. 같은 환자의 기존 사실·대화·남은 예산을 이어받아 질문의 목적만 바뀐다. Context의 기본·보호 수집을 마친 뒤 선택적 질문의 가치를 비교한다. 해결·부적용·문구 없음·예산 부족은 개별 사유를 남긴다.
-
-설명에 대한 마지막 답변도 수신 원문과 턴을 기록하고 소비한다. Education에는 사실 추출·공감·재진단·계획 재생성을 실행하지 않는다. 조건을 포함한 한국어 묶음 전체를 전달할 여유만 판단하며 전부 안내하지 못하면 사유를 기록하고 영어 계획은 최종 기록에 유지한다. 최종화는 별도의 환자 대화를 생성하지 않는다.
-
-### 9.4 대화 수와 예산을 해석하는 방법
-
-| 흐름 | 실제 대화 수를 결정하는 것 | 다음 단계로 남기는 것 |
-|---|---|---|
-| 인사·초기 정보·공통 문진 | 준비된 첫 SAY, 필요한 제한적 명료화 | 확인된 주호소와 초기 정보 |
-| CC 속성 | 대표 CC, 연결된 전체 목록·처리 상태·남은 슬롯 | 관찰·발현·시점별 DB 속성·처리 상태 |
-| Open Inquiry·집중 ROS | Open Inquiry 한 번, 현재 가치에 따른 ROS 총 여섯 번 이내 | 추가 증상·명시적 부재·미해결 정보 |
-| Context·감별 | 승인 질문·진찰 연결, 현재 질문 가치와 남은 예산 | 적용 조건·실제 소견·진단 근거 |
-| Education | 기본 활성화, 고정 진단의 한국어 문장과 남은 공통 턴 | 영어 P·전체 실제 전달 이력·미전달 사유; 명시적 false는 우회 |
-| SOAP·DIAGNOSE | 검증 결과와 전체 한 번의 재구성 한도 | 서버 결과와 확인된 종료 상태 |
-
-루프 안에서 실행한 SAY·EXAM의 서버 턴 변화가 실제 행동 사용량이다. D35 세션 문진 상한과 공통 50턴을 함께 따르며 공감은 세션 상한에서 제외하지만 공통 턴을 쓴다. 최소 목표는 강제 횟수가 아니므로 고정 대화 번호로 세션을 나누지 않는다. 그래프 노드 수, 문진·공감 SAY/EXAM 수, 모델 호출 수는 구분하고 마지막 행동 응답까지 처리한 뒤 마감 전에 제출한다.
-
-새 수집 SAY·EXAM 전에 문맥 분석·정규화 최소 2회·8192 출력토큰, 응답 처리 120초, 최종화 120초를 확보한다. 공감은 생성까지 최소 3회·12288 출력토큰을 확보하며 Education 답변은 해석 호출을 예약하지 않는다. 기한·모델·행동 예산이 부족하면 최종화로 이동한다. 이 절의 순서는 그 조건을 충족했을 때의 실행 계획이며, Mermaid 원문의 시각 렌더링·실제 Luna 호출·공식 진료 실행·임상 성능은 별도 검증 대상이다.
+예를 들어 “치료받은 적은 없고 지켜봤어요”는 치료력 부정과 관찰 경험의 note 두 개다. 이를 위해 주호소의 양성/음성 사실을 다시 만들거나 세 번의 빈 후보 매핑을 수행할 필요가 없다. 미등록 수치가 있으면 값·단위·범위를 note의 수치에 보존하면서 진단 근거로 승격하지 않는다.
 
 <a id="change-guide"></a>
+## 10. 변경할 때 지킬 경계
 
-## 10. 수정 방향을 생각할 때 확인할 책임과 경계
+정보를 추가하기 전에 다음 턴의 실행 판단에 필요한지 확인한다. 입력 함수에서 끝나는 정보는 지역값으로, 실제 환자 사실은 CaseState로, 질문 처리 결과는 InterviewState로, 서버 제약과 사용량은 SessionContext로 둔다. 노드 사이에서 현재 행동을 이어갈 때만 TurnContext를 사용한다. 해설과 감사 때문에 상태 객체나 mapping 사본을 늘리지 않는다.
 
-아래는 변경을 구현한 목록이 아니라, 원하는 동작과 관련된 현재 코드·기록을 찾아가는 안내다. 한 단계의 품질 문제를 다른 단계의 점수 변경으로 가리는 일을 피하려면 입력부터 제출까지 어느 경계에서 기대와 달라졌는지 먼저 확인하는 편이 좋다.
-
-| 확인하려는 현상 | 먼저 볼 기록 | 해당 책임·코드 |
-|---|---|---|
-| 환자 말을 다른 증상으로 연결함 | 실제 input·전송 vocabulary·별칭·`parser_result`·거절 사유 | [InputInterpreter](workflow/input_interpreter.py)의 `_search`, `_vocabulary`, `_request_parse`와 [입력 검증](workflow/rules/input.py) |
-| 증상은 연결됐는데 주호소로 확정되지 않음 | S.cc의 status·subject·time_context·인용·개념 ID | [CaseState](workflow/state/models.py)의 `chief_complaints`와 입력 사실 반영 |
-| 기대한 질환이 후보에도 없음 | Target ID와 그 Target의 Association | [ClinicalKnowledge](knowledge/graph.py)의 `get_patterns_by_target`; 원천 연결 변경은 준비·수용 범위 |
-| 후보는 있지만 지지 점수가 0임 | `pattern_matches`, `association_matches`, 미해결 Feature·적용 조건 | [ClinicalReasoner](workflow/clinical_reasoner.py)의 `_match`, `_applicability`, `refresh_hypotheses` |
-| 추가 정보를 얻었는데 점수가 낮아짐 | 선택 Contribution과 정교화·차분·관찰·발현 | 정교화 대체 규칙과 manifest의 scoring policy |
-| 높은 점수의 질환이 최종 선택되지 않음 | 대표 CC의 정확한 관찰·발현·시점, `chief_score`, fit, `chief_coverage` | `supported_hypotheses`, `select_diagnosis` |
-| 예상과 다른 질문을 먼저 함 | `assessment`, selection_report, 임상·질문 개정·세션·예산 | [InterviewPlanner](workflow/interview_planner.py)의 `_frontier`, `replan`, `select_question`와 selection.py |
-| 턴을 많이 쓰거나 Context가 먼저 끝남 | 직접·후속·완성 경로 가치, 계산 완료 여부, 세션별 남은 용량 | `DecisionEvaluation`, 양수 가치 선택, `advance_to_diagnostic_acquisition` |
-| 묻지 않거나 한 번 물은 내용을 다시 확인함 | 출처, 실제 delivered 이력, observation/episode, clarification 수 | `has_resolved_evidence`, `was_asked`, QuestionLifecycle |
-| 제출 기록이 비거나 근거가 빠짐 | `diagnosis_evidence`, 실제 source_refs·획득 상태, 고정 진단의 영어 P·원문 읽기·실패 기록 | [SubmissionWriter](workflow/submission_writer.py)와 [교육 생성](workflow/education.py) |
-
-특히 다음 네 가지는 현재 동작을 평가할 때 구분해야 한다. 첫째, Gateway의 단일 Symptom 선택은 출력 계약이고 그 의미가 맞았다는 임상 판정은 아니다. 둘째, 원천 지지와 fit은 정렬 점수이며 진단 확률이 아니다. 셋째, 질문 가치는 구조적 판별 정책이므로 높은 가치 질문 선택만으로 최소 턴을 보장하지 않는다. 넷째, 증상 수준 잠정진단·명시적 Education 비활성화·실패 뒤 빈 계획 필드 허용은 제출을 진행할 수 있는 경계이며 해당 평가 영역의 충족을 뜻하지 않는다.
-
-현재 검증 이력은 [submission 상태](PROJECT_STATE.md)에 연결되어 있다. 합성 입력의 행동 검증, 실제 수용 RDF와 스크립트 응답의 상담, 독립 ZIP의 실행은 코드·자산·제출 계약을 확인한 증거다. 실제 Luna의 한국어 의미 매핑, 공식 서버 재검증, 임상 정확도·공식 점수는 별도 관측으로 남아 있다. 문서·그림·예제는 그 구분을 대신하지 않는다.
+원천·스키마·임상 수용은 Dev/data, 환자 워크플로우는 submission, 관측·개인 뷰어는 Test가 소유한다. 새 corpus·모델·기능·배포를 정보 객체 리팩토링에 섞지 않는다. 아래 온톨로지와 준비 파이프라인은 이 수명 구분과 별개의 읽기 전용 지식 구조다.
 
 <a id="ontology-schema"></a>
 
@@ -1023,6 +399,6 @@ flowchart TD
 
 `source_projection.py build/export/admit`는 원천 정본·후보·수용의 경계를, `connections`는 D20 파생 연결을 담당한다. D19의 `source-findings.ttl` 발견 자료 전체를 실행 그래프에 넣지 않는다. D20의 그래프만 수용한 중간 상태는 `graph_admitted_text_pending`이었으며 D23이 한국어 행동을 고정한 뒤 현재 `admitted`가 되었다. D37은 문서 탐색 인덱스, D38은 별도 추론 정책을 추가하며 원래 그래프·행동 수용 기록을 보존한다.
 
-진료 중 RF2·BODHI 원본이나 부모 준비 DB를 다시 읽지 않는다. **추론은 ZIP 내부 RDF와 JSON, Education은 고정 탐색 인덱스와 제공 원문 마운트**를 사용한다. 환자의 실제 기록은 이 파이프라인의 새 일반 지식으로 되돌려 쓰지 않는다. 공모전 수용과 독립 임상 검증·실제 모델 품질·공식 평가의 경계는 [D43 입력 복구 기록](../data/provenance/input-recovery-d43-2026-10-18.json), [D41 수용 기록](../data/provenance/algorithm-d41-2026-10-18.json)과 [운영 상태](PROJECT_STATE.md)에 연결되어 있다.
+진료 중 RF2·BODHI 원본이나 부모 준비 DB를 다시 읽지 않는다. **추론은 ZIP 내부 RDF와 JSON, Education은 고정 탐색 인덱스와 제공 원문 마운트**를 사용한다. 환자의 실제 기록은 이 파이프라인의 새 일반 지식으로 되돌려 쓰지 않는다. 공모전 수용과 독립 임상 검증·실제 모델 품질·공식 평가의 최신 경계는 [D44 수명 리팩토링 기록](../data/provenance/state-lifecycle-d44-2026-10-18.json)에 정리한다. 이전 [D43 입력 복구 기록](../data/provenance/input-recovery-d43-2026-10-18.json), [D41 수용 기록](../data/provenance/algorithm-d41-2026-10-18.json)과 [운영 상태](PROJECT_STATE.md)에 연결되어 있다.
 
 D42의 [현재 데이터 배치와 작성 안내](../data/preparation/v5/common-complaints-2026-10-18-r2/README.md)는 기존 843개 질환·9,401개 Association을 보존하고 추가한 데이터와 남은 공백을 설명한다. 새 출처의 정성적 연관은 별도 정책 점수 1을 사용하며, 작성자 지정 수준은 작성자 판단으로 보존한다. 일반 구어·기록 속성·출처 재배포가 점수 보너스가 되지 않는다. 새 임상 그래프·문구·정책은 [D42 수용 기록](../data/provenance/common-complaints-d42-2026-10-18.json)의 새 manifest와 영수증으로 구분한다.

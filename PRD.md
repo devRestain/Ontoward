@@ -6,7 +6,7 @@ Ontoward는 N.O.V.A. 모의 환자의 초기 정보에서 출발하여 문진·�
 
 첫 MVP는 한 증례를 메모리에서 진행한다. 사용자는 에이전트가 어떤 정보를 얻었고, 어떤 후보를 고려하며, 왜 다음 행동을 제안하는지 확인할 수 있어야 한다.
 
-현재 제출 에이전트는 D41의 항상 호출하는 문맥 분석·DB dictionary 정규화·강제 복구와 D40의 보호 수집 예산, D38의 대표 주호소·공유 추론·그래프 질문 선택을 사용한다. 환자 원문은 해석 문맥과 감사 기록에만 두고 진단·질문·SOAP·교육 모델에는 정규화한 사실과 타입 메타데이터를 제공한다. D37의 working 진단 고정·지침 기반 영어 P·NFC 1–30자 한국어 전달과 Education 답변 기록 전용 정책을 유지한다. SDK 제출 형태와 임상 자산은 보존하며 실제 모델 품질·공식 평가는 별도 검증한다.
+현재 제출 에이전트는 D44의 세 상주 상태와 현재 턴 수명, 항상 문맥 분석 뒤 정확한 Python 연결과 선택적 DB 정규화를 사용한다. 임상 사실은 정식 영어 용어·속성·속성별 값·작은 수치와 필요한 취득 메타데이터로 저장한다. 원문은 해석 문맥과 감사에만 두고, DB 미표현 정보는 기존 범주의 typed note로 SOAP·수집 판단에 보존하며 진단 점수에는 넣지 않는다. D38의 대표 주호소·공유 추론·질문 효용, D40의 보호 수집·예산·Education 응답 경계, D42 임상 핀과 원본 SDK를 유지한다. 진단과 최종 영어 계획은 하나씩 보관하고 SOAP는 제출·확인 동안만 유지한다. 실제 모델 품질·공식 평가는 별도 검증한다.
 
 D15의 정보 보존과 D17의 워크플로우 정책을 유지한다. D18은 이전 지식·문구·승인 배치를 삭제하고 SNOMED CT·BODHI-S 원천 전용 베이스에서 전체 스키마 후보와 한국어 매핑을 재구축한다.
 
@@ -108,7 +108,7 @@ D36은 검증 전에 `record_id`와 현재 질문의 암묵적 연결을 해석�
 
 문맥 모델에는 그래프 조건 전체가 아닌 관찰용 quantity/interval 스키마를 제공한다. 정상 JSON의 각 진술을 독립 검증하고 유효 행을 고정한 채 무효 행만 1회 복구한다. 초기 우선 호소의 관찰과 원인 불확실성이 혼동되면 집중 문맥 검토 1회를 추가할 수 있으나 실제 모름을 양성으로 강제하지 않는다. 과거에 시작해 지금도 지속되는 호소와 종료된 과거 에피소드를 구별한다.
 
-등록된 수치가 부모 관찰 없이 보고되면 record_only로 보존할 수 있다. 이를 증상 존재나 질환 점수로 바꾸지 않으며 경과·변화량을 절대 신장·체중으로, 치료력 부정을 주호소 부재로 바꾸지 않는다. 원문 위치·거절·복구·진술별 처리 결과는 감사에 보존한다. 실제 C03 저장 응답의 재현과 새로운 집중 검토의 통제 응답, 실제 모델 검증을 구분한다. D42 임상 자산과 d41.1 추론 정책은 그대로 두고 알고리즘 표지는 d43.1로 관리한다.
+등록된 수치가 부모 관찰 없이 보고되면 record_only로 보존할 수 있다. 이를 증상 존재나 질환 점수로 바꾸지 않으며 경과·변화량을 절대 신장·체중으로, 치료력 부정을 주호소 부재로 바꾸지 않는다. 원문 위치·거절·복구·진술별 처리 결과는 감사에 보존한다. 실제 C03 저장 응답의 재현과 새로운 집중 검토의 통제 응답, 실제 모델 검증을 구분한다. D42 임상 자산과 d41.1 추론 정책은 그대로 두고 알고리즘 표지는 최신 D44의 d44.1로 관리한다.
 
 ## D40 보호 수집과 D41 입력·기록 계약
 
@@ -146,7 +146,7 @@ D36은 검증 전에 `record_id`와 현재 질문의 암묵적 연결을 해석�
 
 형식·의미 거절은 실제 수행이나 관찰로 확정하지 않는다. 보존한 공개 규칙에서 `EXAM_NOT_SPECIFIC`·`EXAM_NOT_RECOGNIZED`는 결과 없이 1턴을 사용하며, `ACTION_NOT_AVAILABLE`은 턴을 쓰지 않는다. 응답의 남은 턴을 확인하고 D35의 제한된 동일 요청 1회 재전송만 허용한다. 명시적 환자·진찰 응답 형식 오류를 새 ID로 자동 재시도하지 않으며 세션 종료·만료와 미해결 일시 오류는 명시적으로 종료한다. 기본 예제와 개발 키트만으로 공식 서버의 중복 처리·복구 동작을 검증했다고 주장하지 않는다. [요청과 오류 규칙](https://nova.snubhai.org/docs/)
 
-서버가 받은 빈 내용·길이 초과 SAY/EXAM과 부적절한 EXAM은 1턴을 쓴다. SDK가 전송 전에 ValueError로 막은 요청은 턴을 쓰지 않는다. 빈 Doctor 답변은 호출 200회에는 포함되지만 토큰 예산과 Doctor 비용에서는 제외된다. 공식 session()의 events에 의존하지 않고 대화·행동·응답 이력을 InteractionState에 유지한다.
+서버가 받은 빈 내용·길이 초과 SAY/EXAM과 부적절한 EXAM은 1턴을 쓴다. SDK가 전송 전에 ValueError로 막은 요청은 턴을 쓰지 않는다. 빈 Doctor 답변은 호출 200회에는 포함되지만 토큰 예산과 Doctor 비용에서는 제외된다. 공식 session()의 events에 의존하지 않고 실제 대화는 InputInterpreter 문맥에 한 번 유지하고 상세 행동·응답은 Test 감사에 기록한다.
 
 문맥 분석·DB 정규화·empathy는 openai/gpt-6-luna medium을 사용한다. 기본 출력은 4096토큰이며 finish_reason=length는 성공이 아니다. D41의 단계별 복구에서 최대 8000토큰을 사용하고 강제 정규화 이후에도 형식이 무효하면 Python이 유효 dictionary를 완성한다. 문맥 자체의 반복 실패는 unknown으로 남기며 기록용 terminology는 사용하지 않는다. 실제 Luna 의미 품질은 별도 검증이다.
 
@@ -166,7 +166,7 @@ D31의 개인용 웹사이트는 `sh Test/web.sh`로 시작하고 `http://127.0.
 
 관측 부트스트랩은 submission의 파일을 수정하지 않고 원본 진입점을 실행한다. 실제 그래프 노드·초기 상태·노드별 변경분·SDK 요청과 응답·오류를 기록하고 시뮬레이터의 역할별 모델 요청과 상위 행동 ID를 연결한다. 화면에서 내부 세션과 턴별 대화, 질문·예산·사실의 변화, 후보 순서·점수 기여·근거·선택된 진단, 최종 SOAP와 영수증을 탐색한다. Note 탭은 S·O·A·P의 15개 필드와 별도 diagnosis에 저장된 기록·완료 상태·임상 값·개념·출처를 보여주고, 해당 시점의 실제 생성된 제출 payload 및 최종 수신본과 구분한다. 미구조화 환자 보고는 기록된 구간만 표시하며 새 임상 해석을 생성하지 않는다. 전체 상태와 원시 요청은 상세 영역에서 확인하며, 별도 report.html도 보존한다. 저장된 실행을 열면 현재 뷰어로 리포트만 갱신한다. 인증 헤더와 환경변수는 기록하지 않고 수집되지 않은 과거 상태는 만들어내지 않는다. 실행 실패도 부분 로그와 함께 표시하며 재시작으로 자동 재개하지 않는다.
 
-D31 테스트 리포트는 **정보 흐름**을 기본 화면으로 사용한다. 선택한 턴의 실제 그래프 노드 아래에서 Consultation·InputInterpreter·ClinicalReasoner·InterviewPlanner·Doctor·SubmissionWriter와 상태·모델·전송 담당 객체의 호출을 펼친다. 각 단계의 호출자·인스턴스 경로·자료형·입력·반환값·변경 경로·SDK body와 수신 결과를 확인하고, JSON 문자열은 원문과 해독한 구조를 함께 살핀다. **객체 탐색**은 WorkflowState의 CaseState·SessionContext·DifferentialState·QuestionPlan·InteractionState를 구분해 턴 전후의 데이터 트리·필드별 변화·검색·변경 턴 이동을 제공한다. 파서와 canonical snapshot 등의 임시 반환 객체도 실제 호출 결과에서 확인한다. 내부 호출을 기록하지 않은 과거 실행에는 관측된 노드와 상태만 제공하고 미수집을 표시한다. 수집 범위는 주요 실행 객체 경계이며 Python heap과 가상 분기의 내부 점수 계산 루프 전체를 추적하지 않는다.
+D31 테스트 리포트는 **정보 흐름**을 기본 화면으로 사용한다. 선택한 턴의 실제 그래프 노드 아래에서 Consultation·InputInterpreter·ClinicalReasoner·InterviewPlanner·Doctor·SubmissionWriter와 상태·모델·전송 담당 객체의 호출을 펼친다. 각 단계의 호출자·인스턴스 경로·자료형·입력·반환값·변경 경로·SDK body와 수신 결과를 확인하고, JSON 문자열은 원문과 해독한 구조를 함께 살핀다. **객체 탐색**은 WorkflowState의 CaseState·InterviewState·SessionContext와 선택적 TurnContext를 구분해 턴 전후의 데이터 트리·필드별 변화·검색·변경 턴 이동을 제공한다. InputResult·ModelResult·EvidenceIndex 등의 임시 반환 객체도 실제 호출 결과에서 확인한다. 내부 호출을 기록하지 않은 과거 실행에는 관측된 노드와 상태만 제공하고 미수집을 표시한다. 수집 범위는 주요 실행 객체 경계이며 Python heap과 가상 분기의 내부 점수 계산 루프 전체를 추적하지 않는다.
 
 ## 오프라인 프로젝트 흐름 지도
 
@@ -176,23 +176,32 @@ D32의 `Test/atlas.html`은 개인이 프로젝트 구조를 이해하기 위한
 
 | 객체 | 소유 정보 |
 |---|---|
-| CaseState | 구조화된 S/O/A/P, 대표 CC 기록·Target·관찰·에피소드·시점, diagnosis와 근거 ID |
-| SessionContext | 현재 내부 세션, 초기화 여부, 공통 예산과 세션별 사용량과 마감 |
-| DifferentialState | 전체 회수 후보·Pattern·Association 연결, CC/추가 보강/Context/반증 분해와 자격·기록 참조 |
-| QuestionPlan | 전체 CC 속성 처리 상태, 질문 이력 개정, 구조화된 평가·답변별 예상 결과·선택 사유 |
-| InteractionState | 전체 원문 대화·역할별 모델 기록·대기 행동·전달 이력·복구·제출 결과 |
+| CaseState | facts·notes·chief_fact_id·최종 diagnosis·plan·임상 revision |
+| SessionContext | 최신 서버 제약·한도·마감·실제 사용량·종료·최소 receipt |
+| InterviewState | 현재 세션 질문 대기열·compact 완료 기록·필요한 중단·공감 코드 |
+| TurnContext | 현재 입력·행동·제출의 요청·응답·단계; 처리 후 해제 |
 
-SOAP 항목은 id·scope·status·value·출처 참조를 가진다. status는 unasked/done으로 처리 여부만 나타내며, value의 present/absent/uncertain/unknown은 임상 의미를 구분한다. 모른다는 답도 done으로 닫을 수 있으나 음성으로 바꾸지 않는다. 대상·현재/과거·가족력·관찰·에피소드와 정정을 보존한다. 수치·단위·시간은 원문과 타입 measurement에 보존하며 근거 없는 범주를 추정하지 않는다.
+임상 주장마다 독립 fact ID와 정식 영어 Target·Attribute·속성별 값·ObservedNumber·present/absent/uncertain/unknown을 둔다. 질문은 별도 대기열이며 완료 뒤 의미 키·목적·출처·취득 턴·처리 결과와 필요한 fact ID만 남긴다. 모름은 질문 처리 완료일 수 있지만 임상 음성으로 바꾸지 않는다. 같은 용어라도 주체·가족 구성원·시점·관찰·에피소드·취득 조건이 다르면 합치지 않는다.
 
-D41 InputInterpreter는 초기 입력과 수집 세션 SAY·EXAM의 모든 답변에 문맥 분석 LLM을 호출한다. 단순 답·모름·수긍·빈 입력도 호출하며 Education 답변만 기록 전용으로 우회한다. 문맥 분석은 현재 원문의 원자적 진술·주체·보고자·시점·에피소드·정정·부정 범위·감정과 검색 힌트를 추출한다. 이후 별도 정규화 호출은 공급된 DB Target을 key로 하고 (+)/(-), 해당 AttributeValue, 등록된 quantity/interval을 value로 하는 dictionary 배열만 반환한다. 임상 dictionary에 원문·영어 요약·메타데이터를 넣지 않는다.
+InputInterpreter는 초기 입력과 수집 SAY·EXAM의 모든 답변에 문맥 분석을 호출한다. 짧은 답·모름·수긍·빈 입력도 호출하며 Education 답변은 기록 전용이다. 정확한 연결은 Python이 처리하고 미해결 임상 진술만 공급된 정식 영어 DB 용어를 key로 하는 dictionary 배열에 매핑한다. polarity·허용 속성 값·보고한 수치만 반환하며 원문·요약·메타데이터를 매핑 사본으로 저장하지 않는다.
 
-InteractionState는 전체 원문, 모델 요청·응답·실패, 문맥 진술과 감사 참조를 증례별 보존한다. 원문 문맥은 InputInterpreter 안에서만 소비한다. CanonicalSnapshot은 원문·자유 record_details·미등록 quantities 없이 현재 DB 사실과 typed outcome을 제공하고 EvidenceIndex는 그중 추론 가능한 부분집합이다. 사실 ID는 질문 ID와 독립적이며 answered_fact_ids로 연결한다. 등록 수치 형식은 approximate boolean으로 명시적 근삿값을 보존하고 SOAP는 제한된 부정 범위를 qualified scope로 표시한다. ONTOWARD_PARSER_PROMPT·ONTOWARD_NORMALIZATION_PROMPT·ONTOWARD_EMPATHY_PROMPT는 제출 내부 설정 파일을 선택한다.
+실제 대화와 환자 맥락은 InputInterpreter에서만 보관·소비하고 모델 교환·오류·복구·대체 전 사실은 실행 상태와 분리된 Test 감사로 기록한다. 환자 사실 자체가 typed canonical 상태이며 별도 CanonicalSnapshot은 두지 않는다. EvidenceIndex는 필요한 지식 경계에서 내부 URI를 찾아 진단 가능한 사실만 계산한다. 질문과 다른 fact ID를 사용하고 완료 결과의 fact_ids로 한 번 연결한다. 등록 수치는 approximate와 구간·단위를 보존하며 SOAP는 qualified scope를 표시한다. 프롬프트 경로는 제출 내부 공개 설정으로 선택한다.
 
 D41은 현재 질문의 Target·Attribute·허용 값·주체·시점과 진술별 원천 라벨·동의어·검색 힌트를 사용한다. 기본 후보는 진술당 Target 8개·속성 2개·속성값 8개, 복구는 Target 32개·속성 4개·값 32개이며 전체 messages 한도를 함께 적용한다. 현재 진단 가설로 새로운 호소를 배제하지 않는다. 여러 진술이 한 후보 예산 때문에 사라지지 않도록 배치를 나눈다. 중복 JSON key·미등록 ID/값·잘못된 관계·비유한 수치·미등록 단위를 거부한다.
 
-D41은 문맥 분석 1회와 복구 1회, 정규화 배치의 기본 매핑·바인딩 복구·강제 매핑과 추가 형식 복구 1회를 공통 자원 안에서 사용한다. 독립 유효 사실을 고정하고 미해결 진술만 복구한다. 강제 단계는 가장 가까운 타입 호환 DB 용어를 선택하며, 유효 JSON을 얻지 못하면 Python이 검증된 문맥과 후보로 dictionary를 완성하고 forced_by=model 또는 deterministic을 기록한다. 강제 결과도 취득·주체·시점 조건을 충족하면 진단·질문·SOAP에 사용한다. 미등록 측정 슬롯·일반 병력 부정·모름·비임상 발화를 임의의 증상이나 개별 질환 음성으로 만들지 않는다. 이 세부 정보는 감사와 처리 상태에 남기고 흐름을 계속한다.
+D44는 문맥 분석 1회와 행별 복구 1회, 정확한 Python 바인딩 후 필요한 일반 매핑·최종 강제 매핑과 배치당 형식 복구 1회를 사용한다. binding_repair는 제거한다. 정확히 수용한 형제 진술을 고정하고 미해결 진술만 비어 있지 않은 호환 후보로 복구한다. 강제 결과도 polarity·주체·시점·취득 조건을 검증하며 최소 forced 표지만 사실에 남긴다. 시도별 원문·오류·강제 주체는 감사 기록에 둔다. 포괄적 병력 부정·치료력·미등록 측정은 기존 범주의 note와 작은 완료 결과로 처리하고, 미확인 증상 양성·개별 질환 음성·실제 EXAM으로 승격하지 않는다.
 
 문맥 분석은 수집 세션의 감정·공감 요청을 정확한 인용으로 식별하고 별도 공감 생성에는 감정·요청 코드와 canonical 사실만 제공한다. 반복·수긍을 억제하고 새 어려움·명시적 재요청을 구분한다. Education 답변은 원문·전달 이력만 기록하며 임상 추출·공감·재진단·재계획을 수행하지 않는다.
+
+## 정보 객체 수명과 책임 — D44
+
+WorkflowState는 CaseState·InterviewState·SessionContext를 턴 사이에 유지하고 TurnContext만 선택적으로 전달한다. CaseState는 facts·notes·chief_fact_id·diagnosis·plan·revision에 한정한다. 현재 세션 질문과 compact 완료 결과·필요한 수집 중단은 InterviewState가, 서버 제약·사용량·종료와 최소 receipt는 SessionContext가 소유한다. TurnContext에는 노드를 넘어 현재 행동을 이어가는 질문 참조·요청 ID·단계·응답과 제출 작업만 둔다. 입력을 수용하고 완료 질문을 제거한 뒤 turn을 비운다.
+
+ModelResult·InputResult·문맥 진술·후보·mapping·행별 오류·복구 이력·교육 문서 조각은 호출의 지역값이다. 실제 근거 인덱스와 캐시는 최신 한 벌만 재사용하며 사실/주호소가 바뀌면 교체한다. 가상 응답·경로·가상 캐시는 선택 뒤 폐기한다. 실제 대화는 해석기에서 한 번 보관하고 하류나 그래프 상태로 전달하지 않는다. 상세 감사는 Test 경계에서 기록하며 실행 판단에 다시 사용하지 않는다.
+
+질문에 assessment나 가상 결과를 붙이지 않고 미래 세션의 질문을 생성하지 않는다. 완료 후에는 의미 키·목적·처리 결과·필요한 fact ID·출처·취득 턴만 보관한다. chief 진행 수·ROS 대상·Context 확보 수는 사실·지식·완료 결과로 계산한다. 고정 진단·영어 계획은 단일 정본이고 한국어 안내는 같은 대기열에서 sentence ID로 연결한다. SOAP는 최종 제출 작업에만 존재하며 confirmed completed 뒤 해제한다.
+
+수명·정보 보존·취득/정정·속성별 용어·캐시/관측 일치·저장 C03 응답·한국어·Education·독립 ZIP·원본 SDK 로컬 HTTP를 프로젝트 Docker에서 검증한다. 같은 고정 입력의 상태 크기·복사/검증 시간·요청 바이트·호출 수를 측정하며 실제 서비스 성능으로 일반화하지 않는다. 모든 남은 객체·필드의 소유자·생성·소비·폐기·필요 이유는 제출 백서에 기록한다.
 
 ## SOAP 기록과 최종 제출
 
@@ -206,11 +215,11 @@ D41은 문맥 분석 1회와 복구 1회, 정규화 배치의 기본 매핑·바
 | P | `tests`, `treatment`, `disposition`, `follow_up`, `education` | 추가 검사, 치료, 처치 결정, 추적·경고 증상, 교육 계획 |
 | 별도 값 | `diagnosis` | CaseState.diagnosis의 비어 있지 않은 주진단 하나 |
 
-모든 SOAP 칸은 문자열이고 내용이 없는 칸은 빈 문자열로 둔다. 단, 기록 전체를 빈 문자열로만 채우지 않는다. 주진단은 CaseState.diagnosis에 유지하고 별도 diagnosis 인자로 비어 있지 않은 문자열 하나를 보낸다. note.A에는 evidence·differential만 넣는다. 누락·추가 필드와 잘못된 자료형은 제출 전에 거절한다. A.evidence에는 실제로 확보하고 판단에 사용한 문진·신체진찰 소견을 간결하게 목록화하며, 지식 출처나 내부 사고 과정으로 대신하지 않는다. 미확인·미시행 항목은 근거로 채우지 않고 원문·획득 턴은 InteractionState에서 추적하고 CaseState는 출처 ID를 참조한다.
+모든 SOAP 칸은 문자열이고 내용이 없는 칸은 빈 문자열로 둔다. 단, 기록 전체를 빈 문자열로만 채우지 않는다. 주진단은 CaseState.diagnosis에 유지하고 별도 diagnosis 인자로 비어 있지 않은 문자열 하나를 보낸다. note.A에는 evidence·differential만 넣는다. 누락·추가 필드와 잘못된 자료형은 제출 전에 거절한다. A.evidence에는 실제로 확보하고 판단에 사용한 문진·신체진찰 소견을 간결하게 목록화하며, 지식 출처나 내부 사고 과정으로 대신하지 않는다. 미확인·미시행 항목은 근거로 채우지 않고 원문은 InputInterpreter 전용 문맥과 Test 감사에서 추적하고 사실은 직접 출처·취득 턴을 보관한다.
 
 D33의 결정론적 렌더러는 가능한 모든 SOAP 내용과 별도 주진단에 원천의 영어 용어를 사용하고, 채워진 각 줄을 `Category: Content`로 고정한다. `S.cc`는 `C.C: Cough`, `Onset: 3 days before presentation`으로 구성하며, 통증이면 같은 주호소·관찰·에피소드에서 확보한 NRS·Location·Quality·Duration을 `Pain assessment:`에 넣는다. NRS 척도와 미확인 점수를 추정하지 않는다. `S.hpi`는 `P.I:`, `Onset:`, `Duration:`, `Aggravating factor:` 등 확인된 범주의 합으로 작성한다.
 
-과거력·가족력·사회력·ROS는 수용 DB label과 (+)/(-), 허용 속성값·수치를 사용한다. 원문, 자유 영어 record_details, 미해결 환자 span, 원문 text fallback은 SOAP에 넣지 않는다. unknown·비적용·미등록 의미는 처리 상태로 남기고 일반 병력 부정을 개별 질환 음성으로 확장하지 않는다. 새 기록용 코드나 임상 관계는 추가하지 않으므로 현재 DB로 표현할 수 없는 인구학·측정·병력 세부 정보는 SOAP에서 제외될 수 있다. 원문과 해석 결과는 감사 기록으로 보존한다.
+과거력·가족력·사회력·ROS는 정식 영어 용어와 (+)/(-), 속성별 허용 값·수치를 사용한다. D44의 note는 기존 범주·polarity·간결한 영어 값·별도 typed 수치로 표현하며 SOAP와 수집 판단에 사용한다. 환자 원문·미해결 원문 span과 과거 중첩 객체를 우회 복사하지 않는다. note와 포괄적 병력 부정을 개별 질환 음성이나 진단 근거로 만들지 않는다. 치료력 부정과 지켜본 경험은 previous_care에 보존한다.
 
 `O.exam`은 `V/S:`·`PE:`와 제공된 단위·실제 획득 턴을 보존한다. `A.evidence`는 `Diagnosis: #1. ...`와 `Evidence:`로, 감별은 실제 확보한 근거가 있는 `r/o Diagnosis: reason`으로 작성한다. P도 필드별 영어 범주로 작성하며 D37의 검증된 생성 문장을 보존한다. D15의 주체·현재/과거·발현·속성 값·수치·단위·구간 경계 보존을 유지하되 주체와 발현 표시는 가족·과거·여러 에피소드 구분에 필요할 때만 붙인다. 내부 URI·요청 ID·에피소드 ID는 노출하지 않고, 한 번의 지속시간과 발생 후 경과시간을 구분하며 월·년을 일수로 환산하지 않는다. 영어 명칭이나 승인된 영어 계획이 없는 경우 원천 표현을 보존한다.
 
@@ -316,7 +325,7 @@ FeatureContribution은 W(D,P') − W(D,P)이다. 한 조건 추가·정교화면
 | get_feature_contributions(association_id) | 기준·정교화 연관과 atomic/joint 차분 |
 | get_supporting_context·get_exam_methods·get_planned_tests | 기존 Context, EXAM, SOAP P.tests 경계 |
 
-prepare()는 manifest의 v5.0 스키마·어휘·임상 묶음을 하나의 RDFLib Graph에 로드하고 공개 점수 정책에서 Association 점수와 FeatureContribution을 계산한다. 진료 중 Graph는 읽기 전용이다. 관찰·에피소드·점수·근거는 CaseState 및 workflow state에 유지하고 소수 점수를 보존한다. D41 정규화 결과는 같은 타입 값 계약을 사용한다.
+prepare()는 manifest의 v5.0 스키마·어휘·임상 묶음을 하나의 RDFLib Graph에 로드하고 공개 점수 정책에서 Association 점수와 FeatureContribution을 계산한다. 진료 중 Graph는 읽기 전용이다. 관찰·에피소드와 실제 사실은 CaseState에, 최신 실제 점수·근거 캐시는 그래프 밖의 증례별 reasoner에 둔다. 가상 계산은 질문 평가 뒤 폐기하고 소수 점수를 보존한다. 환자 ObservedNumber는 지식 ExpectedValue와 분리한다.
 
 모든 빌드는 schema_version, registry_version, normalization_version, source_snapshots와 파일 해시, scoring_policy_version과 정책 해시를 고정한다. v5.0 reader가 v5.0 빌드만 소비하며 의미를 삭제하는 v4.2 호환 변환을 만들지 않는다. 임상 자산이 수용되기 전 실제 prepare를 빈 그래프로 우회하지 않는다.
 
@@ -356,7 +365,7 @@ evidence.py는 생성 Python·Docker 설정·스키마·점수 정책·입력 �
 
 ## 제출환경과 실행 자산
 
-submission/run.py는 workflow/runtime.py의 prepare()와 consult(client, resources)를 SDK run_agent()에 전달한다. prepare()는 읽기 전용으로 사용하는 지식과 텍스트 설정을 PreparedResources에 담고 consult()는 증례별 객체와 새 상태를 조립한다. D13의 Consultation 하나가 다섯 내부 세션을 조정하며 graph.py는 노드·엣지·상태 기반 분기와 deep-copy/Pydantic 검증을 연결한다. Doctor·InputInterpreter·InterviewPlanner·ClinicalReasoner·SubmissionWriter는 각각 환자 행동·입력 사실·질문과 교육·진단 추론·최종 제출을 맡는다. rules/는 불변 한도와 순수 판단, state/는 기존 다섯 상태 모델과 질문·상호작용·사용량 변경 연산, io/는 모델 호출·공식 NOVA 세션·전송 복구를 맡는다. 기존 agents/와 호환 wrapper는 남기지 않는다. knowledge/graph.py의 ClinicalKnowledge는 하나의 RDFLib Graph를 소유한다. import는 API 호출이나 지식 로딩을 수행하지 않는다.
+submission/run.py는 workflow/runtime.py의 prepare()와 consult(client, resources)를 SDK run_agent()에 전달한다. prepare()는 읽기 전용으로 사용하는 지식과 텍스트 설정을 PreparedResources에 담고 consult()는 증례별 객체와 새 상태를 조립한다. D13의 Consultation 하나가 다섯 내부 세션을 조정하며 graph.py는 노드·엣지·상태 기반 분기와 deep-copy/Pydantic 검증을 연결한다. Doctor·InputInterpreter·InterviewPlanner·ClinicalReasoner·SubmissionWriter는 각각 환자 행동·입력 사실·질문과 교육·진단 추론·최종 제출을 맡는다. rules/는 불변 한도와 순수 판단, state/는 D44 세 상주 상태·현재 턴 모델과 질문·상호작용·사용량 변경 연산, io/는 모델 호출·공식 NOVA 세션·전송 복구를 맡는다. 기존 agents/와 호환 wrapper는 남기지 않는다. knowledge/graph.py의 ClinicalKnowledge는 하나의 RDFLib Graph를 소유한다. import는 API 호출이나 지식 로딩을 수행하지 않는다.
 
 submission/을 런타임 코드의 단일 원본으로 사용한다. 공개 설정인 submission/.env는 ZIP에 포함하고, 같은 폴더의 AGENTS.md·README.md·PROJECT_STATE.md는 제출에서 제외한다. SDK는 assets/nova-starter/nova_sdk.py의 수정 없는 사본이며 버전과 해시는 공모전 출처 기록에 남긴다. 원본 복제 허용은 이 SDK 사본으로 한정한다.
 
@@ -402,7 +411,7 @@ D41의 문맥 분석·정규화·강제 JSON 완료·사실 저장·하류 원�
 - 대표 CC의 고정 ROS 계통·기확인 제외·최대 6개·교차 계통 후보와 명료화 2회·증상 수준 진단·근거 없음의 명시적 실패.
 - 동일 요청 ID·payload·턴·사용량 보존, 공유 모델 예산과 응답 처리 여유, 교육 답변의 원문 전용 소비와 임상 상태 불변, SOAP 1회 재구성.
 - 초기화 전 빈 목록·대기 응답·현재 scope 완료·Context 0점·후보 없음·질문이 남은 선두 후보의 Python 분기와 분기용 LLM 0회.
-- CaseState와 QuestionPlan 동시 삭제, Open Inquiry 보존, 새 개정에서 저우선순위 질문 재선택과 일반 전달 질문 반복 방지, 확인 사실·대기 행동·교육 계획 보존.
+- 질문 대기열 등록·폐기가 환자 사실을 변경하지 않음과 완료 뒤 질문 제거, Open Inquiry 보존, 새 개정에서 저우선순위 질문 재선택과 일반 전달 질문 반복 방지, 확인 사실·대기 행동·교육 계획 보존.
 - 중복 가산 방지·정정 재계산·에피소드 분리·Context 음성/미확인·원천 점수와 정교화 대체·URI 동률·마지막 특징에 따른 순위 변경.
 - 엄격한 답과 복합 자유서술, 잘못된 모델 출력, NFC 30/31자, 진찰 거절, TEST 차단, 만료·닫힘·결과 불명, 50번째 응답 뒤 제출.
 - 정확한 SOAP 15개 문자열 필드·별도 진단·UTF-8 한도·Doctor 최소 호출·교육 계획과 실제 전달 구분.

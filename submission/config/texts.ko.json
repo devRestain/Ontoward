@@ -14,7 +14,6 @@
     "social_history": "평소 생활환경은 어떠신가요?"
   },
   "primary_chief_question": "어떤 증상이 가장 불편하세요?",
-  "unmapped_question": "불편한 부위는 어디인가요?",
   "open_question": "그 밖에 불편한 증상이 있나요?",
   "clarification_question": "불편한 증상을 조금 더 설명해 주세요.",
   "clarification_questions": {
@@ -26,27 +25,54 @@
     "EpisodeDuration": "한 번에 얼마나 가는지 알려주세요.",
     "Severity": "얼마나 심한지 다시 말씀해 주세요."
   },
-  "symptom_education": "증상의 원인은 아직 확실하지 않습니다.",
   "symptom_assessment": "Cause undetermined; provisional symptom diagnosis",
-  "provisional_education": "현재 판단은 잠정적입니다.",
-  "understanding_question": "설명을 이해하셨나요?",
-  "correction_education": "새 답변으로 판단이 바뀌었습니다.",
   "empathy_fallback": "많이 힘드셨겠어요. 함께 살펴볼게요.",
-  "unknown_text": "미확인",
-  "missing_question_text": "질문 문구 미준비",
-  "invalid_action_text": "행동 실행 불가",
-  "unknown_replies": ["모르겠습니다", "모르겠어요", "잘 모르겠어요", "기억나지 않아요"],
-  "education_acknowledgements": ["네", "예", "알겠습니다", "감사합니다"],
-  "present_replies": ["네", "예", "있어요"],
-  "absent_replies": ["아니요", "없어요", "없습니다"],
+  "unknown_replies": [
+    "모르겠습니다",
+    "모르겠어요",
+    "잘 모르겠어요",
+    "기억나지 않아요"
+  ],
+  "education_acknowledgements": [
+    "네",
+    "예",
+    "알겠습니다",
+    "감사합니다"
+  ],
+  "present_replies": [
+    "네",
+    "예",
+    "있어요"
+  ],
   "reply_trailing_punctuation": ".!?。",
-  "status_labels": {"present": "+", "absent": "-", "uncertain": "Uncertain", "unknown": "Unknown"},
-  "subject_labels": {"patient": "Patient", "family": "Family"},
-  "time_labels": {"current": "Current", "past": "Past", "unspecified": "Time unspecified"},
-  "unit_labels": {"s": "s", "min": "min", "h": "h", "day": "day", "week": "week", "month": "month", "year": "year"},
-  "operator_labels": {"eq": "", "lt": "<", "le": "≤", "gt": ">", "ge": "≥"},
+  "status_labels": {
+    "present": "+",
+    "absent": "-",
+    "uncertain": "Uncertain",
+    "unknown": "Unknown"
+  },
+  "subject_labels": {
+    "patient": "Patient",
+    "family": "Family"
+  },
+  "time_labels": {
+    "current": "Current",
+    "past": "Past",
+    "unspecified": "Time unspecified"
+  },
+  "unit_labels": {
+    "s": "s",
+    "min": "min",
+    "h": "h",
+    "day": "day",
+    "week": "week",
+    "month": "month",
+    "year": "year"
+  },
+  "operator_labels": {
+    "eq": ""
+  },
   "episode_format": "; Episode {number}",
-  "clinical_context_format": "{subject} · {time}{episode}",
   "qualified_scope_label": "qualified scope",
   "approximate_label": "approximately",
   "measurement_format": "{operator}{value} {unit}",
@@ -56,48 +82,71 @@
   "nrs_format": "NRS {value}",
   "category_format": "{category}: {content}",
   "assessment_format": "Diagnosis: #1. {diagnosis}\nEvidence: {evidence}",
-  "finding_format": "{labels} ({status})",
   "differential_format": "r/o {diagnosis}: {evidence}",
-  "unlinked_format": "Unmapped report ({status})",
   "exam_turn_format": "{text} (turn {turn})",
   "initial_exam_format": "{text} (initial information)",
   "label_separator": " / ",
   "test_separator": "、",
   "record_separator": "\n",
-  "attribute_labels": {
-    "Location": "Location", "Laterality": "Laterality", "Quality": "Quality", "PainQuality": "Quality",
-    "Onset": "Onset pattern", "TimeSinceOnset": "Onset", "Course": "Course", "EpisodeDuration": "Duration",
-    "Frequency": "Frequency", "Timing": "Timing", "TemporalPattern": "Timing", "Severity": "Severity",
-    "Trigger": "Trigger", "AggravatingFactor": "Aggravating factor", "RelievingFactor": "Relieving factor",
-    "RadiationLocation": "Radiation", "Radiation": "Radiation", "CoughSound": "Cough sound",
-    "SputumColour": "Sputum colour", "SputumContent": "Sputum content"
-  },
   "record_labels": {
-    "onset": "Onset", "duration": "Duration", "course": "Course", "quality": "Quality",
-    "aggravating_factor": "Aggravating factor", "relieving_factor": "Relieving factor",
-    "associated_symptoms": "Associated symptoms", "previous_care": "Previous care", "presentation": "Presentation",
-    "medical_history": "PMH", "medication": "Medicine history", "allergy": "Allergy", "surgery": "Op. Hx",
-    "family_history": "Family history", "smoking": "Smoking", "alcohol": "Alcohol", "occupation": "Occupation",
-    "patient_context": "Patient", "recurrence": "Previous similar episodes", "measurement": "Reported measurements",
-    "social_history": "Social history", "developmental_history": "Developmental history",
-    "review_of_systems": "Additional symptoms", "other": "Other"
+    "onset": "Onset",
+    "duration": "Duration",
+    "course": "Course",
+    "quality": "Quality",
+    "aggravating_factor": "Aggravating factor",
+    "relieving_factor": "Relieving factor",
+    "associated_symptoms": "Associated symptoms",
+    "previous_care": "Previous care",
+    "presentation": "Presentation",
+    "medical_history": "PMH",
+    "medication": "Medicine history",
+    "allergy": "Allergy",
+    "surgery": "Op. Hx",
+    "family_history": "Family history",
+    "smoking": "Smoking",
+    "alcohol": "Alcohol",
+    "occupation": "Occupation",
+    "patient_context": "Patient",
+    "recurrence": "Previous similar episodes",
+    "measurement": "Reported measurements",
+    "social_history": "Social history",
+    "developmental_history": "Developmental history",
+    "review_of_systems": "Additional symptoms",
+    "other": "Other"
   },
   "term_abbreviations": {
-    "diabetes": "DM", "diabetes mellitus": "DM", "hypertension": "HTN", "tuberculosis": "Tbc",
-    "current smoker": "Smoking", "tobacco user": "Smoking", "smoker": "Smoking", "smoking": "Smoking",
+    "diabetes": "DM",
+    "diabetes mellitus": "DM",
+    "hypertension": "HTN",
+    "tuberculosis": "Tbc",
+    "current smoker": "Smoking",
+    "tobacco user": "Smoking",
+    "smoker": "Smoking",
+    "smoking": "Smoking",
     "alcohol use": "Alcohol"
   },
-  "history_prefixes": ["Family history of ", "History of ", "F/H ", "F/H: ", "FH ", "H/O ", "H/O: "],
-  "vital_labels": {
-    "temperature": "BT", "temperature_c": "BT", "temp": "BT", "blood_pressure": "BP",
-    "heart_rate": "HR", "pulse": "PR", "respiratory_rate": "RR", "respiration": "RR",
-    "oxygen_saturation": "SpO2", "spo2": "SpO2", "systolic": "SBP", "diastolic": "DBP",
-    "체온": "BT", "맥박": "PR", "호흡": "RR", "호흡수": "RR", "산소포화도": "SpO2", "혈압": "BP", "회/분": "/min"
-  },
+  "history_prefixes": [
+    "Family history of ",
+    "History of ",
+    "F/H ",
+    "F/H: ",
+    "FH ",
+    "H/O ",
+    "H/O: "
+  ],
   "soap_labels": {
     "patient_report": "Patient report (unstructured)",
-    "cc": "C.C", "hpi": "P.I", "pain": "Pain assessment", "exam": "PE", "vitals": "V/S",
-    "tests": "Tests", "treatment": "Treatment", "disposition": "Disposition", "follow_up": "Follow-up",
-    "education": "Education", "unknown": "Unknown", "unmapped": "Unmapped report"
+    "cc": "C.C",
+    "hpi": "P.I",
+    "pain": "Pain assessment",
+    "exam": "PE",
+    "vitals": "V/S",
+    "tests": "Tests",
+    "treatment": "Treatment",
+    "disposition": "Disposition",
+    "follow_up": "Follow-up",
+    "education": "Education",
+    "unknown": "Unknown",
+    "unmapped": "Unmapped report"
   }
 }

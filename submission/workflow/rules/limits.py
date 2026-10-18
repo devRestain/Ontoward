@@ -32,10 +32,6 @@ class Limits:
     open_inquiry_priority: int = 1000000
     clarification_priority: int = 2000000
     differential_display: int = 5
-    parser_concepts: int = 256
-    parser_vocabulary_bytes: int = 32768
-    expanded_parser_concepts: int = 1024
-    expanded_parser_vocabulary_bytes: int = 131072
     gateway_request_bytes: int = 12288
     expanded_gateway_request_bytes: int = 16384
     compact_gateway_request_bytes: int = 8192
@@ -44,16 +40,10 @@ class Limits:
     record_bytes: int = 100000
     request_timeout: int = 240
     retry_delays: tuple[int, ...] = (2,)
-    graph_base_steps: int = 150
-    graph_steps_per_turn: int = 24
     model: str = "openai/gpt-6-luna"
     gateway_reasoning: str = "medium"
-    context_records: int = 24
-    context_turns: int = 6
-    context_bytes: int = 16384
     expanded_context_records: int = 64
     expanded_context_turns: int = 12
-    expanded_context_bytes: int = 65536
 
 
 LIMITS = Limits()

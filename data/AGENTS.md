@@ -53,3 +53,5 @@
 - Separate automated provenance/structural checks from clinical meaning, wording review, runtime admission, official submission, and evaluation.
 - Create a separate generation-evidence.zip with replay code and evidence; exclude credentials and raw source packages.
 - Report only performed checks and preserve exact unresolved coverage and the next bounded action.
+
+- Keep D44 algorithm-only archive and lifecycle verification custody in provenance/state-lifecycle-d44-2026-10-18.json while preserving D42 clinical admission and every accepted receipt byte-for-byte.

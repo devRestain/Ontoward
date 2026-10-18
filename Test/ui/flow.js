@@ -1,4 +1,6 @@
 const stateObjects = {
+  interview: ['InterviewState', '질문과 수집 진행', '현재 세션 대기열, 작은 완료 기록, 필요한 중단 사유'],
+  turn: ['TurnContext', '현재 작업', '노드 간 요청과 응답, 처리 후 해제'],
   case: ['CaseState', '환자 사실과 진단', '정규화된 기록, 취득 경로, 원문 참조, 고정 진단'],
   session: ['SessionContext', '세션과 예산', '현재 세션, 남은 턴, 모델 사용량, 종료 준비'],
   differential: ['DifferentialState', '추론 결과', '질환 후보, Pattern, 점수 기여, 선택된 후보'],
@@ -197,7 +199,7 @@ function stepInspector(step, root) {
 
 function stateStrip(before, after, onSelect) {
   const strip = el('div', null, 'state-strip');
-  for (const [key, [type, title]] of Object.entries(stateObjects)) {
+  for (const [key, [type, title]] of Object.entries(stateObjects).filter(([key]) => after?.interview ? ['case','interview','session','turn'].includes(key) : !['interview','turn'].includes(key))) {
     const button = el('button', null, `state-cell ${after && !same(before?.[key], after[key]) ? 'changed' : ''}`); button.type = 'button';
     button.append(el('strong', type), el('span', title), el('small', !after ? '미수집' : same(before?.[key], after[key]) ? '유지' : '이 턴에서 변경'));
     button.addEventListener('click', () => onSelect(key)); strip.append(button);
@@ -275,10 +277,11 @@ function flowPanel(group, before, after) {
 function objectPanel(group, before, after) {
   const root = panel('정보를 가진 객체와 턴별 변화');
   if (!after) { root.append(note('이 실행에는 내부 객체 상태가 수집되지 않았습니다.')); return root; }
-  root.append(note('WorkflowState의 다섯 상태 객체를 경로와 자료형으로 구분합니다. 턴을 바꾸면 같은 객체의 해당 시점 값과 변경 필드를 보여줍니다.'));
+  root.append(note(after.interview?'WorkflowState의 상주 상태 3개와 현재 턴 작업을 구분합니다. 현재 턴 응답은 처리 후 해제됩니다.':'저장된 WorkflowState의 다섯 상태 객체를 경로와 자료형으로 구분합니다.'));
+  if(after.interview&&!['case','interview','session','turn'].includes(objectSelection))objectSelection='case';
   const workbench = el('div', null, 'object-workbench'), catalog = el('nav', null, 'object-catalog'), inspector = el('div', null, 'object-inspector');
   catalog.setAttribute('aria-label', 'WorkflowState 객체');
-  for (const [key, [type, title, description]] of Object.entries(stateObjects)) {
+  for (const [key, [type, title, description]] of Object.entries(stateObjects).filter(([key]) => after?.interview ? ['case','interview','session','turn'].includes(key) : !['interview','turn'].includes(key))) {
     const button = el('button', null, 'object-button'); button.type = 'button'; button.setAttribute('aria-pressed', objectSelection === key ? 'true' : 'false');
     button.append(el('strong', type), el('code', `state.${key}`), el('span', title), el('small', description));
     button.addEventListener('click', () => { objectSelection = key; detail(); }); catalog.append(button);

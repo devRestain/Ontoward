@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..rules.limits import LIMITS
-from ..state.models import SessionContext, WorkflowState
+from ..state.models import SessionContext, TurnContext, WorkflowState
 
 
 class SessionInput(BaseModel):
@@ -49,7 +49,8 @@ class NovaSessionClient:
             deadline=incoming.deadline, turns_remaining=incoming.turns_remaining,
         ))
         self.apply_snapshot(state, incoming)
-        self.interactions.receive_input(state, {"initial": incoming.initial})
+        if not state.session.termination:
+            state.turn = TurnContext(kind='initial', response=incoming.initial)
         return state
 
     def apply_snapshot(self, state: WorkflowState, value: SessionInput) -> None:
