@@ -32,17 +32,17 @@ for(let i=0;i<events.length;i++){
     const session=row.session??previous?.session??'unknown',turn=row.turn??previous?.turn??0;
     let group=previous;
     if(!group||group.session!==session||group.turn!==turn){group={session,turn,before:boundary,to:i,events:[]};groups.push(group);}
-    group.to=i;group.events.push(...pending);pending=[];boundary=i;
+    group.to=i;for(const event of pending)group.events.push(event);pending=[];boundary=i;
   }
 }
-if(pending.length&&groups.length){groups[groups.length-1].events.push(...pending);groups[groups.length-1].to=events.length-1;}
+if(pending.length&&groups.length){for(const event of pending)groups[groups.length-1].events.push(event);groups[groups.length-1].to=events.length-1;}
 if(!groups.length){
-  groups.push({session:'unknown',turn:0,before:-1,to:-1,events:[],initial:true});
+  groups.push({session:'unknown',turn:0,before:-1,to:events.length-1,events:[...events],initial:true});
   for(const row of data.transcript.events||[])groups.push({session:'unknown',turn:row.turn??'—',before:-1,to:-1,events:[],legacy:row});
 }
 const requestIds=group=>new Set([...group.events.map(row=>row.request_id).filter(Boolean),...(group.legacy?[group.legacy.request_id]:[])]);
 function actions(group){const ids=requestIds(group);return group.legacy?[group.legacy]:(data.transcript.events||[]).filter(row=>ids.has(row.request_id));}
-let selected=0,tab='dialogue';
+let selected=0,tab='flow';
 function visible(){const scope=$('session-filter').value;return groups.map((g,i)=>({g,i})).filter(({g})=>!scope||g.session===scope);}
 function timeline(){
   const root=$('timeline');root.replaceChildren();
@@ -175,7 +175,7 @@ function notePanel(group,before,after){
   }
   const reports=(after.interaction?.patient_reports||[]).filter(report=>report.uncovered_spans?.length);
   if(reports.length){
-    const block=el('section',null,'note-section');block.append(el('h4','S.hpi · 미구조화 환자 보고'),note('interaction.patient_reports의 미포함 원문 구간입니다. SOAP 작성 시 S.hpi에 보존하며 구조화된 소견이나 진단 근거를 추가하지 않습니다.'));
+    const block=el('section',null,'note-section');block.append(el('h4','원문 감사 기록 · 미구조화 환자 보고'),note('interaction.patient_reports에 보존된 원문 구간입니다. 원문 보존과 canonical 사실 수용은 별개이며 실제 SOAP 반영 여부는 생성된 제출 payload에서 확인합니다.'));
     for(const report of reports){
       const card=el('article',null,'note-record');card.append(note(`출처: ${report.source_id}`));
       for(const [start,end] of report.uncovered_spans)card.append(el('blockquote',Array.from(report.text).slice(start,end).join(''),'note-quote'));
@@ -236,12 +236,12 @@ function detail(){
   for(const [text,offset] of [['이전',-1],['다음',1]]){const button=el('button',text);button.type='button';button.disabled=position+offset<0||position+offset>=indices.length;button.addEventListener('click',()=>select(indices[position+offset]));controls.append(button);}heading.append(controls);root.append(heading);
   root.append(el('p',`실제 내부 세션: ${group.session} · ${group.events.filter(row=>row.kind==='node_end').length}개 노드 처리`,'session-note'));
   const tabs=el('div',null,'tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','턴 상세 보기');
-  const choices=[['dialogue','대화'],['note','Note 상태'],['state','상태 변화'],['diagnosis','진단 근거'],['models','모델 호출']];
+  const choices=[['flow','정보 흐름'],['objects','객체 탐색'],['dialogue','대화'],['note','Note 상태'],['state','상태 변화'],['diagnosis','진단 근거'],['models','모델 호출']];
   for(const [id,title] of choices){const button=el('button',title);button.type='button';button.id=`tab-${id}`;button.setAttribute('role','tab');button.setAttribute('aria-selected',tab===id?'true':'false');button.setAttribute('aria-controls','detail-panel');button.tabIndex=tab===id?0:-1;
     button.addEventListener('click',()=>{tab=id;detail();$(`tab-${id}`).focus();});
     button.addEventListener('keydown',event=>{let index=choices.findIndex(row=>row[0]===id);if(event.key==='ArrowRight')index=(index+1)%choices.length;else if(event.key==='ArrowLeft')index=(index+choices.length-1)%choices.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=choices.length-1;else return;event.preventDefault();tab=choices[index][0];detail();$(`tab-${tab}`).focus();});tabs.append(button);}
   root.append(tabs);
-  const body=tab==='note'?notePanel(group,before,after):tab==='state'?statePanel(group,before,after):tab==='diagnosis'?diagnosisPanel(before,after):tab==='models'?modelPanel(group,before,after):conversation(group,after);
+  const body=tab==='flow'?flowPanel(group,before,after):tab==='objects'?objectPanel(group,before,after):tab==='note'?notePanel(group,before,after):tab==='state'?statePanel(group,before,after):tab==='diagnosis'?diagnosisPanel(before,after):tab==='models'?modelPanel(group,before,after):conversation(group,after);
   body.id='detail-panel';body.setAttribute('role','tabpanel');body.setAttribute('aria-labelledby',`tab-${tab}`);root.append(body);
   const nodes=el('div',null,'node-list');for(const row of group.events.filter(row=>row.kind==='node_end'||row.kind==='node_error'))nodes.append(el('span',row.node));root.append(nodes);
 }
@@ -266,4 +266,3 @@ const settings=events.find(row=>row.kind==='settings');
 if(settings?.education_enabled===false)$('final-record').after(el('p','교육 세션: 공개 설정에서 비활성화되어 발화와 예약 턴을 사용하지 않습니다.','session-note'));
 $('session-filter').addEventListener('change',()=>{const choices=visible();if(!choices.some(row=>row.i===selected)&&choices.length)selected=choices[0].i;timeline();detail();});
 const logs=$('all-logs');logs.append(jsonDetail('수집 상태와 경고',{trace:data.trace.status,warnings:data.warnings}),jsonDetail('실행기 로그 · 마지막 64 KiB',data.logs.runner),jsonDetail('에이전트 오류 · 마지막 64 KiB',data.logs.stderr),jsonDetail('에이전트 출력 · 마지막 64 KiB',data.logs.stdout));
-timeline();detail();

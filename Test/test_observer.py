@@ -77,18 +77,22 @@ def capture(name, options, observed, bad_path=False):
             if trace:
                 trace.knowledge = resources.knowledge
             initial = consultation.nova_session.initialize_case(client)
-            graph = fixture.build_graph(consultation, resources.knowledge)
+            from workflow import graph as graph_module
+            graph = graph_module.build_graph(consultation, resources.knowledge)
             updates = list(graph.stream(initial.model_dump(), {'recursion_limit': 1400}, stream_mode='updates'))
+        assert 'enter_session' not in vars(consultation) and 'finalize' not in vars(consultation)
         result = plain({'initial': initial.model_dump(), 'updates': updates, 'wire': wire, 'delays': delays})
         return result, trace_path
 
 
-def reconstructed(path):
+def reconstructed(path, *, objects=False):
     state, updates = None, []
     for event in map(json.loads, path.read_text().splitlines()):
-        if event['kind'] == 'initial':
+        if objects and 'object_state' in event:
+            state = event['object_state']
+        elif not objects and event['kind'] == 'initial':
             state = event['state']
-        for change in event.get('patch', []):
+        for change in event.get('object_patch' if objects else 'patch', []):
             if not change['path']:
                 state = copy.deepcopy(change['value'])
                 continue
@@ -121,7 +125,18 @@ def main():
         if name == 'normal':
             normal = baseline
         final = next(iter(observed['updates'][-1].values()))
+        rows = [json.loads(line) for line in path.read_text().splitlines()]
+        calls = [row for row in rows if row['kind'] == 'call_start']
+        ends = {row['call_id']: row for row in rows if row['kind'] in {'call_end', 'call_error'}}
+        assert calls and all(row['call_id'] in ends for row in calls)
+        assert not any(row['kind'] == 'observation_error' for row in rows)
+        assert any(row['owner'] == 'InputInterpreter' for row in calls)
+        assert any(row['owner'] == 'SubmissionWriter' for row in calls) or final['interaction']['termination'] != 'submitted'
+        ids = {row['call_id'] for row in calls}
+        assert all(row['parent_call_id'] is None or row['parent_call_id'] in ids for row in calls)
+        assert reconstructed(path, objects=True)[-1] == observed['updates'][-1]
         results[name] = {'nodes': len(observed['updates']), 'parity': True, 'reconstruction': True,
+                         'object_calls': len(calls), 'matched_calls': True,
                          'termination': final['interaction']['termination'], 'diagnosis': final['case']['diagnosis']}
     unavailable, _ = capture('normal', {}, True, bad_path=True)
     assert comparison.first_difference(normal, unavailable) is None
@@ -130,6 +145,7 @@ def main():
     client = nova_sdk.Client(api_base='http://unused', token='secret-not-for-trace', session_id='local')
     body = {'request_id': 'fixed-request', 'messages': [{'role': 'user', 'content': 'same request'}]}
     path = OUTPUT / 'sdk.jsonl'
+    path.unlink(missing_ok=True)
     failure = nova_sdk.NovaError('REQUEST_PENDING', 409)
     with patch.object(nova_sdk.Client, '_request', side_effect=[{'ok': True}, failure]) as original:
         with observing(path):

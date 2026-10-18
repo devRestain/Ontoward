@@ -1,0 +1,761 @@
+{
+  "decision": "D43",
+  "status": "offline_acceptance_pass",
+  "algorithm_version": "d43.1",
+  "created_at": "2026-10-18T08:01:41.243353+00:00",
+  "baseline_revision": "7ee06ec410f8dbe3a6c1c2e2575e05997e5e440b",
+  "failed_run": {
+    "path": "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c",
+    "result": {
+      "status": "fail",
+      "backend": "nova",
+      "case_id": "C03",
+      "turns": 7,
+      "doctor_calls": 36,
+      "nonempty_gateway_responses": 36,
+      "sandbox": {
+        "cpu_max": "200000 100000",
+        "memory_max": "8589934592",
+        "root_read_only": true,
+        "submission_read_only": true,
+        "tmp_options": [
+          "rw",
+          "nosuid",
+          "nodev",
+          "noexec",
+          "relatime",
+          "size=524288k",
+          "inode64"
+        ],
+        "output_writable": true
+      },
+      "missing_evidence": [],
+      "model_requests": 43,
+      "checks": {
+        "agent_exit_zero": false,
+        "confirmed_submission": false,
+        "ready_handshake": true,
+        "nonempty_gateway_response": true,
+        "within_turn_limit": true,
+        "within_model_limits": true,
+        "no_development_key_in_agent": true,
+        "no_samples_in_agent": true,
+        "root_read_only": true,
+        "submission_read_only": true,
+        "output_writable": true
+      },
+      "score_status": "not_scored",
+      "actual_nova": "run",
+      "official_submission": "not_run",
+      "clinical_accuracy": "not_evaluated",
+      "trace_status": "complete"
+    },
+    "source_sha256": {
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/agent/process.json": "3da51b18a52d4332a4ae877c2d741cff4d2b0be1a0aa5c486b65c6ada2577cd7",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/agent/stderr.log": "3c020b68c8192e3bb84abe5f62c22cec3d81e90d411255d20e35b736b65c0679",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/agent/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/agent/trace.jsonl": "49bf16f4812a096edbe2c6860b8e1e0f787edeef950ea1370afc85e11e3ef77d",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/ended": "79b9e21ca37663e6d243e17af543165778dd3540ae2fbbc42a3d9d509c33b9a0",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/exit-code": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/report.html": "924be0362aadc4bf743d0453e70da9c03aa99e47d56c96dde841e509593ced82",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/result.json": "688bd3cfd5de0cac9db98eecfa7ae9139cbc334b2042c52c5c28066d36fdaf2d",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/run.args": "e7c3c817dad16874a491a75e6ebab059936c389f1456de78149ac9b1e7e2d603",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/run.json": "f84b8606fc5b7eb9fc6669561cc98d48af7a1fc472be53f1a60b4ebbecc8252c",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/runner.log": "6f792b3922677be48356b41ca89c98a171e368e40f5e10301b85bfcdc0b40603",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/simulator/model-calls.jsonl": "ba438562ea451fbd86fd66e4eeefbd8b20a9a62649c0c439baa0116c635253cc",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/simulator/nova-requests.jsonl": "48ca7d4405bb7760dfa934a8975afc9d0ad307feacc14f78735a828147b73a63",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/simulator/requests.json": "0ba3cd58f2c720c183763847d38c39027f4c3560602aa21bd5ba055db858c6a4",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/simulator/summary.json": "661cb9e8cc94cf5934cce34257665d8c361bbc9225d63733ee5c34bd11b1f59c",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/simulator/transcript.json": "7828feddfaa3a9e90d21827036d70adb14bb93abb6a4dbdeffacf1b88cd993f0",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/started": "984ceae1dd18b4d72a9fa57848b72eaf32a80031d04cbd5f60bacc58570e509d",
+      "Tmp/test-evaluator/C03-20261018T065328Z-e6ec9d048c/status": "6da5b18878e110928643ebcc38dbb7552cf3a296eea56493e23edc2b93eecff8"
+    },
+    "original_files_preserved": true,
+    "captured_doctor_calls": 36,
+    "captured_doctor_tokens": {
+      "prompt_tokens": 129348,
+      "completion_tokens": 23232,
+      "total_tokens": 152580
+    },
+    "initial_context_calls": [
+      {
+        "id": "8d9ba335-68cd-442c-ac54-4fcafea1ad4f",
+        "phase": "context",
+        "finish_reason": "length",
+        "tokens": {
+          "prompt_tokens": 2332,
+          "completion_tokens": 4096,
+          "total_tokens": 6428
+        },
+        "schema_bytes": 4125
+      },
+      {
+        "id": "d29f4c7a-a553-4c9e-8819-a8e3d318cb7e",
+        "phase": "context_repair",
+        "finish_reason": "stop",
+        "tokens": {
+          "prompt_tokens": 2360,
+          "completion_tokens": 4312,
+          "total_tokens": 6672
+        },
+        "schema_bytes": 4125
+      }
+    ]
+  },
+  "observed_causes": [
+    "Interpreter executed at turn zero; first context response was truncated at 4096 output tokens.",
+    "Whole-context validation erased all independent statements when verbose numeric graph defaults failed validation.",
+    "Attribute/value retrieval hints incorrectly required feature dictionaries and rejected valid Target (+) responses.",
+    "Registered standalone measurements were rejected because no positive parent observation was admitted.",
+    "The presentation record category could reroute a current chief away from S.cc.",
+    "Saved model uncertainty about perceived stature was kept separate from the runtime binding defects."
+  ],
+  "implemented": [
+    "Explicit process_initial_input at turn zero before any SAY; normalize chief and incidental facts together.",
+    "Compact observed-number schema and target/attribute focus; concise English prompts distinguish report from cause uncertainty.",
+    "Independent context validation with one index-bound repair and frozen accepted rows.",
+    "One focused context review for unresolved prioritized initial observations; genuine unknown existence remains unknown.",
+    "Typed candidate binding, semantic rejection feedback, bounded forced completion and chief-bound intake.",
+    "Registered orphan numbers retained as record_only attributes; no inferred positive symptom or examination finding.",
+    "Unregistered changes and care denials close with typed outcomes; no absolute-measurement or symptom-negative fabrication.",
+    "Source span positions retained in audit; canonical payload includes kind and evidence_use without raw text."
+  ],
+  "source_and_archive_checks": {
+    "workflow_tests": 204,
+    "source_log": "Tmp/d43-input-recovery-2026-10-18/evidence/workflow-final-source.log",
+    "archive_log": "Tmp/d43-input-recovery-2026-10-18/evidence/isolated-workflow.log",
+    "normalization_tests": 42,
+    "reports": {
+      "admitted": {
+        "path": "Tmp/d43-input-recovery-2026-10-18/isolated/admitted/verification.json",
+        "sha256": "f9f3726c8c84a1be66b41f7bb0a131d8947d27339937a93173bdfbca06e312e7",
+        "status": "pass",
+        "cases": 3,
+        "check_count": null,
+        "node_updates": null
+      },
+      "korean": {
+        "path": "Tmp/d43-input-recovery-2026-10-18/isolated/korean/verification.json",
+        "sha256": "6cfa63a2c9e3f9d81f5fc28bf841e02fa21a7a228d669bbe77cef488b551b406",
+        "status": "pass",
+        "cases": 3,
+        "check_count": 619,
+        "node_updates": null
+      },
+      "observer-accepted-frozen": {
+        "path": "Tmp/d43-input-recovery-2026-10-18/isolated/observer-accepted-frozen/verification.json",
+        "sha256": "e1343df52f71d044dac34100ad5fa851a8ad72ceca05f54c2f1ab33e28276c63",
+        "status": "pass",
+        "cases": 14,
+        "check_count": null,
+        "node_updates": 1264
+      },
+      "observer-current": {
+        "path": "Tmp/d43-input-recovery-2026-10-18/isolated/observer-current/verification.json",
+        "sha256": "390c4d44b46cc02e734a62d77a4ceeee188c87c9312d030d1752866fc60375f9",
+        "status": "pass",
+        "cases": 14,
+        "check_count": null,
+        "node_updates": 1264
+      }
+    },
+    "scripted_http": {
+      "path": "Tmp/d43-input-recovery-2026-10-18/final-http/result.json",
+      "sha256": "87b8ff01844e077bb4b45cb4126d4b47ca146f06144ad591e7ca098229c9dadf",
+      "result": {
+        "status": "pass",
+        "backend": "scripted",
+        "case_id": "C10",
+        "turns": 41,
+        "doctor_calls": 42,
+        "nonempty_gateway_responses": 42,
+        "sandbox": {
+          "cpu_max": "200000 100000",
+          "memory_max": "8589934592",
+          "root_read_only": true,
+          "submission_read_only": true,
+          "tmp_options": [
+            "rw",
+            "nosuid",
+            "nodev",
+            "noexec",
+            "relatime",
+            "size=524288k",
+            "inode64"
+          ],
+          "output_writable": true
+        },
+        "missing_evidence": [],
+        "model_requests": 83,
+        "checks": {
+          "agent_exit_zero": true,
+          "confirmed_submission": true,
+          "ready_handshake": true,
+          "nonempty_gateway_response": true,
+          "within_turn_limit": true,
+          "within_model_limits": true,
+          "no_development_key_in_agent": true,
+          "no_samples_in_agent": true,
+          "root_read_only": true,
+          "submission_read_only": true,
+          "output_writable": true
+        },
+        "score_status": "not_scored",
+        "actual_nova": "not_run",
+        "official_submission": "not_run",
+        "clinical_accuracy": "not_evaluated",
+        "trace_status": "complete"
+      },
+      "fixture": "synthetic source-label opening; not a new public C03 semantic run"
+    }
+  },
+  "saved_response_replay": {
+    "path": "Tmp/d43-input-recovery-2026-10-18/replay.json",
+    "sha256": "4a19166969b7775a351fafc17c63a35839b9794b45d3f41f17b119d38adf62d4",
+    "cases": [
+      {
+        "mode": "saved_assertions",
+        "status": "pass",
+        "stages": [
+          {
+            "turn": 0,
+            "scope": "Initiation",
+            "facts": 5,
+            "chief": null,
+            "outcomes": {
+              "nonclinical": 3,
+              "unknown": 3,
+              "forced": 5,
+              "unsupported": 2
+            }
+          },
+          {
+            "turn": 1,
+            "scope": "Initiation",
+            "facts": 5,
+            "chief": null,
+            "outcomes": {
+              "nonclinical": 1
+            }
+          },
+          {
+            "turn": 2,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": null,
+            "outcomes": {
+              "mapped": 1
+            }
+          },
+          {
+            "turn": 3,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": null,
+            "outcomes": {
+              "unknown": 1,
+              "unsupported": 1
+            }
+          },
+          {
+            "turn": 4,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": null,
+            "outcomes": {
+              "unsupported": 1
+            }
+          },
+          {
+            "turn": 5,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": null,
+            "outcomes": {
+              "unsupported": 2
+            }
+          },
+          {
+            "turn": 6,
+            "scope": "ChiefComplaint",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "mapped": 1,
+              "nonclinical": 1
+            }
+          },
+          {
+            "turn": 7,
+            "scope": "ChiefComplaint",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "nonclinical": 1
+            }
+          }
+        ],
+        "semantics": "preserve saved model assertion statuses"
+      },
+      {
+        "mode": "controlled_initial_review",
+        "status": "pass",
+        "stages": [
+          {
+            "turn": 0,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "nonclinical": 3,
+              "forced": 6,
+              "unknown": 2,
+              "unsupported": 2
+            }
+          },
+          {
+            "turn": 1,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "nonclinical": 1
+            }
+          },
+          {
+            "turn": 2,
+            "scope": "Initiation",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "mapped": 1
+            }
+          },
+          {
+            "turn": 3,
+            "scope": "Initiation",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "unknown": 1,
+              "unsupported": 1
+            }
+          },
+          {
+            "turn": 4,
+            "scope": "Initiation",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "unsupported": 1
+            }
+          },
+          {
+            "turn": 5,
+            "scope": "Initiation",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "unsupported": 2
+            }
+          },
+          {
+            "turn": 6,
+            "scope": "ChiefComplaint",
+            "facts": 8,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "mapped": 1,
+              "nonclinical": 1
+            }
+          },
+          {
+            "turn": 7,
+            "scope": "ChiefComplaint",
+            "facts": 8,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "nonclinical": 1
+            }
+          }
+        ],
+        "semantics": "only the focused initial-chief assertion is controlled"
+      }
+    ],
+    "transport_adaptation": "Original captured rows selected by the new repair indices without changing their values.",
+    "unmatched_mapping_calls": "Explicit empty mappings exercise Python completion; not saved or new model predictions.",
+    "new_provider_calls": 0
+  },
+  "metrics": {
+    "path": "Tmp/d43-input-recovery-2026-10-18/metrics.json",
+    "sha256": "35ff62055effe4c314f4f0b33645030bdd1d5a56dcd51529ea27e94bf7ed6de9",
+    "cases": [
+      {
+        "mode": "saved_assertions",
+        "stages": [
+          {
+            "turn": 0,
+            "scope": "Initiation",
+            "facts": 5,
+            "chief": null,
+            "outcomes": {
+              "nonclinical": 3,
+              "unknown": 3,
+              "forced": 5,
+              "unsupported": 2
+            }
+          },
+          {
+            "turn": 1,
+            "scope": "Initiation",
+            "facts": 5,
+            "chief": null,
+            "outcomes": {
+              "nonclinical": 1
+            }
+          },
+          {
+            "turn": 2,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": null,
+            "outcomes": {
+              "mapped": 1
+            }
+          },
+          {
+            "turn": 3,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": null,
+            "outcomes": {
+              "unknown": 1,
+              "unsupported": 1
+            }
+          },
+          {
+            "turn": 4,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": null,
+            "outcomes": {
+              "unsupported": 1
+            }
+          },
+          {
+            "turn": 5,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": null,
+            "outcomes": {
+              "unsupported": 2
+            }
+          },
+          {
+            "turn": 6,
+            "scope": "ChiefComplaint",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "mapped": 1,
+              "nonclinical": 1
+            }
+          },
+          {
+            "turn": 7,
+            "scope": "ChiefComplaint",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "nonclinical": 1
+            }
+          }
+        ],
+        "outcome_counts": {
+          "nonclinical": 6,
+          "unknown": 4,
+          "forced": 5,
+          "unsupported": 6,
+          "mapped": 2
+        },
+        "forced_among_mapped": 0.7142857142857143,
+        "replayed_or_injected_calls": 34,
+        "request_phases": {
+          "context": 8,
+          "context_repair": 1,
+          "initial_chief_repair": 1,
+          "mapping": 9,
+          "binding_repair": 7,
+          "forced": 7,
+          "format_repair": 1
+        },
+        "new_provider_calls": 0,
+        "new_billable_tokens": 0,
+        "semantics": "preserve saved model assertion statuses",
+        "unmatched_requests": "explicit unresolved mappings exercise deterministic completion; not actual model responses"
+      },
+      {
+        "mode": "controlled_initial_review",
+        "stages": [
+          {
+            "turn": 0,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "nonclinical": 3,
+              "forced": 6,
+              "unknown": 2,
+              "unsupported": 2
+            }
+          },
+          {
+            "turn": 1,
+            "scope": "Initiation",
+            "facts": 6,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "nonclinical": 1
+            }
+          },
+          {
+            "turn": 2,
+            "scope": "Initiation",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "mapped": 1
+            }
+          },
+          {
+            "turn": 3,
+            "scope": "Initiation",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "unknown": 1,
+              "unsupported": 1
+            }
+          },
+          {
+            "turn": 4,
+            "scope": "Initiation",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "unsupported": 1
+            }
+          },
+          {
+            "turn": 5,
+            "scope": "Initiation",
+            "facts": 7,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "unsupported": 2
+            }
+          },
+          {
+            "turn": 6,
+            "scope": "ChiefComplaint",
+            "facts": 8,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "mapped": 1,
+              "nonclinical": 1
+            }
+          },
+          {
+            "turn": 7,
+            "scope": "ChiefComplaint",
+            "facts": 8,
+            "chief": [
+              "urn:ontoward:SymptomSnomedCT444000005"
+            ],
+            "outcomes": {
+              "nonclinical": 1
+            }
+          }
+        ],
+        "outcome_counts": {
+          "nonclinical": 6,
+          "forced": 6,
+          "unknown": 3,
+          "unsupported": 6,
+          "mapped": 2
+        },
+        "forced_among_mapped": 0.75,
+        "replayed_or_injected_calls": 37,
+        "request_phases": {
+          "context": 8,
+          "context_repair": 1,
+          "initial_chief_repair": 1,
+          "mapping": 10,
+          "binding_repair": 8,
+          "forced": 8,
+          "format_repair": 1
+        },
+        "new_provider_calls": 0,
+        "new_billable_tokens": 0,
+        "semantics": "only the focused initial-chief assertion is controlled",
+        "unmatched_requests": "explicit unresolved mappings exercise deterministic completion; not actual model responses"
+      }
+    ],
+    "statement_outcomes": "See metrics.json and each replay stages.json",
+    "production_forced_rate": "not_measured"
+  },
+  "archive": {
+    "path": "Tmp/d43-input-recovery-2026-10-18/ontoward-submission-d43.zip",
+    "status": "pass",
+    "sha256": "ae7eabeed9b3704082ce0e5f2fbbc977a4226b8113d92da3b2b17fdb3962d55c",
+    "files": 55,
+    "bytes": 1677950,
+    "expanded_bytes": 16419436,
+    "all_archive_files_match_source": true,
+    "file_sha256": {
+      ".env": "e47a0db1192d4c376d189f25e17a82fa531a3a118db75bf773525eb5f26a854f",
+      "config/education.txt": "3ac5d525d8111b9c9184b66155b01331fcf721c940e9865974707babbbbd231b",
+      "config/education_doctor.txt": "00e42ebce68545a347acd83d2ab15f1f68cc75b3bf2d69cadca4a8a24e209529",
+      "config/empathy.txt": "f27b80ff1dcf2c155cf1125fd70122ff37963d94a1f961b2badfb3f85b0ef645",
+      "config/input_parser.txt": "86b813a1edf44b3a3baa96a4571c39ed7c4a9095e31442635aeb9f153e731234",
+      "config/normalization.txt": "f7f1133ce62bb21e2d98d34affafc5b2058c38679e9927172794787c3097620d",
+      "config/texts.ko.json": "fb0af778e774736ee77eeba573f2615f425276c785cc3c621c85b0242bf20b5c",
+      "knowledge/83afd0b132a07941-clinical.ttl": "a5b5f3d94e0cba1048735cb61a3ed56d5e8622c4540c6a3737186061cfad769f",
+      "knowledge/83afd0b132a07941-guideline-index.json": "408f7d14d459e282df7b9230eca8f5474ce401353c2abdf2a6e7e307ba2f7bfa",
+      "knowledge/83afd0b132a07941-questions.ko.json": "911a9249fec89a494234912f21ba46cfe3747a01ebbddaef4f3b453a08541e6d",
+      "knowledge/83afd0b132a07941-reasoning_policy.json": "b23681158479aaa5471808f8950dd88d136a41340900e6b8ef3cc2d36044bb8a",
+      "knowledge/83afd0b132a07941-scoring_policy.json": "4bf15b5fc5cee84fdb2911435ad31e1a6b63d1e90afdc009676873f12f3baf17",
+      "knowledge/83afd0b132a07941-vocabulary.ttl": "28bb51976edc258367a50ad909b423aba47a7e88a0da7bc02e364054f4676ed8",
+      "knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "knowledge/conditions.py": "5226331815960f33864da6d9dbe304d52c43724adcf03fba2a41bd758855c9c6",
+      "knowledge/graph.py": "39bec30272c22b75161b5b289aea6af9937c2366e4bb1dcf399d1966e3e81d3e",
+      "knowledge/guidelines.py": "199c4e08ad41de657d564cf5d35845d6a020de53aa4c3b231b75b201a4d243c8",
+      "knowledge/manifest.json": "6311a7ef606bf33f6a2a5d13249449606ec1763d61b556bd04a62c6839d366d1",
+      "knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+      "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+      "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+      "settings.py": "912ca57613fafb2b285ad4b341af7ed0632515dafffcf1a0fd70d96e9f9ec92e",
+      "workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/clinical_reasoner.py": "359ac7651123cdfc06276edce07be0752e0b9e28200e7481a36d225d4b09a8cf",
+      "workflow/consultation.py": "88dc31b3ae60e5133a1efbc41a594f797c2a556e605711c9c93dc787fcd1907a",
+      "workflow/doctor.py": "0dfa9e79f7b517254575fd1968a8bc85da284bdb51be9e5770784cbd948dfabe",
+      "workflow/education.py": "3dc2200240befd910c1105f01649627024a9979905f3b61969eedcd51f37a206",
+      "workflow/graph.py": "539dcc9f5365c34d989707d83935989241c37f91a1d63cf3850f338c855d1018",
+      "workflow/input_interpreter.py": "90369f30f574690da1c1dd0eb790996d9e962a412ff7edc2ae70b9757e956290",
+      "workflow/interview_planner.py": "1d32f608d1c495dd21a68ff2b6141715ed2e631553e4ab61ead37284a6306e71",
+      "workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/io/model_client.py": "c0138371bd8a860e43346a7b3d3d94f2619f1b5c75c2cbfe38da83889afa9fc9",
+      "workflow/io/nova_session.py": "fac9fda2db826d001cfa8c8a307084981848d9f0581eab9b40ff0a5bfd54158c",
+      "workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+      "workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/rules/action.py": "8c0607c389057c9299e6046974b42e3e713a82246f2f70e4318f2dd3f5bc3942",
+      "workflow/rules/budget.py": "40ece5808cf2fdb7ace73c2aa35a65eb11343b88a06f5e4ae1b7412309d6f24b",
+      "workflow/rules/collection.py": "1d3c7ffce86c311b7e8e19d94063eb46ea2f8230f04879b3ba99609611f5b723",
+      "workflow/rules/input.py": "675a6c04270a9c10a79a91e09402009b40d3df08ed3e8b08a6f2d4257bfed5b8",
+      "workflow/rules/limits.py": "4ea8d2fd343f51fc8679411955251b778a7ef06ffaf6d42e60731983b5ea0366",
+      "workflow/rules/normalization.py": "8bde29ac6fdf9f0f02fe85db3e4f1bc42de8f9f5c23234d43a0d5b6d79615d82",
+      "workflow/rules/selection.py": "18d3e467098f89fe7a5ef58b0bf423daffb5ad388800a2b59636686dc0b07a01",
+      "workflow/rules/submission.py": "ce004712cd7d06e5a9fa3789ab5338c6cd1e73a970ba3048f6be624cebeba91f",
+      "workflow/runtime.py": "2417d3d72ad83e6d80c53bad4a541959191bf2b09c6414fbdf43f825853a8186",
+      "workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/state/canonical.py": "e14abf05e56c4e92ef714d7a4d55f1c15e04bd821ae0e8966e415eb4e2d5a82a",
+      "workflow/state/evidence.py": "9408304bc57a37c2127bd116cbd3ad959c48161a6d75621eb376cfb5e82314a8",
+      "workflow/state/interactions.py": "aeabf55633ecaff73f4f2b051f46fda9a6ad807d76d8840f6b9138940c5d49b1",
+      "workflow/state/models.py": "85f540114f08af437002b1cc91e684e3855f5ecb15f212be0e1f8dbeaddc1926",
+      "workflow/state/questions.py": "fd70634e28216ebc5944082b649a5ae4787c288e194b794353f701f0ef14992e",
+      "workflow/state/usage.py": "9fee797f7b7fcfbbbf0eb560d0d13f6469118faf24ff1a2d505b716601729714",
+      "workflow/submission_writer.py": "095d63ceec3785099bdd6a8c05c9caec5509dc222a7fc797f7bc010e4f0b42e9",
+      "workflow/text_config.py": "4446d6de3e8335d6f0487a3810617c200309d33ee09ae0deb0efc9a106c74e8d"
+    },
+    "changed_knowledge_files": [
+      "submission/knowledge/manifest.json"
+    ],
+    "clinical_assets": "unchanged D42",
+    "new_model_calls": 0,
+    "official_submission": "not_run",
+    "hash_receipt": "Tmp/d43-input-recovery-2026-10-18/archive.json"
+  },
+  "preserved": {
+    "clinical_assets": "D42 hashes unchanged",
+    "reasoning_policy": "d41.1 unchanged",
+    "source_weights": "unchanged",
+    "sdk_sha256": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    "manifest_sha256": "6311a7ef606bf33f6a2a5d13249449606ec1763d61b556bd04a62c6839d366d1",
+    "manifest_change": "algorithm_version only",
+    "d41_archive_and_receipt": "preserved",
+    "d42_archive_and_receipt": "preserved",
+    "concurrent_work": "Test observer object tracing and viewer edits are outside D43 and preserved"
+  },
+  "observer_boundary": {
+    "accepted_source": "Frozen Test/observe.py and Test/test_observer.py from baseline revision",
+    "observer_sha256": "bcd313b453f0ccdecac657ff605e6f3e7cf207d9513c951266252ca706760773",
+    "test_sha256": "523e32d1e72a2e3d1893d067ad32fa1a0997340dc2973ed3113f2232cb5d957d",
+    "baseline_observer_on_final_runtime": "14 scenarios and 1264 node updates pass",
+    "concurrent_observer_attempt": "evidence/isolated-observer.log retained an attach TypeError from in-progress Test instrumentation; not a runtime assertion failure",
+    "current_observer_log": "evidence/isolated-observer-current.log",
+    "current_observer_result": "pass; 14 scenarios with 1264 node updates and matched object calls",
+    "current_observer_sha256": "a177dd3498624a53c25459ce3f7261af069c51d82bef0f28a5b9a07a7dd01e4e",
+    "current_observer_test_sha256": "79b51c07c3bd038575e49bd4a78be7c1ff120938bf8159eac6b9479eef0a3a5b"
+  },
+  "environment": {
+    "execution": "proven project Docker images; no host dependencies installed",
+    "dev_image": "sha256:261d00d1b7779ebbf28aeb0ca58b0bf04792e5059a22a10278397cc63261ef25",
+    "package_image": "sha256:00f125aece702d7c3f6611d94d68dc6d3e054659cb45726c218823914a7e211e",
+    "http_image": "sha256:b39027d87b010956507ed9bfad32e3b3d195ea01775f7bd12723b1014b5adb18",
+    "offline_checks": "network none",
+    "http": "project internal Docker network only; original SDK and run.py"
+  },
+  "not_run": [
+    "new NOVA calls",
+    "new paid Luna semantic evaluation",
+    "independent clinical accuracy",
+    "official sample validation",
+    "official scoring",
+    "upload",
+    "publication",
+    "commits",
+    "remote writes",
+    "deployment",
+    "atlas browser rendering"
+  ]
+}

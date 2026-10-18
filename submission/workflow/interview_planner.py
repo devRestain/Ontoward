@@ -78,6 +78,7 @@ class InterviewPlanner:
             self.questions.register(state, Question(item_id=f"{state.session.current}:{slot}",
                 purpose=purpose, field=CATEGORY_FIELDS[slot], text=texts[slot], order=order,
                 priority=LIMITS.hpi_priority, coverage=True, record_category=slot,
+                target_id=anchor.target_id if anchor and slot in INTAKE else None,
                 subject="family" if slot == "family_history" else "patient",
                 observation_id=anchor.observation_id if anchor and slot in INTAKE else None,
                 episode_id=anchor.episode_id if anchor and slot in INTAKE else None,

@@ -9,6 +9,7 @@ def context_from_facts(facts, *, patient_context=None, empathy=None):
         key = (tuple(value.get("concept_ids", [])), value.get("subject", "patient"), value.get("time_context", "unspecified"))
         status = value.get("status", "unknown")
         row = {"quote": fact["quote"], "role": "clinical" if status in {"present", "absent"} else "unknown",
+            "focus": "attribute" if value.get("attribute_id") else "target",
             "assertion": status, "target_terms": value.get("concept_ids", []),
             "attribute_terms": [value["attribute_id"]] if value.get("attribute_id") else [],
             "value_terms": value.get("values", []), "subject": value.get("subject", "patient"),

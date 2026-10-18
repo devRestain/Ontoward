@@ -62,14 +62,15 @@ def render(root):
     html = '''<!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Ontoward · 진료 과정 리포트</title>
 <style>@@CSS@@</style></head><body class="report-page">
-<header class="report-heading"><div><p class="eyebrow">ONTOWARD / CONSULTATION TRACE</p><h1>진료 과정 리포트</h1><p id="report-meta" class="muted"></p></div><span id="trace-status" class="badge"></span></header>
+<header class="report-heading"><div><h1>진료 내부 흐름</h1><p id="report-meta" class="muted"></p></div><span id="trace-status" class="badge"></span></header>
 <section id="summary" class="metrics" aria-label="실행 요약"></section>
 <details class="final-record"><summary>최종 진단 · SOAP · 실행 검사</summary><div id="final-record"></div></details>
 <div class="report-layout"><aside class="timeline-panel"><label for="session-filter">내부 세션</label><select id="session-filter"><option value="">전체 세션</option></select><nav id="timeline" aria-label="세션과 턴"></nav></aside>
 <main id="turn-detail" aria-live="polite"></main></div>
 <details class="all-logs"><summary>실행 로그 · 수집 상태</summary><div id="all-logs"></div></details>
 <script type="application/json" id="report-data">@@DATA@@</script><script>@@JS@@</script></body></html>'''
-    html = html.replace('@@CSS@@', (UI / 'style.css').read_text()).replace('@@JS@@', (UI / 'viewer.js').read_text()).replace('@@DATA@@', packed)
+    scripts = (UI / 'viewer.js').read_text() + '\n' + (UI / 'flow.js').read_text()
+    html = html.replace('@@CSS@@', (UI / 'style.css').read_text()).replace('@@JS@@', scripts).replace('@@DATA@@', packed)
     target = root / 'report.html'
     temporary = target.with_suffix('.html.tmp')
     temporary.write_text(html, encoding='utf-8')

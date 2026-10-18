@@ -4,7 +4,7 @@
 <body>
 <header class="topbar"><span class="brand">ONTOWARD <span class="muted">/ TEST</span></span><span class="badge">로컬 공개 증례</span></header>
 <main class="app-shell">
-  <div class="intro"><div><p class="eyebrow">CONSULTATION LAB</p><h1>테스트 실행</h1><p class="muted">환자와의 대화부터 진단 제출까지, 실제 진행 과정을 확인하세요.</p></div></div>
+  <div class="intro"><div><h1>진료 흐름 테스트</h1><p class="muted">턴마다 어떤 객체가 정보를 받고, 바꾸고, 전달했는지 확인하세요.</p></div></div>
   <form id="launch" class="launch-form">
     <div class="field"><label for="case">공개 증례</label><select id="case" name="case"><option value="C10">C10 · 체중 감소</option><option value="C01">C01 · 수면 불편</option><option value="C03">C03 · 성장 우려</option></select></div>
     <div class="field"><label for="backend">응답 방식</label><select id="backend" name="backend"><option value="nova">NOVA 모델</option><option value="scripted">오프라인 고정 응답</option></select></div>
@@ -15,7 +15,7 @@
   <div id="run-status" class="run-status" role="status" aria-live="polite"><span class="badge">연결 중</span><strong>실행기를 확인하고 있습니다.</strong></div>
   <div id="progress" class="progress-line" aria-hidden="true"></div>
   <div class="results-header"><h2>실행 결과</h2><div class="history-control"><label for="history">저장된 실행</label><select id="history"><option value="">실행 기록 없음</option></select><a id="standalone" href="#" target="_blank" rel="noopener" hidden>별도 열기</a></div></div>
-  <p id="empty" class="empty">증례와 실행 조건을 선택하고 테스트를 시작하세요.<br>완료되면 대화·턴별 상태·진단 근거가 이곳에 표시됩니다.</p>
+  <p id="empty" class="empty">저장된 실행을 선택하거나 새 테스트를 시작하세요.<br>정보 흐름에서 호출 순서와 입출력을, 객체 탐색에서 턴별 데이터 변화를 볼 수 있습니다.</p>
   <iframe id="report" title="선택한 테스트의 진료 과정 리포트" hidden></iframe>
 </main>
 </body></html>

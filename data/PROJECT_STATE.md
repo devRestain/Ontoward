@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-data
-/status value=active
-/checkpoint revision=aaf041ec81a57a836bf758997c8a7c96bf88b944 dirty=true updated=2026-10-18T06:40:00+00:00
-/goal phase=current id=DATA.D42 state=complete action="Build and pin the local source and author common complaint batch under D42"
+/status value=complete
+/checkpoint revision=7ee06ec410f8dbe3a6c1c2e2575e05997e5e440b dirty=true updated=2026-10-18T08:02:48.372661+00:00
+/goal phase=current id=DATA.D43 state=complete action="Preserve admitted D42 assets and record D43 input recovery evidence and archive custody"
+/goal phase=history id=DATA.D42 state=complete action="Build and pin the local source and author common complaint batch under D42"
 /goal phase=history id=DATA.D41 state=complete action="Pin D41 policy runtime archive and statement-level acceptance custody without changing clinical admission"
 /goal phase=history id=DATA.RUNTIME_REVIEW18 state=complete action="Record runtime review source fixture and archive custody"
 /goal phase=history id=DATA.D40 state=complete action="Pin D40 policy and preserve admitted graph and source custody"
@@ -152,4 +153,11 @@
 /evidence id=DATA.D42.E4 class=semantic result=pass source=data/preparation/v5/common-complaints-2026-10-18-r2/README.md observed="Preserve author date assertion optional references explicit support and typed conditions through JSONL; keep the supplied author file empty and retain 92 deferred DDXPlus evidences 32 unresolved disease identities and 152 attribute-free interviewable Symptoms as visible gaps"
 /scope id=DATA.D42.S1 state=in action="Own D42 local source role and identifier restoration DDXPlus metadata authored preparation registered formats source-specific scores and exact admission receipts"
 /scope id=DATA.D42.S2 state=out action="Exclude new downloads patient CSVs synthetic probabilities generated user clinical assertions live models clinical validation and old source or approval rewrites"
-/handoff state=complete action="Serve the admitted D42 batch and preserved parent custody; use the residual audit for the next requested source or author batch without automatic corpus expansion"
+/accept id=DATA.D43.A1 state=pass action="Preserve D42 clinical and source custody while binding D43 runtime prompts manifest and ZIP" evidence=DATA.D43.E1
+/accept id=DATA.D43.A2 state=pass action="Preserve exact saved-run sources and distinguish replayed controlled and external evidence" evidence=DATA.D43.E2
+/evidence id=DATA.D43.E1 class=artifact result=pass source=provenance/input-recovery-d43-2026-10-18.json observed="Hash every final runtime member and the 55-file ZIP ae7eabeed9b3704082ce0e5f2fbbc977a4226b8113d92da3b2b17fdb3962d55c; only algorithm_version changes in the D42 manifest and all knowledge assets source weights d41.1 policy SDK and frozen D41/D42 artifacts are preserved"
+/evidence id=DATA.D43.E2 class=semantic result=pass source=../Tmp/d43-input-recovery-2026-10-18/metrics.json observed="Retain original C03 hashes statement outcomes and call/token custody; captured-assertion replay has 5 forced and 2 mapped outcomes and controlled review has 6 forced and 2 mapped; no new provider calls or billable tokens and no production forced-rate estimate"
+/evidence id=DATA.D43.E3 class=runtime result=pass source=../submission/PROJECT_STATE.md observed="Reference APP.D43 source archive admitted Korean baseline observer and original SDK HTTP evidence while leaving fresh model semantic and clinical evaluation unrun"
+/scope id=DATA.D43.S1 state=in action="Own D43 preserved source hashes code prompt manifest artifact replay and verification custody"
+/scope id=DATA.D43.S2 state=out action="Exclude source data changes new vocabulary or relations admission rewrites corpus expansion clinical accuracy paid models and publication"
+/handoff state=ready action="D43 custody complete; preserve D42 admission and wait for the next selected data slice"

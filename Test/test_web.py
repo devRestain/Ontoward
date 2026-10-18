@@ -202,3 +202,17 @@ class WebTests(unittest.TestCase):
         trace.emit('start')
         trace.emit('end')
         self.assertTrue(trace.failed)
+
+    def test_object_observation_keeps_types_and_excludes_service_credentials(self):
+        from dataclasses import dataclass
+        @dataclass
+        class Snapshot:
+            values: tuple
+        class Service:
+            token = 'credential-never-serialized'
+        trace = Trace(Path(self.temp.name) / 'objects.jsonl')
+        value = trace.value({'snapshot': Snapshot((1, {'id': 'fact-1'})), 'client': Service()})
+        self.assertEqual(value['snapshot']['type'], 'Snapshot')
+        self.assertEqual(value['snapshot']['data']['values'], {'type': 'tuple', 'data': [1, {'id': 'fact-1'}]})
+        self.assertEqual(value['client'], {'type': 'Service', 'reference_only': True})
+        self.assertNotIn('credential-never-serialized', json.dumps(value))

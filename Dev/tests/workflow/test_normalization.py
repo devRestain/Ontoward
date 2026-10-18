@@ -73,6 +73,94 @@ class Verification(unittest.TestCase):
         self.assertEqual({i.value.status for _, i in facts}, {"present", "absent"})
         self.assertEqual(sum(len(o.fact_ids) for o in s.case.outcomes), 2)
 
+    def test_target_hints_do_not_turn_the_chief_into_a_required_attribute(self):
+        s = self.initial("가상증상이 작아 보여요")
+        self.reply(s, [statement("가상증상이 작아 보여요", record_category="presentation", primary_concern=True,
+            attribute_terms=["relative appearance"], value_terms=["seems small"])], [[{str(OW.Complaint): "(+)"}]])
+        self.assertEqual(s.case.chief(confirmed=True).value.concept_ids, [str(OW.Complaint)])
+        self.assertEqual([p["task"] for p in self.payloads], ["input_context", "input_mapping"])
+
+    def test_invalid_context_sibling_does_not_erase_valid_clinical_statements(self):
+        s = self.initial("가상증상 있고 별도증상은 3일째")
+        contexts = [statement("가상증상 있고"), statement("별도증상은 3일째", target=OW.Other,
+            measurement={"kind":"quantity","value":"not a number","unit":"day","operator":"eq"})]
+        self.reply(s, contexts)
+        self.assertTrue(s.case.chief(confirmed=True))
+        self.assertEqual([o.state for o in s.case.outcomes], ["mapped", "unknown"])
+        repair = next(p for p in self.payloads if p["phase"] == "context_repair")
+        self.assertEqual(repair["statement_indices"], [1])
+        self.assertEqual(repair["frozen_statements"][0]["quote"], "가상증상 있고")
+
+    def test_context_repair_replaces_only_the_invalid_original_index(self):
+        s = self.initial("가상증상과 별도증상")
+        def chat(messages, **kwargs):
+            p = json.loads(messages[1]["content"])
+            self.payloads.append(p)
+            if p["phase"] == "context":
+                raw = {"statements": [statement("가상증상"), statement("별도증상", target=OW.Other,
+                    observation_id="not_supplied")]}
+            elif p["phase"] == "context_repair":
+                self.assertEqual(p["statement_indices"], [1])
+                raw = {"statements": [statement("별도증상", target=OW.Other)]}
+            else:
+                raw = mapping_from_contracts(p)
+            return self.client.completion(json.dumps(raw, ensure_ascii=False))
+        self.client.chat = Mock(side_effect=chat)
+        self.c.interpreter.process_input(s, self.k, self.client)
+        self.assertEqual(len(CanonicalSnapshot.from_case(s.case).entries), 2)
+        self.assertEqual([o.state for o in s.case.outcomes], ["mapped", "mapped"])
+
+    def test_turn_zero_records_chief_and_incidental_negative_before_first_say(self):
+        from workflow.graph import build_graph
+        s = self.initial("가상증상이 있어요 별도증상은 없어요")
+        delegate = self.client.chat
+        def chat(messages, **kwargs):
+            p = json.loads(messages[1]["content"])
+            if p["task"] == "input_context" and p["question"] is None:
+                return self.client.completion(json.dumps({"statements": [
+                    statement("가상증상이 있어요", record_category="presentation", primary_concern=True),
+                    statement("별도증상은 없어요", target=OW.Other, assertion="absent")]}, ensure_ascii=False))
+            if p["task"] == "input_mapping":
+                return self.client.completion(json.dumps(mapping_from_contracts(p)))
+            return delegate(messages, **kwargs)
+        self.client.chat = Mock(side_effect=chat)
+        stream = build_graph(self.c, self.k).stream(s.model_dump())
+        first = next(stream)
+        self.assertEqual(set(first), {"process_initial_input"})
+        case = first["process_initial_input"]["case"]
+        self.assertTrue(case["S"]["cc"])
+        self.assertTrue(case["S"]["ros"])
+        self.assertEqual(self.client.actions, [])
+        for update in stream:
+            if "execute_action" in update:
+                self.assertEqual(self.client.actions[0]["content"], CONFIG.texts.greeting)
+                break
+        stream.close()
+
+    def test_initial_uncertain_presenting_report_has_one_focused_context_review(self):
+        s = self.initial("가상증상이 있어 보여 걱정돼요")
+        def chat(messages, **kwargs):
+            p = json.loads(messages[1]["content"])
+            self.payloads.append(p)
+            if p["phase"] == "context":
+                raw = {"statements": [statement("가상증상이 있어 보여", role="uncertain", assertion="uncertain", primary_concern=True)]}
+            elif p["phase"] == "initial_chief_repair":
+                self.assertEqual(p["statement_indices"], [0])
+                raw = {"statements": [statement("가상증상이 있어 보여", primary_concern=True)]}
+            else:
+                raw = mapping_from_contracts(p)
+            return self.client.completion(json.dumps(raw, ensure_ascii=False))
+        self.client.chat = Mock(side_effect=chat)
+        self.c.interpreter.process_input(s, self.k, self.client)
+        self.assertTrue(s.case.chief(confirmed=True))
+        self.assertEqual([p["phase"] for p in self.payloads], ["context", "initial_chief_repair", "mapping"])
+
+    def test_focused_initial_review_does_not_force_genuine_unknown_presence(self):
+        s = self.initial("가상증상인지는 모르겠어요")
+        self.reply(s, [statement("가상증상인지는 모르겠어요", role="uncertain", assertion="uncertain", primary_concern=True)])
+        self.assertFalse(s.case.chief(confirmed=True))
+        self.assertEqual(s.case.outcomes[0].state, "unknown")
+
     def test_same_question_two_values_have_independent_fact_ids(self):
         s = state("ChiefComplaint", True)
         record(s)
@@ -195,6 +283,67 @@ class Verification(unittest.TestCase):
         self.assertEqual((value.measurement.value, value.measurement.unit), (3, "day"))
         self.c.writer.build_soap(s)
         self.assertIn("Onset: 3 days before presentation", s.interaction.submission_payload["note"]["S"]["hpi"])
+
+    def test_verbose_numeric_context_defaults_do_not_discard_the_measurement(self):
+        s, q = self.numeric_reply({"kind":"quantity","value":3,"unit":"day","operator":"eq",
+            "concept":None,"concepts":[],"selection":"all_of","match":"subsumption",
+            "lower":None,"upper":None,"lower_inclusive":False,"upper_inclusive":False,"upper_unit":None})
+        value = s.case.get(s.questions.answered_fact_ids[q.item_id][0]).value
+        self.assertEqual(value.measurement.value, 3)
+        self.assertEqual([p["phase"] for p in self.payloads], ["context", "mapping"])
+        sent = self.payloads[-1]["statements"][0]["measurement"]
+        self.assertNotIn("concepts", sent)
+        self.assertNotIn("lower_inclusive", sent)
+
+    def test_registered_orphan_number_is_recorded_without_inventing_a_symptom(self):
+        from workflow.state.evidence import EvidenceIndex
+        add_v5_pattern(self.k, "orphanNumeric", OW.Complaint, [(OW.TimeSinceOnset,
+            {"kind":"quantity","value":1,"unit":"day","operator":"ge"})])
+        s = self.initial("가상증상의 기간 3일")
+        self.reply(s, [statement("가상증상의 기간 3일", focus="attribute", attribute_terms=[str(OW.TimeSinceOnset)],
+            measurement={"kind":"quantity","value":3,"unit":"day","operator":"eq"})])
+        entries = CanonicalSnapshot.from_case(s.case).entries
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0][1].value.evidence_use, "record_only")
+        payload = CanonicalSnapshot.from_case(s.case).payload()["facts"][0]
+        self.assertEqual((payload["kind"], payload["evidence_use"]), ("attribute", "record_only"))
+        self.assertFalse(EvidenceIndex.from_case(s.case).entries)
+        self.assertFalse(s.case.chief(confirmed=True))
+        self.c.writer.build_soap(s)
+        self.assertIn("3 days", s.interaction.submission_payload["note"]["S"]["hpi"])
+
+    def test_unregistered_numeric_course_cannot_become_an_absolute_measurement(self):
+        add_v5_pattern(self.k, "numericCourse", OW.Complaint, [(OW.TimeSinceOnset,
+            {"kind":"quantity","value":1,"unit":"day","operator":"ge"})])
+        s = self.initial("3일간 변했어요")
+        self.reply(s, [statement("3일간 변했어요", focus="attribute", record_category="course",
+            attribute_terms=["change over time"], measurement={"kind":"quantity","value":3,"unit":"day","operator":"eq"})])
+        self.assertFalse(CanonicalSnapshot.from_case(s.case).entries)
+        self.assertEqual(s.case.outcomes[0].state, "unsupported")
+
+    def test_prior_care_denial_never_negates_the_bound_chief(self):
+        s = state("Initiation", True)
+        record(s)
+        q = question(s, purpose="intake", target=OW.Complaint, field="S.hpi")
+        q.record_category = "previous_care"
+        pending(s, q)
+        s.interaction.incoming = {"content":"치료받은 적은 없어요"}
+        self.reply(s, [statement("치료받은 적은 없어요", assertion="absent", target="previous treatment",
+            record_category="previous_care")])
+        self.assertTrue(s.case.chief(confirmed=True))
+        self.assertEqual(s.case.outcomes[0].state, "unsupported")
+        self.assertEqual(len(CanonicalSnapshot.from_case(s.case).entries), 1)
+
+    def test_source_offsets_point_only_to_the_reported_current_input(self):
+        s = self.initial("가상증상 있고 별도증상은 없어요")
+        self.reply(s, [statement("가상증상 있고"), statement("별도증상은 없어요", target=OW.Other, assertion="absent")])
+        audit = s.interaction.interpretations[-1]
+        self.assertEqual(audit["source_ref"], "initial")
+        for span in audit["source_spans"]:
+            quote = audit["context"]["statements"][span["statement_index"]]["quote"]
+            self.assertTrue(span["positions"])
+            for start, end in span["positions"]:
+                self.assertEqual(audit["input"][start:end], quote)
 
     def test_unreported_numeric_value_is_rejected_then_repaired(self):
         wrong = [{str(OW.Complaint): {str(OW.TimeSinceOnset): {"kind":"quantity","value":7,"unit":"day","operator":"eq"}}}]

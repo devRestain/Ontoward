@@ -68,6 +68,7 @@ def run_node(state, operation):
 def build_graph(consultation, knowledge):
     graph = StateGraph(WorkflowState)
     operations = {
+        "process_initial_input": partial(consultation.interpreter.process_input, knowledge=knowledge, client=consultation.client),
         "process_input": partial(consultation.interpreter.process_input, knowledge=knowledge, client=consultation.client),
         "refresh_after_input": consultation.refresh_after_input,
         "enter_session": consultation.enter_session, "check_budget": consultation.check_budget,
@@ -83,7 +84,8 @@ def build_graph(consultation, knowledge):
     }
     for name, operation in operations.items():
         graph.add_node(name, partial(run_node, operation=operation))
-    graph.add_edge(START, "process_input")
+    graph.add_edge(START, "process_initial_input")
+    graph.add_edge("process_initial_input", "refresh_after_input")
     graph.add_edge("process_input", "refresh_after_input")
     graph.add_edge("refresh_after_input", "check_budget")
     graph.add_edge("enter_session", "check_budget")

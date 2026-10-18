@@ -99,7 +99,8 @@ class IntakeSOAP(unittest.TestCase):
         questions = sorted(s.pending_questions(), key=lambda q:q.order)
         self.assertEqual(questions[0].text, f.CONFIG.texts.greeting)
         self.assertEqual([q.record_category for q in questions[1:]], ["onset", "course", "recurrence", "previous_care"])
-        self.assertTrue(all(q.target_id is None for q in questions))
+        self.assertIsNone(questions[0].target_id)
+        self.assertTrue(all(q.target_id == str(f.OW.Complaint) and q.attribute_id is None for q in questions[1:]))
         from workflow.state.models import InputOutcome
         s.case.outcomes.append(InputOutcome(source_ref="initial", statement_id="care:not-applicable",
             state="not_applicable", record_category="previous_care"))

@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-submission
 /status value=active
-/checkpoint revision=aaf041ec81a57a836bf758997c8a7c96bf88b944 dirty=true updated=2026-10-18T06:40:00+00:00
-/goal phase=current id=APP.D42 state=complete action="Consume D42 common complaint assets through the completed D41 canonical input path"
+/checkpoint revision=7ee06ec410f8dbe3a6c1c2e2575e05997e5e440b dirty=true updated=2026-10-18T08:02:48.372661+00:00
+/goal phase=current id=APP.D43 state=complete action="Preserve independent input facts and extract the chief with incidental information at turn zero"
+/goal phase=history id=APP.D42 state=complete action="Consume D42 common complaint assets through the completed D41 canonical input path"
 /goal phase=history id=APP.D41 state=complete action="Implement two-stage DB normalization forced completion and raw-free canonical consumers"
 /goal phase=history id=APP.RUNTIME_REVIEW18 state=complete action="Review current consultation contracts and public chief selection failures"
 /goal phase=history id=APP.D40 state=complete action="Implement D40 initial extraction semantic SOAP protected collection and record-only Education"
@@ -16,7 +17,7 @@
 /goal phase=history id=APP.SOAP33 state=complete action="Render English Category Content SOAP with source terms quote-backed keywords explicit polarity and same-episode pain assessment"
 /goal phase=history id=APP.CHIEF29 state=complete action="Require one existing Symptom for chief mapping with source aliases bounded lookup recovery and explicit semantic evidence"
 /goal phase=history id=APP.INTEGRATE36 state=complete action="Verify D36 against the combined D37 runtime and independent archive"
-/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify real Luna interpretation English planning Korean delivery and completed submission from the D42 archive after separate external execution authorization"
+/goal phase=next id=APP.REVALIDATE29 state=deferred action="Verify real Luna interpretation English planning Korean delivery and completed submission from the D43 archive after separate external execution authorization"
 /goal phase=history id=APP.CONTEXT28 state=complete action="Bound complete Gateway requests and recover context rejection once while preserving consultation and submission behavior"
 /goal phase=history id=APP.TEST27 state=complete action="Verify unchanged D26 callbacks through the D27 local HTTP API with the scripted C10 fixture"
 /goal phase=history id=APP.READINESS26 state=complete action="Pass Education and complete diagnostic acquisition Gateway recovery assessment and confirmed submission under D26"
@@ -220,4 +221,13 @@
 /evidence id=APP.D42.E4 class=external_service result=not_run source=data/provenance/common-complaints-d42-2026-10-18.json observed="Leave actual Luna interpretation and delivery independent clinical accuracy official sample validation scoring upload commits and deployment unrun"
 /scope id=APP.D42.S1 state=in action="Consume newly admitted aliases roles registered numeric units and qualitative source labels through unchanged D41 interpretation canonical facts reasoning questions and SOAP"
 /scope id=APP.D42.S2 state=out action="Exclude runtime phrase tables raw SOAP fallbacks new ontology structure new acquisition assumptions and clinical or official performance claims"
-/handoff state=complete action="Use the verified D42 runtime and standalone archive while retaining D41 frozen custody residual data gaps and separately authorized live semantic validation"
+/accept id=APP.D43.A1 state=pass action="Preserve independent initial facts and bind current chief plus incidental details before first SAY" evidence=APP.D43.E1,APP.D43.E2
+/accept id=APP.D43.A2 state=pass action="Verify canonical consumers through completed isolated consultations and original SDK HTTP" evidence=APP.D43.E3,APP.D43.E4
+/evidence id=APP.D43.E1 class=runtime result=pass source=../Tmp/d43-input-recovery-2026-10-18/evidence/isolated-workflow.log observed="Pass 204 maintained workflow tests including 42 normalization tests on the final extracted ZIP; source tests also pass 204"
+/evidence id=APP.D43.E2 class=runtime result=pass source=../Tmp/d43-input-recovery-2026-10-18/replay.json observed="Preserve five valid initial numeric facts with captured assertion states and recover the chief from the saved turn-six answer; a separately controlled focused review records the chief plus five numeric facts at turn zero without claiming new model accuracy"
+/evidence id=APP.D43.E3 class=runtime result=pass source=../Tmp/d43-input-recovery-2026-10-18/isolated/korean/verification.json observed="Pass 619 Korean prepared-action Context and acquired EXAM checks; complete three additional admitted-RDF cases and 14 baseline and current observer parity scenarios each with 1264 node updates"
+/evidence id=APP.D43.E4 class=runtime result=pass source=../Tmp/d43-input-recovery-2026-10-18/final-http/result.json observed="Execute unchanged original SDK and run.py from the final ZIP with a synthetic source-label fixture on the internal Docker network; confirm ready SOAP and DIAGNOSE completed in 41 turns with 42 Doctor calls and 83 combined scripted requests"
+/evidence id=APP.D43.E5 class=external_service result=not_run source=../data/provenance/input-recovery-d43-2026-10-18.json observed="Leave fresh Luna interpretation of C03 revised prompts live NOVA semantic and clinical accuracy official validation scoring upload commits and deployment unrun"
+/scope id=APP.D43.S1 state=in action="Own explicit initial node compact context focus row repair typed normalization rejection feedback chief routing registered orphan measurements and source audit positions"
+/scope id=APP.D43.S2 state=out action="Exclude clinical vocabulary expansion source weights SDK changes patient raw downstream fallback and live model execution"
+/handoff state=blocked action="D43 offline acceptance complete; defer APP.REVALIDATE29 on the final D43 ZIP until exact external authorization"

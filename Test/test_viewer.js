@@ -16,7 +16,7 @@ class Element {
   click(){this.emit('click');}
   focus(){this.focused=true;}
   scrollIntoView(){}
-  remove(){this.parent.children=this.parent.children.filter(node=>node!==this);}
+  remove(){if(this.parent)this.parent.children=this.parent.children.filter(node=>node!==this);}
   before(node){this.insert(node,0);}
   after(node){this.insert(node,1);}
   insert(node,offset){const index=this.parent.children.indexOf(this);node.parent=this.parent;this.parent.children.splice(index+offset,0,node);}
@@ -28,7 +28,7 @@ function load(data){
   for(const id of ['report-data','report-meta','trace-status','summary','final-record','session-filter','timeline','turn-detail','all-logs']){const node=new Element('div');node.id=id;if(id==='report-data')node.textContent=JSON.stringify(data);body.append(node);}
   const document={getElementById:id=>walk(body).find(node=>node.id===id),createElement:tag=>new Element(tag)};
   const context=vm.createContext({document});
-  vm.runInContext(fs.readFileSync(__dirname+'/ui/viewer.js','utf8'),context);
+  vm.runInContext(fs.readFileSync(__dirname+'/ui/viewer.js','utf8')+'\n'+fs.readFileSync(__dirname+'/ui/flow.js','utf8'),context);
   return {body,context,get:id=>document.getElementById(id),text:()=>document.getElementById('detail-panel').textContent};
 }
 const fields={S:['cc','hpi','pmh','fh','sh','ros'],O:['exam','tests'],A:['evidence','differential'],P:['tests','treatment','disposition','follow_up','education']};
@@ -49,6 +49,11 @@ const events=[{seq:1,kind:'initial',session:'ChiefComplaint',turn:0,state:initia
   {seq:3,kind:'node_end',node:'build_soap',session:'ChiefComplaint',turn:1,patch:[{op:'replace',path:['case'],value:caseState},{op:'replace',path:['interaction'],value:interaction}]},{seq:4,kind:'end'}];
 const data={run_id:'note-view',run:{},result:{},process:{},summary:{},record:{note:soap,diagnosis:'Submitted diagnosis'},transcript:{events:[]},models:[],requests:{},trace:{status:'complete',events},logs:{},warnings:[]};
 const original=JSON.stringify(data),page=load(data);
+assert.equal(page.get('tab-flow').attributes['aria-selected'],'true');
+assert.match(page.text(),/객체 메서드 호출을 수집하지 않았습니다/);
+page.get('tab-objects').click();
+for(const name of ['CaseState','SessionContext','DifferentialState','QuestionPlan','InteractionState'])assert.match(page.text(),new RegExp(name));
+assert.match(page.text(),/WorkflowState.case/);
 page.get('tab-note').click();
 assert.match(page.text(),/완료 0 \/ 전체 0건/);
 assert.match(page.text(),/아직 생성되지 않았습니다/);
@@ -79,12 +84,63 @@ const partial=load({...data,record:{},trace:{status:'incomplete',events:[{...eve
 assert.match(partial.text(),/O.exam · 진찰 — 필드 미수집/);
 assert.doesNotMatch(partial.text(),/최종 수신된 SOAP/);
 console.log('PASS: Note field mapping, turn snapshots, clinical and completion states, source labels, Unicode spans, payload distinction, legacy and partial logs, keyboard tabs, text-only rendering');
+
+const flowEvents=[
+  {seq:1,kind:'initial',session:'ChiefComplaint',turn:0,state:initial},
+  {seq:2,kind:'node_start',node:'process_input',operation:'InputInterpreter.process_input'},
+  {seq:3,kind:'call_start',node:'process_input',call_id:1,parent_call_id:null,owner:'InputInterpreter',object_id:'consultation.interpreter',method:'process_input',inputs:{state:{type:'WorkflowState',state_reference:true}},object_state:initial},
+  {seq:4,kind:'call_start',node:'process_input',call_id:2,parent_call_id:1,owner:'InputInterpreter',object_id:'consultation.interpreter',method:'_parse_text',inputs:{text:attack}},
+  {seq:5,kind:'sdk_request',node:'process_input',parent_call_id:2,method:'POST',path:'/v1/chat/completions',request_id:'wire-1',body:{messages:[{content:'{"concept_ids":["symptom-1"]}'}]}},
+  {seq:6,kind:'sdk_response',node:'process_input',request_id:'wire-1',response:{choices:[{message:{content:'{"facts":[]}'}}]}},
+  {seq:7,kind:'call_end',node:'process_input',call_id:2,owner:'InputInterpreter',method:'_parse_text',output:{type:'ParseResult',data:{facts:[]}},writes:[]},
+  {seq:8,kind:'call_end',node:'process_input',call_id:1,owner:'InputInterpreter',method:'process_input',output:null,writes:[{op:'add',path:['case','diagnosis'],value:'new diagnosis'}],object_patch:[{op:'add',path:['case','diagnosis'],value:'new diagnosis'}]},
+  {seq:9,kind:'node_end',node:'process_input',session:'ChiefComplaint',turn:0,patch:[{op:'add',path:['case','diagnosis'],value:'new diagnosis'}]},
+  {seq:10,kind:'end'}
+];
+const flowData={...data,record:{},trace:{status:'complete',events:flowEvents}},flowOriginal=JSON.stringify(flowData),flow=load(flowData);
+assert.doesNotMatch(flow.text(),/객체 메서드 호출을 수집하지 않았습니다/);
+const parseButton=walk(flow.get('detail-panel')).find(node=>node.className.includes('flow-call')&&node.children[0].textContent==='InputInterpreter._parse_text');
+parseButton.click();
+const inspector=flow.get('detail-panel').querySelector('.flow-inspector');
+assert.match(inspector.textContent,/InputInterpreter.process_input → InputInterpreter._parse_text/);
+assert.match(inspector.textContent,/ParseResult/);assert.match(inspector.textContent,/return/);
+assert.ok(walk(inspector).some(node=>node.textContent===attack));
+assert.equal(parseButton.attributes['aria-pressed'],'true');
+const sdkButton=walk(flow.get('detail-panel')).find(node=>node.className.includes('sdk-call'));
+sdkButton.click();assert.match(inspector.textContent,/request_id: wire-1/);assert.match(inspector.textContent,/request.body/);
+flow.get('tab-objects').click();assert.match(flow.text(),/diagnosis/);
+const change=walk(flow.get('detail-panel')).find(node=>node.className==='change-row add');change.open=true;change.emit('toggle');
+assert.match(change.textContent,/new diagnosis/);assert.match(change.textContent,/관측 없음/);
+const search=walk(flow.get('detail-panel')).find(node=>node.type==='search');search.value='missing-key';search.emit('input');assert.match(flow.text(),/검색어에 맞는 변경이 없습니다/);
+search.value='diagnosis';search.emit('input');assert.match(flow.text(),/diagnosis/);
+assert.equal(JSON.stringify(flowData),flowOriginal);
+const interrupted=load({...data,record:{},trace:{status:'incomplete',events:flowEvents.slice(0,6)}});
+const pending=walk(interrupted.get('detail-panel')).find(node=>node.className.includes('flow-call')&&node.children[0].textContent==='InputInterpreter._parse_text');pending.click();
+assert.match(interrupted.text(),/반환값이 수집되지 않았습니다/);assert.match(interrupted.text(),/성공으로 해석하지 않습니다/);
+const missingInitial=load({...data,record:{},trace:{status:'incomplete',events:flowEvents.slice(1,6)}});
+assert.match(missingInitial.text(),/InputInterpreter.process_input/);
+assert.match(missingInitial.text(),/실제 SDK 전송|POST \/v1\/chat\/completions/);
+console.log('PASS: observed method sequence, parent linkage, typed return values, SDK payloads, object diffs, field search, partial calls and immutable source data');
+const largeEvents=[flowEvents[0],flowEvents[1]];
+for(let index=0;index<140000;index++)largeEvents.push({seq:index+3,kind:'call_end',call_id:index+1,output:null});
+largeEvents.push({...flowEvents[8],seq:140003,patch:[]});
+const large=load({...data,record:{},trace:{status:'incomplete',events:largeEvents}});
+assert.match(large.text(),/InputInterpreter.process_input/);
+console.log('PASS: large partial node trace without argument-spread overflow');
 for(const path of process.argv.slice(2)){
   const saved=JSON.parse(fs.readFileSync(path,'utf8').match(/id="report-data">(.*?)<\/script>/s)[1]);
   const report=load(saved);walk(report.body).find(node=>node.className==='last-note').click();
   if(saved.trace.events.some(row=>row.kind==='initial')){
     for(const [section,names] of Object.entries(fields))for(const name of names)assert.ok(report.text().includes(section+'.'+name));
     assert.match(report.text(),/case.diagnosis/);
+    report.get('tab-flow').click();
+    const step=walk(report.get('detail-panel')).find(node=>node.className.split(' ').includes('flow-node-button'));
+    if(step){step.click();assert.ok(report.get('detail-panel').querySelector('.flow-inspector').textContent.length>0);}
+    report.get('tab-objects').click();
+    for(const [key,type] of Object.entries({case:'CaseState',session:'SessionContext',differential:'DifferentialState',questions:'QuestionPlan',interaction:'InteractionState'})){
+      const button=walk(report.get('detail-panel')).find(node=>node.className==='object-button'&&node.children[0].textContent===type);
+      button.click();assert.ok(report.text().includes('WorkflowState.'+key));
+    }
   }
   console.log(`PASS: saved report ${saved.run_id} (${saved.trace.events.length} trace events)`);
 }

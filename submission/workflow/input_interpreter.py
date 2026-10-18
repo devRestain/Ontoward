@@ -1,5 +1,6 @@
 import hashlib
 import json
+import re
 from copy import deepcopy
 from functools import lru_cache
 
@@ -8,14 +9,17 @@ from pydantic import ValidationError
 from .rules.input import validate_facts
 from .rules.limits import LIMITS
 from .rules.normalization import (candidate_contracts, compact_schema, force_mapping,
-                                  mapping_schema, statement_outcome, strict_json, validate_mapping)
+                                  mapping_schema, measurement_value, numeric_schema, statement_outcome, strict_json, validate_mapping)
 from .state.models import (ClinicalValue, ContextInput, ContextStatement, Fact, InputOutcome,
                            EmpathySignal, ParseResult, PatientContextEntry, PatientContextFact, PatientReport, RecordItem)
 
 
 @lru_cache(maxsize=1)
 def parser_schema():
-    return compact_schema(ContextInput.model_json_schema())
+    schema = compact_schema(ContextInput.model_json_schema())
+    schema["$defs"]["ExpectedValue"] = numeric_schema()
+    schema["required"] = ["statements"]
+    return schema
 
 
 class InputInterpreter:
@@ -40,6 +44,9 @@ class InputInterpreter:
         if initial:
             self.interactions.record_initial(state, incoming["initial"])
             text = str(incoming["initial"].get("opening", ""))
+            initial_data = incoming["initial"].get("vital_signs")
+            if initial_data:
+                text += "\n" + (initial_data if isinstance(initial_data, str) else json.dumps(initial_data, ensure_ascii=False))
         else:
             text = incoming.get("content" if action.question.kind == "SAY" else "result", "")
             text = text if isinstance(text, str) else ""
@@ -70,10 +77,6 @@ class InputInterpreter:
             item = state.case.get(action.question.item_id)
             if item and (item.status == "unasked" or not item.value or not item.value.concept_ids):
                 state.case.remove({item.id})
-
-    @staticmethod
-    def _chief_input(state):
-        return not state.case.chief_complaints()
 
     @staticmethod
     def _size(messages):
@@ -108,18 +111,91 @@ class InputInterpreter:
                 "context_records": len(payload.get("records", [])), "context_turns": len(payload.get("dialogue", []))}
         return content
 
+    def _read_context(self, state, raw, payload, text, question, previous=None, indices=None):
+        if not isinstance(raw, dict) or not isinstance(raw.get("statements"), list):
+            raise ValueError("context_requires_statement_array")
+        ContextInput.model_validate({**raw, "statements": [], "empathy": None, "patient_context": []})
+        rows = raw["statements"]
+        if indices is not None and len(rows) != len(indices):
+            raise ValueError("context_repair_length_mismatch")
+        context = previous.model_copy(deep=True) if previous else ContextInput(
+            statements=[ContextStatement(quote=text or " ", role="unknown") for _ in rows])
+        positions = indices if indices is not None else list(range(len(rows)))
+        supplied = {item["id"] for item in payload["records"]}
+        observations = {item["value"].get("observation_id") for item in payload["records"] if item.get("value")}
+        episodes = {item["value"].get("episode_id") for item in payload["records"] if item.get("value")}
+        if question:
+            observations.add(question.observation_id)
+            episodes.add(question.episode_id)
+        errors = []
+        for index, row in zip(positions, rows):
+            try:
+                statement = ContextStatement.model_validate(row)
+                if not statement.quote.strip() or statement.quote not in text:
+                    raise ValueError("statement_not_in_current_input")
+                if statement.correction_id and statement.correction_id not in supplied:
+                    raise ValueError("correction_outside_transmitted_context")
+                if statement.observation_id and statement.observation_id not in observations:
+                    raise ValueError("observation_outside_transmitted_context")
+                if statement.episode_id and statement.episode_id not in episodes:
+                    raise ValueError("episode_outside_transmitted_context")
+                if statement.measurement and statement.measurement.kind not in {"quantity", "interval"}:
+                    raise ValueError("context_measurement_must_be_numeric")
+                if statement.anchor is not None and statement.anchor >= len(context.statements):
+                    raise ValueError("unknown_statement_anchor")
+                context.statements[index] = statement
+            except (TypeError, ValueError, ValidationError) as error:
+                reason = str(error) if not isinstance(error, ValidationError) else json.dumps(
+                    [{"field": list(e["loc"]), "reason": e["msg"]} for e in error.errors()], ensure_ascii=False)
+                errors.append({"index": index, "reason": reason[:320], "raw": row})
+        for index in positions:
+            statement = context.statements[index]
+            if statement.anchor is not None:
+                anchor = context.statements[statement.anchor]
+                if (statement.measurement or statement.focus == "attribute") and anchor.focus == "target" and (
+                        anchor.subject, anchor.subject_member) == (statement.subject, statement.subject_member):
+                    statement.target_terms = list(dict.fromkeys([*anchor.target_terms, *statement.target_terms]))[:8]
+                if statement.role != "clinical" or (anchor.subject, anchor.subject_member, anchor.time_context) != (
+                        statement.subject, statement.subject_member, statement.time_context):
+                    statement.anchor = None
+                    state.interaction.parse_recoveries.append({"stage": payload["phase"], "index": index,
+                                                              "reason": "detach_cross_scope_anchor"})
+        for row in raw.get("patient_context", []) if isinstance(raw.get("patient_context", []), list) else []:
+            try:
+                fact = PatientContextFact.model_validate(row)
+                if fact.quote not in text:
+                    raise ValueError("ungrounded_patient_context")
+                context.patient_context.append(fact)
+            except (TypeError, ValueError, ValidationError):
+                state.interaction.issues.append("invalid_patient_context")
+        ambiguous = {fact.key for fact in context.patient_context
+                     if len({f.value for f in context.patient_context if f.key == fact.key}) > 1}
+        if ambiguous:
+            state.interaction.issues.append("conflicting_patient_context")
+        context.patient_context = list({fact.key: fact for fact in context.patient_context if fact.key not in ambiguous}.values())
+        if raw.get("empathy") is not None:
+            try:
+                signal = EmpathySignal.model_validate(raw["empathy"])
+                if signal.quote not in text or question and question.kind == "EXAM":
+                    raise ValueError("ungrounded_empathy")
+                context.empathy = signal
+            except (TypeError, ValueError, ValidationError):
+                state.interaction.issues.append("invalid_empathy_signal")
+        return context, errors
+
     def _context(self, state, knowledge, client, text):
         pending = state.interaction.pending
         question = pending.question if pending else None
         projected = self.interactions.project_context(state, question, knowledge.search_concepts(text), expanded=True)
         payload = {"task": "input_context", "phase": "context", "input": text,
+            "input_kind": "initial" if pending is None else "reply", "turn": LIMITS.turns - state.session.turns_remaining,
             "question": question.model_dump(exclude={"assessment"}) if question else None,
             "spoken_question": pending.content if pending else None,
             "patient_context": {key: value.model_dump() for key, value in state.case.patient_context.items()},
             "schema": deepcopy(parser_schema()), **projected}
         if pending is None and state.interaction.incoming:
             payload["initial_data"] = state.interaction.incoming.get("initial", {}).get("vital_signs", {})
-        context = None
+        context, indices = None, None
         for attempt in range(2):
             payload["phase"] = "context_repair" if attempt else "context"
             limit = LIMITS.expanded_gateway_request_bytes if attempt else LIMITS.gateway_request_bytes
@@ -130,61 +206,22 @@ class InputInterpreter:
             if state.interaction.termination:
                 break
             try:
-                raw_context = strict_json(content)
-                if not isinstance(raw_context, dict):
-                    raise ValueError("context_requires_object")
-                context = ContextInput.model_validate({**raw_context, "empathy": None, "patient_context": []})
-                for row in raw_context.get("patient_context", []) if isinstance(raw_context.get("patient_context", []), list) else []:
-                    try:
-                        fact = PatientContextFact.model_validate(row)
-                        if fact.quote not in text:
-                            raise ValueError("ungrounded_patient_context")
-                        context.patient_context.append(fact)
-                    except (TypeError, ValueError, ValidationError):
-                        state.interaction.issues.append("invalid_patient_context")
-                ambiguous = {fact.key for fact in context.patient_context
-                             if len({f.value for f in context.patient_context if f.key == fact.key}) > 1}
-                if ambiguous:
-                    state.interaction.issues.append("conflicting_patient_context")
-                    context.patient_context = [f for f in context.patient_context if f.key not in ambiguous]
-                context.patient_context = list({fact.key: fact for fact in context.patient_context}.values())
-                if raw_context.get("empathy") is not None:
-                    try:
-                        signal = EmpathySignal.model_validate(raw_context["empathy"])
-                        if signal.quote not in text or question and question.kind == "EXAM":
-                            raise ValueError("ungrounded_empathy")
-                        context.empathy = signal
-                    except (TypeError, ValueError, ValidationError):
-                        state.interaction.issues.append("invalid_empathy_signal")
-                supplied = {item["id"] for item in payload["records"]}
-                known_observations = {item["value"].get("observation_id") for item in payload["records"] if item.get("value")}
-                known_episodes = {item["value"].get("episode_id") for item in payload["records"] if item.get("value")}
-                if question:
-                    known_observations.add(question.observation_id)
-                    known_episodes.add(question.episode_id)
-                for statement in context.statements:
-                    if statement.quote not in text or not statement.quote.strip():
-                        raise ValueError("statement_not_in_current_input")
-                    if statement.correction_id and statement.correction_id not in supplied:
-                        raise ValueError("correction_outside_transmitted_context")
-                    if statement.observation_id and statement.observation_id not in known_observations:
-                        raise ValueError("observation_outside_transmitted_context")
-                    if statement.episode_id and statement.episode_id not in known_episodes:
-                        raise ValueError("episode_outside_transmitted_context")
-                    if statement.anchor is not None:
-                        if statement.anchor >= len(context.statements):
-                            raise ValueError("unknown_statement_anchor")
-                        anchor = context.statements[statement.anchor]
-                        if (anchor.subject, anchor.subject_member, anchor.time_context) != (
-                                statement.subject, statement.subject_member, statement.time_context):
-                            raise ValueError("anchor_changes_subject_or_time")
-                    if statement.measurement and statement.measurement.kind not in {"quantity", "interval"}:
-                        raise ValueError("context_measurement_must_be_numeric")
-                break
+                context, errors = self._read_context(state, strict_json(content), payload, text, question, context, indices)
+                if not errors:
+                    break
+                state.interaction.parse_rejections.extend({"stage": payload["phase"], **error} for error in errors)
+                indices = [error["index"] for error in errors]
+                payload["statement_indices"] = indices
+                payload["repair_statements"] = errors
+                payload["validation_errors"] = [f"{e['index']}: {e['reason']}" for e in errors]
+                payload["frozen_statements"] = [{"index": i, "quote": s.quote, "subject": s.subject,
+                    "subject_member": s.subject_member, "time_context": s.time_context}
+                    for i, s in enumerate(context.statements) if i not in indices]
+                payload["schema"]["properties"]["statements"].update(minItems=len(indices), maxItems=len(indices))
             except (TypeError, ValueError, ValidationError) as error:
-                context = None
-                payload["validation_errors"] = [str(error)[:240]]
-                state.interaction.parse_rejections.append({"stage": payload["phase"], "reason": str(error)[:240]})
+                reason = state.interaction.model_history[-1].get("error", str(error)) if content is None and state.interaction.model_history else str(error)
+                payload["validation_errors"] = [reason[:320]]
+                state.interaction.parse_rejections.append({"stage": payload["phase"], "reason": reason[:320]})
         if context is None:
             context = ContextInput(statements=[ContextStatement(quote=text, role="unknown")] if text.strip() else [])
         # Exact nonanswers are a post-model guard, never a model-call shortcut.
@@ -193,21 +230,53 @@ class InputInterpreter:
             context.statements = [ContextStatement(quote=text, role="unknown")]
         elif reply in set(self.config.texts.education_acknowledgements) - set(self.config.texts.present_replies):
             context.statements = [ContextStatement(quote=text, role="nonclinical")]
+        ambiguous_chief = [i for i, s in enumerate(context.statements) if s.primary_concern
+            and s.subject == "patient" and s.time_context != "past" and s.focus == "target"
+            and statement_outcome(s) == "unknown"]
+        if pending is None and ambiguous_chief:
+            repair = deepcopy(payload)
+            repair.update(phase="initial_chief_repair", statement_indices=ambiguous_chief,
+                repair_statements=[{"index": i, "statement": context.statements[i].model_dump(exclude_defaults=True)}
+                                   for i in ambiguous_chief],
+                validation_errors=["Separate the reported presenting observation from uncertainty about its cause. Preserve genuinely unresolved existence as unknown."])
+            repair["frozen_statements"] = [{"index": i, "quote": s.quote, "subject": s.subject,
+                "subject_member": s.subject_member, "time_context": s.time_context}
+                for i, s in enumerate(context.statements) if i not in ambiguous_chief]
+            repair["schema"]["properties"]["statements"].update(minItems=len(ambiguous_chief), maxItems=len(ambiguous_chief))
+            content = self._call(state, client, repair, self.config.parser_prompt,
+                                 limit=LIMITS.expanded_gateway_request_bytes, max_tokens=LIMITS.gateway_tokens)
+            try:
+                context, errors = self._read_context(state, strict_json(content), repair, text, question, context, ambiguous_chief)
+                state.interaction.parse_rejections.extend({"stage": repair["phase"], **error} for error in errors)
+            except (TypeError, ValueError, ValidationError) as error:
+                state.interaction.parse_rejections.append({"stage": repair["phase"], "reason": str(error)[:320]})
         state.interaction.interpretations.append({"source_ref": pending.request_id if pending else "initial",
-            "context": context.model_dump(), "input": text})
+            "context": context.model_dump(), "input": text,
+            "source_spans": [{"statement_index": i, "positions": [[m.start(), m.end()]
+                for m in re.finditer(re.escape(s.quote), text)]} for i, s in enumerate(context.statements)]})
         return context, payload
 
-    def _mapping_payload(self, context_payload, statements, indices, contracts, phase):
-        return {"task": "input_mapping", "phase": phase, "input": context_payload["input"],
+    def _mapping_payload(self, context_payload, statements, indices, contracts, phase, feedback=None):
+        rows = []
+        for i in indices:
+            row = statements[i].model_dump(exclude_none=True, exclude_defaults=True)
+            row["focus"] = "attribute" if any(c["attributes"] for c in contracts[i]) else statements[i].focus
+            if statements[i].measurement:
+                row["measurement"] = measurement_value(statements[i].measurement)
+            rows.append({**row, "candidates": contracts[i]})
+        payload = {"task": "input_mapping", "phase": phase, "input": context_payload["input"],
             "question": context_payload["question"], "spoken_question": context_payload["spoken_question"],
             "dialogue": deepcopy(context_payload.get("dialogue", [])), "statement_indices": indices,
-            "statements": [{**statements[i].model_dump(exclude_none=True), "candidates": contracts[i]} for i in indices],
+            "statements": rows,
             "schema": {"type": "array", "prefixItems": [mapping_schema(contracts[i]) for i in indices],
                        "minItems": len(indices), "maxItems": len(indices)}}
+        if feedback:
+            payload["validation_errors"] = [{"statement_index": i, **feedback[i]} for i in indices if i in feedback]
+        return payload
 
     def _map_batch(self, state, knowledge, client, context_payload, statements, batch, contracts, mappings, forced, result):
         question = state.interaction.pending.question if state.interaction.pending else None
-        remaining, format_used = list(batch), False
+        remaining, format_used, feedback = list(batch), False, {}
         for phase in ("mapping", "binding_repair", "forced"):
             if not remaining or state.interaction.termination:
                 break
@@ -215,14 +284,14 @@ class InputInterpreter:
                 for i in remaining:
                     contracts[i] = candidate_contracts(knowledge, statements[i], question, expanded=True,
                                                        complete=phase == "forced")[:32]
-            payload = self._mapping_payload(context_payload, statements, remaining, contracts, phase)
+            payload = self._mapping_payload(context_payload, statements, remaining, contracts, phase, feedback)
             limit = LIMITS.gateway_request_bytes if phase == "mapping" else LIMITS.expanded_gateway_request_bytes
             while self._fit_request(self.config.normalization_prompt, payload, limit) is None:
                 largest = max(remaining, key=lambda i: len(contracts[i]))
                 if len(contracts[largest]) <= 1:
                     break
                 contracts[largest].pop()
-                payload = self._mapping_payload(context_payload, statements, remaining, contracts, phase)
+                payload = self._mapping_payload(context_payload, statements, remaining, contracts, phase, feedback)
             content = self._call(state, client, payload, self.config.normalization_prompt, limit=limit,
                 max_tokens=LIMITS.gateway_recovery_tokens if phase == "forced" else LIMITS.gateway_tokens)
             for attempt in range(2 if not format_used else 1):
@@ -253,12 +322,14 @@ class InputInterpreter:
             for i, mapping in zip(remaining, wire):
                 try:
                     if not validate_mapping(mapping, statements[i], contracts[i]):
+                        feedback[i] = {"reason": "unresolved_mapping"}
                         unresolved.append(i)
                         continue
                     mappings[i] = mapping
                     if phase == "forced":
                         forced[i] = "model"
                 except (TypeError, ValueError, ValidationError) as error:
+                    feedback[i] = {"reason": str(error)[:240]}
                     result.rejected_facts.append({"index": i, "stage": phase, "raw": mapping, "reason": str(error)})
                     unresolved.append(i)
             result.recovery_history.append({"pass": phase, "accepted_facts": len(remaining) - len(unresolved),
@@ -314,14 +385,16 @@ class InputInterpreter:
                 kind = "attribute" if attribute else "context" if knowledge.has_type(target, "ContextFactor") else (
                     "finding" if question and question.kind == "EXAM" else "symptom")
                 field = "O.exam" if question and question.kind == "EXAM" else "S.hpi" if attribute else (
-                    "S.cc" if kind == "symptom" and statement.subject == "patient" and statement.time_context != "past"
+                    "S.cc" if kind == "symptom" and status == "present" and statement.subject == "patient" and statement.time_context != "past"
                     and (not state.case.primary_chief or statement.primary_concern or question and question.purpose == "chief") else "S.ros")
                 value = ClinicalValue(kind=kind, text=statement.quote, status=status, concept_ids=[target],
                     attribute_id=attribute, values=values, measurement=measurement,
                     observation_id=observation, episode_id=episode, subject=statement.subject,
                     subject_member=statement.subject_member, reported_by=statement.reported_by,
-                    time_context=statement.time_context, record_category=statement.record_category,
-                    primary_concern=statement.primary_concern, polarity_scope=statement.polarity_scope,
+                    time_context=statement.time_context,
+                    record_category=None if field == "S.cc" else statement.record_category,
+                    primary_concern=statement.primary_concern and kind == "symptom" and statement.time_context != "past",
+                    polarity_scope=statement.polarity_scope,
                     mapping_status="forced" if index in forced else "exact", forced_by=forced.get(index))
                 facts.append(Fact(field=field, quote=statement.quote, value=value, statement_id=statement_id,
                     record_id=statement.correction_id, correction=bool(statement.correction_id), mapping=mappings[index]))
@@ -331,6 +404,14 @@ class InputInterpreter:
                 record_category=statement.record_category or (question.record_category if question else None),
                 target_id=question.target_id if question else None, attribute_id=question.attribute_id if question else None,
                 reason="no_compatible_database_slot" if outcome == "unsupported" else None))
+        bases = {(v.subject, v.subject_member, v.observation_id, v.episode_id, v.time_context, target)
+                 for v in [*(f.value for f in facts), *(item.value for _, item in state.case.current_entries() if item.value)]
+                 if v.kind in {"symptom", "finding"} and v.status == "present" for target in v.concept_ids}
+        for fact in facts:
+            value = fact.value
+            if value.measurement and not all((value.subject, value.subject_member, value.observation_id,
+                    value.episode_id, value.time_context, target) in bases for target in value.concept_ids):
+                value.evidence_use = "record_only"
         validated = self._validate_facts({"facts": [f.model_dump() for f in facts]}, state, knowledge, text)
         if validated:
             result.accepted_facts = validated.accepted_facts

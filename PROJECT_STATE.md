@@ -1,8 +1,10 @@
 /state version=1
 /project id=ontoward
-/status value=active
-/checkpoint revision=aaf041ec81a57a836bf758997c8a7c96bf88b944 dirty=true updated=2026-10-18T06:40:00+00:00
-/goal phase=current id=ROOT.D42 state=complete action="Coordinate the local common complaint rebuild and D41 consumer acceptance under D42"
+/status value=complete
+/checkpoint revision=7ee06ec410f8dbe3a6c1c2e2575e05997e5e440b dirty=true updated=2026-10-18T08:13:55.433157+00:00
+/goal phase=current id=ROOT.FLOW31 state=complete action="Expose turn-by-turn object methods typed data transfers and state changes in the Test frontend"
+/goal phase=history id=ROOT.D43 state=complete action="Repair saved C03 input failures and verify explicit turn-zero interpretation"
+/goal phase=history id=ROOT.D42 state=complete action="Coordinate the local common complaint rebuild and D41 consumer acceptance under D42"
 /goal phase=history id=ROOT.D41 state=complete action="Coordinate D41 DB normalization canonical consumers offline acceptance and isolated packaging"
 /goal phase=history id=ROOT.RUNTIME_REVIEW18 state=complete action="Verify current runtime in project containers and review successful and failed evidence"
 /goal phase=history id=ROOT.D40 state=complete action="Coordinate D40 input SOAP session acceptance and independent packaging"
@@ -22,7 +24,7 @@
 /goal phase=history id=ROOT.GUIDELINES30 state=complete action="Implement reusable disease-to-guideline mapping with exact source evidence and bounded NOVA semantic review"
 /goal phase=history id=ROOT.CHIEF29 state=complete action="Coordinate case-independent chief mapping evaluator correction offline acceptance and the D29 archive handoff"
 /goal phase=history id=ROOT.INTEGRATE36 state=complete action="Verify D36 with concurrent Education changes in the D37 standalone archive"
-/goal phase=next id=ROOT.NOVA27 state=deferred action="Run one separately authorized D42 archive case against real NOVA models within a confirmed shared request and credit ceiling"
+/goal phase=next id=ROOT.NOVA27 state=deferred action="Run one separately authorized D43 archive case against real NOVA models within a confirmed shared request and credit ceiling"
 /goal phase=history id=ROOT.CONTEXT28 state=complete action="Coordinate D28 context failure recovery offline verification and a standalone submission archive handoff"
 /goal phase=history id=ROOT.TEST27 state=complete action="Implement and verify the D27 isolated public-sample evaluator and NOVA development-chat bridge"
 /goal phase=history id=ROOT.READINESS26 state=complete action="Complete D26 submission readiness with Education pass offline verification and an independent runtime ZIP"
@@ -327,4 +329,27 @@
 /evidence id=ROOT.D42.E5 class=external_service result=not_run source=data/provenance/common-complaints-d42-2026-10-18.json observed="Leave new downloads live Luna clinical accuracy official samples scoring upload commits remote writes deployment and atlas rendering unrun"
 /scope id=ROOT.D42.S1 state=in action="Own D42 local integration project Docker packaging source custody coordination current documentation and bounded handoff"
 /scope id=ROOT.D42.S2 state=out action="Exclude corpus downloads paid models official evaluation publication deployment and changes to the frozen D41 artifact"
-/handoff state=complete action="Use the admitted D42 batch and verified independent archive; retain residual data gaps and require separate authorization before live model execution"
+/accept id=ROOT.D43.A1 state=pass action="Complete the C03 failure repair and turn-zero intake slice" evidence=ROOT.D43.E1
+/accept id=ROOT.D43.A2 state=pass action="Verify the independent runtime archive and preserved admission custody" evidence=ROOT.D43.E2
+/accept id=ROOT.D43.A3 state=pass action="Reconcile D43 decisions orientation topology and maintained state scopes" evidence=ROOT.D43.E3
+/evidence id=ROOT.D43.E1 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.D43 saved-response replay 204 maintained tests admitted consultations Korean delivery and original SDK local HTTP completion; preserve actual-model semantic limits"
+/evidence id=ROOT.D43.E2 class=artifact result=pass source=data/provenance/input-recovery-d43-2026-10-18.json observed="Pin the 55-file 1677950-byte ZIP ae7eabeed9b3704082ce0e5f2fbbc977a4226b8113d92da3b2b17fdb3962d55c and unchanged D42 clinical assets d41.1 reasoning policy source weights and SDK"
+/evidence id=ROOT.D43.E3 class=semantic result=pass source=Tmp/d43-input-recovery-2026-10-18/handoff.json observed="Align D43 PRD decisions contracts Korean orientation rule references and compiled topology with 18 nodes and 30 edges; preserve concurrent Test object tracing and viewer work"
+/evidence id=ROOT.D43.E4 class=external_service result=not_run source=data/provenance/input-recovery-d43-2026-10-18.json observed="Leave new Luna and NOVA execution clinical accuracy official validation scoring upload commits remote writes deployment and atlas visual rendering unrun"
+/scope id=ROOT.D43.S1 state=in action="Own saved-run failure analysis offline integration tests isolated packaging documentation and bounded handoff"
+/scope id=ROOT.D43.S2 state=out action="Exclude source expansion concurrent Test UI instrumentation external models paid services publication and deployment"
+/accept id=ROOT.FLOW31.A1 state=pass action="Expose observed component calls typed inputs returns SDK formats and five state owners across turns" evidence=ROOT.FLOW31.E2,ROOT.FLOW31.E3,ROOT.FLOW31.E4
+/accept id=ROOT.FLOW31.A2 state=pass action="Preserve workflow results original delegation error identity historical artifacts and source ownership" evidence=ROOT.FLOW31.E1,ROOT.FLOW31.E2,ROOT.FLOW31.E5
+/accept id=ROOT.FLOW31.A3 state=pass action="Serve refreshed saved reports and reconcile requirements decisions instructions and maintained state scopes" evidence=ROOT.FLOW31.E6,ROOT.FLOW31.E9
+/evidence id=ROOT.FLOW31.E1 class=runtime result=pass source=Tmp/test-evaluator/verify-flow31-bounded-20261018/verification.json observed="Pass 44 offline evaluator web control report and typed credential-boundary checks with zero failures or errors"
+/evidence id=ROOT.FLOW31.E2 class=runtime result=pass source=Tmp/test-flow-2026-10-18/bounded-parity/verification.json observed="Match observed and unobserved results wire calls and delays across 14 fixture scenarios and 1264 graph updates; match 11822 method calls and reconstruct node and object state while preserving logging failure and SDK single delegation error identity"
+/evidence id=ROOT.FLOW31.E3 class=runtime result=pass source=Tmp/test-flow-2026-10-18/viewer.log observed="Execute the real JavaScript with a Node text DOM double for typed IO parent calls SDK bodies state owners field diffs search keyboard Unicode injection text legacy and partial traces plus a 140000-event regression and four saved reports; keep browser rendering separate"
+/evidence id=ROOT.FLOW31.E4 class=runtime result=pass source=Tmp/test-evaluator/flow31-20261018-C10-bounded/result.json observed="Complete unchanged submission entrypoint C10 scripted in 121.682 seconds with 31 turns 30 nonempty Gateway responses 61 fixture model requests confirmed SOAP diagnosis receipt and exit code zero; collect 4179 events and 1802 matched method calls across 16 types without real models or scoring"
+/evidence id=ROOT.FLOW31.E5 class=artifact result=pass source=Tmp/test-flow-2026-10-18/preservation.json observed="Preserve 243 prior saved run artifacts byte for byte outside refreshed derived HTML; retain five concurrent D43 submission changes and record zero submission writes by this Test slice without claiming whole-session source identity"
+/evidence id=ROOT.FLOW31.E6 class=semantic result=pass source=Tmp/test-flow-2026-10-18/handoff.json observed="Review root submission data and decision state ownership; preserve completed D43 child scopes deferred live-model work and independent atlas changes while aligning D31 PRD Test instructions and Korean usage guidance"
+/evidence id=ROOT.FLOW31.E7 class=runtime result=not_run source=Tmp/test-flow-2026-10-18/verification.json observed="Leave desktop and mobile browser rendering screenshots console and physical interaction unrun after the user selects offline checks without browser dependency downloads"
+/evidence id=ROOT.FLOW31.E8 class=external_service result=not_run source=Tmp/test-flow-2026-10-18/verification.json observed="Leave paid models actual NOVA official validation scoring external uploads downloads commits and deployment unrun"
+/evidence id=ROOT.FLOW31.E9 class=runtime result=pass source=Tmp/test-flow-2026-10-18/http.json observed="Serve the loopback entrypoint assets and four refreshed saved reports with HTTP 200 from the project web container; observe an online worker fourteen saved runs and no active test"
+/scope id=ROOT.FLOW31.S1 state=in action="Own Test-only observation the object-flow frontend offline verification local web startup report refresh and root documentation"
+/scope id=ROOT.FLOW31.S2 state=out action="Exclude submission data and original asset edits the Python heap inner hypothetical scoring loops real browser downloads external models commits and deployment"
+/handoff state=ready action="Inspect the completed local object-flow report and retain ROOT.NOVA27 as deferred until exact external execution authorization"

@@ -54,6 +54,16 @@ def concept_rank(knowledge, terms, kinds):
 def candidate_contracts(knowledge, statement, question, *, expanded=False, complete=False):
     if statement.assertion_scope == "domain" or statement.record_category == "patient_context":
         return []
+    if statement.record_category == "previous_care" and not any(
+            knowledge.has_type(target, "ContextFactor") for term in statement.target_terms
+            for target in ([term] if term.startswith(("urn:", "http://", "https://")) else knowledge.resolve_concept(term))):
+        return []
+    exact_attributes = {attribute for term in statement.attribute_terms
+        for attribute in ([term] if term.startswith(("urn:", "http://", "https://")) else knowledge.resolve_concept(term))
+        if knowledge.has_type(attribute, "FindingAttribute")}
+    if (statement.measurement and statement.record_category in {"course", "recurrence", "previous_care"}
+            and not exact_attributes and not (question and question.attribute_id)):
+        return []
     is_exam = bool(question and question.kind == "EXAM")
     history = statement.record_category in {"medical_history", "medication", "allergy", "surgery",
         "family_history", "smoking", "alcohol", "occupation", "social_history", "developmental_history"}
@@ -66,8 +76,11 @@ def candidate_contracts(knowledge, statement, question, *, expanded=False, compl
         ranked = [question.target_id, *ranked]
     if complete:
         ranked.extend(c["id"] for c in knowledge.iter_concepts() if c["kind"] in kinds)
-    feature = bool(statement.attribute_terms or statement.value_terms or statement.measurement
-                   or direct and question.attribute_id)
+    feature = bool(statement.focus == "attribute" or statement.measurement or direct and (
+        question.attribute_id or question.record_category in {"onset", "course", "recurrence", "previous_care"}
+        and statement.record_category == question.record_category))
+    attribute_rank = concept_rank(knowledge, statement.attribute_terms, ("FindingAttribute",)) if feature else []
+    value_rank = concept_rank(knowledge, [*statement.value_terms, statement.quote], ("AttributeValue",)) if feature else []
     result = []
     for target in dict.fromkeys(ranked):
         contract = knowledge.questions.get(target)
@@ -83,17 +96,19 @@ def candidate_contracts(knowledge, statement, question, *, expanded=False, compl
         attrs = []
         if feature:
             allowed = knowledge.get_symptom_attributes(target)
-            matched = concept_rank(knowledge, statement.attribute_terms, ("FindingAttribute",))
+            matched = [a for a in attribute_rank if a in allowed]
             if direct and question.attribute_id:
                 matched.insert(0, question.attribute_id)
-            if not matched and statement.measurement:
-                matched = [a for a in allowed if knowledge.numeric_units(target, a)]
+            if statement.measurement:
+                matched = [a for a in matched if statement.measurement.unit in knowledge.numeric_units(target, a)]
+                if not matched:
+                    matched = [a for a in allowed if statement.measurement.unit in knowledge.numeric_units(target, a)]
             if not matched and statement.value_terms:
-                values = set(concept_rank(knowledge, statement.value_terms, ("AttributeValue",)))
+                values = set(value_rank)
                 matched = [a for a in allowed if values & set(knowledge.get_attribute_values(a))]
             for attribute in dict.fromkeys(a for a in matched if a in allowed):
                 values = knowledge.get_attribute_values(attribute)
-                ordered = [v for v in concept_rank(knowledge, [*statement.value_terms, statement.quote], ("AttributeValue",)) if v in values]
+                ordered = [v for v in value_rank if v in values]
                 ordered = list(dict.fromkeys([*ordered, *values]))
                 attrs.append({"id": attribute, "label": knowledge.label(attribute, language="en"),
                     "values": [{"id": v, "label": knowledge.label(v, language="en")} for v in ordered[:32 if expanded else 8]],
@@ -104,23 +119,30 @@ def candidate_contracts(knowledge, statement, question, *, expanded=False, compl
                 continue
         result.append({"id": target, "label": knowledge.label(target, language="en"),
                        "kind": next(k for k in kinds if knowledge.has_type(target, k)), "attributes": attrs})
-        if not complete and len(result) >= (32 if expanded else 8):
+        if len(result) >= (32 if expanded else 8):
             break
     return result
 
 
-def numeric_schema(units):
+def numeric_schema(units=None):
     number = {"type": "number"}
+    unit = {"enum": units} if units is not None else {"type": "string", "minLength": 1}
     quantity = {"type": "object", "properties": {"kind": {"const": "quantity"}, "value": number,
-        "unit": {"enum": units}, "operator": {"const": "eq"}, "approximate": {"type": "boolean"}},
+        "unit": unit, "operator": {"const": "eq"}, "approximate": {"type": "boolean"}},
         "required": ["kind", "value", "unit", "operator"], "additionalProperties": False}
     interval = {"type": "object", "properties": {"kind": {"const": "interval"},
         "lower": {"anyOf": [number, {"type": "null"}]}, "upper": {"anyOf": [number, {"type": "null"}]},
-        "unit": {"enum": units}, "upper_unit": {"enum": [*units, None]},
+        "unit": unit, "upper_unit": {"enum": [*units, None]} if units is not None else {"anyOf": [unit, {"type": "null"}]},
         "lower_inclusive": {"type": "boolean"}, "upper_inclusive": {"type": "boolean"},
         "approximate": {"type": "boolean"}},
         "required": ["kind", "unit"], "additionalProperties": False}
     return {"anyOf": [quantity, interval]}
+
+
+def measurement_value(measured):
+    keys = {"kind", "value", "unit", "operator", "approximate"} if measured.kind == "quantity" else {
+        "kind", "lower", "upper", "unit", "upper_unit", "lower_inclusive", "upper_inclusive", "approximate"}
+    return {key: value for key, value in measured.model_dump(exclude_none=True).items() if key in keys}
 
 
 def mapping_schema(contracts):
@@ -186,7 +208,7 @@ def validate_mapping(mapping, statement, contracts):
             measurement = ExpectedValue.model_validate(selected)
             if (measurement.unit not in spec["units"] or measurement.upper_unit not in {None, *spec["units"]}
                     or measurement.kind == "quantity" and measurement.operator != "eq"
-                    or statement.measurement is None or measurement.signature() != statement.measurement.signature()
+                    or statement.measurement is None or measurement_value(measurement) != measurement_value(statement.measurement)
                     or statement.assertion != "present"):
                 raise ValueError("unreported_or_unregistered_numeric_value")
             decoded.append((target, attribute, [], measurement, "present"))
@@ -208,10 +230,7 @@ def force_mapping(statement, contracts):
             return {target["id"]: sign}
         for attribute in target["attributes"]:
             if statement.measurement:
-                measured = statement.measurement.model_dump(exclude_none=True)
-                measured = {k: v for k, v in measured.items() if k in (
-                    {"kind", "value", "unit", "operator", "approximate"} if statement.measurement.kind == "quantity" else
-                    {"kind", "lower", "upper", "unit", "upper_unit", "lower_inclusive", "upper_inclusive", "approximate"})}
+                measured = measurement_value(statement.measurement)
                 result = {target["id"]: {attribute["id"]: measured}}
                 try:
                     validate_mapping(result, statement, [target])

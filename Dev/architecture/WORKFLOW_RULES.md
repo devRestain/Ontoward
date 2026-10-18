@@ -1,6 +1,6 @@
 # Workflow Rule Index
 
-Apply D38 single-chief collection shared pure inference and graph residual question selection followed by D37 fixed-diagnosis Education with complete guideline text, D41 canonical patient data, English P and separate Korean delivery. Preserve D35 interview budgets, D34 interpretation/empathy, D36 acquisition and patient reports, and D08/D12/D13/D14 boundaries. Maintain behavioral verification in tests/workflow including test_education.py and test_evidence_consistency.py; validate the admitted graph and extracted archive through test_admitted.py and test_korean_admitted.py.
+Apply D43 explicit turn-zero interpretation, independent context-row repair and target-versus-attribute normalization. Apply D38 single-chief collection shared pure inference and graph residual question selection followed by D37 fixed-diagnosis Education with complete guideline text, D41 canonical patient data, English P and separate Korean delivery. Preserve D35 interview budgets, D34 interpretation/empathy, D36 acquisition and patient reports, and D08/D12/D13/D14 boundaries. Maintain behavioral verification in tests/workflow including test_education.py and test_evidence_consistency.py; validate the admitted graph and extracted archive through test_admitted.py and test_korean_admitted.py.
 
 | ID | Rule and owner | Behavioral acceptance |
 |---|---|---|
@@ -12,6 +12,8 @@ Apply D38 single-chief collection shared pure inference and graph residual quest
 | QP-04 | Replan by evidence revision, block absent attributes, and reconsider undelivered questions | test_d17_absent_target_attributes_and_reconsideration; test_context_cannot_starve_more_valuable_diagnostic_acquisition; test_saturated_supporting_context_has_no_remaining_bonus_utility |
 | BD-01 | BudgetPolicy applies conditional targets and non-borrowing session caps inside shared resources | test_session_hard_caps_stop_actions_without_borrowing; test_session_cap_and_shared_response_window |
 | BD-02 | Apply a lightweight transmission gate and preserve last-turn submission | test_injected_clock_expires_collection_between_framing_and_execution; test_closed_expired_reserve_and_fiftieth_turn |
+| IN-11 | D43 processes the initial chief and incidental facts before the first SAY and preserves valid context rows | test_turn_zero_records_chief_and_incidental_negative_before_first_say; test_invalid_context_sibling_does_not_erase_valid_clinical_statements; test_context_repair_replaces_only_the_invalid_original_index |
+| IN-12 | Retrieval hints do not require attributes; unsupported numeric course and care denial cannot fabricate facts | test_target_hints_do_not_turn_the_chief_into_a_required_attribute; test_unregistered_numeric_course_cannot_become_an_absolute_measurement; test_prior_care_denial_never_negates_the_bound_chief |
 | IN-01 | InputInterpreter validates current quotes, type, references, and corrections | test_fact_grounding_and_correction_boundary; test_contextual_correction_preserves_episode_and_quote |
 | IN-02 | Validate independent facts and quarantine invalid dependencies atomically | test_d17_partial_facts_and_atomic_correction_dependencies |
 | IN-03 | InteractionLifecycle projects bounded original episode/source context | test_d17_context_is_bounded_and_retains_old_episode_source; test_actual_korean_context_short_answer_and_case_isolation |

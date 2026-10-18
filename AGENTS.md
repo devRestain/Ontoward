@@ -43,6 +43,7 @@
 - Apply D38 to one primary chief full attribute collection shared pure reasoning residual graph questions and versioned policy with D40 budgets and Education response boundaries.
 - Apply D41 always-called context analysis DB-only normalization forced completion and canonical consumers with D40 protected collection budgets and transcript-only Education replies.
 - Apply D42 to source-bound common complaints local DDXPlus metadata and explicit authored JSONL through a new v5.0 admission while preserving D41 canonical consumers and frozen acceptance.
+- Apply D43 explicit turn-zero interpretation compact target-versus-attribute context independent row recovery and chief-bound intake while preserving D42 clinical pins and raw-free consumers.
 - Apply D17 prepared Doctor delivery and designated-model Gateway interpretation; keep selection in InterviewPlanner and submission in SubmissionWriter.
 - Maintain the implemented Korean workflow white paper in submission/README.md and keep root README as project orientation.
 - Do not resume cancelled model jobs or expand the corpus without a new user request.

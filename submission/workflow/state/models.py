@@ -60,6 +60,7 @@ class SpeechSpan(Model):
 class ContextStatement(Model):
     quote: str = Field(min_length=1)
     role: Literal["clinical", "nonclinical", "question", "emotion", "conditional", "uncertain", "unknown", "not_applicable"]
+    focus: Literal["target", "attribute"] = "target"
     assertion: Literal["present", "absent", "uncertain", "unknown"] = "unknown"
     target_terms: list[Annotated[str, Field(min_length=1, max_length=80)]] = Field(default_factory=list, max_length=8)
     attribute_terms: list[Annotated[str, Field(min_length=1, max_length=80)]] = Field(default_factory=list, max_length=4)
@@ -83,9 +84,15 @@ class ContextStatement(Model):
     @classmethod
     def numeric_literals(cls, value):
         measured = value.get("measurement") if isinstance(value, dict) else None
-        if isinstance(measured, dict) and any(type(measured[k]) not in {int, float}
-                for k in ("value", "lower", "upper") if k in measured and measured[k] is not None):
-            raise ValueError("Measurement literals must be JSON numbers")
+        if isinstance(measured, dict):
+            if any(type(measured[k]) not in {int, float}
+                    for k in ("value", "lower", "upper") if k in measured and measured[k] is not None):
+                raise ValueError("Measurement literals must be JSON numbers")
+            if measured.get("kind") in {"quantity", "interval"} and not measured.get("concept") and not measured.get("concepts"):
+                measured = {k: v for k, v in measured.items() if k not in {"concept", "concepts", "selection", "match"}}
+                if measured["kind"] == "quantity" and measured.get("lower") is None and measured.get("upper") is None:
+                    measured = {k: v for k, v in measured.items() if k not in {"lower", "upper", "lower_inclusive", "upper_inclusive", "upper_unit"}}
+                value = {**value, "measurement": measured}
         return value
 
 

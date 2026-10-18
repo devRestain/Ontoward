@@ -23,6 +23,10 @@ def resolve_destination(fact, state, knowledge):
     existing = state.case.get(fact.record_id) if fact.record_id else None
     if existing:
         fact.field = next(field for field, item in state.case.entries() if item.id == existing.id)
+    elif (fact.field == "S.cc" and value.kind == "symptom" and value.subject == "patient" and value.time_context != "past"
+            and (not state.case.chief_complaints() or value.primary_concern
+                 or pending and pending.question.purpose in {"chief", "clarification"})):
+        pass
     elif value.record_category in CATEGORY_FIELDS:
         fact.field = CATEGORY_FIELDS[value.record_category]
     elif value.kind == "context" and value.concept_ids:
@@ -280,7 +284,9 @@ def validate_facts(raw, state, knowledge, text, *, dialogue_ids=None, supplied_r
         question = state.interaction.pending.question if state.interaction.pending else None
         key = (value.subject, value.observation_id or (question.observation_id if question else None),
                value.episode_id or (question.episode_id if question else None), value.time_context)
-        if key in blocked or (value.kind == "attribute" and not all((*key, concept) in anchors for concept in value.concept_ids)):
+        standalone_measurement = value.measurement is not None and value.evidence_use == "record_only"
+        if key in blocked or (value.kind == "attribute" and not standalone_measurement
+                and not all((*key, concept) in anchors for concept in value.concept_ids)):
             rejected.append({"index": index, "raw": raw["facts"][index], "reason": "dependent_observation_or_correction"})
         else:
             facts.append(fact)

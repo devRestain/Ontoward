@@ -41,6 +41,11 @@
 ## Gateway and Evidence
 
 - Apply D41 context analysis followed by database-only normalization for every initial input and collection SAY or EXAM reply.
+- Execute D43 process_initial_input before the first SAY and preserve the opening chief and independent clinical details at turn zero.
+- Keep compact observed-number schemas separate from graph-condition schemas and preserve valid context rows while repairing only invalid indices once.
+- Allow one additional focused review of an explicitly prioritized unresolved initial observation without promoting genuine unknown existence to positive.
+- Distinguish target assertions from attribute assertions; use feature hints for retrieval without turning them into mandatory target attributes.
+- Bind common intake to the known chief and retain standalone registered numeric reports as record-only without inventing symptom presence or converting changes to absolute measurements.
 - Keep Education replies transcript-only without interpretation, empathy, clinical updates, or replanning.
 - Use openai/gpt-6-luna through the pinned SDK and keep routing, diagnosis scores, question selection, and SOAP serialization in Python.
 - Preserve the complete actual transcript and raw model exchanges in case-local audit storage only.

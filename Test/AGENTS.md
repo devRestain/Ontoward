@@ -34,6 +34,9 @@
 - Default the website to C10 NOVA and 200 total role requests; require an explicit start action and retain one active run without queuing or automatic resumption.
 - Observe the original run.py through Test-only in-memory graph and SDK wrappers; delegate once and preserve errors retries routing and all clinical decisions.
 - Store the initial state and reversible node changes with actual node names session turn request IDs and source labels; mark missing or partial traces explicitly.
+- Observe case collaborator methods parser stages canonical snapshots evidence indexes dictionary lookups and SDK payloads with matched parent calls typed arguments returns and state deltas; preserve each original call exception and method binding once.
+- Lead reports with selectable execution flow and a five-owner WorkflowState explorer; expose exact paths before and after values returned temporary objects and JSON string formatting without inferring field reads or unrecorded historical calls.
+- Keep inner hypothetical scoring loops and the Python heap outside observation and declare collector coverage; preserve service references without serializing credentials or arbitrary service dictionaries.
 - Serve completed and failed runs through the same viewer and preserve a self-contained report.html for offline review.
 - Show each observed Note snapshot with all fifteen case fields separate diagnosis completion and value statuses source links and the actual generated SOAP payload; never infer missing state or rerun clinical logic for display.
 - Refresh saved report HTML from preserved logs when opened; keep LangSmith setup guidance distinct from an implemented exporter or authorized external upload.

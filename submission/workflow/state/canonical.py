@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from ..rules.normalization import measurement_value
+
 
 def value_mapping(value):
     if len(value.concept_ids) != 1 or value.status not in {"present", "absent"}:
@@ -9,10 +11,7 @@ def value_mapping(value):
     if not value.attribute_id:
         return {target: sign}
     if value.measurement:
-        measured = value.measurement.model_dump(exclude_none=True)
-        keys = {"kind", "value", "unit", "operator", "approximate"} if value.measurement.kind == "quantity" else {
-            "kind", "lower", "upper", "unit", "upper_unit", "lower_inclusive", "upper_inclusive", "approximate"}
-        return {target: {value.attribute_id: {k: v for k, v in measured.items() if k in keys}}}
+        return {target: {value.attribute_id: measurement_value(value.measurement)}}
     if not value.values:
         return {}
     selected = value.values[0] if len(value.values) == 1 and value.status == "present" else {
@@ -43,6 +42,7 @@ class CanonicalSnapshot:
 
     def payload(self):
         return {"facts": [{"fact_id": item.id, "field": field, "mapping": item.mapping,
+            "kind": item.value.kind, "evidence_use": item.value.evidence_use,
             "subject": item.value.subject, "subject_member": item.value.subject_member,
             "reported_by": item.value.reported_by, "time_context": item.value.time_context,
             "observation_id": item.value.observation_id, "episode_id": item.value.episode_id,
