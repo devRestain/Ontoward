@@ -164,7 +164,8 @@ class ClinicalReasoner:
                 features = self.knowledge.get_pattern_features(profile.id)
                 if (applies != "matched" or result.status != "contradicted" or profile.target in present_targets
                         or result.episode_id not in chief_episodes or not all(f.status == "present" and not f.expected for f in features)
-                        or not bases or not all(i.value.status == "absent" and i.value.time_context == "current" for i in bases)):
+                        or not bases or not all(i.value.status == "absent" and i.value.time_context == "current"
+                                               and i.value.polarity_scope == "general" for i in bases)):
                     continue
                 penalty = policy.absence_penalties.get(profile.typicality, 0)
                 if penalty:
@@ -275,7 +276,7 @@ class ClinicalReasoner:
                 state.stop("failed", "no_supported_diagnosis")
                 return
             concepts = chief.value.concept_ids
-            state.case.diagnosis = self.knowledge.label(concepts[0], language="en") if len(concepts) == 1 else chief.value.text
+            state.case.diagnosis = self.knowledge.label(concepts[0], language="en")
             state.case.diagnosis_kind = "symptom"
             state.case.diagnosis_evidence = [chief.id]
             return

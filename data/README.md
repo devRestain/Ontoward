@@ -2,6 +2,8 @@
 
 data/는 공급된 원천의 식별·판본·파일 해시·매핑·지속 준비 결과를 소유한다. RF2·BODHI-S 원본과 주최자 패키지는 assets/에 그대로 보존하며 실제 상담과 환자 상태는 submission/이 소유한다.
 
+현재 실행 데이터는 [D42 일반 호소 배치](preparation/v5/common-complaints-2026-10-18-r2/README.md)다. D41의 canonical 입력과 v5.0 구조를 유지하고, 기존 원천 복원·한국어 표현·로컬 DDXPlus metadata와 출처가 있는 작성 JSONL을 같은 준비·검증·수용 경로로 처리한다. [D42 영수증](provenance/common-complaints-d42-2026-10-18.json)이 현재 manifest·독립 ZIP·오프라인 검증을 고정하며 과거 D20–D41 증빙은 보존한다.
+
 | 경로 | 역할 |
 |---|---|
 | [ontology/](ontology/README.md) | v5.0 구조 계약과 원천 투영 의미 |

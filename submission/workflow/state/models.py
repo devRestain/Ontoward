@@ -57,11 +57,63 @@ class SpeechSpan(Model):
     field: SOAPField = "S.hpi"
 
 
+class ContextStatement(Model):
+    quote: str = Field(min_length=1)
+    role: Literal["clinical", "nonclinical", "question", "emotion", "conditional", "uncertain", "unknown", "not_applicable"]
+    assertion: Literal["present", "absent", "uncertain", "unknown"] = "unknown"
+    target_terms: list[Annotated[str, Field(min_length=1, max_length=80)]] = Field(default_factory=list, max_length=8)
+    attribute_terms: list[Annotated[str, Field(min_length=1, max_length=80)]] = Field(default_factory=list, max_length=4)
+    value_terms: list[Annotated[str, Field(min_length=1, max_length=80)]] = Field(default_factory=list, max_length=4)
+    subject: Literal["patient", "family"] = "patient"
+    subject_member: str | None = Field(default=None,
+        pattern=r"^(mother|father|brother|sister|son|daughter|grandmother|grandfather|spouse|sibling|relative|other)(_[0-9]+)?$")
+    reported_by: Literal["patient", "mother", "father", "family", "caregiver", "unknown"] = "patient"
+    time_context: Literal["current", "past", "unspecified"] = "unspecified"
+    observation_id: str | None = None
+    episode_id: str | None = None
+    anchor: int | None = Field(default=None, ge=0)
+    record_category: RecordCategory | None = None
+    primary_concern: bool = False
+    correction_id: str | None = None
+    polarity_scope: Literal["general", "qualified"] = "general"
+    assertion_scope: Literal["specific", "domain"] = "specific"
+    measurement: ExpectedValue | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def numeric_literals(cls, value):
+        measured = value.get("measurement") if isinstance(value, dict) else None
+        if isinstance(measured, dict) and any(type(measured[k]) not in {int, float}
+                for k in ("value", "lower", "upper") if k in measured and measured[k] is not None):
+            raise ValueError("Measurement literals must be JSON numbers")
+        return value
+
+
+class ContextInput(Model):
+    statements: list[ContextStatement] = Field(default_factory=list)
+    patient_context: list[PatientContextFact] = Field(default_factory=list, max_length=3)
+    empathy: EmpathySignal | None = None
+
+
+class InputOutcome(Model):
+    source_ref: str
+    statement_id: str
+    state: Literal["mapped", "forced", "unknown", "nonclinical", "not_applicable", "unsupported", "conflict"]
+    question_id: str | None = None
+    record_category: RecordCategory | None = None
+    target_id: str | None = None
+    attribute_id: str | None = None
+    fact_ids: list[str] = Field(default_factory=list)
+    reason: str | None = None
+
+
 class ClinicalValue(Model):
     kind: Literal["symptom", "finding", "context", "attribute", "text", "plan", "education"]
-    text: str
+    text: str = ""
     status: Literal["present", "absent", "uncertain", "unknown"] = "unknown"
-    mapping_status: Literal["exact", "broader", "ambiguous", "unmapped"] = "exact"
+    mapping_status: Literal["exact", "broader", "forced", "ambiguous", "unmapped"] = "exact"
+    forced_by: Literal["model", "deterministic"] | None = None
+    polarity_scope: Literal["general", "qualified"] = "general"
     primary_concern: bool = False
     not_applicable: bool = False
     concept_ids: list[str] = Field(default_factory=list)
@@ -97,6 +149,7 @@ class RecordItem(Model):
     context_refs: list[str] = Field(default_factory=list)
     acquisition: Literal["initial", "SAY", "EXAM"] | None = None
     resolves: list[str] = Field(default_factory=list)
+    mapping: dict[str, object] = Field(default_factory=dict)
 
 
 class FixedDiagnosis(Model):
@@ -127,6 +180,7 @@ class CaseState(Model):
     fixed_diagnosis: FixedDiagnosis | None = None
     primary_chief: ChiefAnchor | None = None
     patient_context: dict[str, PatientContextEntry] = Field(default_factory=dict)
+    outcomes: list[InputOutcome] = Field(default_factory=list)
     _locations: dict[str, tuple[str, str]] = PrivateAttr(default_factory=dict)
 
     @model_validator(mode="after")
@@ -174,7 +228,7 @@ class CaseState(Model):
     def evidence_key(value, target=None):
         return (value.subject, value.subject_member, value.observation_id, value.episode_id,
                 target if target is not None else tuple(sorted(value.concept_ids)),
-                value.attribute_id, value.time_context)
+                value.attribute_id, value.time_context, value.polarity_scope)
 
     def current_entries(self):
         entries = list(self.entries())
@@ -197,7 +251,7 @@ class CaseState(Model):
             superseded.update(i.id for i in items if i.id in resolved_ids and i.value.status in {"unknown", "uncertain"})
             items = [i for i in items if i.id not in superseded]
             definite = [i for i in items if i.value.status in {"present", "absent"} and len(i.value.concept_ids) == 1
-                        and i.value.mapping_status in {"exact", "broader"}]
+                        and i.value.mapping_status in {"exact", "broader", "forced"}]
             statuses = {i.value.status for i in definite}
             numeric = {i.value.measurement.signature() for i in definite if i.value.measurement
                        and i.value.status == "present"}
@@ -414,6 +468,8 @@ class QuestionPlan(Model):
     context_coverage: list[str] = Field(default_factory=list)
     context_exclusions: dict[str, str] = Field(default_factory=dict)
     session_endings: dict[str, str] = Field(default_factory=dict)
+    answered_fact_ids: dict[str, list[str]] = Field(default_factory=dict)
+    answer_outcomes: dict[str, str] = Field(default_factory=dict)
 
 
 class ActionSpec(Model):
@@ -439,6 +495,7 @@ class InteractionEntry(Model):
 class EmpathySignal(Model):
     quote: str = Field(min_length=1)
     intent: Literal["new_distress", "renewed_request", "repeat", "acknowledgement"]
+    emotion: Literal["fear", "anxiety", "pain", "frustration", "sadness", "other"] = "other"
 
 
 class EmpathyEvent(EmpathySignal):
@@ -485,6 +542,7 @@ class EducationProgress(Model):
 
 
 class InteractionState(Model):
+    interpretations: list[dict[str, object]] = Field(default_factory=list)
     model_history: list[dict[str, object]] = Field(default_factory=list)
     history: list[InteractionEntry] = Field(default_factory=list)
     incoming: dict[str, object] | None = None
@@ -542,6 +600,7 @@ class WorkflowState(Model):
 
 
 class Fact(Model):
+    statement_id: str | None = None
     field: SOAPField
     value: ClinicalValue
     quote: str = Field(min_length=1)
@@ -549,6 +608,7 @@ class Fact(Model):
     context_refs: list[str] = Field(default_factory=list)
     repair_of: int | None = Field(default=None, ge=0)
     correction: bool = False
+    mapping: dict[str, object] = Field(default_factory=dict)
 
 
 LookupTerm = Annotated[str, Field(min_length=1, max_length=80)]
@@ -565,6 +625,10 @@ class ParsedInput(Model):
 
 
 class ParseResult(Model):
+    mappings: list[dict[str, object]] = Field(default_factory=list)
+    fact_metadata: list[dict[str, object]] = Field(default_factory=list)
+    outcomes: list[InputOutcome] = Field(default_factory=list)
+    audit_refs: list[str] = Field(default_factory=list)
     accepted_facts: list[Fact] = Field(default_factory=list)
     rejected_facts: list[dict[str, object]] = Field(default_factory=list)
     unresolved_links: list[int] = Field(default_factory=list)
@@ -579,3 +643,6 @@ class ParseResult(Model):
     spans: list[SpeechSpan] = Field(default_factory=list)
     truncated: bool = False
     valid_output: bool = False
+
+
+ContextInput.model_rebuild()

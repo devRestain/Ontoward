@@ -1,0 +1,91 @@
+{
+  "all_current_goals": "complete",
+  "artifact_sha256": "0bf3e40a39eaa5bf4cc10638ea50994b2e8337288494612aaf6bb1e86670aaec",
+  "decision": "D42",
+  "documents": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "afc8ef249d8c748275aba2b73f6d4fed51451d5f3c9d78471aca6db4f9193c18"
+    },
+    {
+      "path": "Dev/AGENTS.md",
+      "sha256": "cd6631abcfbc392352dbdeee2ab597d1b8b927160c2ec21863a894a9b4379bfc"
+    },
+    {
+      "path": "submission/AGENTS.md",
+      "sha256": "38cfb6edd02bb70a5a333db209030a64cac2206c10b906f09d0cc1adbe8a126b"
+    },
+    {
+      "path": "data/AGENTS.md",
+      "sha256": "bfb30afb8594f4c40acf76c89669998316f6a902e0e763a7b6bbc7619a851f77"
+    },
+    {
+      "path": "data/ontology/AGENTS.md",
+      "sha256": "b8284c2a084eb8cafffb1152c516913338045c78a1f34e8b937c96ce891d12da"
+    },
+    {
+      "path": "PRD.md",
+      "sha256": "12c186066a5d7cecb0a646bae17402c2ef1c9b698b46f57e52096215ed23510e"
+    },
+    {
+      "path": "DECISION_STATE.md",
+      "sha256": "8c5d8a8f6c0c3fcf6ef5697869f8c41781d26301cf86b46425dd071242c1f07d"
+    },
+    {
+      "path": "README.md",
+      "sha256": "fef357d74e869f3ff4b4693d38e59c8b5b1228ce1de9ef476fd5808ad3c8bbb2"
+    },
+    {
+      "path": "data/README.md",
+      "sha256": "c9eed7e52e8583b125b432d5b543b9ec29b07ca1d0360df5a5f37fda95d0084b"
+    },
+    {
+      "path": "submission/README.md",
+      "sha256": "82422c90efaec10ae07ef9ea188282aaedb6094f4a9035f45eddabcfa6b99e08"
+    },
+    {
+      "path": "submission/knowledge/README.md",
+      "sha256": "cd297cd34738351809590dbe031538df32c9cefba693825060edcd32a243cfe7"
+    },
+    {
+      "path": "Dev/ontology/README.md",
+      "sha256": "c0645a68d5eec2951ade3b586757bd674ef7be238adc26fd8909a7dbd6afaf86"
+    },
+    {
+      "path": "data/ontology/README.md",
+      "sha256": "a21a590be06123dbea62da7702717015b13ee2fe291604f6ffac72a424d4c4a9"
+    },
+    {
+      "path": "Test/atlas.html",
+      "sha256": "66f9145c3d68a22715e81b293378048be7f553c8e59190c1ed50b69443c9a278"
+    },
+    {
+      "path": "PROJECT_STATE.md",
+      "sha256": "1d9227d5bbacb39e6ab861a082c6735d79ad532e6bae9dd82d34ffe34662b4fc"
+    },
+    {
+      "path": "submission/PROJECT_STATE.md",
+      "sha256": "8a68ed61a66e439afe39eceebf5a65808dc776045bda0f0b9f6226c6b506dcef"
+    },
+    {
+      "path": "data/PROJECT_STATE.md",
+      "sha256": "0682b6c555088bdcba20bb1abc011e9442773b0a41714c724142941eea9e6d01"
+    },
+    {
+      "path": "data/preparation/v5/common-complaints-2026-10-18-r2/README.md",
+      "sha256": "3de4e0d870ef3fd8cc51a092c04957779ed344220bd50caa1de7641603b762ff"
+    }
+  ],
+  "local_links": 145,
+  "missing_links": [],
+  "observed_at": "2026-10-18T06:40:40.522672+00:00",
+  "runtime_files_match_verified_archive": true,
+  "source_and_clinical_validation_boundaries": "separate",
+  "state_scopes": [
+    "PROJECT_STATE.md",
+    "submission/PROJECT_STATE.md",
+    "data/PROJECT_STATE.md"
+  ],
+  "status": "pass",
+  "visual_rendering": "not_run"
+}

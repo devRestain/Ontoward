@@ -298,7 +298,7 @@ class Evaluation:
         role = 'gateway'
         try:
             task = json.loads(messages[-1]['content'])
-            if isinstance(task, dict) and task.get('task') in {'gateway', 'terminology', 'empathy', 'education', 'education_doctor'}:
+            if isinstance(task, dict) and task.get('task') in {'gateway', 'input_context', 'input_mapping', 'terminology', 'empathy', 'education', 'education_doctor'}:
                 role = task['task']
         except (ValueError, TypeError):
             pass

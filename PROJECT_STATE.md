@@ -1,8 +1,11 @@
 /state version=1
 /project id=ontoward
-/status value=complete
-/checkpoint revision=88af4e5b739c823f49c64bfe117108a359985639 dirty=true updated=2026-10-17T16:33:15.325078+00:00
-/goal phase=current id=ROOT.D40 state=complete action="Coordinate D40 input SOAP session acceptance and independent packaging"
+/status value=active
+/checkpoint revision=aaf041ec81a57a836bf758997c8a7c96bf88b944 dirty=true updated=2026-10-18T06:40:00+00:00
+/goal phase=current id=ROOT.D42 state=complete action="Coordinate the local common complaint rebuild and D41 consumer acceptance under D42"
+/goal phase=history id=ROOT.D41 state=complete action="Coordinate D41 DB normalization canonical consumers offline acceptance and isolated packaging"
+/goal phase=history id=ROOT.RUNTIME_REVIEW18 state=complete action="Verify current runtime in project containers and review successful and failed evidence"
+/goal phase=history id=ROOT.D40 state=complete action="Coordinate D40 input SOAP session acceptance and independent packaging"
 /goal phase=history id=ROOT.DOCS17 state=complete action="Refresh current project orientation workflow whitepaper and static ontology workflow and extraction diagrams"
 /goal phase=history id=ROOT.VIEWER39 state=complete action="Provide a personal offline read-only browser for admitted ontology relationships and preparation SQLite records"
 /goal phase=history id=ROOT.CLEANUP17 state=complete action="Remove completed Dev and Tmp legacy outputs while preserving active runtime custody and acceptance receipts"
@@ -19,7 +22,7 @@
 /goal phase=history id=ROOT.GUIDELINES30 state=complete action="Implement reusable disease-to-guideline mapping with exact source evidence and bounded NOVA semantic review"
 /goal phase=history id=ROOT.CHIEF29 state=complete action="Coordinate case-independent chief mapping evaluator correction offline acceptance and the D29 archive handoff"
 /goal phase=history id=ROOT.INTEGRATE36 state=complete action="Verify D36 with concurrent Education changes in the D37 standalone archive"
-/goal phase=next id=ROOT.NOVA27 state=deferred action="Confirm one case the shared request ceiling and credit use before running the D40 archive against real NOVA development models"
+/goal phase=next id=ROOT.NOVA27 state=deferred action="Run one separately authorized D42 archive case against real NOVA models within a confirmed shared request and credit ceiling"
 /goal phase=history id=ROOT.CONTEXT28 state=complete action="Coordinate D28 context failure recovery offline verification and a standalone submission archive handoff"
 /goal phase=history id=ROOT.TEST27 state=complete action="Implement and verify the D27 isolated public-sample evaluator and NOVA development-chat bridge"
 /goal phase=history id=ROOT.READINESS26 state=complete action="Complete D26 submission readiness with Education pass offline verification and an independent runtime ZIP"
@@ -293,4 +296,35 @@
 /evidence id=ROOT.D40.E5 class=external_service result=not_run source=data/provenance/algorithm-d40-2026-10-18.json observed="Leave actual Luna quality new NOVA requests and credits independent clinical validation official evaluation upload commits remote writes deployment and visual rendering unrun"
 /scope id=ROOT.D40.S1 state=in action="Own D40 cross-directory integration local Test harness offline verification independent packaging documentation and maintained state handoff"
 /scope id=ROOT.D40.S2 state=out action="Exclude new clinical graph admission source downloads live models official services commits remote writes and deployment"
-/handoff state=blocked action="Require separate user authorization before live Luna or NOVA execution and retain the completed D40 offline slice"
+/accept id=ROOT.RUNTIME_REVIEW18.A1 state=pass action="Execute local evaluator and read-only knowledge browser checks" evidence=ROOT.RUNTIME_REVIEW18.E1,ROOT.RUNTIME_REVIEW18.E2
+/accept id=ROOT.RUNTIME_REVIEW18.A2 state=pass action="Classify public-case completion failures and preserve their complete traces" evidence=ROOT.RUNTIME_REVIEW18.E3,ROOT.RUNTIME_REVIEW18.E4
+/accept id=ROOT.RUNTIME_REVIEW18.A3 state=pass action="Reconcile application acceptance data custody and review boundaries" evidence=ROOT.RUNTIME_REVIEW18.E5,ROOT.RUNTIME_REVIEW18.E6
+/evidence id=ROOT.RUNTIME_REVIEW18.E1 class=runtime result=pass source=Tmp/test-evaluator/runtime-review-20261018-verify/verification.json observed="Pass forty-three offline evaluator and web checks including the SDK loopback handshake"
+/evidence id=ROOT.RUNTIME_REVIEW18.E2 class=runtime result=pass source=Tmp/knowledge-viewer/verification.json observed="Pass thirty-four actual graph source-row lookup query-only SQLite and preservation checks without browser rendering"
+/evidence id=ROOT.RUNTIME_REVIEW18.E3 class=runtime result=fail source=Tmp/runtime-review-2026-10-18/public/review-index.json observed="Observe newly executed C01 C03 and C10 scripted processes and a separately started C01 NOVA run fail primary_chief_unresolved after seven turns and two clarifications without completed diagnosis receipts"
+/evidence id=ROOT.RUNTIME_REVIEW18.E4 class=semantic result=pass source=Tmp/runtime-review-2026-10-18/review.md observed="Classify controlled passes public fixture limits missing transmitted chief candidates and five rejected dialogue references while preserving the concurrent run and making zero new external model calls"
+/evidence id=ROOT.RUNTIME_REVIEW18.E5 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.RUNTIME_REVIEW18 for maintained source extracted-archive and independent outcome verification without promoting controlled success to public-case readiness"
+/evidence id=ROOT.RUNTIME_REVIEW18.E6 class=artifact result=pass source=data/PROJECT_STATE.md observed="Reference DATA.RUNTIME_REVIEW18 for source fixture manifest image and standalone archive custody and retained failed-run evidence"
+/evidence id=ROOT.RUNTIME_REVIEW18.E7 class=external_service result=not_run source=data/provenance/runtime-review-2026-10-18.json observed="Leave new NOVA calls real Education quality clinical validation official evaluation uploads commits remote writes downloads and deployment unrun by this review"
+/scope id=ROOT.RUNTIME_REVIEW18.S1 state=in action="Own offline runtime verification public scripted execution saved local failure review evidence packaging and maintained state reconciliation"
+/accept id=ROOT.D41.A1 state=pass action="Coordinate the approved input contract implementation without expanding clinical assets" evidence=ROOT.D41.E1,ROOT.D41.E3
+/accept id=ROOT.D41.A2 state=pass action="Verify Test integration original SDK completion and the independently extracted final archive" evidence=ROOT.D41.E1,ROOT.D41.E2,ROOT.D41.E3
+/accept id=ROOT.D41.A3 state=pass action="Reconcile requirements decisions contracts orientation and all maintained state dependencies" evidence=ROOT.D41.E4
+/evidence id=ROOT.D41.E1 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.D41 for the two-stage interpreter canonical consumers source and final-archive regressions admitted consultations observer parity and confirmed local SDK submission"
+/evidence id=ROOT.D41.E2 class=runtime result=pass source=Tmp/test-evaluator/D41-offline-api-20261018/verification.json observed="Pass forty-three offline local evaluator and web checks while retaining scripted-model and public-case limitations"
+/evidence id=ROOT.D41.E3 class=artifact result=pass source=data/PROJECT_STATE.md observed="Reference DATA.D41 for d41.1 policy prompt code manifest source custody and the fifty-four-file final ZIP excluding concurrent ontology extensions"
+/evidence id=ROOT.D41.E4 class=semantic result=pass source=Tmp/d41-2026-10-18/handoff.json observed="Align D41 and superseded raw SOAP terminology call-skip and full-patient-dialogue rules across PRD decisions contracts Korean orientation static atlas and the three operational states while preserving preexisting review and concurrent ontology work"
+/evidence id=ROOT.D41.E5 class=external_service result=not_run source=data/provenance/algorithm-d41-2026-10-18.json observed="Leave actual Luna semantic quality new NOVA calls credits independent clinical validation official evaluation scoring upload commits remote writes deployment and visual rendering unrun"
+/scope id=ROOT.D41.S1 state=in action="Own cross-directory D41 integration offline verification packaging documentation and scoped handoff"
+/scope id=ROOT.D41.S2 state=out action="Exclude concurrent clinical-authoring extensions new clinical admission model jobs live services publication and deployment"
+/accept id=ROOT.D42.A1 state=pass action="Integrate the local source rebuild and authoring path without changing v5.0 structure or frozen D41 custody" evidence=ROOT.D42.E1,ROOT.D42.E4
+/accept id=ROOT.D42.A2 state=pass action="Verify canonical source and independent archive consumer paths in offline Docker" evidence=ROOT.D42.E2,ROOT.D42.E4
+/accept id=ROOT.D42.A3 state=pass action="Reconcile D42 requirements decisions and the three maintained state scopes" evidence=ROOT.D42.E3
+/evidence id=ROOT.D42.E1 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference DATA.D42 for source custody complete dispositions current admission authoring and residual coverage; preserve D41 canonical consumers and the unchanged v5 schema"
+/evidence id=ROOT.D42.E2 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.D42 for maintained source and isolated archive consultation canonical payload SOAP diagnosis completion and explicit scripted semantic boundaries"
+/evidence id=ROOT.D42.E3 class=semantic result=pass source=data/preparation/v5/common-complaints-2026-10-18-r2/handoff-verification.json observed="Reconcile D42 decisions requirements current knowledge orientation static class counts and all three maintained state scopes; preserve deferred live execution"
+/evidence id=ROOT.D42.E4 class=artifact result=pass source=Tmp/common-complaints-2026-10-18/archive.json observed="Verify every source byte in the independent 55-file 1676121-byte runtime ZIP with SHA256 0bf3e40a39eaa5bf4cc10638ea50994b2e8337288494612aaf6bb1e86670aaec; preserve the frozen D41 archive and original SDK"
+/evidence id=ROOT.D42.E5 class=external_service result=not_run source=data/provenance/common-complaints-d42-2026-10-18.json observed="Leave new downloads live Luna clinical accuracy official samples scoring upload commits remote writes deployment and atlas rendering unrun"
+/scope id=ROOT.D42.S1 state=in action="Own D42 local integration project Docker packaging source custody coordination current documentation and bounded handoff"
+/scope id=ROOT.D42.S2 state=out action="Exclude corpus downloads paid models official evaluation publication deployment and changes to the frozen D41 artifact"
+/handoff state=complete action="Use the admitted D42 batch and verified independent archive; retain residual data gaps and require separate authorization before live model execution"

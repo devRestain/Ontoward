@@ -3,61 +3,10 @@ import hashlib
 
 from pydantic import ValidationError
 
-from ..state.models import ClinicalValue, EmpathySignal, Fact, ParsedInput, ParseResult, PatientContextFact, SpeechSpan, WorkflowState
+from ..state.models import ClinicalValue, EmpathySignal, Fact, ParseResult, PatientContextFact, SpeechSpan, WorkflowState
 from .collection import CATEGORY_FIELDS
 
 
-def fixed_reply(config, state: WorkflowState, text: str, knowledge=None) -> ParsedInput | None:
-    question = state.interaction.pending.question
-    texts = config.texts
-    reply = text.strip().rstrip(texts.reply_trailing_punctuation)
-    if reply in texts.unknown_replies:
-        return ParsedInput(clinical_content=False)
-    if question.purpose in {"education", "empathy"} and reply in texts.education_acknowledgements:
-        return ParsedInput(clinical_content=False)
-    if not state.session.gateway_successes:
-        return None
-    statuses = {**dict.fromkeys(texts.present_replies, "present"), **dict.fromkeys(texts.absent_replies, "absent")}
-    if question.purpose == "open_inquiry" and statuses.get(reply) == "absent":
-        return ParsedInput(facts=[Fact(field="S.ros", record_id=question.item_id, quote=text,
-            value=ClinicalValue(kind="text", text=text, status="absent", record_category="review_of_systems",
-                evidence_use="record_only"))])
-    if question.record_category and question.answer_type == "presence" and reply in statuses:
-        status = statuses[reply]
-        return ParsedInput(facts=[Fact(field=question.field, record_id=question.item_id, quote=text,
-            value=ClinicalValue(kind="text", text=text, status=status, evidence_use="record_only",
-                record_category=question.record_category, subject=question.subject,
-                observation_id=question.observation_id, episode_id=question.episode_id,
-                record_details=[{"quote": text, "english": "Reported history"}] if status == "present" else []))])
-    if (question.affirmative_presence and question.answer_type == "presence" and question.target_id
-            and question.purpose in {"context", "feature", "ros", "clarification"} and not question.attribute_id
-            and question.kind == "SAY" and reply in statuses):
-        kind = "context" if question.field in {"S.pmh", "S.fh", "S.sh"} else "symptom"
-        return ParsedInput(facts=[Fact(field=question.field, record_id=question.item_id, quote=text,
-            value=ClinicalValue(kind=kind, text=text, status=statuses[reply], concept_ids=[question.target_id],
-                observation_id=question.observation_id or question.item_id,
-                episode_id=question.episode_id or question.item_id, subject=question.subject,
-                time_context=question.time_context))])
-    if question.kind != "SAY" or not question.target_id or not question.attribute_id:
-        return None
-    values, measurement = [], None
-    if question.answer_type == "duration":
-        match = re.fullmatch(r"(\d+(?:\.\d+)?)\s*(초|분|시간|일|주|개월|달|년)(?:이요|요)?", reply)
-        if match:
-            units = {"초": "s", "분": "min", "시간": "h", "일": "day", "주": "week", "개월": "month", "달": "month", "년": "year"}
-            measurement = {"kind": "quantity", "value": float(match[1]), "unit": units[match[2]], "operator": "eq"}
-    elif question.answer_type == "category" and knowledge is not None:
-        values = [concept for concept in knowledge.resolve_concept(reply)
-                  if concept in knowledge.get_attribute_values(question.attribute_id)]
-        if len(values) != 1:
-            values = []
-    if not values and measurement is None:
-        return None
-    return ParsedInput(facts=[Fact(field=question.field, record_id=question.item_id, quote=text,
-        value=ClinicalValue(kind="attribute", text=text, status="present", concept_ids=[question.target_id],
-            attribute_id=question.attribute_id, values=values, measurement=measurement,
-            observation_id=question.observation_id, episode_id=question.episode_id,
-            subject=question.subject, time_context=question.time_context))])
 
 
 def resolve_destination(fact, state, knowledge):
@@ -71,14 +20,6 @@ def resolve_destination(fact, state, knowledge):
         if len(matches) != 1:
             raise ValueError("Correction requires one existing evidence record")
         fact.record_id = matches[0]
-    if not fact.record_id and pending:
-        q = pending.question
-        if (q.target_id and q.target_id in value.concept_ids and q.subject == value.subject
-                and q.attribute_id == value.attribute_id and (not q.observation_id or value.observation_id in {None, q.observation_id})
-                and (not q.episode_id or value.episode_id in {None, q.episode_id})
-                and value.time_context == q.time_context
-                and (item := state.case.get(q.item_id)) and item.status == "unasked"):
-            fact.record_id = q.item_id
     existing = state.case.get(fact.record_id) if fact.record_id else None
     if existing:
         fact.field = next(field for field, item in state.case.entries() if item.id == existing.id)
@@ -88,10 +29,12 @@ def resolve_destination(fact, state, knowledge):
         context_type = knowledge.get_context_type(value.concept_ids[0])
         fact.field = "S.fh" if context_type == "family_history" else (
             "S.sh" if context_type in {"social_history", "occupational_history", "psychosocial_history", "demographic"} else "S.pmh")
-    elif value.kind == "symptom" and value.subject == "family":
+    elif value.kind in {"symptom", "attribute"} and value.subject == "family":
         fact.field = "S.fh"
-    elif value.kind == "symptom" and value.time_context == "past":
+    elif value.kind in {"symptom", "attribute"} and value.time_context == "past":
         fact.field = "S.pmh"
+    elif value.kind == "attribute" and not (pending and pending.question.kind == "EXAM"):
+        fact.field = "S.hpi"
     elif value.kind == "symptom" and pending:
         q = pending.question
         if value.subject == "patient" and value.time_context != "past" and q.purpose == "chief":

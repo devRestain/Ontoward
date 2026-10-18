@@ -1,0 +1,86 @@
+{
+  "algorithm_version": "d41.1",
+  "associations": 9955,
+  "authored_records": 0,
+  "baseline": {
+    "classes": {
+      "AttributeValue": 373,
+      "BodySystem": 12,
+      "ClinicalFeature": 3283,
+      "ClinicalPattern": 1797,
+      "ContextFactor": 243,
+      "Disease": 843,
+      "DiseasePatternAssociation": 9401,
+      "ExamFinding": 1,
+      "ExamMethod": 1,
+      "FindingAttribute": 16,
+      "Symptom": 490
+    },
+    "disease_unique_targets_median": 5,
+    "diseases_with_at_most_two_targets": 214,
+    "interviewable_symptoms": 475,
+    "interviewable_without_attributes": 190,
+    "korean_alternative_labels": 0
+  },
+  "bodhi_blank_root_rows": 1,
+  "bodhi_roots": 590,
+  "build_id": "6501f157bde1e2c367f4e7adc0266578c858d97eb3855de6981a4f31b682b2b7",
+  "clinical_review": "not_run",
+  "ddxplus": {
+    "condition_count": 49,
+    "condition_statuses": {
+      "disease_identity_unresolved": 32,
+      "mapped": 17
+    },
+    "evidence_count": 223,
+    "evidence_statuses": {
+      "mapped": 118,
+      "mapped_attribute": 13,
+      "unresolved": 92
+    },
+    "files": [
+      {
+        "path": "assets/nova-benchmarks-2026/DDXPlus/release_evidences.json",
+        "sha256": "281c78b044ae60514e28ecc9052d08a8225dd3e2db3f00f8788b99c47b05e0c0"
+      },
+      {
+        "path": "assets/nova-benchmarks-2026/DDXPlus/release_conditions.json",
+        "sha256": "56edf4682d8e86a4209fc3a33932e50ce03d1cc1fecc326c26d5ef8fa5c24890"
+      },
+      {
+        "path": "assets/nova-benchmarks-2026/DDXPlus/LICENSE.txt",
+        "sha256": "0b64a7527832d51b56d72ef59fcde110c1f6bb0eb9f7dd3b32508e1108b55dfe"
+      }
+    ],
+    "license": "CC BY 4.0",
+    "link_statuses": {
+      "mapped_association": 81,
+      "mapped_context": 49,
+      "unresolved": 758
+    },
+    "patient_archives_read": false,
+    "synthetic_probabilities_imported": false,
+    "version": "DDXPlus-English-v2"
+  },
+  "decision": "D42",
+  "features": 3530,
+  "independent_clinical_validation": "not_run",
+  "model_calls": 0,
+  "normalization_version": "v5.0.5-common-complaints",
+  "patterns": 1925,
+  "registry_version": "532045c55a94675d8a1bc383ef73726b1cedb358297c163528253eeab1ceec29",
+  "root_statuses": {
+    "id_unresolved": 11,
+    "restored": 7,
+    "retained": 424,
+    "role_deferred": 146,
+    "role_unavailable": 2
+  },
+  "runtime_admission": "not_run",
+  "schema_version": "5.0",
+  "status": "preview_only",
+  "variant_statuses": {
+    "mapped": 2716,
+    "unresolved": 1321
+  }
+}

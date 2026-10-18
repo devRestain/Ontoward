@@ -70,8 +70,10 @@ class Consultation:
                 unresolved.append("Chief complaint details remain incomplete")
             if not any(e.delivered and e.kind == "EXAM" for e in state.interaction.history):
                 unresolved.append("No additional physical examination obtained")
-            if any(r.clinical_spans for r in state.interaction.patient_reports):
-                unresolved.append("Some patient reports remain unstructured")
+            if any(outcome.state in {"unsupported", "unknown", "conflict"} for outcome in state.case.outcomes):
+                unresolved.append("Some reported information remains unresolved in the admitted vocabulary")
+            if any(outcome.state == "forced" for outcome in state.case.outcomes):
+                unresolved.append("Some patient facts use forced database approximations")
             state.case.fixed_diagnosis = FixedDiagnosis(kind=state.case.diagnosis_kind,
                 disease_id=state.differential.selected_id, name=state.case.diagnosis,
                 evidence_ids=list(state.case.diagnosis_evidence), unresolved=unresolved)

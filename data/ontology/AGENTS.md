@@ -2,7 +2,8 @@
 
 ## Ownership
 
-- Own schema.ttl as the D08 v5.0 structural contract; keep clinical vocabulary derived exclusively from source rows under D18.
+- Own schema.ttl as the D08 v5.0 structural contract; preserve D18 source custody and apply the explicit D42 local metadata and authoring scope to new vocabulary.
+- Apply D42 to newly admitted local metadata and explicit authored claims while keeping the v5.0 structural schema unchanged and recording each non-RF2 assertion's actual source.
 - Remove pre-v5 data, starter vocabulary, old extraction interfaces, manual translations, and obsolete approval receipts; preserve the clean empty base and deletion receipt in ../preparation/v5/.
 - Keep source-specific candidate registries, mapping decisions, raw assertions, dispositions, and previews in ../preparation/v5/.
 - Keep full-source SQLite custody and pinned batch receipts in ../preparation/v5/; do not treat model normalization, structural verification, or export as human approval.

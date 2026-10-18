@@ -3,6 +3,7 @@ import json
 from dataclasses import dataclass
 
 from .models import CaseState
+from .canonical import CanonicalSnapshot
 
 
 @dataclass(frozen=True)
@@ -20,9 +21,12 @@ class EvidenceIndex:
             for field, item in case.entries():
                 isolated.put(field, item.model_copy(deep=True))
             case = isolated
-        entries = tuple((field, item) for field, item in case.current_entries()
+        canonical = CanonicalSnapshot.from_case(case)
+        entries = tuple((field, item) for field, item in canonical.entries
                         if item.status == "done" and item.source_refs and item.value
                         and item.value.evidence_use == "reasoning"
+                        and not (item.value.status == "absent" and item.value.polarity_scope == "qualified"
+                                 and not item.value.attribute_id)
                         and item.value.kind in {"symptom", "finding", "attribute", "context"})
         groups, contexts = {}, []
         for _, item in entries:
@@ -36,7 +40,7 @@ class EvidenceIndex:
         values = [(field, i.id, i.value.model_dump(exclude={"text", "record_category", "record_details"}))
                   for field, i in sorted(entries, key=lambda p: p[1].id)]
         digest = hashlib.sha256(json.dumps(values, sort_keys=True).encode()).hexdigest()
-        return cls(tuple(case.entries()), entries, groups, tuple(contexts), digest)
+        return cls(canonical.entries, entries, groups, tuple(contexts), digest)
 
     def patch(self, patch):
         case = CaseState()

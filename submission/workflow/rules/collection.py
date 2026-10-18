@@ -23,9 +23,10 @@ def slot_records(case, slot):
 
 
 def slot_resolved(case, slot):
-    return any(item.value.not_applicable or item.value.status in {"present", "absent"} for item in slot_records(case, slot))
+    return any(item.value.concept_ids and (item.value.not_applicable or item.value.status in {"present", "absent"})
+               for item in slot_records(case, slot))
 
 
 def answered(state, slot):
-    return slot_resolved(state.case, slot) or any(e.delivered and e.question and e.question.record_category == slot
+    return slot_resolved(state.case, slot) or any(o.record_category == slot and o.state != "conflict" for o in state.case.outcomes) or any(e.delivered and e.question and e.question.record_category == slot
         and e.question.purpose in {"intake", "history"} for e in state.interaction.history)

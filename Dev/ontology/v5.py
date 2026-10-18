@@ -135,7 +135,8 @@ class PreviewBuilder:
                 previous["predictiveness"], previous["typicality"]) != (predictiveness, typicality):
             self.conflicts.add(key)
         priority = lambda a: (a["relation_basis"] == "bodhi_present_in", a["derivation_scope"] == "exact",
-                              {"due_to": 3, "associated_with": 2, "subtype_intersection": 1, "bodhi_present_in": 4}[a["relation_basis"]])
+                              {"due_to": 3, "associated_with": 2, "subtype_intersection": 1, "bodhi_present_in": 4,
+                               "external_association": 0, "authored_association": 0}[a["relation_basis"]])
         chosen = assertion if previous is None or priority(assertion) > priority(previous) else previous
         self.selected[key] = chosen
         self.graph.add((URIRef(disease), OW.hasAssociation, node))
@@ -152,7 +153,8 @@ class PreviewBuilder:
             self.graph.set((node, OW.applicability, Literal(json.dumps(list(applicability), sort_keys=True), datatype=RDF.JSON)))
         return key
 
-    def export(self, output, *, source_snapshots, report, dispositions, require_action_assets=True):
+    def export(self, output, *, source_snapshots, report, dispositions, require_action_assets=True,
+               retain_concepts=(), retain_attributes=(), scoring_policy_path=None, reasoning_policy_path=None):
         output = workspace_path(output)
         if output.exists() and any(output.iterdir()):
             raise ValueError("Use a new or empty preview directory")
@@ -174,6 +176,7 @@ class PreviewBuilder:
             if node not in expected_nodes:
                 self.graph.remove((node, None, None))
         attributes, categorical = {}, {}
+        retained_attributes = {(URIRef(target), URIRef(attribute)) for target, attribute in retain_attributes}
         for pattern in used:
             target = self.graph.value(pattern, OW.targets)
             for feature in self.graph.objects(pattern, OW.hasFeature):
@@ -184,12 +187,13 @@ class PreviewBuilder:
                     values = [expected.concept] if expected.kind == "concept" else expected.concepts
                     categorical.setdefault(attribute, set()).update(URIRef(value) for value in values)
         for target, attribute in list(self.vocabulary.subject_objects(OW.hasAttribute)):
-            if attribute not in attributes.get(target, set()):
+            if attribute not in attributes.get(target, set()) and (target, attribute) not in retained_attributes:
                 self.vocabulary.remove((target, OW.hasAttribute, attribute))
         for attribute, value in list(self.vocabulary.subject_objects(OW.canHaveValue)):
-            if value not in categorical.get(attribute, set()):
+            if value not in categorical.get(attribute, set()) and not any(a == attribute for _, a in retained_attributes):
                 self.vocabulary.remove((attribute, OW.canHaveValue, value))
         used_concepts = set(self.graph.subjects(OW.hasAssociation, None)) | set(self.graph.objects(None, OW.targets))
+        used_concepts.update(URIRef(uri) for uri in retain_concepts)
         for payload in self.graph.objects(None, OW.applicability):
             used_concepts.update(URIRef(item["concept_id"]) for item in json.loads(str(payload)))
         used_concepts.update(self.graph.objects(None, OW.onAttribute))
@@ -211,7 +215,10 @@ class PreviewBuilder:
         if str(ROOT / "submission") not in sys.path:
             sys.path.insert(0, str(ROOT / "submission"))
         from knowledge.graph import ClinicalKnowledge
-        knowledge = ClinicalKnowledge(combined)
+        scoring_policy_path = workspace_path(scoring_policy_path or ROOT / "submission/knowledge/scoring_policy.json")
+        reasoning_policy_path = workspace_path(reasoning_policy_path or ROOT / "submission/knowledge/reasoning_policy.json")
+        policy = ScoringPolicy.model_validate_json(scoring_policy_path.read_text())
+        knowledge = ClinicalKnowledge(combined, policy=policy)
         knowledge.validate_graph(require_action_assets=require_action_assets)
         patterns = sorted(self.graph.subjects(RDF.type, OW.ClinicalPattern), key=str)
         by_target = {}
@@ -221,8 +228,8 @@ class PreviewBuilder:
             for child, parent in knowledge._refinement_edges([str(node) for node in members]):
                 self.graph.add((URIRef(child), OW.refinesPattern, URIRef(parent)))
         (output / "schema.ttl").write_bytes((ROOT / "data/ontology/schema.ttl").read_bytes())
-        (output / "scoring_policy.json").write_bytes((ROOT / "submission/knowledge/scoring_policy.json").read_bytes())
-        (output / "reasoning_policy.json").write_bytes((ROOT / "submission/knowledge/reasoning_policy.json").read_bytes())
+        (output / "scoring_policy.json").write_bytes(scoring_policy_path.read_bytes())
+        (output / "reasoning_policy.json").write_bytes(reasoning_policy_path.read_bytes())
         for name, graph in (("vocabulary.ttl", self.vocabulary), ("clinical.ttl", self.graph)):
             (output / name).write_text("".join(sorted(f"{s.n3()} {p.n3()} {o.n3()} .\n" for s, p, o in graph)), encoding="utf-8")
         assets = {name: {"path": "knowledge/" + name, "sha256": digest((output / name).read_bytes())}
@@ -230,11 +237,13 @@ class PreviewBuilder:
         self.registry = dict(sorted(self.registry.items()))
         registry_version = digest(self.registry)
         manifest = {"schema_version": "5.0", "registry_version": registry_version,
-                    "normalization_version": NORMALIZATION_VERSION, "source_snapshots": source_snapshots,
-                    "scoring_policy_version": ScoringPolicy.load_default().version, "scoring_policy": assets["scoring_policy.json"],
+                    "normalization_version": report.get("normalization_version", NORMALIZATION_VERSION), "source_snapshots": source_snapshots,
+                    "scoring_policy_version": policy.version, "scoring_policy": assets["scoring_policy.json"],
                     "reasoning_policy": assets["reasoning_policy.json"],
                     "schema": assets["schema.ttl"], "vocabulary": assets["vocabulary.ttl"], "bundles": [assets["clinical.ttl"]],
                     "preparation_status": "preview_only", "build_id": report.get("build_id")}
+        if report.get("algorithm_version"):
+            manifest["algorithm_version"] = report["algorithm_version"]
         report = {**report, "status": "preview_only", "schema_version": "5.0", "patterns": len(patterns),
                   "associations": len(set(self.graph.subjects(RDF.type, OW.DiseasePatternAssociation))),
                   "features": len(set(self.graph.subjects(RDF.type, OW.ClinicalFeature))), "registry_version": registry_version,

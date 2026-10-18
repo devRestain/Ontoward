@@ -47,6 +47,8 @@
   "operator_labels": {"eq": "", "lt": "<", "le": "≤", "gt": ">", "ge": "≥"},
   "episode_format": "; Episode {number}",
   "clinical_context_format": "{subject} · {time}{episode}",
+  "qualified_scope_label": "qualified scope",
+  "approximate_label": "approximately",
   "measurement_format": "{operator}{value} {unit}",
   "interval_format": "{lower_bound}{lower}, {upper}{upper_bound}",
   "range_format": "{lower}–{upper} {unit}",

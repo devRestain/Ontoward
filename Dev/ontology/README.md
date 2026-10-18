@@ -15,9 +15,12 @@
 | codex_cli.py | 전용 Docker 인증 volume을 사용하는 단일 Codex CLI 호출 |
 | model_normalization.py | 별도로 선택할 수 있는 제한된 원천 정규화 후보 처리 |
 | admission.py | 빌드에 고정된 새 승인과 실행 자산 수용 |
+| common.py·ddxplus.py·authored.py | D42 일반 호소 복원·로컬 DDXPlus metadata·출처가 있는 작성 JSONL의 v5.0 투영 |
 | evidence.py | 원천 패키지·인증 정보를 제외한 생성 증빙 ZIP |
 
 ## 재실행 순서
+
+현재 일반 호소 배치는 D41 canonical 입력에 맞춘 [D42 결과와 작성 안내](../../data/preparation/v5/common-complaints-2026-10-18-r2/README.md)를 따른다. `rebuild-common`은 보관된 원천 DB를 읽기 전용으로 공유하고, 현재 수용 배치의 `--parent-database`에서 어휘·주장 대장을 이어받는다. 새로운 JSONL 작성 자료는 `--authored`로 제공하며, 새 출력 경로를 사용한다. 이 경로는 새 다운로드·환자 CSV·유료 모델을 사용하지 않는다. 아래 D18–D23 명령은 원래 원천 생성과 과거 수용을 재현하는 절차다.
 
 D20의 연결 단계는 전체 원천을 재적재하지 않고 기존 원천 custody를 읽기 전용으로 공유한다. 아래 명령은 새 경로에 연결 그래프를 재생성하는 예시다. `--accept-competition`은 이 세션에서 사용자가 선택한 공모전 후보 수용을 명시하며, 이 옵션이 없으면 검토 양식만 생성하고 승인 영수증은 만들지 않는다. 한국어 생성은 실행하지 않는다.
 

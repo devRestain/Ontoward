@@ -208,6 +208,22 @@ class ClinicalKnowledge:
     def get_attribute_values(self, attribute_id: str) -> list[str]:
         return sorted(str(value) for value in self._graph.objects(URIRef(attribute_id), OW.canHaveValue))
 
+    def numeric_units(self, target_id, attribute_id):
+        units = set()
+        for profile in self.get_patterns_by_target(target_id):
+            for feature in self.get_pattern_features(profile.id):
+                expected = feature.expected
+                if feature.attribute == attribute_id and expected and expected.kind in {"quantity", "interval"}:
+                    units.add(expected.unit)
+                    if expected.upper_unit:
+                        units.add(expected.upper_unit)
+        template = self.question_contract(attribute_id, target_id)
+        if template:
+            units.update(template.units)
+        if template and template.answer_type == "duration":
+            units.update({"s", "min", "h", "day", "week", "month", "year"})
+        return sorted(units)
+
     def _profile(self, association) -> AssociationProfile:
         association = URIRef(association)
         if str(association) in self._profile_cache:
@@ -470,6 +486,9 @@ class ClinicalKnowledge:
                 raise ValueError("Association endpoints must be admitted")
             if profile.typicality is not None and profile.typicality not in self.policy.labels:
                 raise ValueError("Unknown typicality label")
+            if profile.relation_basis in {"external_association", "authored_association"} and (
+                    profile.typicality is not None or profile.strong_predictor is not None):
+                raise ValueError("Qualitative associations cannot imply typicality or strong prediction")
             if any(not self.has_type(condition.concept_id, "ContextFactor") for condition in profile.applicability):
                 raise ValueError("Applicability requires admitted contexts")
             identity = (profile.disease_id, profile.id, tuple(c.model_dump_json() for c in profile.applicability))

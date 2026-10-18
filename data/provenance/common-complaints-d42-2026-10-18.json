@@ -1,0 +1,845 @@
+{
+  "actual_model_calls_for_verification": 0,
+  "admission_receipt_sha256": "83afd0b132a079411ce29c751dc4acd87aa7d2b2ee7bbf4fce9a54678fa2034f",
+  "algorithm_version": "d41.1",
+  "all_input_and_generator_pins_rechecked": true,
+  "artifact": {
+    "all_files_match_source": true,
+    "archive": "Tmp/common-complaints-2026-10-18/ontoward-submission-d42.zip",
+    "bytes": 1676121,
+    "clinical_or_official_validation": "not_run",
+    "d41_archive_preserved": "f67a1a85726c6ae1aae8f494729720285120dba618c1b352fa353ee125f2110b",
+    "d41_runtime_differences": [
+      "knowledge/conditions.py",
+      "knowledge/graph.py",
+      "knowledge/manifest.json"
+    ],
+    "files": 55,
+    "files_sha256": {
+      ".env": "e47a0db1192d4c376d189f25e17a82fa531a3a118db75bf773525eb5f26a854f",
+      "config/education.txt": "3ac5d525d8111b9c9184b66155b01331fcf721c940e9865974707babbbbd231b",
+      "config/education_doctor.txt": "00e42ebce68545a347acd83d2ab15f1f68cc75b3bf2d69cadca4a8a24e209529",
+      "config/empathy.txt": "f27b80ff1dcf2c155cf1125fd70122ff37963d94a1f961b2badfb3f85b0ef645",
+      "config/input_parser.txt": "28c159454682371b7c6032f0e5bd31f75e297e12161f8e7f50191abfabd6a480",
+      "config/normalization.txt": "2bd24eee4c7cc6f116a9941430ee9cd122ac9271e4092f9354fb061c745719ba",
+      "config/texts.ko.json": "fb0af778e774736ee77eeba573f2615f425276c785cc3c621c85b0242bf20b5c",
+      "knowledge/83afd0b132a07941-clinical.ttl": "a5b5f3d94e0cba1048735cb61a3ed56d5e8622c4540c6a3737186061cfad769f",
+      "knowledge/83afd0b132a07941-guideline-index.json": "408f7d14d459e282df7b9230eca8f5474ce401353c2abdf2a6e7e307ba2f7bfa",
+      "knowledge/83afd0b132a07941-questions.ko.json": "911a9249fec89a494234912f21ba46cfe3747a01ebbddaef4f3b453a08541e6d",
+      "knowledge/83afd0b132a07941-reasoning_policy.json": "b23681158479aaa5471808f8950dd88d136a41340900e6b8ef3cc2d36044bb8a",
+      "knowledge/83afd0b132a07941-scoring_policy.json": "4bf15b5fc5cee84fdb2911435ad31e1a6b63d1e90afdc009676873f12f3baf17",
+      "knowledge/83afd0b132a07941-vocabulary.ttl": "28bb51976edc258367a50ad909b423aba47a7e88a0da7bc02e364054f4676ed8",
+      "knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "knowledge/conditions.py": "5226331815960f33864da6d9dbe304d52c43724adcf03fba2a41bd758855c9c6",
+      "knowledge/graph.py": "39bec30272c22b75161b5b289aea6af9937c2366e4bb1dcf399d1966e3e81d3e",
+      "knowledge/guidelines.py": "199c4e08ad41de657d564cf5d35845d6a020de53aa4c3b231b75b201a4d243c8",
+      "knowledge/manifest.json": "f855b4b10f4531ff494e21dae698c70cbcb4fe956123da0fbaba6c936fe5d42b",
+      "knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+      "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+      "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+      "settings.py": "912ca57613fafb2b285ad4b341af7ed0632515dafffcf1a0fd70d96e9f9ec92e",
+      "workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/clinical_reasoner.py": "359ac7651123cdfc06276edce07be0752e0b9e28200e7481a36d225d4b09a8cf",
+      "workflow/consultation.py": "88dc31b3ae60e5133a1efbc41a594f797c2a556e605711c9c93dc787fcd1907a",
+      "workflow/doctor.py": "0dfa9e79f7b517254575fd1968a8bc85da284bdb51be9e5770784cbd948dfabe",
+      "workflow/education.py": "3dc2200240befd910c1105f01649627024a9979905f3b61969eedcd51f37a206",
+      "workflow/graph.py": "6b82b2739e9e3ce83a620093c9805c1d0ee607ec77108c3dcf013959b6581032",
+      "workflow/input_interpreter.py": "7c315f0b318dc54662954f11525b6d12ef8f76b887cc6329f07147038d836c87",
+      "workflow/interview_planner.py": "2e49602adf69081d8da2209a68bd6c9f2f03ab4bcc1bcd8a888729321060b789",
+      "workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/io/model_client.py": "c0138371bd8a860e43346a7b3d3d94f2619f1b5c75c2cbfe38da83889afa9fc9",
+      "workflow/io/nova_session.py": "fac9fda2db826d001cfa8c8a307084981848d9f0581eab9b40ff0a5bfd54158c",
+      "workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+      "workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/rules/action.py": "8c0607c389057c9299e6046974b42e3e713a82246f2f70e4318f2dd3f5bc3942",
+      "workflow/rules/budget.py": "40ece5808cf2fdb7ace73c2aa35a65eb11343b88a06f5e4ae1b7412309d6f24b",
+      "workflow/rules/collection.py": "1d3c7ffce86c311b7e8e19d94063eb46ea2f8230f04879b3ba99609611f5b723",
+      "workflow/rules/input.py": "a32453f6b6f63975f66607461b61e82779916b2cccad16076d5ebecbad7ce948",
+      "workflow/rules/limits.py": "4ea8d2fd343f51fc8679411955251b778a7ef06ffaf6d42e60731983b5ea0366",
+      "workflow/rules/normalization.py": "5bba74f291afd92f430934509675a539a7b7a4384ce1702c2f946cb37d647fb5",
+      "workflow/rules/selection.py": "18d3e467098f89fe7a5ef58b0bf423daffb5ad388800a2b59636686dc0b07a01",
+      "workflow/rules/submission.py": "ce004712cd7d06e5a9fa3789ab5338c6cd1e73a970ba3048f6be624cebeba91f",
+      "workflow/runtime.py": "2417d3d72ad83e6d80c53bad4a541959191bf2b09c6414fbdf43f825853a8186",
+      "workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/state/canonical.py": "cdfe7898f40e5b9103df2700c0f2a7309c2bc2f5a59a5d939c62edadbb035e13",
+      "workflow/state/evidence.py": "9408304bc57a37c2127bd116cbd3ad959c48161a6d75621eb376cfb5e82314a8",
+      "workflow/state/interactions.py": "aeabf55633ecaff73f4f2b051f46fda9a6ad807d76d8840f6b9138940c5d49b1",
+      "workflow/state/models.py": "f6302c930787525a360cc112bba08b22921cad27ce3b59e7c3d8c92b1e36ab80",
+      "workflow/state/questions.py": "fd70634e28216ebc5944082b649a5ae4787c288e194b794353f701f0ef14992e",
+      "workflow/state/usage.py": "9fee797f7b7fcfbbbf0eb560d0d13f6469118faf24ff1a2d505b716601729714",
+      "workflow/submission_writer.py": "095d63ceec3785099bdd6a8c05c9caec5509dc222a7fc797f7bc010e4f0b42e9",
+      "workflow/text_config.py": "4446d6de3e8335d6f0487a3810617c200309d33ee09ae0deb0efc9a106c74e8d"
+    },
+    "sdk_unchanged": true,
+    "sha256": "0bf3e40a39eaa5bf4cc10638ea50994b2e8337288494612aaf6bb1e86670aaec"
+  },
+  "assets": {
+    "bundles": [
+      {
+        "path": "knowledge/83afd0b132a07941-clinical.ttl",
+        "sha256": "a5b5f3d94e0cba1048735cb61a3ed56d5e8622c4540c6a3737186061cfad769f"
+      }
+    ],
+    "guidelines": {
+      "path": "knowledge/83afd0b132a07941-guideline-index.json",
+      "sha256": "408f7d14d459e282df7b9230eca8f5474ce401353c2abdf2a6e7e307ba2f7bfa"
+    },
+    "questions": {
+      "path": "knowledge/83afd0b132a07941-questions.ko.json",
+      "sha256": "911a9249fec89a494234912f21ba46cfe3747a01ebbddaef4f3b453a08541e6d"
+    },
+    "reasoning_policy": {
+      "path": "knowledge/83afd0b132a07941-reasoning_policy.json",
+      "sha256": "b23681158479aaa5471808f8950dd88d136a41340900e6b8ef3cc2d36044bb8a"
+    },
+    "schema": {
+      "path": "knowledge/schema.ttl",
+      "sha256": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89"
+    },
+    "scoring_policy": {
+      "path": "knowledge/83afd0b132a07941-scoring_policy.json",
+      "sha256": "4bf15b5fc5cee84fdb2911435ad31e1a6b63d1e90afdc009676873f12f3baf17"
+    },
+    "vocabulary": {
+      "path": "knowledge/83afd0b132a07941-vocabulary.ttl",
+      "sha256": "28bb51976edc258367a50ad909b423aba47a7e88a0da7bc02e364054f4676ed8"
+    }
+  },
+  "batch": "data/preparation/v5/common-complaints-2026-10-18-r2",
+  "build_id": "6501f157bde1e2c367f4e7adc0266578c858d97eb3855de6981a4f31b682b2b7",
+  "checks": {
+    "archive_admitted": {
+      "actual_luna": "not_run",
+      "associations": 9955,
+      "authenticated_sdk": "not_run",
+      "blocked_targets": 15,
+      "cases": [
+        {
+          "actions": 43,
+          "diagnosis_kind": "disease",
+          "gateway_payload_bytes": 0,
+          "max_context_bytes": 0,
+          "model_calls": 45,
+          "numeric": false,
+          "pattern_evaluations": 45,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 1,
+          "scripted_consult_seconds": 64.24268534098519,
+          "target": "urn:ontoward:SymptomSnomedCT21522001",
+          "termination": "submitted",
+          "unresolved_records": 37
+        },
+        {
+          "actions": 43,
+          "diagnosis_kind": "disease",
+          "gateway_payload_bytes": 0,
+          "max_context_bytes": 0,
+          "model_calls": 46,
+          "numeric": true,
+          "pattern_evaluations": 45,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 1,
+          "scripted_consult_seconds": 55.76953156403033,
+          "target": "urn:ontoward:SymptomSnomedCT21522001",
+          "termination": "submitted",
+          "unresolved_records": 37
+        },
+        {
+          "actions": 17,
+          "diagnosis_kind": "symptom",
+          "gateway_payload_bytes": 0,
+          "max_context_bytes": 0,
+          "model_calls": 16,
+          "numeric": false,
+          "pattern_evaluations": 3,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 1,
+          "scripted_consult_seconds": 1.5341805379721336,
+          "target": "urn:ontoward:SymptomSnomedCT1003721002",
+          "termination": "submitted",
+          "unresolved_records": 11
+        }
+      ],
+      "diagnostic_performance": "not_run",
+      "display_labels": 0,
+      "graph_triples": 113062,
+      "manifest_sha256": "f855b4b10f4531ff494e21dae698c70cbcb4fe956123da0fbaba6c936fe5d42b",
+      "model_responses": "scripted",
+      "network": "none",
+      "patient_data": "synthetic",
+      "peak_rss_kib": 446108,
+      "prepare_seconds": 4.026954732020386,
+      "receipt": "Tmp/common-complaints-2026-10-18/isolated/admitted/verification.json",
+      "runtime_root": "/submission",
+      "status": "pass",
+      "symptom_questions": 533
+    },
+    "archive_http": {
+      "actual_nova": "not_run",
+      "backend": "scripted",
+      "case_id": "C10",
+      "clinical_accuracy": "not_evaluated",
+      "doctor_calls": 42,
+      "missing_evidence": [],
+      "model_requests": 83,
+      "nonempty_gateway_responses": 42,
+      "official_submission": "not_run",
+      "receipt": "Tmp/common-complaints-2026-10-18/http/result.json",
+      "score_status": "not_scored",
+      "status": "pass",
+      "trace_status": "complete",
+      "turns": 41
+    },
+    "archive_korean": {
+      "actual_luna": "not_run",
+      "associations": 9955,
+      "authenticated_sdk": "not_run",
+      "blocked_targets": 15,
+      "cases": [
+        {
+          "actions": 43,
+          "context_actions": 4,
+          "context_status": "present",
+          "diagnosis_kind": "disease",
+          "ros_actions": 4,
+          "scripted_gateway_calls": 60,
+          "termination": "submitted"
+        },
+        {
+          "actions": 41,
+          "context_actions": 4,
+          "context_status": "absent",
+          "diagnosis_kind": "disease",
+          "ros_actions": 4,
+          "scripted_gateway_calls": 58,
+          "termination": "submitted"
+        },
+        {
+          "actions": 41,
+          "context_actions": 4,
+          "context_status": "unknown",
+          "diagnosis_kind": "disease",
+          "ros_actions": 4,
+          "scripted_gateway_calls": 54,
+          "termination": "submitted"
+        }
+      ],
+      "check_count": 619,
+      "examination": {
+        "scope": "separate selected-action acquisition through SOAP and confirmed submission",
+        "status": "pass",
+        "target": "urn:ontoward:ExamFindingSnomedCT414069003"
+      },
+      "graph_triples": 113062,
+      "manifest_sha256": "f855b4b10f4531ff494e21dae698c70cbcb4fe956123da0fbaba6c936fe5d42b",
+      "model_responses": "scripted",
+      "network": "none",
+      "official_submission": "not_run",
+      "patient_data": "synthetic Korean",
+      "peak_rss_kib": 533900,
+      "prepare_seconds": 4.02250710898079,
+      "prepared_say_questions": 1517,
+      "receipt": "Tmp/common-complaints-2026-10-18/isolated/korean/verification.json",
+      "selected_context_cases": [
+        {
+          "field": "S.sh",
+          "status": "present",
+          "target": "urn:ontoward:BodhiContext219006",
+          "termination": "submitted"
+        },
+        {
+          "field": "S.sh",
+          "status": "absent",
+          "target": "urn:ontoward:BodhiContext219006",
+          "termination": "submitted"
+        },
+        {
+          "field": "S.sh",
+          "status": "unknown",
+          "target": "urn:ontoward:BodhiContext219006",
+          "termination": "submitted"
+        }
+      ],
+      "status": "pass"
+    },
+    "archive_workflow": {
+      "log": "Tmp/common-complaints-2026-10-18/workflow-archive-final.log",
+      "status": "pass",
+      "tests": 193
+    },
+    "components": {
+      "log": "Tmp/common-complaints-2026-10-18/components.log",
+      "status": "pass",
+      "tests": 6
+    },
+    "source_admitted": {
+      "actual_luna": "not_run",
+      "associations": 9955,
+      "authenticated_sdk": "not_run",
+      "blocked_targets": 15,
+      "cases": [
+        {
+          "actions": 43,
+          "diagnosis_kind": "disease",
+          "gateway_payload_bytes": 0,
+          "max_context_bytes": 0,
+          "model_calls": 45,
+          "numeric": false,
+          "pattern_evaluations": 45,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 1,
+          "scripted_consult_seconds": 51.58509090199368,
+          "target": "urn:ontoward:SymptomSnomedCT21522001",
+          "termination": "submitted",
+          "unresolved_records": 37
+        },
+        {
+          "actions": 43,
+          "diagnosis_kind": "disease",
+          "gateway_payload_bytes": 0,
+          "max_context_bytes": 0,
+          "model_calls": 46,
+          "numeric": true,
+          "pattern_evaluations": 45,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 1,
+          "scripted_consult_seconds": 49.659479326976,
+          "target": "urn:ontoward:SymptomSnomedCT21522001",
+          "termination": "submitted",
+          "unresolved_records": 37
+        },
+        {
+          "actions": 17,
+          "diagnosis_kind": "symptom",
+          "gateway_payload_bytes": 0,
+          "max_context_bytes": 0,
+          "model_calls": 16,
+          "numeric": false,
+          "pattern_evaluations": 3,
+          "question_generation_calls": 0,
+          "scoring_refreshes": 1,
+          "scripted_consult_seconds": 1.1734462330350652,
+          "target": "urn:ontoward:SymptomSnomedCT1003721002",
+          "termination": "submitted",
+          "unresolved_records": 11
+        }
+      ],
+      "diagnostic_performance": "not_run",
+      "display_labels": 0,
+      "graph_triples": 113062,
+      "manifest_sha256": "f855b4b10f4531ff494e21dae698c70cbcb4fe956123da0fbaba6c936fe5d42b",
+      "model_responses": "scripted",
+      "network": "none",
+      "patient_data": "synthetic",
+      "peak_rss_kib": 446144,
+      "prepare_seconds": 5.276946321013384,
+      "receipt": "Tmp/common-complaints-2026-10-18/source-admitted/verification.json",
+      "runtime_root": "/workspace/submission",
+      "status": "pass",
+      "symptom_questions": 533
+    },
+    "source_korean": {
+      "actual_luna": "not_run",
+      "associations": 9955,
+      "authenticated_sdk": "not_run",
+      "blocked_targets": 15,
+      "cases": [
+        {
+          "actions": 43,
+          "context_actions": 4,
+          "context_status": "present",
+          "diagnosis_kind": "disease",
+          "ros_actions": 4,
+          "scripted_gateway_calls": 60,
+          "termination": "submitted"
+        },
+        {
+          "actions": 41,
+          "context_actions": 4,
+          "context_status": "absent",
+          "diagnosis_kind": "disease",
+          "ros_actions": 4,
+          "scripted_gateway_calls": 58,
+          "termination": "submitted"
+        },
+        {
+          "actions": 41,
+          "context_actions": 4,
+          "context_status": "unknown",
+          "diagnosis_kind": "disease",
+          "ros_actions": 4,
+          "scripted_gateway_calls": 54,
+          "termination": "submitted"
+        }
+      ],
+      "check_count": 619,
+      "examination": {
+        "scope": "separate selected-action acquisition through SOAP and confirmed submission",
+        "status": "pass",
+        "target": "urn:ontoward:ExamFindingSnomedCT414069003"
+      },
+      "graph_triples": 113062,
+      "manifest_sha256": "f855b4b10f4531ff494e21dae698c70cbcb4fe956123da0fbaba6c936fe5d42b",
+      "model_responses": "scripted",
+      "network": "none",
+      "official_submission": "not_run",
+      "patient_data": "synthetic Korean",
+      "peak_rss_kib": 534672,
+      "prepare_seconds": 5.265451302984729,
+      "prepared_say_questions": 1517,
+      "receipt": "Tmp/common-complaints-2026-10-18/source-korean/verification.json",
+      "selected_context_cases": [
+        {
+          "field": "S.sh",
+          "status": "present",
+          "target": "urn:ontoward:BodhiContext219006",
+          "termination": "submitted"
+        },
+        {
+          "field": "S.sh",
+          "status": "absent",
+          "target": "urn:ontoward:BodhiContext219006",
+          "termination": "submitted"
+        },
+        {
+          "field": "S.sh",
+          "status": "unknown",
+          "target": "urn:ontoward:BodhiContext219006",
+          "termination": "submitted"
+        }
+      ],
+      "status": "pass"
+    },
+    "source_workflow": {
+      "log": "Tmp/common-complaints-2026-10-18/workflow-source.log",
+      "status": "pass",
+      "tests": 193
+    }
+  },
+  "consumer": {
+    "actual_model_semantic_accuracy": "not_run",
+    "check_names": [
+      "unchanged_v5_schema",
+      "preserve_d41_algorithm_and_reasoning_policy",
+      "preserve_exact_843_disease_catalog",
+      "account_for_all_590_nonempty_bodhi_roots",
+      "inactive_ear_pain_uses_unique_active_same_as",
+      "ddxplus_metadata_only_complete_dispositions",
+      "ddxplus_binary_links_are_independent_presence_not_joint_and",
+      "all_original_eight_complaints_reach_d41_primary_candidates",
+      "heldout_lexical_recall_improves",
+      "ambiguous_expression_retains_multiple_targets",
+      "actual_payload_to_canonical:301345002",
+      "canonical_soap:301345002",
+      "actual_payload_to_canonical:444000005",
+      "canonical_soap:444000005",
+      "actual_payload_to_canonical:262285001",
+      "canonical_soap:262285001",
+      "actual_payload_to_canonical:267036007",
+      "canonical_soap:267036007",
+      "actual_payload_to_canonical:69215007",
+      "canonical_soap:69215007",
+      "actual_payload_to_canonical:52613005",
+      "canonical_soap:52613005",
+      "actual_payload_to_canonical:26079004",
+      "canonical_soap:26079004",
+      "actual_payload_to_canonical:193462001",
+      "canonical_soap:193462001",
+      "registered_measurement_preserves_number_unit_approximation_and_subject",
+      "measurement_adds_no_threshold_or_diagnostic_support",
+      "patient_measurement_reaches_s_hpi_without_exam_conversion",
+      "planner_uses_same_acquired_measurement",
+      "added_attributes_respect_existing_submission_reserve",
+      "source_confirmed_palpation_has_prepared_request",
+      "actual_exam_result_reaches_canonical_o_exam",
+      "patient_report_does_not_create_physical_exam",
+      "no_positive_evidence_from:absentpatientcurrent",
+      "no_positive_evidence_from:presentfamilycurrent",
+      "no_positive_evidence_from:presentpatientpast",
+      "unknown_remains_unknown",
+      "new_aliases_reach_bounded_forced_completion",
+      "actual_full_serialized_messages_remain_within_d41_limits",
+      "readonly_custody_keeps_all_12586084_source_rows"
+    ],
+    "checks": 9506,
+    "clinical_attribute_counts": {
+      "0": 154,
+      "1": 212,
+      "10": 4,
+      "11": 1,
+      "2": 67,
+      "3": 27,
+      "4": 21,
+      "5": 13,
+      "6": 14,
+      "7": 12,
+      "8": 7,
+      "9": 1
+    },
+    "clinical_validation": "not_run",
+    "largest_full_messages_bytes": 8946,
+    "mapping_payloads": 18,
+    "preserved_profiles": 9401,
+    "recall": {
+      "development": {
+        "after_recall10": 1.0,
+        "before_recall10": 0.0,
+        "expanded32": 1.0,
+        "primary8": 1.0,
+        "rows": [
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "잠을 잘 못 자요",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT301345002"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "키가 또래보다 작아요",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT444000005"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "살이 빠져요",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT262285001"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "숨이 차요",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT267036007"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "더위를 많이 타요",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT69215007"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "땀이 많이 나요",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT52613005"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "손이 떨려요",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT26079004"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "불면증",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT193462001"
+          }
+        ]
+      },
+      "heldout": {
+        "after_recall10": 0.875,
+        "before_recall10": 0.375,
+        "expanded32": 0.875,
+        "primary8": 0.875,
+        "rows": [
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "요즘 통 잠을 이루질 못합니다",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT301345002"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": true,
+            "expanded32": true,
+            "phrase": "전보다 체중이 계속 줄어듭니다",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT262285001"
+          },
+          {
+            "after_recall10": false,
+            "before_recall10": false,
+            "expanded32": false,
+            "phrase": "조금 걷는데도 숨차고 힘듭니다",
+            "primary8": false,
+            "target": "urn:ontoward:SymptomSnomedCT267036007"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": true,
+            "expanded32": true,
+            "phrase": "손에 떨림이 생겼습니다",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT26079004"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "뜨거운 날씨를 견디기가 힘듭니다",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT69215007"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "땀이 과하게 흐르는 편입니다",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT52613005"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": true,
+            "expanded32": true,
+            "phrase": "제 나이의 다른 아이들에 비해 키가 작습니다",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT444000005"
+          },
+          {
+            "after_recall10": true,
+            "before_recall10": false,
+            "expanded32": true,
+            "phrase": "몸이 피곤한 느낌이 지속됩니다",
+            "primary8": true,
+            "target": "urn:ontoward:SymptomSnomedCT84229001"
+          }
+        ]
+      }
+    },
+    "status": "pass"
+  },
+  "coverage": {
+    "algorithm_version": "d41.1",
+    "associations": 9955,
+    "authored_records": 0,
+    "baseline": {
+      "classes": {
+        "AttributeValue": 373,
+        "BodySystem": 12,
+        "ClinicalFeature": 3283,
+        "ClinicalPattern": 1797,
+        "ContextFactor": 243,
+        "Disease": 843,
+        "DiseasePatternAssociation": 9401,
+        "ExamFinding": 1,
+        "ExamMethod": 1,
+        "FindingAttribute": 16,
+        "Symptom": 490
+      },
+      "disease_unique_targets_median": 5,
+      "diseases_with_at_most_two_targets": 214,
+      "interviewable_symptoms": 475,
+      "interviewable_without_attributes": 190,
+      "korean_alternative_labels": 0
+    },
+    "bodhi_blank_root_rows": 1,
+    "bodhi_roots": 590,
+    "build_id": "6501f157bde1e2c367f4e7adc0266578c858d97eb3855de6981a4f31b682b2b7",
+    "clinical_review": "not_run",
+    "current": {
+      "classes": {
+        "AttributeValue": 1153,
+        "BodySystem": 12,
+        "ClinicalFeature": 3530,
+        "ClinicalPattern": 1925,
+        "ContextFactor": 310,
+        "Disease": 843,
+        "DiseasePatternAssociation": 9955,
+        "ExamFinding": 2,
+        "ExamMethod": 2,
+        "FindingAttribute": 36,
+        "Symptom": 533
+      },
+      "disease_unique_targets_median": 5,
+      "diseases_with_at_most_two_targets": 209,
+      "interviewable_symptoms": 518,
+      "interviewable_without_attributes": 152,
+      "korean_alternative_labels": 1785
+    },
+    "ddxplus": {
+      "condition_count": 49,
+      "condition_statuses": {
+        "disease_identity_unresolved": 32,
+        "mapped": 17
+      },
+      "evidence_count": 223,
+      "evidence_statuses": {
+        "mapped": 118,
+        "mapped_attribute": 13,
+        "unresolved": 92
+      },
+      "files": [
+        {
+          "path": "assets/nova-benchmarks-2026/DDXPlus/release_evidences.json",
+          "sha256": "281c78b044ae60514e28ecc9052d08a8225dd3e2db3f00f8788b99c47b05e0c0"
+        },
+        {
+          "path": "assets/nova-benchmarks-2026/DDXPlus/release_conditions.json",
+          "sha256": "56edf4682d8e86a4209fc3a33932e50ce03d1cc1fecc326c26d5ef8fa5c24890"
+        },
+        {
+          "path": "assets/nova-benchmarks-2026/DDXPlus/LICENSE.txt",
+          "sha256": "0b64a7527832d51b56d72ef59fcde110c1f6bb0eb9f7dd3b32508e1108b55dfe"
+        }
+      ],
+      "license": "CC BY 4.0",
+      "link_statuses": {
+        "mapped_association": 81,
+        "mapped_context": 49,
+        "unresolved": 758
+      },
+      "patient_archives_read": false,
+      "synthetic_probabilities_imported": false,
+      "version": "DDXPlus-English-v2"
+    },
+    "decision": "D42",
+    "features": 3530,
+    "independent_clinical_validation": "not_run",
+    "model_calls": 0,
+    "normalization_version": "v5.0.5-common-complaints",
+    "patterns": 1925,
+    "registry_version": "532045c55a94675d8a1bc383ef73726b1cedb358297c163528253eeab1ceec29",
+    "root_statuses": {
+      "id_unresolved": 11,
+      "restored": 7,
+      "retained": 424,
+      "role_deferred": 146,
+      "role_unavailable": 2
+    },
+    "runtime_admission": "not_run",
+    "schema_version": "5.0",
+    "status": "preview_only",
+    "variant_statuses": {
+      "mapped": 2716,
+      "unresolved": 1321
+    }
+  },
+  "decision": "D42",
+  "evidence": [
+    {
+      "path": "data/preparation/v5/common-complaints-2026-10-18-r2/report.json",
+      "sha256": "e78dd2746ea808b5e255b658f8fdfddaeac89e62664089e1b7fbaae97529d764"
+    },
+    {
+      "path": "data/preparation/v5/common-complaints-2026-10-18-r2/admission.json",
+      "sha256": "4a2dc98a7f857408943f31a5fb162f336976391cf3423b1d3cefe3e46cd682c0"
+    },
+    {
+      "path": "data/preparation/v5/common-complaints-2026-10-18-r2/review-approved.json",
+      "sha256": "76a25284bed693b964ed05172dbb9950ad3d4f3906b600c3eceaa279dab80767"
+    },
+    {
+      "path": "data/preparation/v5/common-complaints-2026-10-18-r2/baseline-manifest.json",
+      "sha256": "31cc6c16e90ba5a999901c13c230ebc6addc3c43e3629b2adc16408f5b4b6baf"
+    },
+    {
+      "path": "Tmp/common-complaints-2026-10-18/consumer-final.json",
+      "sha256": "89f9601ca51c04a779e7a91e1599423b62879a52204e28ce06c02e266f084b7f"
+    },
+    {
+      "path": "Tmp/common-complaints-2026-10-18/archive.json",
+      "sha256": "a738d78e428f2d82faa57fd579cc1c2315d69fd350994095bc8cd770249ca881"
+    },
+    {
+      "path": "Tmp/common-complaints-2026-10-18/workflow-source.log",
+      "sha256": "d5ea914b0ed5267a04484e470e9e65d0687a0bb83dafd8fa7b49e11bc9cdf414"
+    },
+    {
+      "path": "Tmp/common-complaints-2026-10-18/workflow-archive-final.log",
+      "sha256": "077786f466244c7f7f31496f7e8d8ab71062e5bf9c8dc9b0d5598c431b88845c"
+    },
+    {
+      "path": "Tmp/common-complaints-2026-10-18/components.log",
+      "sha256": "d549f0f3a35d94ae75abaae5bc15196ac969b53df00c7daf94676389df061496"
+    },
+    {
+      "path": "Tmp/common-complaints-2026-10-18/http/result.json",
+      "sha256": "87b8ff01844e077bb4b45cb4126d4b47ca146f06144ad591e7ca098229c9dadf"
+    },
+    {
+      "path": "Tmp/common-complaints-2026-10-18/http/simulator/summary.json",
+      "sha256": "76c2f6f6f20a0ebd7b06badf230d211481c2459f8134cafd5e55926b3cfd0be5"
+    },
+    {
+      "path": "Tmp/common-complaints-2026-10-18/source-admitted/verification.json",
+      "sha256": "b3e9c46d263b6a08fba24cec0cd42f0f738175aa8e7a895999b9370290cba5f0"
+    },
+    {
+      "path": "Tmp/common-complaints-2026-10-18/source-korean/verification.json",
+      "sha256": "dd388b2b978d976bb0c2119873306119de1c1f07952349ba2e7bd97eff7d2ca2"
+    },
+    {
+      "path": "Tmp/common-complaints-2026-10-18/isolated/admitted/verification.json",
+      "sha256": "38e1d42fbeccea3298e87f2510a3f5a6f2cd758fb7733c4702d2fb6c22e8713b"
+    },
+    {
+      "path": "Tmp/common-complaints-2026-10-18/isolated/korean/verification.json",
+      "sha256": "719981933d27f21eb925e51d56517db269fb5e904ccb9e5271d38b036fe714a1"
+    }
+  ],
+  "generation_evidence_receipt": "data/preparation/v5/common-complaints-2026-10-18-r2/evidence.json",
+  "http_fixture": {
+    "kind": "synthetic-source-label-protocol-only",
+    "path": "Tmp/d41-2026-10-18/synthetic-cases/C10/case.json",
+    "public_sample_clinical_case": false,
+    "sha256": "f9bd53336e5fd3f008243aa9a7400e39a87df5970968d3d87a866a726b2641b5"
+  },
+  "manifest_sha256": "f855b4b10f4531ff494e21dae698c70cbcb4fe956123da0fbaba6c936fe5d42b",
+  "model_calls_for_preparation": 0,
+  "normalization_version": "v5.0.5-common-complaints",
+  "not_run": [
+    "new source downloads",
+    "live Luna semantic accuracy",
+    "paid model calls",
+    "independent clinical validation",
+    "official sample validation",
+    "official scoring",
+    "upload",
+    "commits",
+    "remote writes",
+    "deployment",
+    "atlas browser rendering"
+  ],
+  "observed_at": "2026-10-18T06:38:56.785601+00:00",
+  "remaining_gaps": {
+    "author_records_supplied": 0,
+    "ddxplus_unresolved_disease_identities": 32,
+    "ddxplus_unresolved_evidences": 92,
+    "disease_unique_targets_median": 5,
+    "heldout_lexical_miss": "조금 걷는데도 숨차고 힘듭니다",
+    "interviewable_symptoms_without_attributes": 152,
+    "new_palpation_disease_weight": "not_added_without_a_source_association"
+  },
+  "schema_version": "5.0",
+  "source_files": 109,
+  "source_rows": 12586084,
+  "status": "offline_accepted",
+  "steering": [
+    "Preserve D41 canonical consumers and fixed v5 schema",
+    "Admit prepared aliases roles and numeric formats through pinned data rather than runtime phrase rules",
+    "Restore selected common complaints first and preserve unresolved source conditions",
+    "Use the remaining gap report for the next requested source or author batch"
+  ]
+}

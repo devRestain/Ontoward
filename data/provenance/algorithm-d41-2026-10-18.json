@@ -1,0 +1,444 @@
+{
+  "decision": "D41",
+  "algorithm_version": "d41.1",
+  "status": "offline_accepted",
+  "frozen_artifact": {
+    "archive": "Tmp/d41-2026-10-18/ontoward-submission-d41-final.zip",
+    "sha256": "f67a1a85726c6ae1aae8f494729720285120dba618c1b352fa353ee125f2110b",
+    "bytes": 1540734,
+    "files": 54,
+    "isolated_snapshot": true,
+    "workspace_exceptions": [
+      "knowledge/conditions.py",
+      "knowledge/graph.py"
+    ],
+    "protected_files_unchanged": {
+      "submission/nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "submission/knowledge/5b44871b970f5e98-clinical.ttl": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a",
+      "submission/knowledge/5b44871b970f5e98-vocabulary.ttl": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88",
+      "submission/knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "submission/knowledge/5b44871b970f5e98-questions.ko.json": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687",
+      "submission/knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea"
+    },
+    "files_sha256": {
+      ".env": "e47a0db1192d4c376d189f25e17a82fa531a3a118db75bf773525eb5f26a854f",
+      "config/education.txt": "3ac5d525d8111b9c9184b66155b01331fcf721c940e9865974707babbbbd231b",
+      "config/education_doctor.txt": "00e42ebce68545a347acd83d2ab15f1f68cc75b3bf2d69cadca4a8a24e209529",
+      "config/empathy.txt": "f27b80ff1dcf2c155cf1125fd70122ff37963d94a1f961b2badfb3f85b0ef645",
+      "config/input_parser.txt": "28c159454682371b7c6032f0e5bd31f75e297e12161f8e7f50191abfabd6a480",
+      "config/normalization.txt": "2bd24eee4c7cc6f116a9941430ee9cd122ac9271e4092f9354fb061c745719ba",
+      "config/texts.ko.json": "fb0af778e774736ee77eeba573f2615f425276c785cc3c621c85b0242bf20b5c",
+      "knowledge/5b44871b970f5e98-clinical.ttl": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a",
+      "knowledge/5b44871b970f5e98-questions.ko.json": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687",
+      "knowledge/5b44871b970f5e98-vocabulary.ttl": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88",
+      "knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "knowledge/conditions.py": "e517984d635af08356da070aca036137d12514bf42d5eb2c5e18718d1c7dec49",
+      "knowledge/d41-reasoning_policy.json": "b23681158479aaa5471808f8950dd88d136a41340900e6b8ef3cc2d36044bb8a",
+      "knowledge/graph.py": "81fbb0400130e7a41d135e9a5da380c64cf02c67abeb685ba84b4571490d9725",
+      "knowledge/guideline-index.json": "f6b7e631c62b06d335bbd8e4001c773b5b1d3dc540c8d29c0f1aa0cf1ba39907",
+      "knowledge/guidelines.py": "199c4e08ad41de657d564cf5d35845d6a020de53aa4c3b231b75b201a4d243c8",
+      "knowledge/manifest.json": "d7572b688bf66eef2a56d6e7d18520db70d922db7d89232e88aacd1d88a8daa7",
+      "knowledge/schema.ttl": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89",
+      "knowledge/scoring_policy.json": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea",
+      "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+      "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+      "settings.py": "912ca57613fafb2b285ad4b341af7ed0632515dafffcf1a0fd70d96e9f9ec92e",
+      "workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/clinical_reasoner.py": "359ac7651123cdfc06276edce07be0752e0b9e28200e7481a36d225d4b09a8cf",
+      "workflow/consultation.py": "88dc31b3ae60e5133a1efbc41a594f797c2a556e605711c9c93dc787fcd1907a",
+      "workflow/doctor.py": "0dfa9e79f7b517254575fd1968a8bc85da284bdb51be9e5770784cbd948dfabe",
+      "workflow/education.py": "3dc2200240befd910c1105f01649627024a9979905f3b61969eedcd51f37a206",
+      "workflow/graph.py": "6b82b2739e9e3ce83a620093c9805c1d0ee607ec77108c3dcf013959b6581032",
+      "workflow/input_interpreter.py": "7c315f0b318dc54662954f11525b6d12ef8f76b887cc6329f07147038d836c87",
+      "workflow/interview_planner.py": "2e49602adf69081d8da2209a68bd6c9f2f03ab4bcc1bcd8a888729321060b789",
+      "workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/io/model_client.py": "c0138371bd8a860e43346a7b3d3d94f2619f1b5c75c2cbfe38da83889afa9fc9",
+      "workflow/io/nova_session.py": "fac9fda2db826d001cfa8c8a307084981848d9f0581eab9b40ff0a5bfd54158c",
+      "workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+      "workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/rules/action.py": "8c0607c389057c9299e6046974b42e3e713a82246f2f70e4318f2dd3f5bc3942",
+      "workflow/rules/budget.py": "40ece5808cf2fdb7ace73c2aa35a65eb11343b88a06f5e4ae1b7412309d6f24b",
+      "workflow/rules/collection.py": "1d3c7ffce86c311b7e8e19d94063eb46ea2f8230f04879b3ba99609611f5b723",
+      "workflow/rules/input.py": "a32453f6b6f63975f66607461b61e82779916b2cccad16076d5ebecbad7ce948",
+      "workflow/rules/limits.py": "4ea8d2fd343f51fc8679411955251b778a7ef06ffaf6d42e60731983b5ea0366",
+      "workflow/rules/normalization.py": "5bba74f291afd92f430934509675a539a7b7a4384ce1702c2f946cb37d647fb5",
+      "workflow/rules/selection.py": "18d3e467098f89fe7a5ef58b0bf423daffb5ad388800a2b59636686dc0b07a01",
+      "workflow/rules/submission.py": "ce004712cd7d06e5a9fa3789ab5338c6cd1e73a970ba3048f6be624cebeba91f",
+      "workflow/runtime.py": "2417d3d72ad83e6d80c53bad4a541959191bf2b09c6414fbdf43f825853a8186",
+      "workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow/state/canonical.py": "cdfe7898f40e5b9103df2700c0f2a7309c2bc2f5a59a5d939c62edadbb035e13",
+      "workflow/state/evidence.py": "9408304bc57a37c2127bd116cbd3ad959c48161a6d75621eb376cfb5e82314a8",
+      "workflow/state/interactions.py": "aeabf55633ecaff73f4f2b051f46fda9a6ad807d76d8840f6b9138940c5d49b1",
+      "workflow/state/models.py": "f6302c930787525a360cc112bba08b22921cad27ce3b59e7c3d8c92b1e36ab80",
+      "workflow/state/questions.py": "fd70634e28216ebc5944082b649a5ae4787c288e194b794353f701f0ef14992e",
+      "workflow/state/usage.py": "9fee797f7b7fcfbbbf0eb560d0d13f6469118faf24ff1a2d505b716601729714",
+      "workflow/submission_writer.py": "095d63ceec3785099bdd6a8c05c9caec5509dc222a7fc797f7bc010e4f0b42e9",
+      "workflow/text_config.py": "4446d6de3e8335d6f0487a3810617c200309d33ee09ae0deb0efc9a106c74e8d"
+    },
+    "reason": "D41 final snapshot includes qualification fixes; preserve concurrent ontology and numeric-unit extensions in the workspace without adding them to this artifact."
+  },
+  "clinical_admission": {
+    "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+    "manifest": {
+      "path": "Tmp/d41-2026-10-18/final-archive/submission/knowledge/manifest.json",
+      "sha256": "d7572b688bf66eef2a56d6e7d18520db70d922db7d89232e88aacd1d88a8daa7"
+    },
+    "triples": 99105,
+    "associations": 9401,
+    "new_clinical_codes_or_edges": 0,
+    "source_weights": "unchanged",
+    "original_admission_receipts": "preserved"
+  },
+  "acceptance": {
+    "maintained_tests": {
+      "source": 193,
+      "isolated_archive": 193,
+      "status": "pass"
+    },
+    "admitted_graph": {
+      "status": "pass",
+      "cases": [
+        {
+          "target": "urn:ontoward:SymptomSnomedCT21522001",
+          "numeric": false,
+          "actions": 43,
+          "model_calls": 45,
+          "diagnosis_kind": "disease",
+          "termination": "submitted",
+          "unresolved_records": 37,
+          "scripted_consult_seconds": 50.36553414002992,
+          "question_generation_calls": 0,
+          "gateway_payload_bytes": 0,
+          "max_context_bytes": 0,
+          "pattern_evaluations": 45,
+          "scoring_refreshes": 1
+        },
+        {
+          "target": "urn:ontoward:SymptomSnomedCT21522001",
+          "numeric": true,
+          "actions": 43,
+          "model_calls": 46,
+          "diagnosis_kind": "disease",
+          "termination": "submitted",
+          "unresolved_records": 37,
+          "scripted_consult_seconds": 46.902040165965445,
+          "question_generation_calls": 0,
+          "gateway_payload_bytes": 0,
+          "max_context_bytes": 0,
+          "pattern_evaluations": 45,
+          "scoring_refreshes": 1
+        },
+        {
+          "target": "urn:ontoward:SymptomSnomedCT1003721002",
+          "numeric": false,
+          "actions": 17,
+          "model_calls": 16,
+          "diagnosis_kind": "symptom",
+          "termination": "submitted",
+          "unresolved_records": 11,
+          "scripted_consult_seconds": 1.268992293975316,
+          "question_generation_calls": 0,
+          "gateway_payload_bytes": 0,
+          "max_context_bytes": 0,
+          "pattern_evaluations": 3,
+          "scoring_refreshes": 1
+        }
+      ]
+    },
+    "korean": {
+      "status": "pass",
+      "checks": 618,
+      "full_consultations": 3,
+      "selected_contexts": 3,
+      "examination": {
+        "status": "pass",
+        "target": "urn:ontoward:ExamFindingSnomedCT414069003",
+        "scope": "separate selected-action acquisition through SOAP and confirmed submission"
+      }
+    },
+    "observer": {
+      "status": "pass",
+      "scenarios": 14,
+      "node_updates": 1264,
+      "scope": "parity and reconstruction including explicit failure outcomes"
+    },
+    "local_api_checks": {
+      "status": "pass",
+      "checks": 43
+    },
+    "original_sdk_local_http": {
+      "status": "pass",
+      "backend": "scripted",
+      "case_id": "C10",
+      "turns": 41,
+      "doctor_calls": 42,
+      "nonempty_gateway_responses": 42,
+      "sandbox": {
+        "cpu_max": "200000 100000",
+        "memory_max": "8589934592",
+        "root_read_only": true,
+        "submission_read_only": true,
+        "tmp_options": [
+          "rw",
+          "nosuid",
+          "nodev",
+          "noexec",
+          "relatime",
+          "size=524288k",
+          "inode64"
+        ],
+        "output_writable": true
+      },
+      "missing_evidence": [],
+      "model_requests": 83,
+      "checks": {
+        "agent_exit_zero": true,
+        "confirmed_submission": true,
+        "ready_handshake": true,
+        "nonempty_gateway_response": true,
+        "within_turn_limit": true,
+        "within_model_limits": true,
+        "no_development_key_in_agent": true,
+        "no_samples_in_agent": true,
+        "root_read_only": true,
+        "submission_read_only": true,
+        "output_writable": true
+      },
+      "score_status": "not_scored",
+      "actual_nova": "not_run",
+      "official_submission": "not_run",
+      "clinical_accuracy": "not_evaluated",
+      "trace_status": "complete",
+      "fixture": "synthetic admitted-source-label opening; not the public C10 clinical case"
+    },
+    "saved_c01": {
+      "status": "pass",
+      "source": "Tmp/d41-2026-10-18/saved-c01/verification.json",
+      "scope": "controlled annotation using admitted source label; not a real model prediction"
+    },
+    "raw_invariance": {
+      "status": "pass",
+      "scope": "fixed canonical facts and outcomes preserve scores question targets/order SOAP and patient payloads for Education/Doctor"
+    },
+    "numeric_and_scope": {
+      "status": "pass",
+      "scope": "registered quantities intervals finite literals units approximation and qualified negatives"
+    },
+    "scope_reconciliation": {
+      "status": "pass",
+      "source": "Tmp/d41-2026-10-18/handoff.json",
+      "local_file_links": 167
+    }
+  },
+  "metrics": {
+    "path": "Tmp/d41-2026-10-18/metrics.json",
+    "aggregate_outcomes": {
+      "mapped": 61,
+      "unknown": 142
+    },
+    "forced_ratio": 0.0,
+    "model_calls": 299,
+    "input_tokens": 5980,
+    "output_tokens": 2990,
+    "measurement": "scripted protocol observations; not actual Luna tokens, accuracy or production forced frequency"
+  },
+  "schema_binding": "SDK has no server-side response_format; dynamic schemas, strict validation, bounded repair and Python canonical serialization",
+  "failure_boundaries": [
+    "unknown or nonclinical input does not become a symptom",
+    "unsupported numeric slots remain audit-only",
+    "two invalid context responses close as unknown",
+    "required input exceeding local message cap is audited without oversized transmission",
+    "remote expiry closure or ambiguous transport remains an explicit termination boundary"
+  ],
+  "preservation": {
+    "preexisting_state_changes": "Tmp/d41-2026-10-18/evidence/preexisting-state.patch",
+    "preexisting_review_receipt": "data/provenance/runtime-review-2026-10-18.json",
+    "concurrent_workspace_changes": [
+      "Dev/ontology/admission.py",
+      "Dev/ontology/v5.py",
+      "Dev/ontology/authored.py",
+      "submission/knowledge/conditions.py",
+      "submission/knowledge/graph.py"
+    ],
+    "concurrent_scope": "preserved; extensions excluded from frozen D41 artifact; source regressions passed alongside current shared files"
+  },
+  "not_run": [
+    "actual Luna semantic accuracy",
+    "new NOVA calls or credit use",
+    "independent clinical validation",
+    "official sample validation",
+    "official evaluation or scoring",
+    "upload",
+    "commits",
+    "remote writes",
+    "deployment",
+    "Mermaid visual rendering"
+  ],
+  "evidence": [
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/workflow-final-review.log",
+      "sha256": "8cbba9e8b6058bf8f575084277fb95ef33d907affa3b62fbda82c273113f5f62"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/normalization-review.log",
+      "sha256": "e0434c988a33b5e11f756148cbc7b60306f8d19632c1bd439e64d11d3edda22b"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/final-workflow.log",
+      "sha256": "c3848af2becbf6d52c86e35ec6488166609d46f556022a56a690585689176dfb"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/final-admitted.log",
+      "sha256": "9b602634afa0588863ed1d715d0b26bd9b3f1759db967545c0c638a8eb8fd8aa"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/final-korean.log",
+      "sha256": "8b27ebfd99da68965d6bff2d2393ac0dec123d12db01b30c0538f9c42b60f0ba"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/final-observer.log",
+      "sha256": "a2e5cb201ee30d716c16223ec5f41fd19afe6494292b64e826905b5273c0de79"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/final-http.log",
+      "sha256": "f0f7cb5af0ce8e9da9e1bc5dca52eca24fa39fee107f7c2b7e1c7925ab7bb695"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/saved-c01-verified.log",
+      "sha256": "c2e8c4d99443264afb4e12d78b8f4318a0a0eeaeb7fec7ec059882465ddbaddb"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/evaluator.log",
+      "sha256": "099d8a2c531b794bbcbe7092802aca53d0fefd32c40d3e5283cf4ab27f8add66"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/package-final.log",
+      "sha256": "fb3413280a19d02c656252db7072b07365547a6abfcab6ad148faf633f5998f5"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/preexisting-state.patch",
+      "sha256": "dc5fe83ec2d8a173b63743f7360a5bef8d5a16311b66f3e60d5a431346d7139c"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/evidence/superseded-tests.json",
+      "sha256": "1ce7a414b75560d1bb015111694bc7a4fa43d3ddc29e2c278679199c17b383d4"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/final-checks/admitted/verification.json",
+      "sha256": "9b602634afa0588863ed1d715d0b26bd9b3f1759db967545c0c638a8eb8fd8aa"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/final-checks/korean/verification.json",
+      "sha256": "69db0d2e8b716946df43f196f6a8aca9ffd29d1d310453e1d5c0d6e6b48b25d0"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/final-checks/observer/verification.json",
+      "sha256": "e1343df52f71d044dac34100ad5fa851a8ad72ceca05f54c2f1ab33e28276c63"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/final-http/result.json",
+      "sha256": "87b8ff01844e077bb4b45cb4126d4b47ca146f06144ad591e7ca098229c9dadf"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/final-http/simulator/summary.json",
+      "sha256": "76c2f6f6f20a0ebd7b06badf230d211481c2459f8134cafd5e55926b3cfd0be5"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/final-archive.json",
+      "sha256": "4f664877ceb194543bdd2c43db4b86524523a34491fb2b5a89d181939eceb5d8"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/metrics.json",
+      "sha256": "5a273cd5fba0b3ff13cc2d2e26d01235f4ba30a272130cd9afa2e2ff15b7fb75"
+    },
+    {
+      "path": "Tmp/d41-2026-10-18/saved-c01/verification.json",
+      "sha256": "db85519e4feb25ea033c4f3a5b9147ac06499fae37acca305302692295e3bbf7"
+    },
+    {
+      "path": "Tmp/test-evaluator/D41-offline-api-20261018/verification.json",
+      "sha256": "f7f3be3f1a0064c651418542b5cef7294f9f7a22b937d3468130cb22411a75c9"
+    }
+  ],
+  "documents_and_handoff": {
+    "path": "Tmp/d41-2026-10-18/handoff.json",
+    "sha256": "84ce6f1480374cf05a461262101193f4f9283dd056c6323e7d94045ebe8d804d"
+  },
+  "verification_source_hashes": [
+    {
+      "path": "Dev/tests/workflow/compare_algorithms.py",
+      "sha256": "1dc0678aa2fad80591a83fa5c0f7fe1ec65260ad886c8476930e88a51080180f"
+    },
+    {
+      "path": "Dev/tests/workflow/compare_traces.py",
+      "sha256": "e214eedf505109928a82ffeeacbbe1612b52911903f4cd5c3a5afd5c00eb9c55"
+    },
+    {
+      "path": "Dev/tests/workflow/education_fixtures.py",
+      "sha256": "11975bfc7fc8739d1c59129545e8cd8176f0b22e002c7524b3a19387e704f211"
+    },
+    {
+      "path": "Dev/tests/workflow/normalization_fixtures.py",
+      "sha256": "9f5a9380d528a4155515cd4b404eea6cf41f0bf0537dcd18d6a949d80708ca75"
+    },
+    {
+      "path": "Dev/tests/workflow/test_admitted.py",
+      "sha256": "1af77339e9872d4f59d2af9a8578c5724f26c66585467244d57c47941fa86e56"
+    },
+    {
+      "path": "Dev/tests/workflow/test_algorithm.py",
+      "sha256": "32dbbc1a867433d6f9927064c27e9ba8a17815316e1dc3bbf43939af00c4a806"
+    },
+    {
+      "path": "Dev/tests/workflow/test_education.py",
+      "sha256": "cc73675d12f84034ca1ee08efe9b1d123d5fff9ef307c2ac0de2c5c61f2c437a"
+    },
+    {
+      "path": "Dev/tests/workflow/test_evidence_consistency.py",
+      "sha256": "675b664223ba852be3a81aa9a569440306ba81cf72b7ca90365e660f14cf7b54"
+    },
+    {
+      "path": "Dev/tests/workflow/test_input_empathy.py",
+      "sha256": "6177b4a7b660a8b0c6b3cc142a6fc2b62072d4896369eec9c7514255226417bd"
+    },
+    {
+      "path": "Dev/tests/workflow/test_intake_soap.py",
+      "sha256": "0be8d5da6e1364dd6f0d5a0bbbf908d7d493459c9eeca21b890b86609fda6d53"
+    },
+    {
+      "path": "Dev/tests/workflow/test_korean_admitted.py",
+      "sha256": "f526ce6aa586ffbcdab0d553f19c2fc24768c3ddff7fc459a65238072d9d81e5"
+    },
+    {
+      "path": "Dev/tests/workflow/test_normalization.py",
+      "sha256": "08613eac9fa98e1044b4b6fa889dbd00d8a996254d7747f44e39b63ec59dfb3d"
+    },
+    {
+      "path": "Dev/tests/workflow/test_workflow.py",
+      "sha256": "47b3a6338135fbc847d376a830d6ca64a8427db6c20f51843510c8cb68c65bdc"
+    },
+    {
+      "path": "Dev/packaging/package_submission.py",
+      "sha256": "79ddb6ce53a0625409425749f4cf00b3eb7816d3f2f3dca13d87c84fffc3f328"
+    },
+    {
+      "path": "Test/models.py",
+      "sha256": "8f4485eb95f0864b7b7a431eb76dbc8634014839e428f275402c1b9508d16734"
+    },
+    {
+      "path": "Test/server.py",
+      "sha256": "d68ae08421e3f083a15c587f3ccf195d3837f90b376f321bfb3e8ddf23de4b99"
+    },
+    {
+      "path": "Test/test_observer.py",
+      "sha256": "523e32d1e72a2e3d1893d067ad32fa1a0997340dc2973ed3113f2232cb5d957d"
+    }
+  ],
+  "runtime_images": {
+    "ontoward-dev": "sha256:261d00d1b7779ebbf28aeb0ca58b0bf04792e5059a22a10278397cc63261ef25",
+    "ontoward-test:local": "sha256:b39027d87b010956507ed9bfad32e3b3d195ea01775f7bd12723b1014b5adb18",
+    "ontoward-package:local": "sha256:00f125aece702d7c3f6611d94d68dc6d3e054659cb45726c218823914a7e211e"
+  },
+  "sdk_matches_organizer_original": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d"
+}

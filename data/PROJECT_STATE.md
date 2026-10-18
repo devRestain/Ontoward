@@ -1,8 +1,11 @@
 /state version=1
 /project id=ontoward-data
-/status value=complete
-/checkpoint revision=88af4e5b739c823f49c64bfe117108a359985639 dirty=true updated=2026-10-17T16:33:15.325078+00:00
-/goal phase=current id=DATA.D40 state=complete action="Pin D40 policy and preserve admitted graph and source custody"
+/status value=active
+/checkpoint revision=aaf041ec81a57a836bf758997c8a7c96bf88b944 dirty=true updated=2026-10-18T06:40:00+00:00
+/goal phase=current id=DATA.D42 state=complete action="Build and pin the local source and author common complaint batch under D42"
+/goal phase=history id=DATA.D41 state=complete action="Pin D41 policy runtime archive and statement-level acceptance custody without changing clinical admission"
+/goal phase=history id=DATA.RUNTIME_REVIEW18 state=complete action="Record runtime review source fixture and archive custody"
+/goal phase=history id=DATA.D40 state=complete action="Pin D40 policy and preserve admitted graph and source custody"
 /goal phase=history id=DATA.ALGORITHM38 state=complete action="Pin D38 reasoning policy and preserve admitted graph and action custody"
 /goal phase=history id=DATA.EDUCATION37 state=complete action="Admit the D37 build-pinned guideline navigation index and preserve source custody"
 /goal phase=history id=DATA.GUIDELINES30 state=complete action="Map every admitted Disease to relevant preserved guideline corpus documents with exact source and request provenance"
@@ -126,4 +129,27 @@
 /evidence id=DATA.D40.E3 class=runtime result=pass source=../submission/PROJECT_STATE.md observed="Reference APP.D40 application-owned offline acceptance and distinguish controlled C03 responses and synthetic HTTP protocol proof from actual Luna or clinical validation"
 /evidence id=DATA.D40.E4 class=external_service result=not_run source=provenance/algorithm-d40-2026-10-18.json observed="Leave source expansion real model quality new NOVA requests credits independent clinical review official evaluation and publication unrun"
 /scope id=DATA.D40.S1 state=in action="Own D40 policy and acceptance custody while preserving original source admission and leaving model jobs unresumed"
-/handoff state=blocked action="Require separate user authorization before live Luna or NOVA execution and retain the completed D40 offline slice"
+/accept id=DATA.RUNTIME_REVIEW18.A1 state=pass action="Pin current runtime fixture manifest archive and observed review evidence" evidence=DATA.RUNTIME_REVIEW18.E1
+/accept id=DATA.RUNTIME_REVIEW18.A2 state=pass action="Preserve clinical admission and classify controlled and failed public evidence separately" evidence=DATA.RUNTIME_REVIEW18.E2,DATA.RUNTIME_REVIEW18.E3
+/evidence id=DATA.RUNTIME_REVIEW18.E1 class=artifact result=pass source=provenance/runtime-review-2026-10-18.json observed="Pin source fixtures manifest d40.1 policy image identities the fifty-two-file source-matching archive and every retained acceptance or failure evidence hash while preserving one hundred runtime test and public input files"
+/evidence id=DATA.RUNTIME_REVIEW18.E2 class=semantic result=pass source=../Tmp/runtime-review-2026-10-18/saved-gateway-audit.json observed="Preserve the zero-attribute C03 target and current admitted sleep concepts while exposing missing transmitted candidates and dialogue references without adding clinical nodes edges or model jobs"
+/evidence id=DATA.RUNTIME_REVIEW18.E3 class=semantic result=pass source=../submission/PROJECT_STATE.md observed="Reference APP.RUNTIME_REVIEW18 for controlled runtime success and explicit unresolved-chief public failures without changing graph admission or source weights"
+/evidence id=DATA.RUNTIME_REVIEW18.E4 class=external_service result=not_run source=provenance/runtime-review-2026-10-18.json observed="Distinguish zero new external calls by this review from one separately started saved C01 NOVA failure and leave clinical validation official evaluation publication and deployment unrun"
+/scope id=DATA.RUNTIME_REVIEW18.S1 state=in action="Own runtime review input and evidence custody without changing admitted clinical artifacts or preparation jobs"
+/accept id=DATA.D41.A1 state=pass action="Pin policy manifest runtime prompts code evidence metrics and the independently verified final ZIP" evidence=DATA.D41.E1
+/accept id=DATA.D41.A2 state=pass action="Preserve SDK admitted RDF wording source weights original receipts and concurrent data work" evidence=DATA.D41.E1,DATA.D41.E2
+/accept id=DATA.D41.A3 state=pass action="Distinguish controlled offline acceptance unsupported database details and deferred model validation" evidence=DATA.D41.E2,DATA.D41.E3
+/evidence id=DATA.D41.E1 class=artifact result=pass source=provenance/algorithm-d41-2026-10-18.json observed="Pin d41.1 reasoning policy manifest all fifty-four runtime members source and prompt hashes final ZIP f67a1a85726c6ae1aae8f494729720285120dba618c1b352fa353ee125f2110b and every linked verification receipt; retain six prechange protected asset hashes and unchanged upstream SDK"
+/evidence id=DATA.D41.E2 class=semantic result=pass source=../Tmp/d41-2026-10-18/metrics.json observed="Record statement-level outcomes calls and tokens for ten controlled admitted-graph paths and two saved C01 replays; retain 61 mapped and 142 unknown outcomes with zero forced mappings in normal fixtures while separate injected failures prove forced completion and do not estimate production accuracy or forced frequency"
+/evidence id=DATA.D41.E3 class=runtime result=pass source=../submission/PROJECT_STATE.md observed="Reference APP.D41 source extracted-archive admitted Korean observation and local SDK acceptance with explicit unrun actual-model clinical and official boundaries"
+/evidence id=DATA.D41.E4 class=external_service result=not_run source=provenance/algorithm-d41-2026-10-18.json observed="Leave new source admission authoring extension acceptance actual Luna quality live NOVA credits independent clinical validation official scoring publication and deployment outside this custody slice"
+/scope id=DATA.D41.S1 state=in action="Own D41 policy code prompt artifact and acceptance custody while preserving original clinical admission preexisting review evidence and concurrent authoring files"
+/accept id=DATA.D42.A1 state=pass action="Preserve source custody and account for every selected BODHI root and DDXPlus metadata record" evidence=DATA.D42.E1
+/accept id=DATA.D42.A2 state=pass action="Pin the complete v5.0 graph wording numeric formats authored provenance and admission receipt" evidence=DATA.D42.E2,DATA.D42.E3
+/evidence id=DATA.D42.E1 class=semantic result=pass source=data/provenance/common-complaints-d42-2026-10-18.json observed="Reuse 109 files and 12586084 source rows read-only; account for 590 nonempty BODHI roots plus one blank row and all 223 DDXPlus evidences and 49 conditions; map 118 evidences 13 attributes and 17 exact disease identities while retaining exclusions"
+/evidence id=DATA.D42.E2 class=artifact result=pass source=data/preparation/v5/common-complaints-2026-10-18-r2/admission.json observed="Admit build 6501f157bde1e2c367f4e7adc0266578c858d97eb3855de6981a4f31b682b2b7 under receipt 83afd0b132a079411ce29c751dc4acd87aa7d2b2ee7bbf4fce9a54678fa2034f with unchanged v5 structure and d41.1 policy; retain 843 Diseases 533 Symptoms 310 Contexts 36 attributes 1153 values and 9955 Associations"
+/evidence id=DATA.D42.E3 class=artifact result=pass source=data/preparation/v5/common-complaints-2026-10-18-r2/evidence.json observed="Package and extract-verify replay code current source pins local curation inputs and offline receipts separately from the runtime ZIP without raw source packages or credentials"
+/evidence id=DATA.D42.E4 class=semantic result=pass source=data/preparation/v5/common-complaints-2026-10-18-r2/README.md observed="Preserve author date assertion optional references explicit support and typed conditions through JSONL; keep the supplied author file empty and retain 92 deferred DDXPlus evidences 32 unresolved disease identities and 152 attribute-free interviewable Symptoms as visible gaps"
+/scope id=DATA.D42.S1 state=in action="Own D42 local source role and identifier restoration DDXPlus metadata authored preparation registered formats source-specific scores and exact admission receipts"
+/scope id=DATA.D42.S2 state=out action="Exclude new downloads patient CSVs synthetic probabilities generated user clinical assertions live models clinical validation and old source or approval rewrites"
+/handoff state=complete action="Serve the admitted D42 batch and preserved parent custody; use the residual audit for the next requested source or author batch without automatic corpus expansion"

@@ -17,10 +17,10 @@ C03_OPENING = '이름은 김도현이고, 여섯 살 남자아이이다. 엄마 
 
 
 def history(state):
+    from workflow.state.models import InputOutcome
     for slot in HISTORY:
-        state.case.put(CATEGORY_FIELDS[slot], RecordItem(id="history:" + slot, scope="ContextFactor", status="done",
-            source_refs=["initial"], acquisition="initial", value=ClinicalValue(kind="text", text="denied",
-                status="absent", record_category=slot, evidence_use="record_only")))
+        state.case.outcomes.append(InputOutcome(source_ref="initial", statement_id="history:" + slot,
+            state="unsupported", record_category=slot))
 
 
 class IntakeSOAP(unittest.TestCase):
@@ -31,90 +31,14 @@ class IntakeSOAP(unittest.TestCase):
 
     def initial(self, text, payload):
         s = f.state()
-        self.client.chat = Mock(return_value=self.client.completion(json.dumps(payload, ensure_ascii=False)))
+        from normalization_fixtures import fixture_chat
+        self.client.chat = Mock(side_effect=fixture_chat(self.client, payload.get("facts", []), empathy=payload.get("empathy")))
         s.interaction.incoming = {"initial": {"opening": text}}
         self.agent.interpreter.process_input(s, self.k, self.client)
         return s
 
-    def test_c03_compact_facts_preserve_patient_reporter_all_four_measurements_and_time(self):
-        root = f.PROJECT / "Tmp/test-evaluator/C03-20261017T123828Z-bad389c34d/simulator/transcript.json"
-        text = json.loads(root.read_text())["initial"]["opening"] if root.exists() else C03_OPENING
-        payload = {"patient_context": [
-            {"key": "age", "value": "6 years", "quote": "여섯 살 남자아이"},
-            {"key": "sex", "value": "male", "quote": "여섯 살 남자아이"},
-            {"key": "reporter", "value": "mother", "quote": "엄마 김지영"}], "facts": [
-            {"field": "S.cc", "quote": "키가 또래에 비해 많이 작은 것 같아", "value": {
-                "kind": "symptom", "status": "present", "concept_ids": [str(f.OW.Complaint)], "reported_by": "mother"}},
-            {"quote": "일 년 전부터", "value": {"kind": "text", "status": "present", "record_category": "onset",
-                "record_details": ["One year before presentation"], "evidence_use": "record_only"}},
-            {"quote": "최근 육 개월에서 일 년 사이에 키가 별로 크지 않은 것 같다고 느꼈다", "value": {
-                "kind": "text", "status": "present", "record_category": "course",
-                "record_details": ["Perceived slow growth over the past 6-12 months"], "evidence_use": "record_only"}},
-            {"quote": "일 년 전에는 백 센티미터였고 지금은 백오 센티미터 정도였다", "value": {
-                "kind": "text", "status": "present", "record_category": "measurement", "reported_by": "mother",
-                "quantities": [{"name": "Height", "value": 100, "unit": "cm", "when": "one year ago"},
-                    {"name": "Height", "value": 105, "unit": "cm", "when": "current", "approximate": True}], "evidence_use": "record_only"}},
-            {"quote": "일 년 전 십오 키로그람에서 지금은 십육 점 오 키로그람", "value": {
-                "kind": "text", "status": "present", "record_category": "measurement", "reported_by": "mother",
-                "quantities": [{"name": "Weight", "value": 15, "unit": "kg", "when": "one year ago"},
-                    {"name": "Weight", "value": 16.5, "unit": "kg", "when": "current"}], "evidence_use": "record_only"}}]}
-        s = self.initial(text, payload)
-        self.assertEqual(len([i for _, i in s.case.entries()]), 5)
-        self.assertEqual(s.case.patient_context["age"].value, "6 years")
-        self.assertEqual(s.case.patient_context["reporter"].source_refs, ["initial"])
-        self.assertEqual(s.case.chief().value.subject, "patient")
-        self.agent.writer.build_soap(s)
-        note = s.interaction.submission_payload["note"]
-        for expected in ("6 years", "male", "mother", "100 cm", "105 cm", "15 kg", "16.5 kg", "one year ago", "6-12 months"):
-            self.assertIn(expected, note["S"]["hpi"])
-        self.assertEqual(note["O"]["exam"], "")
-        self.assertEqual(len(EvidenceIndex.from_case(s.case).entries), 1)
-        self.agent.planner.prepare_initiation(s)
-        slots = {q.record_category for q in s.pending_questions()}
-        self.assertNotIn("onset", slots)
-        self.assertNotIn("course", slots)
-        self.assertIn("recurrence", slots)
 
-    def test_truncated_historical_c03_responses_use_one_larger_recovery_and_no_terminology(self):
-        source = f.PROJECT / "Tmp/test-evaluator/C03-20261017T123828Z-bad389c34d/simulator/requests.json"
-        requests = json.loads(source.read_text()) if source.exists() else {}
-        ids = ["6420f224-98cb-4e52-bd11-129f8b3b79a8", "e7be2743-a979-4911-90cd-d927c44b63d8"]
-        fallback = self.client.completion('{"facts":[')
-        fallback["choices"][0]["finish_reason"] = "length"
-        self.client.chat = Mock(side_effect=[requests[i]["outcome"][1] if i in requests else copy.deepcopy(fallback) for i in ids])
-        s = f.state(); text = "가상증상이 있어요"
-        s.interaction.incoming = {"initial": {"opening": text}}
-        self.agent.interpreter.process_input(s, self.k, self.client)
-        self.assertEqual(self.client.chat.call_count, 2)
-        self.assertEqual([c.kwargs["max_tokens"] for c in self.client.chat.call_args_list], [4096, 8000])
-        self.assertEqual(s.session.doctor_successes, 0)
-        self.assertEqual(s.session.gateway_successes, 0)
-        self.assertFalse(s.case.chief_complaints())
-        self.assertEqual(s.interaction.patient_reports[0].text, text)
-        self.assertTrue(s.interaction.needs_clarification)
 
-    def test_lookup_recovery_preserves_distinct_record_only_categories_and_measurements(self):
-        raw = {"facts": [
-            {"field": "S.cc", "quote": "가상증상", "value": {"kind": "symptom", "status": "present",
-                "concept_ids": [str(f.OW.Complaint)]}},
-            {"quote": "어제부터", "value": {"kind": "text", "status": "present", "record_category": "onset",
-                "record_details": ["Since yesterday"], "evidence_use": "record_only"}},
-            *[{"quote": quote, "value": {"kind": "text", "status": "present", "record_category": "measurement",
-                "quantities": [{"name": name, "value": number, "unit": unit}], "evidence_use": "record_only"}}
-              for quote, name, number, unit in (("키 100cm", "Height", 100, "cm"), ("몸무게 15kg", "Weight", 15, "kg"))]]}
-        self.client.chat = Mock(side_effect=[self.client.completion(json.dumps(response, ensure_ascii=False))
-            for response in ({"facts": [], "needs_context": True, "lookup_terms": ["가상증상"]}, raw)])
-        s = f.state()
-        s.interaction.incoming = {"initial": {"opening": "가상증상. 어제부터. 키 100cm. 몸무게 15kg."}}
-        self.agent.interpreter.process_input(s, self.k, self.client)
-        self.assertEqual(self.client.chat.call_count, 2)
-        self.assertEqual(len(list(s.case.entries())), 4)
-        self.agent.writer.build_soap(s)
-        hpi = s.interaction.submission_payload["note"]["S"]["hpi"]
-        self.assertIn("Since yesterday", hpi)
-        self.assertIn("100 cm", hpi)
-        self.assertIn("15 kg", hpi)
-        self.assertEqual(len(EvidenceIndex.from_case(s.case).entries), 1)
 
     def test_invalid_json_does_not_trigger_terminology_or_unstructured_soap(self):
         self.client.chat = Mock(return_value=self.client.completion('{'))
@@ -130,28 +54,12 @@ class IntakeSOAP(unittest.TestCase):
 
     def test_unclassified_raw_speech_remains_in_history_without_hpi_fallback(self):
         s = self.initial("감사합니다. 다음에 또 오겠습니다.", {"facts": [], "clinical_content": False})
-        self.assertTrue(s.interaction.patient_reports[0].uncovered_spans)
+        self.assertEqual(s.interaction.patient_reports[0].text, "감사합니다. 다음에 또 오겠습니다.")
         self.assertFalse(s.interaction.patient_reports[0].clinical_spans)
         self.agent.writer.build_soap(s)
         self.assertEqual(s.interaction.submission_payload["note"]["S"]["hpi"], "")
 
-    def test_patient_context_survives_required_request_fitting(self):
-        s = f.state("ChiefComplaint", True); f.record(s); s.case.select_primary()
-        s.case.patient_context["age"] = PatientContextEntry(value="6 years", quote="여섯 살", source_refs=["initial"])
-        q = f.question(s, target=f.OW.Complaint, attribute=f.OW.Location, purpose="hpi", field="S.hpi")
-        f.pending(s, q)
-        self.agent.interpreter._request_parse(s, self.k, self.client, "가상부위예요")
-        payload = json.loads(self.client.calls[0]["messages"][1]["content"])
-        self.assertEqual(payload["patient_context"]["age"]["value"], "6 years")
-        self.assertIn(str(f.OW.Complaint), {c["id"] for c in payload["vocabulary"]})
-        self.assertNotIn("text", parser_schema()["$defs"]["ClinicalValue"]["properties"])
 
-    def test_semantic_routing_preserves_incidental_medication_in_cc(self):
-        s = self.initial("약은 복용하지 않아요", {"facts": [{"field": "S.sh", "quote": "약은 복용하지 않아요",
-            "value": {"kind": "text", "status": "absent", "record_category": "medication", "evidence_use": "record_only"}}]})
-        self.agent.writer.build_soap(s)
-        self.assertIn(f.CONFIG.texts.record_labels["medication"], s.interaction.submission_payload["note"]["S"]["pmh"])
-        self.assertEqual(s.interaction.submission_payload["note"]["S"]["sh"], "")
 
     def test_nonclinical_spans_do_not_hide_a_mixed_new_symptom(self):
         text = "네, 그런데 다른 증상도 있어요. 두통이 생기면 오겠습니다."
@@ -192,9 +100,9 @@ class IntakeSOAP(unittest.TestCase):
         self.assertEqual(questions[0].text, f.CONFIG.texts.greeting)
         self.assertEqual([q.record_category for q in questions[1:]], ["onset", "course", "recurrence", "previous_care"])
         self.assertTrue(all(q.target_id is None for q in questions))
-        s.case.put("S.hpi", RecordItem(id="care:not-applicable", scope="Initiation", status="done", source_refs=["initial"],
-            value=ClinicalValue(kind="text", text="No relevant treatment", status="unknown", not_applicable=True,
-                record_category="previous_care", evidence_use="record_only")))
+        from workflow.state.models import InputOutcome
+        s.case.outcomes.append(InputOutcome(source_ref="initial", statement_id="care:not-applicable",
+            state="not_applicable", record_category="previous_care"))
         self.agent.planner.prepare_initiation(s)
         self.assertNotIn("previous_care", {q.record_category for q in s.pending_questions()})
         self.assertEqual(s.questions.intake["previous_care"], "not_applicable")

@@ -15,6 +15,7 @@
 - Preserve the five case-local state owners without a generic agent base, registry, or session subclasses.
 - Keep runtime knowledge inside submission/knowledge and patient facts outside the read-only Graph.
 - Leave source projection, asset preparation, and admission to root Dev and data owners.
+- Consume D42 source and author extensions only through pinned v5.0 assets; retain D41 dictionary binding raw-free consumers and original source weight meanings.
 
 ## Prepared Interviews
 
@@ -39,42 +40,33 @@
 
 ## Gateway and Evidence
 
-- Route received replies through InputInterpreter and consume Education replies as transcript-only input before clinical parsing.
-- Preserve quoted patient age sex reporter family-member identity and record-only quantities without requiring graph attributes.
-- Transmit the compact Gateway schema with one quote per fact and derive internal text and defaults after validation.
-- Use openai/gpt-6-luna for gateway terminology and empathy roles; track the first substantive Gateway interpretation separately from other model successes.
-- Map each current chief report to one supplied Symptom and separate exact broader ambiguous or unmapped mapping from clinical presence.
-- Restrict chief identifiers to Symptoms while extracting incidental attributes values symptoms and Context from the whole utterance under the existing bounded recovery allowance.
-- Keep the chief schema enum synchronized with the transmitted candidates, reject multiple chief IDs and unqualified diagnostic composites, and record linked-chief counts separately from nonempty model responses.
-- Keep routing selection scores diagnosis and SOAP serialization in Python while accepting validated D37 model-generated P sentences.
-- Preserve the complete actual transcript case-locally; exclude failed drafts, undelivered text, and transport errors from dialogue.
-- Project current question, relevant observations/episodes, and original context into bounded requests rather than sending the full history.
-- Limit primary past context to 24 records, 6 turns, and 16 KiB; limit expanded context to 64 records, 12 turns, and 64 KiB.
-- Preserve the complete current input outside the past-context limit and allow only supplied record/dialogue references in model output.
-- Require nonempty exact current quotations for every accepted fact; never turn Doctor speech into patient findings.
-- Resolve explicit and implicit record destinations before validation and store only the validated field under D36.
-- Restrict acquired O corrections to a new EXAM result for the same target and occurrence while retaining patient disputes separately in S.
-- Resolve explicit ID-free corrections only against one complete matching evidence key and retain ambiguous conflicts for bounded clarification.
-- Separate accepted facts, rejected facts, and unresolved links; quarantine invalid observation dependencies and conflicting corrections without discarding independent valid facts.
-- Allow one combined context/link/fact recovery and one final record-only terminology call per reply; freeze accepted independent facts and retain every original rejection and recovery result.
-- Include malformed or empty Gateway JSON in that same one-call recovery allowance without admitting ungrounded facts.
-- Use fixed parsing only for complete replies matching an explicit prepared answer contract; send compound, temporal, and subject-changing replies to Gateway.
-- Bind current answers to the supplied Target Attribute allowed values subject and episode; recover empty substantive answers and incomplete attributes without forcing incompatible meanings.
-- Preserve unsupported measurements as quoted subjective medical text without fabricated numeric attributes examination findings or score support.
-- Detect exact-quote emotional signals in collection sessions and prioritize budgeted empathy after the required greeting.
-- Keep empathy events outside SOAP placeholders and education completion; suppress repeated concerns and acknowledgements while permitting new distress and explicit renewed requests.
-- Validate generated empathy as one NFC 1-30 codepoint statement and use the prepared fallback after empty malformed or invalid generation.
-- Reserve a reply-model allowance and finalization time before empathy generation and record undelivered events when budgets prevent delivery.
-- Bound primary vocabulary to 256 concepts/32 KiB and expansion to 1024 concepts/128 KiB.
-- Preserve question Target/Attribute identifiers, prioritize chief lookup terms and current wording before optional Target-specific values, and stop candidate construction at the count limit.
-- Apply D28 whole-message UTF-8 JSON caps of 12 KiB primary, 16 KiB expansion, and 8 KiB after a context rejection; include system instructions, schema, current input, question, vocabulary, and past context.
-- Prioritize current wording and trim optional vocabulary and past context without truncating current input, question, schema, or required Target/Attribute IDs; preserve oversized input for clarification without transmission.
-- Treat CONTEXT_LIMIT_EXCEEDED as a request-specific rejection and use only the existing one-call recovery allowance with a smaller payload and a new request ID; preserve accepted facts and normal clarification/finalization limits.
-- Keep unknown, uncertain, explicit absence, unasked, unperformed, and acquired evidence distinct.
-- Use the shared current-evidence projection for chief confirmation question resolution reasoning and SOAP while preserving raw conflicts and unstructured reports.
-- Preserve raw reports, subject/time, broad and fine locations, corrections, separate observations/episodes, typed quantities/ranges, and both time axes.
-- Keep patient speech, actual EXAM findings, initial vitals, proposed tests, and plans in their designated SOAP roles.
-- Do not infer units, thresholds, clinical causal qualifiers, examinations, or plans from unqualified wording.
+- Apply D41 context analysis followed by database-only normalization for every initial input and collection SAY or EXAM reply.
+- Keep Education replies transcript-only without interpretation, empathy, clinical updates, or replanning.
+- Use openai/gpt-6-luna through the pinned SDK and keep routing, diagnosis scores, question selection, and SOAP serialization in Python.
+- Preserve the complete actual transcript and raw model exchanges in case-local audit storage only.
+- Restrict patient-original context to InputInterpreter model requests and exclude failed drafts and undelivered speech from dialogue.
+- Extract atomic statements with exact current spans and typed subject, reporter, time, episode, assertion, correction, and emotional intent.
+- Use only supplied existing observation, episode, and correction references and keep family relationship tokens closed.
+- Separate unknown, uncertain, nonclinical, domain denials, conditional negation, inapplicability, and acquired facts.
+- Search each statement independently using source labels, aliases, and context-generated retrieval hints without hypothesis filtering.
+- Bind normalization batches to admitted Target, Attribute, AttributeValue, polarity, and registered numeric formats.
+- Reject unknown identifiers, invalid relationships, duplicate JSON keys, nonfinite numbers, unsupported units, and invented measurements.
+- Allow one context repair, three normalization stages, and one additional format repair per mapping batch inside shared case budgets.
+- Freeze independent valid mappings and repair only unresolved statements while preserving original rejection evidence.
+- Force the closest compatible admitted mapping at the final semantic stage and complete remaining valid-context mappings deterministically when necessary.
+- Preserve polarity, subject, scope, and acquisition during forced completion and record forced_by without excluding otherwise eligible evidence.
+- Keep unsupported details in typed outcomes and audit storage without adding record codes, clinical graph relations, or free SOAP summaries.
+- Separate fact identifiers from question identifiers and connect every acquired question answer through answered_fact_ids.
+- Preserve nonexclusive values and separate subjects, observations, conditions, and time points; replace facts only through validated corrections.
+- Restrict acquired O corrections to a new EXAM result for the same target and occurrence.
+- Use CanonicalSnapshot for downstream patient data and EvidenceIndex for its graph-eligible reasoning subset.
+- Keep raw quotations, free English record details, and unregistered quantities outside canonical patient payloads.
+- Derive question acquisition and retry behavior from typed outcomes and facts rather than patient wording.
+- Detect empathy through the context pass and provide only emotional codes and canonical facts to empathy generation.
+- Validate empathy independently as one NFC 1-30 Korean statement and preserve the prepared fallback.
+- Preserve D28 whole-message caps of 12 KiB primary, 16 KiB recovery, and 8 KiB after context rejection.
+- Split normalization batches rather than deleting independent statements and retain required current input and bound identifiers.
+- Preserve oversized input in audit without transmitting an oversized request or manufacturing a clinical fact.
 
 ## Pattern Reasoning
 
@@ -85,7 +77,7 @@
 - Record incomparable matches without fabricating a combined-source weight.
 - Preserve nonexclusive categorical positives and distinguish explicit value negation from numeric conflict.
 - Restrict chief support to the anchored occurrence and exclude another occurrence of the same Target from auxiliary support.
-- Preserve source Association weights and hash-pin the separate d40.1 reasoning policy without changing source graph or action assets.
+- Preserve source Association weights and hash-pin the separate d41.1 reasoning policy without changing source graph or action assets.
 - Apply bounded absence penalties only to basic presence Patterns with matched applicability, high/very_high source typicality, and explicit current absence in the active chief episode.
 - Cap penalties at one per Target and two per Disease; do not penalize unknown, missing relations, detailed mismatch, or another episode's absence.
 - Calculate fit as exact-chief support plus min(4, other Target support) plus positive Context capped at one minus bounded contradiction.
@@ -110,7 +102,7 @@
 - Keep Usage.actions as total consumed server turns and empathy_actions as its empathy subset; count actions minus empathy_actions against interview caps.
 - Charge empathy SAY and model calls to the common 50-turn and model/token budgets without an independent empathy quota; preserve queued empathy across replanning and interpret its reply before continuation.
 - Preserve empathy dialogue and accepted clinical facts without inserting an unlinked acknowledgement into SOAP.
-- Reserve one Gateway call and 4096 output tokens before collection actions while retaining response and finalization windows of 120 seconds each.
+- Reserve two Gateway calls and 8192 output tokens before collection actions while retaining response and finalization windows of 120 seconds each.
 - Allow prepared Education delivery without a reply-model reservation and retain response and finalization time windows.
 - Classify finish_reason length as truncation and use the existing single recovery with at most 8000 tokens without counting truncated responses as success.
 - Process every received reply immediately after execution and let interpretation consume its reserved window; do not route budget checks back to pending recovery.
@@ -122,7 +114,7 @@
 - Treat the fixed selection as a working diagnosis and preserve unresolved assessment and treatment prerequisites in A and P.
 - Keep English P sentences separate from Korean delivery queues and retain exact undelivered reasons.
 - Read every mapped original document through the pinned index and organizer mount and retain document relation scope and source hashes.
-- Include complete actual dialogue and obtained records in every Education generation request within a whole-messages 64-KiB cap.
+- Include only canonical patient facts and typed outcomes in every Education generation request within a whole-messages 64-KiB cap.
 - Read oversized documents in complete sequential fragments and combine verified quote-backed notes before synthesis.
 - Require five nonempty English P sentence arrays on success and distinguish guideline model_knowledge and mixed provenance.
 - Allow one case-wide plan-format repair and one Doctor repair for each invalid batch while preserving accepted items.
@@ -132,8 +124,9 @@
 - Keep A.evidence limited to actual obtained findings used in diagnosis and exclude unasked/unperformed findings and internal identifiers.
 - Apply D33 English source labels and fixed Category: Content lines to populated SOAP fields; keep the representative complaint in S.cc and onset and pain assessment in S.hpi tied to the same observation and episode.
 - Render history and ROS presence as (+) or (-), keep unknown and uncertain explicit, and never expand a general history denial into individual disease negatives.
-- Keep additional record keywords anchored to exact patient quotes in the existing Gateway pass; prefer admitted typed values and require explicit NRS scale evidence.
-- Render only unresolved clinical spans in their semantic S fields and keep greetings acknowledgements and future promises in the transcript.
+- Render patient facts from admitted labels, values, and numeric formats; require explicit NRS scale evidence.
+- Preserve numeric approximation and mark qualified assertions in SOAP without inserting the patient's original condition text.
+- Keep unmapped spans, greetings, acknowledgements, and future promises in audit storage without adding them to SOAP.
 - Render Diagnosis and Evidence categories plus source-supported r/o entries; keep all fifteen SDK fields and the separate English diagnosis unchanged in shape.
 - Preserve acquired negative findings used by diagnosis penalties and include obtained supporting findings beside each differential diagnosis.
 - Reconstruct an invalid SOAP record once and finish only after the submitted DIAGNOSE returns completed.
@@ -149,7 +142,7 @@
 - Consume D23 admitted D22 patient actions through strict prepare; preserve D20 graph and policy semantics and use only exact prepared SAY and EXAM wording.
 - Keep require_action_assets=False confined to offline graph preparation and validation; use full graph and question validation during prepare.
 - Use package-relative runtime imports and settings.py for file-relative paths.
-- Run maintained workflow D40 intake SOAP algorithm input empathy evidence Education and admitted-RDF checks through root Dev/tests/workflow.
+- Run maintained D41 normalization intake SOAP algorithm empathy evidence Education and admitted-RDF checks through root Dev/tests/workflow.
 - Compare frozen pre-D38 and D38 synthetic consultations with identical source fixtures and budgets without public-case tuning.
 - Keep synthetic fixtures and evidence in Tmp and verify the extracted ZIP without parent data/assets or network.
 - Package only active manifest knowledge assets and required runtime defaults; exclude superseded unreferenced knowledge files without deleting their source custody.

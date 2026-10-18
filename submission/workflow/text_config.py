@@ -36,6 +36,8 @@ class Texts(BaseModel):
     operator_labels: dict[str, str]
     episode_format: str
     clinical_context_format: str
+    qualified_scope_label: str
+    approximate_label: str
     measurement_format: str
     interval_format: str
     range_format: str
@@ -61,7 +63,7 @@ class Texts(BaseModel):
 
 class TextConfig(BaseModel):
     parser_prompt: str
-    terminology_prompt: str
+    normalization_prompt: str
     empathy_prompt: str
     education_prompt: str
     education_doctor_prompt: str
@@ -71,16 +73,18 @@ class TextConfig(BaseModel):
     @classmethod
     def load(cls):
         prompt = configured_path("ONTOWARD_PARSER_PROMPT", "config").read_text(encoding="utf-8").strip()
-        terminology = configured_path("ONTOWARD_TERMINOLOGY_PROMPT", "config").read_text(encoding="utf-8").strip()
+        normalization = configured_path("ONTOWARD_NORMALIZATION_PROMPT", "config").read_text(encoding="utf-8").strip()
         empathy = configured_path("ONTOWARD_EMPATHY_PROMPT", "config").read_text(encoding="utf-8").strip()
         education = configured_path("ONTOWARD_EDUCATION_PROMPT", "config").read_text(encoding="utf-8").strip()
         education_doctor = configured_path("ONTOWARD_EDUCATION_DOCTOR_PROMPT", "config").read_text(encoding="utf-8").strip()
         texts = Texts.model_validate_json(configured_path("ONTOWARD_TEXTS", "config").read_text(encoding="utf-8"))
-        if not all((prompt, terminology, empathy, education, education_doctor)) or set(texts.status_labels) != {"present", "absent", "uncertain", "unknown"}:
+        if not all((prompt, normalization, empathy, education, education_doctor)) or set(texts.status_labels) != {"present", "absent", "uncertain", "unknown"}:
             raise ValueError("Missing parser prompt or clinical status labels")
         if (set(texts.subject_labels) != {"patient", "family"} or set(texts.time_labels) != {"current", "past", "unspecified"}
                 or set(texts.operator_labels) != {"eq", "lt", "le", "gt", "ge"}):
             raise ValueError("Missing clinical context or numeric labels")
+        if not texts.qualified_scope_label.strip() or not texts.approximate_label.strip():
+            raise ValueError("Missing qualification labels")
         if (not {"cc", "hpi", "pain", "exam", "vitals", "tests", "treatment", "disposition", "follow_up",
                  "education", "unknown", "unmapped", "patient_report"} <= texts.soap_labels.keys()
                 or "TimeSinceOnset" not in texts.attribute_labels
@@ -117,6 +121,6 @@ class TextConfig(BaseModel):
         if any(content_error(text) for text in [*texts.clarification_questions.values(),
                 *texts.intake_questions.values(), *texts.history_questions.values()]):
             raise ValueError("Invalid prepared clarification")
-        return cls(parser_prompt=prompt, terminology_prompt=terminology, empathy_prompt=empathy,
+        return cls(parser_prompt=prompt, normalization_prompt=normalization, empathy_prompt=empathy,
                    education_prompt=education, education_doctor_prompt=education_doctor,
                    texts=texts, education_enabled=education_enabled())

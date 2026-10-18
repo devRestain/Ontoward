@@ -1,0 +1,15 @@
+{
+  "actual_models": "not_run",
+  "artifact_sha256": "0bf3e40a39eaa5bf4cc10638ea50994b2e8337288494612aaf6bb1e86670aaec",
+  "build_id": "6501f157bde1e2c367f4e7adc0266578c858d97eb3855de6981a4f31b682b2b7",
+  "consumer_checks": 9506,
+  "http_status": "pass",
+  "http_turns": 41,
+  "korean_checks_source_and_archive": 619,
+  "official_evaluation": "not_run",
+  "preserved_profiles": 9401,
+  "source_files": 109,
+  "source_rows": 12586084,
+  "status": "pass",
+  "workflow_tests_source_and_archive": 193
+}

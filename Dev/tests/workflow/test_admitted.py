@@ -7,6 +7,7 @@ import resource
 import sys
 import time
 from education_fixtures import education_response, KOREAN
+from normalization_fixtures import context_from_facts, mapping_from_contracts
 
 
 def verify(submission, output, candidate=None):
@@ -87,29 +88,22 @@ def verify(submission, output, candidate=None):
             education = education_response(payload)
             if education is not None:
                 return self.completion(json.dumps(education, ensure_ascii=False))
-            q, text = payload["question"], payload.get("input")
-            if payload["parser_pass"] == "expansion":
-                return self.completion('{"facts":[]}')
-            value = {"kind": "symptom", "text": text, "status": "present", "concept_ids": [self.target],
-                     "subject": "patient", "time_context": "current", "observation_id": "synthetic-observation", "episode_id": "synthetic-episode"}
-            field = "S.cc"
-            if q and q["attribute_id"]:
-                value.update(kind="attribute", concept_ids=[q["target_id"]], attribute_id=q["attribute_id"],
-                             observation_id=q["observation_id"], episode_id=q["episode_id"])
-                field = q["field"]
-                if q["attribute_id"] == str(OW.Location):
-                    value["values"] = locations
-                elif q["attribute_id"] == str(OW.TimeSinceOnset):
-                    value["measurement"] = {"kind": "quantity", "value": 2.0, "unit": "month", "operator": "eq"}
-                elif q["attribute_id"] == str(OW.EpisodeDuration):
-                    value["measurement"] = {"kind": "interval", "lower": 1.0, "upper": 2.0, "unit": "h", "upper_inclusive": False}
-            if q and q["purpose"] == "greeting":
-                return self.completion(json.dumps({"facts": [], "clinical_content": False,
-                    "spans": [{"quote": text, "role": "nonclinical"}]}))
-            fact = {"field": field, "quote": text, "value": value}
-            if q:
-                fact["record_id"] = q["item_id"]
-            return self.completion(json.dumps({"facts": [fact]}, ensure_ascii=False))
+            if payload['task'] == 'input_mapping':
+                return self.completion(json.dumps(mapping_from_contracts(payload)))
+            q, text = payload['question'], payload['input']
+            facts = []
+            if text.strip() and text not in config.texts.unknown_replies and (q is None or q['purpose'] not in {'greeting', 'intake', 'history', 'open_inquiry'}):
+                value = {'kind': 'symptom', 'status': 'present', 'concept_ids': [self.target], 'time_context': 'current'}
+                if q and q['attribute_id']:
+                    value.update(kind='attribute', concept_ids=[q['target_id']], attribute_id=q['attribute_id'])
+                    if q['attribute_id'] == str(OW.Location):
+                        value['values'] = locations
+                    elif q['attribute_id'] == str(OW.TimeSinceOnset):
+                        value['measurement'] = {'kind':'quantity','value':2.0,'unit':'month','operator':'eq'}
+                    elif q['attribute_id'] == str(OW.EpisodeDuration):
+                        value['measurement'] = {'kind':'interval','lower':1.0,'upper':2.0,'unit':'h','upper_inclusive':False}
+                facts = [{'quote':text, 'value':value}]
+            return self.completion(json.dumps(context_from_facts(facts), ensure_ascii=False))
 
         def say(self, content, request_id):
             if content == config.texts.greeting:
@@ -204,9 +198,9 @@ def verify(submission, output, candidate=None):
             assert exchange["role"] in {"gateway", "terminology", "empathy", "education", "education_doctor"}
             if exchange["role"] in {"gateway", "terminology"}:
                 metrics = exchange["parser_payload"]
-                expanded = metrics["pass"] != "primary"
-                assert metrics["vocabulary_count"] <= (1024 if expanded else 256)
-                assert metrics["vocabulary_bytes"] <= (131072 if expanded else 32768)
+                assert metrics['request_bytes'] <= metrics['request_byte_limit']
+                assert metrics['pass'] in {'context','context_repair','mapping','binding_repair','forced','format_repair'}
+
         cases.append({"target": case_target, "numeric": numeric, "actions": len(client.actions), "model_calls": state.session.doctor_calls,
                       "diagnosis_kind": state.case.diagnosis_kind, "termination": state.interaction.termination,
                       "unresolved_records": sum(item.value is not None and item.value.status == "unknown" for _, item in state.case.entries()),

@@ -24,6 +24,8 @@ Pattern은 질환·출처와 독립적인 단일 Target 표현이다. Feature는
 
 가중치는 [공개 점수 정책](../../submission/knowledge/scoring_policy.json)을 사용한다. BODHI 예측도는 zero/rare/low/medium/high/very_high = 0/0.5/1/2/3/4, 동일한 BODHI 평가가 없을 때의 SNOMED 기본값은 due_to=2, associated_with=1, 조건을 보존한 일반화=0.5다. 정교화 점수와 기준 점수의 차이는 한 조건이면 atomic, 여러 조건이면 joint로 유지한다.
 
+D42는 이 기존 가중치를 보존하고 [현재 manifest](../../submission/knowledge/manifest.json)에 새 정성적 출처 정책을 고정한다. 로컬 DDXPlus·작성자 연관의 기본 정책 점수는 1이며 작성자 지정 수준은 작성자 판단으로 남긴다. 문헌이 없는 자료도 작성자·날짜·주장·조건을 가진 JSONL로 받을 수 있지만, 원천 SCTID·공식 한국어·질환 확률을 제공한 자료로 표시하지 않는다. 표현·단위·기록 속성은 진단 조건과 별도로 등록할 수 있으며 전체 절차와 보류 사유는 [D42 배치](../preparation/v5/common-complaints-2026-10-18-r2/README.md)를 따른다.
+
 후보 검색은 Target에서 넓게 수행한다. 전체 Feature와 적용 조건이 맞을 때만 점수를 활성화하고 구체적인 변형은 점수가 낮아져도 조상을 대체한다. 같은 Target의 반복·출처를 중복 가산하지 않고 다른 에피소드의 조건을 섞지 않는다. 점수는 감별 순위용이며 보정된 확률이 아니다.
 
 D18에 따라 기존 seed 어휘·승인 영수증·v4.2 자료·이전 임상 배치와 지침 파생 데이터를 삭제했다. 이 디렉터리는 구조 계약만 소유하며 어휘와 관계는 원천 행 또는 명시적 파생 규칙에서 새로 추출한다. 깨끗한 빈 베이스와 새 후보는 [preparation/v5/](../preparation/v5/source-only-2026-10-16/README.md)에 분리한다.

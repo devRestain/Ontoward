@@ -592,6 +592,10 @@ def export(database_path,output):
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="ontoward-source-projection")
     commands = parser.add_subparsers(dest="command",required=True)
+    common = commands.add_parser("rebuild-common")
+    common.add_argument("--output", type=Path, required=True)
+    common.add_argument("--authored", type=Path)
+    common.add_argument("--parent-database", type=Path)
     prepare = commands.add_parser("build")
     prepare.add_argument("--international",type=Path,required=True)
     prepare.add_argument("--korean",type=Path)
@@ -621,7 +625,11 @@ def main(argv=None):
     korean.add_argument("--output", type=Path, required=True)
     korean.add_argument("--resume", action="store_true")
     args = parser.parse_args(argv)
-    if args.command=="build":
+    if args.command=="rebuild-common":
+        from .common import build as build_common
+        kwargs = {"parent_path": args.parent_database} if args.parent_database else {}
+        result = build_common(args.output, authored_path=args.authored, **kwargs)
+    elif args.command=="build":
         if args.llm and (not args.allowance_date or args.max_calls<=0 or args.daily_remaining<=0):
             parser.error("Live normalization requires current --allowance-date and explicit positive budgets")
         result = build(args.international,args.korean,args.bodhi,args.output,resume=args.resume,llm=args.llm,

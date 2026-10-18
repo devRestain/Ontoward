@@ -41,7 +41,8 @@
 - Keep generated directories and upstream archive internals under their existing owner.
 - Apply D17 prepared interviews Pattern-first fit bounded parsing and adaptive budgets while preserving D11 session and submission boundaries.
 - Apply D38 to one primary chief full attribute collection shared pure reasoning residual graph questions and versioned policy with D40 budgets and Education response boundaries.
-- Apply D40 initial patient context compact parsing semantic SOAP protected intake and history budgets and transcript-only Education replies.
+- Apply D41 always-called context analysis DB-only normalization forced completion and canonical consumers with D40 protected collection budgets and transcript-only Education replies.
+- Apply D42 to source-bound common complaints local DDXPlus metadata and explicit authored JSONL through a new v5.0 admission while preserving D41 canonical consumers and frozen acceptance.
 - Apply D17 prepared Doctor delivery and designated-model Gateway interpretation; keep selection in InterviewPlanner and submission in SubmissionWriter.
 - Maintain the implemented Korean workflow white paper in submission/README.md and keep root README as project orientation.
 - Do not resume cancelled model jobs or expand the corpus without a new user request.
@@ -55,9 +56,9 @@
 - Apply D29 for case-independent chief mapping to one supplied Symptom, source-backed bilingual aliases, and one bounded full-index lookup recovery.
 - Preserve D30 source mappings and apply D37 manifest-pinned navigation to the organizer guideline mount without packaging original documents.
 - Generate D37 English P sentences with Luna high and render independent NFC 1-30 Korean Doctor statements while retaining source and model-knowledge provenance.
-- Apply D33 English SOAP Category: Content entries with source terminology explicit polarity and quote-backed keywords and display only D40 unresolved clinical spans as unstructured S reports.
+- Apply D33 English Category: Content SOAP using D41 admitted labels values and typed metadata without patient-original spans or free record summaries.
 - Apply D36 resolved-destination acquisition checks and D40 shared current evidence for chief selection question resolution reasoning SOAP and symptom fallback.
-- Apply D34 question-bound vocabulary interpretation one binding repair record-only terminology fallback and separate budgeted empathy SAY in the four collection sessions.
+- Apply D41 per-statement DB binding bounded semantic and format repairs and forced completion while retaining separate budgeted D34 empathy SAY.
 - Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep maintained workflow tests in Dev/tests/workflow and generated synthetic assets and evidence in Tmp.
 
 ## Working Order
@@ -74,7 +75,7 @@
 - Use specific clinical pain complaints as D08 retrieval targets and preserve finer Location values, raw wording, interpretation uncertainty, and separate episodes.
 - Use D17 for the five-session workflow and Python reasoning, D40 for session collection and budgets, and D12 for wire format and packaging.
 - Apply D15 for information-preserving SOAP and bounded Gateway vocabulary; use D18 for all knowledge and Korean text preparation.
-- Preserve D36 original reports and quote coverage without treating unstructured speech as scored evidence or acquired examination findings.
+- Preserve D36 acquisition and raw audit custody while restricting downstream patient information to D41 canonical facts and typed outcomes.
 - Apply newer explicit user decisions before stale operational plans or next goals; record implementation and execution only from observed evidence.
 - Isolate runtime LLM instructions and editable clinical text in submission/config with public environment-selected paths; keep machine field names and decision codes in Python.
 - Package only submission runtime Python, pinned requirements, public .env, config prompts and text, and knowledge assets through the package Compose service under D14.

@@ -125,8 +125,9 @@ class EducationTests(unittest.TestCase):
         self.assertEqual(direct["fixed_diagnosis"]["certainty"], "working")
         self.assertIn("unresolved", direct["fixed_diagnosis"])
         self.assertLessEqual(direct["delivery_turn_budget"], 10)
-        self.assertEqual(len(direct["dialogue"]), 15)
-        self.assertEqual(direct["dialogue"][0]["patient"], "Original patient opening")
+        self.assertNotIn("dialogue", direct)
+        self.assertTrue(direct["patient"]["facts"])
+        self.assertNotIn("Original patient opening", json.dumps(direct["patient"]))
         self.assertEqual(direct["documents"][0]["text"].splitlines()[-1], "Complete source ending.")
         self.assertTrue(all(exchange["request"]["reasoning_effort"] == "high"
                             and exchange["request"]["max_tokens"] == 8000
@@ -161,7 +162,8 @@ class EducationTests(unittest.TestCase):
         for call in self.client.calls:
             payload = json.loads(call["messages"][-1]["content"])
             if payload.get("task") == "education":
-                self.assertEqual(payload["dialogue"], reads[0]["dialogue"])
+                self.assertEqual(payload["patient"], reads[0]["patient"])
+                self.assertNotIn("dialogue", payload)
                 self.assertLessEqual(message_bytes(call["messages"]), 12288)
 
     def test_missing_and_changed_sources_are_excluded_but_plan_is_generated(self):
@@ -306,14 +308,14 @@ class EducationTests(unittest.TestCase):
         self.assertFalse(any(item.value and str(w.OW.Other) in item.value.concept_ids for _, item in result.case.entries()))
         self.assertTrue(any(turn.get("patient") == self.client.late_report for turn in result.interaction.dialogue()))
 
-    def test_full_dialogue_overflow_does_not_send_a_truncated_request(self):
+    def test_full_dialogue_overflow_cannot_affect_canonical_education(self):
         self.sources(["Complete document."])
         self.s.interaction.history[0].response["opening"] = "Original speech " * 6000
         result = self.finish()
         self.assertEqual(result.interaction.termination, "submitted")
-        self.assertEqual(self.client.education_calls, [])
-        self.assertIn("education_context_overflow", result.interaction.education.errors)
-        self.assertEqual(result.interaction.education.status, "failed")
+        self.assertTrue(self.client.education_calls)
+        self.assertNotIn("education_context_overflow", result.interaction.education.errors)
+        self.assertTrue(all("dialogue" not in p for p in self.client.education_calls))
 
     def test_education_distress_is_recorded_without_empathy_or_replanning(self):
         self.sources([])

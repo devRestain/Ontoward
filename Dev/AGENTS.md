@@ -13,6 +13,9 @@
 
 ## v5.0 Source Projection
 
+- Apply D42 as the authorized local multi-source rebuild after D41; preserve raw-only audit boundaries and admit prepared aliases and registered formats rather than adding runtime mapping tables.
+- Keep DDXPlus evidence and condition metadata separate from all patient archives and preserve complete exclusion reasons and explicit author provenance.
+
 - Read root AGENTS.md, PROJECT_STATE.md, PRD.md, DECISION_STATE.md D02/D05/D07/D08/D09, the data contracts, and applicable asset contracts before handling sources.
 - Use ontology/source_projection.py as the build/export/admit entrypoint, database.py for SQLite source custody, model_normalization.py for bounded source normalization, admission.py for reviewed integration, and v5.py for RDF construction.
 - Treat the removed v4.2 SNOMED and guideline extraction pipelines as deprecated; do not restore or adapt them for compatibility.
@@ -59,12 +62,13 @@
 - Use the proven project dev container with tests/workflow/compose.offline.yaml for current projection and checks; keep dependencies off the host.
 - Preserve the existing extraction image and dedicated authentication volume; use the declared extraction service for the explicitly requested Korean run without downloading dependencies.
 - Run python -B Dev/tests/workflow/test_workflow.py for the complete offline consultation flow.
+- Run python -B -m unittest discover -s Dev/tests/workflow -p test_normalization.py for D41 dictionary binding forced completion loss prevention and raw invariance.
 - Run python -B Dev/tests/workflow/test_intake_soap.py for D40 C03 input custody semantic SOAP protected collection and record-only Education.
 - Run python -B Dev/tests/workflow/test_algorithm.py for D38 matching delta equivalence chief collection and decision invariants.
 - Use tests/workflow/compare_algorithms.py with a frozen baseline submission and its original fixtures for the bounded D38 comparison.
-- Run python -B Dev/tests/workflow/test_input_empathy.py for D34 question binding terminology recovery and empathy delivery behavior.
+- Run python -B Dev/tests/workflow/test_input_empathy.py for D41 typed empathy generation response reservations and last-reply delivery behavior.
 - Run python -B Dev/tests/workflow/test_education.py for D37 full-document context fixed diagnosis English plans and bounded Korean delivery.
-- Run python -B Dev/tests/workflow/test_evidence_consistency.py for D36 acquisition-safe corrections shared evidence and uncovered patient reports through confirmed submission.
+- Run python -B Dev/tests/workflow/test_evidence_consistency.py for acquisition-safe corrections shared evidence and raw-free SOAP through confirmed submission.
 - Run python -B Dev/tests/workflow/test_admitted.py --submission PATH --output PATH for actual admitted knowledge and archive isolation with scripted patient and model responses.
 - Run python -B Dev/tests/workflow/test_korean_admitted.py --submission PATH --output PATH for exact prepared Korean delivery, Context polarity, and separate examination acquisition through SOAP and confirmed submission.
 - Run python -B Dev/tests/ontology/test_database.py for source/approval/quota/Korean behavior and verify_database.py plus verify_catalog.py for real-source coverage, graph semantics, provenance, Korean coverage, and resource evidence.

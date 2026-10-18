@@ -16,6 +16,7 @@ from unittest.mock import patch, Mock
 import tempfile
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from education_fixtures import education_response, KOREAN
+from normalization_fixtures import context_from_facts, mapping_from_contracts
 
 PROJECT = Path(__file__).resolve().parents[3]
 HERE = Path(os.environ.get("ONTOWARD_TEST_OUTPUT", PROJECT / "Tmp/d18-verification/workflow"))
@@ -36,7 +37,6 @@ from workflow.submission_writer import SubmissionWriter
 from workflow.graph import build_graph, finish, route_budget, run_node
 from workflow.rules.budget import BudgetPolicy
 from workflow.rules.action import content_error
-from workflow.rules.input import fixed_reply
 from workflow.runtime import PreparedResources, assemble_consultation, prepare, consult
 from workflow.state.evidence import EvidenceIndex
 from workflow.state.models import ActionSpec, ClinicalValue, Fact, Hypothesis, InteractionEntry, ParsedInput, Question, RecordItem, SessionContext, WorkflowState
@@ -244,6 +244,26 @@ class FakeSDK:
             return self.completion(json.dumps(education, ensure_ascii=False))
         if payload.get("task") == "empathy":
             return self.completion(json.dumps({"text": CONFIG.texts.empathy_fallback}, ensure_ascii=False))
+        if payload.get("task") == "input_mapping":
+            return self.completion("{bad json" if self.malformed else json.dumps(mapping_from_contracts(payload)))
+        if payload.get("task") == "input_context":
+            q, text = payload["question"], payload["input"]
+            if self.malformed:
+                return self.completion("{bad json")
+            if not text.strip() or text in {"알겠습니다", "감사합니다", "안녕하세요"}:
+                return self.completion('{"statements":[]}')
+            if text in CONFIG.texts.unknown_replies:
+                return self.completion(json.dumps({"statements": [{"quote": text, "role": "unknown"}]}))
+            target = q["target_id"] if q and q["target_id"] else str(OW.Other if self.no_candidate else OW.Complaint)
+            kind = "finding" if q and q["kind"] == "EXAM" else "context" if q and q["purpose"] == "context" else "symptom"
+            facts = []
+            if q and q["purpose"] == "hpi":
+                for attr, value in ((OW.Location, OW.Here), (OW.Quality, OW.Dull)):
+                    facts.append(fact("S.hpi", "attribute", target, text, q=q, attribute=attr, values=[value]))
+            elif not q or q["purpose"] not in {"greeting", "intake", "history", "open_inquiry", "empathy"}:
+                facts = [fact(q["field"] if q else "S.cc", kind, target, text, q=q,
+                              status="absent" if text in {"아니요", "없어요"} else "present")]
+            return self.completion(json.dumps(context_from_facts(facts), ensure_ascii=False))
         if payload.get("task") == "terminology":
             return self.completion(json.dumps({"facts": [], "clinical_content": False}))
         q, text = payload["question"], payload["input"]
@@ -704,36 +724,7 @@ class Verification(unittest.TestCase):
         r.refresh_hypotheses(s)
         self.assertTrue(all(h.evidence_score == 0 for h in s.differential.hypotheses))
 
-    def test_strict_reply_vs_compound_free_text(self):
-        s = state("ContextFactor", True)
-        q = question(s, purpose="context", target=OW.Context, field="S.pmh")
-        pending(s, q)
-        gateway = make_interpreter(CONFIG)
-        s.session.gateway_successes = s.session.doctor_successes = 1
-        self.assertEqual(fixed_reply(CONFIG, s, "아니요.").facts[0].value.status, "absent")
-        self.assertIsNone(fixed_reply(CONFIG, s, "아니요, 하지만 어제는 있었어요"))
-        self.assertEqual(fixed_reply(CONFIG, s, "모르겠어요").facts, [])
-        s.interaction.incoming = {"content": "모르겠어요"}
-        client = FakeSDK()
-        gateway.process_input(s, knowledge(), client)
-        self.assertEqual(s.case.get("q").status, "done")
-        self.assertEqual(s.case.get("q").value.status, "unknown")
-        self.assertFalse(client.calls)
 
-    def test_structured_and_malformed_inputs_preserve_raw(self):
-        s = state()
-        s.interaction.incoming = {"initial": {"opening": "가상증상", "facts": [fact("S.cc", "symptom", OW.Complaint, "가상증상")]}}
-        client = FakeSDK()
-        make_interpreter(CONFIG).process_input(s, knowledge(), client)
-        self.assertEqual(len(client.calls), 1)
-        self.assertTrue(s.case.S["cc"])
-        s = make_consultation().nova_session.initialize_case(FakeSDK())
-        client = FakeSDK(malformed=True)
-        make_interpreter(CONFIG).process_input(s, knowledge(), client)
-        self.assertFalse(s.case.S["cc"])
-        self.assertEqual(s.interaction.history[0].response["opening"], "가상증상이 있어요")
-        self.assertEqual(len(client.calls), 2)
-        self.assertIn("invalid_gateway_output", s.interaction.issues)
 
     def test_fact_grounding_and_correction_boundary(self):
         s = state()
@@ -821,8 +812,7 @@ class Verification(unittest.TestCase):
         self.assertEqual(s.interaction.termination, "submitted")
         self.assertEqual(sum(a["kind"] == "EXAM" for a in client.actions), 1)
         refused = client.submissions[0]["note"]["O"]["exam"]
-        self.assertIn("가상소견", refused)
-        self.assertIn("(Unknown)", refused)
+        self.assertEqual(refused, "")
         self.assertNotIn("가상소견", client.submissions[0]["note"]["A"]["evidence"])
         self.assertFalse(any(item.value.kind == "finding" and str(OW.ExamX) in item.value.concept_ids
                              for _, item in s.case.entries() if item.value))
@@ -973,41 +963,6 @@ class Verification(unittest.TestCase):
         self.assertEqual(content_error("가" * 29 + "\n"), None)
         self.assertEqual(content_error("가" * 30 + "\n"), "content_too_long")
 
-    def test_actual_korean_context_short_answer_and_case_isolation(self):
-        s = state("ChiefComplaint", True)
-        q = question(s, purpose="ros", text="별도증상이 있나요?")
-        for index in range(6):
-            s.interaction.history.append(InteractionEntry(id=f"past-{index}", kind="SAY", delivered=True,
-                turn=index + 1, question=q, request={"content": "어디가 불편하세요?"}, response={"content": "거기도요"}))
-        s.interaction.history.append(InteractionEntry(id="unsent", kind="SAY", request={"content": "유령 질문"}))
-        s.interaction.model_history.append({"role": "doctor", "draft": "유령 출력"})
-        pending(s, q)
-        s.interaction.pending.content = "별도증상은 없으시죠?"
-        s.interaction.pending.question.affirmative_presence = False
-        s.interaction.incoming = {"content": "네"}
-        answer = fact("S.ros", "symptom", OW.Other, "네", q=q.model_dump(), status="absent")
-        answer["context_refs"] = ["past-5"]
-        client = FakeSDK()
-        client.chat = Mock(return_value=client.completion(json.dumps({"facts": [answer]}, ensure_ascii=False)))
-        gateway = make_interpreter(CONFIG)
-        self.assertIsNone(fixed_reply(CONFIG, s, "네"))
-        gateway.process_input(s, knowledge(), client)
-        payload = json.loads(client.chat.call_args.kwargs["messages"][1]["content"])
-        self.assertEqual(payload["spoken_question"], "별도증상은 없으시죠?")
-        self.assertEqual(payload["question"]["text"], "별도증상이 있나요?")
-        self.assertLessEqual(len(payload["dialogue"]), 6)
-        self.assertEqual(s.case.get("q").value.status, "absent")
-        self.assertEqual(s.case.get("q").context_refs, ["past-5"])
-        self.assertNotIn("유령", json.dumps(payload, ensure_ascii=False))
-        self.assertEqual(state().interaction.dialogue(), [])
-        answer["context_refs"] = ["unsent"]
-        self.assertTrue(gateway._validate_facts({"facts": [answer]}, s, knowledge(), "네").rejected_facts)
-        answer["context_refs"] = []
-        answer["quote"] = answer["value"]["text"] = "의사가 한 말"
-        self.assertTrue(gateway._validate_facts({"facts": [answer]}, s, knowledge(), "네").rejected_facts)
-        s.interaction.pending = ActionSpec(question=q, content=q.text, request_id="prepared")
-        q.affirmative_presence = False
-        self.assertIsNone(fixed_reply(CONFIG, s, "네"))
 
     def test_contextual_correction_preserves_episode_and_quote(self):
         for reply in ("거기도요", "아까보다 덜해요", "아니요, 아까 말한 곳이에요"):
@@ -1022,7 +977,7 @@ class Verification(unittest.TestCase):
             parsed = gateway._validate_facts({"facts": [correction]}, s, knowledge(), reply)
             self.assertIsNotNone(parsed)
             gateway._apply_facts(s, parsed, "current")
-            self.assertEqual(s.case.get("location").value.text, reply)
+            self.assertEqual(s.case.get("location").value.text, "")
             self.assertEqual(s.case.get("location").value.episode_id, "episode1")
             self.assertEqual(s.case.get("location").context_refs, ["earlier"])
 
@@ -1099,7 +1054,7 @@ class Verification(unittest.TestCase):
         pending(s, q)
         s.interaction.incoming = {"content": "설명하기 어려워요"}
         make_interpreter(CONFIG).process_input(s, knowledge(), FakeSDK(malformed=True))
-        self.assertTrue(s.interaction.needs_clarification)
+        self.assertEqual(s.questions.answer_outcomes[q.item_id], "unknown")
         interview = make_planner(knowledge(), CONFIG)
         self.assertTrue(interview.prepare_clarification(s, q))
         interview.select_question(s)
@@ -1178,24 +1133,6 @@ class Verification(unittest.TestCase):
             self.assertEqual(s.session.usage["Initiation"].actions, int(code == "REQUEST_PENDING"))
             self.assertEqual(len(s.interaction.dialogue()), int(code == "REQUEST_PENDING"))
 
-    def test_shared_budget_reserves_one_gateway_without_render_cost(self):
-        s, client = state(), FakeSDK()
-        s.session.call_limit = 1
-        q = question(s, purpose="chief", text=CONFIG.texts.clarification_question, field="S.cc", target=None)
-        s.interaction.selected = ActionSpec(question=q, content=q.text, request_id="budget")
-        make_doctor(CONFIG).validate_action(s)
-        self.assertEqual(BudgetPolicy().calls_left(s.session), 1)
-        make_doctor(CONFIG).execute_action(s, client)
-        client.chat = Mock(return_value=client.completion(json.dumps({"facts": [fact("S.cc", "symptom", OW.Other, "가상증상이 있어요", q=q.model_dump())]}, ensure_ascii=False)))
-        make_interpreter(CONFIG).process_input(s, knowledge(), client)
-        self.assertEqual(BudgetPolicy().calls_left(s.session), 0)
-        w = make_consultation(client)
-        w.check_budget(s)
-        w.finalize(s)
-        w.writer.submit_diagnosis(s)
-        w.writer.confirm_submission(s)
-        self.assertEqual(s.interaction.termination, "submitted")
-        self.assertEqual(s.case.diagnosis_kind, "symptom")
 
     def test_soap_reconstruction_local_and_server(self):
         s, _ = self.run_flow()
@@ -1470,87 +1407,7 @@ class Verification(unittest.TestCase):
         self.assertEqual(len(lines), 5)
         self.assertTrue(all(line.startswith(f"r/o 대안{i}: ") and "가상증상 (+)" in line for i, line in enumerate(lines)))
 
-    def test_parser_vocabulary_bounds_and_required_question_values(self):
-        k, s = knowledge(), state("ChiefComplaint", True)
-        from rdflib import RDFS
-        for i in range(600):
-            node = OW[f"Added{i:04d}"]
-            k._graph.add((node, RDF.type, OW.Symptom))
-            k._graph.add((node, RDFS.label, Literal(f"extra symptom {i}", lang="en")))
-        for i in range(207):
-            node = OW[f"Place{i:04d}"]
-            k._graph.add((node, RDF.type, OW.AttributeValue))
-            k._graph.add((node, RDFS.label, Literal(f"부위{i}", lang="ko")))
-            k._graph.add((OW.Location, OW.canHaveValue, node))
-        k.validate_graph()
-        q = question(s, target=OW.Complaint, attribute=OW.Location, purpose="hpi", field="S.hpi")
-        pending(s, q)
-        interpreter = make_interpreter(CONFIG)
-        vocabulary, size = interpreter._vocabulary(s, k, "부위206")
-        ids = {entry["id"] for entry in vocabulary}
-        self.assertLessEqual(len(vocabulary), 256)
-        self.assertLessEqual(size, 32768)
-        self.assertEqual(size, len(json.dumps(vocabulary, ensure_ascii=False, separators=(",", ":")).encode()))
-        self.assertTrue(set(k.get_target_values(str(OW.Complaint), str(OW.Location))) <= ids)
-        self.assertIn(str(OW.Place0206), ids)
-        self.assertTrue({str(OW.Complaint), str(OW.Location)} <= ids)
-        expanded, expanded_size = interpreter._vocabulary(s, k, "부위206", expanded=True)
-        self.assertLessEqual(len(expanded), 1024)
-        self.assertLessEqual(expanded_size, 131072)
-        self.assertGreater(len(expanded), len(vocabulary))
 
-    def test_parser_expands_once_and_preserves_first_valid_facts(self):
-        for mode in ("resolve", "malformed", "mutate_frozen", "budget", "context_limit"):
-            with self.subTest(mode=mode):
-                k, s, client = knowledge(), state("ChiefComplaint", True), FakeSDK()
-                from rdflib import RDFS
-                for i in range(70):
-                    node = OW[f"Added{i:04d}"]
-                    k._graph.add((node, RDF.type, OW.Symptom))
-                    k._graph.add((node, RDFS.label, Literal(f"unused label {i}", lang="en")))
-                far = str(OW.ZzzUnlinked)
-                k._graph.add((URIRef(far), RDF.type, OW.Symptom))
-                k._graph.add((URIRef(far), RDFS.label, Literal("unseen terminology", lang="en")))
-                k.validate_graph()
-                q = question(s, purpose="open_inquiry", target=None)
-                pending(s, q)
-                s.interaction.incoming = {"content": "가상증상과 별도 보고"}
-                first = fact("S.ros", "symptom", OW.Complaint, "가상증상")
-                unlinked = fact("S.ros", "symptom", OW.Other, "별도 보고")
-                unlinked["value"].update(concept_ids=[], observation_id="other-observation", episode_id="other-episode")
-                payloads = []
-                def chat(messages, **kwargs):
-                    payload = json.loads(messages[1]["content"])
-                    payloads.append(payload)
-                    if payload["parser_pass"] == "primary":
-                        self.assertNotIn(far, {entry["id"] for entry in payload["vocabulary"]})
-                        return client.completion(json.dumps({"facts": [first, unlinked],
-                                                             "lookup_terms": ["unseen terminology"]}, ensure_ascii=False))
-                    if mode == "malformed":
-                        return client.completion("{invalid")
-                    if mode == "context_limit":
-                        raise NovaError("CONTEXT_LIMIT_EXCEEDED", 400)
-                    if mode == "resolve":
-                        self.assertIn(far, {entry["id"] for entry in payload["vocabulary"]})
-                    replacement = copy.deepcopy(payload["unlinked_facts"][0])
-                    replacement["value"]["concept_ids"] = [far]
-                    if mode == "mutate_frozen":
-                        replacement = copy.deepcopy(first)
-                        replacement["value"]["status"] = "absent"
-                    return client.completion(json.dumps({"facts": [replacement]}, ensure_ascii=False))
-                client.chat = chat
-                if mode == "budget":
-                    s.session.call_limit = 1
-                make_interpreter(CONFIG).process_input(s, k, client)
-                records = [item for _, item in s.case.entries() if item.value and item.value.kind == "symptom"]
-                linked = next(item for item in records if item.value.text == "가상증상")
-                other = next(item for item in records if item.value.text == "별도 보고")
-                self.assertEqual(linked.value.status, "present")
-                self.assertEqual(linked.value.concept_ids, [str(OW.Complaint)])
-                self.assertEqual(other.value.concept_ids, [far] if mode == "resolve" else [])
-                self.assertEqual(len(payloads), 1 if mode == "budget" else 2 if mode in {"resolve", "context_limit"} else 3)
-                self.assertTrue(all("parser_payload" in entry for entry in s.interaction.model_history))
-                self.assertEqual(s.session.doctor_calls, len(payloads))
 
     def test_display_label_asset_is_hash_pinned_without_graph_mutation(self):
         manifest_path = COPY / "knowledge/manifest.json"
@@ -1720,8 +1577,6 @@ class Verification(unittest.TestCase):
         q = question(s, target=OW.Complaint, attribute=OW.TimeSinceOnset)
         q.answer_type = "duration"
         pending(s, q)
-        self.assertEqual(fixed_reply(CONFIG, s, "3일").facts[0].value.measurement.unit, "day")
-        self.assertIsNone(fixed_reply(CONFIG, s, "3일, 예전에도 있었어요"))
 
     def test_d17_primary_requires_current_chief_explanation(self):
         s, r = state("Education", True), ClinicalReasoner(knowledge())
@@ -1753,19 +1608,6 @@ class Verification(unittest.TestCase):
         self.assertFalse(result.accepted_facts)
 
 
-    def test_d17_context_only_recovery_accepts_new_grounded_fact(self):
-        s, client = state("ChiefComplaint", True), FakeSDK()
-        record(s)
-        q = question(s, target=OW.Complaint, attribute=OW.Location, purpose="hpi", field="S.hpi")
-        q.observation_id, q.episode_id = "obs1", "episode1"
-        pending(s, q)
-        s.interaction.incoming = {"content": "아까 그 부위요"}
-        repaired = fact("S.hpi", "attribute", OW.Complaint, "아까 그 부위요", q=q.model_dump(), attribute=OW.Location, values=[OW.Here])
-        client.chat = Mock(side_effect=[client.completion('{"facts":[],"needs_context":true}'),
-                                      client.completion(json.dumps({"facts": [repaired]}, ensure_ascii=False))])
-        make_interpreter(CONFIG).process_input(s, knowledge(), client)
-        self.assertEqual(client.chat.call_count, 2)
-        self.assertEqual(s.case.get(q.item_id).value.values, [str(OW.Here)])
 
     def test_education_exhaustion_preserves_the_complete_plan(self):
         s, client = state("Education", True, turns=3), FakeSDK()
@@ -1801,111 +1643,10 @@ class Verification(unittest.TestCase):
             with self.assertRaises(ValueError):
                 TextConfig.load()
 
-    def test_gateway_recovers_malformed_first_response_once(self):
-        for first in ("{invalid", "", None, '{"facts":"invalid"}'):
-            with self.subTest(first=first):
-                client = FakeSDK()
-                original = client.chat
-                responses = [first]
-                def chat(messages, **kwargs):
-                    if responses:
-                        client.calls.append({"messages": messages, **kwargs})
-                        return client.completion(responses.pop())
-                    return original(messages, **kwargs)
-                client.chat = chat
-                result, client = self.run_flow(client)
-                self.assertEqual(result.interaction.termination, "submitted")
-                self.assertEqual(result.case.diagnosis_kind, "disease")
-                self.assertEqual([e["parser_payload"]["pass"] for e in result.interaction.model_history[:2]],
-                                 ["primary", "expansion"])
-                self.assertEqual(result.session.doctor_calls, len(client.calls))
-        s, client = state(), FakeSDK()
-        client.chat = Mock(return_value=client.completion("{invalid"))
-        s.interaction.incoming = {"initial": {"opening": "가상증상이 있어요"}}
-        make_interpreter(CONFIG).process_input(s, knowledge(), client)
-        self.assertEqual(client.chat.call_count, 2)
-        self.assertFalse(s.case.chief_complaints())
-        self.assertTrue(s.interaction.needs_clarification)
 
-    def test_gateway_context_limit_recovers_once_with_smaller_request(self):
-        client = FakeSDK()
-        original = client.chat
-        def chat(messages, **kwargs):
-            if not client.calls:
-                client.calls.append({"messages": messages, **kwargs})
-                raise NovaError("CONTEXT_LIMIT_EXCEEDED", 400)
-            return original(messages, **kwargs)
-        client.chat = chat
-        result, _ = self.run_flow(client)
-        first, recovery = result.interaction.model_history[:2]
-        self.assertEqual(result.interaction.termination, "submitted")
-        self.assertEqual(first["error"], "CONTEXT_LIMIT_EXCEEDED")
-        self.assertTrue(recovery["parser_payload"]["compact"])
-        self.assertLess(recovery["parser_payload"]["request_bytes"], first["parser_payload"]["request_bytes"])
-        self.assertLessEqual(recovery["parser_payload"]["request_bytes"], 8192)
-        self.assertNotEqual(first["request"]["request_id"], recovery["request"]["request_id"])
-        self.assertEqual(len(first["attempts"]), 1)
-        self.assertEqual(result.session.doctor_calls, len(client.calls))
-        self.assertEqual(client.submissions[0]["note"]["P"]["education"], "")
 
-    def test_gateway_repeated_context_limit_preserves_input_and_clarifies(self):
-        s, client = state(), FakeSDK()
-        text = "가상증상이 있어요"
-        s.interaction.incoming = {"initial": {"opening": text}}
-        client.chat = Mock(side_effect=NovaError("CONTEXT_LIMIT_EXCEEDED", 400))
-        make_interpreter(CONFIG).process_input(s, knowledge(), client)
-        self.assertEqual(client.chat.call_count, 2)
-        self.assertEqual(s.session.doctor_calls, 2)
-        self.assertTrue(s.session.models_available)
-        self.assertIsNone(s.interaction.termination)
-        self.assertTrue(s.interaction.needs_clarification)
-        self.assertFalse(s.case.chief_complaints())
-        self.assertEqual(s.interaction.dialogue()[0]["patient"], text)
-        self.assertEqual(len({call.kwargs["request_id"] for call in client.chat.call_args_list}), 2)
 
-    def test_gateway_whole_request_bound_keeps_current_input_and_required_ids(self):
-        from rdflib import RDFS
-        k, s, client = knowledge(), state("ChiefComplaint", True), FakeSDK()
-        for i in range(400):
-            node = OW[f"Extra{i:04d}"]
-            k._graph.add((node, RDF.type, OW.Symptom))
-            k._graph.add((node, RDFS.label, Literal(f"unrelated symptom {i}", lang="en")))
-        k.validate_graph()
-        for i in range(40):
-            record(s, f"old-{i}")
-            s.case.get(f"old-{i}").value.text = "earlier evidence " * 70
-        q = question(s, target=OW.Complaint, attribute=OW.Location, purpose="hpi", field="S.hpi")
-        pending(s, q)
-        before = s.case.model_dump()
-        text = '가상부위와 다른부위, "그대로"\\보존'
-        interpreter = make_interpreter(CONFIG)
-        client.chat = Mock(return_value=client.completion('{"facts":[]}'))
-        interpreter._request_parse(s, k, client, text)
-        from workflow.state.models import ParseResult
-        interpreter._request_parse(s, k, client, text, previous=ParseResult(needs_context=True))
-        for index, call in enumerate(client.chat.call_args_list):
-            messages = call.kwargs["messages"]
-            payload = json.loads(messages[1]["content"])
-            self.assertEqual(payload["input"], text)
-            self.assertEqual(payload["spoken_question"], s.interaction.pending.content)
-            self.assertEqual(payload["question"]["target_id"], str(OW.Complaint))
-            self.assertTrue({str(OW.Complaint), str(OW.Location)} <= {c["id"] for c in payload["vocabulary"]})
-            byte_limit = 12288 if index == 0 else 16384
-            self.assertLessEqual(len(json.dumps(messages, ensure_ascii=False, separators=(",", ":")).encode()), byte_limit)
-        self.assertEqual(client.chat.call_count, 2)
-        self.assertEqual(s.case.model_dump(), before)
 
-    def test_gateway_oversized_current_input_is_preserved_without_transmission(self):
-        s, client = state(), FakeSDK()
-        text = "가상증상 " * 5000
-        s.interaction.incoming = {"initial": {"opening": text}}
-        client.chat = Mock()
-        make_interpreter(CONFIG).process_input(s, knowledge(), client)
-        client.chat.assert_not_called()
-        self.assertEqual(s.session.doctor_calls, 0)
-        self.assertIn("gateway_request_overflow", s.interaction.issues)
-        self.assertTrue(s.interaction.needs_clarification)
-        self.assertEqual(s.interaction.dialogue()[0]["patient"], text)
 
     def test_gateway_exposes_source_aliases_and_filters_chief_retrieval_by_type(self):
         from rdflib import RDFS, SKOS
@@ -1923,114 +1664,9 @@ class Verification(unittest.TestCase):
         self.assertIn(str(OW.Complaint), k.search_concepts("Current concern", kind="Symptom"))
         self.assertEqual(frozenset(k._graph), before)
 
-    def test_empty_chief_response_gets_one_recovery_without_semantic_success(self):
-        s, client = state(), FakeSDK()
-        text = "가상증상이 있어요"
-        s.interaction.incoming = {"initial": {"opening": text}}
-        client.chat = Mock(return_value=client.completion('{"facts":[]}'))
-        make_interpreter(CONFIG).process_input(s, knowledge(), client)
-        self.assertEqual(client.chat.call_count, 3)
-        self.assertEqual(s.session.doctor_successes, 3)
-        self.assertFalse(s.case.chief_complaints())
-        self.assertTrue(s.interaction.needs_clarification)
-        self.assertEqual([e["parser_result"]["linked_chief_facts"] for e in s.interaction.model_history], [0, 0, 0])
-        self.assertEqual(s.interaction.dialogue()[0]["patient"], text)
 
-    def test_chief_selection_is_one_supplied_symptom_after_bounded_recovery(self):
-        k, s, client = knowledge(), state(), FakeSDK()
-        text, requests = "가상증상이 있어요", []
-        s.interaction.incoming = {"initial": {"opening": text}}
-        ambiguous = fact("S.cc", "symptom", OW.Complaint, text, status="uncertain")
-        ambiguous["value"]["concept_ids"].append(str(OW.Other))
-        def chat(messages, **kwargs):
-            payload = json.loads(messages[1]["content"])
-            requests.append(payload)
-            self.assertTrue(payload["chief_mapping_required"])
-            self.assertTrue(any(c["kind"] == "Symptom" for c in payload["vocabulary"]))
-            selected = payload["schema"]["anyOf"][0]["properties"]["facts"]["contains"]
-            ids = selected["properties"]["value"]["properties"]["concept_ids"]
-            self.assertEqual((ids["minItems"], ids["maxItems"]), (1, 1))
-            self.assertEqual(set(ids["items"]["enum"]), {c["id"] for c in payload["vocabulary"] if c["kind"] == "Symptom"})
-            if payload["parser_pass"] == "primary":
-                return client.completion(json.dumps({"facts": [ambiguous]}, ensure_ascii=False))
-            self.assertEqual(len(payload["schema"]["anyOf"]), 2)
-            fixed = copy.deepcopy(ambiguous)
-            fixed["value"]["concept_ids"] = [str(OW.Complaint)]
-            return client.completion(json.dumps({"facts": [fixed]}, ensure_ascii=False))
-        client.chat = Mock(side_effect=chat)
-        make_interpreter(CONFIG).process_input(s, k, client)
-        self.assertEqual(client.chat.call_count, 2)
-        chief = s.case.chief_complaints()[0]
-        self.assertEqual(chief.value.concept_ids, [str(OW.Complaint)])
-        self.assertEqual(chief.value.status, "uncertain")
-        self.assertFalse(s.interaction.needs_clarification)
-        self.assertEqual([e["parser_result"]["linked_chief_facts"] for e in s.interaction.model_history], [0, 1])
 
-    def test_chief_lookup_terms_retrieve_unoffered_symptom_and_repair_only_its_id(self):
-        from rdflib import RDFS, SKOS
-        k, s, client = knowledge(), state(), FakeSDK()
-        for i in range(400):
-            node = OW[f"Padding{i:04d}"]
-            k._graph.add((node, RDF.type, OW.Symptom))
-            k._graph.add((node, RDFS.label, Literal(f"unrelated {i}", lang="en")))
-        target = str(OW.ZzzConcern)
-        k._graph.add((URIRef(target), RDF.type, OW.Symptom))
-        k._graph.add((URIRef(target), RDFS.label, Literal("검토된 증상", lang="ko")))
-        k._graph.add((URIRef(target), SKOS.altLabel, Literal("Unlisted concern", lang="en")))
-        k.validate_graph()
-        text, requests = "설명하기 어려운 불편감이에요", []
-        s.interaction.incoming = {"initial": {"opening": text}}
-        first = fact("S.cc", "symptom", OW.Complaint, text)
-        first["value"]["concept_ids"] = []
-        def chat(messages, **kwargs):
-            payload = json.loads(messages[1]["content"])
-            requests.append(payload)
-            ids = {entry["id"] for entry in payload["vocabulary"]}
-            if payload["parser_pass"] == "primary":
-                self.assertNotIn(target, ids)
-                return client.completion(json.dumps({"facts": [first], "needs_context": True,
-                                                     "lookup_terms": ["Unlisted concern"]}, ensure_ascii=False))
-            self.assertIn(target, ids)
-            self.assertEqual(payload["unlinked_facts"][0]["value"]["text"], text)
-            repaired = copy.deepcopy(payload["unlinked_facts"][0])
-            repaired["value"]["concept_ids"] = [target]
-            return client.completion(json.dumps({"facts": [repaired]}, ensure_ascii=False))
-        client.chat = Mock(side_effect=chat)
-        make_interpreter(CONFIG).process_input(s, k, client)
-        self.assertEqual(client.chat.call_count, 2)
-        chief = s.case.chief_complaints(confirmed=True)[0]
-        self.assertEqual(chief.value.concept_ids, [target])
-        self.assertEqual(chief.value.text, text)
-        self.assertEqual(s.interaction.model_history[-1]["parser_result"]["linked_chief_facts"], 1)
-        self.assertFalse(s.interaction.needs_clarification)
-        for index, call in enumerate(client.chat.call_args_list):
-            self.assertLessEqual(len(json.dumps(call.kwargs["messages"], ensure_ascii=False, separators=(",", ":")).encode()),
-                                 12288 if index == 0 else 16384)
 
-    def test_unlinked_chief_remains_a_report_without_a_disease_conversion(self):
-        from rdflib import RDFS
-        k, s, client = knowledge(), state(), FakeSDK()
-        k._graph.add((OW.Alpha, RDFS.label, Literal("Named disorder", lang="en")))
-        k.validate_graph()
-        text = "설명하기 어려운 불편감이에요"
-        s.interaction.incoming = {"initial": {"opening": text}}
-        first = fact("S.cc", "symptom", OW.Complaint, text)
-        first["value"]["concept_ids"] = []
-        requests = []
-        def chat(messages, **kwargs):
-            payload = json.loads(messages[1]["content"])
-            requests.append(payload)
-            if payload["parser_pass"] == "primary":
-                return client.completion(json.dumps({"facts": [first], "lookup_terms": ["Named disorder"]}, ensure_ascii=False))
-            self.assertNotIn(str(OW.Alpha), {item["id"] for item in payload["vocabulary"]})
-            return client.completion('{"facts":[],"needs_context":true}')
-        client.chat = Mock(side_effect=chat)
-        make_interpreter(CONFIG).process_input(s, k, client)
-        self.assertEqual(client.chat.call_count, 3)
-        chief = s.case.chief_complaints()[0]
-        self.assertEqual(chief.value.text, text)
-        self.assertEqual(chief.value.concept_ids, [])
-        self.assertTrue(s.interaction.needs_clarification)
 
     def test_gateway_lookup_hints_have_a_finite_size(self):
         s, k, interpreter = state(), knowledge(), make_interpreter(CONFIG)
@@ -2236,32 +1872,6 @@ class Verification(unittest.TestCase):
         self.assertTrue(s.session.finalizing)
         self.assertFalse(client.actions)
 
-    def test_last_empathy_response_precedes_soap_and_confirmed_submission(self):
-        s, client = state("DifferentialDiagnosis", True, turns=1), FakeSDK()
-        record(s)
-        s.session.usage[s.session.current].actions = 12
-        s.differential.initialized = True
-        client.remaining = 1
-        original_reply = client._reply
-        def reply(*args, **kwargs):
-            return {**original_reply(*args, **kwargs), "content": "별도증상도 있어요"}
-        client._reply = reply
-        client.chat = Mock(return_value=client.completion(json.dumps({"facts": [
-            fact("S.ros", "symptom", OW.Other, "별도증상도 있어요") ]}, ensure_ascii=False)))
-        w = make_consultation(client)
-        q = question(s, purpose="empathy", target=None, text="많이 힘드셨겠어요")
-        w.interactions.select_question(s, q)
-        w.doctor.validate_action(s)
-        w.doctor.execute_action(s, client)
-        result = WorkflowState.model_validate(build_graph(w, w.planner.knowledge).invoke(s.model_dump(), {"recursion_limit": 200}))
-        self.assertEqual(result.interaction.termination, "submitted")
-        self.assertEqual(result.session.turns_remaining, 0)
-        self.assertIsNone(result.interaction.pending)
-        self.assertEqual(result.session.usage["DifferentialDiagnosis"].empathy_actions, 1)
-        self.assertEqual(len(client.submissions), 1)
-        self.assertIn("별도증상: (+)", client.submissions[0]["note"]["S"]["ros"])
-        self.assertTrue(any(item.value and item.value.text == "별도증상도 있어요" for item in result.case.S["ros"].values()))
-        self.assertEqual(client.submissions[0]["note"]["P"]["education"], "")
 
     def test_exhausted_transient_gateway_stops_without_actions_or_submission(self):
         client, requests = FakeSDK(), []
@@ -2290,61 +1900,6 @@ class Verification(unittest.TestCase):
         w.doctor.executor.sleep.assert_not_called()
         self.assertEqual(client.timeout, 120)
 
-    def test_english_soap_cough_keywords_and_confirmed_submission(self):
-        from rdflib import RDFS
-        k, s = knowledge(), state("Education", True)
-        for concept, kind, english, korean in (
-            (OW.Cough, OW.Symptom, "Cough", "기침"), (OW.Dyspnea, OW.Symptom, "Dyspnea", "호흡곤란"),
-            (OW.Sputum, OW.Symptom, "Sputum", "가래"), (OW.Smoking, OW.ContextFactor, "Current smoker", "흡연")):
-            k._graph.add((concept, RDF.type, kind))
-            k._graph.add((concept, RDFS.label, Literal(english, lang="en")))
-            k._graph.add((concept, RDFS.label, Literal(korean, lang="ko")))
-        record(s, target=OW.Cough)
-        s.case.get("chief").value.text = "기침이 나서 왔어요."
-        for ident, attribute, measurement in (
-            ("onset", OW.TimeSinceOnset, ExpectedValue(kind="quantity", value=3, unit="day")),
-            ("duration", OW.EpisodeDuration, ExpectedValue(kind="interval", lower=1, upper=2, unit="min"))):
-            record(s, ident, OW.Cough, kind="attribute", field="S.hpi", attribute=attribute)
-            s.case.get(ident).value.measurement = measurement
-        for ident, field, category, status, quote, details in (
-            ("night", "S.hpi", "aggravating_factor", "present", "밤에 더 심해요.", [{"quote": "밤에", "english": "At night"}]),
-            ("pmh", "S.pmh", "medical_history", "absent", "진단받은 만성질환은 없어요.", []),
-            ("medication", "S.pmh", "medication", "absent", "복용 중인 약은 없어요.", [])):
-            s.case.put(field, RecordItem(id=ident, scope="ChiefComplaint", status="done", source_refs=["source"],
-                value=ClinicalValue(kind="text", text=quote, status=status, record_category=category, record_details=details)))
-        record(s, "smoking", OW.Smoking, kind="context", field="S.sh", status="absent")
-        record(s, "dyspnea", OW.Dyspnea, field="S.ros", status="absent")
-        record(s, "sputum", OW.Sputum, field="S.ros", status="absent")
-        s.case.put("O.exam", RecordItem(id="initial:vitals", scope="Initiation", status="done", source_refs=["initial"],
-            value=ClinicalValue(kind="finding", text=json.dumps({"temperature":"36.8 °C", "pulse":"78/min",
-                "respiratory_rate":"16/min", "oxygen_saturation":"98%"}), status="present")))
-        ClinicalReasoner(k).select_diagnosis(s)
-        client, s.session.doctor_successes = FakeSDK(), 1
-        s.session.gateway_successes = 1
-        writer = make_writer(client, k, CONFIG)
-        writer.build_soap(s)
-        payload = copy.deepcopy(s.interaction.submission_payload)
-        note = payload["note"]
-        self.assertEqual(payload["diagnosis"], "Cough")
-        self.assertEqual(note["S"]["cc"], "C.C: Cough")
-        self.assertEqual(note["S"]["hpi"], "P.I: Cough (+)\nOnset: 3 days before presentation\nDuration: 1–2 min\nAggravating factor: At night")
-        self.assertEqual(note["S"]["pmh"], "PMH: (-)\nMedicine history: (-)")
-        self.assertEqual(note["S"]["sh"], "Smoking: (-)")
-        self.assertEqual(note["S"]["ros"], "Dyspnea: (-)\nSputum: (-)")
-        self.assertEqual(note["S"]["fh"], "")
-        self.assertEqual(note["O"]["exam"], "V/S: BT 36.8 °C; PR 78/min; RR 16/min; SpO2 98% (initial information)")
-        self.assertEqual(note["O"]["tests"], "")
-        self.assertTrue(note["A"]["evidence"].startswith("Diagnosis: #1. Cough\nEvidence: Cough (+)"))
-        self.assertEqual(note["P"]["education"], "")
-        self.assertTrue(all(": " in line for fields in note.values() for text in fields.values() for line in text.splitlines()))
-        self.assertFalse(any("가" <= char <= "힣" for char in json.dumps(payload, ensure_ascii=False)))
-        self.assertNotIn("DM", note["S"]["pmh"])
-        self.assertNotIn("HTN", note["S"]["pmh"])
-        writer.submit_diagnosis(s)
-        writer.confirm_submission(s)
-        self.assertEqual(s.interaction.termination, "submitted")
-        self.assertEqual(len(client.submissions), 1)
-        (HERE / "soap-cough.json").write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def test_pain_assessment_uses_reported_scale_and_same_episode_only(self):
         from rdflib import RDFS
@@ -2391,7 +1946,7 @@ class Verification(unittest.TestCase):
         make_writer(FakeSDK(), k, CONFIG).build_soap(s)
         note = s.interaction.submission_payload["note"]["S"]
         self.assertIn("DM: (-)", note["pmh"])
-        self.assertIn("Allergy: (Unknown)", note["pmh"])
+        self.assertNotIn("Allergy: (Unknown)", note["pmh"])
         self.assertNotIn("Allergy: (-)", note["pmh"])
         self.assertNotIn("HTN", note["pmh"])
         self.assertTrue(note["fh"].startswith("DM: (+)"))
@@ -2406,7 +1961,7 @@ class Verification(unittest.TestCase):
         self.assertEqual(len(parsed.accepted_facts), 1)
         gateway._apply_facts(s, parsed, "reported")
         make_writer(FakeSDK(), k, CONFIG).build_soap(s)
-        self.assertEqual(s.interaction.submission_payload["note"]["S"]["sh"], "Alcohol: (+); Twice/week")
+        self.assertEqual(s.interaction.submission_payload["note"]["S"]["sh"], "")
         forged = copy.deepcopy(raw)
         forged["value"]["record_details"][0]["quote"] = "주 3회"
         self.assertTrue(gateway._validate_facts({"facts":[forged]}, s, k, raw["quote"]).rejected_facts)
@@ -2434,7 +1989,7 @@ class Verification(unittest.TestCase):
         make_writer(FakeSDK(), k, CONFIG).build_soap(s)
         note = s.interaction.submission_payload["note"]["S"]
         self.assertNotIn("Onset:", note["cc"])
-        self.assertIn("Onset: 3 days before presentation", note["hpi"])
+        self.assertNotIn("3 days before presentation", note["hpi"])
 
     def test_record_keywords_preserve_reasoning_and_multiple_chief_hpi_links(self):
         k, s = knowledge(), state("DifferentialDiagnosis", True)

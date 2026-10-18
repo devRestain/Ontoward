@@ -82,9 +82,9 @@ class BudgetPolicy:
 
     def collection_available(self, session):
         education = session.current == "Education" and self.education_enabled
-        return (not session.finalizing and session.turns_remaining > 0 and (education or self.calls_left(session) > 0)
+        return (not session.finalizing and session.turns_remaining > 0 and (education or self.calls_left(session) >= 2)
                 and self.seconds_left(session) > session.reserve_seconds + LIMITS.response_seconds
-                and (education or session.output_token_limit - session.output_tokens >= LIMITS.gateway_tokens))
+                and (education or session.output_token_limit - session.output_tokens >= 2 * LIMITS.gateway_tokens))
 
     def can_start_action(self, state, *, purpose=None):
         return self.collection_available(state.session) and self.action_capacity(state, purpose=purpose) > 0
@@ -109,8 +109,8 @@ class BudgetPolicy:
         return (not session.finalizing and not state.interaction.submission_payload
                 and session.current != "Education"
                 and self.action_capacity(state, purpose="empathy") > 0 and "SAY" in session.allowed_actions
-                and self.calls_left(session) >= 2
-                and session.output_token_limit - session.output_tokens >= 2 * LIMITS.gateway_tokens
+                and self.calls_left(session) >= 3
+                and session.output_token_limit - session.output_tokens >= 3 * LIMITS.gateway_tokens
                 and self.seconds_left(session) > session.reserve_seconds + LIMITS.response_seconds)
 
     def evaluate(self, state):
@@ -138,7 +138,7 @@ class BudgetPolicy:
                     interview_left -= len(group)
             return BudgetDecision(discard=frozenset(q.item_id for q in questions) - keep)
         for question in sorted(questions, key=lambda q: (-q.priority, q.order, q.item_id)):
-            model_cost = int(question.purpose != "education")
+            model_cost = 2 * int(question.purpose != "education")
             if actions_left <= 0 or calls_left < model_cost or (question.purpose != "empathy" and interview_left <= 0):
                 continue
             keep.add(question.item_id)

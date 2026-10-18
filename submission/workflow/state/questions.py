@@ -73,7 +73,7 @@ class QuestionLifecycle:
         item = state.case.get(action.question.item_id)
         if item and item.status == "unasked":
             item.status = "done"
-            item.value = ClinicalValue(kind="text", text=text or self.config.texts.unknown_text, status="unknown",
+            item.value = ClinicalValue(kind="text", status="unknown",
                 concept_ids=[action.question.target_id] if action.question.target_id else [],
                 attribute_id=action.question.attribute_id, observation_id=action.question.observation_id,
                 episode_id=action.question.episode_id, subject=action.question.subject,

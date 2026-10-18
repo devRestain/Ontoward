@@ -1,575 +1,352 @@
 import hashlib
 import json
-import re
 from copy import deepcopy
 from functools import lru_cache
 
-from knowledge.graph import ClinicalKnowledge
 from pydantic import ValidationError
 
-from .rules.input import fixed_reply, validate_facts
+from .rules.input import validate_facts
 from .rules.limits import LIMITS
-from .state.models import ClinicalValue, ParsedInput, ParseResult, PatientContextEntry, PatientReport, RecordItem, WorkflowState
-from .rules.collection import INTAKE
+from .rules.normalization import (candidate_contracts, compact_schema, force_mapping,
+                                  mapping_schema, statement_outcome, strict_json, validate_mapping)
+from .state.models import (ClinicalValue, ContextInput, ContextStatement, Fact, InputOutcome,
+                           EmpathySignal, ParseResult, PatientContextEntry, PatientContextFact, PatientReport, RecordItem)
 
 
 @lru_cache(maxsize=1)
 def parser_schema():
-    def compact(value):
-        if isinstance(value, dict):
-            if "anyOf" in value and any(item.get("type") == "null" for item in value["anyOf"]):
-                return compact(next(item for item in value["anyOf"] if item.get("type") != "null"))
-            return {key: compact(item) for key, item in value.items()
-                    if key not in {"title", "default", "maxLength", "minLength", "minimum", "maximum"}}
-        if isinstance(value, list):
-            return [compact(item) for item in value]
-        return value
-    schema = compact(ParsedInput.model_json_schema())
-    value = schema["$defs"]["ClinicalValue"]
-    value["properties"].pop("text")
-    value["required"].remove("text")
-    value["properties"]["record_details"] = {"type": "array", "items": {"type": "string"}, "maxItems": 8}
-    schema["$defs"].pop("RecordDetail")
-    measured = schema["$defs"]["ExpectedValue"]
-    measured["properties"] = {key: item for key, item in measured["properties"].items()
-        if key in {"kind", "value", "unit", "operator", "lower", "upper", "lower_inclusive", "upper_inclusive", "upper_unit"}}
-    measured["properties"]["kind"] = {"enum": ["quantity", "interval"]}
-    schema["$defs"]["Fact"]["required"].remove("field")
-    subjective = ["S.cc", "S.hpi", "S.pmh", "S.fh", "S.sh", "S.ros"]
-    schema["$defs"]["Fact"]["properties"]["field"] = {"enum": [*subjective, "O.exam"]}
-    schema["$defs"]["SpeechSpan"]["properties"]["field"] = {"enum": subjective}
-    return schema
-
-
-@lru_cache(maxsize=1)
-def terminology_schema():
-    schema = deepcopy(parser_schema())
-    value = schema["$defs"]["ClinicalValue"]
-    for key in ("concept_ids", "attribute_id", "values", "measurement"):
-        value["properties"].pop(key)
-    value["properties"]["kind"] = {"const": "text"}
-    schema["$defs"].pop("ExpectedValue", None)
-    schema["$defs"]["Fact"]["properties"]["record_id"] = {"type": "null"}
-    return schema
+    return compact_schema(ContextInput.model_json_schema())
 
 
 class InputInterpreter:
     def __init__(self, config, model, questions, interactions):
-        self.config = config
-        self.model = model
-        self.questions = questions
-        self.interactions = interactions
+        self.config, self.model = config, model
+        self.questions, self.interactions = questions, interactions
 
     def process_input(self, state, knowledge, client):
         interaction = state.interaction
         if interaction.termination:
             return
-        if interaction.incoming is None:
-            if interaction.pending:
+        incoming, action = interaction.incoming, interaction.pending
+        if incoming is None:
+            if action:
                 state.stop("unknown", "missing_action_response")
             return
-        incoming, action = interaction.incoming, interaction.pending
         initial = "initial" in incoming
         if not initial and action is None:
             state.stop("failed", "unexpected_action_response")
             return
-        source_id = "initial" if initial else action.request_id
+        source = "initial" if initial else action.request_id
         if initial:
-            raw = incoming["initial"]
-            text = str(raw.get("opening", ""))
-            self.interactions.record_initial(state, raw)
-            vitals = raw.get("vital_signs")
-            if vitals:
-                state.case.put("O.exam", RecordItem(id="initial:vitals", scope="Initiation", status="done",
-                    value=ClinicalValue(kind="finding", text=json.dumps(vitals, ensure_ascii=False) if not isinstance(vitals, str) else vitals,
-                                        status="present"), source_refs=[source_id], acquisition="initial"))
+            self.interactions.record_initial(state, incoming["initial"])
+            text = str(incoming["initial"].get("opening", ""))
         else:
             text = incoming.get("content" if action.question.kind == "SAY" else "result", "")
             text = text if isinstance(text, str) else ""
         if action and (action.question.purpose == "education" or state.session.current == "Education"):
             if action.question.purpose == "education":
-                self.questions.complete_unresolved(state, action, text, source_id)
+                self.questions.complete_unresolved(state, action, "", source)
             elif (item := state.case.get(action.question.item_id)) and item.status == "unasked":
                 state.case.remove({item.id})
             self.interactions.consume_input(state)
             return
-        facts = incoming["initial"] if initial else incoming
-        if incoming.get("error"):
-            parsed = ParseResult()
-        elif text.strip() and not state.session.gateway_successes:
-            parsed = self._parse_text(state, knowledge, client, text)
-        elif "facts" in facts:
-            parsed = self._validate_facts({key: facts[key] for key in
-                ("facts", "clinical_content", "empathy", "patient_context", "spans") if key in facts}, state, knowledge, text)
-        else:
-            fixed = ParsedInput() if initial and not text.strip() else (None if initial else fixed_reply(self.config, state, text, knowledge))
-            parsed = self._validate_facts(fixed.model_dump(), state, knowledge, text) if fixed is not None else self._parse_text(state, knowledge, client, text)
+        parsed = self._parse_text(state, knowledge, client, text) if not incoming.get("error") else ParseResult()
         if parsed is not None:
-            self._apply_facts(state, parsed, source_id)
-            audited = [item for step in parsed.recovery_history for item in step["rejected_facts"]]
-            interaction.parse_rejections.extend({"source_id": source_id, **item} for item in (audited or parsed.rejected_facts))
-            interaction.parse_recoveries.extend({"source_id": source_id, **step} for step in parsed.recovery_history)
+            self._apply_facts(state, parsed, source)
+            interaction.parse_rejections.extend({"source_id": source, **item} for item in parsed.rejected_facts)
+            interaction.parse_recoveries.extend({"source_id": source, **item} for item in parsed.recovery_history)
             if parsed.empathy:
-                self.interactions.queue_empathy(state, parsed.empathy, source_id)
-            if parsed.rejected_facts:
-                interaction.issues.append("partial_input_facts")
-        uncovered_report = self._preserve_report(state, parsed, source_id, text) if initial or action.question.kind == "SAY" else False
-        if interaction.termination:
-            return
-        conflicts = any(item.value and item.value.status != state.case.get(item.id).value.status
-                        for _, item in state.case.current_entries())
-        unresolved = uncovered_report or conflicts or parsed is None or parsed.binding_unresolved or (parsed.rejected_facts or parsed.needs_context) and not any(
-            action and (fact.record_id == action.question.item_id or (
-                action.question.target_id in fact.value.concept_ids
-                and fact.value.attribute_id == action.question.attribute_id)) for fact in parsed.accepted_facts)
-        if unresolved and not incoming.get("error"):
-            self.interactions.request_clarification(state, action.question if action else None)
-        if action and action.question.purpose != "empathy":
-            self.questions.complete_unresolved(state, action, text, source_id)
-        if (action and action.question.purpose == "context" and action.question.coverage and action.question.target_id
-                and any(e.id == source_id and e.delivered for e in interaction.history)
-                and action.question.target_id not in state.questions.context_coverage):
-            state.questions.context_coverage.append(action.question.target_id)
-        if action and incoming.get("error") and action.empathy_source_id:
-            self.interactions.skip_empathy(state, "action_response_error", action.empathy_source_id)
+                self.interactions.queue_empathy(state, parsed.empathy, source)
+        if not any(report.source_id == source for report in interaction.patient_reports):
+            interaction.patient_reports.append(PatientReport(source_id=source, text=text))
+        if action and not interaction.termination:
+            self.questions.complete_unresolved(state, action, "", source)
+            if (action.question.purpose == "context" and action.question.coverage and action.question.target_id
+                    and any(e.id == source and e.delivered for e in interaction.history)
+                    and action.question.target_id not in state.questions.context_coverage):
+                state.questions.context_coverage.append(action.question.target_id)
         self.interactions.consume_input(state)
-        if action and action.question.purpose == "empathy":
+        if action and action.question.purpose in {"greeting", "empathy"}:
             item = state.case.get(action.question.item_id)
-            if item and item.status == "unasked":
-                self.questions.discard_unasked(state, {item.id})
-        if action and action.question.purpose == "greeting":
-            item = state.case.get(action.question.item_id)
-            if item and (not item.value or item.value.kind == "text" and not item.value.record_category):
+            if item and (item.status == "unasked" or not item.value or not item.value.concept_ids):
                 state.case.remove({item.id})
-
-    def _preserve_report(self, state, parsed, source_id, text):
-        if not text.strip() or any(report.source_id == source_id for report in state.interaction.patient_reports):
-            return False
-        quotes = []
-        for fact in parsed.accepted_facts if parsed else []:
-            clauses = [part for part in re.split(r"(?<!\d)[.!?。！？](?:\s|$)|[\n;]", fact.quote) if re.search(r"\w", part)]
-            # A broad quotation alone does not establish extraction of each sentence.
-            quotes.extend([fact.quote] if len(clauses) <= 1 else [detail.quote for detail in fact.value.record_details])
-        if parsed:
-            quotes.extend(fact.quote for fact in parsed.patient_context)
-        if parsed and parsed.empathy:
-            quotes.append(parsed.empathy.quote)
-        if parsed:
-            quotes.extend(span.quote for span in parsed.spans if span.role != "clinical")
-        texts = self.config.texts
-        reply = text.strip().rstrip(texts.reply_trailing_punctuation)
-        if reply in {*texts.unknown_replies, *texts.education_acknowledgements}:
-            quotes.append(text)
-        spans = []
-        for quote in quotes:
-            start = text.find(quote)
-            if start >= 0:
-                spans.append((start, start + len(quote)))
-        covered = []
-        for start, end in sorted(set(spans)):
-            if covered and start <= covered[-1][1]:
-                covered[-1] = (covered[-1][0], max(end, covered[-1][1]))
-            else:
-                covered.append((start, end))
-        uncovered, cursor = [], 0
-        for start, end in [*covered, (len(text), len(text))]:
-            if re.search(r"\w", text[cursor:start]):
-                uncovered.append((cursor, start))
-            cursor = end
-        clinical = []
-        for start, end in uncovered:
-            for span in parsed.spans if parsed else []:
-                offset = text.find(span.quote)
-                if span.role == "clinical" and offset < end and offset + len(span.quote) > start:
-                    clinical.append((max(start, offset), min(end, offset + len(span.quote)), span.field))
-        state.interaction.patient_reports.append(PatientReport(source_id=source_id, text=text,
-            covered_spans=covered, uncovered_spans=uncovered, clinical_spans=clinical))
-        if clinical:
-            state.interaction.issues.append("unstructured_patient_report")
-        return bool(clinical)
 
     @staticmethod
     def _chief_input(state):
-        if any(item.value.concept_ids for item in state.case.chief_complaints()):
-            return False
-        pending = state.interaction.pending
-        return pending is None or pending.question.purpose == "empathy" or (pending.question.purpose in {"chief", "clarification"}
-                                   and pending.question.field == "S.cc")
-
-    def _search(self, state, knowledge, text, *, kind=None):
-        key = hashlib.sha256(((kind or "*") + "\0" + knowledge.normalize_alias(text)).encode()).hexdigest()
-        cache = state.differential.search_cache
-        if key not in cache:
-            if len(cache) >= 128:
-                cache.pop(next(iter(cache)))
-            cache[key] = knowledge.search_concepts(text, kind=kind)
-        return cache[key]
-
-    def _parse_text(self, state, knowledge, client, text):
-        parsed = self._request_parse(state, knowledge, client, text)
-        if parsed is None or state.interaction.termination:
-            return parsed
-        history = [self._recovery_audit("primary", parsed)]
-        if parsed.unresolved_links or parsed.rejected_facts or parsed.needs_context or parsed.binding_unresolved:
-            expanded = self._request_parse(state, knowledge, client, text, previous=parsed, compact=parsed.context_limited)
-            if expanded is not None:
-                history.append(self._recovery_audit("expansion", expanded))
-                parsed = self._merge_recovery(state, parsed, expanded)
-                self._mark_missing_binding(parsed, state, text)
-        if (not state.interaction.termination and not parsed.context_limited and parsed.clinical_content
-                and not parsed.truncated and parsed.valid_output
-                and self._needs_terminology(parsed, text)):
-            fallback = self._request_parse(state, knowledge, client, text, previous=parsed, terminology=True)
-            if fallback is not None:
-                history.append(self._recovery_audit("terminology", fallback))
-                for fact in fallback.accepted_facts:
-                    if not any(fact.quote == old.quote and old.value.kind == "text"
-                               and old.value.record_details for old in parsed.accepted_facts):
-                        parsed.accepted_facts.append(fact)
-                parsed.empathy = parsed.empathy or fallback.empathy
-        parsed.recovery_history = history
-        return parsed
+        return not state.case.chief_complaints()
 
     @staticmethod
-    def _recovery_audit(stage, parsed):
-        return {"pass": stage, "accepted_facts": len(parsed.accepted_facts),
-                "rejected_facts": deepcopy(parsed.rejected_facts), "unresolved_links": list(parsed.unresolved_links),
-                "binding_unresolved": parsed.binding_unresolved}
+    def _size(messages):
+        return len(json.dumps(messages, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8"))
 
-    @staticmethod
-    def _needs_terminology(parsed, text):
-        reports = [fact.quote for fact in parsed.accepted_facts if fact.value.kind == "text" and fact.value.record_details]
-        unresolved = [parsed.accepted_facts[i].quote for i in parsed.unresolved_links]
-        unresolved.extend(item["raw"].get("quote", "") for item in parsed.rejected_facts if isinstance(item["raw"], dict))
-        unresolved = [quote for quote in unresolved if isinstance(quote, str) and quote.strip() and quote in text]
-        if unresolved:
-            return any(not any(quote in report for report in reports) for quote in unresolved)
-        return (parsed.needs_context or parsed.binding_unresolved) and not reports
-
-    @staticmethod
-    def _mark_missing_binding(parsed, state, text):
-        if not parsed.clinical_content or not text.strip():
-            parsed.binding_unresolved = False
-            return
-        question = state.interaction.pending.question if state.interaction.pending else None
-        if InputInterpreter._chief_input(state):
-            resolved = any(f.field == "S.cc" and f.value.kind == "symptom" and len(f.value.concept_ids) == 1
-                and f.value.subject == "patient" and f.value.time_context != "past"
-                and f.value.status in {"present", "uncertain"} for f in parsed.accepted_facts)
-        elif question and question.target_id:
-            resolved = any(question.target_id in f.value.concept_ids and f.value.attribute_id == question.attribute_id
-                and (f.value.status in {"present", "absent", "uncertain"} or f.value.not_applicable)
-                and f.value.subject == question.subject and f.value.time_context == question.time_context
-                and (not question.observation_id or f.value.observation_id in {None, question.observation_id})
-                and (not question.episode_id or f.value.episode_id in {None, question.episode_id})
-                and (not question.attribute_id or f.value.values or f.value.measurement or f.value.not_applicable)
-                for f in parsed.accepted_facts)
-        elif question and question.record_category:
-            resolved = any(f.value.record_category == question.record_category for f in parsed.accepted_facts)
-        else:
-            resolved = bool(parsed.accepted_facts)
-        parsed.binding_unresolved = not resolved
-
-    @staticmethod
-    def _merge_recovery(state, original, expanded):
-        accepted = list(original.accepted_facts)
-        unresolved = set(original.unresolved_links)
-        repaired = set()
-        for fact in expanded.accepted_facts:
-            linked = [i for i in unresolved if (fact.repair_of is None or fact.repair_of == accepted[i].repair_of)
-                      and fact.quote == accepted[i].quote and fact.record_id == accepted[i].record_id]
-            rejected = [item for item in original.rejected_facts if isinstance(item["raw"], dict)
-                        and (fact.repair_of is None or fact.repair_of == item["index"])
-                        and fact.quote == item["raw"].get("quote")]
-            if len(linked) == 1 and not rejected:
-                index, old = linked[0], accepted[linked[0]]
-                same_fact = fact.model_dump(exclude={"value", "repair_of"}) == old.model_dump(exclude={"value", "repair_of"})
-                same_value = fact.value.model_dump(exclude={"concept_ids", "mapping_status", "status"}) == old.value.model_dump(exclude={"concept_ids", "mapping_status", "status"})
-                conservative = fact.value.status == old.value.status or (old.value.status == "present" and fact.value.status == "uncertain")
-                if same_fact and same_value and conservative and fact.value.concept_ids:
-                    fact.repair_of = old.repair_of
-                    accepted[index] = fact
-                    unresolved.remove(index)
-                    continue
-            elif len(rejected) == 1 and not linked:
-                item = rejected[0]
-                if not any(fact.record_id and fact.record_id == old.record_id for i, old in enumerate(accepted) if i not in unresolved):
-                    fact.repair_of = item["index"]
-                    accepted.append(fact)
-                    repaired.add(item["index"])
-                    continue
-            elif fact.repair_of is None and (original.needs_context or original.binding_unresolved):
-                if not any((fact.record_id and fact.record_id == old.record_id) or
-                    (fact.value.subject, fact.value.subject_member, fact.value.time_context,
-                     fact.value.observation_id, fact.value.episode_id, fact.value.concept_ids, fact.value.attribute_id,
-                     fact.value.record_category, fact.quote if fact.value.kind == "text" else None)
-                    == (old.value.subject, old.value.subject_member, old.value.time_context,
-                        old.value.observation_id, old.value.episode_id, old.value.concept_ids, old.value.attribute_id,
-                        old.value.record_category, old.quote if old.value.kind == "text" else None)
-                    for old in accepted):
-                    accepted.append(fact)
-                    continue
-            state.interaction.issues.append("invalid_gateway_expansion")
-        return ParseResult(accepted_facts=accepted,
-            unresolved_links=sorted(unresolved) + [i for i in range(len(original.accepted_facts), len(accepted))
-                if accepted[i].value.kind in {"symptom", "finding"} and not accepted[i].value.concept_ids
-                and accepted[i].value.status in {"present", "uncertain"}],
-            rejected_facts=[item for item in original.rejected_facts if item["index"] not in repaired] + expanded.rejected_facts,
-            needs_context=expanded.needs_context, lookup_terms=expanded.lookup_terms,
-            context_limited=expanded.context_limited, clinical_content=bool(accepted) or expanded.clinical_content,
-            empathy=original.empathy or expanded.empathy,
-            patient_context=expanded.patient_context or original.patient_context,
-            spans=expanded.spans or original.spans, truncated=expanded.truncated,
-            valid_output=original.valid_output or expanded.valid_output)
-
-    def _required_vocabulary(self, state, knowledge, text):
-        pending = state.interaction.pending
-        if not pending:
-            return []
-        q = pending.question
-        required = list(filter(None, (q.target_id, q.attribute_id)))
-        if q.attribute_id:
-            allowed = knowledge.get_attribute_values(q.attribute_id)
-            matched = [c for c in self._search(state, knowledge, text, kind="AttributeValue") if c in allowed]
-            required.extend((matched or allowed)[:4])
-        return list(dict.fromkeys(required))
-
-    def _vocabulary(self, state, knowledge, text, *, expanded=False, lookup_terms=()):
-        pending = state.interaction.pending
-        chief_input = self._chief_input(state)
-        required = self._required_vocabulary(state, knowledge, text)
-        def candidates():
-            attribute = pending.question.attribute_id if pending else None
-            allowed_values = set(knowledge.get_attribute_values(attribute)) if attribute else set()
-            for term in lookup_terms:
-                if attribute:
-                    yield from (c for c in self._search(state, knowledge, term, kind="AttributeValue") if c in allowed_values)
-                yield from self._search(state, knowledge, term)
-            if attribute:
-                yield from (c for c in knowledge.resolve_concept(text) if c in allowed_values)
-                yield from (c for c in self._search(state, knowledge, text, kind="AttributeValue") if c in allowed_values)
-            matches = self._search(state, knowledge, text)
-            yield from matches[:8]
-            if pending and pending.question.target_id:
-                question = pending.question
-                attrs = [question.attribute_id] if question.attribute_id else knowledge.get_symptom_attributes(question.target_id)
-                for attribute in attrs:
-                    yield attribute
-                    yield from knowledge.get_target_values(question.target_id, attribute)
-                    yield from knowledge.get_attribute_values(attribute)
-            if chief_input:
-                for target in self._search(state, knowledge, text, kind="Symptom")[:8]:
-                    yield target
-                    for attr in knowledge.get_symptom_attributes(target):
-                        yield attr
-                        yield from knowledge.get_target_values(target, attr)
-                yield from self._search(state, knowledge, text, kind="FindingAttribute")[:8]
-                yield from self._search(state, knowledge, text, kind="AttributeValue")[:8]
-                yield from self._search(state, knowledge, text, kind="ContextFactor")[:8]
-            yield from matches[8:]
-            projected = self.interactions.project_context(state, pending.question if pending else None,
-                                                          self._search(state, knowledge, text), expanded=expanded)
-            for item in projected["records"]:
-                value = item["value"]
-                if value:
-                    yield from value["concept_ids"]
-                    yield from value["values"]
-                    if value["attribute_id"]:
-                        yield value["attribute_id"]
-            for hypothesis in state.differential.hypotheses[:5]:
-                for profile in knowledge.get_disease_patterns(hypothesis.disease_id):
-                    yield profile.target
-            yield from (concept["id"] for concept in knowledge.iter_concepts())
-        count_limit = LIMITS.expanded_parser_concepts if expanded else LIMITS.parser_concepts
-        byte_limit = LIMITS.expanded_parser_vocabulary_bytes if expanded else LIMITS.parser_vocabulary_bytes
-        vocabulary = list(knowledge.iter_concepts(dict.fromkeys(required)))
-        size = len(json.dumps(vocabulary, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
-        if len(vocabulary) > count_limit or size > byte_limit:
-            raise ValueError("Required question vocabulary exceeds parser limits")
-        seen = {concept["id"] for concept in vocabulary}
-        for ident in candidates():
-            if len(vocabulary) >= count_limit:
-                break
-            if ident in seen:
-                continue
-            seen.add(ident)
-            concept = next(knowledge.iter_concepts([ident]), None)
-            if concept is None:
-                continue
-            extra = len(json.dumps(concept, ensure_ascii=False, separators=(",", ":")).encode("utf-8")) + bool(vocabulary)
-            if size + extra > byte_limit:
-                continue
-            vocabulary.append(concept)
-            size += extra
-        return vocabulary, size
-
-    def _fit_request(self, payload, *, required_count, byte_limit):
-        vocabulary = payload["vocabulary"]
-        if payload.get("chief_mapping_required"):
-            first_symptom = next((i for i, c in enumerate(vocabulary) if c["kind"] == "Symptom"), None)
-            if first_symptom is None:
-                return None
-            required_count = max(required_count, first_symptom + 1)
-        preferred_count = min(len(vocabulary), max(required_count, 32))
+    def _fit_request(self, prompt, payload, byte_limit):
         while True:
-            binding = payload.get("binding_contract")
-            if binding:
-                value_ids = [c["id"] for c in vocabulary if c["id"] in binding["value_ids"]]
-                binding["value_ids"] = value_ids
-                properties = {"concept_ids": {"const": [binding["target_id"]]}}
-                if binding["attribute_id"]:
-                    properties.update(kind={"const": "attribute"}, attribute_id={"const": binding["attribute_id"]},
-                                      values={"items": {"enum": value_ids} if value_ids else {"not": {}}})
-                payload["schema"]["properties"]["facts"]["items"]["allOf"] = [{
-                    "if": {"properties": {"record_id": {"const": payload["question"]["item_id"]}}, "required": ["record_id"]},
-                    "then": {"properties": {"value": {"properties": properties}}}}]
-            if payload.get("chief_mapping_required"):
-                chief = {"properties": {"field": {"const": "S.cc"}, "value": {"properties": {
-                    "kind": {"const": "symptom"}, "subject": {"const": "patient"},
-                    "status": {"enum": ["present", "uncertain"]},
-                    "time_context": {"enum": ["current", "unspecified"]},
-                    "concept_ids": {"minItems": 1, "maxItems": 1,
-                        "items": {"enum": [c["id"] for c in vocabulary if c["kind"] == "Symptom"]}}},
-                    "required": ["kind", "subject", "status", "time_context", "concept_ids"]}},
-                    "required": ["field", "value"]}
-                selected = {"properties": {"facts": {"contains": chief}}, "required": ["facts"]}
-                payload["schema"]["anyOf"] = [selected, {"properties": {"clinical_content": {"const": False}},
-                                                        "required": ["clinical_content"]}]
-                if payload["parser_pass"] == "primary":
-                    payload["schema"]["anyOf"].append({"properties": {
-                        "needs_context": {"const": True}, "lookup_terms": {"minItems": 1}},
-                        "required": ["needs_context", "lookup_terms"]})
-            encoded = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-            prompt = self.config.terminology_prompt if payload.get("task") == "terminology" else self.config.parser_prompt
-            messages = [{"role": "system", "content": prompt}, {"role": "user", "content": encoded}]
-            size = len(json.dumps(messages, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
-            if size <= byte_limit:
-                return messages, size
-            # Keep the current input, question, schema and required IDs intact.
-            if len(vocabulary) > preferred_count:
-                vocabulary.pop()
-            elif len(vocabulary) > required_count:
-                vocabulary.pop()
-            elif payload["dialogue"]:
+            messages = [{"role": "system", "content": prompt},
+                        {"role": "user", "content": json.dumps(payload, ensure_ascii=False, separators=(",", ":"), allow_nan=False)}]
+            if self._size(messages) <= byte_limit:
+                return messages
+            if payload.get("dialogue"):
                 payload["dialogue"].pop()
-            elif payload["records"]:
+            elif payload.get("records"):
                 payload["records"].pop()
-            elif payload.get("frozen_facts"):
-                payload["frozen_facts"].pop()
+            elif payload.get("patient_context"):
+                payload["patient_context"].pop(next(iter(payload["patient_context"])))
             else:
                 return None
 
-    def _request_parse(self, state, knowledge, client, text, *, previous=None, compact=False, terminology=False):
-        expanded = previous is not None
-        pending = state.interaction.pending
-        context = self.interactions.project_context(state, pending.question if pending else None,
-                                                    self._search(state, knowledge, text), expanded=expanded)
-        try:
-            vocabulary, vocabulary_bytes = ([], 2) if terminology else self._vocabulary(state, knowledge, text, expanded=expanded,
-                lookup_terms=previous.lookup_terms if previous else ())
-        except ValueError:
-            state.interaction.issues.append("gateway_required_vocabulary_overflow")
-            return None
-        payload = {"input": text, "question": pending.question.model_dump(exclude={"order", "priority", "assessment"}) if pending else None,
-                   "spoken_question": pending.content if pending else None, **context,
-                   "schema": deepcopy(terminology_schema() if terminology else parser_schema()), "vocabulary": vocabulary,
-                   "task": "terminology" if terminology else "gateway",
-                   "parser_pass": "terminology" if terminology else "expansion" if expanded else "primary"}
-        payload["patient_context"] = {key: value.model_dump() for key, value in state.case.patient_context.items()}
-        if pending and pending.question.target_id and not terminology:
-            question = pending.question
-            payload["binding_contract"] = {"target_id": question.target_id, "attribute_id": question.attribute_id,
-                "value_ids": knowledge.get_attribute_values(question.attribute_id) if question.attribute_id else [],
-                "answer_type": question.answer_type, "subject": question.subject, "time_context": question.time_context,
-                "observation_id": question.observation_id, "episode_id": question.episode_id}
-        event = next((event for event in reversed(state.interaction.empathy_events)
-                      if event.status in {"pending", "attempted", "delivered"}), None)
-        if event:
-            payload["last_empathy"] = {"quote": event.quote, "intent": event.intent, "status": event.status}
-        frozen_chief = previous and any(f.field == "S.cc" and f.value.kind == "symptom"
-            and len(f.value.concept_ids) == 1 and f.value.subject == "patient"
-            and f.value.time_context != "past" and f.value.status in {"present", "uncertain"}
-            for f in previous.accepted_facts)
-        if self._chief_input(state) and not terminology and not frozen_chief:
-            payload["chief_mapping_required"] = True
-        if previous:
-            payload["recovery_reason"] = "output_truncated" if previous.truncated else "binding_or_context"
-            payload["unlinked_facts"] = [previous.accepted_facts[i].model_dump() for i in previous.unresolved_links]
-            payload["rejected_facts"] = [{**item, "reason": str(item["reason"])[:240]} for item in previous.rejected_facts]
-            payload["frozen_facts"] = [fact.model_dump() for i, fact in enumerate(previous.accepted_facts) if i not in previous.unresolved_links]
-            payload["needs_context"] = previous.needs_context
-            payload["lookup_terms"] = previous.lookup_terms
-        byte_limit = (LIMITS.compact_gateway_request_bytes if compact else
-                      LIMITS.expanded_gateway_request_bytes if expanded else LIMITS.gateway_request_bytes)
-        if compact:
-            byte_limit = min(byte_limit, state.interaction.model_history[-1]["parser_payload"]["request_bytes"] - 1)
-        required = self._required_vocabulary(state, knowledge, text) if not terminology else []
-        fitted = self._fit_request(payload, required_count=len(required), byte_limit=byte_limit)
+    def _call(self, state, client, payload, prompt, *, limit, max_tokens=None):
+        fitted = self._fit_request(prompt, payload, limit)
         if fitted is None:
             state.interaction.issues.append("gateway_request_overflow")
             return None
-        messages, request_bytes = fitted
-        vocabulary_bytes = len(json.dumps(vocabulary, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
-        previous_calls = len(state.interaction.model_history)
-        options = {"max_tokens": LIMITS.gateway_recovery_tokens} if previous and previous.truncated else {}
-        content = self.model.complete(state, client, role="terminology" if terminology else "gateway", messages=messages, **options)
-        if len(state.interaction.model_history) > previous_calls:
+        previous = len(state.interaction.model_history)
+        content = self.model.complete(state, client, role="gateway", messages=fitted, max_tokens=max_tokens)
+        if len(state.interaction.model_history) > previous:
             state.interaction.model_history[-1]["parser_payload"] = {
-                "pass": payload["parser_pass"], "vocabulary_count": len(vocabulary), "vocabulary_bytes": vocabulary_bytes,
-                "payload_bytes": len(messages[1]["content"].encode("utf-8")),
-                "request_bytes": request_bytes, "request_byte_limit": byte_limit, "compact": compact,
-                "context_bytes": len(json.dumps(context, ensure_ascii=False, separators=(",", ":")).encode("utf-8")),
-                "context_records": len(context["records"]), "context_turns": len(context["dialogue"])}
-        if content is None:
-            if (len(state.interaction.model_history) > previous_calls
-                    and state.interaction.model_history[-1].get("error") == "OUTPUT_TRUNCATED"):
-                return ParseResult(needs_context=True, truncated=True)
-            if (len(state.interaction.model_history) > previous_calls
-                    and state.interaction.model_history[-1].get("error") == "CONTEXT_LIMIT_EXCEEDED"):
-                return ParseResult(needs_context=True, context_limited=True)
-            return None
-        try:
-            parsed = self._validate_facts(json.loads(content), state, knowledge, text,
-                dialogue_ids={turn["id"] for turn in context["dialogue"]},
-                supplied_records={item["id"] for item in context["records"]} | ({pending.question.item_id} if pending else set()),
-                allowed={concept["id"] for concept in vocabulary},
-                frozen_facts=previous.accepted_facts if previous else ())
-            parsed = parsed if parsed is not None else ParseResult(needs_context=True)
-            if terminology:
-                allowed_facts = []
-                for index, fact in enumerate(parsed.accepted_facts):
-                    value = fact.value
-                    if (value.kind != "text" or value.concept_ids or value.attribute_id or value.values
-                            or value.measurement or fact.record_id is not None or not value.record_details):
-                        parsed.rejected_facts.append({"index": index, "raw": fact.model_dump(), "reason": "not_record_only_terminology"})
-                    elif not previous or not any(fact.quote == old.quote for i, old in enumerate(previous.accepted_facts)
-                                                 if i not in previous.unresolved_links):
-                        allowed_facts.append(fact)
-                parsed.accepted_facts = allowed_facts
-            elif not expanded:
-                rejected_indices = {item["index"] for item in parsed.rejected_facts}
-                indices = (i for i in range(len(parsed.accepted_facts) + len(rejected_indices)) if i not in rejected_indices)
-                for fact, index in zip(parsed.accepted_facts, indices):
-                    fact.repair_of = index
-            self._mark_missing_binding(parsed, state, text)
-            linked_chiefs = [fact for fact in parsed.accepted_facts if fact.field == "S.cc"
-                and fact.value.kind == "symptom" and fact.value.subject == "patient"
-                and fact.value.time_context != "past" and fact.value.status in {"present", "uncertain"}
-                and len(fact.value.concept_ids) == 1]
-            if payload.get("chief_mapping_required") and parsed.clinical_content and text.strip() and not linked_chiefs:
-                parsed.needs_context = True
-                state.interaction.issues.append("chief_mapping_unresolved")
-            if len(state.interaction.model_history) > previous_calls:
-                state.interaction.model_history[-1]["parser_result"] = {
-                    "accepted_facts": len(parsed.accepted_facts), "linked_chief_facts": len(linked_chiefs),
-                    "unlinked_facts": len(parsed.unresolved_links), "rejected_facts": len(parsed.rejected_facts),
-                    "needs_context": parsed.needs_context, "binding_unresolved": parsed.binding_unresolved,
-                    "clinical_content": parsed.clinical_content, "empathy": parsed.empathy.model_dump() if parsed.empathy else None,
-                    "lookup_terms": parsed.lookup_terms}
-            return parsed
-        except (TypeError, ValueError):
-            state.interaction.issues.append("invalid_gateway_output")
-            return ParseResult(needs_context=True)
+                "pass": payload["phase"], "request_bytes": self._size(fitted), "request_byte_limit": limit,
+                "statement_indices": payload.get("statement_indices", []),
+                "context_records": len(payload.get("records", [])), "context_turns": len(payload.get("dialogue", []))}
+        return content
+
+    def _context(self, state, knowledge, client, text):
+        pending = state.interaction.pending
+        question = pending.question if pending else None
+        projected = self.interactions.project_context(state, question, knowledge.search_concepts(text), expanded=True)
+        payload = {"task": "input_context", "phase": "context", "input": text,
+            "question": question.model_dump(exclude={"assessment"}) if question else None,
+            "spoken_question": pending.content if pending else None,
+            "patient_context": {key: value.model_dump() for key, value in state.case.patient_context.items()},
+            "schema": deepcopy(parser_schema()), **projected}
+        if pending is None and state.interaction.incoming:
+            payload["initial_data"] = state.interaction.incoming.get("initial", {}).get("vital_signs", {})
+        context = None
+        for attempt in range(2):
+            payload["phase"] = "context_repair" if attempt else "context"
+            limit = LIMITS.expanded_gateway_request_bytes if attempt else LIMITS.gateway_request_bytes
+            if attempt and state.interaction.model_history and state.interaction.model_history[-1].get("error") == "CONTEXT_LIMIT_EXCEEDED":
+                limit = LIMITS.compact_gateway_request_bytes
+            content = self._call(state, client, payload, self.config.parser_prompt, limit=limit,
+                                 max_tokens=LIMITS.gateway_recovery_tokens if attempt else LIMITS.gateway_tokens)
+            if state.interaction.termination:
+                break
+            try:
+                raw_context = strict_json(content)
+                if not isinstance(raw_context, dict):
+                    raise ValueError("context_requires_object")
+                context = ContextInput.model_validate({**raw_context, "empathy": None, "patient_context": []})
+                for row in raw_context.get("patient_context", []) if isinstance(raw_context.get("patient_context", []), list) else []:
+                    try:
+                        fact = PatientContextFact.model_validate(row)
+                        if fact.quote not in text:
+                            raise ValueError("ungrounded_patient_context")
+                        context.patient_context.append(fact)
+                    except (TypeError, ValueError, ValidationError):
+                        state.interaction.issues.append("invalid_patient_context")
+                ambiguous = {fact.key for fact in context.patient_context
+                             if len({f.value for f in context.patient_context if f.key == fact.key}) > 1}
+                if ambiguous:
+                    state.interaction.issues.append("conflicting_patient_context")
+                    context.patient_context = [f for f in context.patient_context if f.key not in ambiguous]
+                context.patient_context = list({fact.key: fact for fact in context.patient_context}.values())
+                if raw_context.get("empathy") is not None:
+                    try:
+                        signal = EmpathySignal.model_validate(raw_context["empathy"])
+                        if signal.quote not in text or question and question.kind == "EXAM":
+                            raise ValueError("ungrounded_empathy")
+                        context.empathy = signal
+                    except (TypeError, ValueError, ValidationError):
+                        state.interaction.issues.append("invalid_empathy_signal")
+                supplied = {item["id"] for item in payload["records"]}
+                known_observations = {item["value"].get("observation_id") for item in payload["records"] if item.get("value")}
+                known_episodes = {item["value"].get("episode_id") for item in payload["records"] if item.get("value")}
+                if question:
+                    known_observations.add(question.observation_id)
+                    known_episodes.add(question.episode_id)
+                for statement in context.statements:
+                    if statement.quote not in text or not statement.quote.strip():
+                        raise ValueError("statement_not_in_current_input")
+                    if statement.correction_id and statement.correction_id not in supplied:
+                        raise ValueError("correction_outside_transmitted_context")
+                    if statement.observation_id and statement.observation_id not in known_observations:
+                        raise ValueError("observation_outside_transmitted_context")
+                    if statement.episode_id and statement.episode_id not in known_episodes:
+                        raise ValueError("episode_outside_transmitted_context")
+                    if statement.anchor is not None:
+                        if statement.anchor >= len(context.statements):
+                            raise ValueError("unknown_statement_anchor")
+                        anchor = context.statements[statement.anchor]
+                        if (anchor.subject, anchor.subject_member, anchor.time_context) != (
+                                statement.subject, statement.subject_member, statement.time_context):
+                            raise ValueError("anchor_changes_subject_or_time")
+                    if statement.measurement and statement.measurement.kind not in {"quantity", "interval"}:
+                        raise ValueError("context_measurement_must_be_numeric")
+                break
+            except (TypeError, ValueError, ValidationError) as error:
+                context = None
+                payload["validation_errors"] = [str(error)[:240]]
+                state.interaction.parse_rejections.append({"stage": payload["phase"], "reason": str(error)[:240]})
+        if context is None:
+            context = ContextInput(statements=[ContextStatement(quote=text, role="unknown")] if text.strip() else [])
+        # Exact nonanswers are a post-model guard, never a model-call shortcut.
+        reply = text.strip().rstrip(self.config.texts.reply_trailing_punctuation)
+        if reply in self.config.texts.unknown_replies:
+            context.statements = [ContextStatement(quote=text, role="unknown")]
+        elif reply in set(self.config.texts.education_acknowledgements) - set(self.config.texts.present_replies):
+            context.statements = [ContextStatement(quote=text, role="nonclinical")]
+        state.interaction.interpretations.append({"source_ref": pending.request_id if pending else "initial",
+            "context": context.model_dump(), "input": text})
+        return context, payload
+
+    def _mapping_payload(self, context_payload, statements, indices, contracts, phase):
+        return {"task": "input_mapping", "phase": phase, "input": context_payload["input"],
+            "question": context_payload["question"], "spoken_question": context_payload["spoken_question"],
+            "dialogue": deepcopy(context_payload.get("dialogue", [])), "statement_indices": indices,
+            "statements": [{**statements[i].model_dump(exclude_none=True), "candidates": contracts[i]} for i in indices],
+            "schema": {"type": "array", "prefixItems": [mapping_schema(contracts[i]) for i in indices],
+                       "minItems": len(indices), "maxItems": len(indices)}}
+
+    def _map_batch(self, state, knowledge, client, context_payload, statements, batch, contracts, mappings, forced, result):
+        question = state.interaction.pending.question if state.interaction.pending else None
+        remaining, format_used = list(batch), False
+        for phase in ("mapping", "binding_repair", "forced"):
+            if not remaining or state.interaction.termination:
+                break
+            if phase != "mapping":
+                for i in remaining:
+                    contracts[i] = candidate_contracts(knowledge, statements[i], question, expanded=True,
+                                                       complete=phase == "forced")[:32]
+            payload = self._mapping_payload(context_payload, statements, remaining, contracts, phase)
+            limit = LIMITS.gateway_request_bytes if phase == "mapping" else LIMITS.expanded_gateway_request_bytes
+            while self._fit_request(self.config.normalization_prompt, payload, limit) is None:
+                largest = max(remaining, key=lambda i: len(contracts[i]))
+                if len(contracts[largest]) <= 1:
+                    break
+                contracts[largest].pop()
+                payload = self._mapping_payload(context_payload, statements, remaining, contracts, phase)
+            content = self._call(state, client, payload, self.config.normalization_prompt, limit=limit,
+                max_tokens=LIMITS.gateway_recovery_tokens if phase == "forced" else LIMITS.gateway_tokens)
+            for attempt in range(2 if not format_used else 1):
+                try:
+                    wire = strict_json(content)
+                    if not isinstance(wire, list) or len(wire) != len(remaining):
+                        raise ValueError("mapping_batch_length_or_type")
+                    break
+                except (TypeError, ValueError) as error:
+                    result.rejected_facts.append({"stage": phase, "reason": str(error)})
+                    wire = [{} for _ in remaining]
+                    if attempt or format_used or state.interaction.termination:
+                        break
+                    format_used = True
+                    payload.update(phase="format_repair", repair_phase=phase, validation_errors=[str(error)])
+                    if state.interaction.model_history and state.interaction.model_history[-1].get("error") == "CONTEXT_LIMIT_EXCEEDED":
+                        limit = LIMITS.compact_gateway_request_bytes
+                        while self._fit_request(self.config.normalization_prompt, payload, limit) is None:
+                            largest = max(remaining, key=lambda i: len(contracts[i]))
+                            if len(contracts[largest]) <= 1:
+                                break
+                            contracts[largest].pop()
+                            payload = self._mapping_payload(context_payload, statements, remaining, contracts, "format_repair")
+                            payload["repair_phase"] = phase
+                    content = self._call(state, client, payload, self.config.normalization_prompt, limit=limit,
+                                         max_tokens=LIMITS.gateway_recovery_tokens)
+            unresolved = []
+            for i, mapping in zip(remaining, wire):
+                try:
+                    if not validate_mapping(mapping, statements[i], contracts[i]):
+                        unresolved.append(i)
+                        continue
+                    mappings[i] = mapping
+                    if phase == "forced":
+                        forced[i] = "model"
+                except (TypeError, ValueError, ValidationError) as error:
+                    result.rejected_facts.append({"index": i, "stage": phase, "raw": mapping, "reason": str(error)})
+                    unresolved.append(i)
+            result.recovery_history.append({"pass": phase, "accepted_facts": len(remaining) - len(unresolved),
+                                            "rejected_facts": [], "unresolved_links": unresolved})
+            remaining = unresolved
+        if not state.interaction.termination:
+            for i in remaining:
+                contracts[i] = candidate_contracts(knowledge, statements[i], question, expanded=True, complete=True)
+                mappings[i] = force_mapping(statements[i], contracts[i])
+                if mappings[i]:
+                    forced[i] = "deterministic"
+
+    def _parse_text(self, state, knowledge, client, text):
+        pending = state.interaction.pending
+        question = pending.question if pending else None
+        source = pending.request_id if pending else "initial"
+        context, context_payload = self._context(state, knowledge, client, text)
+        statements = context.statements
+        result = ParseResult(patient_context=context.patient_context, empathy=context.empathy,
+                             valid_output=True, clinical_content=any(s.role == "clinical" for s in statements), audit_refs=[source])
+        contracts = {i: candidate_contracts(knowledge, s, question) for i, s in enumerate(statements)}
+        mappings, forced = [{} for _ in statements], {}
+        waiting = [i for i, s in enumerate(statements) if statement_outcome(s) is None]
+        batches, batch = [], []
+        for index in waiting:
+            trial = self._mapping_payload(context_payload, statements, [*batch, index], contracts, "mapping")
+            if batch and self._fit_request(self.config.normalization_prompt, trial, LIMITS.gateway_request_bytes) is None:
+                batches.append(batch)
+                batch = []
+            batch.append(index)
+        if batch:
+            batches.append(batch)
+        for batch in batches:
+            self._map_batch(state, knowledge, client, context_payload, statements, batch, contracts, mappings, forced, result)
+        facts = []
+        for index, statement in enumerate(statements):
+            decoded = validate_mapping(mappings[index], statement, contracts[index])
+            statement_id = f"{source}:statement:{index}"
+            for target, attribute, values, measurement, status in decoded:
+                occurrence = statement.anchor if statement.anchor is not None else index
+                same_question = question and target == question.target_id and statement.subject == question.subject
+                observation = statement.observation_id or (question.observation_id if same_question else None)
+                episode = statement.episode_id or (question.episode_id if same_question else None)
+                if attribute and not observation:
+                    previous = [item.value for _, item in state.case.current_entries() if item.value and target in item.value.concept_ids
+                        and item.value.kind in {"symptom", "finding"} and item.value.subject == statement.subject
+                        and item.value.subject_member == statement.subject_member and item.value.time_context == statement.time_context]
+                    keys = {(v.observation_id, v.episode_id) for v in previous}
+                    if len(keys) == 1:
+                        observation, episode = next(iter(keys))
+                observation = observation or "observation:" + hashlib.sha256(f"{source}:{occurrence}".encode()).hexdigest()[:24]
+                episode = episode or observation
+                kind = "attribute" if attribute else "context" if knowledge.has_type(target, "ContextFactor") else (
+                    "finding" if question and question.kind == "EXAM" else "symptom")
+                field = "O.exam" if question and question.kind == "EXAM" else "S.hpi" if attribute else (
+                    "S.cc" if kind == "symptom" and statement.subject == "patient" and statement.time_context != "past"
+                    and (not state.case.primary_chief or statement.primary_concern or question and question.purpose == "chief") else "S.ros")
+                value = ClinicalValue(kind=kind, text=statement.quote, status=status, concept_ids=[target],
+                    attribute_id=attribute, values=values, measurement=measurement,
+                    observation_id=observation, episode_id=episode, subject=statement.subject,
+                    subject_member=statement.subject_member, reported_by=statement.reported_by,
+                    time_context=statement.time_context, record_category=statement.record_category,
+                    primary_concern=statement.primary_concern, polarity_scope=statement.polarity_scope,
+                    mapping_status="forced" if index in forced else "exact", forced_by=forced.get(index))
+                facts.append(Fact(field=field, quote=statement.quote, value=value, statement_id=statement_id,
+                    record_id=statement.correction_id, correction=bool(statement.correction_id), mapping=mappings[index]))
+            outcome = statement_outcome(statement) or ("forced" if index in forced else "mapped" if decoded else "unsupported")
+            result.outcomes.append(InputOutcome(source_ref=source, statement_id=statement_id, state=outcome,
+                question_id=question.item_id if question else None,
+                record_category=statement.record_category or (question.record_category if question else None),
+                target_id=question.target_id if question else None, attribute_id=question.attribute_id if question else None,
+                reason="no_compatible_database_slot" if outcome == "unsupported" else None))
+        validated = self._validate_facts({"facts": [f.model_dump() for f in facts]}, state, knowledge, text)
+        if validated:
+            result.accepted_facts = validated.accepted_facts
+            result.rejected_facts.extend(validated.rejected_facts)
+        admitted = {f.statement_id for f in result.accepted_facts}
+        for i, outcome in enumerate(result.outcomes):
+            if outcome.state in {"mapped", "forced"} and outcome.statement_id not in admitted:
+                mappings[i] = {}
+                outcome.state, outcome.reason = "unsupported", "fact_validation_rejected"
+        result.mappings = mappings
+        result.fact_metadata = [{"statement_id": o.statement_id, "subject": s.subject,
+            "subject_member": s.subject_member, "time_context": s.time_context, "polarity_scope": s.polarity_scope,
+            "forced_by": forced.get(i)} for i, (s, o) in enumerate(zip(statements, result.outcomes))]
+        json.dumps(result.mappings, ensure_ascii=False, allow_nan=False)
+        state.interaction.interpretations[-1]["result"] = result.model_dump(exclude={"accepted_facts", "patient_context", "empathy"})
+        return result
 
     def _validate_facts(self, raw, state, knowledge, text, **kwargs):
         try:
@@ -578,60 +355,52 @@ class InputInterpreter:
             state.interaction.issues.append("invalid_input_facts")
             return None
 
-    def _apply_facts(self, state: WorkflowState, parsed: ParseResult, source_id: str) -> None:
-        pending = state.interaction.pending
-        changed = False
-        priorities = set()
-        for fact in parsed.patient_context:
-            state.case.patient_context[fact.key] = PatientContextEntry(value=fact.value, quote=fact.quote, source_refs=[source_id])
+    def _apply_facts(self, state, parsed, source):
+        pending, assigned = state.interaction.pending, {}
+        for context in parsed.patient_context:
+            state.case.patient_context[context.key] = PatientContextEntry(value=context.value, quote=context.quote, source_refs=[source])
         for index, fact in enumerate(parsed.accepted_facts):
             value = fact.value.model_copy(deep=True)
-            item_id = fact.record_id or f"{source_id}:fact:{index}"
-            if value.primary_concern:
-                priorities.add(item_id)
-            existing = state.case.get(item_id)
-            if value.kind in {"symptom", "finding", "attribute"}:
-                question = next((q for q in state.questions.questions if q.item_id == item_id), None)
-                value.observation_id = value.observation_id or (question.observation_id if question else None) or item_id
-                value.episode_id = value.episode_id or (question.episode_id if question else None) or value.observation_id
-            field = fact.field
-            if value.kind in {"symptom", "finding", "attribute", "context"}:
-                changed = changed or existing is None or existing.value is None or (
-                    value.model_dump(exclude={"text", "record_category", "record_details"})
-                    != existing.value.model_dump(exclude={"text", "record_category", "record_details"}))
-            refs = list(dict.fromkeys([*(existing.source_refs if existing else []), source_id]))
-            scope = existing.scope if existing else state.session.current
-            context_refs = list(dict.fromkeys([*(existing.context_refs if existing else []), *fact.context_refs]))
-            state.case.put(field, RecordItem(id=item_id, scope=scope, status="done", value=value,
-                source_refs=refs, context_refs=context_refs,
-                resolves=list(dict.fromkeys([*(existing.resolves if existing else []), *(
-                    [pending.question.clarifies_id] if pending and pending.question.clarifies_id else [])])),
-                acquisition=pending.question.kind if pending else "initial"))
-
-        if changed:
+            value.text, value.record_details, value.quantities = "", [], []
+            prior = state.case.get(fact.record_id) if fact.record_id else None
+            ident = fact.record_id if prior and prior.status == "done" and prior.value else f"{source}:fact:{index}"
+            existing = state.case.get(ident)
+            item = RecordItem(id=ident, scope=existing.scope if existing else state.session.current, status="done", value=value,
+                source_refs=list(dict.fromkeys([*(existing.source_refs if existing else []), source])),
+                context_refs=fact.context_refs, resolves=[pending.question.clarifies_id] if pending and pending.question.clarifies_id else [],
+                acquisition=pending.question.kind if pending else "initial", mapping=fact.mapping)
+            state.case.put(fact.field, item)
+            if fact.statement_id:
+                assigned.setdefault(fact.statement_id, []).append(ident)
+            if pending:
+                q = pending.question
+                if ((q.target_id in value.concept_ids and q.attribute_id == value.attribute_id and q.subject == value.subject)
+                        or q.record_category and q.record_category == value.record_category):
+                    state.questions.answered_fact_ids.setdefault(q.item_id, []).append(ident)
+        for outcome in parsed.outcomes:
+            outcome.fact_ids = assigned.get(outcome.statement_id, [])
+            if outcome.state in {"mapped", "forced"} and not outcome.fact_ids:
+                outcome.state, outcome.reason = "unsupported", "fact_validation_rejected"
+            state.case.outcomes.append(outcome)
+        if pending:
+            outcomes = [o.state for o in parsed.outcomes]
+            state.questions.answer_outcomes[pending.question.item_id] = (
+                "mapped" if state.questions.answered_fact_ids.get(pending.question.item_id) else
+                "not_applicable" if "not_applicable" in outcomes else "unknown" if "unknown" in outcomes else
+                "unsupported" if "unsupported" in outcomes else "nonclinical")
+        if parsed.accepted_facts:
             state.differential.clinical_revision += 1
+        conflicts = [item.id for _, item in state.case.current_entries() if item.value
+                     and item.value.status == "uncertain" and state.case.get(item.id).value.status in {"present", "absent"}]
+        if conflicts:
+            state.case.outcomes.append(InputOutcome(source_ref=source, statement_id=f"{source}:conflict", state="conflict",
+                question_id=pending.question.item_id if pending else None, fact_ids=conflicts, reason="conflicting_current_facts"))
+            self.interactions.request_clarification(state, pending.question if pending else None)
         if not state.case.fixed_diagnosis:
-            if priorities:
-                for _, item in list(state.case.entries()):
-                    if item.value:
-                        item.value.primary_concern = item.id in priorities
-                        if item.id in priorities:
-                            state.case.put("S.cc", item)
+            chiefs = state.case.chief_complaints()
+            if sum(item.value.primary_concern for item in chiefs) == 1 or len(chiefs) > 1 and not any(
+                    item.value.primary_concern for item in chiefs):
                 state.case.primary_chief = None
-            elif pending and pending.question.purpose == "chief" and state.case.primary_chief:
-                anchor = state.case.primary_chief
-                previous = state.case.get(anchor.record_id)
-                if previous and not previous.value.primary_concern and any(
-                        fact.field == "S.cc" and fact.value.kind == "symptom"
-                        and fact.value.subject == "patient" and fact.value.time_context != "past"
-                        and fact.value.status in {"present", "uncertain"}
-                        and fact.value.concept_ids != [anchor.target_id] for fact in parsed.accepted_facts):
-                    state.case.primary_chief = None
             state.case.select_primary()
-            anchor = state.case.primary_chief
-            if anchor:
-                for field, item in state.case.entries():
-                    value = item.value
-                    if (value and value.record_category in INTAKE and value.subject == "patient"
-                            and not value.observation_id and not value.concept_ids):
-                        value.observation_id, value.episode_id = anchor.observation_id, anchor.episode_id
+        if state.interaction.interpretations:
+            state.interaction.interpretations[-1]["result"] = parsed.model_dump(exclude={"accepted_facts", "patient_context", "empathy"})

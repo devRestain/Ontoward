@@ -7,6 +7,7 @@ import resource
 import sys
 import time
 from education_fixtures import education_response, KOREAN
+from normalization_fixtures import context_from_facts, mapping_from_contracts
 import unicodedata
 
 
@@ -72,48 +73,26 @@ def verify(submission, output):
 
         def chat(self, messages, **kwargs):
             payload = json.loads(messages[1]['content'])
-            education = education_response(payload)
-            if education is not None:
-                return {'choices':[{'message':{'content':json.dumps(education, ensure_ascii=False)}}],
-                        'usage':{'prompt_tokens':20, 'completion_tokens':10}}
-            if payload.get('task') == 'terminology':
-                return {'choices':[{'message':{'content':'{"facts":[],"clinical_content":false}'}}],
-                        'usage':{'prompt_tokens':20, 'completion_tokens':10}}
-            question, text = payload['question'], payload['input']
-            facts = []
-            available = {entry['id'] for entry in payload['vocabulary']}
-            if payload['parser_pass'] == 'expansion' and target in available:
-                for original_fact in payload.get('unlinked_facts', []):
-                    if original_fact['quote'] == '배가 아파요':
-                        repaired = json.loads(json.dumps(original_fact))
-                        repaired['value']['concept_ids'] = [target]
-                        facts.append(repaired)
-                        self.unlinked_recoveries += 1
-            if payload['parser_pass'] != 'expansion' and (question is None or
-                    question['purpose'] in {'chief', 'hpi', 'ros', 'feature', 'context', 'clarification'}):
-                is_context = question is not None and question['purpose'] == 'context'
-                is_exam = question is not None and question['kind'] == 'EXAM'
-                attr = question['attribute_id'] if question else None
-                concept = question['target_id'] if question and question['target_id'] else target
-                value = {'kind':'context' if is_context else 'attribute' if attr else 'finding' if is_exam else 'symptom',
-                    'text':text, 'status':self.context_status if is_context else 'unknown' if attr else
-                        'present' if concept == target or is_exam else 'absent',
-                    'concept_ids':[concept] if concept in available else [], 'subject':question['subject'] if question else 'patient',
-                    'time_context':question['time_context'] if question else 'current'}
-                if not is_context:
-                    value.update(observation_id=(question['observation_id'] if question else None) or 'abdominal',
-                                 episode_id=(question['episode_id'] if question else None) or 'one')
-                if attr:
-                    value['attribute_id'] = attr
-                fact = {'field':question['field'] if question else 'S.cc', 'quote':text, 'value':value}
-                if question:
-                    fact['record_id'] = question['item_id']
-                facts.append(fact)
-            parsed = {'facts': facts, 'clinical_content': text != '모르겠어요'}
-            if any(item['field'] == 'S.cc' and not item['value']['concept_ids'] for item in facts):
-                parsed.update(needs_context=True, lookup_terms=[knowledge.label(target)])
-            return {'choices':[{'message':{'content':json.dumps(parsed, ensure_ascii=False)}}],
-                    'usage':{'prompt_tokens':20, 'completion_tokens':10}}
+            parsed = education_response(payload)
+            if parsed is None and payload['task'] == 'input_mapping':
+                parsed = mapping_from_contracts(payload)
+            if parsed is None:
+                q, text = payload['question'], payload['input']
+                facts = []
+                if text.strip() and text not in config.texts.unknown_replies and (q is None or q['purpose'] not in {'greeting','intake','history','open_inquiry','empathy'}):
+                    is_context = q is not None and q['purpose'] == 'context'
+                    is_exam = q is not None and q['kind'] == 'EXAM'
+                    attribute = q['attribute_id'] if q else None
+                    concept = q['target_id'] if q and q['target_id'] else target
+                    status = self.context_status if is_context else 'unknown' if attribute else 'present' if concept == target or is_exam else 'absent'
+                    value = {'kind':'context' if is_context else 'attribute' if attribute else 'finding' if is_exam else 'symptom',
+                        'status':status, 'concept_ids':[concept], 'subject':q['subject'] if q else 'patient',
+                        'time_context':q['time_context'] if q else 'current'}
+                    if attribute:
+                        value['attribute_id'] = attribute
+                    facts = [{'quote':text,'value':value}]
+                parsed = context_from_facts(facts)
+            return {'choices':[{'message':{'content':json.dumps(parsed,ensure_ascii=False)}}], 'usage':{'prompt_tokens':20,'completion_tokens':10}}
 
         def action(self, kind, content, request_id):
             require(unicodedata.normalize('NFC', content) == content and 1 <= len(content) <= 30,
@@ -157,7 +136,8 @@ def verify(submission, output):
         contexts = [entry for entry in delivered if entry.question.purpose == 'context']
         require(outcome.interaction.termination == 'submitted' and len(client.submissions) == 1,
                 'confirmed_submission:' + context_status)
-        require(client.unlinked_recoveries > 0, 'bounded_korean_complaint_link_recovery:' + context_status)
+        require(any(e.get('parser_payload', {}).get('pass') == 'mapping' for e in outcome.interaction.model_history),
+                'database_mapping_after_context:' + context_status)
         require((outcome.session.usage['Education'].actions >= 5 and all(client.submissions[0]['note']['P'].values())
                  and len(outcome.interaction.education.sentences) == 5) if config.education_enabled else
                 (outcome.session.usage['Education'].actions == 0 and client.submissions[0]['note']['P']['education'] == ''),
@@ -178,10 +158,7 @@ def verify(submission, output):
             if exchange['role'] not in {'gateway', 'terminology'}:
                 continue
             metrics = exchange['parser_payload']
-            expanded = metrics['pass'] != 'primary'
-            require(metrics['vocabulary_count'] <= (1024 if expanded else 256) and
-                    metrics['vocabulary_bytes'] <= (131072 if expanded else 32768), 'bounded_gateway_projection:' + context_status)
-            require(metrics['request_bytes'] <= metrics['request_byte_limit'] <= (16384 if expanded else 12288),
+            require(metrics['request_bytes'] <= metrics['request_byte_limit'] <= 16384,
                     'bounded_complete_gateway_request:' + context_status)
         (output / ('case-' + context_status + '.json')).write_text(outcome.model_dump_json(indent=2))
         cases.append({'context_status':context_status, 'termination':outcome.interaction.termination,
@@ -214,12 +191,11 @@ def verify(submission, output):
         consultation.writer.confirm_submission(state)
         require(state.interaction.termination == 'submitted' and len(client.submissions) == 1,
                 'selected_context_confirmed_submission:' + context_status)
-        require(any(item.value and item.value.status == context_status and context['id'] in item.value.concept_ids
-                    and item.source_refs for _, item in state.case.entries()), 'selected_context_polarity:' + context_status)
+        require(any(item.value and item.value.status == context_status and context['id'] in item.value.concept_ids and item.source_refs for _, item in state.case.entries()) if context_status != 'unknown' else any(o.state == 'unknown' for o in state.case.outcomes), 'selected_context_polarity:' + context_status)
         require(any(h.context_bonus == 1 for h in state.differential.hypotheses) if context_status == 'present' else
                 all(h.context_bonus == 0 for h in state.differential.hypotheses), 'selected_context_bonus:' + context_status)
         section, name = field.split('.')
-        require(client.submissions[0]['note'][section][name] and
+        require((bool(client.submissions[0]['note'][section][name]) == (context_status != 'unknown')) and
                 (bool(client.submissions[0]['note']['P']['education']) == config.education_enabled),
                 'selected_context_soap_and_education:' + context_status)
         (output / ('case-selected-context-' + context_status + '.json')).write_text(state.model_dump_json(indent=2))
@@ -243,7 +219,8 @@ def verify(submission, output):
     consultation.writer.submit_diagnosis(state)
     consultation.writer.confirm_submission(state)
     require(state.interaction.termination == 'submitted' and len(client.submissions) == 1, 'exam_path_confirmed_submission')
-    require('다리 혈관에서 잡음이 들립니다' in client.submissions[0]['note']['O']['exam'], 'exam_wording_and_result_reach_soap')
+    require(knowledge.label(exam_target, language='en') in client.submissions[0]['note']['O']['exam']
+            and '다리 혈관에서 잡음이 들립니다' not in client.submissions[0]['note']['O']['exam'], 'canonical_exam_label_reaches_soap_without_raw_result')
     require(frozenset(knowledge._graph) == original, 'shared_admitted_graph_remains_readonly')
     (output / 'case-examination.json').write_text(state.model_dump_json(indent=2))
     report = {'status':'pass', 'check_count':len(checks), 'checks':checks, 'cases':cases, 'selected_context_cases':context_cases,

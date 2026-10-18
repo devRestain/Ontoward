@@ -96,6 +96,11 @@ htmlcov/
 !/data/preparation/**/preview/manifest.json
 !/data/preparation/**/preview/review.md
 !/data/preparation/**/preview/review-batch.json
+!/data/preparation/v5/common-complaints-inputs-2026-10-18/*.json
+!/data/preparation/v5/common-complaints-inputs-2026-10-18/authored.jsonl
+
+# Preserve the superseded D42 dry build locally; version only the admitted r2 receipts.
+/data/preparation/v5/common-complaints-2026-10-18/**
 
 # Interrupted snapshots stay local even when they contain ordinary report names.
 /data/preparation/**/interrupted-preview-*/**

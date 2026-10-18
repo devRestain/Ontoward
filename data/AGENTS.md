@@ -10,13 +10,16 @@
 
 ## Source-only Preparation
 
+- Apply D42 to new source-bound common complaint data local DDXPlus metadata and explicit authored batches without restoring D18-withdrawn data or rewriting D41 custody.
+- Preserve author judgments as author judgments and keep recordable attributes independent of disease scoring claims.
+
 - Apply D18's deletion of pre-v5 and non-SNOMED/BODHI derived data, old seeds, manual translations, prior clinical bundles, approvals, education drafts, and temporary copies.
 - Preserve source packages, ordinary catalog navigation, competition provenance, deletion receipts, and the clean empty v5 base.
 - Keep D30 fresh guideline mappings in preparation/guideline-mapping with original source hashes and model request records; preserve withdrawn education batches as withdrawn and keep document navigation separate from plan extraction and runtime admission.
 - Keep D37 navigation admission in preparation/guideline-runtime and pin the original D30 mapping current graph build source hashes and packaged index.
 - Preserve D20-D23 RDF and interview asset pins while distinguishing case-local generated P from admitted clinical graph assertions.
 - Keep D38 policy hashes unchanged-source custody archive identity and offline acceptance in provenance/algorithm-d38-2026-10-17.json without rewriting historical graph receipts.
-- Keep D40 policy prompt archive and unchanged-source custody in provenance/algorithm-d40-2026-10-18.json without rewriting graph admission receipts.
+- Preserve historical D40 custody and keep D41 policy prompt archive and unchanged-source evidence in provenance/algorithm-d41-2026-10-18.json without rewriting graph admission receipts.
 - Mark clinical background-only D30 links as background_only with empty P fields and section selections; preserve them as plan-evidence gaps rather than care coverage.
 - Reuse only hash-verified complete raw source custody and clear all previous projection, normalization, and approval records.
 - Ingest the entire supplied International and Korean RF2 Snapshot composition and all eight BODHI-S CSVs.
@@ -36,7 +39,8 @@
 - Preserve superseded large JSON in hash-verified lossless archives with restoration receipts; keep the original assets, saved empty base, and request ledgers unchanged.
 - Require new batch-pinned runtime admission after D18 and never reuse deleted approvals.
 - Apply D20 user candidate acceptance to the complete competition graph batch and exact connection policy without a further clinical approval gate.
-- Keep competition-graph-2026-10-16/ as the admitted graph, source-custody reference, relation proof, approval receipt, and required action-text handoff.
+- Preserve competition-graph-2026-10-16/ as the D20 parent graph, source-custody reference, relation proof, approval receipt, and original action-text handoff.
+- Keep common-complaints-2026-10-18-r2/ as the D42 admitted preparation batch and preserve its parent pins root audit DDXPlus dispositions authored provenance and admission receipt.
 - Apply D21 with a fresh graph-pinned patient-action workset; exclude internal-label translation and preserve NFC 1-30 validation, separate semantic comparison, request reservations, partial results, and exact provider evidence.
 - Apply D22 NOVA-only same-day continuation after user-authorized failures; preserve reviewed texts and failed attempts and stop on completion or the pinned request/service limit.
 - Preserve technical exclusions for incomplete source meanings and missing acquisition; do not turn them into pending user decisions or fabricated values.

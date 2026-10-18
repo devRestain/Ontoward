@@ -42,9 +42,9 @@
 - Preserve request identity, completed responses, refused turns, failed requests, and final submission receipts.
 - Preserve actual Gateway request bodies and responses in simulator output so transmitted candidates can be audited without exposing credentials.
 - Keep the scripted Gateway case-independent and limited to supplied source names and aliases; do not add case-to-concept fixtures or clinical synonym tables.
-- Handle D34 terminology and empathy request tasks in scripted doubles without adding clinical semantics or treating fixture responses as model-quality evidence.
+- Handle D41 input_context and input_mapping tasks plus typed empathy in scripted doubles without treating protocol fixtures as semantic-quality evidence.
 - Handle D37 education and education_doctor protocol fixtures and forward the requested reasoning effort through the model bridge.
-- Return compact D40 Gateway facts and keep scripted patient replies case-independent without adding clinical mappings.
+- Return D41 context statements and database dictionary batches while keeping scripted patient replies case-independent without clinical synonym tables.
 - Label isolated synthetic archive acceptance separately from public-sample consultation and keep its patient fixture outside the agent container.
 
 ## Evidence

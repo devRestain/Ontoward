@@ -1,41 +1,41 @@
 {
-  "algorithm_version": "d40.1",
+  "algorithm_version": "d41.1",
   "approval_basis": "explicit_user_candidate_acceptance",
-  "build_id": "1c2907c79f7bbba2046f89617c9d33daeec7d2bb9652ab691deb766e9a237dc3",
+  "build_id": "6501f157bde1e2c367f4e7adc0266578c858d97eb3855de6981a4f31b682b2b7",
   "bundles": [
     {
-      "path": "knowledge/5b44871b970f5e98-clinical.ttl",
-      "sha256": "93999936be048d0662aacba3252ab1d3da612fd0d8565a00740a094a40e6d12a"
+      "path": "knowledge/83afd0b132a07941-clinical.ttl",
+      "sha256": "a5b5f3d94e0cba1048735cb61a3ed56d5e8622c4540c6a3737186061cfad769f"
     }
   ],
   "clinical_text_status": "patient_actions_prepared",
   "guidelines": {
-    "path": "knowledge/guideline-index.json",
-    "sha256": "f6b7e631c62b06d335bbd8e4001c773b5b1d3dc540c8d29c0f1aa0cf1ba39907"
+    "path": "knowledge/83afd0b132a07941-guideline-index.json",
+    "sha256": "408f7d14d459e282df7b9230eca8f5474ce401353c2abdf2a6e7e307ba2f7bfa"
   },
   "independent_clinical_validation": "not_run",
-  "normalization_version": "v5.0.4-source-findings",
+  "normalization_version": "v5.0.5-common-complaints",
   "preparation_status": "admitted",
   "questions": {
-    "path": "knowledge/5b44871b970f5e98-questions.ko.json",
-    "sha256": "ccf3d345a683571b479090c1ec929c8dca7cdd42dab911338b3c402f7d172687"
+    "path": "knowledge/83afd0b132a07941-questions.ko.json",
+    "sha256": "911a9249fec89a494234912f21ba46cfe3747a01ebbddaef4f3b453a08541e6d"
   },
   "reasoning_policy": {
-    "path": "knowledge/d40-reasoning_policy.json",
-    "sha256": "8bd6c2cb190c760bbeeecca4b8ad5519626e47ae77adc9a18a03a953c6ef0118"
+    "path": "knowledge/83afd0b132a07941-reasoning_policy.json",
+    "sha256": "b23681158479aaa5471808f8950dd88d136a41340900e6b8ef3cc2d36044bb8a"
   },
-  "registry_version": "1157f6419ef5a8c7278c2ac3c5fdf8a04f14192b1bc3dd3532d182e89b6d9197",
-  "review_receipt_sha256": "5b44871b970f5e987041c0103a8e06572956d7ac92859d032bd926802d04ec04",
+  "registry_version": "532045c55a94675d8a1bc383ef73726b1cedb358297c163528253eeab1ceec29",
+  "review_receipt_sha256": "83afd0b132a079411ce29c751dc4acd87aa7d2b2ee7bbf4fce9a54678fa2034f",
   "schema": {
     "path": "knowledge/schema.ttl",
     "sha256": "94739b3cdabd73c35b5b4a4374755abdab95d48394c51c5a3899f226ec3cdc89"
   },
   "schema_version": "5.0",
   "scoring_policy": {
-    "path": "knowledge/scoring_policy.json",
-    "sha256": "4fd218a8a1974a20e474a924cc9f0a1c93baa46e3c6c38b572ee0edcd84ad1ea"
+    "path": "knowledge/83afd0b132a07941-scoring_policy.json",
+    "sha256": "4bf15b5fc5cee84fdb2911435ad31e1a6b63d1e90afdc009676873f12f3baf17"
   },
-  "scoring_policy_version": "v5.0.1",
+  "scoring_policy_version": "v5.0.2-qualitative-sources",
   "source_snapshots": [
     {
       "dataset": "SNOMED_CT",
@@ -788,10 +788,51 @@
         }
       ],
       "license": "CC BY-NC 4.0"
+    },
+    {
+      "dataset": "DDXPlus",
+      "files": [
+        {
+          "path": "assets/nova-benchmarks-2026/DDXPlus/LICENSE.txt",
+          "sha256": "0b64a7527832d51b56d72ef59fcde110c1f6bb0eb9f7dd3b32508e1108b55dfe"
+        },
+        {
+          "path": "assets/nova-benchmarks-2026/DDXPlus/release_conditions.json",
+          "sha256": "56edf4682d8e86a4209fc3a33932e50ce03d1cc1fecc326c26d5ef8fa5c24890"
+        },
+        {
+          "path": "assets/nova-benchmarks-2026/DDXPlus/release_evidences.json",
+          "sha256": "281c78b044ae60514e28ecc9052d08a8225dd3e2db3f00f8788b99c47b05e0c0"
+        }
+      ],
+      "license": "CC BY 4.0",
+      "version": "English-v2"
+    },
+    {
+      "dataset": "D42-preparation",
+      "files": [
+        {
+          "path": "data/preparation/v5/common-complaints-inputs-2026-10-18/authored.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "data/preparation/v5/common-complaints-inputs-2026-10-18/complaints.json",
+          "sha256": "35324e1daa7961f7c3c9eaefc7dab3f9edb96b26ee2fe9faded72f1ede847b0c"
+        },
+        {
+          "path": "data/preparation/v5/common-complaints-inputs-2026-10-18/ddxplus.json",
+          "sha256": "ade0274fcb2be3abaee32b6521c8983ce555f1bfcd3866e9e2a9311dea0563ea"
+        },
+        {
+          "path": "data/preparation/v5/common-complaints-inputs-2026-10-18/scoring_policy.json",
+          "sha256": "4bf15b5fc5cee84fdb2911435ad31e1a6b63d1e90afdc009676873f12f3baf17"
+        }
+      ],
+      "version": "v5.0.5-common-complaints"
     }
   ],
   "vocabulary": {
-    "path": "knowledge/5b44871b970f5e98-vocabulary.ttl",
-    "sha256": "a5f62eda7fdba54555f624853c4b19c06415b5a6512067e053875d90a3e18f88"
+    "path": "knowledge/83afd0b132a07941-vocabulary.ttl",
+    "sha256": "28bb51976edc258367a50ad909b423aba47a7e88a0da7bc02e364054f4676ed8"
   }
 }

@@ -88,6 +88,35 @@ class ScriptedModels:
             return completion(json.dumps({'id': row} if row else {'id': None, 'reason': 'too_broad'}))
         if payload.get('task') == 'empathy':
             return completion(json.dumps({'text': '많이 힘드셨겠어요. 함께 살펴볼게요.'}, ensure_ascii=False))
+        if payload.get('task') == 'input_context':
+            text, question = payload['input'], payload['question']
+            if not text.strip():
+                return completion('{"statements":[]}')
+            unknown = text.strip().rstrip('.!?') in {'모르겠어요', '모르겠습니다'}
+            nonclinical = text.strip().rstrip('.!?') in {'안녕하세요', '알겠습니다', '감사합니다'}
+            row = {'quote': text, 'role': 'unknown' if unknown else 'nonclinical' if nonclinical else 'clinical',
+                   'assertion': 'unknown' if unknown or nonclinical else 'absent' if text.strip() in {'아니요', '없어요'} else 'present',
+                   'target_terms': [text[:80]], 'subject': question['subject'] if question else 'patient',
+                   'time_context': question['time_context'] if question else 'current'}
+            if question and question['target_id']:
+                row['target_terms'] = [question['target_id']]
+            if question and question['attribute_id']:
+                row['attribute_terms'] = [question['attribute_id']]
+            return completion(json.dumps({'statements': [row]}, ensure_ascii=False))
+        if payload.get('task') == 'input_mapping':
+            mappings = []
+            for statement in payload['statements']:
+                candidates = statement['candidates']
+                target = candidates[0] if candidates else None
+                sign = '(+)' if statement['assertion'] == 'present' else '(-)'
+                selected = {target['id']: sign} if target and not target['attributes'] else {}
+                if target and target['attributes']:
+                    attribute = target['attributes'][0]
+                    if attribute['values']:
+                        value = attribute['values'][0]['id']
+                        selected = {target['id']: {attribute['id']: value if sign == '(+)' else {value: sign}}}
+                mappings.append(selected)
+            return completion(json.dumps(mappings))
         if payload.get('task') == 'terminology':
             return completion(json.dumps({'facts': [], 'clinical_content': False}))
         question, text = payload['question'], payload['input']

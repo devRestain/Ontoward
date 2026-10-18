@@ -15,7 +15,7 @@ class ModelClient:
 
     def complete(self, state, client, *, role, messages, max_tokens=None):
         session = state.session
-        if role not in {"gateway", "terminology", "empathy", "education", "education_doctor"}:
+        if role not in {"gateway", "empathy", "education", "education_doctor"}:
             raise ValueError("Unsupported designated-model role")
         allowance = self.budget.model_allowance(session, role, maximum=max_tokens)
         if role.startswith("education"):

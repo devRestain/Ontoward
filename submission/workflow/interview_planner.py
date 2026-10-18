@@ -67,8 +67,9 @@ class InterviewPlanner:
         anchor = state.case.primary_chief
         for order, slot in enumerate(categories):
             if answered(state, slot):
-                ledger[slot] = ("not_applicable" if any(i.value.not_applicable for i in slot_records(state.case, slot))
-                                else "acquired" if slot_resolved(state.case, slot) else "unknown")
+                outcome = next((o for o in reversed(state.case.outcomes) if o.record_category == slot), None)
+                ledger[slot] = ("acquired" if slot_resolved(state.case, slot) else
+                                outcome.state if outcome and outcome.state not in {"mapped", "forced"} else "unknown")
                 ident = f"{state.session.current}:{slot}"
                 if (item := state.case.get(ident)) and item.status == "unasked":
                     self.questions.discard_unasked(state, {ident})
@@ -118,9 +119,8 @@ class InterviewPlanner:
             args = (state, anchor.target_id, attribute, anchor.observation_id, anchor.episode_id, "patient", timing)
             if self.has_resolved_evidence(*args):
                 status = "acquired"
-            elif (category := ATTRIBUTE_CATEGORIES.get(attribute.rsplit(":", 1)[-1])) and slot_resolved(state.case, category):
-                status = "recorded_unmapped"
-            elif any(item.value.not_applicable for _, item in state.case.current_entries()
+            elif any(o.state == "not_applicable" and o.target_id == anchor.target_id and o.attribute_id == attribute
+                     for o in state.case.outcomes) or any(item.value.not_applicable for _, item in state.case.current_entries()
                      if item.status == "done" and item.source_refs and item.value and item.value.kind == "attribute"
                      and item.value.concept_ids == [anchor.target_id] and item.value.subject == "patient"
                      and item.value.time_context == timing and item.value.attribute_id == attribute
@@ -247,11 +247,7 @@ class InterviewPlanner:
                         and e.question.semantic_key() == self._key(spec)]
             if (not previous or any(e.question.purpose == "clarification" for e in previous)
                     or not self.budget.can_clarify(state)
-                    or any(str(e.response.get("content", "")).strip().rstrip(self.config.texts.reply_trailing_punctuation)
-                           in self.config.texts.unknown_replies
-                           or (state.case.get(e.question.item_id) and state.case.get(e.question.item_id).value
-                               and state.case.get(e.question.item_id).value.text.strip().rstrip(
-                                   self.config.texts.reply_trailing_punctuation) in self.config.texts.unknown_replies)
+                    or any(state.questions.answer_outcomes.get(e.question.item_id) in {"unknown", "not_applicable", "unsupported", "nonclinical"}
                            for e in previous)):
                 return False
             attribute = (spec["attribute_id"] or "").rsplit(":", 1)[-1]

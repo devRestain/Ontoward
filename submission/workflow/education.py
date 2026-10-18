@@ -169,17 +169,16 @@ def _fragments(document, base, prompt):
 
 
 def generate_plan(state, client, knowledge, config, model):
+    from .state.canonical import CanonicalSnapshot
     progress = state.interaction.education
     if progress.attempted:
         return
     progress.attempted = True
     fixed = state.case.fixed_diagnosis
     base = {"task": "education", "fixed_diagnosis": fixed.model_dump(),
-            "patient_context": {key: entry.model_dump() for key, entry in state.case.patient_context.items()},
+            "patient": CanonicalSnapshot.from_case(state.case).payload(),
             "delivery_turn_budget": model.budget.action_capacity(state),
-            "dialogue": state.interaction.dialogue(),
-            "records": [{"field": field, **item.model_dump(exclude_none=True)} for field, item in state.case.current_entries()
-                        if field.startswith(("S.", "O.")) and item.status == "done" and item.source_refs]}
+            }
     documents = []
     if fixed.kind == "disease":
         if knowledge.guidelines is None:

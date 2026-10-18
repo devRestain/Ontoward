@@ -1,0 +1,7 @@
+{
+  "version": "v5.0.2-qualitative-sources",
+  "labels": {"zero":0,"rare":0.5,"low":1,"medium":2,"high":3,"very_high":4},
+  "relations": {"due_to":2,"associated_with":1,"subtype_intersection":0.5},
+  "generalized": 0.5,
+  "qualitative": {"external_association":1,"authored_association":1}
+}

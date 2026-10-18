@@ -1,0 +1,224 @@
+import json
+
+from knowledge.conditions import ExpectedValue
+
+
+def strict_json(content):
+    def object_pairs(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("duplicate_json_key")
+            result[key] = value
+        return result
+
+    def invalid_constant(value):
+        raise ValueError("nonfinite_json_number")
+
+    return json.loads(content, object_pairs_hook=object_pairs, parse_constant=invalid_constant)
+
+
+def compact_schema(value):
+    if isinstance(value, dict):
+        return {key: compact_schema(item) for key, item in value.items()
+                if key not in {"title", "description", "default"}}
+    if isinstance(value, list):
+        return [compact_schema(item) for item in value]
+    return value
+
+
+def statement_outcome(statement):
+    if statement.role == "not_applicable":
+        return "not_applicable"
+    if statement.role in {"unknown", "uncertain"} or (
+            statement.role == "clinical" and statement.assertion not in {"present", "absent"}):
+        return "unknown"
+    if statement.role != "clinical":
+        return "nonclinical"
+    return None
+
+
+def concept_rank(knowledge, terms, kinds):
+    ranked = []
+    ranked.extend(term for term in terms if term.startswith(("urn:", "http://", "https://"))
+                  and any(knowledge.has_type(term, kind) for kind in kinds))
+    for term in terms:
+        ranked.extend(c for c in knowledge.resolve_concept(term)
+                      if any(knowledge.has_type(c, kind) for kind in kinds))
+    for term in terms:
+        for kind in kinds:
+            ranked.extend(knowledge.search_concepts(term, kind=kind))
+    return list(dict.fromkeys(ranked))
+
+
+def candidate_contracts(knowledge, statement, question, *, expanded=False, complete=False):
+    if statement.assertion_scope == "domain" or statement.record_category == "patient_context":
+        return []
+    is_exam = bool(question and question.kind == "EXAM")
+    history = statement.record_category in {"medical_history", "medication", "allergy", "surgery",
+        "family_history", "smoking", "alcohol", "occupation", "social_history", "developmental_history"}
+    kinds = ("ExamFinding",) if is_exam else (("ContextFactor", "Symptom") if history else ("Symptom", "ContextFactor"))
+    terms = [*statement.target_terms, statement.quote]
+    ranked = concept_rank(knowledge, terms, kinds)
+    direct = bool(question and question.target_id and statement.subject == question.subject
+                  and (not statement.target_terms or question.target_id in ranked[:8]))
+    if direct and any(knowledge.has_type(question.target_id, kind) for kind in kinds):
+        ranked = [question.target_id, *ranked]
+    if complete:
+        ranked.extend(c["id"] for c in knowledge.iter_concepts() if c["kind"] in kinds)
+    feature = bool(statement.attribute_terms or statement.value_terms or statement.measurement
+                   or direct and question.attribute_id)
+    result = []
+    for target in dict.fromkeys(ranked):
+        contract = knowledge.questions.get(target)
+        if contract and not contract.interviewable:
+            aliases = next(iter(knowledge.concepts([target])), {}).get("aliases", [])
+            if not any(knowledge.normalize_alias(name) in knowledge.normalize_alias(statement.quote)
+                       for name in [knowledge.label(target), *aliases] if name):
+                continue
+        if knowledge.has_type(target, "ContextFactor"):
+            family = knowledge.get_context_type(target) == "family_history"
+            if family != (statement.subject == "family"):
+                continue
+        attrs = []
+        if feature:
+            allowed = knowledge.get_symptom_attributes(target)
+            matched = concept_rank(knowledge, statement.attribute_terms, ("FindingAttribute",))
+            if direct and question.attribute_id:
+                matched.insert(0, question.attribute_id)
+            if not matched and statement.measurement:
+                matched = [a for a in allowed if knowledge.numeric_units(target, a)]
+            if not matched and statement.value_terms:
+                values = set(concept_rank(knowledge, statement.value_terms, ("AttributeValue",)))
+                matched = [a for a in allowed if values & set(knowledge.get_attribute_values(a))]
+            for attribute in dict.fromkeys(a for a in matched if a in allowed):
+                values = knowledge.get_attribute_values(attribute)
+                ordered = [v for v in concept_rank(knowledge, [*statement.value_terms, statement.quote], ("AttributeValue",)) if v in values]
+                ordered = list(dict.fromkeys([*ordered, *values]))
+                attrs.append({"id": attribute, "label": knowledge.label(attribute, language="en"),
+                    "values": [{"id": v, "label": knowledge.label(v, language="en")} for v in ordered[:32 if expanded else 8]],
+                    "units": knowledge.numeric_units(target, attribute)})
+                if len(attrs) >= (4 if expanded else 2):
+                    break
+            if not attrs:
+                continue
+        result.append({"id": target, "label": knowledge.label(target, language="en"),
+                       "kind": next(k for k in kinds if knowledge.has_type(target, k)), "attributes": attrs})
+        if not complete and len(result) >= (32 if expanded else 8):
+            break
+    return result
+
+
+def numeric_schema(units):
+    number = {"type": "number"}
+    quantity = {"type": "object", "properties": {"kind": {"const": "quantity"}, "value": number,
+        "unit": {"enum": units}, "operator": {"const": "eq"}, "approximate": {"type": "boolean"}},
+        "required": ["kind", "value", "unit", "operator"], "additionalProperties": False}
+    interval = {"type": "object", "properties": {"kind": {"const": "interval"},
+        "lower": {"anyOf": [number, {"type": "null"}]}, "upper": {"anyOf": [number, {"type": "null"}]},
+        "unit": {"enum": units}, "upper_unit": {"enum": [*units, None]},
+        "lower_inclusive": {"type": "boolean"}, "upper_inclusive": {"type": "boolean"},
+        "approximate": {"type": "boolean"}},
+        "required": ["kind", "unit"], "additionalProperties": False}
+    return {"anyOf": [quantity, interval]}
+
+
+def mapping_schema(contracts):
+    properties = {}
+    for target in contracts:
+        if not target["attributes"]:
+            properties[target["id"]] = {"enum": ["(+)", "(-)"]}
+            continue
+        attrs = {}
+        for attribute in target["attributes"]:
+            values = [v["id"] for v in attribute["values"]]
+            options = []
+            if values:
+                options.extend([{"enum": values}, {"type": "object", "properties": {
+                    value: {"enum": ["(+)", "(-)"]} for value in values},
+                    "additionalProperties": False, "minProperties": 1}])
+            if attribute["units"]:
+                options.append(numeric_schema(attribute["units"]))
+            attrs[attribute["id"]] = {"anyOf": options} if options else {"not": {}}
+        properties[target["id"]] = {"type": "object", "properties": attrs,
+            "additionalProperties": False, "minProperties": 1}
+    return {"type": "object", "properties": properties, "additionalProperties": False, "maxProperties": 1}
+
+
+def validate_mapping(mapping, statement, contracts):
+    if not isinstance(mapping, dict) or len(mapping) > 1:
+        raise ValueError("mapping_requires_one_target_dictionary")
+    if not mapping:
+        return []
+    if statement_outcome(statement):
+        raise ValueError("nonasserted_statement_cannot_create_fact")
+    target, value = next(iter(mapping.items()))
+    contract = next((c for c in contracts if c["id"] == target), None)
+    if contract is None:
+        raise ValueError("target_outside_supplied_database")
+    sign = "(+)" if statement.assertion == "present" else "(-)"
+    if not contract["attributes"]:
+        if value != sign:
+            raise ValueError("assertion_changed")
+        return [(target, None, [], None, statement.assertion)]
+    if not isinstance(value, dict) or not value:
+        raise ValueError("feature_requires_attribute_dictionary")
+    decoded = []
+    for attribute, selected in value.items():
+        spec = next((a for a in contract["attributes"] if a["id"] == attribute), None)
+        if spec is None:
+            raise ValueError("attribute_outside_target_contract")
+        allowed = {v["id"] for v in spec["values"]}
+        if isinstance(selected, str):
+            if selected not in allowed or statement.assertion != "present":
+                raise ValueError("invalid_or_negated_categorical_value")
+            decoded.append((target, attribute, [selected], None, "present"))
+        elif isinstance(selected, dict) and selected.get("kind") in {"quantity", "interval"}:
+            keys = {"kind", "value", "unit", "operator", "approximate"} if selected["kind"] == "quantity" else {
+                "kind", "lower", "upper", "unit", "upper_unit", "lower_inclusive", "upper_inclusive", "approximate"}
+            if (set(selected) - keys or not spec["units"] or any(
+                    type(selected[k]) not in {int, float} for k in ("value", "lower", "upper")
+                    if k in selected and selected[k] is not None)):
+                raise ValueError("invalid_numeric_format")
+            required = {"kind", "value", "unit", "operator"} if selected["kind"] == "quantity" else {"kind", "unit"}
+            if not required <= set(selected):
+                raise ValueError("missing_numeric_fields")
+            measurement = ExpectedValue.model_validate(selected)
+            if (measurement.unit not in spec["units"] or measurement.upper_unit not in {None, *spec["units"]}
+                    or measurement.kind == "quantity" and measurement.operator != "eq"
+                    or statement.measurement is None or measurement.signature() != statement.measurement.signature()
+                    or statement.assertion != "present"):
+                raise ValueError("unreported_or_unregistered_numeric_value")
+            decoded.append((target, attribute, [], measurement, "present"))
+        elif isinstance(selected, dict) and selected and set(selected) <= allowed:
+            if any(v != sign for v in selected.values()):
+                raise ValueError("feature_assertion_changed")
+            decoded.append((target, attribute, list(selected), None, statement.assertion))
+        else:
+            raise ValueError("value_outside_attribute_contract")
+    return decoded
+
+
+def force_mapping(statement, contracts):
+    if statement_outcome(statement):
+        return {}
+    sign = "(+)" if statement.assertion == "present" else "(-)"
+    for target in contracts:
+        if not target["attributes"]:
+            return {target["id"]: sign}
+        for attribute in target["attributes"]:
+            if statement.measurement:
+                measured = statement.measurement.model_dump(exclude_none=True)
+                measured = {k: v for k, v in measured.items() if k in (
+                    {"kind", "value", "unit", "operator", "approximate"} if statement.measurement.kind == "quantity" else
+                    {"kind", "lower", "upper", "unit", "upper_unit", "lower_inclusive", "upper_inclusive", "approximate"})}
+                result = {target["id"]: {attribute["id"]: measured}}
+                try:
+                    validate_mapping(result, statement, [target])
+                    return result
+                except ValueError:
+                    continue
+            if attribute["values"]:
+                selected = attribute["values"][0]["id"]
+                return {target["id"]: {attribute["id"]: selected if sign == "(+)" else {selected: sign}}}
+    return {}

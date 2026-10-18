@@ -158,7 +158,7 @@ if elapsed>600 or peak>8*1024*1024:
 
 def approved_text_assets(receipt, destination):
     assets = receipt.get("text_assets", {})
-    if not isinstance(assets, dict) or set(assets) - {"questions", "labels", "exam_requests"}:
+    if not isinstance(assets, dict) or set(assets) - {"questions", "labels", "exam_requests", "guidelines"}:
         raise ValueError("Admission permits approved questions, display labels and examination requests")
     result = {}
     for name, asset in assets.items():
@@ -192,10 +192,19 @@ def admit(database_path,review_path,*,destination=None,report_path=None):
         if database.meta("stage")!="complete":
             raise ValueError("Admission requires a complete build")
         identity = database.meta("identity")
+        if identity.get("parent_database"):
+            parent = identity["parent_database"]
+            if file_hash(workspace_path(ROOT / parent["path"])) != parent["sha256"]:
+                raise ValueError("Admission parent preparation database changed")
+            if destination == ROOT / "submission/knowledge" and digest(json.loads((destination / "manifest.json").read_text())) != identity["parent_manifest"]:
+                raise ValueError("The runtime changed after preparation; rebuild against its current admission")
+            if any(file_hash(ROOT / "Dev/ontology" / name) != sha for name, sha in identity["generator_files"].items()):
+                raise ValueError("Admission preparation code differs from its build pin")
         for source in identity["inputs"]:
             if file_hash(ROOT/source["path"])!=source["sha256"]:
                 raise ValueError("Admission source pin changed")
-        if file_hash(ROOT/"data/ontology/schema.ttl")!=identity["schema"] or file_hash(ROOT/"submission/knowledge/scoring_policy.json")!=identity["scoring_policy"]:
+        scoring_path = workspace_path(ROOT / identity.get("scoring_policy_path", "submission/knowledge/scoring_policy.json"))
+        if file_hash(ROOT/"data/ontology/schema.ttl")!=identity["schema"] or file_hash(scoring_path)!=identity["scoring_policy"]:
             raise ValueError("Admission schema or policy changed")
         receipt = json.loads(review_path.read_text(encoding="utf-8"))
         graph_only = receipt.get("admission_scope") == "graph"
@@ -212,8 +221,11 @@ def admit(database_path,review_path,*,destination=None,report_path=None):
         runtime = staging/"submission"
         shutil.copytree(ROOT/"submission",runtime,ignore=shutil.ignore_patterns("__pycache__","*.pyc","manifest.json"))
         output = staging/"export"
-        report = builder.export(output,source_snapshots=database.source_snapshots(),report=database.meta("report"),
-                                dispositions=DispositionRecords(database),require_action_assets=not graph_only)
+        report = builder.export(output,source_snapshots=database.meta("source_snapshots") or database.source_snapshots(),report=database.meta("report"),
+                                dispositions=DispositionRecords(database),require_action_assets=not graph_only,
+                                retain_concepts=database.meta("retain_concepts", []),
+                                retain_attributes=database.meta("retain_attributes", []), scoring_policy_path=scoring_path,
+                                reasoning_policy_path=ROOT / identity["reasoning_policy_path"] if identity.get("reasoning_policy_path") else None)
         manifest = json.loads((output/"manifest.json").read_text())
         text_assets = receipt.get("text_assets",{})
         for name,source in text_sources.items():

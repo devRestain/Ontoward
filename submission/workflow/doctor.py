@@ -7,6 +7,7 @@ from .rules.action import ActionResponse, REFUSAL_ERRORS, RESPONSE_FORMAT_ERRORS
 from .rules.limits import LIMITS
 from .education import message_bytes, messages
 from .state.models import ActionSpec, Question, WorkflowState
+from .state.canonical import CanonicalSnapshot
 
 
 class Doctor:
@@ -28,7 +29,7 @@ class Doctor:
         progress.rendering_attempted = True
         batches, batch = [], []
         base = {"task": "education_doctor", "fixed_diagnosis": state.case.fixed_diagnosis.model_dump(),
-                "dialogue": state.interaction.dialogue()[-2:], "turn_budget": self.budget.action_capacity(state)}
+                "patient": CanonicalSnapshot.from_case(state.case).payload(), "turn_budget": self.budget.action_capacity(state)}
         core, remaining = [], list(progress.sentences)
         for field in ("education", "tests", "treatment", "disposition", "follow_up"):
             first = next((sentence for sentence in remaining if sentence.field == field), None)
@@ -100,9 +101,10 @@ class Doctor:
                 progress.rendering_errors.setdefault(sentence.id, "rendering_not_completed")
 
     def prepare_empathy(self, state, client, event):
-        payload = {"task": "empathy", "input": event.quote,
-                   "last_empathy": [entry.request["content"] for entry in state.interaction.history
-                       if entry.delivered and entry.question and entry.question.purpose == "empathy"][-2:]}
+        payload = {"task": "empathy", "emotion": event.emotion, "intent": event.intent,
+                   "patient": CanonicalSnapshot.from_case(state.case).payload(),
+                   "previous_deliveries": sum(entry.delivered and entry.question is not None
+                       and entry.question.purpose == "empathy" for entry in state.interaction.history)}
         messages = [{"role": "system", "content": self.config.empathy_prompt},
                     {"role": "user", "content": json.dumps(payload, ensure_ascii=False, separators=(",", ":"))}]
         if len(json.dumps(messages, ensure_ascii=False, separators=(",", ":")).encode()) > LIMITS.gateway_request_bytes:

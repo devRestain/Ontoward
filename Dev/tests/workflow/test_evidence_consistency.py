@@ -9,6 +9,7 @@ from workflow.clinical_reasoner import ClinicalReasoner
 from workflow.graph import build_graph
 from workflow.interview_planner import InterviewPlanner
 from workflow.state.models import WorkflowState
+from workflow.state.models import PatientReport
 
 
 class Verification(unittest.TestCase):
@@ -25,7 +26,12 @@ class Verification(unittest.TestCase):
         s.interaction.incoming = {"content" if kind == "SAY" else "result": text, "facts": facts,
                                   "clinical_content": clinical_content,
                                   "spans": [{"quote": text, "role": "clinical", "field": field}] if kind == "SAY" else []}
-        self.interpreter.process_input(s, self.k, self.client)
+        parsed = self.interpreter._validate_facts({"facts": facts, "clinical_content": clinical_content}, s, self.k, text)
+        self.interpreter._apply_facts(s, parsed, s.interaction.pending.request_id)
+        s.interaction.parse_rejections.extend(parsed.rejected_facts)
+        s.interaction.patient_reports.append(PatientReport(source_id=s.interaction.pending.request_id, text=text))
+        self.consultation.questions.complete_unresolved(s, s.interaction.pending, "", s.interaction.pending.request_id)
+        self.consultation.interactions.consume_input(s)
         return q
 
     def parse(self, s, value):
@@ -45,7 +51,8 @@ class Verification(unittest.TestCase):
                 self.assertEqual(s.case.get("exam").model_dump(), before)
                 self.assertTrue(s.interaction.parse_rejections)
                 self.consultation.writer.build_soap(s)
-                self.assertIn(text, s.interaction.submission_payload["note"]["S"]["hpi"])
+                self.assertNotIn(text, s.interaction.submission_payload["note"]["S"]["hpi"])
+                self.assertEqual(s.interaction.patient_reports[-1].text, text)
 
     def test_omitted_record_id_cannot_bind_to_a_prior_exam_question(self):
         s = state("DifferentialDiagnosis", True)
@@ -58,8 +65,7 @@ class Verification(unittest.TestCase):
             "concept_ids": [str(OW.ExamX)], "observation_id": "obs1", "episode_id": "episode1"}}
         self.reply(s, disputed["quote"], [disputed])
         self.assertEqual(s.case.get("exam").model_dump(), before)
-        self.assertTrue(any(field == "S.hpi" and item.value and item.value.text == disputed["quote"]
-                            for field, item in s.case.entries()))
+        self.assertEqual(s.interaction.patient_reports[-1].text, disputed["quote"])
 
     def test_patient_cannot_replace_initial_vitals(self):
         s = state("ChiefComplaint", True)
@@ -81,7 +87,7 @@ class Verification(unittest.TestCase):
         self.assertFalse(s.interaction.parse_rejections)
         self.assertEqual(s.case.get("exam").value.status, "absent")
         self.assertEqual(s.case.get("exam").acquisition, "EXAM")
-        self.assertFalse(s.interaction.patient_reports)
+        self.assertEqual(s.interaction.patient_reports[-1].text, result["quote"])
 
     def test_exam_cannot_rewrite_initial_acquisition_or_subjective_report(self):
         for field in ("O.exam", "S.cc"):
@@ -176,14 +182,14 @@ class Verification(unittest.TestCase):
         self.reply(s, first + " " + second, [accepted], field="S.pmh")
         report = s.interaction.patient_reports[0]
         self.assertEqual(report.text, first + " " + second)
-        self.assertEqual(report.covered_spans, [(0, len(first))])
-        self.assertEqual([report.text[start:end].strip() for start, end in report.uncovered_spans], [second])
-        self.assertTrue(s.interaction.needs_clarification)
+        self.assertEqual(report.covered_spans, [])
+        self.assertIn(second, report.text)
+        self.assertFalse(s.interaction.needs_clarification)
         self.consultation.reasoner.retrieve_candidates(s)
         self.assertEqual({hypothesis.evidence_score for hypothesis in s.differential.hypotheses}, {1})
         self.consultation.writer.build_soap(s)
         note = s.interaction.submission_payload["note"]
-        self.assertIn("Patient report (unstructured): " + second, note["S"]["pmh"])
+        self.assertNotIn(second, note["S"]["pmh"])
         self.assertNotIn(second, note["S"]["hpi"])
         self.assertEqual(note["O"]["tests"], "")
         self.assertNotIn(second, note["A"]["evidence"])
@@ -198,16 +204,16 @@ class Verification(unittest.TestCase):
         self.assertFalse(s.interaction.patient_reports[0].uncovered_spans)
         self.consultation.writer.build_soap(s)
         note = s.interaction.submission_payload["note"]["S"]
-        self.assertIn("Allergy: (+); Antibiotic allergy", note["pmh"])
+        self.assertNotIn("Antibiotic allergy", note["pmh"])
         self.assertNotIn("Patient report (unstructured)", note["hpi"])
 
     def test_misclassified_empty_output_cannot_discard_a_patient_report(self):
         s = state("ChiefComplaint", True)
         text = "항생제 알레르기가 있어요."
         self.reply(s, text, [], clinical_content=False)
-        self.assertTrue(s.interaction.patient_reports[0].uncovered_spans)
+        self.assertEqual(s.interaction.patient_reports[0].text, text)
         self.consultation.writer.build_soap(s)
-        self.assertIn(text, s.interaction.submission_payload["note"]["S"]["hpi"])
+        self.assertNotIn(text, s.interaction.submission_payload["note"]["S"]["hpi"])
 
     def test_broad_quote_cannot_claim_coverage_of_unextracted_sentences(self):
         s = state("ChiefComplaint", True)
@@ -215,8 +221,8 @@ class Verification(unittest.TestCase):
         self.reply(s, text, [fact("S.cc", "symptom", OW.Complaint, text)])
         self.assertFalse(s.interaction.patient_reports[0].covered_spans)
         self.consultation.writer.build_soap(s)
-        self.assertIn(text, s.interaction.submission_payload["note"]["S"]["hpi"])
-        self.assertTrue(s.interaction.needs_clarification)
+        self.assertNotIn(text, s.interaction.submission_payload["note"]["S"]["hpi"])
+        self.assertFalse(s.interaction.needs_clarification)
 
     def test_whitespace_quote_cannot_create_a_positive_observation(self):
         s = state("ChiefComplaint", True)
@@ -246,7 +252,8 @@ class Verification(unittest.TestCase):
         before = copy.deepcopy(restored.interaction.submission_payload)
         self.consultation.writer.build_soap(restored)
         self.assertEqual(before, restored.interaction.submission_payload)
-        self.assertEqual(before["note"]["S"]["hpi"].count("알레르기 보고."), 1)
+        self.assertNotIn("알레르기 보고.", before["note"]["S"]["hpi"])
+        self.assertIn("알레르기 보고.", restored.interaction.patient_reports[0].text)
 
     def test_final_workflow_submits_remaining_chief_and_preserves_unparsed_allergy(self):
         s = state("DifferentialDiagnosis", True, turns=0)
@@ -257,9 +264,13 @@ class Verification(unittest.TestCase):
         retract, allergy = "아까 증상은 사실 없어요.", "항생제 알레르기가 있어요."
         correction = fact("S.cc", "symptom", OW.Complaint, retract, status="absent")
         correction["correction"] = True
+        correction["record_id"] = "chief"
         s.interaction.incoming = {"content": retract + " " + allergy, "facts": [correction],
             "spans": [{"quote": allergy, "role": "clinical", "field": "S.pmh"}]}
         s.session.gateway_successes = s.session.doctor_successes = 1
+        from unittest.mock import Mock
+        from normalization_fixtures import fixture_chat
+        self.client.chat = Mock(side_effect=fixture_chat(self.client, [correction]))
         self.interpreter.process_input(s, self.k, self.client)
         self.client.remaining = 0
         result = WorkflowState.model_validate(build_graph(self.consultation, self.k).invoke(s.model_dump(), {"recursion_limit": 1800}))
@@ -267,7 +278,8 @@ class Verification(unittest.TestCase):
         self.assertEqual(result.case.diagnosis_kind, "symptom")
         self.assertEqual(result.case.diagnosis_evidence, ["remaining-chief"])
         self.assertEqual(len(self.client.submissions), 1)
-        self.assertIn(allergy, self.client.submissions[0]["note"]["S"]["pmh"])
+        self.assertNotIn(allergy, self.client.submissions[0]["note"]["S"]["pmh"])
+        self.assertIn(allergy, result.interaction.patient_reports[-1].text)
         self.assertNotIn("chief", result.case.diagnosis_evidence)
 
 

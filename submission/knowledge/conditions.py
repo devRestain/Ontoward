@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 from typing import Literal
 
@@ -25,6 +26,7 @@ class ExpectedValue(Strict):
     upper_inclusive: bool = True
     unit: str | None = None
     upper_unit: str | None = None
+    approximate: bool = False
 
     @model_validator(mode="after")
     def validate_value(self):
@@ -40,6 +42,8 @@ class ExpectedValue(Strict):
         elif not self.unit or (self.lower is None and self.upper is None) or self.value is not None:
             raise ValueError("Interval requires a unit and at least one bound")
         if self.kind in {"concept", "concept_set"}:
+            if self.approximate:
+                raise ValueError("Only numeric values can be approximate")
             if any(v is not None for v in (self.value, self.lower, self.upper, self.unit, self.upper_unit)) or self.operator != "eq":
                 raise ValueError("Concept values cannot carry numeric conditions")
             if not self.lower_inclusive or not self.upper_inclusive or (self.kind == "concept" and self.selection != "any_of"):
@@ -60,6 +64,8 @@ class ExpectedValue(Strict):
 
     def signature(self):
         data = {"kind": self.kind}
+        if self.approximate:
+            data["approximate"] = True
         if self.kind == "concept":
             data.update(concept=self.concept, match=self.match)
         elif self.kind == "concept_set":
@@ -124,7 +130,7 @@ class AssociationProfile(Strict):
     predictiveness: str | None = None
     typicality: str | None = None
     strong_predictor: bool | None = None
-    relation_basis: Literal["bodhi_present_in", "due_to", "associated_with", "subtype_intersection"]
+    relation_basis: Literal["bodhi_present_in", "due_to", "associated_with", "subtype_intersection", "external_association", "authored_association"]
     derivation_scope: Literal["exact", "descendant"] = "exact"
     source_refs: list[str] = Field(min_length=1)
     score: float
@@ -146,9 +152,14 @@ class QuestionTemplate(Strict):
     affirmative: bool = False
     interviewable: bool = True
     reason: str | None = None
+    units: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_contract(self):
+        if len(set(self.units)) != len(self.units) or any(not unit.strip() for unit in self.units):
+            raise ValueError("Question numeric units must be distinct nonempty source formats")
+        if self.units and self.answer_type not in {"quantity", "duration"}:
+            raise ValueError("Numeric units require a numeric question")
         if self.affirmative and self.answer_type != "presence":
             raise ValueError("Only a presence question can map affirmative replies")
         if not self.interviewable and not self.reason:
@@ -157,7 +168,7 @@ class QuestionTemplate(Strict):
 
 
 class ReasoningPolicy(Strict):
-    version: Literal["d40.1"] = "d40.1"
+    version: Literal["d41.1"] = "d41.1"
     supporting_cap: float = Field(default=4.0, ge=0)
     comparison_current: int = Field(default=8, ge=1)
     comparison_potential: int = Field(default=4, ge=1)
@@ -184,6 +195,7 @@ class ScoringPolicy(Strict):
     labels: dict[str, float]
     relations: dict[str, float]
     generalized: float
+    qualitative: dict[str, float] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def validate_policy(self):
@@ -193,6 +205,9 @@ class ScoringPolicy(Strict):
         scores = [self.labels[label] for label in labels]
         if scores != sorted(scores) or any(v < 0 for v in [*scores, *self.relations.values(), self.generalized]):
             raise ValueError("Support weights must be nonnegative and labels ordered")
+        if set(self.qualitative) - {"external_association", "authored_association"} or any(
+                not 0 <= value <= 4 for value in self.qualitative.values()):
+            raise ValueError("Qualitative source weights must be explicit scores between zero and four")
         return self
 
     @classmethod
@@ -200,6 +215,17 @@ class ScoringPolicy(Strict):
         return cls.model_validate_json(Path(__file__).with_name("scoring_policy.json").read_text(encoding="utf-8"))
 
     def weight(self, predictiveness, relation_basis, derivation_scope):
+        if relation_basis in self.qualitative:
+            if derivation_scope != "exact":
+                raise ValueError("Qualitative source associations cannot imply inherited support")
+            if predictiveness is not None:
+                if relation_basis != "authored_association":
+                    raise ValueError("External qualitative associations cannot invent directional likelihoods")
+                score = float(predictiveness)
+                if not math.isfinite(score) or not 0 <= score <= 4:
+                    raise ValueError("Author support must be finite and between zero and four")
+                return score, "author_judgment"
+            return self.qualitative[relation_basis], relation_basis
         if relation_basis not in {"bodhi_present_in", *self.relations} or derivation_scope not in {"exact", "descendant"}:
             raise ValueError("Unknown association source basis or scope")
         if predictiveness is not None:

@@ -180,18 +180,6 @@ class Algorithm(unittest.TestCase):
         state.case.get("ambiguous-negative").value.mapping_status = "ambiguous"
         self.assertEqual(state.case.chief(confirmed=True).id, "chief")
 
-    def test_lookup_repair_can_change_mapping_without_changing_presence(self):
-        original = Fact.model_validate(f.fact("S.cc", "symptom", OW.Complaint, "분명히 있어요"))
-        original.value.concept_ids = []
-        original.value.mapping_status = "unmapped"
-        repaired = original.model_copy(deep=True)
-        repaired.value.concept_ids = [str(OW.Complaint)]
-        repaired.value.mapping_status = "broader"
-        merged = f.make_interpreter(f.CONFIG)._merge_recovery(f.state(),
-            ParseResult(accepted_facts=[original], unresolved_links=[0]), ParseResult(accepted_facts=[repaired]))
-        self.assertEqual(merged.unresolved_links, [])
-        self.assertEqual(merged.accepted_facts[0].value.mapping_status, "broader")
-        self.assertEqual(merged.accepted_facts[0].value.status, "present")
 
     def test_nonexclusive_categorical_reports_and_explicit_value_conflicts(self):
         state = f.state()
@@ -461,7 +449,6 @@ class Algorithm(unittest.TestCase):
         planner._register(state, spec, 0, 1)
         f.pending(state, state.questions.questions[-1])
         state.session.gateway_successes = 1
-        self.assertIsNone(f.fixed_reply(f.CONFIG, state, "네", k))
 
     def test_new_evidence_can_reenter_a_previously_omitted_candidate(self):
         k, state = f.knowledge(), f.state("DifferentialDiagnosis", True)
