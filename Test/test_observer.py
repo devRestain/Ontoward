@@ -1,4 +1,4 @@
-"""Compare observed and unobserved D46 execution and reconstruct every node."""
+"""Compare observed and unobserved sequential execution and reconstruct each operation."""
 from contextlib import nullcontext
 import copy
 import json
@@ -19,7 +19,20 @@ OUTPUT=Path(os.environ.get('ONTOWARD_OBSERVER_OUTPUT',ROOT/'Tmp/d44-observer'))
 
 def capture(name,observed):
     client=f.FakeSDK(context='absent' if name=='negative_context' else 'unknown' if name=='unknown_context' else 'present')
-    c=f.consultation(client,prepared=f.resources(education=name=='education'))
+    if name == 'education_repair':
+        from education_fixtures import education_response
+        def response(payload):
+            if payload['task'] == 'education':
+                raw = education_response(payload)
+                raw['P']['treatment'][0]['utterances'] = ['가' * 31]
+                return raw
+        client.chat_handler = response
+    if name == 'fixed_unknown':
+        original_action = client._action
+        def unknown(*args):
+            return {**original_action(*args), 'content': '모르겠습니다'}
+        client._action = unknown
+    c=f.consultation(client,prepared=f.resources(education=name in {'education', 'education_repair'}))
     if name=='closed':
         client.status='closed'
     if name=='expired':
@@ -97,24 +110,37 @@ def verify_trace(rows, name):
         assert 'config/prompts/input_initial.txt' in runtime['source_sha256']
         assert 'config/prompts/input_initial.txt' in runtime['prompt_routes']['input.initial']
         assert 'config/prompts/input_initial.txt' not in runtime['prompt_routes']['input.reply']
+        settings = next(r for r in rows if r['kind'] == 'settings')
+        assert settings['pipeline']['contract'] == 'D50'
+        assert set(runtime['test_source_sha256']) == {'observe.py', 'execution.py', 'pipeline.py'}
+        for owner, field in [('BudgetPolicy', 'required_counts'), ('ContextFactorSession', 'candidate_ids'),
+                             ('DifferentialDiagnosisSession', 'last_input')]:
+            assert any(r['kind'] == 'call_start' and r['owner'] == owner and field in r['owner_state'] for r in rows), (owner, field)
         for owner, method in [('InputBinding','exact_mapping'),('InputBinding','make_fact'),
                               ('GraphEvidence','graph_candidates'),('InitiationSession','prepare_decision'),
-                              ('DoctorBrain','complete')]:
+                              ('DoctorBrain','complete'), ('EvidenceIndex', 'from_case')]:
             calls={r['call_id'] for r in rows if r['kind']=='call_start' and (r['owner'],r['method'])==(owner,method)}
             assert any(r['kind']=='call_end' and r['call_id'] in calls and r.get('output') is not None for r in rows),(owner,method)
+    if name == 'education_repair':
+        assert any(r['kind'] == 'call_start' and r['owner'] == 'EnglishPlan' and r['method'] == 'parse_plan' for r in rows)
+        assert any(r['kind'] == 'call_start' and r['owner'] == 'DoctorMouth' and r['method'] == '_render' for r in rows)
+        assert any(r['kind'] == 'call_end' and r['owner'] == 'EducationSession' and r['owner_state'].get('generated_utterances') for r in rows)
+        assert any(r['kind'] == 'call_start' and r['owner'] == 'DoctorBrain' and r['inputs'].get('role') == 'education_doctor' for r in rows)
+    if name == 'fixed_unknown':
+        assert any(r['kind'] == 'call_end' and r['owner'] == 'DoctorEar' and r['method'] == '_fixed_reply' and r['output'] is not None for r in rows)
     return inspection
 
 
 def verify():
     OUTPUT.mkdir(parents=True,exist_ok=True)
     scenarios=[]
-    for name in ('normal','negative_context','unknown_context','education','transient_model','model_limit',
+    for name in ('normal','negative_context','unknown_context','fixed_unknown','education','education_repair','transient_model','model_limit',
                  'malformed_context','expired','closed','soap_repair','unconfirmed','refusal','action_format','recording_failure'):
         baseline,_=capture(name,False)
         observed,path=capture(name,True)
         assert baseline==observed,name
         end=WorkflowState.model_validate(next(iter(observed['updates'][-1].values())))
-        if name in {'normal','education','negative_context','unknown_context','soap_repair','refusal','action_format','transient_model','recording_failure'}:
+        if name in {'normal','education','education_repair','fixed_unknown','negative_context','unknown_context','soap_repair','refusal','action_format','transient_model','recording_failure'}:
             assert end.session.termination=='submitted',(name,end.session.reason)
         if name!='recording_failure':
             current=None

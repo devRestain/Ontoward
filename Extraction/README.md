@@ -127,6 +127,12 @@ bash Extraction/extraction.sh status --run-id NEW_RUN_ID
 bash Extraction/extraction.sh resume --provider nova_dev --run-id NEW_RUN_ID --install
 ```
 
+### 빈 BODHI 행의 `missing_generated_concepts`
+
+모든 임상 필드가 비어 있고 UUID에도 보이지 않는 문자만 있는 원자료 행은 생성할 개념이 없다. 이 경우 모델이 반환한 빈 배열을 반복 거절하면 6회 상한에서 전체 정규화가 멈출 수 있다. 수정 버전은 원본의 모든 필드·이름이 공백 또는 Unicode format 문자뿐이고 SNOMED 설명·정의도 없는 BODHI 개념 행만 모델 전송 전에 제외한다. 실제 내용이 있는 후보의 빈 결과는 계속 오류로 처리한다.
+
+`recover-empty --run-id OLD_RUN_ID`는 이 조건으로 실패한 실행에 한해 네트워크·모델 호출 없이 새 체크포인트를 만든다. 완료 결과·요청·응답·사용량·모든 시도 횟수와 원본 DB를 보존하고, 빈 행만 빈 완료 결과와 SQLite `excluded:<job_id>` 기록으로 남긴다. 복구 이력도 SQLite에 저장하므로 별도 대용량 `recovery.json`은 생성하지 않는다. 복구 후 출력된 새 ID로 `resume --provider nova_dev --run-id NEW_RUN_ID --install`을 실행한다. 이미 재개한 실행은 중복으로 시작하지 않고 status/watch로 확인한다.
+
 ### 정규화 중 행동 문구 오류와 안전한 중단
 
 `invalid_rendered_korean_length_or_normalization` 또는 `concepts.N.question`의 검증 오류는 해당 행을 재시도한다는 뜻이다. 같은 응답의 유효한 행은 이미 저장된다. `pause_requested=true`, `state=paused`, `error=null`이면 안전한 중단 요청을 처리한 상태다. 진행 중이던 응답까지 저장한 뒤 종료하며, 장애로 응답을 잃은 상태와 구별한다.

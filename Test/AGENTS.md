@@ -37,7 +37,9 @@
 - Observe DoctorEar DoctorBrain DoctorMouth the five session objects QuestionTools and other collaborator methods from Test-only wrappers without runtime audit injection and preserve each original call exception and method binding once.
 - Observe imported Python input-binding graph-candidate and English-plan functions at their actual call sites; record callable definition paths and distinguish functions from instance methods.
 - Store large serialized call values once by content hash in trace value events; resolve recorded references in the viewer without implying Python object identity or losing argument mutation paths.
-- Pin runtime source hashes manifest collector hash actual sequential operations and WorkflowState schema at Consultation.run. Record trace format 5 with sequential execution metadata and preserve reading of historical graph traces without inventing compiled topology.
+- Pin runtime source hashes manifest collector and Test boundary hashes actual sequential operations and WorkflowState schema at Consultation.run. Record trace format 6 with sequential execution metadata and preserve historical graph and format 5 traces without inventing compiled topology or missing values.
+- Keep D50 inspection landmarks and explicit collaborator field allowlists in pipeline.py. Capture session decision keys fixed Context candidates generated Education utterances and required question counts only at actual call boundaries; exclude arbitrary service dictionaries and credentials.
+- Record callable definition files and lines and the first EvidenceIndex for each case revision and chief within an operation; count repeated inner lookups without reconstructing unrecorded eligibility or field reads.
 - Pin the configured prompt manifest modules settings and route composition in new traces while preserving saved runs unchanged.
 - Derive inspection.json only from preserved trace and simulator records; expose incomplete calls SDK pairs graph paths frozen patient state revision primary diagnosis SOAP equality and completed receipts without rerunning clinical logic.
 - Keep execution settings in a collapsible rail and give reports a stable viewport with one content scroll; preserve the selected report and history control during unchanged polling and provide compact turn selection.
@@ -74,4 +76,5 @@
 
 - Use compose.d49.yaml and verify_d49_archive.py for a fresh synthetic ZIP consultation with read-only submission, network none, unchanged run.py, original SDK, ready handshake, fifteen-field SOAP, and completed receipt. Keep the fixture responder outside the archive and remove development credentials.
 - Set ONTOWARD_DENY_LANGGRAPH=1 for D50 independent SDK verification and use no_langgraph/sitecustomize.py only as an external test guard. Keep actual model and clinical quality distinct from blocked-import protocol acceptance.
+- Use verify_d49_archive.py --observe only with a fresh synthetic output directory to retain actual SDK exchanges trace inspection and a standalone report; keep fixture acceptance distinct from public cases and real knowledge installation.
 - Read only the new effect, target_scope, Pattern/applicability, attribute_roles, and five asset pins in current graph inspection; do not restore score or source-required metadata.

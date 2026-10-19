@@ -1,6 +1,6 @@
 const stateObjects = {
   interview: ['InterviewState', '질문과 수집 진행', '현재 세션 대기열, 작은 완료 기록, 필요한 중단 사유'],
-  turn: ['TurnContext', '현재 작업', '노드 간 요청과 응답, 처리 후 해제'],
+  turn: ['TurnContext', '현재 작업', '작업 중 요청과 응답, 처리 후 해제'],
   case: ['CaseState', '환자 사실과 평가', '통합 facts와 graph_binding, chief, 현재·고정 Assessment와 영어 계획'],
   session: ['SessionContext', '세션과 예산', '현재 세션, 남은 턴, 모델 사용량, 종료 준비'],
   differential: ['DifferentialState', '추론 결과', '질환 후보, Pattern, 점수 기여, 선택된 후보'],
@@ -10,7 +10,7 @@ const stateObjects = {
 const roleNames = {
   DoctorEar: '입력 해석', DoctorBrain: 'LLM 호출', DoctorMouth: '환자 전달',
   InitiationSession: '초기 수집·평가', ChiefComplaintSession: '주호소 수집·평가',
-  ContextFactorSession: '맥락 수집·평가', DifferentialDiagnosisSession: '감별·다음 행동', EducationSession: '계획·교육',
+  ContextFactorSession: 'CC 후보 고정·맥락 수집', DifferentialDiagnosisSession: '응답별 순위·다음 행동', EducationSession: '공동 계획·교육 일정',
   InputBinding: 'Python 입력 연결', GraphEvidence: '그래프 후보·근거', EnglishPlan: '영어 계획',
   InputInterpreter: '해석', ClinicalKnowledge: 'DB 조회', ClinicalReasoner: '추론',
   InterviewPlanner: '계획', Doctor: '행동', SubmissionWriter: '제출',
@@ -30,6 +30,9 @@ for (const event of events) {
   else if (pendingSdk && ['sdk_response', 'sdk_error'].includes(event.kind)) { sdkEnds.set(pendingSdk.seq, event); pendingSdk = null; }
 }
 const stateSchema = events.find(event => event.kind === 'settings')?.state_schema;
+const executionSettings = events.find(event => event.kind === 'settings') || {};
+const sequential = executionSettings.execution?.kind === 'sequential';
+const pipelineContract = executionSettings.pipeline;
 const same = (left, right) => JSON.stringify(left) === JSON.stringify(right);
 const atPath = (value, path) => path.reduce((item, key) => resolveValue(item)?.[key], value);
 
@@ -174,10 +177,11 @@ function stepInspector(step, root) {
   root.replaceChildren();
   const start = step.start, end = step.end, failed = end?.kind?.endsWith('error');
   const before = stepState(step), after = stepState(step, true);
-  root.append(el('span', step.kind === 'sdk' ? '실제 SDK 전송' : step.kind === 'call' ? start.call_kind==='function'?'관측된 Python 함수':'관측된 객체 호출' : '그래프 노드', 'inspector-kind'),
+  root.append(el('span', step.kind === 'sdk' ? '실제 SDK 전송' : step.kind === 'call' ? start.call_kind==='function'?'관측된 Python 함수':'관측된 객체 호출' : sequential ? '순차 실행 작업' : '그래프 노드', 'inspector-kind'),
     el('h3', stepName(step)), note(`seq ${start.seq}${end ? ` → ${end.seq}` : ' · 종료 미수집'}${end?.elapsed !== undefined ? ` · ${(end.elapsed * 1000).toFixed(1)} ms` : ''}`));
   if (start.object_id) root.append(el('code', start.object_id, 'instance-path'));
   if (start.callable) root.append(note(`정의 위치: ${start.callable}`));
+  if (start.definition) root.append(el('code', `${start.definition.path}:${start.definition.line}`, 'instance-path'));
   if (failed) root.append(el('p', `${end.error}: ${end.message || ''}`, 'inline-error'));
   if (step.kind === 'sdk') {
     root.append(note(`상위 호출 #${start.parent_call_id ?? '미수집'} · request_id: ${start.request_id ?? '없음'}`),
@@ -187,7 +191,7 @@ function stepInspector(step, root) {
   }
   if (step.kind === 'call') {
     const parent = callStarts.get(start.parent_call_id);
-    root.append(note(parent ? `호출한 객체: ${callName(parent)} → ${callName(start)}` : '그래프 노드가 호출한 최상위 객체입니다.'),
+    root.append(note(parent ? `호출한 객체: ${callName(parent)} → ${callName(start)}` : sequential ? 'Consultation의 순차 작업에서 호출한 객체입니다.' : '그래프 노드가 호출한 최상위 객체입니다.'),
       el('h4', '입력 · 이름과 실제 자료형'), dataTree(start.inputs, 'arguments'));
     if (Object.values(start.inputs || {}).some(value => value?.state_reference)) {
       root.append(dataTree(before, 'WorkflowState · 호출 직전', 0, stateSchema));
@@ -196,9 +200,14 @@ function stepInspector(step, root) {
     if (parent && end && !failed) root.append(note(`반환 경로: ${callName(start)} → ${callName(parent)}`));
     if (end && end.output === null) root.append(note('return은 None입니다. 상태를 직접 갱신하는 메서드의 결과는 아래 변경분에 나타납니다.'));
     if (end?.argument_writes?.length) root.append(el('h4', '입력 인자에 직접 기록한 값'), changeRows(start.inputs, end.arguments_after, end.argument_writes));
+    if (Object.keys(start.owner_state || {}).length || Object.keys(end?.owner_state || {}).length) {
+      root.append(el('h4', '이 실행 객체가 소유한 값'),
+        dataTree(start.owner_state, '호출 직전'), dataTree(end?.owner_state, '호출 직후'),
+        note('허용된 필드만 수집합니다. 서비스 내부와 인증 정보는 포함하지 않습니다.'));
+    }
   } else {
-    root.append(note('WorkflowState를 deep copy한 뒤 검증된 dict로 다음 그래프 노드에 전달합니다.'),
-      dataTree(before, 'WorkflowState · 입력', 0, stateSchema), dataTree(after, 'dict · 검증된 노드 출력', 0, stateSchema));
+    root.append(note(sequential ? 'Consultation.run이 같은 WorkflowState를 순차 갱신합니다. 아래 값은 Test가 기록한 작업 경계의 스냅샷입니다.' : 'WorkflowState를 deep copy한 뒤 검증된 dict로 다음 그래프 노드에 전달합니다.'),
+      dataTree(before, 'WorkflowState · 입력', 0, stateSchema), dataTree(after, sequential ? 'WorkflowState · 작업 직후' : 'dict · 검증된 노드 출력', 0, stateSchema));
     if (Object.keys(end?.suppressed_calls || {}).length) root.append(note('임상 판단 안의 반복 DB·예산 조회는 횟수만 기록합니다. 그래프 후보 구성과 판단 결과는 별도 호출의 입력·반환에서 확인합니다.'), dataTree(end.suppressed_calls, '내부 반복 호출 · 상세 값 미수집'));
   }
   root.append(el('h4', '상태에 쓴 결과 · 하위 호출 포함'));
@@ -224,12 +233,13 @@ function flowPanel(group, before, after) {
   root.append(note('위에서 아래로 실제 실행 순서를 읽습니다. 객체나 전달 단계를 선택하면 입력 → 반환값 → 상태 변경을 확인할 수 있습니다.'));
   if (!calls.length) root.append(el('p', '이 실행은 객체 메서드 호출을 수집하지 않았습니다. 저장된 그래프 노드와 SDK 전송만 표시합니다. 새 관측 실행부터 내부 객체와 반환값이 기록됩니다.', 'coverage-message'));
   const heading = el('div', null, 'flow-legend');
-  heading.append(el('span', `그래프 ${nodes.length}단계`), el('span', `내부 호출 ${calls.length}회`), el('span', `SDK 전송 ${group.events.filter(e => e.kind === 'sdk_request').length}회`));
+  heading.append(el('span', `${sequential ? '순차 작업' : '그래프'} ${nodes.length}단계`), el('span', `내부 호출 ${calls.length}회`), el('span', `SDK 전송 ${group.events.filter(e => e.kind === 'sdk_request').length}회`));
   root.append(heading, stateStrip(before, after, key => { objectSelection = key; tab = 'objects'; detail(); $('tab-objects').focus(); }));
-  root.append(pipelinePath(group.events));
+  root.append(pipelinePath(group.events), landmarkPanel(group));
   if (!nodes.length) { root.append(note(after ? '초기 WorkflowState입니다. 각 상태 객체를 선택해 초기 데이터를 확인하세요.' : '이 구간에는 내부 실행 관측이 없습니다. 대화와 수신 기록 탭에서 보존된 결과를 확인하세요.')); return root; }
   const workbench = el('div', null, 'flow-workbench'), sequence = el('div', null, 'flow-sequence'), inspector = el('aside', null, 'flow-inspector');
   inspector.setAttribute('aria-label', '선택한 실행 단계의 입출력');
+  inspector.tabIndex = -1;
   const buttons = [];
   const choose = (step, button) => {
     flowSelection.set(selected, step.start.seq + ':' + step.kind);
@@ -240,7 +250,7 @@ function flowPanel(group, before, after) {
     const owner = step.start.owner || step.start.operation?.split('.')[0] || 'graph';
     const button = el('button', null, `${cls} role-${owner}`); button.type = 'button'; button.setAttribute('aria-pressed', 'false');
     button.append(el('span', title), el('small', step.kind === 'sdk' ? `body → ${step.end?.kind === 'sdk_response' ? 'response' : '미완료 / 오류'}` : `seq ${step.start.seq} · ${roleNames[step.start.owner] || '상태 전달'}`));
-    button.addEventListener('click', () => choose(step, button)); buttons.push(button);
+    button.addEventListener('click', () => { choose(step, button); inspector.focus({preventScroll: true}); inspector.scrollIntoView({block: 'nearest'}); }); buttons.push(button);
     return button;
   };
   let initial;
@@ -248,7 +258,7 @@ function flowPanel(group, before, after) {
     const block = el('article', null, 'flow-node');
     block.append(el('span', String(index + 1).padStart(2, '0'), 'flow-index'));
     const main = makeButton(step, stepName(step), 'flow-node-button');
-    main.append(el('small', `graph.${step.start.node || 'unknown'} · ${step.end?.kind === 'node_error' ? '오류' : step.end ? '완료' : '종료 미수집'}`, 'graph-name'));
+    main.append(el('small', `${sequential ? 'Consultation.run' : 'graph'}.${step.start.node || 'unknown'} · ${step.end?.kind === 'node_error' ? '오류' : step.end ? '완료' : '종료 미수집'}`, 'graph-name'));
     block.append(main);
     if (!initial) initial = [step, main];
     if (flowSelection.get(selected) === step.start.seq + ':' + step.kind) initial = [step, main];
@@ -278,7 +288,7 @@ function flowPanel(group, before, after) {
       block.append(nested);
     }
     sequence.append(block);
-    if (index < nodes.length - 1) sequence.append(el('div', '↓ WorkflowState → 검증된 dict → 다음 노드', 'flow-transfer'));
+    if (index < nodes.length - 1) sequence.append(el('div', sequential ? '↓ 같은 WorkflowState · 다음 작업' : '↓ WorkflowState → 검증된 dict → 다음 노드', 'flow-transfer'));
   });
   workbench.append(sequence, inspector); root.append(workbench);
   if (initial) choose(...initial);
@@ -290,6 +300,25 @@ function objectPanel(group, before, after) {
   const root = panel('정보를 가진 객체와 턴별 변화');
   if (!after) { root.append(note('이 실행에는 내부 객체 상태가 수집되지 않았습니다.')); return root; }
   root.append(note(after.interview?'WorkflowState의 상주 상태 3개와 현재 턴 작업을 구분합니다. 현재 턴 응답은 처리 후 해제됩니다.':'저장된 WorkflowState의 다섯 상태 객체를 경로와 자료형으로 구분합니다.'));
+  if (pipelineContract) {
+    const captured = group.events.filter(event => event.kind === 'call_start' && Object.keys(event.owner_state || {}).length);
+    const owned = el('details', null, 'collaborator-states');
+    owned.append(el('summary', `이 턴의 실행 객체 소유 값 · ${new Set(captured.map(event => event.object_id)).size}개 객체`));
+    let built = false;
+    owned.addEventListener('toggle', () => {
+      if (!owned.open || built) return; built = true;
+      if (!captured.length) owned.append(note('이 턴에는 허용된 실행 객체 필드가 수집되지 않았습니다.'));
+      for (const event of captured) {
+        const box = el('details', null, 'detail-json'), end = callEnds.get(event.call_id);
+        box.append(el('summary', `${event.owner}.${event.method} · seq ${event.seq}`));
+        box.append(el('code', event.object_id, 'instance-path'), dataTree(event.owner_state, '호출 직전'),
+          dataTree(end?.owner_state, end ? '호출 직후' : '종료 미수집'));
+        const button = el('button', '정보 흐름에서 이 호출 보기'); button.type = 'button';
+        button.addEventListener('click', () => jumpToEvent(event)); box.append(button); owned.append(box);
+      }
+    });
+    root.append(owned);
+  }
   if(after.interview&&!['case','interview','session','turn'].includes(objectSelection))objectSelection='case';
   const workbench = el('div', null, 'object-workbench'), catalog = el('nav', null, 'object-catalog'), inspector = el('div', null, 'object-inspector');
   catalog.setAttribute('aria-label', 'WorkflowState 객체');
@@ -355,17 +384,49 @@ function jumpToEvent(event) {
   $('tab-flow').focus();
 }
 
+function landmarkPanel(group) {
+  const root = el('section', null, 'landmark-panel');
+  root.setAttribute('aria-label', '현재 파이프라인 추적 지점');
+  if (!pipelineContract) {
+    root.append(note('이전 수집 형식: D50 추적 지점과 실행 객체 소유 값은 당시 기록된 호출에서만 확인할 수 있습니다.'));
+    return root;
+  }
+  const titles = {input:'입력·부분 복구', evidence:'범위별 그래프 근거', assessment:'평가·다음 행동', budget:'필수 질문·예산',
+    plan:'영어·한국어 공동 계획', delivery:'한국어 검증·전달', submission:'SOAP·완료 수신'};
+  root.append(el('h4', '이 턴의 추적 지점'), note('관측된 호출로 바로 이동합니다. 호출이 없는 지점은 이 턴의 수집 범위를 뜻하며, 임상 요구 충족 여부를 판정하지 않습니다.'));
+  const grid = el('div', null, 'landmark-grid');
+  for (const item of pipelineContract.landmarks) {
+    const calls = group.events.filter(row => row.kind === 'call_start' && item.owners.includes(row.owner) && item.methods.includes(row.method));
+    const box = el('details', null, 'landmark');
+    box.append(el('summary', `${titles[item.id] || item.title} · ${calls.length}회`));
+    box.addEventListener('toggle', () => {
+      if (!box.open || box.querySelector('.landmark-calls')) return;
+      const list = el('div', null, 'landmark-calls');
+      if (!calls.length) list.append(note('이 턴에서 관측된 호출이 없습니다. 다른 턴이나 전체 실행 검증을 확인하세요.'));
+      for (const call of calls) {
+        const button = el('button', `${callName(call)} · seq ${call.seq}`); button.type = 'button';
+        button.addEventListener('click', () => jumpToEvent(call)); list.append(button);
+      }
+      box.append(list);
+    });
+    grid.append(box);
+  }
+  root.append(grid); return root;
+}
+
 function pipelinePath(rows) {
-  const root=el('div',null,'pipeline-path');root.setAttribute('aria-label','관측된 역할별 호출');
+  const root=el('details',null,'role-catalog'), grid=el('div',null,'pipeline-path');root.setAttribute('aria-label','관측된 역할별 호출');
+  root.append(el('summary','역할별 실행 객체와 호출 수'));
   for(const [owner,title] of [['DoctorEar','입력 → 통합 사실'],['InitiationSession','초기 수집 → 첫 평가'],
-    ['ChiefComplaintSession','주호소 → 종료 평가'],['ContextFactorSession','CC 감별 → 맥락 → 평가'],
-    ['DifferentialDiagnosisSession','응답 → 순위·질문 → 고정'],['EducationSession','고정 진단 → 계획'],
+    ['ChiefComplaintSession','주호소 → 종료 평가'],['ContextFactorSession',sequential?'CC 후보 고정 → 맥락 수집':'CC 감별 → 맥락 → 평가'],
+    ['DifferentialDiagnosisSession',sequential?'DD 진입·응답 → 공동 판단 → 고정':'응답 → 순위·질문 → 고정'],['EducationSession',sequential?'영어·한국어 공동 계획 → 일정·수신':'고정 진단 → 계획'],
     ['DoctorBrain','준비된 입력 → LLM 응답'],['DoctorMouth','표현 → SAY·EXAM'],['SubmissionWriter','SOAP → DIAGNOSE']]){
     const calls=rows.filter(row=>row.kind==='call_start'&&row.owner===owner);
     const button=el('button',null,'pipeline-stage');button.type='button';button.disabled=!calls.length;
     button.append(el('strong',owner),el('small',title),el('small',calls.length?`${calls.length}회 · 첫 호출 보기`:'이 구간에서 호출 미관측'));
-    button.addEventListener('click',()=>jumpToEvent(calls[0]));root.append(button);
+    button.addEventListener('click',()=>jumpToEvent(calls[0]));grid.append(button);
   }
+  root.append(grid);
   return root;
 }
 
@@ -375,7 +436,7 @@ function executionPanel() {
   if(!inspection){root.append(el('p','이 저장 리포트에는 실행 검증 파일이 없습니다. 웹에서 리포트를 다시 열면 보존 로그로 생성합니다.','coverage-message'));return root;}
   root.append(kv([['실행 알고리즘',inspection.runtime?.algorithm||'당시 미수집'],['상태 구조',inspection.state_layout],
     ['관측 검사',inspection.status],['Assessment 고정',inspection.frozen?`seq ${inspection.frozen.seq} · ${inspection.frozen.primary}`:'미관측']]));
-  const titles={event_sequence:'이벤트 순서',trace_boundaries:'수집 시작·종료',recorded_values:'저장 값 참조의 완전성',call_boundaries:'객체 호출·반환과 부모 연결',node_boundaries:'실행 단계 시작·종료',execution_operations:'실제 순차 실행 작업',sdk_boundaries:'SDK 요청·응답',state_reconstruction:'전체 노드 상태 복원',graph_transitions:'실제 그래프 경로',frozen_patient_state:'고정 후 사실·평가 보존',assessment_revision:'고정 평가의 revision·chief 일치',submission_primary:'고정 1위와 제출 진단 일치',received_soap:'전송 SOAP와 수신 기록 일치',confirmed_completion:'로컬 완료 영수증과 종료 상태'};
+  const titles={event_sequence:'이벤트 순서',trace_boundaries:'수집 시작·종료',recorded_values:'저장 값 참조의 완전성',call_boundaries:'객체 호출·반환과 부모 연결',collaborator_fields:'실행 객체의 허용된 소유 필드',definition_locations:'호출 정의 파일·행',node_boundaries:'실행 단계 시작·종료',execution_operations:'실제 순차 실행 작업',sdk_boundaries:'SDK 요청·응답',state_reconstruction:'작업 경계 상태 복원',graph_transitions:'실제 그래프 경로',frozen_patient_state:'고정 후 사실·평가 보존',assessment_revision:'고정 평가의 revision·chief 일치',submission_primary:'고정 1위와 제출 진단 일치',received_soap:'전송 SOAP와 수신 기록 일치',confirmed_completion:'로컬 완료 영수증과 종료 상태'};
   for(const check of inspection.checks){
     const row=el('div',null,'inspection-check'),status=el('span',({pass:'확인',fail:'불일치',not_collected:'미수집'})[check.status]||check.status,`badge ${check.status==='pass'?'good':'warn'}`);
     const content=el('div');content.append(el('strong',titles[check.id]||check.id),jsonDetail('판정 근거',check.detail));row.append(status,content);root.append(row);

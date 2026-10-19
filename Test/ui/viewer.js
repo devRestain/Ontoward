@@ -59,7 +59,7 @@ function timeline(){
   for(const {g,i} of visible()){
     if(picker){const option=el('option',`턴 ${g.turn} · ${scopes[g.session]||g.session}`);option.value=String(i);picker.append(option);}
     const button=el('button',null,'turn-button');button.type='button';button.setAttribute('aria-current',i===selected?'true':'false');
-    button.append(el('span',`TURN ${String(g.turn).padStart(2,'0')}`,'number'),el('span',scopes[g.session]||'내부 상태 미수집','name'));
+    button.append(el('span',`턴 ${String(g.turn).padStart(2,'0')}`,'number'),el('span',scopes[g.session]||'내부 상태 미수집','name'));
     const action=actions(g).find(row=>row.content);
     button.append(el('span',action?.content||g.events.find(row=>row.kind==='node_error')?.error||'상태 처리','preview'));
     button.addEventListener('click',()=>select(i));root.append(button);
@@ -250,7 +250,7 @@ function diagnosisPanel(before,after){
         for(const [key,title] of [['supports','지지'],['against','반대'],['unresolved','미해결']]){
           card.append(el('h4',`${title} · ${(item[key]||[]).length}개`));
           for(const ref of item[key]||[]){
-            for(const id of ref.fact_ids||[]){const fact=after.case.facts?.[id];if(fact)card.append(note(`${id} · ${fact.target}${fact.attribute?' / '+fact.attribute:''} · ${fact.status} · ${fact.acquisition} · ${fact.source_ref}`));}
+            for(const id of ref.fact_ids||[]){const fact=after.case.facts?.[id];if(fact){const binding=fact.graph_binding||fact;card.append(note(`${id} · ${binding.target||fact.value||'연결 없음'}${binding.attribute?' / '+binding.attribute:''} · ${fact.status} · ${fact.acquisition??'취득 경로 미수집'} · ${fact.source_ref}`));}}
             card.append(jsonDetail(ref.graph_ref?.id||ref.reason||title,ref));
           }
         }
@@ -258,7 +258,7 @@ function diagnosisPanel(before,after){
       }
     }
     root.append(jsonDetail(after.case.assessment?'CaseState.assessment':'CaseState.diagnosis',after.case.assessment??after.case.diagnosis));
-    root.append(note('D46은 CaseState.assessment에 현재 감별 순위와 근거를 보관하고 DD 종료에서 고정합니다. 이전 D44 reasoner 기록은 원래 형식으로 표시합니다.'));
+    root.append(note(sequential ? 'D50의 CaseState.assessment는 현재 감별 순위와 근거를 보관하고 수집 종료에서 고정합니다. 판단은 revision·chief·수용 응답으로 구별합니다.' : after.case.assessment ? 'CaseState.assessment에 보존된 감별 순위와 고정 여부입니다. 당시 기록한 형식을 유지합니다.' : '이전 D44 reasoner의 진단 기록입니다. 현재 Assessment 형식으로 추정하지 않습니다.'));
     return root;
   }
   const root=panel('기록된 진단 후보와 근거');
@@ -299,7 +299,7 @@ function detail(){
   const heading=el('div',null,'turn-heading');heading.append(el('h2',`턴 ${group.turn} · ${scopes[group.session]||'상태 미수집'}`));
   const controls=el('div',null,'controls'),indices=visible().map(row=>row.i),position=indices.indexOf(selected);
   for(const [text,offset] of [['이전',-1],['다음',1]]){const button=el('button',text);button.type='button';button.disabled=position+offset<0||position+offset>=indices.length;button.addEventListener('click',()=>select(indices[position+offset]));controls.append(button);}heading.append(controls);root.append(heading);
-  root.append(el('p',`실제 내부 세션: ${group.session} · ${group.events.filter(row=>row.kind==='node_end').length}개 노드 처리`,'session-note'));
+  root.append(el('p',`실제 내부 세션: ${group.session} · ${group.events.filter(row=>row.kind==='node_end').length}개 ${sequential?'순차 작업':'노드'} 처리`,'session-note'));
   const tabs=el('div',null,'tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','턴 상세 보기');
   const choices=[['flow','정보 흐름'],['execution','실행 검증'],['objects','객체 탐색'],['dialogue','대화'],['note','기록 · SOAP'],['state','상태 변화'],['diagnosis','진단 근거'],['models','모델 호출']];
   for(const [id,title] of choices){const button=el('button',title);button.type='button';button.id=`tab-${id}`;button.setAttribute('role','tab');button.setAttribute('aria-selected',tab===id?'true':'false');button.setAttribute('aria-controls','detail-panel');button.tabIndex=tab===id?0:-1;

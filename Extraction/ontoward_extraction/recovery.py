@@ -11,7 +11,7 @@ from .models import Result, canonical, digest
 
 def recover_normalization(work, source_run_id, identity, boundary=lambda: None, repair='schema'):
     """Fork a settled normalization checkpoint after a bounded transport or phase-ownership fix."""
-    if repair not in {'schema','text','provider','batch'}: raise ValueError('unsupported_normalization_recovery')
+    if repair not in {'schema','text','provider','batch','empty'}: raise ValueError('unsupported_normalization_recovery')
     work = Path(work)
     source = work / source_run_id
     run_id = digest(identity)[:32]
@@ -44,14 +44,14 @@ def recover_normalization(work, source_run_id, identity, boundary=lambda: None, 
                     raise ValueError('recovery_index_or_semantic_contract_changed:'+name)
             allowed_state=(meta.get('state')=='failed' and meta.get('error')=='output_contract_failed:normalize')
             if repair=='text': allowed_state=allowed_state or meta.get('state')=='paused'
-            if repair=='batch':
-                allowed_state=meta.get('state')=='paused'
+            if repair in {'batch','empty'}:
+                if repair=='batch': allowed_state=meta.get('state')=='paused'
                 if previous['prompts']!=identity['prompts']:
-                    raise ValueError('recovery_batch_prompts_changed')
+                    raise ValueError('recovery_'+repair+'_prompts_changed')
                 changed={name for name in previous['generator'].keys() | identity['generator'].keys()
                     if previous['generator'].get(name)!=identity['generator'].get(name)}
                 if not changed or changed-{'build.py','recovery.py','__main__.py'}:
-                    raise ValueError('recovery_not_a_batch_scheduler_change')
+                    raise ValueError('recovery_not_a_'+repair+'_scheduler_change')
             if repair=='provider':
                 allowed_state=meta.get('state')=='failed' and meta.get('error')=='persistent_provider_failure:PROVIDER_RESPONSE_INVALID'
                 if previous['prompts']!=identity['prompts']:
@@ -67,6 +67,13 @@ def recover_normalization(work, source_run_id, identity, boundary=lambda: None, 
                 raise ValueError('recovery_requires_normalization_only')
             if repair=='schema' and any(row['status']=='done' or row['result'] is not None for row in rows):
                 raise ValueError('recovery_requires_zero_accepted_results')
+            if repair=='empty':
+                from .build import empty_bodhi_candidate
+                exhausted=[row for row in rows if row['status']!='done' and row['attempt_count']>=6]
+                if not exhausted or any(row['error']!='missing_generated_concepts' or
+                    not empty_bodhi_candidate(json.loads(db.execute('SELECT normalized_input FROM jobs WHERE job_id=?',
+                        (row['job_id'],)).fetchone()[0])) for row in exhausted):
+                    raise ValueError('recovery_requires_empty_source_exhaustion_only')
             if repair=='text':
                 from .build import normalization_result
                 for row in rows:
@@ -81,7 +88,7 @@ def recover_normalization(work, source_run_id, identity, boundary=lambda: None, 
                         raise ValueError('recovery_not_an_action_text_failure:'+row['job_id'])
             requests = [dict(row) for row in db.execute('SELECT * FROM requests')]
             confirmed=[row for row in requests if (repair=='provider' and row['state'] in {'prepared','failed'} or
-                repair=='batch' and row['state']=='failed') and
+                repair in {'batch','empty'} and row['state']=='failed') and
                 row['provider']=='nova_dev' and row['error']=='PROVIDER_RESPONSE_INVALID' and row['response'] is None]
             confirmed_ids={row['request_id'] for row in confirmed}
             if repair=='provider' and (not confirmed or any(row['error'] for row in rows if row['status']!='done')):
@@ -103,10 +110,11 @@ def recover_normalization(work, source_run_id, identity, boundary=lambda: None, 
                 run_id=run_id,source_identity=digest(previous),target_identity=digest(identity),
                 reason={'schema':'nova_schema_missing_from_messages','text':'defer_executable_text_to_questions',
                     'provider':'confirmed_provider_response_invalid_requires_new_id',
-                    'batch':'replace_sticky_shrink_with_fixed_configured_batch_size'}[repair],accepted_results=done,
+                    'batch':'replace_sticky_shrink_with_fixed_configured_batch_size',
+                    'empty':'exclude_blank_bodhi_source_rows_without_inventing_concepts'}[repair],accepted_results=done,
                 indexed_files=len(previous['inputs']),
                 indexed_rows=sum(value for key,value in meta.items() if key.startswith('cursor:')),
-                jobs_reset=0 if repair in {'provider','batch'} else len(rows)-done,jobs_kept_done=done,jobs_pending=len(rows)-done,
+                jobs_reset=0 if repair in {'provider','batch','empty'} else len(rows)-done,jobs_kept_done=done,jobs_pending=len(rows)-done,
                 confirmed_failed_request_ids=sorted(confirmed_ids),
                 requests_preserved=len(requests),usage_preserved=usage,
                 previous_attempts=[row for row in rows if row['attempt_count']],
@@ -123,7 +131,7 @@ def recover_normalization(work, source_run_id, identity, boundary=lambda: None, 
                     if repair in {'provider','batch'}:
                         copy.execute("UPDATE jobs SET status='pending' WHERE status!='done'")
                         copy.executemany("UPDATE requests SET state='failed' WHERE request_id=?",[(ident,) for ident in confirmed_ids])
-                    else:
+                    elif repair!='empty':
                         copy.execute("UPDATE jobs SET status='pending',attempt_count=0,error=NULL WHERE status!='done'")
                     copy.executemany('INSERT OR REPLACE INTO meta VALUES(?,?)',[(key,canonical(value)) for key,value in
                         dict(identity=identity,state='ready',phase='normalize',error=None,pause_requested=False,
@@ -133,6 +141,16 @@ def recover_normalization(work, source_run_id, identity, boundary=lambda: None, 
             finally:
                 copy.close()
             recovered=[]
+            if repair=='empty':
+                from .build import exclude_empty_sources
+                from .jobs import Jobs
+                saved=Jobs(staging)
+                try:
+                    receipt['excluded_sources']=exclude_empty_sources(saved)
+                    receipt['jobs_pending']=len(saved.pending('normalize'))
+                    saved.set('recovery',receipt)
+                finally:
+                    saved.close()
             if repair=='text':
                 from .build import accept_response
                 from .jobs import Jobs
@@ -152,7 +170,8 @@ def recover_normalization(work, source_run_id, identity, boundary=lambda: None, 
                     saved.set('recovery',receipt)
                 finally:
                     saved.close()
-            (staging / 'recovery.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+            if repair!='empty':
+                (staging / 'recovery.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
             boundary()
             if target.exists():
                 raise ValueError('recovery_target_exists_use_resume')

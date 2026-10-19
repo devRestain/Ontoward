@@ -1,6 +1,6 @@
 # 웹에서 실행하는 공개 샘플 테스트
 
-**D50 현재 상태:** 실제 새 지식 manifest가 없어 현재 submission으로 새 상담을 시작하면 knowledge_bundle_not_installed로 실패한다. 과거 결과·리포트는 계속 읽을 수 있다. 실제 생성/설치는 [Extraction 안내](../Extraction/README.md)를 따른다. 보존된 D50 실행 수용은 Tmp/의 합성 새 번들로 수행했습니다. 이번 문서 갱신은 기존 증빙의 해시와 현재 정의를 대조하며 상담을 새로 실행하지 않았습니다.
+**D50 현재 상태:** 실제 새 지식 manifest가 없어 현재 submission으로 새 상담을 시작하면 knowledge_bundle_not_installed로 실패한다. 과거 결과·리포트는 계속 읽을 수 있다. 실제 생성/설치는 [Extraction 안내](../Extraction/README.md)를 따른다. Test 관측·화면은 trace format 6으로 갱신했다. 새 오프라인 검증은 Tmp/의 합성 번들과 독립 ZIP으로 수행하며 실제 DB나 공개 증례의 임상 품질과 구별한다.
 
 `Test/`는 기존 `submission/run.py`와 SDK를 그대로 실행하면서, 공모전의 세션 API와 예선 컨테이너 제약을 로컬에서 재현한다. 공개 `C01`·`C03`·`C10`의 `case.json`을 읽으며 공식 서버의 비공개 구현이나 채점 기준을 재현하지 않는다. 모든 결과의 채점 상태는 `not_scored`다.
 
@@ -64,9 +64,9 @@ sh Test/web.sh
 
 리포트 왼쪽의 내부 세션·턴을 선택하고 다음 내용을 확인한다.
 
-- **정보 흐름:** 기본 화면이다. 그래프 노드를 위에서 아래로 따라가며 **내부 호출과 전달**을 펼친다. 객체·메서드 이름을 누르면 오른쪽에서 호출자, 인스턴스 경로, 실제 인자와 자료형, 반환값, 직접 바뀐 인자와 상태 경로를 본다. `return None`인 메서드도 상태에 기록한 결과를 따로 표시한다. SDK 행은 실제 전송 body와 응답을 보여주며 JSON 문자열은 원문과 해독한 구조를 함께 펼칠 수 있다. 현재 D50의 화살표는 순차 작업과 인자·반환·상태 변경의 흐름입니다. `WorkflowState → 검증된 dict → 다음 노드`는 과거 LangGraph 기록에만 해당합니다.
+- **정보 흐름:** 기본 화면이다. D50의 순차 작업을 위에서 아래로 따라가며 **내부 호출과 전달**을 펼친다. **이 턴의 추적 지점**에서 입력·부분 복구, 범위별 근거, 평가·행동, 질문 예산, 공동 계획, 한국어 검증·전달, SOAP·완료 수신의 실제 호출로 이동한다. 객체·메서드 이름을 누르면 호출자, 인스턴스 경로, 정의 파일·행, 실제 인자와 자료형, 반환값, 인자·상태 변화와 실행 객체 소유 값을 본다. `return None`의 기록 결과도 따로 표시한다. 역할별 목록은 펼쳐서 보고, 넓은 화면은 호출 목록 옆에 검사기를, 좁은 화면은 아래에 배치한다. SDK 행은 실제 body와 응답을 보존한다. 같은 WorkflowState를 순차 갱신하며, `deep copy → 검증된 dict → 다음 노드` 설명은 과거 LangGraph 기록에만 표시한다.
 - **실행 검증:** 전체 실행의 소스·manifest SHA256, 알고리즘·수집기, D50 순차 작업의 연결과 관측 횟수(과거 로그는 당시 컴파일 그래프), 메서드별 호출 수, 노드별 revision·facts·현재 턴 수명, Assessment 고정 시점을 확인한다. 이벤트 순서·호출과 반환·SDK 요청과 응답·상태 복원·저장 값 참조·고정 후 사실 보존·평가 revision과 chief·고정 1위와 제출 진단·SOAP 수신본·완료 영수증을 각각 판정한다. 수집 완료와 상담 성공은 별도다. Ear·Brain·Mouth·Writer 버튼은 해당 역할의 실제 첫 호출로 이동한다.
-- **객체 탐색:** 현재 D50의 `CaseState`·`InterviewState`·`SessionContext`·`TurnContext`를 고르고 같은 객체의 턴 이전·이후 트리와 필드별 변경을 비교한다. 변경 경로·값을 검색하거나 객체가 바뀐 턴 번호를 눌러 이동한다. 지역 `InputResult`, `ModelResult`, `EvidenceIndex` 등 임시 반환 데이터는 해당 턴의 반환 객체와 정보 흐름에서 확인한다. 트리는 값 전체를 보존하며 펼칠 때 하위 항목을 만든다.
+- **객체 탐색:** 현재 D50의 `CaseState`·`InterviewState`·`SessionContext`·`TurnContext`를 고르고 같은 객체의 턴 이전·이후 트리와 필드별 변경을 비교한다. **이 턴의 실행 객체 소유 값**은 CC 종료 상태, Context 고정 후보, DD의 `last_input/error`, Education의 `generated_utterances`, Budget의 `required_counts`를 실제 호출 전후로 보여준다. 해당 호출로 다시 이동할 수 있다. 변경 경로·값 검색과 객체 변경 턴 이동을 유지한다. 지역 `InputResult`, `ModelResult`, `EvidenceIndex`는 반환 객체와 정보 흐름에서 확인한다. 트리는 펼칠 때 하위 항목을 만든다.
 - **대화:** 실제 Doctor 발화·환자 답변·진찰 요청과 결과·거절·전달 미확인 요청.
 - **기록 · SOAP:** 현재 D47에서는 `case.facts/assessment/plan`과 제출 중의 `turn.payload.note`를 확인한다. 통합 CaseFact·선택적 graph_binding·평가와 최종 수신된 15개 SOAP 문자열을 구별한다. 과거 실행에만 존재하는 S·O·A·P 저장 필드와 완료 상태는 해당 형식으로 표시한다.
 - **상태 변화:** 턴과 호출 예산, 추가·변경된 사실, 선택한 행동, 질문 계획, 해석 결과와 수용·거절, 노드별 변경분과 전체 상태.
@@ -229,8 +229,12 @@ docker compose -f Test/compose.d49.yaml run --rm -T d49-archive
 
 ## D50 순차 실행과 공동 교육 검증
 
-새 trace는 format 5의 execution.kind=sequential과 실제 작업 이름·소스/schema/prompt 해시를 기록한다. execution.py는 Test에서만 작업 경계를 감싸고 중첩 검증은 객체 호출로 보존한다. 과거 그래프 trace는 저장 형식대로 읽는다. 전체 상태 복사나 audit hook은 제출 코드에 넣지 않는다.
+새 trace는 format 6의 execution.kind=sequential, 실제 작업 이름·소스/schema/prompt 해시와 observe.py·execution.py·pipeline.py의 해시를 기록한다. pipeline.py의 추적 지점은 탐색용이며 필수 호출 수나 실행 그래프가 아니다. 실행 객체의 허용된 필드만 수집하고, 이전 로그에 없던 값은 추정하지 않는다. execution.py는 Test에서만 작업 경계를 감싸고 중첩 검증은 객체 호출로 보존한다. 각 작업의 revision·chief별 첫 EvidenceIndex를 보존하고 반복 내부 조회는 횟수로 제한한다. 과거 그래프와 format 5 로그도 당시 형식으로 읽는다. 전체 상태 복사나 audit hook은 제출 코드에 넣지 않는다.
 
 영어 P와 한국어는 정상 high 호출 한 번에 생성하고 영어·인용·한국어 문구를 별도로 수용한다. 잘못된 한국어 그룹만 medium으로 제한 복구한다. 독립 SDK 검사에는 ONTOWARD_DENY_LANGGRAPH=1을 주어 Test 외부 guard로 LangGraph import를 차단할 수 있다. guard와 fixtures는 ZIP에 포함하지 않는다.
 
 현재 수용 증거는 [D50 provenance](../data/provenance/algorithm-d50-2026-10-20.json)에 연결한다. 관측·텍스트 DOM·HTTP와 실제 브라우저 시각 검증, 실제 모델·임상·공식 평가는 구분한다.
+
+독립 합성 ZIP의 관측과 화면을 함께 확인하려면 위 `compose.d49.yaml` 명령의 서비스 뒤에 `python -B /fixtures/Test/verify_d49_archive.py --observe`를 붙인다. `D49_OUTPUT`은 새 빈 폴더여야 한다. 원본 SDK의 실제 HTTP 요청·응답과 대화, `agent/trace.jsonl`, `inspection.json`, 자체 포함 `report.html`을 저장한다. 필요하면 `-e ONTOWARD_DENY_LANGGRAPH=1`을 서비스 앞에 지정한다. 실제 상담 알고리즘을 다시 계산하지 않고 리포트만 갱신할 때는 기존 저장 로그를 연다.
+
+이번 Test 갱신의 검증·합성 리포트 경로는 루트 상태의 `ROOT.TESTPIPE50`에 기록한다. 실제 브라우저 화면·모바일 렌더링·스크린리더 검증은 미실행이다.

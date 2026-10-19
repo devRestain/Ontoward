@@ -1,7 +1,7 @@
 /state version=1
 /project id=ontoward-data
 /status value=active
-/checkpoint revision=37aa74df239f8167d76f64fff2de841b4fa3f36b dirty=true updated=2026-10-20T01:34:50+09:00
+/checkpoint revision=dcbdfbed81ccd8c5b6949ad1bdaeaa58914b5d24 dirty=true updated=2026-10-20T02:12:27+09:00
 /goal phase=history id=DATA.D48 state=complete action="Bind D48 source artifact prompt and preserved run evidence without changing clinical assets"
 /goal phase=history id=DATA.INDEX_REPAIR49 state=complete action="Preserve failed indexing evidence and verify the corrected raw-input parsing boundary"
 /goal phase=history id=DATA.NORMALIZE_REPAIR49 state=complete action="Preserve the real normalization failure and bind its guarded offline checkpoint copy"
@@ -10,7 +10,8 @@
 /goal phase=history id=DATA.D49 state=complete action="Preserve withdrawn assets and bind the new D49 build and acceptance evidence"
 /goal phase=history id=DATA.BATCH_REPAIR49 state=complete action="Restore fixed ten-job batches and resume the preserved normalization checkpoint"
 /goal phase=history id=DATA.D50 state=complete action="Preserve D50 runtime and synthetic artifact provenance alongside active extraction custody"
-/goal phase=current id=DATA.BUILD49 state=active action="Track active 10282b2e382f085d756e9f6645dc05fe requests generation results and verified installation"
+/goal phase=history id=DATA.EMPTY_SOURCE49 state=complete action="Exclude verified blank BODHI normalization input and resume the preserved build"
+/goal phase=current id=DATA.BUILD49 state=active action="Track active c9bb43be69ba8d0c16cedec569895fea requests generation results and verified installation"
 /goal phase=history id=DATA.D47 state=complete action="Bind D47 source archive and verification identity while preserving clinical and C03 custody"
 /goal phase=history id=DATA.TESTVIEW46 state=complete action="Record Test inspection runtime fixture hashes preserved clinical pins and bounded local evidence"
 /goal phase=history id=DATA.STATE19 state=complete action="Reconcile data state references and verify current clinical and archive custody"
@@ -284,4 +285,9 @@
 /evidence id=DATA.DOCS20.E1 class=semantic result=pass source=../Tmp/docs-atlas-2026-10-20/verification.json observed="Inspect seven checkpoint tables thirty-one columns primary keys and no declared foreign keys; document JSON job references RDF structure and bundle contracts separately from historical custody SQLite"
 /evidence id=DATA.DOCS20.E2 class=artifact result=pass source=../Tmp/docs-atlas-2026-10-20/verification.json observed="Match all 169 protected source and configuration files to the initial inspection and all 86 D50 runtime pins plus thirteen retained D50 evidence hashes; preserve raw inputs checkpoints accepted results and historical provenance"
 /evidence id=DATA.DOCS20.E3 class=external_service result=not_run source=../Tmp/docs-atlas-2026-10-20/verification.json observed="Leave new model requests pause resume recovery installation clinical validity official evaluation publication commits and deployment unrun in this read-only documentation slice"
-/handoff state=incomplete action="Monitor active 10282b2e382f085d756e9f6645dc05fe through watch logs and pause; preserve the pinned extraction image and earlier checkpoints until generation and verified installation complete"
+/accept id=DATA.EMPTY_SOURCE49.A1 state=pass action="Exclude empty source input without weakening nonempty concept validation or resetting retries" evidence=DATA.EMPTY_SOURCE49.E1
+/evidence id=DATA.EMPTY_SOURCE49.E1 class=runtime result=pass source=../Tmp/extraction-empty-concept-repair-2026-10-20/image-tests.log observed="Pass 63 extraction tests in development and the pinned offline image including blank Unicode-format input exclusion no extra calls nonempty concept rejection immutable source recovery and synthetic full-pipeline completion"
+/evidence id=DATA.EMPTY_SOURCE49.E2 class=artifact result=pass source=../Tmp/extraction-empty-concept-repair-2026-10-20/verification.json observed="Preserve source 10282b2e382f085d756e9f6645dc05fe SHA256 fe76b8777c9554acd20c6f906e283e1f001c0a57ba33cbebe62efd4ca9c28559 all 2479 completed model results all other job rows counters 886 requests usage and index cursors; record one blank BODHI exclusion with its six attempts in SQLite without a recovery.json duplicate"
+/evidence id=DATA.EMPTY_SOURCE49.E3 class=external_service result=pass source=../Tmp/extraction-empty-concept-repair-2026-10-20/resume-proof.json observed="Resume c9bb43be69ba8d0c16cedec569895fea with fixed ten-job requests and install enabled; verify accepted fresh output and resolution of the prior missing_result job without recalling completed or excluded jobs"
+/evidence id=DATA.EMPTY_SOURCE49.E4 class=artifact result=pass source=provenance/extraction-empty-source-repair-2026-10-20.json observed="Bind compact source image code test and live-resume evidence while retaining generation as active and real installation clinical quality and official evaluation unrun"
+/handoff state=incomplete action="Monitor active c9bb43be69ba8d0c16cedec569895fea through watch logs and pause; preserve earlier checkpoints until generation and verified installation complete"

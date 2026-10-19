@@ -59,6 +59,8 @@ def inspect_run(data):
           bool(defined) or any(e.get('format_version', 0) >= 4 for e in events))
     active_calls, call_errors, active_node, node_errors, active_sdk, sdk_errors = [], [], None, [], None, []
     seen_calls, previous = set(), None
+    collaborator_errors, definition_errors = [], []
+    pipeline = settings.get('pipeline', {})
     state, state_error, frozen, frozen_changes = None, None, None, []
     modern, unified, freeze_seq, sent = False, False, None, []
     for event in events:
@@ -68,6 +70,10 @@ def inspect_run(data):
             if ident in seen_calls or event.get('parent_call_id') != (active_calls[-1] if active_calls else None):
                 call_errors.append(seq)
             seen_calls.add(ident)
+            if pipeline:
+                location = event.get('definition') or {}
+                if not location.get('path') or not isinstance(location.get('line'), int) or location['line'] < 1:
+                    definition_errors.append(seq)
             active_calls.append(ident)
             methods[f"{event.get('owner')}.{event.get('method')}"] += 1
         elif kind in {'call_end', 'call_error'}:
@@ -96,6 +102,10 @@ def inspect_run(data):
             if not active_sdk or (active_sdk.get('request_id'), active_sdk.get('path')) != (event.get('request_id'), event.get('path')):
                 sdk_errors.append(seq)
             active_sdk = None
+        if 'owner_state' in event:
+            owner = event.get('owner')
+            if set(event['owner_state']) - set(pipeline.get('owner_fields', {}).get(owner, ())):
+                collaborator_errors.append(seq)
         if state_error:
             continue
         try:
@@ -116,6 +126,10 @@ def inspect_run(data):
                     frozen, freeze_seq = deepcopy(patient), seq
                 checkpoints.append(dict(seq=seq, node=event.get('node'), session=state.get('interview', {}).get('current'),
                     revision=case.get('revision'), assessment_revision=assessment.get('based_on_case_revision'),
+                    assessment_response=assessment.get('based_on_response'),
+                    assessment_chief=assessment.get('based_on_chief_fact_id'),
+                    education_status=state.get('interview', {}).get('education_status'),
+                    plan_count=len(case.get('plan', [])),
                     primary=primary, frozen=assessment.get('frozen'), turn_present=state.get('turn') is not None,
                     fact_count=len(case.get('facts', {})), note_count=len(case.get('notes', {})),
                     unbound_fact_count=sum(not f.get('graph_binding') for f in case.get('facts', {}).values()) if unified else None))
@@ -124,6 +138,10 @@ def inspect_run(data):
 
     check('call_boundaries', not active_calls and not call_errors,
           dict(open=active_calls, invalid_sequences=call_errors), bool(counts['call_start']))
+    check('collaborator_fields', not collaborator_errors,
+          dict(invalid_sequences=collaborator_errors, declared=pipeline.get('owner_fields', {})), bool(pipeline))
+    check('definition_locations', not definition_errors,
+          dict(invalid_sequences=definition_errors), bool(pipeline) and bool(counts['call_start']))
     check('node_boundaries', active_node is None and not node_errors,
           dict(open=active_node, invalid_sequences=node_errors), bool(counts['node_start']))
     check('sdk_boundaries', active_sdk is None and not sdk_errors,
@@ -157,7 +175,8 @@ def inspect_run(data):
     return dict(version=1, status='fail' if any(c['status'] == 'fail' for c in checks) else
                 'pass' if events and not state_error else 'not_collected',
                 runtime=settings.get('runtime'), graph=settings.get('graph'), execution=settings.get('execution'),
-                state_layout='D47' if unified else 'D46' if modern else 'legacy_or_unknown', checks=checks,
+                pipeline=pipeline,
+                state_layout='D50' if execution.get('kind') == 'sequential' else 'D47' if unified else 'D46' if modern else 'legacy_or_unknown', checks=checks,
                 event_counts=dict(counts), observed_methods=dict(methods),
                 declared_objects=settings.get('objects', []), checkpoints=checkpoints,
                 transitions=[dict(source=a, target=b, count=n) for (a, b), n in transitions.items()],

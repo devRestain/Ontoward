@@ -11,6 +11,8 @@ import runpy
 import sys
 import time
 
+from pipeline import OWNER_FIELDS, metadata as pipeline_metadata
+
 
 def plain(value):
     return json.loads(json.dumps(value, ensure_ascii=False, default=str))
@@ -43,6 +45,7 @@ class Trace:
         self.calls, self.stack, self.object_state = 0, [], None
         self.restore, self.objects = [], []
         self.decision_depth, self.suppressed = 0, Counter()
+        self.evidence_seen = set()
         self.values = {}
 
     def value(self, value):
@@ -90,13 +93,31 @@ class Trace:
 
     def wrap(self, operation, owner, name, object_id, *, call_kind='method'):
         signature = inspect.signature(operation)
+        instance = getattr(operation, '__self__', None)
+        def owner_state():
+            return {field: self.value(getattr(instance, field)) for field in OWNER_FIELDS.get(owner, ())
+                    if instance is not None and hasattr(instance, field)}
+        try:
+            defined = inspect.unwrap(operation)
+            source = inspect.getsourcefile(defined)
+            definition = dict(path=source[source.rfind('/workflow/') + 1:] if source and '/workflow/' in source else source,
+                              line=inspect.getsourcelines(defined)[1]) if source else None
+        except (OSError, TypeError):
+            definition = None
         @wraps(operation)
         def call(*args, **kwargs):
             if self.failed:
                 return operation(*args, **kwargs)
-            if self.decision_depth and owner in {'EvidenceIndex', 'ClinicalKnowledge', 'BudgetPolicy'}:
+            evidence_key = None
+            if owner == 'EvidenceIndex' and name == 'from_case':
+                case = kwargs.get('case') or next((arg for arg in args if type(arg).__name__ == 'CaseState'), None)
+                evidence_key = (getattr(case, 'revision', None), getattr(case, 'chief_fact_id', None))
+            repeated = owner == 'EvidenceIndex' and evidence_key in self.evidence_seen
+            if self.decision_depth and (owner in {'ClinicalKnowledge', 'BudgetPolicy'} or repeated):
                 self.suppressed[f'{owner}.{name}'] += 1
                 return operation(*args, **kwargs)
+            if evidence_key is not None:
+                self.evidence_seen.add(evidence_key)
             self.calls += 1
             call_id, parent, started = self.calls, self.stack[-1] if self.stack else None, time.monotonic()
             state, before = None, None
@@ -109,6 +130,7 @@ class Trace:
                 self.emit('call_start', call_id=call_id, parent_call_id=parent, object_id=object_id,
                           owner=owner, method=name, call_kind=call_kind,
                           callable=f'{operation.__module__}.{operation.__qualname__}',
+                          definition=definition, owner_state=owner_state(),
                           inputs=inputs, **self.object_snapshot(state))
             except Exception as error:
                 self.emit('observation_error', error=type(error).__name__)
@@ -123,6 +145,7 @@ class Trace:
                     after = plain(state.model_dump(mode='json')) if state is not None else None
                     self.emit('call_error', call_id=call_id, owner=owner, method=name,
                               error=type(error).__name__, message=str(error),
+                              owner_state=owner_state(),
                               writes=changes(before, after) if before is not None else [], **self.object_snapshot(state))
                 except Exception:
                     pass
@@ -134,6 +157,7 @@ class Trace:
                                        else self.value(item) for key, item in arguments.items()}
                     argument_writes = changes(self.expanded(inputs), self.expanded(arguments_after))
                     self.emit('call_end', call_id=call_id, owner=owner, method=name, output=self.value(result),
+                              owner_state=owner_state(),
                               writes=changes(before, after) if before is not None else [],
                               argument_writes=argument_writes, **({'arguments_after': arguments_after} if argument_writes else {}),
                               elapsed=round(time.monotonic() - started, 6), **self.object_snapshot(state))
@@ -154,6 +178,8 @@ class Trace:
             'DoctorEar': {'process_input', 'record_delivery', '_context', '_read_context', '_project_context',
                           '_mapping_payload', '_map_batch', '_parse_text', '_demographic_facts', '_fixed_reply'},
             'DoctorBrain': {'complete'},
+            'DoctorMouth': {'_render', 'render_diagnosis', 'render_education', 'prepare_empathy',
+                            'validate_action', 'execute_action'},
             'QuestionTools': {'_spec', '_question', '_register', '_options', 'chief_statuses',
                               'prepare_clarification', 'select_question'},
             'BudgetPolicy': {'evaluate', 'can_start_action', 'can_empathize', 'model_allowance'},
@@ -188,13 +214,14 @@ class Trace:
         visit(consultation, 'consultation')
         visit(knowledge, 'knowledge')
         # Wrap the symbols actually called by Ear/Brain, rather than altering the rules globally.
-        from workflow import doctor_ear
+        from workflow import doctor_ear, education as plan
         from workflow.rules import decision
         from workflow.sessions import initiation, chief_complaint, context_factor, differential_diagnosis, education
         boundaries = ((doctor_ear, 'InputBinding', ('candidate_contracts', 'exact_mapping', 'validate_mapping',
                       'force_mapping', 'make_fact', 'note_fact')),
                       (decision, 'GraphEvidence', ('graph_candidates',)),
                       (education, 'EnglishPlan', ('generate_plan',)),
+                      (plan, 'EnglishPlan', ('parse_plan', 'references')),
                       *((module, 'ClinicalInput', ('prepare_decision',)) for module in
                         (initiation, chief_complaint, context_factor, differential_diagnosis)))
         for module, owner, names in boundaries:
@@ -296,9 +323,12 @@ def observing(path):
                 sources.add('knowledge/manifest.json')
             sources.update(file.relative_to(root).as_posix() for parts in modules.values() for file in parts)
             trace.emit('settings', education_enabled=consultation.budget.education_enabled, objects=trace.objects,
+                pipeline=pipeline_metadata(),
                 state_schema=WorkflowState.model_json_schema(),
                 runtime={'algorithm': __import__('settings').ALGORITHM_VERSION,
                     'collector_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                    'test_source_sha256': {name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+                                          for name in ('observe.py', 'execution.py', 'pipeline.py')},
                     'source_sha256': {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in sorted(sources)},
                     'prompt_routes': {route: [file.relative_to(root).as_posix() for file in parts]
                                       for route, parts in modules.items()}},
@@ -312,6 +342,7 @@ def observing(path):
             trace.node = name
             if kind == 'start':
                 trace.suppressed.clear()
+                trace.evidence_seen.clear()
                 trace.snapshot('node_input', current.model_dump(mode='json'))
                 trace.emit('node_start', operation=name)
             elif kind == 'error':
@@ -339,7 +370,7 @@ def observing(path):
         return response
 
     Consultation.run, nova_sdk.Client._request = run, request
-    trace.emit('start', format_version=5)
+    trace.emit('start', format_version=6)
     try:
         yield trace
     except BaseException as error:

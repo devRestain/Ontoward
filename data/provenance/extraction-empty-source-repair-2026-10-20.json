@@ -1,0 +1,160 @@
+{
+  "contract": "d49-empty-source-repair-1",
+  "created_at": "2026-10-20T02:12:27+09:00",
+  "revision": "dcbdfbed81ccd8c5b6949ad1bdaeaa58914b5d24",
+  "cause": {
+    "job_id": "62a77b522ef63d9eb18ec80be06752b798c755fda11f7264938e877213e07b34",
+    "source": "bodhi:nodes_symptom",
+    "clinical_fields": "empty",
+    "uuid_codepoints": [
+      "U+200B"
+    ],
+    "responses": "empty concepts in six completed responses"
+  },
+  "image": {
+    "tag": "ontoward-extraction:local",
+    "id": "sha256:bcddb6e151d8e9729c122882f0c2acf8ee059017e44fe433820c357b52e35099",
+    "base": "sha256:0ac1f28bb80519e5a5c386a698eb3c52e7a6c30babb2fb92b7015cb598892b3a"
+  },
+  "verification": {
+    "source_id": "10282b2e382f085d756e9f6645dc05fe",
+    "run_id": "c9bb43be69ba8d0c16cedec569895fea",
+    "source_sha256": "fe76b8777c9554acd20c6f906e283e1f001c0a57ba33cbebe62efd4ca9c28559",
+    "preserved_table_hashes": {
+      "requests": "08c17bd8752dc3f5d5eebc4a03b0260d298ecdc738a0b6c2abd1046eb541ea68",
+      "usage": "1d37e0a39aa91772fb473dcb3b58967e5af1ad62664b927efd2c110bf243bc06",
+      "all_other_job_rows": "2c5226070043b410fd80b084c04811098bc81f75e13d92b1da214b4a977f90d4"
+    },
+    "contracts_and_cursors_unchanged": true,
+    "model_results_preserved": 2479,
+    "jobs": {
+      "done": 2480,
+      "pending": 3948,
+      "retry": 1
+    },
+    "requests": {
+      "accepted": 885,
+      "failed": 1
+    },
+    "usage": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 548,
+        "input_tokens": 2534916,
+        "output_tokens": 1046486
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6-luna",
+        "calls": 337,
+        "input_tokens": 1582020,
+        "output_tokens": 611204
+      }
+    ],
+    "exclusions": [
+      {
+        "attempt_count": 6,
+        "job_id": "62a77b522ef63d9eb18ec80be06752b798c755fda11f7264938e877213e07b34",
+        "previous_error": "missing_generated_concepts",
+        "previous_status": "failed",
+        "reason": "empty_bodhi_source_row"
+      }
+    ],
+    "model_calls_in_recovery": 0,
+    "standalone_recovery_json": false,
+    "runtime_manifest_installed": false
+  },
+  "live_resume": {
+    "observed_at": "2026-10-19T17:12:09.008322+00:00",
+    "run_id": "c9bb43be69ba8d0c16cedec569895fea",
+    "state": "running",
+    "phase": "normalize",
+    "jobs": {
+      "done": 2490,
+      "pending": 3929,
+      "running": 10
+    },
+    "requests": {
+      "accepted": 886,
+      "failed": 1,
+      "sent": 1
+    },
+    "usage": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 548,
+        "input_tokens": 2534916,
+        "output_tokens": 1046486
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6-luna",
+        "calls": 338,
+        "input_tokens": 1593116,
+        "output_tokens": 615823
+      }
+    ],
+    "new_requests": [
+      {
+        "id": "030342e8-da2a-4042-bef1-5a50072d872f",
+        "jobs": 10,
+        "state": "accepted",
+        "finish": "stop",
+        "results": 10
+      },
+      {
+        "id": "02c3a787-f593-4d49-bd2b-881dac11225d",
+        "jobs": 10,
+        "state": "sent",
+        "finish": null,
+        "results": null
+      }
+    ],
+    "previous_missing_result_job": {
+      "job_id": "647a7efd4def1ab228ef655d46fc2e3e7a638ba04e03c26223d3fdb57c90014a",
+      "status": "done",
+      "attempt_count": 2,
+      "error": null
+    },
+    "completed_or_excluded_jobs_never_recalled": true,
+    "model_calls_in_recovery": 0
+  },
+  "validation": {
+    "development_tests": 63,
+    "image_tests": 63,
+    "offline_network": "none",
+    "fixed_batch_size": 10,
+    "semantic_attempt_ceiling": 6,
+    "actual_generation": "running",
+    "real_installation": "not_run",
+    "clinical_quality": "not_run",
+    "official_evaluation": "not_run"
+  },
+  "files": {
+    "Extraction/ontoward_extraction/__init__.py": "b0fa6a1d5eb69c16800185180e7ac1c42cd4df30ef34af3162cbfc8f9cadc597",
+    "Extraction/ontoward_extraction/__main__.py": "05c9fd3fdfc4d176b77fe70446aa70472374610fbfd83eb474633680575776b0",
+    "Extraction/ontoward_extraction/build.py": "6096e1f8643be5d606b34378ddd29f6353d46a5d89e7592da1ae71e88db1fd5d",
+    "Extraction/ontoward_extraction/compile.py": "2159ad46cfcaa235facbf5b1714f17b8b45f8580161351ba32c26cd8290cedbf",
+    "Extraction/ontoward_extraction/guidelines.py": "bcf7b88be2d84f5a0c6394c449b613c87480928091e26b30105e98c42f11288c",
+    "Extraction/ontoward_extraction/inputs.py": "c8f0aee3bb11913c7f9221ea6f64226839407d2c74c05cb84b3330e4f2aa95cb",
+    "Extraction/ontoward_extraction/install.py": "e59e68ea4521724b94feb68ba72b116506262e834e183736751d8db53dbea25d",
+    "Extraction/ontoward_extraction/jobs.py": "b4a7e644348af381a7935e6e1e958273f54710c86c71f1df1c3035fd49a34063",
+    "Extraction/ontoward_extraction/llm.py": "57df4f093389a6ba4edf352a1a0bdc51c0394d4d5e02baaeefca4a3cc2ad1194",
+    "Extraction/ontoward_extraction/models.py": "f4410f71d2ca4b3d074b32059060d21af073c61c2676e2c732c2097b4335afc6",
+    "Extraction/ontoward_extraction/normalize.py": "6e20443fd48d997b065ceab2d35adacc4e01030cd2ceead4ae7dab0671c3b359",
+    "Extraction/ontoward_extraction/progress.py": "9950cfda223fdf6aa7dcd7d3f0d36cf121035243cb1320c4775dee1970bb8962",
+    "Extraction/ontoward_extraction/recovery.py": "c529a821427250fb9bff39d7c9762d8d424f44bae18502297bfcd69f05f1cadb",
+    "Extraction/ontoward_extraction/verify.py": "b50174706e41e439ed40819b077b09f43bacc1d25e51082764acca742a9a8b6c",
+    "Extraction/tests/test_empty_source.py": "b70449847f00af20ef7ea397431e6fb2dc90a499556e7b3f0bd9d9c9a90b3998",
+    "Extraction/extraction.sh": "33a25f31f5e8ba2bd99b5de8ab7513f1c5679b15e53aba2008981081ebd04185",
+    "Extraction/config.json": "7ad2974511e475f65c0dc0bf3a2684b4a617a1021e742277ff638f0777fdf980",
+    "Tmp/extraction-empty-concept-repair-2026-10-20/Dockerfile": "3912d741d4172d70e23d5d8c1e813dfe132d5992824ec018925a8ccb409a314f",
+    "Tmp/extraction-empty-concept-repair-2026-10-20/tests.log": "c568d1274ce4321b4518f47b49dc4c14051feec4ce7736e723b43e33089544f7",
+    "Tmp/extraction-empty-concept-repair-2026-10-20/image-tests.log": "0504c362fb9752ff68c17d62bfbf0874828b6e6a0ca7ef8733f289d8b047914d",
+    "Tmp/extraction-empty-concept-repair-2026-10-20/inspection.json": "76c07cc8b276715af6e3cc82cfcc12333048e4b4cbd5d18017a48418dfa58ee6",
+    "Tmp/extraction-empty-concept-repair-2026-10-20/verification.json": "230f0060ae8ae65a877ac20f4f48a5c2c046de13681808854df3776af7d0529c",
+    "Tmp/extraction-empty-concept-repair-2026-10-20/resume-proof.json": "f976415be499c7d83cf406b721ea3360708f687832e5319a81cf83a74f0381f5"
+  }
+}

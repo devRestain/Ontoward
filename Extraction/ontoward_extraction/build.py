@@ -17,6 +17,33 @@ from .install import install
 PHASES = ('normalize','questions','draft','final','conflict','patch')
 
 
+def empty_bodhi_candidate(source):
+    def blank(value):
+        return value is None or isinstance(value,str) and all(
+            char.isspace() or unicodedata.category(char)=='Cf' for char in value)
+    raw=source.get('raw')
+    return (source.get('source') in {'bodhi:nodes_condition','bodhi:nodes_symptom'} and
+        isinstance(raw,dict) and bool(raw) and all(blank(value) for value in raw.values()) and
+        blank(source.get('name')) and not source.get('snomed_descriptions') and not source.get('snomed_definitions'))
+
+
+def exclude_empty_sources(jobs):
+    excluded=[]
+    for row in jobs.pending('normalize'):
+        jobs.boundary()
+        if not empty_bodhi_candidate(json.loads(row['normalized_input'])): continue
+        receipt=dict(job_id=row['job_id'],reason='empty_bodhi_source_row',
+            previous_status=row['status'],previous_error=row['error'],attempt_count=row['attempt_count'])
+        with jobs.db:
+            jobs.db.execute("UPDATE jobs SET status='done',result=?,error=NULL WHERE job_id=?",
+                (canonical(Result(job_id=row['job_id']).model_dump()),row['job_id']))
+            jobs.db.execute('INSERT OR REPLACE INTO meta VALUES(?,?)',
+                ('excluded:'+row['job_id'],canonical(receipt)))
+        excluded.append(receipt)
+        print(canonical(dict(event='normalization_source_excluded',**receipt)),flush=True)
+    return excluded
+
+
 def normalization_result(row):
     value=dict(row)
     if not isinstance(row.get('concepts',[]),list): return value
@@ -169,6 +196,7 @@ def run_phase(jobs, phase, config, provider=None, retry_unknown=False):
         else:
             jobs.request_state(request['request_id'],'outcome_unknown',error='interrupted_after_send')
             raise OutcomeUnknown('outcome_unknown_requires_explicit_retry')
+    if phase=='normalize': exclude_empty_sources(jobs)
     size=config['batch_size']
     while pending:=jobs.pending(phase):
         jobs.boundary()

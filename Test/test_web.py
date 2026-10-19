@@ -300,3 +300,25 @@ class WebTests(unittest.TestCase):
         path.mkdir()
         write(path / 'run-id', 'actual-run-identity')
         self.assertEqual(collect(path)['run_id'], 'actual-run-identity')
+
+    def test_collaborator_capture_excludes_services_and_preserves_errors(self):
+        class DifferentialDiagnosisSession:
+            def __init__(self):
+                self.last_input, self.error = None, None
+                self.client = {'token': 'credential-never-serialized'}
+            def decide(self):
+                self.last_input = (3, 'chief-1', 'response-2')
+                self.error = 'original-failure'
+                raise ValueError(self.error)
+        path = Path(self.temp.name) / 'collaborator.jsonl'
+        trace, session = Trace(path), DifferentialDiagnosisSession()
+        call = trace.wrap(session.decide, 'DifferentialDiagnosisSession', 'decide', 'consultation.sessions.DD')
+        with self.assertRaisesRegex(ValueError, '^original-failure$'):
+            call()
+        rows = [json.loads(line) for line in path.read_text().splitlines()]
+        self.assertEqual([row['kind'] for row in rows], ['call_start', 'call_error'])
+        self.assertEqual(rows[0]['owner_state'], {'last_input': None, 'error': None})
+        self.assertEqual(rows[-1]['owner_state']['last_input']['data'], [3, 'chief-1', 'response-2'])
+        self.assertEqual(rows[-1]['owner_state']['error'], session.error)
+        self.assertNotIn('credential-never-serialized', path.read_text())
+        self.assertFalse(trace.stack)

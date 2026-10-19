@@ -194,3 +194,45 @@ assert.match(unifiedPage.text(),/통합 환자 사실/);assert.match(unifiedPage
 assert.match(unifiedPage.text(),/patient_context/);assert.doesNotMatch(unifiedPage.text(),/과거 별도 note/);
 assert.equal(JSON.stringify(unified.case.facts.f1.graph_binding),JSON.stringify({kind:'symptom',target:'Headache',eligible:true}));
 console.log('PASS: D47 unified facts, graph bindings and demographic context without a duplicate note store');
+
+const d50State=JSON.parse(JSON.stringify(unified));
+delete d50State.case.facts.f1.graph_binding.eligible;
+d50State.case.assessment.differential[0].supports=[{fact_ids:['f1'],graph_ref:{kind:'symptom',id:'Headache'}}];
+const d50Events = [
+  {seq:1,kind:'start',format_version:6},
+  {seq:2,kind:'settings',execution:{kind:'sequential',operations:['enter_session']},
+    pipeline:{contract:'D50',landmarks:[{id:'assessment',owners:['DifferentialDiagnosisSession'],methods:['decide']}] }},
+  {seq:3,kind:'initial',state:d50State,session:'DifferentialDiagnosis',turn:10},
+  {seq:4,kind:'node_start',node:'enter_session',session:'DifferentialDiagnosis',turn:10},
+  {seq:5,kind:'call_start',node:'enter_session',call_id:1,parent_call_id:null,owner:'DifferentialDiagnosisSession',
+    method:'decide',callable:'workflow.sessions.differential_diagnosis.DifferentialDiagnosisSession.decide',
+    definition:{path:'workflow/sessions/differential_diagnosis.py',line:40},object_id:'consultation.sessions.DifferentialDiagnosis',
+    inputs:{state:{type:'WorkflowState',state_reference:true}},object_state:d50State,owner_state:{last_input:null,error:null}},
+  {seq:6,kind:'call_end',node:'enter_session',call_id:1,owner:'DifferentialDiagnosisSession',method:'decide',output:null,
+    writes:[],owner_state:{last_input:{type:'tuple',data:[1,'f1','answer-10']},error:null}},
+  {seq:7,kind:'node_end',node:'enter_session',session:'DifferentialDiagnosis',turn:10,patch:[]},
+  {seq:8,kind:'end'}
+];
+const d50Data={...data,record:{},trace:{status:'complete',events:d50Events}},d50Original=JSON.stringify(d50Data),d50=load(d50Data);
+assert.match(d50.text(),/순차 작업/);
+assert.doesNotMatch(d50.text(),/deep copy|검증된 dict|그래프 노드/);
+const landmark=d50.get('detail-panel').querySelector('.landmark');landmark.open=true;landmark.emit('toggle');
+landmark.querySelector('button').click();
+const d50Inspector=d50.get('detail-panel').querySelector('.flow-inspector');
+assert.match(d50Inspector.textContent,/differential_diagnosis.py:40/);
+assert.match(d50Inspector.textContent,/실행 객체가 소유한 값/);
+assert.match(d50Inspector.textContent,/last_input/);
+d50.get('tab-objects').click();
+const ownerStates=d50.get('detail-panel').querySelector('.collaborator-states');ownerStates.open=true;ownerStates.emit('toggle');
+assert.match(ownerStates.textContent,/consultation.sessions.DifferentialDiagnosis/);
+assert.match(ownerStates.textContent,/호출 직전/);assert.match(ownerStates.textContent,/호출 직후/);
+ownerStates.querySelector('button').click();
+assert.equal(d50.get('tab-flow').attributes['aria-selected'],'true');
+assert.match(d50.text(),/last_input/);
+d50.get('tab-diagnosis').click();assert.match(d50.text(),/f1 · Headache/);assert.doesNotMatch(d50.text(),/undefined/);
+assert.equal(JSON.stringify(d50Data),d50Original);
+const d50Partial=load({...d50Data,trace:{status:'incomplete',events:d50Events.slice(0,5)}});
+const partialCall=walk(d50Partial.get('detail-panel')).find(node=>node.className.includes('flow-call'));
+partialCall.click();assert.match(d50Partial.text(),/종료 미수집|반환값이 수집되지 않았습니다/);
+assert.doesNotMatch(d50Partial.text(),/answer-10/);
+console.log('PASS: D50 sequential flow, trace landmarks, callable source locations, collaborator field snapshots, partial coverage and immutable records');
