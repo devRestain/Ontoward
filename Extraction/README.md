@@ -1,6 +1,29 @@
 # 새 지식 DB 추출
 
-D49의 독립 실행기는 네 원자료에서 새 `v5-enum-1` 번들을 만든다. 이미지는 **ontoward-extraction:local**, 진입점은 `python -m ontoward_extraction`이다. 이미지·합성 파이프라인과 실제 RF2/CSV의 읽기 전용 파싱을 검증했다. 모델 생성·설치는 별도 실행이다. 실제 번들이 설치되기 전 `prepare()`와 정식 패키징은 `knowledge_bundle_not_installed`로 실패한다.
+D49의 독립 실행기는 네 원자료에서 새 `v5-enum-1` 번들을 만듭니다. 이미지는 **ontoward-extraction:local**, 진입점은 `python -m ontoward_extraction`입니다. 이미지·합성 파이프라인과 실제 RF2/CSV의 읽기 전용 파싱을 검증했습니다. 별도로 승인된 실제 NOVA 생성은 진행 중이며 [루트 상태](../PROJECT_STATE.md)·[데이터 상태](../data/PROJECT_STATE.md)를 따릅니다. 실제 번들이 설치되기 전 `prepare()`와 정식 패키징은 `knowledge_bundle_not_installed`로 실패합니다.
+
+## 전체 생성 순서와 DB를 먼저 이해하기
+
+```mermaid
+flowchart LR
+    Index["index: 원자료·최신 RF2"] --> Normalize["normalize: 개념·역할"]
+    Normalize --> Questions["questions: 질문·진찰·속성 역할"]
+    Questions --> Draft["draft: 관계 초안"]
+    Draft --> Final["final → conflict"]
+    Final --> Patch["patch: 유한 공백 보완"]
+    Patch --> Compile["compile → verify"]
+    Compile --> Install["명시된 경우 install → complete"]
+```
+
+정규화에서는 임상 개념을 먼저 안정화하고 행동 문구는 questions 단계에서 만듭니다. 이후 초안·최종 분류와 충돌 해결·공백 보완을 거쳐 RDF와 질문·지침·manifest를 컴파일합니다. [아틀라스](../Test/atlas.html#extraction)는 각 단계의 입력·기능·출력과 공급자/중단 경계를 도식으로 설명하며, [SQLite 스키마](../Test/atlas.html#sqlite)는 실제 7개 테이블의 열·기본키·논리 연결을 모두 제공합니다.
+
+| 저장 영역 | 내용 | 실행 상담과의 관계 |
+|---|---|---|
+| work/RUN_ID/jobs.sqlite3 | meta, jobs, requests, usage, source_rows, rf2, rf2_modules | 생성기의 체크포인트. 상담에서 읽지 않습니다. |
+| output/RUN_ID/ | schema·vocabulary·clinical·questions·guidelines·manifest | 검증 전 staging입니다. |
+| submission/knowledge/builds/BUILD_ID/ | 검증된 build 전용 자산 | 활성 manifest가 마지막에 교체된 뒤 prepare가 읽습니다. |
+
+SQLite에는 SQL 외래 키가 선언되어 있지 않습니다. requests.job_ids의 JSON 배열과 meta의 빌드 신원을 Python이 연결합니다. WAL·FULL 동기화와 worker lock, 수용 transaction이 진행 보존을 담당합니다. 파일 개수나 normalize 완료 비율은 전체 생성 완료율이 아닙니다. 현재 실행을 확인하려면 아래의 키 없는 status/watch를 사용하세요.
 
 | 공급자 | 인증·전송 | 초안 / 최종 분류 |
 |---|---|---|

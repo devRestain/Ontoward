@@ -1,7 +1,7 @@
 /state version=1
 /project id=ontoward
 /status value=active
-/checkpoint revision=3c5c1711e3963698128fa32c06cf222568a9bdbc dirty=true updated=2026-10-20T01:07:57+09:00
+/checkpoint revision=37aa74df239f8167d76f64fff2de841b4fa3f36b dirty=true updated=2026-10-20T01:34:50+09:00
 /goal phase=history id=ROOT.D48 state=complete action="Classify the saved C03 service failure and coordinate modular prompt acceptance"
 /goal phase=history id=ROOT.INDEX_REPAIR49 state=complete action="Repair RF2 literal parsing and provide keyless extraction progress and durable console commands"
 /goal phase=history id=ROOT.NORMALIZE_REPAIR49 state=complete action="Deliver the missing NOVA output schema and recover the fully indexed zero-result checkpoint offline"
@@ -509,4 +509,14 @@
 /evidence id=ROOT.D50.E5 class=external_service result=not_run source=Tmp/d50-2026-10-20/verification.json observed="Leave new external model requests clinical quality official NOVA evaluation real generation installation by this task publication commits and deployment unrun"
 /scope id=ROOT.D50.S1 state=in action="Own runtime integration offline verification packaging observation contracts and evidence handoff"
 /scope id=ROOT.D50.S2 state=out action="Exclude concurrent extraction implementation worker operations credentials real installation source custody and remote effects"
+/goal phase=history id=ROOT.DOCS20 state=complete action="Reconcile current D50 source state Korean READMEs and the offline workflow pipeline and schema atlas"
+/accept id=ROOT.DOCS20.A1 state=pass action="Replace stale D46 architecture explanations with source-backed D50 workflow and D49 pipeline definitions" evidence=ROOT.DOCS20.E1,ROOT.DOCS20.E2
+/accept id=ROOT.DOCS20.A2 state=pass action="Reconcile live build boundaries scoped state and preserved implementation evidence" evidence=ROOT.DOCS20.E3,ROOT.DOCS20.E4
+/evidence id=ROOT.DOCS20.E1 class=static result=pass source=Tmp/docs-atlas-2026-10-20/verification.json observed="Resolve 212 local links across eleven documents and verify twelve atlas sections eight SVG diagrams unique anchors no scripts no external assets and bounded SVG geometry"
+/evidence id=ROOT.DOCS20.E2 class=semantic result=pass source=Tmp/docs-atlas-2026-10-20/verification.json observed="Match fourteen RDF classes twenty-three properties seven SQLite tables thirty-one columns exact DDL and CaseFact fields to current source and the read-only checkpoint"
+/evidence id=ROOT.DOCS20.E3 class=runtime result=pass source=Tmp/docs-atlas-2026-10-20/snapshot.json observed="Confirm absent production manifest and expected knowledge_bundle_not_installed from prepare in the network-disabled credential-free project dev container; reference DATA.BUILD49.E1 for current read-only generation progress"
+/evidence id=ROOT.DOCS20.E4 class=artifact result=pass source=data/PROJECT_STATE.md observed="Reference DATA.DOCS20 for preserved source and D50 evidence hashes and APP.DOCS20 for current runtime documentation; retain the prior D46 atlas in Tmp/docs-atlas-2026-10-20/atlas-d46.html"
+/evidence id=ROOT.DOCS20.E5 class=external_service result=not_run source=Tmp/docs-atlas-2026-10-20/verification.json observed="Leave new model calls generation control installation consultation reruns browser mobile print and Mermaid rendering clinical validation official evaluation commits publication and deployment unrun; observe no browser engine in the project dev image"
+/scope id=ROOT.DOCS20.S1 state=in action="Update maintained documentation scoped state and dated static architecture explanations from observed source"
+/scope id=ROOT.DOCS20.S2 state=out action="Exclude worker operations raw source changes credential volumes runtime implementation accepted receipt mutation and external effects"
 /handoff state=incomplete action="Monitor active 10282b2e382f085d756e9f6645dc05fe through watch logs and pause; preserve the pinned extraction image and earlier checkpoints until generation and verified installation complete"

@@ -6,6 +6,7 @@
 |---|---|
 | tests/workflow/ | 입력·세션·조건·질문·평가 고정·Education·SOAP·전송 유지 회귀 |
 | tests/workflow/test_d49.py | qualitative effect·scope·부분/모순·Context·속성 존재 전제·첫 DD action |
+| tests/workflow/test_d50.py | 정상 입력 형제 보존·동적 graph 자격·정확한 단답·호출 일정·공동 교육·순차 실행 |
 | tests/workflow/fixture_bundle.py | Tmp/의 새 합성 번들 구성 |
 | tests/workflow/test_admitted.py | 명시적 새 번들의 전체 상담·Education 경로 |
 | packaging/package_submission.py | 필요한 runtime·공개 설정·참조 prompts/assets만 ZIP에 포함 |
@@ -17,6 +18,8 @@ docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --
 ```
 
 검증은 프로젝트 컨테이너에서 수행하고 호스트에 의존성을 설치하지 않는다. 합성 프로토콜 통과·실제 모델 의미·임상적 정확성·공식 평가는 구분한다. 독립 ZIP 원본 SDK 검증은 Test/compose.d49.yaml을 사용한다.
+
+[아틀라스](../Test/atlas.html#evidence)는 검증 층위와 코드 탐색 경로를 안내합니다. [D50 provenance](../data/provenance/algorithm-d50-2026-10-20.json)의 과거 소스·독립 ZIP 169회귀와 SDK completed 기록을 현재 문서 작업의 새 테스트 실행으로 해석하지 않습니다. 실제 번들 설치 전 production prepare/패키징 실패와 Tmp/ 합성 수용을 분리합니다.
 
 ```sh
 docker compose build package

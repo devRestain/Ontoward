@@ -52,7 +52,7 @@
 - Run maintained workflow checks with Dev/tests/workflow/compose.offline.yaml and extraction checks in the same proven project dev image or final extraction image.
 - Verify representative full consultations and the independent synthetic ZIP through the unchanged entrypoint and original SDK. Keep fixtures outside the agent artifact and document actual model/clinical/official checks as not_run.
 - Package only required runtime Python, pinned requirements, public .env, referenced prompts/text, and five knowledge assets plus manifest. Exclude source originals, preparation code, credentials, tests, guidance, state, and caches.
-- Keep Test observation read-only; preserve saved traces and accepted evidence. Mark atlas.html and old comparison tools as historical snapshots rather than current acceptance.
+- Keep Test observation read-only; preserve saved traces and accepted evidence. Keep atlas.html as a dated source-backed explanation snapshot rather than acceptance evidence; label old comparison tools as historical.
 
 ## Documentation and handoff
 

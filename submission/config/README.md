@@ -2,6 +2,8 @@
 
 D50은 D48의 모듈 선택을 유지하며 [prompts.json](prompts.json)이 작업별 모듈 조합을 정하고 [prompts/](prompts/)의 영어 지시문을 읽는다. 각 호출자가 Python에서 현재 작업을 선택한다. LLM에는 해당 작업의 자료 해석 규칙·출력 계약·상황 지시만 전달한다. DoctorBrain은 완성된 messages를 실행하며 프롬프트를 선택하지 않는다.
 
+흐름을 먼저 이해하려면 [아틀라스의 소유권](../../Test/atlas.html#owners)과 [세션별 호출 시점](../../Test/atlas.html#consultation)을 보세요. 프롬프트를 선택하는 호출자, 모델을 실행하는 Brain, 출력을 수용하는 Python 검증을 구분해 설명합니다.
+
 공개 설정은 [submission/.env](../.env)에 두고 같은 이름의 환경변수가 우선한다. 프롬프트 manifest와 각 모듈 경로는 submission/config 내부에 제한한다. 변경은 prepare 재실행으로 반영한다. 기존 열 개의 혼합 프롬프트 파일과 개별 프롬프트 환경변수는 제거했다.
 
 | 설정 | 기본값 | 역할 |

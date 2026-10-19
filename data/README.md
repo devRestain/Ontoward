@@ -17,4 +17,16 @@ D49에서 기존 임상 DB의 **활성 사용을 철회**했다. 과거 원자�
 
 실행 RDF와 임상 입력에는 점수·가중치·관계 출처·confidence·reviewer를 넣지 않는다. 실제 환자 취득 source/turn과 Education 문서 경로/hash/인용은 각 실행 책임에서 보존한다. 라이선스·원자료 역할은 [DATA_USE.md](../Extraction/DATA_USE.md)에 분리한다.
 
-이번 D49 결과는 [증빙](provenance/algorithm-d49-2026-10-19.json)과 [상태](PROJECT_STATE.md)를 따른다. 실제 모델 DB 생성과 실제 설치는 not_run이며 활성 manifest는 없다. 합성 데이터와 ZIP은 Tmp/에만 존재한다. 다음 작업은 인증을 마친 선택 공급자로 실제 DB를 생성·검증·설치하는 것이다.
+D49의 초기 구현 수용은 [증빙](provenance/algorithm-d49-2026-10-19.json), D50의 진료 수용은 [D50 provenance](provenance/algorithm-d50-2026-10-20.json)에 보존합니다. 이후 별도로 승인된 실제 NOVA 빌드 `10282b2e382f085d756e9f6645dc05fe`는 진행 중입니다. 2026-10-20 01:33 KST 읽기 전용 조회에서는 normalize 단계였고 실제 활성 manifest는 없었습니다. 최신 작업·요청 상태는 [데이터 상태](PROJECT_STATE.md)와 체크포인트를 따릅니다. 이전 수용의 not_run은 해당 과거 작업 범위에만 적용합니다.
+
+## 저장 구조를 읽는 순서
+
+| 구분 | 정의와 열람 경로 | 주의할 점 |
+|---|---|---|
+| 새 작업 DB | [7테이블·전체 열·키](../Test/atlas.html#sqlite), [jobs.py](../Extraction/ontoward_extraction/jobs.py) | 생성기 전용. 요청–job 연결은 JSON이며 SQL FK가 아닙니다. |
+| 새 실행 지식 | [14클래스·23속성 RDF](../Test/atlas.html#rdf), [온톨로지 안내](ontology/README.md) | 실제 설치 전 인스턴스 수를 주장하지 않습니다. |
+| manifest와 부속 JSON | [6파일·질문·지침 계약](../Test/atlas.html#bundle) | 경로·hash 검증과 manifest 마지막 교체가 필요합니다. |
+| 환자 상태 | [CaseFact·Assessment 스키마](../Test/atlas.html#facts) | data/ DB에 저장하는 지식이 아니라 증례 메모리입니다. |
+| 과거 custody와 결과 | preparation/·catalog/·retired-d42/·provenance/ | 보존된 이력입니다. 새 추출 입력이나 runtime fallback으로 사용하지 않습니다. |
+
+실제 생성 완료, 검증된 번들 설치, 그 번들로 대표 상담 수용이 남아 있습니다. 이번 문서 작업은 체크포인트를 읽기 전용으로 확인했으며 worker·요청·수용 결과·이전 영수증을 변경하지 않았습니다. 합성 번들과 ZIP은 계속 Tmp/에만 둡니다.

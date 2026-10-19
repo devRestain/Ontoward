@@ -2,6 +2,8 @@
 
 현재 구현은 **D50·d50.1**이며 D49 무점수 지식, D48 프롬프트 모듈과 D47 객체·사실 소유권을 유지한다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D48 프롬프트 결정](../DECISION_STATE.md#D48), [D47 객체 결정](../DECISION_STATE.md#D47), [PRD](../PRD.md), [상태 정의](workflow/state/models.py), [D50 오프라인 증빙](../data/provenance/algorithm-d50-2026-10-20.json)을 기준으로 읽는다. 기존 DB의 활성 사용은 철회했고 D45 공식 턴 예산을 유지한다. 실제 새 manifest가 없는 현재 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패한다. 합성 번들은 Tmp/에서만 검증했다.
 
+처음 읽을 때는 [아틀라스의 진료 순서](../Test/atlas.html#consultation)를 먼저 보고 아래 백서를 따라오면 편합니다. 같은 문서에서 [환자 사실 스키마](../Test/atlas.html#facts), [실행 RDF](../Test/atlas.html#rdf), [추출 SQLite](../Test/atlas.html#sqlite)도 비교할 수 있습니다. 아틀라스는 현재 소스의 정적 설명이고 실행 결과는 [제출 상태](PROJECT_STATE.md)가 관리합니다.
+
 <a id="workflow-graph"></a>
 ## 1. 진료 실행 흐름
 
@@ -159,8 +161,9 @@ manifest에는 schema_version·knowledge_contract·build_id와 schema·vocabular
 ```mermaid
 flowchart TD
     Sources["RF2·BODHI·DDXPlus metadata·Astra scope"] --> Index["입력 hash·chunk cursor·빈 SQLite"]
-    Index --> Normalize["개념·역할·질문·진찰"]
-    Normalize --> Draft["유한 관계 초안: Luna medium"]
+    Index --> Normalize["normalize: 개념·역할·허용 값, 행동 text 보류"]
+    Normalize --> Questions["questions: 한국어 질문·진찰·attribute_roles"]
+    Questions --> Draft["유한 관계 초안: Luna medium"]
     Draft --> Final["최종 분류·충돌: Sol medium"]
     Final --> Gaps["결손 한 차례 보완"]
     Gaps --> Stage["staging 여섯 파일·loader/hash 검증"]
@@ -169,4 +172,16 @@ flowchart TD
 
 nova_dev·codex_subscription·openai_api 중 한 빌드의 공급자를 고정한다. 요청 payload/ID·응답·유효 행·사용량·retry·unknown을 체크포인트에 보존하고 완료·neutral을 재호출하지 않는다. pause/SIGINT/SIGTERM은 진행 중 한 응답을 저장한 뒤 종료한다. 같은 fingerprint는 --resume, 불명 API/CLI 전송의 새 시도는 --retry-unknown이 필요하다. 설치는 검증된 파일 뒤 manifest를 원자적으로 바꾼다.
 
-옛 생성기·정책·runtime 자산은 [철회 영수증](../data/extraction/retired-d42-2026-10-19/withdrawal.json)과 과거 준비 결과에 보존한다. 이번에는 이미지 빌드와 합성 오프라인 수용만 완료한다. 실제 로그인·유료 생성·실제 설치·정식 패키징을 실행하지 않았고 원문·이전 ZIP도 변경하지 않았다.
+옛 생성기·정책·runtime 자산은 [철회 영수증](../data/extraction/retired-d42-2026-10-19/withdrawal.json)과 과거 준비 결과에 보존합니다. D49 구현 수용은 이미지·합성 오프라인 범위였습니다. 이후 별도로 승인된 실제 NOVA 생성은 진행 중이며 [루트 상태](../PROJECT_STATE.md)와 [데이터 상태](../data/PROJECT_STATE.md)가 소유합니다. 현재 실제 manifest는 없고, 새 번들 상담·정식 패키징은 설치 후의 별도 수용 작업입니다. 이번 문서 갱신은 모델 호출·생성 제어·설치를 실행하지 않았습니다.
+
+## 15. 데이터를 어디에서 찾아야 하나요?
+
+| 질문 | 저장소와 정의 | 자세한 지도 |
+|---|---|---|
+| 이 환자가 실제로 말하거나 측정된 내용인가요? | 메모리 `CaseFact`와 선택적 `GraphBinding`; [state/models.py](workflow/state/models.py) | [환자 정보 스키마](../Test/atlas.html#facts) |
+| 어떤 질환과 전체 조건이 연결되나요? | manifest의 RDF Graph; [schema.ttl](knowledge/schema.ttl)과 [conditions.py](knowledge/conditions.py) | [14클래스·23속성](../Test/atlas.html#rdf) |
+| 실제로 무슨 질문을 할 수 있나요? | questions와 attribute_roles; [loader](knowledge/graph.py) | [번들·JSON 계약](../Test/atlas.html#bundle) |
+| 생성 요청이 저장되었고 재개해도 되나요? | 추출 전용 jobs.sqlite3; [jobs.py](../Extraction/ontoward_extraction/jobs.py) | [7테이블·열·키](../Test/atlas.html#sqlite) |
+| 실제 SDK에 무슨 내용을 보냈나요? | Test의 별도 관측·model-calls·최종 제출 결과 | [Test 안내](../Test/README.md) |
+
+환자 사실과 등록 지식은 서로 다른 역할입니다. 그래프가 제공하는 것은 일반 조건이며, 환자에게 그 조건이 실제로 확인되었는지는 CaseFact의 사람·시점·episode·취득 경로로 판정합니다. 추출 SQLite에는 환자 사실을 저장하지 않습니다.

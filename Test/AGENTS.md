@@ -68,7 +68,7 @@
 - Keep C10 scripted clinical failure separate from successful website execution and result delivery; never tune fixtures to a case answer or alter submission for a green report.
 - Report authenticated NOVA calls, official API execution, clinical accuracy, and official scoring separately.
 
-- Use brain_double.py for protocol-only clinical responses. Keep compare_d47.py, compare_d46.py, and atlas.html limited to explicit historical snapshots; do not run them as current D49 acceptance against absent old assets.
+- Use brain_double.py for protocol-only clinical responses. Keep compare_d47.py and compare_d46.py limited to explicit historical snapshots; do not run them as current acceptance against absent old assets. Keep atlas.html synchronized with a dated current source snapshot and never treat its explanations as execution acceptance.
 - Keep initial_reports.json limited to public start_information opening and vital_signs and exclude patient scripts examination tables and reference records.
 - Permit the single clinical provider response repair within the existing shared request ceiling while preserving other service and unknown-result stops.
 

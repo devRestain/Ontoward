@@ -1,7 +1,7 @@
 /state version=1
 /project id=ontoward-data
 /status value=active
-/checkpoint revision=3c5c1711e3963698128fa32c06cf222568a9bdbc dirty=true updated=2026-10-20T01:14:56+09:00
+/checkpoint revision=37aa74df239f8167d76f64fff2de841b4fa3f36b dirty=true updated=2026-10-20T01:34:50+09:00
 /goal phase=history id=DATA.D48 state=complete action="Bind D48 source artifact prompt and preserved run evidence without changing clinical assets"
 /goal phase=history id=DATA.INDEX_REPAIR49 state=complete action="Preserve failed indexing evidence and verify the corrected raw-input parsing boundary"
 /goal phase=history id=DATA.NORMALIZE_REPAIR49 state=complete action="Preserve the real normalization failure and bind its guarded offline checkpoint copy"
@@ -278,4 +278,10 @@
 /scope id=DATA.D50.S1 state=in action="Own new D50 runtime and synthetic artifact provenance only"
 /scope id=DATA.D50.S2 state=out action="Exclude active BUILD49 generation checkpoints source custody credential volumes historical receipt mutation and worker operations"
 /evidence id=DATA.BATCH_REPAIR49.E5 class=artifact result=pass source=extraction/v5-enum/work/10282b2e382f085d756e9f6645dc05fe/jobs.sqlite3 observed="Remove the user-selected redundant recovery.json export after verifying exact equality with SQLite recovery metadata; retain authoritative checkpoint metadata and the unchanged referenced provenance record"
+/goal phase=history id=DATA.DOCS20 state=complete action="Reconcile current extraction checkpoint schema and documentation custody without changing the active build"
+/accept id=DATA.DOCS20.A1 state=pass action="Describe actual checkpoint schema generation progress and preserved D50 source and receipt identities" evidence=DATA.BUILD49.E1,DATA.DOCS20.E1,DATA.DOCS20.E2
+/evidence id=DATA.BUILD49.E1 class=runtime result=pass source=../Tmp/docs-atlas-2026-10-20/snapshot.json observed="Observe running nova_dev normalize build 10282b2e382f085d756e9f6645dc05fe at 2026-10-20T01:33:24+09:00 through a read-only transaction with 108 of 108 files 12587695 committed rows 2306 done 4113 pending and ten running jobs; confirm absent active manifest without controlling the worker"
+/evidence id=DATA.DOCS20.E1 class=semantic result=pass source=../Tmp/docs-atlas-2026-10-20/verification.json observed="Inspect seven checkpoint tables thirty-one columns primary keys and no declared foreign keys; document JSON job references RDF structure and bundle contracts separately from historical custody SQLite"
+/evidence id=DATA.DOCS20.E2 class=artifact result=pass source=../Tmp/docs-atlas-2026-10-20/verification.json observed="Match all 169 protected source and configuration files to the initial inspection and all 86 D50 runtime pins plus thirteen retained D50 evidence hashes; preserve raw inputs checkpoints accepted results and historical provenance"
+/evidence id=DATA.DOCS20.E3 class=external_service result=not_run source=../Tmp/docs-atlas-2026-10-20/verification.json observed="Leave new model requests pause resume recovery installation clinical validity official evaluation publication commits and deployment unrun in this read-only documentation slice"
 /handoff state=incomplete action="Monitor active 10282b2e382f085d756e9f6645dc05fe through watch logs and pause; preserve the pinned extraction image and earlier checkpoints until generation and verified installation complete"

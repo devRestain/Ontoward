@@ -4,6 +4,8 @@ D49의 실제 새 번들은 아직 설치하지 않았다. **manifest.json이 �
 
 ClinicalKnowledge.load는 `schema_version=5.0`, `knowledge_contract=v5-enum-1`, build_id와 다섯 asset의 상대 경로/SHA-256을 검증한다. 각 경로는 manifest 디렉터리를 기준으로 해석하며 절대 경로·상위 이탈·symlink 이탈·hash 불일치를 거절한다. 이전 manifest의 status·receipt·policy와 호환 변환은 없다.
 
+[아틀라스의 RDF 지도](../../Test/atlas.html#rdf)에서 클래스·관계·카디널리티를, [번들/JSON 지도](../../Test/atlas.html#bundle)에서 questions·attribute_roles·guidelines·manifest의 필드를 함께 읽을 수 있습니다. 질문은 실행 문구와 답변 계약, RDF는 일반 임상 조건, CaseFact는 실제 환자 관측을 각각 표현합니다. 서로 다른 역할을 하나의 DB로 혼동하지 않는 것이 출발점입니다.
+
 | 번들 파일 | 내용 |
 |---|---|
 | schema.ttl | v5.0 구조 |
