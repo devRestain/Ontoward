@@ -23,7 +23,8 @@ def education_response(payload):
         if phase in {"read", "combine"}:
             return {"notes": []}
         return {"P": {field: [{"text": text, "basis": "model_knowledge", "references": [],
-                               "priority": "safety" if field in {"follow_up", "disposition"} else "routine"}]
+                               "priority": "safety" if field in {"follow_up", "disposition"} else "routine",
+                               "utterances": [KOREAN[field]]}]
                       for field, text in TEXT.items()}}
     if task == "education_doctor":
         if payload.get('announcement'):

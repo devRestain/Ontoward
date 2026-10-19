@@ -29,12 +29,21 @@ class EvidenceIndex:
     entries: tuple
     groups: dict
     contexts: tuple
+    by_target: dict
 
     @classmethod
     def from_case(cls, case, knowledge):
+        facts = case.current_facts()
+        def scope(fact):
+            return (fact.target, fact.subject, fact.subject_member, fact.observation_id,
+                    fact.episode_id, fact.time_context,
+                    fact.acquisition == 'EXAM' or fact.source_ref == 'initial:vital_signs')
+        bases = {scope(fact) for fact in facts if fact.kind in {'symptom', 'finding'}
+                 and fact.status == 'present' and fact.polarity_scope == 'general'}
         records = []
-        for fact in case.current_facts():
-            if fact.evidence_use != 'reasoning' or fact.polarity_scope == 'qualified':
+        for fact in facts:
+            if not fact.graph_binding or fact.polarity_scope == 'qualified' or (
+                    fact.kind == 'attribute' and scope(fact) not in bases):
                 continue
             kinds = ('Symptom', 'ExamFinding') if fact.kind == 'attribute' else (
                 {'symptom':'Symptom', 'finding':'ExamFinding', 'context':'ContextFactor'}[fact.kind],)
@@ -47,7 +56,7 @@ class EvidenceIndex:
                 kind=fact.kind, status=fact.status, measurement=fact.measurement,
                 subject=fact.subject, subject_member=fact.subject_member, observation_id=fact.observation_id,
                 episode_id=fact.episode_id, time_context=fact.time_context,
-                polarity_scope=fact.polarity_scope, evidence_use=fact.evidence_use))
+                polarity_scope=fact.polarity_scope))
         groups, contexts = {}, []
         for item in records:
             if item.kind == 'context':
@@ -58,4 +67,9 @@ class EvidenceIndex:
                 item.episode_id or item.id, item.time_context, objective)
             group = groups.setdefault(key, {'base':[], 'attributes':[]})
             group['attributes' if item.kind == 'attribute' else 'base'].append(item)
-        return cls(tuple(records), groups, tuple(contexts))
+        by_target = {}
+        for group in groups.values():
+            for target in {r.target for r in (*group['base'], *group['attributes'])}:
+                by_target.setdefault(target, []).append({key: [r for r in rows if r.target == target]
+                                                        for key, rows in group.items()})
+        return cls(tuple(records), groups, tuple(contexts), by_target)

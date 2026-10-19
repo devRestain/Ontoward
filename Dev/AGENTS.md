@@ -4,6 +4,7 @@
 - Keep extraction code and prompts in root Extraction/, runtime readers in submission/, durable custody in data/, and synthetic artifacts in Tmp/.
 - Treat the archived Dev/ontology, Dev/codex, Dev/guidelines and their score/admission checks as withdrawn under D49; never restore them as active builders or policy fallbacks.
 - Preserve existing D47/D48 fixtures and extend behavior checks only for changed runtime contracts. Use test_d49.py for qualitative effects, complete conditions, scopes, and question prerequisites.
+- Use test_d50.py for preserved repair siblings current scoped eligibility exact reply boundaries shared relation references response-aware cadence and independent joint Education acceptance. Test actual operation behavior instead of removed LangGraph nodes or routine GET counts.
 - Run python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py' in the root network-disabled dev service with Dev/tests/workflow/compose.offline.yaml.
 - Run Extraction/tests in the project container with PYTHONPATH=/workspace/submission:/workspace/Extraction. Keep dependencies off the host.
 - Use fixture_bundle.py only to stage a fresh synthetic submission beneath Tmp/. Verify complete consultations with test_admitted.py and the independent Test/compose.d49.yaml SDK process.

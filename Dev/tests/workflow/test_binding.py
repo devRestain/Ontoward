@@ -159,7 +159,7 @@ class BindingTests(unittest.TestCase):
         row = f.statement('head',focus='attribute',attribute_terms=['Location'],value_terms=['head'])
         s,c,_ = f.interpret([row])
         attr = next(iter(s.case.facts.values()))
-        self.assertEqual(attr.evidence_use,'record_only')
+        self.assertIsNotNone(attr.graph_binding)
         self.assertFalse(EvidenceIndex.from_case(s.case,c.knowledge).entries)
         self.assertIsNone(s.case.chief())
 

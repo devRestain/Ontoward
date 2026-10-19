@@ -66,7 +66,6 @@ def state(scope='Initiation', *, turns=50, initialized=False):
 def graph_fact(**values):
     binding = {key: values.pop(key) for key in ('kind', 'target', 'attribute', 'values') if key in values}
     binding['method'] = values.pop('binding', 'exact')
-    binding['eligible'] = values.pop('evidence_use', 'reasoning') == 'reasoning'
     return CaseFact(graph_binding=GraphBinding(**binding), **values)
 
 
@@ -177,15 +176,16 @@ def consultation(client=None, prepared=None, *, audit=None, cache=True):
 
 
 def run(client=None, prepared=None, *, audit=None, cache=True):
-    from workflow.graph import build_graph
+    from execution import observing_operations
     c = consultation(client, prepared, audit=audit, cache=cache)
     s = c.nova_session.initialize_case(c.client)
     snapshots = []
-    for update in build_graph(c,c.knowledge).stream(s.model_dump(mode='json'),
-            {'recursion_limit':c.budget.graph_step_limit(s)},stream_mode='updates'):
-        name, raw = next(iter(update.items()))
-        snapshots.append((name,copy.deepcopy(raw)))
-    return c,WorkflowState.model_validate(snapshots[-1][1]),snapshots
+    def capture(kind, name, state, error):
+        if kind == 'end':
+            snapshots.append((name, state.model_dump(mode='json')))
+    with observing_operations(c, capture):
+        c.run(s)
+    return c,s,snapshots
 
 
 def interpret(rows, *, s=None, q=None, k=None, text=None, audit=None, responses=None):

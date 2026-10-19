@@ -5,7 +5,6 @@ import unittest
 from unittest.mock import patch
 
 import fixtures as f
-from workflow.graph import run_node
 from workflow.doctor_brain import ModelResult
 from workflow.rules.action import content_error
 from workflow.rules.submission import validate_payload
@@ -118,9 +117,9 @@ class TransportTests(unittest.TestCase):
         c.questions.register(s,q)
         c.interactions.select_question(s,q)
         c.mouth.validate_action(s)
-        raw=run_node(s,lambda value:c.mouth.execute_action(value,c.client))
+        c.mouth.execute_action(s,c.client)
         self.assertEqual(len(c.client.actions),1)
-        self.assertEqual(raw['turn']['stage'],'received')
+        self.assertEqual(s.turn.stage,'received')
 
     def test_soap_repair_has_one_local_payload_and_new_request_id(self):
         c,s=f.consultation(),f.chief(f.state())

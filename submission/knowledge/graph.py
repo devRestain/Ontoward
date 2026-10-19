@@ -534,12 +534,8 @@ class ClinicalKnowledge:
         self._types = {}
         for subject, kind in self._graph.subject_objects(RDF.type):
             self._types.setdefault(str(subject), set()).add(str(kind))
-        self.patterns_by_input, self.associations_by_context = {}, {}
+        self.associations_by_context = {}
         for profile in profiles:
-            for feature in self.get_pattern_features(profile.id):
-                key = (profile.target, feature.attribute)
-                self.patterns_by_input.setdefault(key, set()).add(profile.id)
-            self.patterns_by_input.setdefault((profile.target, None), set()).add(profile.id)
             for condition in profile.applicability:
                 key = condition.concept_id
                 self.associations_by_context.setdefault(key, []).append(profile)

@@ -15,7 +15,6 @@ REQUIRED = {
     'workflow/__init__.py',
     'workflow/consultation.py',
     'workflow/doctor_mouth.py',
-    'workflow/graph.py',
     'workflow/doctor_ear.py',
     'workflow/doctor_brain.py',
     'workflow/io/__init__.py',

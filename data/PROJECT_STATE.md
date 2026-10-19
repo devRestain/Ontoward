@@ -1,14 +1,16 @@
 /state version=1
 /project id=ontoward-data
 /status value=active
-/checkpoint revision=c83310893daf8009cedc8b85be62f842fcdc4fda dirty=true updated=2026-10-19T20:59:15+09:00
+/checkpoint revision=3c5c1711e3963698128fa32c06cf222568a9bdbc dirty=true updated=2026-10-20T01:14:56+09:00
 /goal phase=history id=DATA.D48 state=complete action="Bind D48 source artifact prompt and preserved run evidence without changing clinical assets"
 /goal phase=history id=DATA.INDEX_REPAIR49 state=complete action="Preserve failed indexing evidence and verify the corrected raw-input parsing boundary"
 /goal phase=history id=DATA.NORMALIZE_REPAIR49 state=complete action="Preserve the real normalization failure and bind its guarded offline checkpoint copy"
 /goal phase=history id=DATA.TEXT_REPAIR49 state=complete action="Preserve the paused checkpoint and bind accepted-row-safe action-text recovery"
 /goal phase=history id=DATA.PROVIDER_REPAIR49 state=complete action="Preserve the provider-failed checkpoint and bind current request recovery and live resumption"
 /goal phase=history id=DATA.D49 state=complete action="Preserve withdrawn assets and bind the new D49 build and acceptance evidence"
-/goal phase=current id=DATA.BUILD49 state=active action="Track active dc60cdc5a593beb39cd6cd8d9a490ea2 requests generation results and verified installation"
+/goal phase=history id=DATA.BATCH_REPAIR49 state=complete action="Restore fixed ten-job batches and resume the preserved normalization checkpoint"
+/goal phase=history id=DATA.D50 state=complete action="Preserve D50 runtime and synthetic artifact provenance alongside active extraction custody"
+/goal phase=current id=DATA.BUILD49 state=active action="Track active 10282b2e382f085d756e9f6645dc05fe requests generation results and verified installation"
 /goal phase=history id=DATA.D47 state=complete action="Bind D47 source archive and verification identity while preserving clinical and C03 custody"
 /goal phase=history id=DATA.TESTVIEW46 state=complete action="Record Test inspection runtime fixture hashes preserved clinical pins and bounded local evidence"
 /goal phase=history id=DATA.STATE19 state=complete action="Reconcile data state references and verify current clinical and archive custody"
@@ -264,4 +266,16 @@
 /evidence id=DATA.PROVIDER_REPAIR49.E4 class=artifact result=pass source=provenance/extraction-provider-repair-2026-10-19.json observed="Bind corrected image code fifty-two tests source preservation official retry reference and the live resume snapshot without pinning the growing console log or changing old receipts"
 /scope id=DATA.PROVIDER_REPAIR49.S1 state=in action="Own failed request custody completed-row preservation current build identity and live-resume evidence"
 /scope id=DATA.PROVIDER_REPAIR49.S2 state=out action="Exclude raw source changes model-setting changes old receipt rewrites clinical validation official submission and publication"
-/handoff state=incomplete action="Track active dc60cdc5a593beb39cd6cd8d9a490ea2 to completion and verified installation while retaining all earlier checkpoints"
+/accept id=DATA.BATCH_REPAIR49.A1 state=pass action="Remove persistent batch shrink and preserve checkpoint custody" evidence=DATA.BATCH_REPAIR49.E1,DATA.BATCH_REPAIR49.E2
+/evidence id=DATA.BATCH_REPAIR49.E1 class=runtime result=pass source=../Tmp/extraction-batch-repair-2026-10-20/checkpoint-image-tests.log observed="Pass 57 extraction tests in development and the repaired offline image including fixed-size missing-row and truncated-output retries bounded attempts synthetic completion and keyless guarded recovery"
+/evidence id=DATA.BATCH_REPAIR49.E2 class=artifact result=pass source=../Tmp/extraction-batch-repair-2026-10-20/verification.json observed="Preserve source dc60cdc5a593beb39cd6cd8d9a490ea2 SHA256 535c888e6444045b51374b18fb4aae9977e283aed48b53ee15a3935e50a9341f all 1787 completed jobs all job counters 815 requests usage and complete index; retain the pinned runtime reader without modifying concurrent workspace changes"
+/evidence id=DATA.BATCH_REPAIR49.E3 class=external_service result=pass source=../Tmp/extraction-batch-repair-2026-10-20/resume-proof.json observed="Resume 10282b2e382f085d756e9f6645dc05fe with install enabled and verify consecutive ten-job requests with at least two accepted responses and no recalled original done jobs; retain actual generation as active and installation unrun"
+/evidence id=DATA.BATCH_REPAIR49.E4 class=artifact result=pass source=provenance/extraction-batch-repair-2026-10-20.json observed="Bind fixed scheduling code tests image base recovery and live ten-job evidence; preserve the separate submission real-bundle acceptance goal"
+/accept id=DATA.D50.A1 state=pass action="Bind D50 synthetic artifact runtime hashes and performed verification without changing active extraction custody" evidence=DATA.D50.E1,DATA.D50.E2
+/evidence id=DATA.D50.E1 class=artifact result=pass source=provenance/algorithm-d50-2026-10-20.json observed="Pin the ninety-one-file synthetic ZIP SHA256 e8a584a59f528931f3c95a6ea7912b676fe3f803017b146f56fddb725e6f0337 source image hashes observer and original SDK evidence while preserving historical receipts"
+/evidence id=DATA.D50.E2 class=artifact result=pass source=../Tmp/d50-2026-10-20/preservation.json observed="Match seven protected SDK entrypoint and knowledge files against the initial snapshot; preserve the absent production manifest and classify seven concurrent Extraction changes as separately owned"
+/evidence id=DATA.D50.E3 class=external_service result=not_run source=provenance/algorithm-d50-2026-10-20.json observed="Leave new generation installation model quality clinical validation official evaluation publication and deployment unrun in the D50 workflow slice"
+/scope id=DATA.D50.S1 state=in action="Own new D50 runtime and synthetic artifact provenance only"
+/scope id=DATA.D50.S2 state=out action="Exclude active BUILD49 generation checkpoints source custody credential volumes historical receipt mutation and worker operations"
+/evidence id=DATA.BATCH_REPAIR49.E5 class=artifact result=pass source=extraction/v5-enum/work/10282b2e382f085d756e9f6645dc05fe/jobs.sqlite3 observed="Remove the user-selected redundant recovery.json export after verifying exact equality with SQLite recovery metadata; retain authoritative checkpoint metadata and the unchanged referenced provenance record"
+/handoff state=incomplete action="Monitor active 10282b2e382f085d756e9f6645dc05fe through watch logs and pause; preserve the pinned extraction image and earlier checkpoints until generation and verified installation complete"

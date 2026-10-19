@@ -21,9 +21,11 @@ class Texts(BaseModel):
     clarification_questions: dict[str, str]
     symptom_assessment: str
     empathy_fallback: str
+    empathy_templates: dict[str, str]
     unknown_replies: list[str]
     education_acknowledgements: list[str]
     present_replies: list[str]
+    absent_replies: list[str]
     reply_trailing_punctuation: str
     status_labels: dict[str, str]
     subject_labels: dict[str, str]
@@ -80,7 +82,7 @@ class TextConfig(BaseModel):
                 or any(not label.strip() for labels in (texts.soap_labels, texts.record_labels)
                        for label in labels.values())):
             raise ValueError("Missing SOAP category labels")
-        reply_groups = [set(texts.unknown_replies), set(texts.present_replies)]
+        reply_groups = [set(texts.unknown_replies), set(texts.present_replies), set(texts.absent_replies)]
         if any(not value.strip() for group in reply_groups for value in group) or any(
             left & right for i, left in enumerate(reply_groups) for right in reply_groups[i + 1:]
         ):
@@ -106,6 +108,10 @@ class TextConfig(BaseModel):
         for name in ('primary_chief_question', 'greeting', 'open_question', 'clarification_question', 'empathy_fallback', 'symptom_cause_unknown'):
             if content_error(getattr(texts, name)):
                 raise ValueError(f"Invalid prepared utterance: {name}")
+        if set(texts.empathy_templates) != {'fear', 'anxiety', 'pain', 'frustration', 'sadness', 'other'} or any(
+                content_error(text) or any(c in text for c in '?？\r\n') or not any('가' <= c <= '힣' for c in text)
+                for text in texts.empathy_templates.values()):
+            raise ValueError('Invalid prepared empathy templates')
         from .rules.collection import INTAKE, HISTORY
         if set(texts.intake_questions) != set(INTAKE) or set(texts.history_questions) != set(HISTORY):
             raise ValueError("Missing common collection questions")

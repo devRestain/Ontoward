@@ -52,3 +52,7 @@ class ChiefComplaintSession:
 
     def prepare(self, state):
         self.prepare_collection(state)
+
+    def required_actions(self, state):
+        return min(7, sum(value == 'unasked' for value in self.tools.chief_statuses(state).values())
+                   + int(not self.tools.open_done(state)))

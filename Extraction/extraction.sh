@@ -11,6 +11,7 @@ case "$command" in
   recover) docker compose run --rm --no-deps -T recovery recover-normalize "$@" ;;
   recover-text) docker compose run --rm --no-deps -T recovery recover-normalize-text "$@" ;;
   recover-provider) docker compose run --rm --no-deps -T recovery recover-normalize-provider "$@" ;;
+  recover-batch) docker compose run --rm --no-deps -T recovery recover-normalize-batch "$@" ;;
   run|resume)
     log_dir="$ROOT/data/extraction/v5-enum/logs"
     mkdir -p "$log_dir"
@@ -34,5 +35,5 @@ case "$command" in
     fi
     tail -n 80 -F "$log"
     ;;
-  *) printf 'Usage: %s [status|watch|pause|recover|recover-text|recover-provider|run|resume|logs] [arguments]\n' "$0" >&2; exit 2 ;;
+  *) printf 'Usage: %s [status|watch|pause|recover|recover-text|recover-provider|recover-batch|run|resume|logs] [arguments]\n' "$0" >&2; exit 2 ;;
 esac

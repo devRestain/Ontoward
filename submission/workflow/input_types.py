@@ -9,6 +9,21 @@ from pydantic import Field, field_validator, model_validator
 from .state.models import CaseFact, Model, ObservedNumber, RecordCategory
 
 
+def normalized_text(value):
+    return bool(re.search('[A-Za-z]', value)) and not re.search('[가-힣]', value) and not value.startswith(('urn:', 'http://', 'https://'))
+
+
+def age_text(measured):
+    def bound(value, unit):
+        return f'{value:g} {unit}' + ('s' if value != 1 else '')
+    prefix = 'Approximately ' if measured.approximate else ''
+    if measured.kind == 'quantity':
+        return prefix + bound(measured.value, measured.unit)
+    lower = ('>=' if measured.lower_inclusive else '>') + ' ' + bound(measured.lower, measured.unit) if measured.lower is not None else None
+    upper = ('<=' if measured.upper_inclusive else '<') + ' ' + bound(measured.upper, measured.upper_unit or measured.unit) if measured.upper is not None else None
+    return prefix + ' and '.join(v for v in (lower, upper) if v)
+
+
 class EmpathySignal(Model):
     quote: str = Field(min_length=1)
     intent: Literal['new_distress', 'renewed_request', 'repeat', 'acknowledgement']
@@ -32,6 +47,12 @@ class PatientContextFact(Model):
                 or self.measurement.upper_unit not in {None,'year','month','week','day'}
                 or any(v is not None and v<0 for v in (self.measurement.value,self.measurement.lower,self.measurement.upper))):
             raise ValueError('Age requires a nonnegative reported age unit')
+        if self.key == 'age' and self.measurement:
+            object.__setattr__(self, 'value', age_text(self.measurement))
+        if not normalized_text(self.value):
+            raise ValueError('Patient context requires normalized English content')
+        if self.key == 'sex' and self.value not in {'male', 'female', 'intersex', 'other', 'unknown'}:
+            raise ValueError('Sex requires an explicit normalized value')
         return self
 
 
@@ -63,8 +84,7 @@ class ContextStatement(Model):
     @field_validator('note_value')
     @classmethod
     def normalized_content(cls, value):
-        if value and (not re.search('[A-Za-z]', value) or re.search('[가-힣]', value)
-                or value.startswith(('urn:', 'http://', 'https://'))):
+        if value and not normalized_text(value):
             raise ValueError('Normalized content requires English clinical text')
         return value
 

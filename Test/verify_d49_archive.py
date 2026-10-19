@@ -44,6 +44,12 @@ def main():
     environment={key:value for key,value in os.environ.items() if key not in {'NOVA_DEV_KEY','OPENAI_API_KEY','CODEX_API_KEY'}}
     environment.update(NOVA_API_BASE=f'http://127.0.0.1:{server.server_port}',NOVA_RUN_TOKEN='synthetic-local-token',
         NOVA_SESSION_ID=client.session_id,PYTHONPATH='/submission')
+    guarded = os.environ.get('ONTOWARD_DENY_LANGGRAPH') == '1'
+    if guarded:
+        environment['PYTHONPATH'] = '/fixtures/Test/no_langgraph:/submission'
+        probe = subprocess.run([sys.executable, '-B', '-c', 'import langgraph'], env=environment,
+                               capture_output=True, text=True)
+        assert probe.returncode != 0 and 'LangGraph is unavailable' in probe.stderr, probe.stderr
     try:
         result=subprocess.run([sys.executable,'-B','/submission/run.py'],cwd='/submission',env=environment,capture_output=True,text=True,timeout=60)
         assert result.returncode==0,result.stderr
@@ -53,7 +59,8 @@ def main():
         assert not client.submissions[0]['note']['O']['tests']
         report={'status':'pass','entrypoint':'run.py','transport':'original_sdk_http_loopback','receipt':'completed',
             'requests':len(requests),'actions':len(client.actions),'diagnosis':client.submissions[0]['diagnosis'],
-            'network':'none','development_credentials':False,'actual_models':'not_run','clinical_accuracy':'not_run'}
+            'network':'none','development_credentials':False,'actual_models':'not_run','clinical_accuracy':'not_run',
+            'langgraph_import':'blocked' if guarded else 'not_checked'}
         Path('/output/sdk-http.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report))
     finally: server.shutdown();server.server_close()
 

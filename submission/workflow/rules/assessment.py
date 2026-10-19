@@ -133,9 +133,9 @@ def graph_candidates(case, knowledge, interview=None):
             features = knowledge.get_pattern_features(profile.id)
             applies, context_refs = applicability(profile.applicability, index.contexts)
             groups = []
-            for group in index.groups.values():
-                bases = scoped_records([b for b in group['base'] if b.target == profile.target], profile.target_scope)
-                attributes = scoped_records([a for a in group['attributes'] if a.target == profile.target], profile.target_scope)
+            for group in index.by_target.get(profile.target, ()):
+                bases = scoped_records(group['base'], profile.target_scope)
+                attributes = scoped_records(group['attributes'], profile.target_scope)
                 if bases or attributes:
                     groups.append((bases, attributes))
             for bases, attributes in groups or [([], [])]:
@@ -181,10 +181,15 @@ def graph_candidates(case, knowledge, interview=None):
                         unresolved.append(UnresolvedRef(graph_ref=GraphRef(kind='context', id=condition.concept_id,
                             association_id=profile.association_id), fact_ids=context_refs, scope=key,
                             reason='applicability_unknown'))
+        refinement_groups = {}
+        def refinement_key(profile, observation):
+            return (profile.target_scope.model_dump_json(), profile.effect,
+                    tuple(c.model_dump_json() for c in profile.applicability), observation)
         for profile, observation, ref in whole:
-            if not any(other.target_scope == profile.target_scope and other.effect == profile.effect
-                and other.applicability == profile.applicability and scope == observation
-                and knowledge.pattern_refines(other.id,profile.id) for other,scope,_ in whole):
+            refinement_groups.setdefault(refinement_key(profile, observation), []).append(profile)
+        for profile, observation, ref in whole:
+            if not any(knowledge.pattern_refines(other.id,profile.id)
+                       for other in refinement_groups[refinement_key(profile, observation)]):
                 (supports if profile.effect in {'support','strong_support'} else against).append(ref)
         def unique(rows):
             return tuple({row.model_dump_json():row for row in rows}.values())

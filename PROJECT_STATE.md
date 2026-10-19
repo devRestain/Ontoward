@@ -1,14 +1,16 @@
 /state version=1
 /project id=ontoward
 /status value=active
-/checkpoint revision=c83310893daf8009cedc8b85be62f842fcdc4fda dirty=true updated=2026-10-19T20:59:15+09:00
+/checkpoint revision=3c5c1711e3963698128fa32c06cf222568a9bdbc dirty=true updated=2026-10-20T01:07:57+09:00
 /goal phase=history id=ROOT.D48 state=complete action="Classify the saved C03 service failure and coordinate modular prompt acceptance"
 /goal phase=history id=ROOT.INDEX_REPAIR49 state=complete action="Repair RF2 literal parsing and provide keyless extraction progress and durable console commands"
 /goal phase=history id=ROOT.NORMALIZE_REPAIR49 state=complete action="Deliver the missing NOVA output schema and recover the fully indexed zero-result checkpoint offline"
 /goal phase=history id=ROOT.TEXT_REPAIR49 state=complete action="Defer normalization action text to question generation and recover saved pending rows without another model call"
 /goal phase=history id=ROOT.PROVIDER_REPAIR49 state=complete action="Correct confirmed NOVA provider-error request IDs and resume the preserved build"
 /goal phase=history id=ROOT.WORKFLOW_REVIEW19 state=complete action="Apply current workflow ownership improvements from the historical D47 review"
-/goal phase=current id=ROOT.BUILD49 state=active action="Monitor resumed NOVA run dc60cdc5a593beb39cd6cd8d9a490ea2 through generation completion and verified installation"
+/goal phase=history id=ROOT.BATCH_REPAIR49 state=complete action="Restore fixed ten-job batches and resume the preserved normalization checkpoint"
+/goal phase=history id=ROOT.D50 state=complete action="Integrate approved workflow simplification through staged offline and independent artifact acceptance"
+/goal phase=current id=ROOT.BUILD49 state=active action="Monitor resumed NOVA run 10282b2e382f085d756e9f6645dc05fe through generation completion and verified installation"
 /goal phase=history id=ROOT.D49 state=complete action="Implement the D49 extraction image runtime transition and offline acceptance"
 /goal phase=history id=ROOT.D47 state=complete action="Coordinate D47 session ownership model execution fact integration and offline artifact acceptance"
 /goal phase=history id=ROOT.TESTVIEW46 state=complete action="Verify current pipeline observation compact recorded values and restructure the Test inspection workspace"
@@ -493,4 +495,18 @@
 /evidence id=ROOT.PROVIDER_REPAIR49.E5 class=artifact result=pass source=data/provenance/extraction-provider-repair-2026-10-19.json observed="Pin current image code docs tests recovery and live-resume evidence; reconcile root and data with the active build while preserving submission state and its pending real-bundle acceptance"
 /scope id=ROOT.PROVIDER_REPAIR49.S1 state=in action="Own NOVA transport classification checkpoint recovery selected live resumption and documentation"
 /scope id=ROOT.PROVIDER_REPAIR49.S2 state=out action="Exclude model or provider changes raw source mutation official evaluation commits publication and deployment"
-/handoff state=incomplete action="Monitor active dc60cdc5a593beb39cd6cd8d9a490ea2 through existing watch logs and pause commands; preserve earlier checkpoints and avoid a duplicate worker"
+/accept id=ROOT.BATCH_REPAIR49.A1 state=pass action="Remove persistent batch shrink and preserve checkpoint custody" evidence=ROOT.BATCH_REPAIR49.E1,ROOT.BATCH_REPAIR49.E2
+/evidence id=ROOT.BATCH_REPAIR49.E1 class=runtime result=pass source=Tmp/extraction-batch-repair-2026-10-20/checkpoint-image-tests.log observed="Pass 57 extraction tests in development and the repaired offline image including fixed-size missing-row and truncated-output retries bounded attempts synthetic completion and keyless guarded recovery"
+/evidence id=ROOT.BATCH_REPAIR49.E2 class=artifact result=pass source=Tmp/extraction-batch-repair-2026-10-20/verification.json observed="Preserve source dc60cdc5a593beb39cd6cd8d9a490ea2 SHA256 535c888e6444045b51374b18fb4aae9977e283aed48b53ee15a3935e50a9341f all 1787 completed jobs all job counters 815 requests usage and complete index; retain the pinned runtime reader without modifying concurrent workspace changes"
+/evidence id=ROOT.BATCH_REPAIR49.E3 class=external_service result=pass source=Tmp/extraction-batch-repair-2026-10-20/resume-proof.json observed="Resume 10282b2e382f085d756e9f6645dc05fe with install enabled and verify consecutive ten-job requests with at least two accepted responses and no recalled original done jobs; retain actual generation as active and installation unrun"
+/evidence id=ROOT.BATCH_REPAIR49.E4 class=artifact result=pass source=data/provenance/extraction-batch-repair-2026-10-20.json observed="Bind fixed scheduling code tests image base recovery and live ten-job evidence; preserve the separate submission real-bundle acceptance goal"
+/accept id=ROOT.D50.A1 state=pass action="Integrate six approved workflow stages and current observation controls" evidence=ROOT.D50.E1,ROOT.D50.E2
+/accept id=ROOT.D50.A2 state=pass action="Verify the independent synthetic ZIP source preservation and documentation handoff" evidence=ROOT.D50.E3,ROOT.D50.E4
+/evidence id=ROOT.D50.E1 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.D50 for 169 maintained tests source and archive consultations response-aware finalization and fourteen-scenario observer parity"
+/evidence id=ROOT.D50.E2 class=runtime result=pass source=Tmp/test-evaluator/D50-offline-final-20261020/verification.json observed="Pass 53 evaluator and web-control tests using the rebuilt current Test image; pass current viewer and app text-DOM checks separately without browser visual claims"
+/evidence id=ROOT.D50.E3 class=artifact result=pass source=data/provenance/algorithm-d50-2026-10-20.json observed="Pin d50.1 sources images current knowledge boundary and the ninety-one-file independent synthetic ZIP with original SDK completion and blocked LangGraph imports"
+/evidence id=ROOT.D50.E4 class=semantic result=pass source=Tmp/d50-2026-10-20/verification.json observed="Reconcile D50 decisions requirements ownership Korean orientation and scoped state while preserving current BUILD49 goals concurrent extractor changes and historical acceptance"
+/evidence id=ROOT.D50.E5 class=external_service result=not_run source=Tmp/d50-2026-10-20/verification.json observed="Leave new external model requests clinical quality official NOVA evaluation real generation installation by this task publication commits and deployment unrun"
+/scope id=ROOT.D50.S1 state=in action="Own runtime integration offline verification packaging observation contracts and evidence handoff"
+/scope id=ROOT.D50.S2 state=out action="Exclude concurrent extraction implementation worker operations credentials real installation source custody and remote effects"
+/handoff state=incomplete action="Monitor active 10282b2e382f085d756e9f6645dc05fe through watch logs and pause; preserve the pinned extraction image and earlier checkpoints until generation and verified installation complete"

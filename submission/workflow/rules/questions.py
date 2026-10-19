@@ -150,7 +150,7 @@ class QuestionTools:
             ident += f':clarification:{state.session.clarifications}'
         self.questions.register(state, self._question(spec, ident, order, priority))
 
-    def _eligible(self, state, spec, *, future=False):
+    def _eligible(self, state, spec):
         target, attribute = spec['target_id'], spec['attribute_id']
         args = (state, target, attribute, spec['observation_id'], spec['episode_id'], spec['subject'], spec['time_context'], spec.get('subject_member'))
         if self.has_resolved_evidence(*args):
@@ -166,9 +166,9 @@ class QuestionTools:
                 return False
             spec.update(purpose='clarification', text=self.knowledge.clarification(attribute,
                          self.config.texts.clarification_question), affirmative_presence=False)
-        if attribute and spec['kind'] == 'SAY' and not future:
+        if attribute and spec['kind'] == 'SAY':
             return any(f.target == self.knowledge.term(target) and not f.attribute and f.status == 'present'
-                and f.evidence_use == 'reasoning' and f.polarity_scope == 'general'
+                and f.graph_binding and f.polarity_scope == 'general'
                 and (f.subject,f.subject_member,f.time_context,f.observation_id,f.episode_id) ==
                     (spec['subject'],spec.get('subject_member'),spec['time_context'],spec['observation_id'],spec['episode_id'])
                 for f in state.case.current_facts())
@@ -211,21 +211,22 @@ class QuestionTools:
     def _options(self, state, candidates):
         if not self.budget.can_start_action(state):
             return {}
-        options = {}
+        grouped = {}
         for disease, candidate in candidates.items():
             for ref in candidate.entry.unresolved:
                 if not ref.scope:
                     continue
-                kind, name, attr, subject, member, timing, observation, episode = ref.scope
-                target = next((ident for t in ('Symptom','ExamFinding','ContextFactor')
-                    if (ident := self.knowledge.term_id(name, t))), None)
-                spec = self._spec(state, target, self.knowledge.term_id(attr,'FindingAttribute') if attr else None,
-                    observation or None, episode or None, purpose='context' if self.knowledge.has_type(target,'ContextFactor') else 'feature',
-                    subject=subject, subject_member=member or None, time_context=timing)
-                if not spec or not self._allowed_now(state, spec):
-                    continue
-                key = self._key(spec)
-                options.setdefault(key, (spec, set()))[1].add(disease)
+                grouped.setdefault(ref.scope, set()).add(disease)
+        options = {}
+        for key, diseases in grouped.items():
+            kind, name, attr, subject, member, timing, observation, episode = key
+            target = next((ident for t in ('Symptom','ExamFinding','ContextFactor')
+                if (ident := self.knowledge.term_id(name, t))), None)
+            spec = self._spec(state, target, self.knowledge.term_id(attr,'FindingAttribute') if attr else None,
+                observation or None, episode or None, purpose='context' if self.knowledge.has_type(target,'ContextFactor') else 'feature',
+                subject=subject, subject_member=member or None, time_context=timing)
+            if spec and self._allowed_now(state, spec):
+                options[self._key(spec)] = (spec, diseases)
         return options
 
     @staticmethod

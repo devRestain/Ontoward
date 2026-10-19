@@ -24,7 +24,3 @@ class PlanRow(Model):
 class RenderedGroup(Model):
     id: StrictStr
     utterances: list[StrictStr]
-
-
-class EmpathyReply(Model):
-    text: StrictStr

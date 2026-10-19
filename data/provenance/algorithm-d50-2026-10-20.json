@@ -1,0 +1,362 @@
+{
+  "status": "pass",
+  "algorithm": "d50.1",
+  "verified_at": "2026-10-20T01:06:54+09:00",
+  "baseline_revision": "3c5c1711e3963698128fa32c06cf222568a9bdbc",
+  "stages": {
+    "input_preservation": {
+      "tests": 158,
+      "log": "stage1.log"
+    },
+    "deterministic_replies": {
+      "tests": 162,
+      "log": "stage2.log"
+    },
+    "shared_work": {
+      "tests": 165,
+      "log": "stage3.log"
+    },
+    "clinical_cadence": {
+      "tests": 167,
+      "log": "stage4.log"
+    },
+    "joint_education": {
+      "tests": 169,
+      "log": "stage5.log"
+    },
+    "sequential_execution": {
+      "tests": 169,
+      "log": "stage6.log"
+    }
+  },
+  "final_checks": {
+    "isolated_workflow": {
+      "tests": 169,
+      "langgraph_import": "blocked",
+      "log": "isolated-suite-final.log"
+    },
+    "observer": {
+      "scenarios": 14,
+      "operation_updates": 1242,
+      "recording_failure": "nonfatal_no_replay",
+      "evidence": "observer-final/verification.json"
+    },
+    "representative_consultations": {
+      "status": "pass",
+      "cases": [
+        {
+          "education": false,
+          "context": "unknown",
+          "termination": "submitted",
+          "nodes": 117
+        },
+        {
+          "education": true,
+          "context": "present",
+          "termination": "submitted",
+          "nodes": 157
+        },
+        {
+          "education": true,
+          "context": "absent",
+          "termination": "submitted",
+          "nodes": 157
+        }
+      ],
+      "knowledge_contract": "v5-enum-1",
+      "actual_models": "not_run",
+      "clinical_accuracy": "not_run",
+      "manifest_sha256": "e3a4e60dc81feffc94a57c90bfe54f4b8308319e92fd8e39bc4a322ee8ee9ebc"
+    },
+    "sdk_http": {
+      "status": "pass",
+      "entrypoint": "run.py",
+      "transport": "original_sdk_http_loopback",
+      "receipt": "completed",
+      "requests": 44,
+      "actions": 21,
+      "diagnosis": "Disease alpha",
+      "network": "none",
+      "development_credentials": false,
+      "actual_models": "not_run",
+      "clinical_accuracy": "not_run",
+      "langgraph_import": "blocked"
+    },
+    "test_controls": {
+      "tests": 53,
+      "evidence": "../test-evaluator/D50-offline-final-20261020/verification.json",
+      "log": "evaluator-final.log"
+    },
+    "viewer": "text_dom_pass",
+    "app_controls": "text_dom_pass",
+    "extraction_adjacent_regressions": {
+      "tests": 57,
+      "log": "extraction-regression.log",
+      "ownership": "concurrent_extraction_work_not_part_of_this_patch"
+    }
+  },
+  "archive": {
+    "status": "pass",
+    "files": 91,
+    "sha256": "e8a584a59f528931f3c95a6ea7912b676fe3f803017b146f56fddb725e6f0337",
+    "runtime_bytes_match_source": true,
+    "langgraph_requirement": false
+  },
+  "images": {
+    "ontoward-dev:latest": "sha256:0999f2b28fd11f6783b849e94ff0c59b3c791a8afb49034b6e57fee225395da7",
+    "ontoward-package:local": "sha256:716fd9fe776e068c5540f63ceb2e277da20b21eb7a0fe1c4c8e37a6d6e4e348f",
+    "ontoward-test:local": "sha256:23f80827002a2c9281b15fb29b2f6690f57c2bf9e58899011ef84c8659750ce8"
+  },
+  "preservation": {
+    "status": "pass",
+    "protected_submission_files": {
+      "submission/knowledge/README.md": "073c6aad7fe1e6059cc6311f51b8c03ea72fdd54d865dda0f63a96b1a05c6890",
+      "submission/knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "submission/knowledge/conditions.py": "8bbb743e5bd1908ac56409d87066ea555a88955fb522ec832ccf6672f8a3af49",
+      "submission/knowledge/guidelines.py": "f15aa5cd3df15e3c1322b54593a4c66e1efa6123954cc8c582b3676693c90853",
+      "submission/knowledge/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "submission/nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "submission/run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af"
+    },
+    "production_manifest_absent": true,
+    "production_package_error": "knowledge_bundle_not_installed",
+    "production_artifact_created": false,
+    "concurrent_extraction_changes": [
+      "Extraction/AGENTS.md",
+      "Extraction/README.md",
+      "Extraction/extraction.sh",
+      "Extraction/ontoward_extraction/__main__.py",
+      "Extraction/ontoward_extraction/build.py",
+      "Extraction/ontoward_extraction/recovery.py",
+      "Extraction/tests/test_normalize_recovery.py"
+    ],
+    "extraction_changes_owned_by_this_task": false
+  },
+  "synthetic_comparison": {
+    "baseline": [
+      {
+        "education": false,
+        "termination": "submitted",
+        "actions": 15,
+        "model_calls": 21,
+        "calls_by_task": {
+          "input_context": 16,
+          "clinical_rank": 3,
+          "clinical_action": 1,
+          "clinical_decision": 1
+        },
+        "session_gets": 28,
+        "soap_fields": 15
+      },
+      {
+        "education": true,
+        "termination": "submitted",
+        "actions": 21,
+        "model_calls": 23,
+        "calls_by_task": {
+          "input_context": 16,
+          "clinical_rank": 3,
+          "clinical_action": 1,
+          "clinical_decision": 1,
+          "education": 1,
+          "education_doctor": 1
+        },
+        "session_gets": 36,
+        "soap_fields": 15
+      }
+    ],
+    "current": [
+      {
+        "education": false,
+        "termination": "submitted",
+        "actions": 15,
+        "model_calls": 20,
+        "calls_by_task": {
+          "input_context": 16,
+          "clinical_rank": 2,
+          "clinical_decision": 2
+        },
+        "session_gets": 2,
+        "soap_fields": 15
+      },
+      {
+        "education": true,
+        "termination": "submitted",
+        "actions": 21,
+        "model_calls": 21,
+        "calls_by_task": {
+          "input_context": 16,
+          "clinical_rank": 2,
+          "clinical_decision": 2,
+          "education": 1
+        },
+        "session_gets": 2,
+        "soap_fields": 15
+      }
+    ],
+    "scope": "Same scripted protocol fixture; no live-model quality or latency comparison"
+  },
+  "production_prepare": {
+    "result": "expected_failure",
+    "error": "knowledge_bundle_not_installed"
+  },
+  "production_packaging": {
+    "result": "expected_failure",
+    "error": "knowledge_bundle_not_installed",
+    "artifact_created": false
+  },
+  "runtime_source_sha256": {
+    "submission/run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+    "submission/requirements.txt": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01",
+    "submission/nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    "submission/.env": "9c2e46b5b22e0f0c47f026cb0cc5a047b10b8cabc7e44e625640513cf6cf6595",
+    "submission/settings.py": "7f6b3a9015541f195546e3ab2f162492a7bb3e5382a0800b1c20eebd60400031",
+    "submission/config/texts.ko.json": "0393a2e09d02183a61ca02ecf96192fc4f566a69636717c0b46ea2b4ee6574f0",
+    "submission/config/prompts.json": "3a605c2bf8dbc4ef27c48a22344815134004f33445ac30ff50310a045af7cd25",
+    "submission/knowledge/graph.py": "9632c39fd13e2d0ea3a9b34be570cadd55835976683c0033cf54696e27af704e",
+    "submission/knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "submission/knowledge/conditions.py": "8bbb743e5bd1908ac56409d87066ea555a88955fb522ec832ccf6672f8a3af49",
+    "submission/knowledge/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "submission/knowledge/guidelines.py": "f15aa5cd3df15e3c1322b54593a4c66e1efa6123954cc8c582b3676693c90853",
+    "submission/workflow/model_context.py": "33f0bd75bc58664a344ebd0ea1ed7285c8044d7ca90d724c780798e036610092",
+    "submission/workflow/consultation.py": "b36eb4c758275e8f65b7abbe027501d49f73eaeaf98b9f4c34c7cea99d75888e",
+    "submission/workflow/doctor_mouth.py": "551f73c375705b248bba51c6b66b0e1c19ac690590e27f478c9a6771cd7a32b6",
+    "submission/workflow/doctor_ear.py": "7fe18cb3be4e7b997c0d07939c275c8ec5e6957f0e97579785a8efff6ae37712",
+    "submission/workflow/input_types.py": "ef2731e8055da237cda2b8939e716a9b09bd6d5d5387e51ba3f566aff1b6fb8f",
+    "submission/workflow/text_config.py": "8ee05228af8a1e4f1b17753d8cc926fcca4661f71620d39d4a773bc0aa835ac7",
+    "submission/workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/education.py": "3746feea0aebd8206dd8b845365b78ee984b66c2010a77636145a919f23b8b02",
+    "submission/workflow/submission_writer.py": "8b7e4953ea3e8c2aac6548b8450f99de5080c9fa8ce4b4003fec7280886e6af0",
+    "submission/workflow/runtime.py": "1a8aee3c4cfc2f3a091a8c461a5ad0f8b0f661baf10b25e4afbe4a3c54796301",
+    "submission/workflow/output_types.py": "af24b35d0a1195889f1e1b256b6eb2d24f422ee46e7f89794cf979953eaf184a",
+    "submission/workflow/doctor_brain.py": "7349628455262df8e10a91f4700f884ae6b2e013b1c0ffda4ea26116621b3f8a",
+    "submission/workflow/io/nova_session.py": "4e6c21f7aa40ec45c9c3b93a7ba6ed77019303f232362f3e3ea0297d04c8d360",
+    "submission/workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+    "submission/workflow/state/models.py": "1980217c662551377d95fb6a9535789af735cfae862481befff42f14c1a64a0f",
+    "submission/workflow/state/questions.py": "01ac8ccb16dfa068daa33777740aaba5f998a604d2ad2b628fdc79a87e321830",
+    "submission/workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/state/interactions.py": "0ed1c3ecc9bf8fb793b417310ae71feda2ccb187bdd6fac8144a09e76f3ec44d",
+    "submission/workflow/state/evidence.py": "038921e99eb6860c1d355614bfac8d850df8d0240d49257b6db2eed4fa45f9cd",
+    "submission/workflow/state/usage.py": "177d81e25b8488434c19d9f065cd68a258e4c603177bc6af885bc78b81fdd1cd",
+    "submission/workflow/sessions/differential_diagnosis.py": "9318f37d2fd672fd354292a8549d4ea0dd9e3d4cebffc9b9c01706496f5d4beb",
+    "submission/workflow/sessions/chief_complaint.py": "1683a681b01b0c1b2826e1a677f41d3c7bbed894c9c532cfeece9b29324247d8",
+    "submission/workflow/sessions/initiation.py": "4da315740f7d04a026c13c08b259f2cf6f649a12d953d9274c050fc5d1fb6d87",
+    "submission/workflow/sessions/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/sessions/education.py": "486c826acc7b269fd5551d9d2ed45d2a371b81051035b4e4eb1324aece50a506",
+    "submission/workflow/sessions/context_factor.py": "864e813a87bbd7d97f21cc5af1f1ed07dd4887cd201ab8a8374b72736a6dc766",
+    "submission/workflow/rules/assessment.py": "3e65fa6cee9aca63b0bdee2f62bf1f4ea94f9313acad40248a9772d9163679a8",
+    "submission/workflow/rules/limits.py": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a",
+    "submission/workflow/rules/budget.py": "418c02e56e3b55863a996a48285af88eba5b7852d5c95c32ef61d0d1cb20660d",
+    "submission/workflow/rules/submission.py": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267",
+    "submission/workflow/rules/questions.py": "91036221973c9113b50cc2ea9c0a5558f305159d3dba60cee7d3b504b044632c",
+    "submission/workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/rules/decision.py": "6a000827c1c1200686a350962128abae3206512e1f31740da4cf5cf56aad34d2",
+    "submission/workflow/rules/action.py": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb",
+    "submission/workflow/rules/input.py": "33029bb8fffdd85ac9c043d5d65fcfe78cbd996527c6c5974693281f3e0d618a",
+    "submission/workflow/rules/collection.py": "ff2d5d755e9c2393a4a7bf2df7624d5e68dcde5188e319f668c9e3529f045048",
+    "submission/workflow/rules/normalization.py": "5222024618448275292c55b7b05421446e99cf9452cb7ccb4b1cd020930e8caf",
+    "submission/config/prompts/clinical_action_output.txt": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769",
+    "submission/config/prompts/session_differential_diagnosis.txt": "25286d10199c3a2aaced6785dcbb8e918b2cc36be873177d8ac0d9b01f1d86e5",
+    "submission/config/prompts/session_initiation.txt": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d",
+    "submission/config/prompts/mouth_plan.txt": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538",
+    "submission/config/prompts/plan_common.txt": "17cb3dc587b95c0e39f0d853ff2c8aa3179c3410fe19f7346dc47a8e0724de6b",
+    "submission/config/prompts/plan_repair.txt": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3",
+    "submission/config/prompts/session_context_factor.txt": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9",
+    "submission/config/prompts/input_reply.txt": "9619bf9e29c185ae9045bea7b19c631dc4f6fc0fbf2b28a1c75fcca5e447cefb",
+    "submission/config/prompts/mouth_disease_notice.txt": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4",
+    "submission/config/prompts/clinical_rank_output.txt": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0",
+    "submission/config/prompts/input_repair.txt": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3",
+    "submission/config/prompts/clinical_ranking.txt": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29",
+    "submission/config/prompts/clinical_action.txt": "98cbc6547ecb7d84e91589557ab5e44d8e489dfaaa8a9048d55029445f6dddc8",
+    "submission/config/prompts/input_common.txt": "42b388062445d43b636ab654e20b94aa52564cc3c52de1d4ae1cfbcd22b1f694",
+    "submission/config/prompts/input_chief_repair.txt": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d",
+    "submission/config/prompts/plan_output.txt": "9c6373c4758e052243124b37faea78633fe2d230787cc9bf2a688158383010ce",
+    "submission/config/prompts/session_chief_complaint.txt": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54",
+    "submission/config/prompts/mapping_common.txt": "dcb0f71ff84df9667cc0c0a6ba4719261c5f29c0bc432094c1af1b97ef879de1",
+    "submission/config/prompts/input_fields.txt": "b4a93203e568a0da98132ec40e54f4b0038618d57b3b874b0d9b189d4855ca06",
+    "submission/config/prompts/mapping_select.txt": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36",
+    "submission/config/prompts/clinical_common.txt": "67dfca00f0ee02a44609745835bff1328e3aebeaeee5d9fb5b5c75e243efcc08",
+    "submission/config/prompts/plan_complete.txt": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4",
+    "submission/config/prompts/clinical_repair.txt": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2",
+    "submission/config/prompts/input_empathy.txt": "354cf23ff9816da9057bb1a770eeaf4428a342a543888542a4b1fafc56100d2a",
+    "submission/config/prompts/input_rows_repair.txt": "048636d000fbbe619c359399ff5187630acfcc116fdba5db023cfd0a2be27c74",
+    "submission/config/prompts/input_exam.txt": "adc533c2df3191469ce1e179933d9100467b2f1ecaa833e696ce0042650e14d5",
+    "submission/config/prompts/mouth_output.txt": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739",
+    "submission/config/prompts/input_initial.txt": "e1cfc1f014c19a78958c4b55a7b66ee4d43e91c78e4c918e13b5bb2ce7673c9e",
+    "submission/config/prompts/mapping_repair.txt": "a86620b89b49b21c1c9d6eda91ca44a17d2196738ae4de8723ee8d18b991d3f3",
+    "submission/config/prompts/mouth_common.txt": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19",
+    "submission/config/prompts/clinical_decision_output.txt": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25",
+    "submission/config/prompts/mouth_symptom_notice.txt": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493",
+    "submission/config/prompts/mapping_forced.txt": "bc16a755bf505d77f90a0e99295bc2c8655b58ccf85bb4b76c6d977b818850d6",
+    "submission/config/prompts/data.txt": "be9dc59c6a2496ac9b392f9f0a246abeaf91be73cb2ae602d8ca0aa890de9f65",
+    "submission/config/prompts/mouth_response_repair.txt": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31",
+    "submission/config/prompts/mouth_text_repair.txt": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5"
+  },
+  "not_run": [
+    "actual_model_quality",
+    "actual_model_latency",
+    "clinical_validity",
+    "official_nova",
+    "official_evaluation",
+    "real_bundle_generation_or_installation_by_this_task",
+    "browser_visual_qa",
+    "commits",
+    "remote_writes",
+    "publication",
+    "deployment"
+  ],
+  "evidence_root": "Tmp/d50-2026-10-20",
+  "input_report": {
+    "name": "ONTOWARD_submission_integrated_review_2026-10-19.md",
+    "sha256": "bafd6e7d89c943487bb821f9dc49652ac505620ed00d7c16cf830aff46437d97"
+  },
+  "evidence_sha256": {
+    "verification.json": "2cf18ed2a5389169746d7d0a9e077268aeff62cb626768d1fb322139d5ae65ba",
+    "archive-check.json": "bee2b3acff1e63f082454a560890a7ec3debb174b24110af4234bd1fccaa3725",
+    "preservation.json": "9f94c8a2f3b2f4393ba310013e398df2f0c97d3f0cc518cba754f841cc401d41",
+    "isolated-suite-final.log": "37a2da08d6cd6a231330ed2544804b6aa6c763481df02b2e148a9d09e9e1abb7",
+    "observer-final/verification.json": "2b9302d30c0c5f67bb90718c0484b5f1c7f5c22e4961811b2c30a694589b1aa0",
+    "isolated-final/sdk-http.json": "a95730d113c64ae06fc71fcf0c0de1e1efc475b5d042188e4a9e172e2c22a832",
+    "isolated-final/admitted/verification.json": "0aa490a6c00dbb6ae78f68da689e79d03b45612e85894e6ebe57f2e2b41ba5d9",
+    "evaluator-final.log": "122afccb4dd9074f38934d12cde879a0a0972100259c25a560700afa900df56c",
+    "viewer.log": "0363a251d03108d88a2954c527372bca7b8c2fb055ed12fc21d63f0a6a088553",
+    "app.log": "8058964343cd60a876659984aab19c9dec7fa558476ee2de7c77f0fc93fb9959",
+    "baseline-counts.json": "8146a8675272978df101375a1c2fc0fc3300e1bbe7b2dc33f7710452d180167a",
+    "current-counts.json": "9136aaeddfa0d265b540b52e4dcddf87aa24022954c0506c858f61e7a79efce2",
+    "documentation-check.json": "a15152f4a5e54e878146d34e413b5bf2e93f88bcc78bd028bdadd37be092f893"
+  },
+  "documentation": {
+    "status": "pass",
+    "local_document_links": 50,
+    "documents_sha256": {
+      "AGENTS.md": "c57fe8921390fff57b48f61768f36d54f559a39ad0f9f43b6d9c776463ef178c",
+      "submission/AGENTS.md": "6efda6f31e288fe8e164a1e6755e6de618777125b4d7b3eaf3ad55e0e1e51fe6",
+      "Dev/AGENTS.md": "0d8111ad1e9f8291cf580a3a55b89d81f72d78c549f4fda7bc11e997216b1165",
+      "Test/AGENTS.md": "8faf84f1210e1a87ec477319040c0625d1fb9af25e959ebc4e4cb04b43bf7b26",
+      "data/AGENTS.md": "1be5f724413e7ddb1c0dc96c197d17d5015cfebd7a22b40d032a8156e6ea6d89",
+      "PRD.md": "1485b97cf2e2e34008db6535380f9c6ff7b6ee64e66477ac60af7de063f818a7",
+      "DECISION_STATE.md": "809b2cba9a416efb7c97f7af82b247149f46a59567b3b5c4a27b9d14afe95851",
+      "README.md": "ea12e0c26f227131eeeba88c9e8fd4bad54fde057a445a8c79a43f0156f6889e",
+      "submission/README.md": "280ea93dd52cf29b0dea1d391172a26d23e83d67f16271986e59e1a7557e4880",
+      "submission/config/README.md": "fa839bb33e12426265c775a69e07121eb0ca0e998a52612168a1d232cb8db011",
+      "Test/README.md": "b0e1136ddc95ab5d76fea3667c8580d5f0b367749dcedd65d3d67b9c0c393b23"
+    },
+    "state_records": {
+      "PROJECT_STATE.md": [
+        "/goal phase=current id=ROOT.BUILD49 state=active action=\"Monitor resumed NOVA run 10282b2e382f085d756e9f6645dc05fe through generation completion and verified installation\"",
+        "/handoff state=incomplete action=\"Monitor active 10282b2e382f085d756e9f6645dc05fe through watch logs and pause; preserve the pinned extraction image and earlier checkpoints until generation and verified installation complete\""
+      ],
+      "submission/PROJECT_STATE.md": [
+        "/goal phase=current id=APP.D50 state=complete action=\"Preserve input and simplify model calls graph work Education and sequential execution through offline acceptance\"",
+        "/goal phase=next id=APP.BUILD49 state=deferred action=\"Verify a real installed v5-enum-1 bundle and representative consultations after the separately authorized build\"",
+        "/handoff state=incomplete action=\"Preserve D50 offline completion and defer APP.BUILD49 real-bundle verification until separately owned installation\""
+      ],
+      "data/PROJECT_STATE.md": [
+        "/goal phase=current id=DATA.BUILD49 state=active action=\"Track active 10282b2e382f085d756e9f6645dc05fe requests generation results and verified installation\"",
+        "/handoff state=incomplete action=\"Monitor active 10282b2e382f085d756e9f6645dc05fe through watch logs and pause; preserve the pinned extraction image and earlier checkpoints until generation and verified installation complete\""
+      ]
+    },
+    "root_and_data_build_goals_and_handoffs_preserved_by_atomic_update": true
+  }
+}

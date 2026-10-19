@@ -4,7 +4,6 @@ import unittest
 from unittest.mock import patch
 
 import fixtures as f
-from workflow.graph import run_node, route_budget
 from workflow.state.models import Question, TurnContext
 from workflow.rules.limits import SESSION_INTERVIEW_LIMITS
 
@@ -67,18 +66,17 @@ class LifecycleTests(unittest.TestCase):
         c.questions.complete(s,q,a.source_ref,outcome='recorded')
         self.assertEqual(len(s.interview.answers),1)
 
-    def test_node_copy_isolation_and_return_validation(self):
-        s = f.chief(f.state())
-        before = s.model_dump()
-        output = run_node(s,lambda value:value.case.apply([f.fact('other',target='Other symptom')]))
-        self.assertEqual(s.model_dump(),before)
-        self.assertIn('other',output['case']['facts'])
-        def bad(value):
-            value.session.usage['Initiation'].actions = -1
-            value.interview.queue.append({'invalid':True})
-        with self.assertRaises(ValueError):
-            run_node(s,bad)
-        self.assertEqual(s.model_dump(),before)
+    def test_loop_exception_stops_before_external_actions_or_submission(self):
+        c, s = f.consultation(), f.chief(f.state('ChiefComplaint', initialized=True))
+        c.refresh_after_input = lambda state: None
+        c.questions.register(s, Question(item_id='pending', purpose='hpi', text='어떤 느낌인가요?'))
+        def fail(state):
+            raise ValueError('invalid operation')
+        c.select_action = fail
+        with self.assertRaisesRegex(ValueError, 'invalid operation'):
+            c.run(s)
+        self.assertFalse(c.client.actions)
+        self.assertFalse(c.client.submissions)
 
     def test_one_assessment_and_one_call_per_input_revision(self):
         c,s = f.consultation(),f.chief(f.state('DifferentialDiagnosis'))
@@ -147,14 +145,10 @@ class LifecycleTests(unittest.TestCase):
         self.assertTrue(any(q.purpose=='open_inquiry' for q in kept))
 
     def test_collection_completion_routes_through_normal_education(self):
-        from workflow.graph import build_graph
-        from workflow.state.models import WorkflowState
         c = f.consultation(prepared=f.resources(education=True))
         s = f.chief(f.state('DifferentialDiagnosis',initialized=True))
         s.session.finalizing = True
-        result = build_graph(c,c.knowledge).invoke(s.model_dump(mode='json'),
-            {'recursion_limit':c.budget.graph_step_limit(s)})
-        done = WorkflowState.model_validate(result)
+        done = c.run(s)
         self.assertEqual(done.session.termination, 'submitted')
         self.assertGreaterEqual(done.session.usage['Education'].actions, 6)
         self.assertEqual(done.interview.collection['DifferentialDiagnosis:completion'], 'collection_complete')
@@ -162,15 +156,11 @@ class LifecycleTests(unittest.TestCase):
         self.assertTrue(all(c.client.submissions[0]['note']['P'].values()))
 
     def test_model_budget_stop_still_allows_prepared_diagnosis_notice(self):
-        from workflow.graph import build_graph
-        from workflow.state.models import WorkflowState
         c = f.consultation(prepared=f.resources(education=True))
         s = f.chief(f.state('DifferentialDiagnosis',initialized=True))
         s.session.models_available = False
         s.session.doctor_successes = 1
-        result = build_graph(c,c.knowledge).invoke(s.model_dump(mode='json'),
-            {'recursion_limit':c.budget.graph_step_limit(s)})
-        done = WorkflowState.model_validate(result)
+        done = c.run(s)
         self.assertEqual(done.session.termination, 'submitted')
         self.assertEqual(done.interview.collection['DifferentialDiagnosis:completion'], 'model_call_budget')
         self.assertEqual(len(c.client.actions), 2)
@@ -186,7 +176,7 @@ class LifecycleTests(unittest.TestCase):
                 c.client.remaining, c.client.deadline = turns, s.session.deadline
                 c.check_budget(s)
                 self.assertTrue(s.session.finalizing)
-                self.assertEqual(route_budget(s), 'build_soap')
+                self.assertTrue(s.session.finalizing)
                 self.assertFalse(c.client.actions)
 
     def test_chief_change_invalidates_old_question_binding(self):

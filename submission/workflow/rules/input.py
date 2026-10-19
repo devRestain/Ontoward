@@ -91,11 +91,3 @@ def make_fact(case, knowledge, statement, decoded, *, source, index, offset, tur
     if knowledge.has_type(target_id, 'ExamFinding') and not objective(acquisition, source):
         raise ValueError('Finding requires an actual examination')
     return fact
-
-
-def isolate_attributes(facts, case):
-    bases = {(f.target, f.subject, f.subject_member, f.observation_id, f.episode_id, f.time_context)
-             for f in (*case.current_facts(), *facts) if f.kind in {'symptom', 'finding'} and f.status == 'present'}
-    return [f.model_copy(update={'graph_binding':f.graph_binding.model_copy(update={'eligible':False})}) if f.kind == 'attribute'
-            and (f.target, f.subject, f.subject_member, f.observation_id, f.episode_id, f.time_context) not in bases else f
-            for f in facts]

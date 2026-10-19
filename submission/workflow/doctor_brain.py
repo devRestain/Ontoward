@@ -20,7 +20,7 @@ class DoctorBrain:
 
     def complete(self, state, client, *, role, messages, max_tokens=None):
         session = state.session
-        if role not in {'gateway', 'clinical', 'empathy', 'education', 'education_doctor'}:
+        if role not in {'gateway', 'clinical', 'education', 'education_doctor'}:
             raise ValueError('Unsupported designated-model role')
         allowance = self.budget.model_allowance(session, role, maximum=max_tokens, state=state)
         if not allowance:
@@ -52,6 +52,7 @@ class DoctorBrain:
                 state.stop('unknown', error.code)
             elif error.code in {'MODEL_CALL_LIMIT', 'MODEL_TOKEN_BUDGET', 'REQUEST_BUDGET_EXHAUSTED'}:
                 self.usage.disable_models(state)
+                session.budget_sync_required = True
             elif error.code not in {'PROVIDER_RESPONSE_INVALID', 'CONTEXT_LIMIT_EXCEEDED'}:
                 state.stop(failure_outcome(error), error.code)
         except (KeyError, IndexError, TypeError, ValueError):

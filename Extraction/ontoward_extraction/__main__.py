@@ -49,7 +49,7 @@ def build_identity(entries, config, assets):
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description='Build qualitative clinical knowledge with explicit provider and durable checkpoints')
-    parser.add_argument('command',choices=['run','status','pause','verify','install','recover-normalize','recover-normalize-text','recover-normalize-provider'])
+    parser.add_argument('command',choices=['run','status','pause','verify','install','recover-normalize','recover-normalize-text','recover-normalize-provider','recover-normalize-batch'])
     parser.add_argument('--config',default=os.environ.get('EXTRACTION_CONFIG','/app/config.json'))
     parser.add_argument('--assets',default='/assets')
     parser.add_argument('--work',default='/work')
@@ -106,7 +106,7 @@ def main(argv=None):
         if args.command.startswith('recover-normalize'):
             print(canonical(recover_normalization(work,args.run_id,identity,boundary,
                 repair={'recover-normalize':'schema','recover-normalize-text':'text',
-                    'recover-normalize-provider':'provider'}[args.command])),flush=True)
+                    'recover-normalize-provider':'provider','recover-normalize-batch':'batch'}[args.command])),flush=True)
             return 0
         run_id=digest(identity)[:32]
         if args.run_id and args.run_id!=run_id: raise ValueError('checkpoint_fingerprint_mismatch')

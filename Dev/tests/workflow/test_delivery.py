@@ -11,6 +11,15 @@ from workflow.rules.limits import LIMITS
 from workflow.state.models import PendingEmpathy, Question
 
 
+def invalid_joint_utterances(payload):
+    if payload['task'] == 'education':
+        raw = education_response(payload)
+        for rows in raw['P'].values():
+            for row in rows:
+                row['utterances'] = ['가' * 31]
+        return raw
+
+
 class DeliveryTests(unittest.TestCase):
     def test_complete_education_and_replies_are_transcript_only(self):
         c,s,updates = f.run(prepared=f.resources(education=True))
@@ -53,6 +62,8 @@ class DeliveryTests(unittest.TestCase):
 
     def test_invalid_render_is_bounded_without_losing_english_plan(self):
         def response(payload):
+            if payload['task'] == 'education':
+                return invalid_joint_utterances(payload)
             if payload['task']=='education_doctor':
                 return {'items':[{'id':r['id'],'utterances':['x'*31]} for r in payload['sentences']]}
         c = f.consultation(f.FakeSDK(chat_handler=response),f.resources(education=True))
@@ -62,13 +73,13 @@ class DeliveryTests(unittest.TestCase):
         c.sessions['Education'].prepare_delivery(s,c.client)
         self.assertEqual(len(s.case.plan),5)
         self.assertFalse(s.interview.queue)
-        self.assertEqual(len([p for p in c.client.requests if p['task']=='education_doctor']),2)
+        self.assertEqual(len([p for p in c.client.requests if p['task']=='education_doctor']),1)
         self.assertEqual(len([a for a in s.interview.answers if a.outcome=='undelivered']),5)
         c.writer.build_soap(s)
         self.assertTrue(all(s.turn.payload['note']['P'].values()))
 
     def test_provider_render_failure_recovers_once_before_completed_submission(self):
-        client = f.FakeSDK()
+        client = f.FakeSDK(chat_handler=invalid_joint_utterances)
         original, requests = client.chat, []
         def chat(**request):
             payload = f.decode_context(request['messages'][-1]['content'])
@@ -93,6 +104,8 @@ class DeliveryTests(unittest.TestCase):
     def test_repeated_provider_render_failure_retains_cause_and_english_plan(self):
         requests = []
         def response(payload):
+            if payload['task'] == 'education':
+                return invalid_joint_utterances(payload)
             if payload['task'] == 'education_doctor':
                 requests.append(payload)
                 raise f.NovaError('PROVIDER_RESPONSE_INVALID', 503)
@@ -111,6 +124,8 @@ class DeliveryTests(unittest.TestCase):
     def test_truncated_render_uses_one_larger_recovery_without_partial_delivery(self):
         requests = []
         def response(payload):
+            if payload['task'] == 'education':
+                return invalid_joint_utterances(payload)
             if payload['task'] == 'education_doctor':
                 requests.append(payload)
                 if len(requests) == 1:
@@ -137,16 +152,20 @@ class DeliveryTests(unittest.TestCase):
                     for row in raw['items'][1:]:
                         row['utterances'] = ['가'*31]
                     return raw
-        c,s,_ = f.run(f.FakeSDK(chat_handler=response), prepared=f.resources(education=True))
-        self.assertEqual(s.session.termination, 'submitted')
-        self.assertEqual(s.interview.education_status, 'complete')
-        self.assertEqual(s.session.usage['Education'].actions, 6)
+        client = f.FakeSDK(chat_handler=response)
+        c, s = f.consultation(client, f.resources(education=True)), f.chief(f.state())
+        f.freeze_for_education(c, s)
+        c.sessions['Education'].prepare_plan(s, client)
+        sentences = [{'id': row.id, 'text': row.text} for row in s.case.plan]
+        rendered, errors = c.mouth.render_education(s, client, sentences, {row['id']: 1 for row in sentences}, 5)
+        self.assertFalse(errors)
+        self.assertEqual(len(rendered), 5)
         self.assertEqual(len(requests), 3)
         self.assertNotIn(accepted, {row['id'] for row in requests[2]['sentences']})
         for error in requests[2]['validation_errors'].values():
             self.assertEqual(error['codepoints'], [31])
             self.assertEqual(error['max_codepoints'], 30)
-        self.assertTrue(all(c.client.submissions[0]['note']['P'].values()))
+        self.assertEqual(len(s.case.plan), 5)
 
     def test_symptom_diagnosis_has_general_plan_without_guideline_lookup(self):
         resources = f.resources(education=True)
@@ -230,6 +249,11 @@ class DeliveryTests(unittest.TestCase):
 
     def test_conditional_group_withholds_whole_invalid_group(self):
         def response(payload):
+            if payload['task'] == 'education':
+                raw = education_response(payload)
+                for rows in raw['P'].values():
+                    rows[0]['utterances'] = ['전제 조건을 확인해요.', '그 외에는 약을 드세요.']
+                return raw
             if payload['task']=='education_doctor':
                 return {'items':[{'id':r['id'],'utterances':['전제 조건을 확인해요.','그 외에는 약을 드세요.']}
                                  for r in payload['sentences']]}
@@ -297,11 +321,11 @@ class DeliveryTests(unittest.TestCase):
         self.assertEqual(s.interview.empathy.emotion,'fear')
         self.assertNotIn('I am scared',s.model_dump_json())
         client.chat_handler=None
+        before = len(client.requests)
         c.mouth.prepare_empathy(s,client,s.interview.empathy)
-        payload=client.requests[-1]
-        self.assertEqual(payload['emotion'],'fear')
-        self.assertNotIn('I am scared',json.dumps(payload))
-        self.assertNotIn('dialogue',payload)
+        self.assertEqual(len(client.requests), before)
+        self.assertEqual(s.question().text, c.config.texts.empathy_templates['fear'])
+        self.assertNotIn('I am scared', s.question().text)
 
     def test_empathy_reserves_three_calls_and_separate_action_accounting(self):
         c,s=f.consultation(),f.chief(f.state('ChiefComplaint',initialized=True))
@@ -316,7 +340,7 @@ class DeliveryTests(unittest.TestCase):
     def test_invalid_empathy_uses_prepared_fallback(self):
         client=f.FakeSDK(chat_handler=lambda p:{'text':'x'*31} if p['task']=='empathy' else None)
         c,s=f.consultation(client),f.chief(f.state())
-        event=PendingEmpathy(source_ref='s',emotion='fear',intent='new_distress',key='k')
+        event=PendingEmpathy(source_ref='s',emotion='unrecognized',intent='new_distress',key='k')
         s.interview.empathy=event
         c.mouth.prepare_empathy(s,client,event)
         self.assertEqual(s.question().text,c.config.texts.empathy_fallback)

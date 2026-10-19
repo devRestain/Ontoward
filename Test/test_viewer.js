@@ -147,7 +147,7 @@ for(const path of process.argv.slice(2)){
     report.get('tab-execution').click();assert.match(report.text(),/전체 실행 검증/);
     if(saved.inspection?.runtime){
       assert.ok(report.text().includes(saved.inspection.runtime.algorithm));
-      const graph=walk(report.get('detail-panel')).find(node=>node.tagName==='details'&&node.children[0].textContent.startsWith('런타임 그래프'));
+      const graph=walk(report.get('detail-panel')).find(node=>node.tagName==='details'&&(/^(런타임 그래프|순차 실행)/).test(node.children[0].textContent));
       graph.open=true;graph.emit('toggle');assert.match(graph.textContent,/process_initial_input/);
       const stage=walk(report.get('detail-panel')).find(node=>node.className==='pipeline-stage'&&!node.disabled);
       if(stage){stage.click();assert.equal(report.get('tab-flow').attributes['aria-selected'],'true');assert.match(report.text(),/관측된 객체 호출/);}

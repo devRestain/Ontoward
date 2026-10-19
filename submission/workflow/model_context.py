@@ -2,22 +2,8 @@ import json
 
 
 def messages(prompt, payload):
-    rows = []
-    def emit(path, value):
-        if isinstance(value, dict) and value:
-            for key, item in value.items():
-                emit(f'{path}.{key}' if path else key, item)
-        elif isinstance(value, (tuple, list)) and value and any(isinstance(item, dict) for item in value):
-            for index, item in enumerate(value):
-                emit(f'{path}[{index}]', item)
-        else:
-            rows.append(f'{path} = {json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False)}')
-    emit('', payload)
-    return [{'role': 'system', 'content': prompt}, {'role': 'user', 'content': '\n'.join(rows)}]
-
-
-def compact_row(row):
-    return '; '.join(f'{key}={json.dumps(value, ensure_ascii=False, separators=(",", ":"))}' for key, value in row.items())
+    return [{'role': 'system', 'content': prompt}, {'role': 'user', 'content':
+        json.dumps(payload, ensure_ascii=False, separators=(',', ':'), allow_nan=False)}]
 
 
 def fact_record(fact, ident=None):

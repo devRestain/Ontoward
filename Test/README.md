@@ -1,6 +1,6 @@
 # 웹에서 실행하는 공개 샘플 테스트
 
-**D49 현재 상태:** 실제 새 지식 manifest가 없어 현재 submission으로 새 상담을 시작하면 knowledge_bundle_not_installed로 실패한다. 과거 결과·리포트는 계속 읽을 수 있다. 실제 생성/설치는 [Extraction 안내](../Extraction/README.md)를 따른다. 이번 검증은 Tmp/의 합성 새 번들로만 수행했다.
+**D50 현재 상태:** 실제 새 지식 manifest가 없어 현재 submission으로 새 상담을 시작하면 knowledge_bundle_not_installed로 실패한다. 과거 결과·리포트는 계속 읽을 수 있다. 실제 생성/설치는 [Extraction 안내](../Extraction/README.md)를 따른다. 이번 검증은 Tmp/의 합성 새 번들로만 수행했다.
 
 `Test/`는 기존 `submission/run.py`와 SDK를 그대로 실행하면서, 공모전의 세션 API와 예선 컨테이너 제약을 로컬에서 재현한다. 공개 `C01`·`C03`·`C10`의 `case.json`을 읽으며 공식 서버의 비공개 구현이나 채점 기준을 재현하지 않는다. 모든 결과의 채점 상태는 `not_scored`다.
 
@@ -87,7 +87,7 @@ Submission에 audit sink나 상세 이벤트를 주입하지 않으며 Python he
 
 ## LangSmith에서 검토하는 방법
 
-Docker에서 실행하는 테스트도 LangSmith로 추적할 수 있다. LangGraph는 환경변수로 추적을 활성화할 수 있고, 사용자 정의 SDK 호출은 별도 래퍼나 수동 span이 필요하다. NOVA SDK는 OpenAI 클라이언트가 아니므로 `wrap_openai`만 추가해서 환자·진찰·Gateway가 모두 수집되지는 않는다. [공식 LangGraph 추적 안내](https://docs.langchain.com/langsmith/trace-with-langgraph)
+아래 LangSmith 안내는 과거 LangGraph 실행 시기의 참고 기록이다. D50은 LangGraph 없이 Consultation의 순차 작업을 Test 내부에서 관측하며 외부 trace 전송은 구현하거나 실행하지 않는다. LangGraph는 환경변수로 추적을 활성화할 수 있고, 사용자 정의 SDK 호출은 별도 래퍼나 수동 span이 필요하다. NOVA SDK는 OpenAI 클라이언트가 아니므로 `wrap_openai`만 추가해서 환자·진찰·Gateway가 모두 수집되지는 않는다. [공식 LangGraph 추적 안내](https://docs.langchain.com/langsmith/trace-with-langgraph)
 
 현재 Test에는 LangSmith 전송 코드와 웹 연결 버튼이 없다. 에이전트는 내부 네트워크만 사용하고, Compose는 `LANGSMITH_*`를 전달하지 않는다. 루트 `.env`에 아래 값을 적는 것만으로 현재 테스트가 업로드되지는 않는다. 프로젝트 dev 이미지에는 기존 의존성을 통해 `langsmith 0.14.7`이 설치되어 있음을 확인했으며 이번 변경에서 패키지를 추가하지 않았다.
 
@@ -164,7 +164,7 @@ NOVA 모드의 에이전트는 계속 내부 네트워크만 사용하지만 시
 |---|---|
 | `result.json` | 프로세스·제출 수신·격리 증거를 합친 실행 판정 |
 | `report.html` | 외부 파일 없이 열 수 있는 대화·상태·진단·모델 리포트 |
-| `inspection.json` | 보존 로그에서 계산한 관측 무결성·그래프 경로·고정 평가·전송 및 수신 일치 검사와 소스 핀 |
+| `inspection.json` | 보존 로그에서 계산한 관측 무결성·실제 순차 작업 또는 과거 그래프 경로·고정 평가·전송 및 수신 일치 검사와 소스 핀 |
 | `run.json`, `run.args`, `status` | 웹의 선택 조건·실행기 입력·실행 상태; `run.json`은 웹 실행에만 생성 |
 | `run-id` | CLI 실행의 고유 ID; 컨테이너의 `/output`이라는 마운트 이름과 구별 |
 | `started`, `ended`, `exit-code`, `runner.log` | 실행기 시작·종료·종료 코드·시작 오류와 Docker 실행 로그 |
@@ -183,7 +183,7 @@ ready 이전에는 증례를 공개하지 않고 준비는 10분, ready 이후 �
 
 에이전트 종료 코드 0과 로컬 DIAGNOSE `completed` 영수증을 함께 확인해야 상담 성공이다. 빈/잘못된 SOAP, 비어 있지 않은 Gateway 응답 누락, 실패 프로세스나 증거 누락은 성공으로 표시하지 않는다. 웹에서 실행이 종료되어 리포트를 받는 것과 상담 성공은 각각 확인한다. scripted 응답으로 확정할 근거가 없으면 `no_supported_diagnosis`와 실패 결과를 그대로 보여준다.
 
-`nonempty_gateway_responses`와 SDK의 `doctor_successes`는 응답 문자열의 존재만 뜻하며 빈 사실 JSON도 포함한다. 실제 수용된 연결은 `case.facts`, Test가 감싼 입력 수용 함수의 인자·반환·상태 변화에서 확인한다. 과거 로그의 model_history는 당시 저장 자료다. Test 부트스트랩은 원본 진입점을 실행하면서 메모리에서만 그래프와 SDK 경계를 감싸고 원래 함수를 한 번 호출한다. 원본 소스·질문·라우팅·순위·재시도·진단·SOAP는 바꾸지 않으며, 로그 쓰기 실패가 행동을 재실행하지 않는다. 비교용으로 `TEST_TRACE=0 sh Test/run.sh C10 scripted`를 실행하면 관측을 끌 수 있다. 각 실행의 trace_status는 complete·incomplete·not_collected로 구분한다.
+`nonempty_gateway_responses`와 SDK의 `doctor_successes`는 응답 문자열의 존재만 뜻하며 빈 사실 JSON도 포함한다. 실제 수용된 연결은 `case.facts`, Test가 감싼 입력 수용 함수의 인자·반환·상태 변화에서 확인한다. 과거 로그의 model_history는 당시 저장 자료다. Test 부트스트랩은 원본 진입점을 실행하면서 메모리에서만 Consultation의 실제 작업과 SDK 경계를 감싸고 원래 함수를 한 번 호출한다. 원본 소스·질문·라우팅·순위·재시도·진단·SOAP는 바꾸지 않으며, 로그 쓰기 실패가 행동을 재실행하지 않는다. 비교용으로 `TEST_TRACE=0 sh Test/run.sh C10 scripted`를 실행하면 관측을 끌 수 있다. 각 실행의 trace_status는 complete·incomplete·not_collected로 구분한다.
 
 공식 점수·독립 임상 검증·실제 NOVA 연결 품질은 이 오프라인 결과로 확인할 수 없다. 재현 근거는 보존된 `assets/nova-devkit/nova_local.py`, `assets/nova-starter/nova_sdk.py`, `assets/nova-competition-2026/`와 [D27](../DECISION_STATE.md#D27)·[D29](../DECISION_STATE.md#D29)·[D31](../DECISION_STATE.md#D31)다.
 
@@ -193,7 +193,7 @@ D37부터 에이전트에는 기존 submission·출력 마운트와 함께 원�
 
 ## D47 세션 대역과 저장 C03 비교
 
-Test/brain_double.py는 순위 전용·순위와 행동·행동 복구를 구별하는 프로토콜 대역이다. 임상 정답이나 실제 모델 품질의 증거가 아니다. 모든 요청은 공통 Brain을 통과하며 Test/protocol.py가 선택된 Key와 Value 문자열을 읽는다.
+Test/brain_double.py는 순위 전용·순위와 행동·행동 복구를 구별하는 프로토콜 대역이다. 임상 정답이나 실제 모델 품질의 증거가 아니다. 모든 요청은 공통 Brain을 통과하며 Test/protocol.py가 현재 JSON 입력과 과거 Key/Value 입력을 구별해 읽는다.
 
 프로젝트 오프라인 dev 컨테이너에서 다음 비교를 수행한다.
 
@@ -224,3 +224,11 @@ docker compose -f Test/compose.d49.yaml run --rm -T d49-archive
 ```
 
 하네스는 read-only root/submission·network none·2CPU·8GB에서 원본 run.py와 SDK를 실행한다. 외부 fixture responder가 loopback HTTP로 ready·chat·SAY/EXAM·DIAGNOSE를 제공하고 fifteen-field SOAP와 completed를 확인한다. 개발 키·부모 data·원자료·환자 대본은 agent에 전달하지 않는다. 프로토콜 검증이며 실제 모델·임상·공식 품질은 not_run이다. D49의 source·이미지·합성 ZIP과 세 운영 상태는 [증빙](../data/provenance/algorithm-d49-2026-10-19.json)에 연결한다.
+
+## D50 순차 실행과 공동 교육 검증
+
+새 trace는 format 5의 execution.kind=sequential과 실제 작업 이름·소스/schema/prompt 해시를 기록한다. execution.py는 Test에서만 작업 경계를 감싸고 중첩 검증은 객체 호출로 보존한다. 과거 그래프 trace는 저장 형식대로 읽는다. 전체 상태 복사나 audit hook은 제출 코드에 넣지 않는다.
+
+영어 P와 한국어는 정상 high 호출 한 번에 생성하고 영어·인용·한국어 문구를 별도로 수용한다. 잘못된 한국어 그룹만 medium으로 제한 복구한다. 독립 SDK 검사에는 ONTOWARD_DENY_LANGGRAPH=1을 주어 Test 외부 guard로 LangGraph import를 차단할 수 있다. guard와 fixtures는 ZIP에 포함하지 않는다.
+
+현재 수용 증거는 [D50 provenance](../data/provenance/algorithm-d50-2026-10-20.json)에 연결한다. 관측·텍스트 DOM·HTTP와 실제 브라우저 시각 검증, 실제 모델·임상·공식 평가는 구분한다.

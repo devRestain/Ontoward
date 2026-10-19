@@ -102,7 +102,7 @@ class NormalizationRecoveryTests(unittest.TestCase):
             with jobs.worker():
                 run_phase(jobs,'normalize',self.config)
         self.assertEqual(jobs.status()['jobs'],{'done':2})
-        self.assertEqual(jobs.status()['usage'][0]['calls'],7)
+        self.assertEqual(sum(row['calls'] for row in jobs.status()['usage']),7)
         self.assertEqual(mock.chat.call_count,1)
         self.assertEqual(self.checksum(),before)
 
@@ -189,8 +189,9 @@ class NormalizationRecoveryTests(unittest.TestCase):
         output = io.StringIO()
         with patch('sys.stdout',new=output),self.assertRaisesRegex(RuntimeError,'output_contract_failed:normalize'):
             run_phase(jobs,'normalize',self.config,provider)
-        self.assertEqual(jobs.db.execute("SELECT COUNT(*) FROM jobs WHERE status='failed'").fetchone()[0],1)
+        self.assertEqual(jobs.db.execute("SELECT COUNT(*) FROM jobs WHERE status='failed' AND attempt_count=6").fetchone()[0],10)
         self.assertEqual(jobs.db.execute("SELECT COUNT(*) FROM jobs WHERE status='pending'").fetchone()[0],2)
+        self.assertEqual(jobs.db.execute("SELECT COUNT(*) FROM jobs WHERE status='pending' AND attempt_count=0").fetchone()[0],2)
         self.assertIn('invalid_batch_envelope',output.getvalue())
         self.assertIn('request_validated',output.getvalue())
 

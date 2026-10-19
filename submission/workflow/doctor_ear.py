@@ -1,10 +1,10 @@
 import json
 from copy import deepcopy
 from pydantic import ValidationError
-from .input_types import ContextInput, ContextStatement, EmpathySignal, InputResult, PatientContextFact
+from .input_types import ContextInput, ContextStatement, EmpathySignal, InputResult, PatientContextFact, normalized_text
 from .output_types import MappingBatch
 from .model_context import messages, fact_record
-from .rules.input import isolate_attributes, make_fact, note_fact
+from .rules.input import make_fact, note_fact
 from .state.models import CaseFact
 from .rules.limits import LIMITS
 from .rules.normalization import candidate_contracts, exact_mapping, force_mapping, measurement_value, statement_outcome, strict_json, validate_mapping
@@ -72,7 +72,7 @@ class DoctorEar:
         return self.model.complete(state, client, role='gateway', messages=messages(prompt, payload),
             max_tokens=LIMITS.gateway_recovery_tokens if recovery else LIMITS.gateway_tokens)
 
-    def _project_context(self, state, question, text):
+    def _project_context(self, state, question):
         related = set()
         if question and question.observation_id:
             related = {f.id for f in state.case.current_facts() if f.observation_id == question.observation_id and f.episode_id == question.episode_id}
@@ -84,7 +84,7 @@ class DoctorEar:
         dialogue = [by_id[ref] for ref in refs if ref in by_id and ref != current][:LIMITS.expanded_context_turns]
         return {'records': records, 'dialogue': dialogue}
 
-    def _read_context(self, raw, payload, text, previous=None, indices=None):
+    def _read_context(self, raw, payload, text, previous=None, indices=None, demographic_indices=None):
         if not isinstance(raw, dict) or not isinstance(raw.get('statements'), list):
             raise ValueError('context_requires_statement_array')
         ContextInput.model_validate({**raw, 'statements': [], 'empathy': None, 'patient_context': []})
@@ -124,7 +124,7 @@ class DoctorEar:
                     raise ValueError('objective_note_requires_objective_acquisition')
                 context.statements[index] = statement
             except (TypeError, ValueError, ValidationError) as error:
-                errors.append({'index': index, 'reason': str(error)[:320], 'raw': row})
+                errors.append({'area': 'statements', 'index': index, 'reason': str(error)[:320], 'raw': row})
         for index in positions:
             s = context.statements[index]
             if s.anchor is not None:
@@ -133,17 +133,26 @@ class DoctorEar:
                     s.anchor = None
                 elif s.focus == 'attribute' or s.measurement:
                     s.target_terms = list(dict.fromkeys([*anchor.target_terms, *s.target_terms]))[:8]
-        demographic = []
-        for row in raw.get('patient_context', []) if isinstance(raw.get('patient_context', []), list) else []:
+        partial = previous is not None and (indices is not None or demographic_indices is not None)
+        demographic = list(context.patient_context) if previous else []
+        demographic_rows = raw.get('patient_context', [])
+        if not isinstance(demographic_rows, list) or len(demographic_rows) > 8:
+            raise ValueError('patient_context_requires_at_most_eight_rows')
+        if partial and demographic_indices is None:
+            demographic_indices = []
+        if demographic_indices is not None and demographic_indices and len(demographic_rows) != len(demographic_indices):
+            raise ValueError('patient_context_repair_length_mismatch')
+        positions = demographic_indices if demographic_indices is not None else range(len(demographic_rows))
+        for index, row in zip(positions, demographic_rows):
             try:
                 item = PatientContextFact.model_validate(row)
                 if item.quote not in text:
                     raise ValueError('ungrounded_patient_context')
                 demographic.append(item)
-            except (TypeError, ValueError, ValidationError):
-                pass
+            except (TypeError, ValueError, ValidationError) as error:
+                errors.append({'area': 'patient_context', 'index': index, 'reason': str(error)[:320], 'raw': row})
         context.patient_context = demographic
-        if raw.get('empathy') is not None:
+        if not partial and raw.get('empathy') is not None:
             try:
                 signal = EmpathySignal.model_validate(raw['empathy'])
                 if signal.quote in text and (not question or question['kind'] == 'SAY'):
@@ -154,11 +163,20 @@ class DoctorEar:
 
     def _context(self, state, knowledge, client, text, segments=None):
         question = state.question()
+        fixed = self._fixed_reply(question, knowledge, text)
+        if fixed is not None:
+            return fixed
         binding = question.model_dump(exclude_none=True, exclude_defaults=True, exclude={'text', 'priority', 'order', 'coverage', 'empathy_key', 'plan_sentence_id'}) if question else None
         if binding is not None:
             binding['kind'] = question.kind
-        payload = {'task': 'input_context', 'phase': 'context', 'input': text, 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'patient_context': {n.context_key: n.value for n in state.case.current_facts() if n.context_key and n.subject == 'patient' and (n.status == 'present')}, 'input_segments': segments, **self._project_context(state, question, text)}
-        context, indices = (None, None)
+            if question.attribute:
+                attribute = knowledge.term_id(question.attribute, 'FindingAttribute')
+                target = next((ident for kind in ('Symptom', 'ExamFinding', 'ContextFactor')
+                    if (ident := knowledge.term_id(question.target, kind))), None)
+                binding['allowed_values'] = [knowledge.term(value) for value in knowledge.get_attribute_values(attribute)]
+                binding['allowed_units'] = knowledge.numeric_units(target, attribute)
+        payload = {'task': 'input_context', 'phase': 'context', 'input': text, 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'patient_context': {n.context_key: n.value for n in state.case.current_facts() if n.context_key and n.subject == 'patient' and (n.status == 'present')}, 'input_segments': segments, **self._project_context(state, question)}
+        context, indices, demographic_indices = (None, None, None)
         route = 'input.exam' if question and question.kind == 'EXAM' else 'input.reply' if question else 'input.initial'
         for attempt in range(2):
             payload['phase'] = 'context_repair' if attempt else 'context'
@@ -169,11 +187,24 @@ class DoctorEar:
             if state.session.termination:
                 break
             try:
-                context, errors = self._read_context(strict_json(response.content), payload, text, context, indices)
+                context, errors = self._read_context(strict_json(response.content), payload, text, context, indices, demographic_indices)
+                for i, statement in enumerate(context.statements):
+                    fallback = '; '.join(dict.fromkeys(statement.target_terms + statement.value_terms))
+                    if (statement_outcome(statement) is None and not statement.note_value and fallback
+                            and not normalized_text(fallback)
+                            and not candidate_contracts(knowledge, statement, question, expanded=True)):
+                        errors.append({'area': 'statements', 'index': i,
+                            'reason': 'Unmapped content requires an English note_value',
+                            'raw': statement.model_dump(exclude_defaults=True)})
+                        context.statements[i] = ContextStatement(quote=statement.quote, role='unknown')
                 if not errors:
                     break
-                indices = [e['index'] for e in errors]
-                payload.update(statement_indices=indices, repair_statements=errors, frozen_statements=[{'index': i, 'quote': s.quote} for i, s in enumerate(context.statements) if i not in indices])
+                indices = [e['index'] for e in errors if e['area'] == 'statements']
+                demographic_indices = [e['index'] for e in errors if e['area'] == 'patient_context']
+                payload.update(statement_indices=indices, patient_context_indices=demographic_indices,
+                    repair_statements=[e for e in errors if e['area'] == 'statements'],
+                    repair_patient_context=[e for e in errors if e['area'] == 'patient_context'],
+                    frozen_statements=[{'index': i, 'quote': s.quote} for i, s in enumerate(context.statements) if i not in indices])
             except (TypeError, ValueError, ValidationError) as error:
                 errors = [{'reason': response.error or str(error)[:320]}]
             payload['validation_errors'] = errors
@@ -196,6 +227,31 @@ class DoctorEar:
                 pass
         return context
 
+    def _fixed_reply(self, question, knowledge, text):
+        if question is None or question.kind != 'SAY':
+            return None
+        texts = self.config.texts
+        reply = text.strip().rstrip(texts.reply_trailing_punctuation)
+        if reply in texts.unknown_replies:
+            return ContextInput(statements=[ContextStatement(quote=text, role='unknown')])
+        if reply in set(texts.education_acknowledgements) - set(texts.present_replies):
+            return ContextInput(statements=[ContextStatement(quote=text, role='nonclinical')])
+        if (question.attribute or not question.target or not question.affirmative_presence
+                or question.answer_type != 'presence' or question.purpose not in {'chief', 'feature', 'ros', 'context'}):
+            return None
+        target = next((ident for kind in ('Symptom', 'ContextFactor')
+                       if (ident := knowledge.term_id(question.target, kind))), None)
+        contract = knowledge.question_contract(target, target) if target else None
+        if not contract or not contract.affirmative or question.text != knowledge.question(target, target):
+            return None
+        status = 'present' if reply in texts.present_replies else 'absent' if reply in texts.absent_replies else None
+        if status is None:
+            return None
+        return ContextInput(statements=[ContextStatement(quote=text, role='clinical', assertion=status,
+            target_terms=[question.target], subject=question.subject, subject_member=question.subject_member,
+            time_context=question.time_context, observation_id=question.observation_id,
+            episode_id=question.episode_id)])
+
     @staticmethod
     def _mapping_payload(statements, indices, contracts, phase, feedback):
         return {'task': 'input_mapping', 'phase': phase, 'statement_indices': indices, 'statements': [{'quote': statements[i].quote, 'focus': statements[i].focus, 'assertion': statements[i].assertion, 'candidates': contracts[i], **({'measurement': measurement_value(statements[i].measurement)} if statements[i].measurement else {})} for i in indices], 'validation_errors': feedback}
@@ -207,7 +263,7 @@ class DoctorEar:
                 break
             if phase == 'forced':
                 for i in remaining:
-                    contracts[i] = candidate_contracts(knowledge, statements[i], state.question(), expanded=True, complete=True)
+                    contracts[i] = candidate_contracts(knowledge, statements[i], state.question(), expanded=True)
                 remaining = [i for i in remaining if contracts[i]]
             if not remaining:
                 break
@@ -257,7 +313,7 @@ class DoctorEar:
                 continue
             contracts[i] = candidate_contracts(knowledge, statement, question)
             if not contracts[i]:
-                contracts[i] = candidate_contracts(knowledge, statement, question, expanded=True, complete=True)
+                contracts[i] = candidate_contracts(knowledge, statement, question, expanded=True)
             if not contracts[i]:
                 continue
             exact = exact_mapping(knowledge, statement, contracts[i], question)
@@ -293,7 +349,6 @@ class DoctorEar:
                 result.outcomes.append(outcome or ('recorded' if note else 'unsupported'))
             else:
                 result.outcomes.append(outcome or 'nonclinical')
-        result.facts = isolate_attributes(result.facts, state.case)
         if len(set(preferred)) == 1:
             result.preferred = preferred[0]
         return result
@@ -306,13 +361,8 @@ class DoctorEar:
         return 'initial:' + name
 
     def _demographic_facts(self, state, rows, source, turn, segments):
-        import re
         accepted = {}
         for row in rows:
-            if not re.search('[A-Za-z]', row.value) or re.search('[가-힣]', row.value):
-                continue
-            if row.key == 'sex' and row.value not in {'male', 'female', 'intersex', 'other', 'unknown'}:
-                continue
             ident = f"patient_context:{row.subject}:{row.subject_member or ''}:{row.key}"
             previous = accepted.get(ident) or state.case.facts.get(ident)
             value, measurement, status = (row.value, row.measurement, 'unknown' if row.value=='unknown' else 'present')

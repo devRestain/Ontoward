@@ -148,8 +148,11 @@ class Trace:
 
     def attach(self, consultation, knowledge):
         selected = {
+            'Consultation': {'enter_session', 'prepare_session', 'refresh_requirements', 'refresh_after_input',
+                             'close_collection', 'check_budget', 'select_action', 'advance_session',
+                             'finalize', 'repair_submission', 'release'},
             'DoctorEar': {'process_input', 'record_delivery', '_context', '_read_context', '_project_context',
-                          '_mapping_payload', '_map_batch', '_parse_text', '_demographic_facts'},
+                          '_mapping_payload', '_map_batch', '_parse_text', '_demographic_facts', '_fixed_reply'},
             'DoctorBrain': {'complete'},
             'QuestionTools': {'_spec', '_question', '_register', '_options', 'chief_statuses',
                               'prepare_clarification', 'select_question'},
@@ -189,15 +192,16 @@ class Trace:
         from workflow.rules import decision
         from workflow.sessions import initiation, chief_complaint, context_factor, differential_diagnosis, education
         boundaries = ((doctor_ear, 'InputBinding', ('candidate_contracts', 'exact_mapping', 'validate_mapping',
-                      'force_mapping', 'make_fact', 'note_fact', 'isolate_attributes')),
+                      'force_mapping', 'make_fact', 'note_fact')),
                       (decision, 'GraphEvidence', ('graph_candidates',)),
-                      (differential_diagnosis, 'GraphEvidence', ('graph_candidates',)),
                       (education, 'EnglishPlan', ('generate_plan',)),
                       *((module, 'ClinicalInput', ('prepare_decision',)) for module in
                         (initiation, chief_complaint, context_factor, differential_diagnosis)))
         for module, owner, names in boundaries:
             for name in names:
-                original = getattr(module, name)
+                original = getattr(module, name, None)
+                if original is None:
+                    continue
                 setattr(module, name, self.wrap(original, owner, name, f'{module.__name__}.{name}', call_kind='function'))
                 self.restore.append((module, name, original, True))
                 self.objects.append({'id': f'{module.__name__}.{name}', 'type': 'function', 'owner': owner,
@@ -271,81 +275,71 @@ class Trace:
 @contextmanager
 def observing(path):
     import nova_sdk
-    from langgraph.config import get_config
-    from workflow import graph, runtime
+    from workflow.consultation import Consultation
+    from execution import BOUNDARIES, observing_operations
 
     trace = Trace(path)
-    original_node, original_request = graph.run_node, nova_sdk.Client._request
-    original_build, runtime_build = graph.build_graph, runtime.build_graph
+    original_run, original_request = Consultation.run, nova_sdk.Client._request
 
-    def run_node(state, operation):
-        trace.suppressed.clear()
+    def run(consultation, state):
+        trace.knowledge = consultation.knowledge
         try:
-            trace.node = get_config().get('metadata', {}).get('langgraph_node')
-        except RuntimeError:
-            trace.node = None
-        trace.snapshot('node_input', state.model_dump(mode='json'))
-        target = operation.func if isinstance(operation, partial) else operation
-        trace.emit('node_start', operation=getattr(target, '__qualname__', str(type(target).__name__)))
-        try:
-            result = original_node(state, operation)
-        except BaseException as error:
-            trace.emit('node_error', error=type(error).__name__, message=str(error))
-            raise
-        trace.snapshot('node_end', result, suppressed_calls=dict(trace.suppressed))
-        return result
-
-    def build_graph(consultation, knowledge):
-        trace.knowledge = knowledge
-        try:
-            trace.attach(consultation, knowledge)
-        except Exception as error:
-            trace.emit('observation_error', error=type(error).__name__)
-        compiled = original_build(consultation, knowledge)
-        from workflow.state.models import WorkflowState
-        try:
+            trace.attach(consultation, consultation.knowledge)
             from settings import configured_path, prompt_paths
+            from workflow.state.models import WorkflowState
             root = Path(inspect.getfile(WorkflowState)).resolve().parents[2]
-            prompt_manifest = configured_path('ONTOWARD_PROMPTS', 'config')
-            modules = prompt_paths(prompt_manifest)
-            sources = {path.relative_to(root).as_posix() for path in (root / 'workflow').rglob('*.py')}
-            sources.update({'.env', 'settings.py', prompt_manifest.relative_to(root).as_posix()})
-            if (root / 'knowledge/manifest.json').is_file(): sources.add('knowledge/manifest.json')
-            sources.update(path.relative_to(root).as_posix() for parts in modules.values() for path in parts)
-            topology = compiled.get_graph()
+            manifest = configured_path('ONTOWARD_PROMPTS', 'config')
+            modules = prompt_paths(manifest)
+            sources = {file.relative_to(root).as_posix() for file in (root / 'workflow').rglob('*.py')}
+            sources.update({'.env', 'settings.py', 'requirements.txt', manifest.relative_to(root).as_posix()})
+            if (root / 'knowledge/manifest.json').is_file():
+                sources.add('knowledge/manifest.json')
+            sources.update(file.relative_to(root).as_posix() for parts in modules.values() for file in parts)
             trace.emit('settings', education_enabled=consultation.budget.education_enabled, objects=trace.objects,
-                       state_schema=WorkflowState.model_json_schema(),
-                       runtime={'algorithm': __import__('settings').ALGORITHM_VERSION,
-                                'collector_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                                'source_sha256': {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in sorted(sources)},
-                                'prompt_routes': {route: [path.relative_to(root).as_posix() for path in parts]
-                                                  for route, parts in modules.items()}},
-                       graph={'nodes': list(topology.nodes), 'edges': [dict(source=e.source, target=e.target,
-                               conditional=e.conditional) for e in topology.edges]},
-                       observation_scope='Selected collaborator and input binding boundaries, graph candidate output, model exchanges, state writes and SDK bodies; exclude Python heap and repeated inner dictionary and affordability lookups')
+                state_schema=WorkflowState.model_json_schema(),
+                runtime={'algorithm': __import__('settings').ALGORITHM_VERSION,
+                    'collector_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                    'source_sha256': {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in sorted(sources)},
+                    'prompt_routes': {route: [file.relative_to(root).as_posix() for file in parts]
+                                      for route, parts in modules.items()}},
+                execution={'kind': 'sequential', 'callable': 'workflow.consultation.Consultation.run',
+                    'operations': ['process_initial_input', *[name for _, name in BOUNDARIES]]},
+                observation_scope='Actual consultation and collaborator operation boundaries, model exchanges, state writes and SDK bodies; exclude Python heap and repeated inner dictionary and affordability lookups')
         except Exception as error:
             trace.emit('observation_error', error=type(error).__name__)
-        return compiled
+
+        def boundary(kind, name, current, error):
+            trace.node = name
+            if kind == 'start':
+                trace.suppressed.clear()
+                trace.snapshot('node_input', current.model_dump(mode='json'))
+                trace.emit('node_start', operation=name)
+            elif kind == 'error':
+                trace.snapshot('node_error', current.model_dump(mode='json'),
+                               error=type(error).__name__, message=str(error))
+            else:
+                trace.snapshot('node_end', current.model_dump(mode='json'), suppressed_calls=dict(trace.suppressed))
+        with observing_operations(consultation, boundary):
+            return original_run(consultation, state)
 
     def request(client, method, path, body=None):
         started = time.monotonic()
         trace.emit('sdk_request', method=method, path=path, body=body,
-                   request_id=(body or {}).get('request_id'), timeout=client.timeout,
-                   parent_call_id=trace.stack[-1] if trace.stack else None)
+            request_id=(body or {}).get('request_id'), timeout=client.timeout,
+            parent_call_id=trace.stack[-1] if trace.stack else None)
         try:
             response = original_request(client, method, path, body)
         except BaseException as error:
             trace.emit('sdk_error', path=path, request_id=(body or {}).get('request_id'),
-                       error=getattr(error, 'code', type(error).__name__), message=str(error),
-                       elapsed=round(time.monotonic() - started, 6))
+                error=getattr(error, 'code', type(error).__name__), message=str(error),
+                elapsed=round(time.monotonic() - started, 6))
             raise
         trace.emit('sdk_response', path=path, request_id=(body or {}).get('request_id'), response=response,
-                   elapsed=round(time.monotonic() - started, 6))
+            elapsed=round(time.monotonic() - started, 6))
         return response
 
-    graph.run_node, graph.build_graph, runtime.build_graph = run_node, build_graph, build_graph
-    nova_sdk.Client._request = request
-    trace.emit('start', format_version=4)
+    Consultation.run, nova_sdk.Client._request = run, request
+    trace.emit('start', format_version=5)
     try:
         yield trace
     except BaseException as error:
@@ -356,8 +350,7 @@ def observing(path):
         trace.emit('end', outcome='exited')
     finally:
         trace.detach()
-        graph.run_node, graph.build_graph, runtime.build_graph = original_node, original_build, runtime_build
-        nova_sdk.Client._request = original_request
+        Consultation.run, nova_sdk.Client._request = original_run, original_request
 
 
 if __name__ == '__main__':

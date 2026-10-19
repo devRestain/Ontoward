@@ -11,7 +11,7 @@ sys.path.insert(0,os.environ.get('ONTOWARD_WORKFLOW_FIXTURES',str(ROOT/'Dev/test
 import fixtures as f
 from observe import observing, plain
 from inspection import inspect_run
-from workflow.graph import build_graph
+from execution import observing_operations
 from workflow.state.models import WorkflowState
 
 OUTPUT=Path(os.environ.get('ONTOWARD_OBSERVER_OUTPUT',ROOT/'Tmp/d44-observer'))
@@ -47,10 +47,14 @@ def capture(name,observed):
     context=observing(path) if observed else nullcontext()
     with context:
         initial=c.nova_session.initialize_case(client)
-        from workflow import graph
-        updates=list(graph.build_graph(c,c.knowledge).stream(initial.model_dump(mode='json'),
-            {'recursion_limit':c.budget.graph_step_limit(initial)},stream_mode='updates'))
-    return plain({'initial':initial.model_dump(mode='json'),'updates':updates,'wire':wire}),path
+        initial_raw=initial.model_dump(mode='json')
+        updates=[]
+        def capture_update(kind, name, state, error):
+            if kind == 'end':
+                updates.append({name:state.model_dump(mode='json')})
+        with observing_operations(c,capture_update):
+            c.run(initial)
+    return plain({'initial':initial_raw,'updates':updates,'wire':wire}),path
 
 
 def apply(state,change):

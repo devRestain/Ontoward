@@ -6,7 +6,8 @@ from .rules.action import ActionResponse, REFUSAL_ERRORS, RESPONSE_FORMAT_ERRORS
 from .rules.limits import LIMITS
 from .state.models import Question
 from .state.evidence import patient_payload
-from .output_types import EmpathyReply, RenderedGroup
+from .output_types import RenderedGroup
+from .doctor_brain import ModelResult
 
 class DoctorMouth:
 
@@ -15,7 +16,7 @@ class DoctorMouth:
         self.questions, self.interactions, self.model = (questions, interactions, model)
         self.config, self.budget = (config, budget)
 
-    def _render(self, state, client, base, sentences, budgets):
+    def _render(self, state, client, base, sentences, budgets, initial=None):
         pending = {row['id']: row for row in sentences}
         rendered, errors = ({}, {})
         response_repairs, format_repairs, generation_error = (0, 0, None)
@@ -29,8 +30,12 @@ class DoctorMouth:
                 routes.append('mouth.response_repair')
             elif errors:
                 routes.append('mouth.text_repair')
-            request = messages(self.config.prompt(*routes), payload)
-            response = self.model.complete(state, client, role='education_doctor', messages=request)
+            if initial is not None:
+                response = ModelResult(content=json.dumps({'items': [dict(id=ident, utterances=initial.get(ident)) for ident in pending]}))
+                initial = None
+            else:
+                request = messages(self.config.prompt(*routes), payload)
+                response = self.model.complete(state, client, role='education_doctor', messages=request)
             if response.error:
                 errors = dict.fromkeys(pending, response.error)
                 if response.error not in {'PROVIDER_RESPONSE_INVALID', 'OUTPUT_TRUNCATED'} or response_repairs:
@@ -90,26 +95,13 @@ class DoctorMouth:
             text = next(iter(rendered.get('diagnosis', [])), prepared)
         return text, errors
 
-    def render_education(self, state, client, sentences, budgets, capacity):
+    def render_education(self, state, client, sentences, budgets, capacity, initial=None):
         """Render the session's allocated groups without changing their lifecycle."""
         base = {'task': 'education_doctor', 'fixed_diagnosis': state.case.fixed_diagnosis(), 'patient': patient_payload(state.case), 'turn_budget': capacity}
-        return self._render(state, client, base, sentences, budgets)
+        return self._render(state, client, base, sentences, budgets, initial=initial)
 
     def prepare_empathy(self, state, client, event):
-        payload = {'task': 'empathy', 'emotion': event.emotion, 'intent': event.intent, 'patient': patient_payload(state.case), 'previous_deliveries': sum((a.purpose == 'empathy' and a.outcome != 'undelivered' for a in state.interview.answers))}
-        request = messages(self.config.prompt('empathy'), payload)
-        response = self.model.complete(state, client, role='empathy', messages=request)
-        if state.session.termination:
-            return
-        text = self.config.texts.empathy_fallback
-        try:
-            raw = EmpathyReply.model_validate_json(response.content)
-            generated = unicodedata.normalize('NFC', raw.text)
-            if content_error(generated) or any((c in generated for c in '?？\r\n')) or (not any(('가' <= c <= '힣' for c in generated))):
-                raise ValueError('Invalid empathy statement')
-            text = generated
-        except (TypeError, ValueError):
-            pass
+        text = self.config.texts.empathy_templates.get(event.emotion, self.config.texts.empathy_fallback)
         q = Question(item_id=f'empathy:{event.source_ref}', purpose='empathy', text=text, order=-100, priority=LIMITS.clarification_priority, empathy_key=event.key)
         self.questions.register(state, q)
         self.interactions.select_question(state, q)

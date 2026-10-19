@@ -32,6 +32,14 @@
   },
   "symptom_assessment": "Cause undetermined; provisional symptom diagnosis",
   "empathy_fallback": "많이 힘드셨겠어요. 함께 살펴볼게요.",
+  "empathy_templates": {
+    "fear": "걱정이 크시겠어요. 함께 살펴볼게요.",
+    "anxiety": "불안하셨겠어요. 차근차근 살펴볼게요.",
+    "pain": "많이 아프셨겠어요. 함께 살펴볼게요.",
+    "frustration": "답답하셨겠어요. 말씀을 듣고 살펴볼게요.",
+    "sadness": "마음이 힘드셨겠어요. 함께 살펴볼게요.",
+    "other": "많이 힘드셨겠어요. 함께 살펴볼게요."
+  },
   "unknown_replies": [
     "모르겠습니다",
     "모르겠어요",
@@ -49,6 +57,7 @@
     "예",
     "있어요"
   ],
+  "absent_replies": ["아니요", "아니오", "없어요", "없습니다"],
   "reply_trailing_punctuation": ".!?。",
   "status_labels": {
     "present": "+",

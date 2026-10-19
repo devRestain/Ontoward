@@ -12,6 +12,45 @@ class Consultation:
         self.knowledge, self.config, self.tools, self.sessions = knowledge, config, tools, sessions
         self.differential = sessions['DifferentialDiagnosis']
 
+    def run(self, state):
+        self.ear.process_input(state, self.knowledge, self.client)
+        self.refresh_after_input(state)
+        while not state.session.termination:
+            self.check_budget(state)
+            if state.session.termination:
+                break
+            if state.session.finalizing:
+                self.finalize(state)
+                while not state.session.termination:
+                    self.writer.validate_submission(state)
+                    if state.session.termination:
+                        break
+                    if state.turn.error:
+                        self.repair_submission(state)
+                        continue
+                    self.writer.submit_diagnosis(state)
+                    if state.session.termination:
+                        break
+                    if state.turn.error:
+                        self.repair_submission(state)
+                        continue
+                    self.writer.confirm_submission(state)
+                    break
+                break
+            if state.interview.status == 'uninitialized':
+                self.enter_session(state)
+            elif state.interview.queue or state.interview.empathy:
+                self.select_action(state)
+                self.mouth.validate_action(state)
+                if state.turn and state.turn.stage == 'ready' and not state.session.termination:
+                    self.mouth.execute_action(state, self.client)
+                    if state.turn and state.turn.stage == 'received' and not state.session.termination:
+                        self.ear.process_input(state, self.knowledge, self.client)
+                        self.refresh_after_input(state)
+            else:
+                self.advance_session(state)
+        return state
+
     def enter_session(self, state):
         if state.session.termination or state.turn or state.interview.status == 'collecting':
             return
@@ -31,10 +70,19 @@ class Consultation:
 
     def prepare_session(self, state):
         current = state.interview.current
+        self.refresh_requirements(state)
         if current in {'DifferentialDiagnosis', 'Education'}:
             self.sessions[current].prepare(state, self.client)
         else:
             self.sessions[current].prepare(state)
+
+    def refresh_requirements(self, state):
+        scope = state.interview.current
+        session = self.sessions[scope]
+        if hasattr(session, 'required_actions'):
+            self.budget.required_counts = {scope: session.required_actions(state)}
+        else:
+            self.budget.required_counts = {}
 
     def refresh_after_input(self, state):
         if state.session.termination or state.case.assessment and state.case.assessment.frozen:
@@ -50,7 +98,7 @@ class Consultation:
     def check_budget(self, state):
         if state.session.termination:
             return
-        if self.budget.seconds_left(state.session) > state.session.reserve_seconds + LIMITS.response_seconds:
+        if state.session.budget_sync_required and self.budget.seconds_left(state.session) > state.session.reserve_seconds + LIMITS.response_seconds:
             try:
                 self.nova_session.refresh_snapshot(state, self.client)
             except NovaError as error:
@@ -59,6 +107,7 @@ class Consultation:
                 state.stop('unknown', 'invalid_session_budget')
             if state.session.termination:
                 return
+        self.refresh_requirements(state)
         decision = self.budget.evaluate(state)
         if decision.expired:
             self.interactions.skip_empathy(state, 'session_expired')

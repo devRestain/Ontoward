@@ -12,6 +12,7 @@ class _EducationWork:
     repairs: int = 0
     sentences: list = field(default_factory=list)
     errors: list = field(default_factory=list)
+    utterances: dict = field(default_factory=dict)
 
 def references(raw, contexts):
     if not isinstance(raw, list):
@@ -48,11 +49,14 @@ def parse_plan(raw, contexts, progress):
             continue
         for index, row in enumerate(rows):
             try:
-                row = PlanRow.model_validate(row).model_dump()
+                if not isinstance(row, dict):
+                    raise ValueError('invalid sentence fields')
+                utterances = row.get('utterances')
+                row = PlanRow.model_validate({k: v for k, v in row.items() if k != 'utterances'}).model_dump()
                 if not isinstance(row, dict) or set(row) != {'text', 'basis', 'references', 'priority'}:
                     raise ValueError('invalid sentence fields')
                 text = row['text']
-                if not isinstance(text, str) or not text.strip() or '\n' in text or ('\r' in text) or (not re.search('[A-Za-z]', text)):
+                if not isinstance(text, str) or not text.strip() or '\n' in text or ('\r' in text) or (not re.search('[A-Za-z]', text)) or re.search('[가-힣]', text):
                     raise ValueError('require a nonempty English sentence on one line')
                 if re.match('^(otherwise|else|in that case)\\b', text.strip(), re.I):
                     raise ValueError('include the treatment prerequisite in this sentence')
@@ -63,6 +67,7 @@ def parse_plan(raw, contexts, progress):
                     continue
                 sentence = PlanSentence(id=f'plan:{field}:{sum((s.field == field for s in progress.sentences))}', field=field, text=text.strip(), basis=row['basis'], references=tuple((SourceReference(**{k: v for k, v in ref.items() if k != 'quote'}) for ref in refs)), priority=row['priority'])
                 progress.sentences.append(sentence)
+                progress.utterances[sentence.id] = utterances
                 accepted.append(sentence.model_dump())
                 existing.add((field, sentence.text))
             except (TypeError, ValueError) as error:
@@ -102,7 +107,7 @@ def _request(state, client, model, config, progress, payload, parser):
 
 def generate_plan(state, client, knowledge, config, model):
     if state.interview.education_status != 'not_started':
-        return
+        return {}
     state.interview.education_status = 'failed'
     progress = _EducationWork()
     fixed = state.case.primary()
@@ -121,3 +126,4 @@ def generate_plan(state, client, knowledge, config, model):
     populated = {sentence.field for sentence in progress.sentences}
     state.interview.education_status = 'complete' if populated == set(PLAN_FIELDS) and (not progress.errors) else 'partial' if populated else 'failed'
     state.interview.education_reason = progress.errors[0] if progress.errors else None
+    return progress.utterances

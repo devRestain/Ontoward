@@ -11,7 +11,7 @@ from .models import Result, canonical, digest
 
 def recover_normalization(work, source_run_id, identity, boundary=lambda: None, repair='schema'):
     """Fork a settled normalization checkpoint after a bounded transport or phase-ownership fix."""
-    if repair not in {'schema','text','provider'}: raise ValueError('unsupported_normalization_recovery')
+    if repair not in {'schema','text','provider','batch'}: raise ValueError('unsupported_normalization_recovery')
     work = Path(work)
     source = work / source_run_id
     run_id = digest(identity)[:32]
@@ -44,6 +44,14 @@ def recover_normalization(work, source_run_id, identity, boundary=lambda: None, 
                     raise ValueError('recovery_index_or_semantic_contract_changed:'+name)
             allowed_state=(meta.get('state')=='failed' and meta.get('error')=='output_contract_failed:normalize')
             if repair=='text': allowed_state=allowed_state or meta.get('state')=='paused'
+            if repair=='batch':
+                allowed_state=meta.get('state')=='paused'
+                if previous['prompts']!=identity['prompts']:
+                    raise ValueError('recovery_batch_prompts_changed')
+                changed={name for name in previous['generator'].keys() | identity['generator'].keys()
+                    if previous['generator'].get(name)!=identity['generator'].get(name)}
+                if not changed or changed-{'build.py','recovery.py','__main__.py'}:
+                    raise ValueError('recovery_not_a_batch_scheduler_change')
             if repair=='provider':
                 allowed_state=meta.get('state')=='failed' and meta.get('error')=='persistent_provider_failure:PROVIDER_RESPONSE_INVALID'
                 if previous['prompts']!=identity['prompts']:
@@ -72,7 +80,8 @@ def recover_normalization(work, source_run_id, identity, boundary=lambda: None, 
                             if errors and all(item['path'].endswith('.question') and item['type']=='value_error' for item in errors): continue
                         raise ValueError('recovery_not_an_action_text_failure:'+row['job_id'])
             requests = [dict(row) for row in db.execute('SELECT * FROM requests')]
-            confirmed=[row for row in requests if repair=='provider' and row['state'] in {'prepared','failed'} and
+            confirmed=[row for row in requests if (repair=='provider' and row['state'] in {'prepared','failed'} or
+                repair=='batch' and row['state']=='failed') and
                 row['provider']=='nova_dev' and row['error']=='PROVIDER_RESPONSE_INVALID' and row['response'] is None]
             confirmed_ids={row['request_id'] for row in confirmed}
             if repair=='provider' and (not confirmed or any(row['error'] for row in rows if row['status']!='done')):
@@ -93,10 +102,11 @@ def recover_normalization(work, source_run_id, identity, boundary=lambda: None, 
             receipt = dict(contract='normalize-'+repair+'-recovery-1',source_run_id=source_run_id,
                 run_id=run_id,source_identity=digest(previous),target_identity=digest(identity),
                 reason={'schema':'nova_schema_missing_from_messages','text':'defer_executable_text_to_questions',
-                    'provider':'confirmed_provider_response_invalid_requires_new_id'}[repair],accepted_results=done,
+                    'provider':'confirmed_provider_response_invalid_requires_new_id',
+                    'batch':'replace_sticky_shrink_with_fixed_configured_batch_size'}[repair],accepted_results=done,
                 indexed_files=len(previous['inputs']),
                 indexed_rows=sum(value for key,value in meta.items() if key.startswith('cursor:')),
-                jobs_reset=0 if repair=='provider' else len(rows)-done,jobs_kept_done=done,jobs_pending=len(rows)-done,
+                jobs_reset=0 if repair in {'provider','batch'} else len(rows)-done,jobs_kept_done=done,jobs_pending=len(rows)-done,
                 confirmed_failed_request_ids=sorted(confirmed_ids),
                 requests_preserved=len(requests),usage_preserved=usage,
                 previous_attempts=[row for row in rows if row['attempt_count']],
@@ -110,7 +120,7 @@ def recover_normalization(work, source_run_id, identity, boundary=lambda: None, 
                 db.backup(copy,pages=4096,progress=lambda *args: boundary())
                 copy.execute('PRAGMA journal_mode=DELETE')
                 with copy:
-                    if repair=='provider':
+                    if repair in {'provider','batch'}:
                         copy.execute("UPDATE jobs SET status='pending' WHERE status!='done'")
                         copy.executemany("UPDATE requests SET state='failed' WHERE request_id=?",[(ident,) for ident in confirmed_ids])
                     else:

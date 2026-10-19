@@ -1,10 +1,10 @@
 # Ontoward
 
-Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D49·d49.1**이며 D47 세션 소유권·통합 사실·평가 고정과 D48 프롬프트 모듈을 유지한다. Python이 등록 그래프의 관계·조건·질문을 준비하고, 공통 DoctorBrain을 호출한 세션이 질환 순위와 선택 질문을 수용한다.
+Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D50·d50.1**이며 D49 무점수 지식, D47 세션 소유권·통합 사실·평가 고정과 D48 프롬프트 모듈을 유지한다. Python이 등록 그래프의 관계·조건·질문을 준비하고, 공통 DoctorBrain을 호출한 세션이 질환 순위와 선택 질문을 수용한다.
 
 **기존 실행 DB는 철회했다. 실제 새 지식 번들은 아직 설치하지 않았다.** 현재 `prepare()`와 정식 ZIP 생성은 `knowledge_bundle_not_installed`로 실패한다. 과거 원자료·준비 DB·수용 ZIP·증거는 보존했으며 [철회 영수증](data/extraction/retired-d42-2026-10-19/withdrawal.json)에 해시를 남겼다. 합성 번들은 Tmp/에서만 검증했다.
 
-[백서](submission/README.md)는 현재 진료 알고리즘, [PRD](PRD.md)는 요구사항, [D49 결정](DECISION_STATE.md#D49)은 선택한 범위, [추출 안내](Extraction/README.md)는 다음 실제 DB 생성 경로를 설명한다. [D49 증빙](data/provenance/algorithm-d49-2026-10-19.json)과 [루트](PROJECT_STATE.md)·[제출](submission/PROJECT_STATE.md)·[데이터](data/PROJECT_STATE.md) 상태가 수행 결과를 관리한다.
+[백서](submission/README.md)는 현재 진료 알고리즘, [PRD](PRD.md)는 요구사항, [D50 결정](DECISION_STATE.md#D50)은 현재 워크플로우 변경 범위, [추출 안내](Extraction/README.md)는 다음 실제 DB 생성 경로를 설명한다. [D50 증빙](data/provenance/algorithm-d50-2026-10-20.json)과 [루트](PROJECT_STATE.md)·[제출](submission/PROJECT_STATE.md)·[데이터](data/PROJECT_STATE.md) 상태가 수행 결과를 관리한다.
 
 ## 무점수 진료
 
@@ -21,9 +21,11 @@ Association은 질환·Pattern·명시적 target_scope·applicability·`support 
 
 Context도 같은 CaseFact를 사용하며 가족 구성원·시점·관찰·episode를 섞지 않는다. 속성 질문에는 같은 Target·scope의 존재 확인이 앞선다. rule의 any와 실제 질문의 current/past/unspecified를 구분한다. 나이·측정값·기간·단위·통증 수치와 실제 취득 경로는 유지한다.
 
-첫 세 세션은 정상 종료에 한 번 순위를 판단하고 DD는 첫 행동에 기존 평가를 사용한 뒤 unknown을 포함한 새 응답마다 판단한다. 최신 평가·facts·chief를 고정한 뒤 Education과 SOAP가 공유한다. Education 답변은 대화 기록만 남긴다. 진료 모델은 기존 openai/gpt-6-luna이며 임상·영어 계획 high, Ear·Mouth medium이다. 추출 공급자 선택과 진료 모델 설정은 별개다.
+Initiation과 CC 종료에서 순위를 판단하고, Context 종료와 DD 첫 행동을 DD 진입의 한 joint decision으로 합친다. DD는 unknown을 포함한 새 응답을 식별자로 판단한다. Consultation 순차 루프가 LangGraph를 대체하며 최신 평가·facts·chief를 고정한 뒤 Education과 Python SOAP가 공유한다. Education은 영어 P와 한국어 발화를 함께 생성하고 두 결과를 독립 수용한다. 진료 모델은 기존 openai/gpt-6-luna이며 임상·공동 계획은 high, Ear와 남은 Mouth 복구는 medium이다. 추출 모델 설정은 별개다.
 
 Consultation이 검증한 CC 평가 자료만 ContextFactor에 전달한다. EducationSession은 영어 계획과 전달 순서·턴 배분·큐·준비 상태를 관리하고, Mouth는 한국어 표현과 행동 실행을 담당한다. 이미 큐나 전달·미전달 결과가 있는 교육 계획 그룹은 재진입해도 다시 표현하지 않는다.
+
+입력 부분 복구는 정상 demographic·형제 진술을 보존하고 typed age와 미매핑 영문 메모를 수용한다. 속성의 그래프 자격은 현재 같은 범위의 존재 확인으로 계산한다. 정확한 단답과 공감 템플릿, 성공 응답의 자원 재사용, 공유 관계 JSON으로 불필요한 호출·조회·중복 표현을 줄인다.
 
 ## 추출 이미지
 
@@ -54,4 +56,4 @@ docker compose run --rm -T control status
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm -T --no-deps dev python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py'
 ```
 
-유지 회귀·합성 상담·공급자 대역·중단 내구성·이미지 실행·독립 ZIP을 오프라인으로 검증한다. 실제 로그인·유료 생성·새 실제 DB 설치·모델 품질·임상적 정확성·공식 평가·배포는 이번 완료 범위에 포함하지 않는다. 다음 제한 작업은 공급자 선택·인증 후 실제 새 DB 생성과 설치다.
+유지 회귀·합성 상담·공급자 대역·중단 내구성·이미지 실행·독립 ZIP을 오프라인으로 검증한다. 실제 로그인·유료 생성·새 실제 DB 설치·모델 품질·임상적 정확성·공식 평가·배포는 이번 완료 범위에 포함하지 않는다. 별도 추출 빌드의 진행·설치와 이후 실제 번들 상담 검증은 해당 운영 상태를 따른다.

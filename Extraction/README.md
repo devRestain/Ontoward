@@ -25,6 +25,21 @@ docker compose run --rm -T verify verify --run-id RUN_ID
 
 ## 실행·진행 확인·로그
 
+요청 배치는 `config.json`의 `batch_size`인 **10개로 고정**한다. 출력 누락·형식 오류·출력 중단·과거 재시도 때문에 자동으로 5→2→1개로 줄이지 않는다. 유효한 결과는 보존하고 미완료 작업만 다음 10개 배치에 넣으며, 단계 말미에 남은 작업만 더 작은 배치가 된다. 작업별 출력 검증 6회 상한과 일일 쿼터는 유지한다. `running=10`은 병렬 요청 10회가 아니라 **요청 한 건에 들어간 작업 10개**를 뜻한다.
+
+이전 자동 축소 버전의 정규화 실행은 먼저 안전하게 중단한 뒤 아래 순서로 옮긴다. 입력·설정·모델·프롬프트·임상 계약이 같고, 모든 요청의 결과가 확정된 paused 체크포인트만 허용한다. 원본과 완료 결과·재시도 횟수·원본 응답·사용량을 보존한 새 fingerprint를 만들고, 복구 명령에서는 모델을 호출하지 않는다. 불명 요청이 있으면 이 복구를 거절한다.
+
+```sh
+bash Extraction/extraction.sh pause --run-id OLD_RUN_ID
+# status에서 paused를 확인한 뒤 실행한다.
+docker compose build extraction
+bash Extraction/extraction.sh recover-batch --run-id OLD_RUN_ID
+# 복구 출력의 새 RUN_ID를 사용한다.
+bash Extraction/extraction.sh resume --provider nova_dev --run-id NEW_RUN_ID --install
+```
+
+실행 도중 다른 작업이 런타임 reader를 변경했다면 새 정본으로 빌드한 이미지의 `runtime_contract`가 달라 복구가 거절될 수 있다. 이 검사를 우회하거나 정본을 되돌리지 않는다. 이번 배치 수정 이미지는 기존 체크포인트 이미지 `sha256:7e98251763fff539605c50dd15ae22d0b4b1f914bc632ce45a490f5d11a95138`에 추출기 수정만 올려 지식 계약을 보존했다. 재현용 Dockerfile과 검증은 `Tmp/extraction-batch-repair-2026-10-20/`, 영속 증빙은 `data/provenance/extraction-batch-repair-2026-10-20.json`에서 확인한다.
+
 프로젝트 루트의 Bash helper는 stdout·stderr를 화면과 `data/extraction/v5-enum/logs/<UTC시각>-<PID>.log`에 함께 보존한다. 실패 종료 코드도 유지한다. `latest.log`는 가장 최근 로그를 가리킨다.
 
 ```sh

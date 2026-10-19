@@ -32,12 +32,12 @@
 - Use sh Test/knowledge.sh start or stop for the separate loopback knowledge viewer without model calls or consultation execution.
 - Preserve SQLite WAL visibility through directory mounts and mode=ro connections; keep preparation candidates distinct from admitted graph nodes and derived display names distinct from source labels.
 - Default the website to C10 NOVA and 200 total role requests; require an explicit start action and retain one active run without queuing or automatic resumption.
-- Observe the original run.py through Test-only in-memory graph and SDK wrappers; delegate once and preserve errors retries routing and all clinical decisions.
+- Observe the original run.py through Test-only Consultation operation and SDK wrappers; delegate once and preserve errors retries routing and all clinical decisions. Use execution.py only outside the agent artifact.
 - Store the initial state and reversible node changes with actual node names session turn request IDs and source labels; mark missing or partial traces explicitly.
 - Observe DoctorEar DoctorBrain DoctorMouth the five session objects QuestionTools and other collaborator methods from Test-only wrappers without runtime audit injection and preserve each original call exception and method binding once.
 - Observe imported Python input-binding graph-candidate and English-plan functions at their actual call sites; record callable definition paths and distinguish functions from instance methods.
 - Store large serialized call values once by content hash in trace value events; resolve recorded references in the viewer without implying Python object identity or losing argument mutation paths.
-- Pin the observed runtime source hashes manifest collector hash compiled graph topology and WorkflowState schema at graph construction.
+- Pin runtime source hashes manifest collector hash actual sequential operations and WorkflowState schema at Consultation.run. Record trace format 5 with sequential execution metadata and preserve reading of historical graph traces without inventing compiled topology.
 - Pin the configured prompt manifest modules settings and route composition in new traces while preserving saved runs unchanged.
 - Derive inspection.json only from preserved trace and simulator records; expose incomplete calls SDK pairs graph paths frozen patient state revision primary diagnosis SOAP equality and completed receipts without rerunning clinical logic.
 - Keep execution settings in a collapsible rail and give reports a stable viewport with one content scroll; preserve the selected report and history control during unchanged polling and provide compact turn selection.
@@ -73,4 +73,5 @@
 - Permit the single clinical provider response repair within the existing shared request ceiling while preserving other service and unknown-result stops.
 
 - Use compose.d49.yaml and verify_d49_archive.py for a fresh synthetic ZIP consultation with read-only submission, network none, unchanged run.py, original SDK, ready handshake, fifteen-field SOAP, and completed receipt. Keep the fixture responder outside the archive and remove development credentials.
+- Set ONTOWARD_DENY_LANGGRAPH=1 for D50 independent SDK verification and use no_langgraph/sitecustomize.py only as an external test guard. Keep actual model and clinical quality distinct from blocked-import protocol acceptance.
 - Read only the new effect, target_scope, Pattern/applicability, attribute_roles, and five asset pins in current graph inspection; do not restore score or source-required metadata.

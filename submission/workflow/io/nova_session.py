@@ -56,6 +56,7 @@ class NovaSessionClient:
     def apply_snapshot(self, state: WorkflowState, value: SessionInput) -> None:
         session = state.session
         self.usage.apply_server_budget(state, value)
+        session.budget_sync_required = False
         session.deadline = value.deadline
         session.allowed_actions = value.allowed_actions
         if value.status in {"closed", "completed"}:

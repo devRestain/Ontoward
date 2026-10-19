@@ -28,14 +28,16 @@ class SessionTaskTests(unittest.TestCase):
     def test_exit_rankings_and_per_response_dd_calls_follow_real_workflow(self):
         c, state, updates = f.run(prepared=f.resources(education=True))
         clinical = [row for row in c.client.requests if row['task'].startswith('clinical_')]
-        self.assertEqual([(row['task'], row['stage']) for row in clinical[:3]],
-            [('clinical_rank', stage) for stage in ('Initiation', 'ChiefComplaint', 'ContextFactor')])
+        self.assertEqual([(row['task'], row['stage']) for row in clinical[:2]],
+            [('clinical_rank', stage) for stage in ('Initiation', 'ChiefComplaint')])
+        self.assertEqual((clinical[2]['task'], clinical[2]['stage']), ('clinical_decision', 'DifferentialDiagnosis'))
         self.assertIsNone(next(raw['case']['assessment'] for name, raw in updates if name == 'process_initial_input'))
-        for stage in ('Initiation', 'ChiefComplaint', 'ContextFactor'):
+        for stage in ('Initiation', 'ChiefComplaint'):
             self.assertEqual(sum(row['stage'] == stage for row in clinical), 1)
         dd_answers = [a for a in state.interview.answers if a.scope == 'DifferentialDiagnosis' and a.purpose != 'empathy']
-        self.assertEqual(sum(row['task'] == 'clinical_decision' for row in clinical), len(dd_answers))
-        self.assertEqual(sum(row['task'] == 'clinical_action' for row in clinical), 1)
+        self.assertFalse(any(row['stage'] == 'ContextFactor' for row in clinical))
+        self.assertEqual(sum(row['task'] == 'clinical_decision' for row in clinical), len(dd_answers) + 1)
+        self.assertEqual(sum(row['task'] == 'clinical_action' for row in clinical), 0)
         self.assertIs(c.ear.model, c.brain)
         self.assertIs(c.mouth.model, c.brain)
         self.assertIs(c.sessions['Education'].brain, c.brain)
@@ -50,7 +52,7 @@ class SessionTaskTests(unittest.TestCase):
             owner = c.sessions[stage]
             owner.close(state, c.client)
             owner.close(state, c.client)
-        self.assertEqual(len(c.client.requests), 3)
+        self.assertEqual(len(c.client.requests), 2)
         self.assertTrue(all(row['candidates'] == [] for row in c.client.requests))
         self.assertEqual(state.case.assessment.differential, ())
 
@@ -142,7 +144,7 @@ class SessionTaskTests(unittest.TestCase):
         self.assertFalse(action.payload['evidence'])
         self.assertNotIn('schema', action.payload)
         wire = clinical_messages(c.config, rank)[-1]['content']
-        self.assertTrue(wire.startswith('task = '))
+        self.assertTrue(wire.startswith('{'))
         self.assertNotIn('urn:ontoward:', wire)
         self.assertNotIn('graph_binding', wire)
 

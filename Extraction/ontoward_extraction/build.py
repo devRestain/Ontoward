@@ -176,8 +176,6 @@ def run_phase(jobs, phase, config, provider=None, retry_unknown=False):
             with jobs.db:
                 jobs.db.execute("UPDATE jobs SET status='failed' WHERE phase=? AND status!='done' AND attempt_count>=6",(phase,))
             raise RuntimeError('output_contract_failed:'+phase)
-        if any(row['attempt_count']>=2 for row in pending): size=max(1,size//2)
-        if any(row['attempt_count']>=3 for row in pending): size=1
         batch=pending[:size]
         final=phase in {'final','conflict','patch'}
         prompt_path=Path(config['prompt_directory'])/('final.txt' if final else phase+'.txt')
@@ -195,7 +193,6 @@ def run_phase(jobs, phase, config, provider=None, retry_unknown=False):
         print(canonical({'event':'request_validated','phase':phase,'request_id':request_id,
             'finish_reason':response['finish_reason'],'accepted':len(ids)-len(invalid),'invalid':len(invalid),
             'errors':[{'job_id':ident,'error':error[:500]} for ident,error in list(invalid.items())[:3]]}),flush=True)
-        if response['finish_reason']=='length' or invalid: size=max(1,size//2)
         jobs.boundary()
 
 

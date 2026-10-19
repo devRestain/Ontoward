@@ -6,7 +6,6 @@ from settings import knowledge_manifest
 
 from .consultation import Consultation
 from .doctor_mouth import DoctorMouth
-from .graph import build_graph
 from .doctor_ear import DoctorEar
 from .doctor_brain import DoctorBrain
 from .io.nova_session import NovaSessionClient
@@ -41,7 +40,7 @@ def prepare() -> PreparedResources:
 
 def assemble_consultation(client, resources, *, now=utc_now, sleep=None, new_request_id=None):
     new_request_id = new_request_id if new_request_id is not None else lambda: str(uuid4())
-    budget = BudgetPolicy(now, education_enabled=resources.config.education_enabled, knowledge=resources.knowledge)
+    budget = BudgetPolicy(now, education_enabled=resources.config.education_enabled)
     usage = UsageAccounting()
     interactions = InteractionLifecycle(new_request_id)
     questions = QuestionLifecycle(interactions)
@@ -65,9 +64,7 @@ def consult(client, resources: PreparedResources):
     consultation = assemble_consultation(client, resources)
     state = consultation.nova_session.initialize_case(client)
     try:
-        result = build_graph(consultation, resources.knowledge).invoke(
-            state.model_dump(mode='json'), {'recursion_limit': consultation.budget.graph_step_limit(state)}
-        )
+        result = consultation.run(state).model_dump(mode='json')
         outcome = result['session']
         if outcome['termination'] != 'submitted':
             raise RuntimeError(f"Consultation {outcome['termination']}: {outcome['reason']}")

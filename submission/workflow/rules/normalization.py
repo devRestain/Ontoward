@@ -42,7 +42,7 @@ def concept_rank(knowledge, terms, kinds):
     return list(dict.fromkeys(ranked))
 
 
-def candidate_contracts(knowledge, statement, question, *, expanded=False, complete=False):
+def candidate_contracts(knowledge, statement, question, *, expanded=False):
     qtarget = next((v for kind in ('Symptom', 'ContextFactor', 'ExamFinding')
                     if question and (v := knowledge.term_id(question.target, kind))), None)
     qattribute = knowledge.term_id(question.attribute, 'FindingAttribute') if question and question.attribute else None

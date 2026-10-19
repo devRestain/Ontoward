@@ -1,8 +1,7 @@
 from ..rules.assessment import context_questions, applicability
 from ..state.evidence import EvidenceIndex
-from ..rules.decision import prepare_decision, accept_ranking, rank_exchange
 from ..rules.limits import LIMITS
-from ..rules.collection import HISTORY
+from ..rules.collection import HISTORY, answered
 
 
 class ContextFactorSession:
@@ -12,19 +11,8 @@ class ContextFactorSession:
         self.error = None
         self.candidate_ids = ()
 
-    def prepare_decision(self, state):
-        return prepare_decision(state, self.knowledge, self.tools, mode='rank')
-
-    def accept(self, state, raw, work):
-        accept_ranking(state, raw, work)
-
     def close(self, state, client):
-        if self.closed or state.session.termination or state.case.assessment and state.case.assessment.frozen:
-            return
         self.closed = True
-        work = self.prepare_decision(state)
-        self.error = rank_exchange(state, client, self.brain, self.config, work,
-            lambda raw: self.accept(state, raw, work))
 
     def enter(self, state, assessment):
         self.candidate_ids = tuple(self.knowledge.term_id(e.name, 'Disease') for e in assessment.differential
@@ -42,6 +30,12 @@ class ContextFactorSession:
             and a.outcome != 'undelivered' and a.key}
         if len(covered) >= 2 and self.tools.budget.action_capacity(state) <= 0:
             return
+        specs = self.context_specs(state)
+        if specs:
+            spec = min(specs.values(), key=lambda row: row['target_id'])
+            self.tools._register(state, dict(spec, coverage=len(covered) < 2), 0, LIMITS.hpi_priority)
+
+    def context_specs(self, state):
         specs = {}
         index = EvidenceIndex.from_case(state.case, self.knowledge)
         for ident, rule_scope in context_questions(self.knowledge, self.candidate_ids):
@@ -53,8 +47,12 @@ class ContextFactorSession:
             spec = self.tools._spec(state, ident, purpose='context', subject=rule_scope.subject,
                 subject_member=rule_scope.subject_member, time_context=self.knowledge.execution_time(ident,rule_scope))
             if spec and self.tools._eligible(state,spec):
-                specs[self.tools._key(spec)] = (True,spec)
-        if specs:
-            _, spec = min(specs.values(), key=lambda row:(not row[0], row[1]['target_id']))
-            self.tools._register(state, dict(spec, coverage=len(covered) < 2), 0, LIMITS.hpi_priority)
+                specs[self.tools._key(spec)] = spec
+        return specs
+
+    def required_actions(self, state):
+        covered = {a.key[1] for a in state.interview.answers if a.purpose == 'context' and a.coverage
+                   and a.outcome != 'undelivered' and a.key}
+        related = min(max(0, 2 - len(covered)), len({s['target_id'] for s in self.context_specs(state).values()}))
+        return sum(not answered(state, slot) for slot in HISTORY) + related
 

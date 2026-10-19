@@ -43,6 +43,7 @@ class SessionOwnershipTests(unittest.TestCase):
                     state.case.apply([CaseFact(id='medicine', category='medication',
                         value='Reported medication 10 mg at night', source_ref='last-reply', acquisition='SAY')])
                     c.client.remaining = 0
+                    state.session.turns_remaining = 0
                     calls = len(c.client.requests)
                     c.check_budget(state)
                     self.assertEqual(len(c.client.requests), calls + 1)
@@ -97,6 +98,12 @@ class SessionOwnershipTests(unittest.TestCase):
         for result in ('queued', 'delivered', 'undelivered'):
             with self.subTest(result=result):
                 def response(payload):
+                    if result == 'undelivered' and payload['task'] == 'education':
+                        from education_fixtures import education_response
+                        raw = education_response(payload)
+                        for rows in raw['P'].values():
+                            rows[0]['utterances'] = []
+                        return raw
                     if result == 'undelivered' and payload['task'] == 'education_doctor':
                         return {'items': []}
                 c = f.consultation(f.FakeSDK(chat_handler=response), f.resources(education=True))

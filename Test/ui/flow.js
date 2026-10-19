@@ -375,14 +375,21 @@ function executionPanel() {
   if(!inspection){root.append(el('p','이 저장 리포트에는 실행 검증 파일이 없습니다. 웹에서 리포트를 다시 열면 보존 로그로 생성합니다.','coverage-message'));return root;}
   root.append(kv([['실행 알고리즘',inspection.runtime?.algorithm||'당시 미수집'],['상태 구조',inspection.state_layout],
     ['관측 검사',inspection.status],['Assessment 고정',inspection.frozen?`seq ${inspection.frozen.seq} · ${inspection.frozen.primary}`:'미관측']]));
-  const titles={event_sequence:'이벤트 순서',trace_boundaries:'수집 시작·종료',recorded_values:'저장 값 참조의 완전성',call_boundaries:'객체 호출·반환과 부모 연결',node_boundaries:'노드 시작·종료',sdk_boundaries:'SDK 요청·응답',state_reconstruction:'전체 노드 상태 복원',graph_transitions:'실제 그래프 경로',frozen_patient_state:'고정 후 사실·평가 보존',assessment_revision:'고정 평가의 revision·chief 일치',submission_primary:'고정 1위와 제출 진단 일치',received_soap:'전송 SOAP와 수신 기록 일치',confirmed_completion:'로컬 완료 영수증과 종료 상태'};
+  const titles={event_sequence:'이벤트 순서',trace_boundaries:'수집 시작·종료',recorded_values:'저장 값 참조의 완전성',call_boundaries:'객체 호출·반환과 부모 연결',node_boundaries:'실행 단계 시작·종료',execution_operations:'실제 순차 실행 작업',sdk_boundaries:'SDK 요청·응답',state_reconstruction:'전체 노드 상태 복원',graph_transitions:'실제 그래프 경로',frozen_patient_state:'고정 후 사실·평가 보존',assessment_revision:'고정 평가의 revision·chief 일치',submission_primary:'고정 1위와 제출 진단 일치',received_soap:'전송 SOAP와 수신 기록 일치',confirmed_completion:'로컬 완료 영수증과 종료 상태'};
   for(const check of inspection.checks){
     const row=el('div',null,'inspection-check'),status=el('span',({pass:'확인',fail:'불일치',not_collected:'미수집'})[check.status]||check.status,`badge ${check.status==='pass'?'good':'warn'}`);
     const content=el('div');content.append(el('strong',titles[check.id]||check.id),jsonDetail('판정 근거',check.detail));row.append(status,content);root.append(row);
   }
-  const graph=el('details',null,'detail-json');graph.append(el('summary','런타임 그래프 · 실제로 지난 연결과 미실행 분기'));
+  const sequential=inspection.execution?.kind==='sequential';
+  const graph=el('details',null,'detail-json');graph.append(el('summary',sequential?'순차 실행 · 실제 작업과 관측된 연결':'런타임 그래프 · 실제로 지난 연결과 미실행 분기'));
   graph.addEventListener('toggle',()=>{
     if(!graph.open||graph.querySelector('table'))return;
+    if(sequential){
+      graph.append(jsonDetail('실행 소유자와 작업',inspection.execution));
+      const table=el('table',null,'data-table');
+      for(const edge of inspection.transitions){const row=el('tr');for(const value of [edge.source,edge.target,edge.count])row.append(el('td',value));table.append(row);}
+      graph.append(table);return;
+    }
     if(!inspection.graph){graph.append(note('이전 trace에는 그래프 구조가 수집되지 않았습니다.'));return;}
     const table=el('table',null,'data-table'),head=el('tr');for(const title of ['출발 노드','도착 노드','관측 횟수'])head.append(el('th',title));table.append(head);
     for(const edge of inspection.graph.edges){const count=inspection.transitions.find(item=>item.source===edge.source&&item.target===edge.target)?.count||0,row=el('tr'),boundary=edge.source==='__start__'||edge.target==='__end__';for(const value of [edge.source,edge.target,count||(boundary?'경계 · 호출 관측 제외':'미실행')])row.append(el('td',value));table.append(row);}graph.append(table);

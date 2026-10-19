@@ -126,9 +126,10 @@ class D49Tests(unittest.TestCase):
         self.assertEqual(payload['evidence'],{})
         entries=[entry for q in payload['questions'] for values in q['expected_by_disease'].values() for entry in values]
         self.assertTrue(entries)
-        self.assertTrue(all(entry['effect'] and entry['rule_scope'] and entry['full_pattern'] for entry in entries))
+        relations = [payload['relations'][entry['relation']] for entry in entries]
+        self.assertTrue(all(row['effect'] and row['rule_scope'] and row['full_pattern'] for row in relations))
         self.assertTrue(any(feature['expected_status']=='present' and feature['expected']=='dull'
-            for entry in entries for feature in entry['full_pattern']))
+            for row in relations for feature in row['full_pattern']))
 
 
 if __name__=='__main__': unittest.main()

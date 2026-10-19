@@ -80,7 +80,8 @@ class ScriptedModels:
             if phase in {'read', 'combine'}:
                 return completion(json.dumps({'notes': []}))
             return completion(json.dumps({'P': {field: [{'text': f'Review the {field.replace("_", " ")} plan with the patient.',
-                'basis': 'model_knowledge', 'references': [], 'priority': 'routine'}]
+                'basis': 'model_knowledge', 'references': [], 'priority': 'routine',
+                'utterances': ['진료 계획을 함께 확인해요.']}]
                 for field in ('tests', 'treatment', 'disposition', 'follow_up', 'education')}}))
         if payload.get('task') == 'education_doctor':
             return completion(json.dumps({'items': [{'id': row['id'], 'utterances': ['진료 계획을 함께 확인해요.']}

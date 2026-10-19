@@ -68,8 +68,9 @@ class PromptTests(unittest.TestCase):
                 self.assertIn('Translate and simplify each requested English plan sentence', prompt)
                 self.assertNotIn('fixed working-diagnosis notice', prompt)
                 self.assertNotIn('Regenerate only the requested invalid IDs', prompt)
-        self.assertTrue({'input_context', 'clinical_rank', 'clinical_action', 'clinical_decision',
-                         'education', 'education_doctor'} <= seen)
+        self.assertTrue({'input_context', 'clinical_rank', 'clinical_decision',
+                         'education'} <= seen)
+        self.assertNotIn('education_doctor', seen)
 
     def test_input_row_repair_keeps_valid_sibling_and_activates_only_repair_module(self):
         def reply(payload):
@@ -186,7 +187,8 @@ class PromptTests(unittest.TestCase):
         f.freeze_for_education(c, state)
         frozen = copy.deepcopy(state.case.assessment)
         c.sessions['Education'].prepare_plan(state, client)
-        c.sessions['Education'].prepare_delivery(state, client)
+        sentences = [{'id': row.id, 'text': row.text} for row in state.case.plan]
+        rendered, errors = c.mouth.render_education(state, client, sentences, {row['id']: 1 for row in sentences}, 5)
         calls = [(p, text) for p, text in client.exchanges if p['task'] == 'education_doctor']
         self.assertEqual(len(calls), 3)
         self.assertNotIn('Recover the unavailable or truncated generation', calls[0][1])
@@ -194,7 +196,8 @@ class PromptTests(unittest.TestCase):
         self.assertNotIn('Regenerate only the requested invalid IDs', calls[1][1])
         self.assertIn('Regenerate only the requested invalid IDs', calls[2][1])
         self.assertNotIn('Recover the unavailable or truncated generation', calls[2][1])
-        self.assertTrue(state.interview.queue)
+        self.assertTrue(rendered)
+        self.assertFalse(errors)
         self.assertEqual(state.case.assessment, frozen)
 
     def test_diagnosis_notice_selects_disease_or_symptom_without_plan_instructions(self):

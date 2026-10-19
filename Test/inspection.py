@@ -132,6 +132,12 @@ def inspect_run(data):
     edges = {(e['source'], e['target']) for e in settings.get('graph', {}).get('edges', [])}
     invalid_edges = [list(pair) for pair in transitions if pair not in edges]
     check('graph_transitions', not invalid_edges, dict(invalid_edges=invalid_edges), bool(edges))
+    execution = settings.get('execution', {})
+    operations = set(execution.get('operations', []))
+    invalid_operations = [event.get('node') for event in events
+                          if event['kind'] == 'node_start' and event.get('node') not in operations]
+    check('execution_operations', not invalid_operations, dict(invalid_operations=invalid_operations),
+          execution.get('kind') == 'sequential')
     assessment = (frozen or {}).get('assessment') or {}
     primary = (assessment.get('differential') or [{}])[0].get('name')
     check('frozen_patient_state', not frozen_changes, dict(freeze_seq=freeze_seq, changed_at=frozen_changes), frozen is not None)
@@ -150,7 +156,7 @@ def inspect_run(data):
           'Require both a local completed receipt and submitted workflow state', state is not None and bool(data['summary']))
     return dict(version=1, status='fail' if any(c['status'] == 'fail' for c in checks) else
                 'pass' if events and not state_error else 'not_collected',
-                runtime=settings.get('runtime'), graph=settings.get('graph'),
+                runtime=settings.get('runtime'), graph=settings.get('graph'), execution=settings.get('execution'),
                 state_layout='D47' if unified else 'D46' if modern else 'legacy_or_unknown', checks=checks,
                 event_counts=dict(counts), observed_methods=dict(methods),
                 declared_objects=settings.get('objects', []), checkpoints=checkpoints,

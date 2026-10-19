@@ -1,6 +1,6 @@
 from ..rules.decision import prepare_decision, accept_ranking, rank_exchange
 from ..rules.limits import LIMITS
-from ..rules.collection import INTAKE
+from ..rules.collection import INTAKE, answered
 from ..state.models import Question
 
 
@@ -32,4 +32,8 @@ class InitiationSession:
         if not self.tools.ensure_chief(state):
             return
         self.tools._prepare_common(state, INTAKE, self.tools.config.texts.intake_questions, 'intake')
+
+    def required_actions(self, state):
+        greeting = not any(a.purpose == 'greeting' and a.outcome != 'undelivered' for a in state.interview.answers)
+        return int(greeting) + sum(not answered(state, slot) for slot in INTAKE)
 

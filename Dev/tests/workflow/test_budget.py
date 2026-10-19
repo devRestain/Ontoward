@@ -30,7 +30,7 @@ class OfficialBudgetTests(unittest.TestCase):
     def test_empathy_preserves_response_judgment_repair_and_optional_delivery(self):
         for enabled in (False,True):
             c=f.consultation(prepared=f.resources(education=enabled));s=f.chief(f.state('DifferentialDiagnosis'))
-            s.session.doctor_calls=s.session.call_limit-c.budget.collection_calls(s)
+            s.session.doctor_calls=s.session.call_limit-c.budget.collection_calls(s)+1
             self.assertFalse(c.budget.can_empathize(s))
             s.session.doctor_calls-=1
             self.assertTrue(c.budget.can_empathize(s))
@@ -52,9 +52,10 @@ class OfficialBudgetTests(unittest.TestCase):
         c, s = f.consultation(), f.state()
         c.client.remaining = 37
         c.client.session = Mock(wraps=c.client.session)
+        s = c.nova_session.initialize_case(c.client)
         for _ in range(3):
             c.check_budget(s)
-        self.assertEqual(c.client.session.call_count, 3)
+        self.assertEqual(c.client.session.call_count, 1)
         self.assertEqual(s.session.turns_remaining, 37)
         self.assertEqual(sum(u.actions for u in s.session.usage.values()), 0)
         self.assertEqual(s.session.doctor_calls, 0)
@@ -81,6 +82,7 @@ class OfficialBudgetTests(unittest.TestCase):
         snapshot.update(turns_remaining=41, doctor_calls_remaining=0,
                         input_tokens_remaining=100, output_tokens_remaining=100)
         c.client.session = Mock(return_value=snapshot)
+        s.session.budget_sync_required = True
         c.check_budget(s)
         self.assertEqual(s.session.turns_remaining, 41)
         self.assertEqual(c.budget.calls_left(s.session), 0)
@@ -90,6 +92,7 @@ class OfficialBudgetTests(unittest.TestCase):
     def test_exhausted_official_snapshot_stops_new_actions(self):
         c, s = self.ready_action()
         c.client.remaining = 0
+        s.session.budget_sync_required = True
         c.check_budget(s)
         self.assertEqual(s.session.turns_remaining, 0)
         self.assertTrue(s.session.finalizing)
@@ -101,6 +104,7 @@ class OfficialBudgetTests(unittest.TestCase):
             with self.subTest(response=response):
                 c, s = self.ready_action()
                 c.client.session = Mock(side_effect=response) if isinstance(response, Exception) else Mock(return_value=response)
+                s.session.budget_sync_required = True
                 c.check_budget(s)
                 self.assertEqual(s.session.termination, 'unknown')
                 self.assertEqual(s.session.turns_remaining, 50)
@@ -111,6 +115,7 @@ class OfficialBudgetTests(unittest.TestCase):
             with self.subTest(status=status):
                 c, s = self.ready_action()
                 c.client.status = status
+                s.session.budget_sync_required = True
                 c.check_budget(s)
                 self.assertEqual(s.session.termination, expected)
                 self.assertFalse(c.client.actions)

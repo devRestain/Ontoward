@@ -72,7 +72,6 @@ class GraphBinding(Model):
     attribute: str | None = None
     values: tuple[str, ...] = ()
     method: Literal['exact', 'broader', 'forced'] = 'exact'
-    eligible: bool = True
 
     @model_validator(mode='after')
     def terms(self):
@@ -130,10 +129,6 @@ class CaseFact(Model):
         return self.graph_binding.values if self.graph_binding else ()
 
     @property
-    def evidence_use(self):
-        return 'reasoning' if self.graph_binding and self.graph_binding.eligible else 'record_only'
-
-    @property
     def binding(self):
         return self.graph_binding.method if self.graph_binding else None
 
@@ -176,6 +171,7 @@ class Assessment(Model):
     differential: tuple[DifferentialEntry, ...] = ()
     based_on_case_revision: int
     based_on_chief_fact_id: str | None
+    based_on_response: str = 'entry'
     frozen: bool = False
     limitations: tuple[str, ...] = ()
 
@@ -353,6 +349,7 @@ class SessionContext(Model):
     input_token_limit: int = LIMITS.input_tokens
     output_token_limit: int = LIMITS.output_tokens
     models_available: bool = True
+    budget_sync_required: bool = False
     clarifications: int = Field(default=0, ge=0, le=LIMITS.clarifications)
     termination: Literal['submitted', 'failed', 'unknown', 'expired', 'closed'] | None = None
     reason: str | None = None

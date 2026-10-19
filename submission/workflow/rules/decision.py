@@ -7,7 +7,7 @@ from pydantic import StrictStr, model_validator
 from .assessment import graph_candidates
 from .limits import LIMITS
 from .normalization import strict_json
-from ..model_context import compact_row, fact_record, messages
+from ..model_context import fact_record, messages
 from ..state.models import Assessment, Model
 
 
@@ -16,7 +16,7 @@ class RankingReply(Model):
 
 
 class NextAction(Model):
-    kind: Literal['continue_required', 'ask', 'advance_stage', 'finish_collection']
+    kind: Literal['ask', 'finish_collection']
     question_ref: StrictStr | None = None
 
     @model_validator(mode='after')
@@ -47,8 +47,15 @@ def clinical_messages(config, work):
     return messages(config.prompt(*routes), work.payload)
 
 
-def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False):
-    candidates = graph_candidates(state.case, knowledge, state.interview)
+def latest_response(state):
+    answer = next((row for row in reversed(state.interview.answers)
+                   if row.scope != 'Education' and row.purpose != 'empathy' and row.source_ref
+                   and row.outcome not in {'undelivered', 'delivered'}), None)
+    return answer.source_ref if answer else 'entry'
+
+
+def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False, candidates=None):
+    candidates = graph_candidates(state.case, knowledge, state.interview) if candidates is None else candidates
     prior = [knowledge.term_id(e.name, 'Disease') for e in state.case.assessment.differential] if state.case.assessment else []
     protected = [ident for ident in prior if ident in candidates]
     remaining = set(candidates) - set(protected)
@@ -83,7 +90,7 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False)
                 row['observation'] = observation_refs.setdefault(observed, f'o_{len(observation_refs) + 1}')
             if episode:
                 row['episode'] = episode_refs.setdefault(episode, f'episode_{len(episode_refs) + 1}')
-            scopes[ident] = compact_row(row)
+            scopes[ident] = row
         return scope_refs[key]
 
     patient_rows = {}
@@ -92,11 +99,11 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False)
         for key in ('id', 'subject', 'subject_member', 'time_context', 'observation_id', 'episode_id'):
             row.pop(key, None)
         row['scope'] = scope(fact.subject, fact.subject_member, fact.time_context, fact.observation_id, fact.episode_id)
-        patient_rows[fact_refs[fact.id]] = compact_row(row)
+        patient_rows[fact_refs[fact.id]] = row
     payload = dict(task={'rank': 'clinical_rank', 'action': 'clinical_action', 'decision': 'clinical_decision'}[mode],
         stage=state.interview.current, revision=state.case.revision,
         chief=fact_refs.get(state.case.chief_fact_id),
-        facts=patient_rows, scopes=scopes, conditions={},
+        facts=patient_rows, scopes=scopes, conditions={}, relations={},
         prior_order=[refs[ident] for ident in protected], required=[],
         resources=dict(turns=tools.budget.action_capacity(state), calls=tools.budget.calls_left(state.session)),
         candidates=[], evidence={}, questions=[])
@@ -122,20 +129,30 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False)
         if signature not in condition_refs:
             ident = f'condition_{len(condition_refs) + 1}'
             condition_refs[signature] = ident
-            payload['conditions'][ident] = ' | '.join(compact_row(row) for row in value)
+            payload['conditions'][ident] = value
         return condition_refs[signature]
+
+    relation_refs = {}
+    def relation(detail):
+        ident = detail['association']
+        if ident not in relation_refs:
+            ref = f'r_{len(relation_refs) + 1}'
+            relation_refs[ident] = ref
+            payload['relations'][ref] = dict(target=detail['target'], effect=detail['effect'],
+                rule_scope=detail['target_scope'],
+                full_pattern=[dict(attribute=f['attribute'], expected_status=f['expected_status'],
+                                   expected=expected(f['expected'])) for f in detail['features']],
+                applicability=conditions(detail['conditions']))
+        return relation_refs[ident]
 
     def describe(ref, details):
         graph = ref.graph_ref
         detail = next((d for d in details if d['association'] == (graph.association_id or graph.id)), None)
         row = dict(level=graph.kind, facts=[fact_refs[i] for i in ref.fact_ids])
         if detail:
-            row.update(target=detail['target'], effect=detail['effect'], rule_scope=detail['target_scope'],
-                full_pattern=[dict(attribute=f['attribute'], expected_status=f['expected_status'], expected=expected(f['expected'])) for f in detail['features']])
+            row['relation'] = relation(detail)
             features = detail['features'] if graph.kind == 'association' else [f for f in detail['features'] if f['id'] == graph.id]
             row['expects'] = {f['attribute'] or 'presence': expected(f['expected']) for f in features}
-            if detail['conditions']:
-                row['if'] = conditions(detail['conditions'])
         if graph.kind == 'context':
             row['context'] = knowledge.term(graph.id)
         if hasattr(ref, 'scope'):
@@ -147,7 +164,7 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False)
         if signature not in evidence_refs:
             ident = f'e_{len(evidence_refs) + 1}'
             evidence_refs[signature] = ident
-            payload['evidence'][ident] = compact_row(row)
+            payload['evidence'][ident] = row
         return evidence_refs[signature]
 
     # A current accepted ranking is enough for action selection; no full graph evidence is resent.
@@ -178,10 +195,8 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False)
                 feature = next((f for f in detail['features'] if f['id'] == graph.id), None) if detail else None
                 context_expected = next((c['status'] for c in detail['conditions'] if c['concept_id'] == graph.id), 'present') if detail else 'present'
                 value = dict(expected=expected(feature['expected']) if feature else context_expected,
-                    effect=detail['effect'] if detail else None, rule_scope=detail['target_scope'] if detail else None,
-                    full_pattern=[dict(attribute=f['attribute'],expected_status=f['expected_status'],expected=expected(f['expected'])) for f in detail['features']] if detail else [],
-                    applicability=[dict(target=c['name'], status=c['status'], subject=c['subject'], member=c.get('subject_member'), time=c['time_context'])
-                        for c in detail['conditions']] if detail else [])
+                    relation=relation(detail) if detail else None,
+                    feature=next((i for i, f in enumerate(detail['features']) if f['id'] == graph.id), None) if detail else None)
                 if value not in entries:
                     entries.append(value)
             row['expected_by_disease'][refs[disease]] = entries
@@ -199,7 +214,8 @@ def accept_ranking(state, raw, work):
             or any(ref not in work.refs for ref in ranked) or not set(work.payload['prior_order']) <= set(ranked)):
         raise ValueError('invalid_or_incomplete_ranking')
     state.case.assessment = Assessment(differential=tuple(work.candidates[work.refs[ref]].entry for ref in ranked),
-        based_on_case_revision=state.case.revision, based_on_chief_fact_id=state.case.chief_fact_id)
+        based_on_case_revision=state.case.revision, based_on_chief_fact_id=state.case.chief_fact_id,
+        based_on_response=latest_response(state))
 
 
 def rank_exchange(state, client, brain, config, work, accept):

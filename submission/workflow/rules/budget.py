@@ -2,7 +2,13 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 
 from .limits import LIMITS, SESSION_INTERVIEW_LIMITS, SESSION_ORDER
-from .collection import INTAKE, HISTORY, answered
+
+MODEL_WORK = {
+    'input': (2, 2 * LIMITS.gateway_tokens),
+    'clinical': (2, LIMITS.gateway_tokens + LIMITS.gateway_recovery_tokens),
+    'education': (1, LIMITS.education_tokens),
+    'education_doctor': (1, LIMITS.education_doctor_tokens),
+}
 
 
 def utc_now():
@@ -18,8 +24,9 @@ class BudgetDecision:
 
 
 class BudgetPolicy:
-    def __init__(self, now=utc_now, *, education_enabled=False, knowledge=None):
-        self.now, self.education_enabled, self.knowledge = now, education_enabled, knowledge
+    def __init__(self, now=utc_now, *, education_enabled=False):
+        self.now, self.education_enabled = now, education_enabled
+        self.required_counts = {}
 
     def seconds_left(self, session):
         return (session.deadline - self.now()).total_seconds()
@@ -39,42 +46,24 @@ class BudgetPolicy:
         return usage.actions - usage.empathy_actions
 
     def required_actions(self, state, scope):
-        if scope == 'Initiation':
-            greeting = not any(a.purpose == 'greeting' and a.outcome != 'undelivered' for a in state.interview.answers)
-            return int(greeting) + sum(not answered(state, slot) for slot in INTAKE)
-        if scope == 'ChiefComplaint':
-            chief = state.case.chief(confirmed=True)
-            remaining = 6
-            if self.knowledge and chief:
-                target = self.knowledge.term_id(chief.target, 'Symptom')
-                remaining = 0
-                for attribute in self.knowledge.get_symptom_attributes(target):
-                    name = self.knowledge.term(attribute)
-                    key = ('SAY', chief.target, name, 'patient', '', chief.time_context, chief.observation_id or '', chief.episode_id or '')
-                    acquired = any(f.target == chief.target and f.attribute == name and f.subject == 'patient'
-                        and f.observation_id == chief.observation_id and f.episode_id == chief.episode_id
-                        and f.time_context == chief.time_context and f.status in {'present','absent'} for f in state.case.current_facts())
-                    processed = any(a.key == key and a.outcome != 'undelivered' for a in state.interview.answers)
-                    blocked = state.interview.collection.get('|'.join(key)) == 'blocked_asset'
-                    remaining += not (acquired or processed or blocked)
-            opened = any(a.purpose == 'open_inquiry' and a.outcome != 'undelivered' for a in state.interview.answers)
-            return min(7, remaining + int(not opened))
-        if scope == 'ContextFactor':
-            covered = {a.key[1] for a in state.interview.answers if a.purpose == 'context' and a.coverage
-                       and a.outcome != 'undelivered' and a.key}
-            graph = max(0, 2 - len(covered))
-            chief = state.case.chief()
-            if self.knowledge and chief:
-                profiles = self.knowledge.get_patterns_by_target(self.knowledge.term_id(chief.target, 'Symptom'))
-                from .assessment import context_questions
-                diseases = {p.disease_id for p in profiles}
-                available = {self.knowledge.term(target) for target,_ in context_questions(self.knowledge,diseases)}
-                graph = min(graph, len(available - covered))
-            return sum(not answered(state, slot) for slot in HISTORY) + graph
-        if scope == 'Education':
-            return LIMITS.education_turns if self.education_enabled else 0
+        if scope == 'Education' and not self.education_enabled:
+            return 0
+        if scope == state.interview.current and scope in self.required_counts:
+            return self.required_counts[scope]
+        target = LIMITS.education_turns if scope == 'Education' else SESSION_INTERVIEW_LIMITS[scope][0]
         usage = state.session.usage[scope]
-        return max(0, 3 - (usage.actions - usage.empathy_actions))
+        return max(0, target - (usage.actions - usage.empathy_actions))
+
+    def model_work(self, state):
+        work = {name: MODEL_WORK[name] for name in ('input', 'clinical')}
+        if self.education_enabled and state.interview.education_status == 'not_started':
+            work.update({name: MODEL_WORK[name] for name in ('education', 'education_doctor')})
+        return work
+
+    @staticmethod
+    def reserve(work, tasks):
+        rows = [work[name] for name in tasks if name in work]
+        return sum(row[0] for row in rows), sum(row[1] for row in rows)
 
     def shared_action_capacity(self, state, *, purpose=None):
         following = SESSION_ORDER[SESSION_ORDER.index(state.interview.current) + 1:]
@@ -88,12 +77,12 @@ class BudgetPolicy:
         return shared if purpose == 'empathy' else max(0, min(shared, self.interview_limits(state)[1] - self.interview_actions(state)))
 
     def collection_calls(self, state):
-        return 4 + (2 if self.education_enabled and state.interview.education_status=='not_started' else 0)
+        work = self.model_work(state)
+        return self.reserve(work, work)[0]
 
     def collection_tokens(self, state):
-        return 3 * LIMITS.gateway_tokens + LIMITS.gateway_recovery_tokens + (
-            LIMITS.education_tokens + LIMITS.education_doctor_tokens
-            if self.education_enabled and state.interview.education_status=='not_started' else 0)
+        work = self.model_work(state)
+        return self.reserve(work, work)[1]
 
     def collection_available(self, state):
         session = state.session
@@ -119,27 +108,28 @@ class BudgetPolicy:
             return 0
         maximum = min(maximum or {'education':LIMITS.education_tokens,
             'education_doctor':LIMITS.education_doctor_tokens}.get(role, LIMITS.gateway_tokens), LIMITS.gateway_recovery_tokens)
-        reserve = LIMITS.education_doctor_tokens if role == 'education' and not session.finalizing else 0
-        if reserve and self.calls_left(session) < 2:
+        reserve, calls = 0, 0
+        if state:
+            work = self.model_work(state)
+            tasks = []
+            if role == 'education' and not session.finalizing:
+                work['education_doctor'] = MODEL_WORK['education_doctor']
+                tasks = ['education_doctor']
+            elif state.interview.current != 'Education' and role in {'gateway', 'clinical'}:
+                tasks = ['education', 'education_doctor']
+                if role == 'gateway' and not (state.case.assessment and state.case.assessment.frozen):
+                    tasks.append('clinical')
+            calls, reserve = self.reserve(work, tasks)
+        elif role == 'education' and not session.finalizing:
+            calls, reserve = MODEL_WORK['education_doctor']
+        if self.calls_left(session) <= calls:
             return 0
-        if state and state.interview.current != 'Education' and role in {'gateway','clinical','empathy'}:
-            pending = self.education_enabled and state.interview.education_status=='not_started'
-            calls = 2 if pending else 0
-            reserve = LIMITS.education_tokens + LIMITS.education_doctor_tokens if pending else 0
-            if role == 'gateway' and not (state.case.assessment and state.case.assessment.frozen):
-                calls += 2
-                reserve += LIMITS.gateway_tokens + LIMITS.gateway_recovery_tokens
-            if role == 'empathy':
-                calls, reserve = self.collection_calls(state), self.collection_tokens(state)
-            if self.calls_left(session) <= calls:
-                return 0
         return max(0, min(maximum, session.output_token_limit - session.output_tokens - reserve))
 
     def can_empathize(self, state):
         session = state.session
         return (not session.finalizing and state.interview.current != 'Education' and self.can_start_action(state, purpose='empathy')
-            and 'SAY' in session.allowed_actions and self.calls_left(session) >= self.collection_calls(state) + 1
-            and session.output_token_limit - session.output_tokens >= self.collection_tokens(state) + LIMITS.gateway_tokens)
+            and 'SAY' in session.allowed_actions)
 
     def evaluate(self, state):
         if state.session.termination:
@@ -154,7 +144,8 @@ class BudgetPolicy:
             return BudgetDecision(finalize=True, discard=frozenset(q.item_id for q in state.interview.queue), reason=reason)
         if state.interview.status == 'uninitialized':
             return BudgetDecision()
-        shared, current, calls = self.shared_action_capacity(state), self.action_capacity(state), self.calls_left(state.session)
+        shared, calls = self.shared_action_capacity(state), self.calls_left(state.session)
+        current = max(0, min(shared, self.interview_limits(state)[1] - self.interview_actions(state)))
         keep = set()
         if state.interview.current == 'Education':
             groups = {}
@@ -174,6 +165,3 @@ class BudgetPolicy:
                     calls -= 3
                     current -= q.purpose != 'empathy'
         return BudgetDecision(discard=frozenset(q.item_id for q in state.interview.queue) - keep)
-
-    def graph_step_limit(self, state):
-        return 12 * (state.session.turns_remaining + LIMITS.clarifications + 6) + 100

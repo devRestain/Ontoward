@@ -22,6 +22,5 @@
   "mouth.announcement.disease": ["config/prompts/data.txt", "config/prompts/mouth_common.txt", "config/prompts/mouth_disease_notice.txt", "config/prompts/mouth_output.txt"],
   "mouth.announcement.symptom": ["config/prompts/data.txt", "config/prompts/mouth_common.txt", "config/prompts/mouth_symptom_notice.txt", "config/prompts/mouth_output.txt"],
   "mouth.response_repair": ["config/prompts/mouth_response_repair.txt"],
-  "mouth.text_repair": ["config/prompts/mouth_text_repair.txt"],
-  "empathy": ["config/prompts/data.txt", "config/prompts/empathy.txt"]
+  "mouth.text_repair": ["config/prompts/mouth_text_repair.txt"]
 }

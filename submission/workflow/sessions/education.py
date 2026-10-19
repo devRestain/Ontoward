@@ -6,6 +6,7 @@ class EducationSession:
     def __init__(self, knowledge, config, brain, mouth, questions, budget):
         self.knowledge, self.config, self.brain, self.mouth = knowledge, config, brain, mouth
         self.questions, self.budget = questions, budget
+        self.generated_utterances = {}
 
     def prepare_diagnosis(self, state, client):
         prefix = 'Education:diagnosis:'
@@ -50,7 +51,8 @@ class EducationSession:
         if notice_error:
             failures['diagnosis'] = notice_error
         if batch:
-            values, errors = self.mouth.render_education(state, client, batch, budgets, capacity)
+            values, errors = self.mouth.render_education(state, client, batch, budgets, capacity,
+                                                       initial=self.generated_utterances)
             rendered.update(values)
             failures.update(errors)
         order = 0
@@ -67,6 +69,8 @@ class EducationSession:
                     text=text, order=order, plan_sentence_id=sentence.id))
                 order += 1
             capacity -= len(utterances)
+        for sentence in ordered:
+            self.generated_utterances.pop(sentence.id, None)
         if failures:
             delivered = any(a.purpose == 'education' and a.outcome == 'delivered' for a in state.interview.answers)
             state.interview.education_status = 'partial' if rendered or delivered else 'failed'
@@ -77,7 +81,7 @@ class EducationSession:
         if state.interview.education_status != 'not_started':
             return
         if self.config.education_enabled:
-            generate_plan(state, client, self.knowledge, self.config, self.brain)
+            self.generated_utterances = generate_plan(state, client, self.knowledge, self.config, self.brain)
         else:
             state.interview.education_status = 'disabled'
 
