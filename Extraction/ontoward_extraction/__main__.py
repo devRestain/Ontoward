@@ -3,6 +3,8 @@ import json
 import os
 import signal
 import sys
+import time
+import math
 from pathlib import Path
 
 from .models import CONTRACT, digest, canonical
@@ -11,6 +13,8 @@ from .jobs import Jobs, PauseRequested
 from .build import run_pipeline
 from .verify import verify
 from .install import install
+from .progress import display
+from .recovery import recover_normalization
 
 
 def configuration(path, provider=None):
@@ -30,9 +34,22 @@ def configuration(path, provider=None):
     return config
 
 
+def build_identity(entries, config, assets):
+    identity={'contract':CONTRACT,'config':config,'inputs':[
+        {key:value for key,value in entry.items() if key!='path'} for entry in entries],
+        'prompts':{path.name:digest(path.read_text()) for path in sorted(Path(config['prompt_directory']).glob('*.txt'))}}
+    from knowledge import graph as graph_module
+    identity['schema']=digest(Path(graph_module.__file__).with_name('schema.ttl').read_text())
+    identity['runtime_contract']={path.name:digest(path.read_text()) for path in sorted(Path(graph_module.__file__).parent.glob('*.py'))}
+    identity['generator']={path.name:digest(path.read_text()) for path in sorted(Path(__file__).parent.glob('*.py'))}
+    catalog=Path(assets)/'guidelines/catalog.csv'
+    identity['guideline_catalog']=digest(catalog.read_text()) if catalog.is_file() else None
+    return identity
+
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description='Build qualitative clinical knowledge with explicit provider and durable checkpoints')
-    parser.add_argument('command',choices=['run','status','pause','verify','install'])
+    parser.add_argument('command',choices=['run','status','pause','verify','install','recover-normalize','recover-normalize-text','recover-normalize-provider'])
     parser.add_argument('--config',default=os.environ.get('EXTRACTION_CONFIG','/app/config.json'))
     parser.add_argument('--assets',default='/assets')
     parser.add_argument('--work',default='/work')
@@ -44,19 +61,33 @@ def main(argv=None):
     parser.add_argument('--resume',action='store_true')
     parser.add_argument('--install',action='store_true')
     parser.add_argument('--retry-unknown',action='store_true')
+    parser.add_argument('--human',action='store_true',help='Render readable status or pause output')
+    parser.add_argument('--watch',action='store_true',help='Refresh read-only status until Ctrl+C')
+    parser.add_argument('--interval',type=float,default=3,help='Status refresh interval in seconds')
     args=parser.parse_args(argv)
     if args.run_id and (not args.run_id.isalnum() or len(args.run_id)>64):
         parser.error('Invalid run ID')
+    if args.command.startswith('recover-normalize') and (not args.run_id or args.resume or args.install or args.retry_unknown):
+        parser.error('recover-normalize requires --run-id and does not run or install model results')
     work=Path(args.work).resolve()
+    if args.watch and args.command!='status': parser.error('--watch is available only for status')
+    if not math.isfinite(args.interval) or not 0.1<=args.interval<=60: parser.error('Use an interval between 0.1 and 60 seconds')
     if args.command in {'status','pause'}:
-        runs=[work/args.run_id] if args.run_id else sorted(work.glob('*'))
-        results=[]
-        for directory in runs:
-            if not (directory/'jobs.sqlite3').is_file(): continue
-            jobs=Jobs(directory,readonly=args.command=='status')
-            try: results.append(jobs.status() if args.command=='status' else jobs.pause())
-            finally: jobs.close()
-        print(canonical(results or {'state':'not_started'}));return 0
+        try:
+            while True:
+                runs=[work/args.run_id] if args.run_id else sorted(work.glob('*'))
+                results=[]
+                for directory in runs:
+                    if directory.name.startswith('.'): continue
+                    if not (directory/'jobs.sqlite3').is_file(): continue
+                    jobs=Jobs(directory,readonly=args.command=='status')
+                    try: results.append(jobs.status() if args.command=='status' else jobs.pause())
+                    finally: jobs.close()
+                print(display(results) if args.human or args.watch else canonical(results or {'state':'not_started'}),flush=True)
+                if not args.watch: return 0
+                time.sleep(args.interval)
+        except KeyboardInterrupt:
+            return 0
     if args.command in {'verify','install'}:
         manifest=Path(args.manifest) if args.manifest else Path(args.output)/args.run_id/'manifest.json' if args.run_id else Path(args.target)/'manifest.json'
         print(canonical(verify(manifest) if args.command=='verify' else install(manifest,args.target)));return 0
@@ -71,15 +102,12 @@ def main(argv=None):
     previous={value:signal.signal(value,stop) for value in (signal.SIGINT,signal.SIGTERM)}
     try:
         entries=discover(args.assets,config.get('inputs'),boundary)
-        identity={'contract':CONTRACT,'config':config,'inputs':[
-            {key:value for key,value in entry.items() if key!='path'} for entry in entries],
-            'prompts':{path.name:digest(path.read_text()) for path in sorted(Path(config['prompt_directory']).glob('*.txt'))}}
-        from knowledge import graph as graph_module
-        identity['schema']=digest(Path(graph_module.__file__).with_name('schema.ttl').read_text())
-        identity['runtime_contract']={path.name:digest(path.read_text()) for path in sorted(Path(graph_module.__file__).parent.glob('*.py'))}
-        identity['generator']={path.name:digest(path.read_text()) for path in sorted(Path(__file__).parent.glob('*.py'))}
-        catalog=Path(args.assets)/'guidelines/catalog.csv'
-        identity['guideline_catalog']=digest(catalog.read_text()) if catalog.is_file() else None
+        identity=build_identity(entries,config,args.assets)
+        if args.command.startswith('recover-normalize'):
+            print(canonical(recover_normalization(work,args.run_id,identity,boundary,
+                repair={'recover-normalize':'schema','recover-normalize-text':'text',
+                    'recover-normalize-provider':'provider'}[args.command])),flush=True)
+            return 0
         run_id=digest(identity)[:32]
         if args.run_id and args.run_id!=run_id: raise ValueError('checkpoint_fingerprint_mismatch')
         if (work/run_id/'jobs.sqlite3').is_file() and not args.resume:

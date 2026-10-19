@@ -1,0 +1,122 @@
+{
+  "contract": "normalize-text-recovery-1",
+  "source_run_id": "cd25fa99307faf8b89b5c691df203c45",
+  "run_id": "42ff7f33bc2fcec39a379623a1ac5550",
+  "source_identity": "cd25fa99307faf8b89b5c691df203c45fdd85dbf9385705129b68c0c220ab0a7",
+  "target_identity": "42ff7f33bc2fcec39a379623a1ac555000729873c3c1a4f59bcb3a720b7a1069",
+  "reason": "defer_executable_text_to_questions",
+  "accepted_results": 7,
+  "indexed_files": 108,
+  "indexed_rows": 12587695,
+  "jobs_reset": 6422,
+  "jobs_kept_done": 7,
+  "jobs_pending": 6419,
+  "requests_preserved": 10,
+  "usage_preserved": [
+    {
+      "day": "2026-10-19",
+      "model": "openai/gpt-6-luna",
+      "calls": 10,
+      "input_tokens": 42412,
+      "output_tokens": 24867
+    }
+  ],
+  "previous_attempts": [
+    {
+      "job_id": "00499cc4e190689c48673b9e7ca667a39ae30555c2aaac7d238d13810895c7eb",
+      "phase": "normalize",
+      "status": "done",
+      "result": "{\"concepts\":[{\"aliases\":[\"Localized lower limb edema\",\"Localized edema of the lower extremity\",\"하지 국소 부종\"],\"attribute_role\":null,\"attributes\":[\"urn:ontoward:attribute:edema-distribution\",\"urn:ontoward:attribute:anatomical-location\"],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:concept:localized-edema-of-lower-limb\",\"kind\":\"Symptom\",\"korean\":\"하지의 국소 부종\",\"name\":\"Localized edema of lower limb\",\"question\":null,\"systems\":[\"urn:ontoward:body-system:circulatory\"],\"values\":[]},{\"aliases\":[\"Extent of edema\",\"부종의 분포\"],\"attribute_role\":{\"category\":\"other\",\"clarification\":\"Localized distribution\",\"order\":0},\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:attribute:edema-distribution\",\"kind\":\"FindingAttribute\",\"korean\":\"부종 분포\",\"name\":\"Edema distribution\",\"question\":null,\"systems\":[],\"values\":[\"urn:ontoward:value:localized\"]},{\"aliases\":[\"Localised\",\"국소적인\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:value:localized\",\"kind\":\"AttributeValue\",\"korean\":\"국소성\",\"name\":\"Localized\",\"question\":null,\"systems\":[],\"values\":[]},{\"aliases\":[\"Body location\",\"부위\"],\"attribute_role\":{\"category\":\"other\",\"clarification\":\"Anatomical site of edema\",\"order\":1},\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:attribute:anatomical-location\",\"kind\":\"FindingAttribute\",\"korean\":\"해부학적 위치\",\"name\":\"Anatomical location\",\"question\":null,\"systems\":[],\"values\":[\"urn:ontoward:value:lower-limb\"]},{\"aliases\":[\"Lower extremity\",\"다리\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:value:lower-limb\",\"kind\":\"AttributeValue\",\"korean\":\"하지\",\"name\":\"Lower limb\",\"question\":null,\"systems\":[],\"values\":[]},{\"aliases\":[\"Cardiovascular system\",\"심혈관계\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:body-system:circulatory\",\"kind\":\"BodySystem\",\"korean\":\"순환계통\",\"name\":\"Circulatory system\",\"question\":null,\"systems\":[],\"values\":[]}],\"job_id\":\"00499cc4e190689c48673b9e7ca667a39ae30555c2aaac7d238d13810895c7eb\",\"relations\":[],\"value_matches\":[]}",
+      "attempt_count": 2,
+      "error": null
+    },
+    {
+      "job_id": "00398fab1f08f8184f1ac92d511dbaaecfe13a4b08d6dbdcc268c4955afdc414",
+      "phase": "normalize",
+      "status": "retry",
+      "result": null,
+      "attempt_count": 2,
+      "error": "output_validation_failed:[{\"path\":\"concepts.1.question\",\"type\":\"value_error\"}]"
+    },
+    {
+      "job_id": "007939bd1c69facb8850fbf79d98ce2c92352ecbdb692eb66d1e7fc917ded9da",
+      "phase": "normalize",
+      "status": "retry",
+      "result": null,
+      "attempt_count": 1,
+      "error": "invalid_rendered_korean_length_or_normalization"
+    },
+    {
+      "job_id": "003271d0080c7131f2d0e8a91a80238eeb30342f7fae15c8d184c5a2e9aaf3e4",
+      "phase": "normalize",
+      "status": "retry",
+      "result": null,
+      "attempt_count": 4,
+      "error": "output_validation_failed:[{\"path\":\"concepts.1.question\",\"type\":\"value_error\"}]"
+    },
+    {
+      "job_id": "000dd15465273c1ebcf4771cc08624b9f54efc1dd821874ff9a6792cad716adb",
+      "phase": "normalize",
+      "status": "done",
+      "result": "{\"concepts\":[{\"aliases\":[\"Blister of foot\",\"Painful foot blister\",\"발 물집\",\"발의 물집\"],\"attribute_role\":null,\"attributes\":[\"urn:ontoward:attribute:symptom-quality\"],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:concept:painful-blister-of-foot\",\"kind\":\"Symptom\",\"korean\":\"발의 통증성 물집\",\"name\":\"Painful blister of foot\",\"question\":null,\"systems\":[\"urn:ontoward:body-system:integumentary\"],\"values\":[]},{\"aliases\":[\"Quality\",\"증상의 질\"],\"attribute_role\":{\"category\":\"quality\",\"clarification\":null,\"order\":0},\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:attribute:symptom-quality\",\"kind\":\"FindingAttribute\",\"korean\":\"증상 특성\",\"name\":\"Symptom quality\",\"question\":null,\"systems\":[],\"values\":[\"urn:ontoward:value:painful\"]},{\"aliases\":[\"Painful\",\"통증성\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:value:painful\",\"kind\":\"AttributeValue\",\"korean\":\"통증이 있는\",\"name\":\"Painful\",\"question\":null,\"systems\":[],\"values\":[]},{\"aliases\":[\"Skin system\",\"피부계통\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:body-system:integumentary\",\"kind\":\"BodySystem\",\"korean\":\"외피계통\",\"name\":\"Integumentary system\",\"question\":null,\"systems\":[],\"values\":[]}],\"job_id\":\"000dd15465273c1ebcf4771cc08624b9f54efc1dd821874ff9a6792cad716adb\",\"relations\":[],\"value_matches\":[]}",
+      "attempt_count": 2,
+      "error": null
+    },
+    {
+      "job_id": "00427466f70c3e9415c508a3a79b95a7492326c472f9f92243a4b2e97c3c4005",
+      "phase": "normalize",
+      "status": "done",
+      "result": "{\"concepts\":[{\"aliases\":[\"Indifference\",\"Apathetic behavior\",\"Listless mood\",\"Listlessness\",\"무관심\",\"무감동 상태\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:SymptomSnomedCT20602000\",\"kind\":\"Symptom\",\"korean\":\"무감동\",\"name\":\"Apathy\",\"question\":null,\"systems\":[\"urn:ontoward:BodySystemMentalHealth\"],\"values\":[]},{\"aliases\":[\"Mental health\",\"정신·수면 영역\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:BodySystemMentalHealth\",\"kind\":\"BodySystem\",\"korean\":\"정신건강 영역\",\"name\":\"Mental health system\",\"question\":null,\"systems\":[],\"values\":[]}],\"job_id\":\"00427466f70c3e9415c508a3a79b95a7492326c472f9f92243a4b2e97c3c4005\",\"relations\":[],\"value_matches\":[]}",
+      "attempt_count": 1,
+      "error": null
+    },
+    {
+      "job_id": "003b0c0b59f0bb6503d76df0b5d3de493c23db73e9d5f63dfb0f4f2407d787d4",
+      "phase": "normalize",
+      "status": "done",
+      "result": "{\"concepts\":[{\"aliases\":[\"Coughing\",\"기침 증상\"],\"attribute_role\":null,\"attributes\":[\"urn:ontoward:FindingAttributeSeverity\"],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:SymptomSnomedCT49727002\",\"kind\":\"Symptom\",\"korean\":\"기침\",\"name\":\"Cough\",\"question\":null,\"systems\":[\"urn:ontoward:BodySystemRespiratory\"],\"values\":[]},{\"aliases\":[\"Intensity\",\"증상의 심한 정도\"],\"attribute_role\":{\"category\":\"quality\",\"clarification\":\"Severity of cough\",\"order\":0},\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:FindingAttributeSeverity\",\"kind\":\"FindingAttribute\",\"korean\":\"중증도\",\"name\":\"Severity\",\"question\":null,\"systems\":[],\"values\":[\"urn:ontoward:AttributeValueSeverityMild\"]},{\"aliases\":[\"Mild severity\",\"가벼운\",\"경미한\"],\"attribute_role\":null,\"attributes\":[\"urn:ontoward:FindingAttributeSeverity\"],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:AttributeValueSeverityMild\",\"kind\":\"AttributeValue\",\"korean\":\"경증\",\"name\":\"Mild\",\"question\":null,\"systems\":[],\"values\":[]},{\"aliases\":[\"호흡계\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:BodySystemRespiratory\",\"kind\":\"BodySystem\",\"korean\":\"호흡기계\",\"name\":\"Respiratory system\",\"question\":null,\"systems\":[],\"values\":[]}],\"job_id\":\"003b0c0b59f0bb6503d76df0b5d3de493c23db73e9d5f63dfb0f4f2407d787d4\",\"relations\":[],\"value_matches\":[]}",
+      "attempt_count": 1,
+      "error": null
+    },
+    {
+      "job_id": "00086b13eaabf356ed457603ff5fe3c7d9b1197978179e0a2469cd8f9716deb8",
+      "phase": "normalize",
+      "status": "done",
+      "result": "{\"concepts\":[{\"aliases\":[\"Green-colored\",\"Green sputum\",\"녹색의\",\"녹색 가래\"],\"attribute_role\":null,\"attributes\":[\"urn:ontoward:FindingAttributeSputumColor\"],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:AttributeValueSputumColorGreen\",\"kind\":\"AttributeValue\",\"korean\":\"녹색\",\"name\":\"Green\",\"question\":null,\"systems\":[],\"values\":[]},{\"aliases\":[\"Color of sputum\",\"객담 색깔\"],\"attribute_role\":{\"category\":\"quality\",\"clarification\":\"Color of sputum\",\"order\":0},\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:FindingAttributeSputumColor\",\"kind\":\"FindingAttribute\",\"korean\":\"가래 색\",\"name\":\"Sputum color\",\"question\":null,\"systems\":[],\"values\":[\"urn:ontoward:AttributeValueSputumColorGreen\"]},{\"aliases\":[\"Sputum\",\"Phlegm\",\"객담\",\"가래\"],\"attribute_role\":null,\"attributes\":[\"urn:ontoward:FindingAttributeSputumColor\"],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:SymptomSputum\",\"kind\":\"Symptom\",\"korean\":\"가래 배출\",\"name\":\"Sputum production\",\"question\":null,\"systems\":[\"urn:ontoward:BodySystemRespiratory\"],\"values\":[]},{\"aliases\":[\"호흡계\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:BodySystemRespiratory\",\"kind\":\"BodySystem\",\"korean\":\"호흡기계\",\"name\":\"Respiratory system\",\"question\":null,\"systems\":[],\"values\":[]}],\"job_id\":\"00086b13eaabf356ed457603ff5fe3c7d9b1197978179e0a2469cd8f9716deb8\",\"relations\":[],\"value_matches\":[]}",
+      "attempt_count": 1,
+      "error": null
+    },
+    {
+      "job_id": "0039a31e9bb24b3885bbbee58902e3173d7b6c425978f70b7a0c7625a76d3f06",
+      "phase": "normalize",
+      "status": "done",
+      "result": "{\"concepts\":[{\"aliases\":[\"Anxiousness\",\"Feeling anxious\",\"불안해요\",\"마음이 조마조마해요\",\"불안반응\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:SymptomSnomedCT48694002\",\"kind\":\"Symptom\",\"korean\":\"불안\",\"name\":\"Anxiety\",\"question\":null,\"systems\":[\"urn:ontoward:BodySystemMentalHealth\"],\"values\":[]},{\"aliases\":[\"Mental health\",\"정신·수면 영역\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:BodySystemMentalHealth\",\"kind\":\"BodySystem\",\"korean\":\"정신건강 영역\",\"name\":\"Mental health system\",\"question\":null,\"systems\":[],\"values\":[]}],\"job_id\":\"0039a31e9bb24b3885bbbee58902e3173d7b6c425978f70b7a0c7625a76d3f06\",\"relations\":[],\"value_matches\":[]}",
+      "attempt_count": 1,
+      "error": null
+    },
+    {
+      "job_id": "0073781d02a235afa8fb6d0aa08f1bdafe73c6c4cbc9fa64fad98b0d1ffaf409",
+      "phase": "normalize",
+      "status": "done",
+      "result": "{\"concepts\":[{\"aliases\":[\"Jugular venous pressure assessment\",\"Examination of jugular venous pressure\",\"경정맥압 평가\",\"경정맥압 검사\"],\"attribute_role\":null,\"attributes\":[],\"context_type\":null,\"exam_method\":null,\"exam_text\":null,\"id\":\"urn:ontoward:exam-method:jugular-venous-pressure-examination\",\"kind\":\"ExamMethod\",\"korean\":\"경정맥압 진찰\",\"name\":\"Jugular venous pressure examination\",\"question\":null,\"systems\":[],\"values\":[]}],\"job_id\":\"0073781d02a235afa8fb6d0aa08f1bdafe73c6c4cbc9fa64fad98b0d1ffaf409\",\"relations\":[],\"value_matches\":[]}",
+      "attempt_count": 2,
+      "error": null
+    }
+  ],
+  "created_at": 1792405860.2515323,
+  "model_calls_started": 0,
+  "recovered_from_saved_responses": [
+    {
+      "job_id": "003271d0080c7131f2d0e8a91a80238eeb30342f7fae15c8d184c5a2e9aaf3e4",
+      "request_id": "999c1a95-ec65-4f77-b2a6-1b3c09e11527"
+    },
+    {
+      "job_id": "00398fab1f08f8184f1ac92d511dbaaecfe13a4b08d6dbdcc268c4955afdc414",
+      "request_id": "c7998aca-ad86-4c18-84e2-a32c32506c89"
+    },
+    {
+      "job_id": "007939bd1c69facb8850fbf79d98ce2c92352ecbdb692eb66d1e7fc917ded9da",
+      "request_id": "93a8f2d0-4db3-4b8e-b26b-468dcad19069"
+    }
+  ]
+}

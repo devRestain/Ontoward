@@ -30,6 +30,21 @@ services:
     read_only: true
     volumes:
       - ../data/extraction/v5-enum/work:/work
+  recovery:
+    profiles: [tools]
+    image: ontoward-extraction:local
+    command: [recover-normalize]
+    network_mode: none
+    read_only: true
+    environment:
+      NOVA_API_BASE: ${NOVA_API_BASE:-https://nova.snubhai.org}
+    volumes:
+      - ../assets:/assets:ro
+      - ../data/extraction/v5-enum/work:/work
+    cpus: 2
+    mem_limit: 8g
+    stop_grace_period: 660s
+    restart: "no"
   verify:
     profiles: [tools]
     image: ontoward-extraction:local

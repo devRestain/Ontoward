@@ -61,7 +61,10 @@ class ScriptedProvider:
             self.calls.append(job['job_id'])
             data=job['input'];result=dict(job_id=job['job_id'],concepts=[],relations=[],value_matches=[])
             if phase=='normalize': result['concepts']=nodes()
-            elif phase=='questions': result['concepts']=[data['concept']]
+            elif phase=='questions':
+                node=data['concept']
+                template=next(item for item in nodes() if (item['name'],item['kind'])==(node['name'],node['kind']))
+                result['concepts']=[dict(node,question=template['question'],exam_text=template['exam_text'],attribute_role=template['attribute_role'])]
             elif phase=='draft':
                 target=next(node for node in data['available_targets'] if node['kind']=='Symptom')
                 result['relations']=[relation(disease_id=data['disease']['id'],target_id=target['id'])]

@@ -36,6 +36,8 @@ docker compose run --rm -T control status
 
 이 두 명령은 실제 생성이나 로그인을 시작하지 않는다. 생성·중단·재개·명시적 불명 요청 재시도·설치 명령은 [추출 안내](Extraction/README.md)를 따른다. 입력 hash와 job·요청·응답·사용량은 SQLite 체크포인트에 저장한다. pause와 SIGINT/SIGTERM은 새 전송을 막고 진행 중 응답을 저장한 뒤 종료한다. 정상 완료·중단 후 자동 재시작하지 않는다.
 
+`bash Extraction/extraction.sh status`, `watch`, `logs`로 진행과 저장된 콘솔을 확인한다. NOVA 요청에는 출력 스키마를 포함하며 로그는 요청별 수용·무효 건수와 검증 원인을 보여준다. 스키마 누락은 [스키마 복구](Extraction/README.md#정규화-output_contract_failednormalize-복구), 정규화에서 잘못 생성된 행동 문구는 [행동 문구 복구](Extraction/README.md#정규화-중-행동-문구-오류와-안전한-중단)를 따른다. 후자는 완료 결과를 보존하며 미완료 행의 저장 응답을 모델 재호출 없이 복구한다.
+
 ## 디렉터리와 검증
 
 | 경로 | 역할 |

@@ -1,6 +1,7 @@
 import fcntl
 import json
 import sqlite3
+import time
 from contextlib import contextmanager
 from pathlib import Path
 from .models import canonical, digest, CONTRACT
@@ -61,8 +62,12 @@ class Jobs:
         return json.loads(row[0]) if row else default
 
     def set(self, key, value):
+        phase_changed=key=='phase' and self.get(key)!=value
         with self.db:
             self.db.execute('INSERT OR REPLACE INTO meta VALUES(?,?)', (key, canonical(value)))
+            self.db.execute('INSERT OR REPLACE INTO meta VALUES(?,?)', ('updated_at',canonical(time.time())))
+        if phase_changed:
+            print(canonical({'event':'phase','run_id':self.directory.name,'phase':value}),flush=True)
 
     @contextmanager
     def worker(self):
@@ -108,11 +113,11 @@ class Jobs:
     def results(self, phase):
         return [json.loads(row[0]) for row in self.db.execute("SELECT result FROM jobs WHERE phase=? AND status='done' ORDER BY job_id", (phase,))]
 
-    def prepare_request(self, request_id, provider, payload, job_ids):
+    def prepare_request(self, request_id, provider, payload, job_ids, *, count_attempt=True):
         with self.db:
             self.db.execute('INSERT INTO requests VALUES(?,?,?,?,?,?,?)',
                 (request_id, provider, canonical(payload), canonical(job_ids), 'prepared', None, None))
-            self.db.executemany("UPDATE jobs SET status='running', attempt_count=attempt_count+1 WHERE job_id=?", [(j,) for j in job_ids])
+            self.db.executemany("UPDATE jobs SET status='running', attempt_count=attempt_count+? WHERE job_id=?", [(int(count_attempt),j) for j in job_ids])
 
     def request_state(self, ident, state, response=None, error=None):
         with self.db:
@@ -133,10 +138,28 @@ class Jobs:
             self.db.execute("UPDATE requests SET state='accepted' WHERE request_id=?", (request_id,))
 
     def status(self):
+        identity=self.get('identity',{})
+        progress={row[0]:json.loads(row[1]) for row in self.db.execute(
+            "SELECT key,value FROM meta WHERE key LIKE 'cursor:%' OR key LIKE 'indexed:%'")}
+        files=[]
+        for entry in identity.get('inputs',[]):
+            key=canonical([entry['relative_path'],entry.get('member')])
+            files.append(dict(path=entry['relative_path'],member=entry.get('member'),
+                rows_committed=progress.get('cursor:'+key,0),complete=progress.get('indexed:'+key,False)))
+        current=next((row for row in files if not row['complete']),None)
+        by_phase={}
+        for phase,status,count in self.db.execute('SELECT phase,status,COUNT(*) FROM jobs GROUP BY phase,status'):
+            by_phase.setdefault(phase,{})[status]=count
         return {'run_id': self.directory.name, 'state': self.get('state'), 'phase': self.get('phase'),
-            'provider': self.get('identity',{}).get('config',{}).get('provider'),
+            'provider': identity.get('config',{}).get('provider'),
             'pause_requested': self.get('pause_requested',False),
+            'updated_at':self.get('updated_at'),
+            'index':{'files_completed':sum(row['complete'] for row in files),'files_total':len(files),
+                'rows_committed':sum(row['rows_committed'] for row in files),'current_file':current},
+            'jobs_by_phase':by_phase,
             'jobs': {row[0]:row[1] for row in self.db.execute('SELECT status,COUNT(*) FROM jobs GROUP BY status')},
             'requests': {row[0]:row[1] for row in self.db.execute('SELECT state,COUNT(*) FROM requests GROUP BY state')},
+            'job_errors': [dict(row) for row in self.db.execute("SELECT job_id,phase,attempt_count,SUBSTR(error,1,600) AS error FROM jobs WHERE error IS NOT NULL ORDER BY attempt_count DESC,job_id LIMIT 3")],
+            'recovery': self.get('recovery'),
             'usage': [dict(row) for row in self.db.execute('SELECT * FROM usage ORDER BY day,model')],
             'error': self.get('error')}

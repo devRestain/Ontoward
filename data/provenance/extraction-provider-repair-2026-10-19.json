@@ -1,0 +1,161 @@
+{
+  "contract": "d49-provider-retry-repair-1",
+  "created_at": "2026-10-19T12:01:35.570681+00:00",
+  "revision": "c83310893daf8009cedc8b85be62f842fcdc4fda",
+  "dirty": true,
+  "cause": "Explicit NOVA PROVIDER_RESPONSE_INVALID was retried five times under one request ID",
+  "official_guidance": {
+    "url": "https://nova.snubhai.org/docs/",
+    "verified_date": "2026-10-19",
+    "explicit_invalid_response": "Retry with a new request",
+    "uncertain_transport": "Keep original ID and payload",
+    "upstream_detailed_cause": "Not available in the saved SDK error"
+  },
+  "changes": [
+    "Retain confirmed terminal failures and create bounded fresh-ID retries with the same payload settings",
+    "Keep original IDs for unknown outcomes and transient unavailability",
+    "Accept and account responses using their actual replacement request IDs",
+    "Preserve semantic attempt budgets during transport replacement",
+    "Guard offline checkpoint recovery with identical prompts inputs models and clinical contracts"
+  ],
+  "image": {
+    "tag": "ontoward-extraction:local",
+    "id": "sha256:7e98251763fff539605c50dd15ae22d0b4b1f914bc632ce45a490f5d11a95138"
+  },
+  "recovery": {
+    "status": "pass",
+    "source_run_id": "42ff7f33bc2fcec39a379623a1ac5550",
+    "run_id": "dc60cdc5a593beb39cd6cd8d9a490ea2",
+    "source_sha256_before": "becf1913f42b4936a833fe6fd27caec06e57967e855cc40d6e4d6538814b7284",
+    "source_sha256_after": "becf1913f42b4936a833fe6fd27caec06e57967e855cc40d6e4d6538814b7284",
+    "done_jobs_preserved": 250,
+    "jobs": {
+      "done": 250,
+      "pending": 6179
+    },
+    "accepted_requests_preserved": 34,
+    "confirmed_failed_requests": [
+      "8a1c1211-e78a-42e7-83bd-da82f801248e"
+    ],
+    "raw_index_cursors_unchanged": true,
+    "all_job_results_inputs_and_counters_unchanged": true,
+    "requests_preserved_except_confirmed_terminal_state": true,
+    "usage_preserved": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 34,
+        "input_tokens": 307751,
+        "output_tokens": 151940
+      }
+    ],
+    "code_fingerprint": "pass",
+    "model_calls_started": 0
+  },
+  "live_resume": {
+    "status": "pass",
+    "observed_at": "2026-10-19T11:59:15.652407+00:00",
+    "run_id": "dc60cdc5a593beb39cd6cd8d9a490ea2",
+    "workflow_state": "running",
+    "phase": "normalize",
+    "jobs": {
+      "done": 260,
+      "pending": 6159,
+      "running": 10
+    },
+    "usage": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 35,
+        "input_tokens": 323446,
+        "output_tokens": 155795
+      }
+    ],
+    "original_done_rows_preserved": 250,
+    "old_failed_request_id": "8a1c1211-e78a-42e7-83bd-da82f801248e",
+    "first_resumed_request_id": "d9e6172a-c82c-4ee7-ad7a-65f9af8b28b9",
+    "first_resumed_batch_jobs": 10,
+    "first_resumed_finish": "stop",
+    "resumed_payload_unchanged_except_id": true,
+    "new_accepted_requests": 1,
+    "active_runtime_manifest": "not_installed"
+  },
+  "verification": {
+    "dev_tests": 52,
+    "image_network_none_tests": 52,
+    "accepted_rows_preserved": 250,
+    "source_db_unchanged": true,
+    "first_resumed_batch": "accepted_10_of_10",
+    "first_resumed_payload_identical_except_id": true,
+    "submission_working_tree_diff": "empty"
+  },
+  "active_run_id": "dc60cdc5a593beb39cd6cd8d9a490ea2",
+  "active_console_log": "data/extraction/v5-enum/logs/20261019T115755Z-11837.log",
+  "ongoing": "User-selected NOVA generation with install enabled",
+  "deferred": [
+    "Remaining generation completion",
+    "Actual bundle installation",
+    "Clinical quality validation",
+    "Production packaging",
+    "Official evaluation",
+    "Commits publication and deployment"
+  ],
+  "sha256": {
+    "Extraction/ontoward_extraction/__init__.py": "b0fa6a1d5eb69c16800185180e7ac1c42cd4df30ef34af3162cbfc8f9cadc597",
+    "Extraction/ontoward_extraction/__main__.py": "e8b9a90df01400dd06b2683b1e1c866c3992c6d8ca688650b28638f3e3dbffa7",
+    "Extraction/ontoward_extraction/build.py": "9cefbfa283ee6b001e8b677d9245b4a34441a287e5af0ca496c8536659c81ed7",
+    "Extraction/ontoward_extraction/compile.py": "2159ad46cfcaa235facbf5b1714f17b8b45f8580161351ba32c26cd8290cedbf",
+    "Extraction/ontoward_extraction/guidelines.py": "bcf7b88be2d84f5a0c6394c449b613c87480928091e26b30105e98c42f11288c",
+    "Extraction/ontoward_extraction/inputs.py": "c8f0aee3bb11913c7f9221ea6f64226839407d2c74c05cb84b3330e4f2aa95cb",
+    "Extraction/ontoward_extraction/install.py": "e59e68ea4521724b94feb68ba72b116506262e834e183736751d8db53dbea25d",
+    "Extraction/ontoward_extraction/jobs.py": "b4a7e644348af381a7935e6e1e958273f54710c86c71f1df1c3035fd49a34063",
+    "Extraction/ontoward_extraction/llm.py": "57df4f093389a6ba4edf352a1a0bdc51c0394d4d5e02baaeefca4a3cc2ad1194",
+    "Extraction/ontoward_extraction/models.py": "f4410f71d2ca4b3d074b32059060d21af073c61c2676e2c732c2097b4335afc6",
+    "Extraction/ontoward_extraction/normalize.py": "6e20443fd48d997b065ceab2d35adacc4e01030cd2ceead4ae7dab0671c3b359",
+    "Extraction/ontoward_extraction/progress.py": "9950cfda223fdf6aa7dcd7d3f0d36cf121035243cb1320c4775dee1970bb8962",
+    "Extraction/ontoward_extraction/recovery.py": "edb19e530022c03b994cdfc298e4b1779f857b2514f4b57eb43797323e330c49",
+    "Extraction/ontoward_extraction/verify.py": "b50174706e41e439ed40819b077b09f43bacc1d25e51082764acca742a9a8b6c",
+    "Extraction/prompts/draft.txt": "c7e5fd8cd9d89c20c1a24772bae8d9674c8a36eefd7160284035600f46e1a7e6",
+    "Extraction/prompts/final.txt": "70e7c3422285b3e4537c18e5c1502031532abfae8d398ab45366828ac6ed9d56",
+    "Extraction/prompts/normalize.txt": "a1bf53ebf5f310a94e3c8715be5700db6d2b4c64313b469456692e0de11f4b0f",
+    "Extraction/prompts/questions.txt": "a81c8b12f6731afffda3b910c2bf515364d1156519375ec4785ea2a6b5e1a553",
+    "Extraction/tests/image_acceptance.py": "e0c0927ea1431d1818c8130cd853296303b24c35e7447e8acdd33b8d29860374",
+    "Extraction/tests/support.py": "688ece2de55c86a78d031927560fa9820b9779a15b555ad33b09d10a18507137",
+    "Extraction/tests/test_extraction.py": "c541445bf84d36b3e6e7edea16e9905a4cf8cd141e50854ae29578fbdab597e3",
+    "Extraction/tests/test_index_progress.py": "027d362bf0526ce4c5dd2444075f21660eecae38188a0aabf7729951d61cedfd",
+    "Extraction/tests/test_korean_phase.py": "48b99f33d148908c6d6278c12174584e067b639fd9d79983c09d5313d297e8af",
+    "Extraction/tests/test_normalize_recovery.py": "af35cc93fb7fc0e185ce6a88e0e8c5a2059b6fa302fd14343fe2e5be2daa25b6",
+    "Extraction/tests/test_provider_retry.py": "ea978fe30e356ac2eeab966a155002ce45d944b7eef655b23d3f451f5ada4008",
+    "Extraction/tests/test_providers.py": "cf47dbfa43336a139497444c69ccc8e39dfeaa1949257df99219de591913a3fb",
+    "AGENTS.md": "2921253263c53b87ca87dd746bf7e15a3480eb85c30cd654aa6ced78e579985c",
+    "Extraction/AGENTS.md": "f736e69f632f1a4b73a7d2a25f3eaa185aceab50b4c685c2dd7b4f54fd5860c3",
+    "data/AGENTS.md": "55d7b7fe075f52b65d980038fc2a3ab1a559d8d071b7a4365df80606198cd780",
+    "Extraction/extraction.sh": "eccdbb13e13e6a44f6db3ea872ba8f3e2ba474b3a61064ce58b2f1fe92c39ee7",
+    "Extraction/compose.yaml": "6921926ce432a0ec59af476c1f713cd04315a420aaf2e0ee6aec6d435dfe911b",
+    "Extraction/config.json": "7ad2974511e475f65c0dc0bf3a2684b4a617a1021e742277ff638f0777fdf980",
+    "PRD.md": "f3f7f1e4ac879de0f90aaf87a65302241c1e39a99be9863a8cfb1f9a2d7c45d3",
+    "Extraction/README.md": "e4c4b3b0b8746b1efdfb00891b8a1cdd333781e2727db9ae8a02a61a3c009b99",
+    "README.md": "2f81f912bea8c38984cd46a922130ff05ea21603fe30839ef09ba898dfc7e36c",
+    "PROJECT_STATE.md": "12d987c3eb1780e4ccce4c38d5e08878c3386e3afa8195e767926f7c7f3da258",
+    "data/PROJECT_STATE.md": "d9a316ed7721e3a5ea7c9d4521a8b3a74f5e43098eb9a143cb232ed331a91790",
+    "submission/PROJECT_STATE.md": "e00b2df30e3b70e81999c165e557e30b51084d3aff64cc5cb6fdbaf3837cdc42",
+    "Tmp/extraction-provider-repair-2026-10-19/capture_resume.py": "8ea809c47f17ef7252572bb057dc9f87925013deeda0c4567db2d7a80f3072c2",
+    "Tmp/extraction-provider-repair-2026-10-19/checkpoint-before.json": "a408c220f7fc27273e17db4a77fc8c09297e6ff310512136a0a2696cd46ce0cb",
+    "Tmp/extraction-provider-repair-2026-10-19/checkpoint-before.log": "535065ae9b230f342462fe77b92e4c2c07d119d15f682c1137a31091ecdbb644",
+    "Tmp/extraction-provider-repair-2026-10-19/image-build.log": "5e3ef6291a049d42ccc7e58bd16ad634f4cd7fdd9984cab2466b60dbd58ef680",
+    "Tmp/extraction-provider-repair-2026-10-19/image-inspect.json": "5cb8551a0d4a11a97dbbf350e875dc646c177811a29934fc40b1ec3106c5ef98",
+    "Tmp/extraction-provider-repair-2026-10-19/image-tests.log": "e3a69b3f2ab2b9bcf9935a325be54525b0c1b669b0bef20054202821856e7b8d",
+    "Tmp/extraction-provider-repair-2026-10-19/probe_checkpoint.py": "88f707c21042528f45d10f6047d46035c572b0e6e4a582eff8fa969d7be9bce9",
+    "Tmp/extraction-provider-repair-2026-10-19/receipt.py": "1c78f03f856c394b9756c1693b68aab68e584fd4989f80265ce6c63c64b92f73",
+    "Tmp/extraction-provider-repair-2026-10-19/recovery.log": "39bd333768f6322c78d06dbb1c2a609aa35329bffc6c41677177b37268c10238",
+    "Tmp/extraction-provider-repair-2026-10-19/resume-proof.json": "db2f7f25c85cd6eb72e63efd0e7971b6be4403e9296d071f7d982a13ad5417d4",
+    "Tmp/extraction-provider-repair-2026-10-19/resume-proof.log": "96e407355fcbb5778b3579e5ecf31615b4cc8189ef108bd84d56eb4f4fb47869",
+    "Tmp/extraction-provider-repair-2026-10-19/tests.log": "4f1452295c82f6332f219f9c1569abb5cccca170daa79223973d056ca8de459d",
+    "Tmp/extraction-provider-repair-2026-10-19/verification.json": "f884bfd8b40f3766f3927b3603e710f90cd40eb72d383921f24d9f8280691f7f",
+    "Tmp/extraction-provider-repair-2026-10-19/verification.log": "f04cdd6c2503be4b29f4fa76a36b81f93c16428e75c0e2f778d195b4c00f5998",
+    "Tmp/extraction-provider-repair-2026-10-19/verify_checkpoint.py": "c412f15e339b6637a7c7971195f55f9512e79c76766a573edc363dd4edf5f2b6",
+    "Tmp/extraction-provider-repair-2026-10-19/worker-ownership.log": "5530dd2f02b56ec01eeff4160701f6006a994f2250361b05f15414d2adb88c82",
+    "data/extraction/v5-enum/work/dc60cdc5a593beb39cd6cd8d9a490ea2/recovery.json": "b76a18f7df41eaf6a061a4af0e7e708eae07f0bc8d60fbf02fe7aefe16c63a73"
+  }
+}

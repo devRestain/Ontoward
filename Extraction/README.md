@@ -1,6 +1,6 @@
 # 새 지식 DB 추출
 
-D49의 독립 실행기는 네 원자료에서 새 `v5-enum-1` 번들을 만든다. 이미지는 **ontoward-extraction:local**, 진입점은 `python -m ontoward_extraction`이다. 이번 구현에서는 이미지와 오프라인 합성 파이프라인만 검증했다. **실제 로그인·유료 모델 호출·실제 DB 생성·실제 설치는 실행하지 않았다.** 현재 제출 지식 manifest는 없으며 실제 번들이 설치되기 전 `prepare()`와 정식 패키징은 `knowledge_bundle_not_installed`로 실패한다.
+D49의 독립 실행기는 네 원자료에서 새 `v5-enum-1` 번들을 만든다. 이미지는 **ontoward-extraction:local**, 진입점은 `python -m ontoward_extraction`이다. 이미지·합성 파이프라인과 실제 RF2/CSV의 읽기 전용 파싱을 검증했다. 모델 생성·설치는 별도 실행이다. 실제 번들이 설치되기 전 `prepare()`와 정식 패키징은 `knowledge_bundle_not_installed`로 실패한다.
 
 | 공급자 | 인증·전송 | 초안 / 최종 분류 |
 |---|---|---|
@@ -22,6 +22,112 @@ docker compose run --rm -T verify verify --run-id RUN_ID
 ```
 
 `status`와 `pause`는 키나 client를 만들지 않는다. 실행이 없으면 `not_started`를 반환한다. `verify`는 네트워크 없이 읽기 전용으로 번들·해시·실행 계약·기본 커버리지를 확인한다. 전체 모델 의미와 임상적 정확성을 검증하는 명령은 아니다.
+
+## 실행·진행 확인·로그
+
+프로젝트 루트의 Bash helper는 stdout·stderr를 화면과 `data/extraction/v5-enum/logs/<UTC시각>-<PID>.log`에 함께 보존한다. 실패 종료 코드도 유지한다. `latest.log`는 가장 최근 로그를 가리킨다.
+
+```sh
+# 선택한 공급자로 새 빌드를 시작하고 콘솔 로그를 저장한다.
+bash Extraction/extraction.sh run --provider nova_dev --install
+```
+
+다른 터미널에서 조회한다. status/watch는 키나 모델 client를 만들지 않고 SQLite를 읽기 전용으로 열며, watch의 Ctrl+C는 조회만 끝낸다.
+
+```sh
+bash Extraction/extraction.sh status
+bash Extraction/extraction.sh watch
+bash Extraction/extraction.sh logs
+# 한 빌드만 확인하거나 갱신 간격을 바꾼다.
+bash Extraction/extraction.sh watch --run-id RUN_ID --interval 3
+```
+
+출력에는 단계·파일 완료 수·transaction으로 확정한 레코드 수·현재 파일 cursor·단계별 job 상태·요청 상태·기록된 모델 호출 수·최근 갱신·오류와 최대 세 작업의 검증 원인이 나온다. 실행 로그의 `request_started`는 전송할 배치를, `request_validated`는 수용·무효 건수와 검증 원인을 보여준다. 시도 상한을 소진한 작업만 failed가 되며 아직 시도하지 않은 작업은 pending으로 남는다. 파일 크기와 뒤 단계의 작업량이 다르므로 파일 수를 전체 완료율이나 남은 시간으로 표시하지 않는다. JSON이 필요하면 기존 `docker compose run --rm -T control status`를 사용한다.
+
+`docker compose run --rm`으로 이미 종료·삭제한 컨테이너의 과거 콘솔은 복구할 수 없다. 기존 실행도 DB의 오류와 cursor는 status에서 확인할 수 있다. 위 helper로 시작한 이후의 콘솔은 logs 명령으로 계속 읽을 수 있다.
+
+### RF2 인덱싱 오류가 난 기존 빌드
+
+실패 run `218abbb17b1438be463b58870fab9d6b`는 RF2 TSV를 일반 CSV의 quote 규칙으로 읽은 버전이다. 실제 255자 이하 term의 따옴표를 해석하다 `field larger than field limit (131072)`가 발생했고, 저장된 term 41개도 원문과 달랐다. 이 run은 보존하되 재개하지 않는다. 단순한 메모리/field limit 증설이나 같은 이미지 재시작으로 고칠 수 없다.
+
+수정 버전은 RF2를 quote 해석 없는 TSV로, BODHI를 정상 CSV로 구분한다. 실제 긴 필드도 처리하되 열 수·CSV 형식 오류는 파일/줄과 함께 실패한다. 수정 코드의 fingerprint가 달라지므로 새 run을 시작하면 별도 DB가 만들어지고 기존 run은 자동 재사용하지 않는다. 컨테이너·인증 volume·기존 DB를 지울 필요가 없다.
+
+```sh
+# 수정 이미지가 없다면 빌드한다. 현재 작업에서는 이미 빌드했다.
+docker compose build extraction
+# 이 오류의 복구는 새 빌드다. 실패한 기존 ID에 --resume을 붙이지 않는다.
+bash Extraction/extraction.sh run --provider nova_dev --install
+```
+
+정상적인 일시 중단을 재개할 때는 **수정 이미지에서 새로 만든 RUN_ID**와 동일 fingerprint를 사용한다.
+
+```sh
+bash Extraction/extraction.sh pause --run-id NEW_RUN_ID
+bash Extraction/extraction.sh resume --provider nova_dev --run-id NEW_RUN_ID --install
+```
+
+### 정규화 `output_contract_failed:normalize` 복구
+
+스키마 전달이 누락된 NOVA 어댑터는 Python에서 JSON Schema를 받아도 SDK의 messages에 넣지 않았다. 프롬프트는 스키마 준수를 요구했지만 모델은 `uri`, `canonical_name`, `label_ko`처럼 실행 계약과 다른 구조를 만들 수 있었다. 수정 버전은 실제 system 메시지에 스키마 전체와 정확한 최상위 `results`, `job_id`, 개념 필드를 넣는다. NOVA는 프롬프트로 형식을 요청하고 Python이 엄격하게 수용한다. API·Codex의 native JSON Schema 경로는 유지한다.
+
+컨테이너를 다시 만드는 것만으로 기존 이미지의 이 결함은 고쳐지지 않는다. 코드가 바뀌면 fingerprint도 달라지므로 예전 ID를 강제로 `--resume`하지 않는다. **원자료 인덱싱 완료·NOVA 정규화 실패·수용 결과 0개·모든 요청 처리 완료** 조건을 만족하는 이 오류에 한해 명시적 오프라인 복구를 제공한다. RF2 파싱이 잘못된 이전 인덱스에는 사용할 수 없다.
+
+```sh
+# 수정 이미지가 없다면 빌드한다. 모델 호출이나 로그인을 하지 않는다.
+docker compose build extraction
+# 기존 실행이 종료된 뒤, 아래 복구를 한 번만 실행한다.
+bash Extraction/extraction.sh recover --run-id OLD_RUN_ID
+```
+
+복구는 네트워크와 키 없는 `recovery` 서비스를 쓴다. 실제 원자료 hash·설정·모델·파서·스키마·실행 계약의 일치를 확인한 뒤 SQLite backup으로 별도 fingerprint의 DB를 만든다. 원본 DB는 보존한다. 과거 요청·응답·사용량은 복사하고, 이전 실패/시도 횟수는 새 DB의 recovery metadata와 `recovery.json`에 기록한다. 새 계약의 시도 횟수만 0에서 시작하며 NOVA 일일 사용량은 유지한다. 수용된 결과·불명 요청·변경된 입력이 있으면 거절한다.
+
+완료 출력의 새 `run_id`는 `ready` 상태다. 이 명령 자체는 모델 생성이나 설치를 시작하지 않는다. 이미 복구했다면 다시 복구할 필요 없이 새 ID로 조회·재개한다. 원본 실패 ID의 일반 resume 제한은 그대로다.
+
+```sh
+bash Extraction/extraction.sh status --run-id NEW_RUN_ID
+# 아래 명령부터 실제 NOVA 요청을 시작한다. 완료되면 검증 후 설치한다.
+bash Extraction/extraction.sh resume --provider nova_dev --run-id NEW_RUN_ID --install
+```
+
+### 정규화 중 행동 문구 오류와 안전한 중단
+
+`invalid_rendered_korean_length_or_normalization` 또는 `concepts.N.question`의 검증 오류는 해당 행을 재시도한다는 뜻이다. 같은 응답의 유효한 행은 이미 저장된다. `pause_requested=true`, `state=paused`, `error=null`이면 안전한 중단 요청을 처리한 상태다. 진행 중이던 응답까지 저장한 뒤 종료하며, 장애로 응답을 잃은 상태와 구별한다.
+
+정규화 단계는 개념·역할을 만들고 실행 문구는 다음 questions 단계가 만든다. 정규화 응답의 `question`, `exam_text`, `attribute_role.clarification`은 원본 응답에 보존하되 수용 전에 null로 제외한다. 질문 생성에서는 한국어 Hangul·NFC·치환 후 1–30자를 검증하고 `affirmative=true`는 presence에만 허용한다. duration·quantity 이외 질문에는 units를 넣지 않는다. 오류에는 필드·실제 길이·언어·검증 이유가 나온다.
+
+수정 전 버전에서 이 오류가 반복되면 먼저 안전하게 일시 중단하고 종료를 확인한다. 이후 **완료된 원자료 인덱스·동일한 입력/임상 계약·처리 완료된 요청·행동 문구 오류만 있는 정규화 단계**에서만 별도 복구를 실행한다.
+
+```sh
+bash Extraction/extraction.sh pause --run-id OLD_RUN_ID
+bash Extraction/extraction.sh status --run-id OLD_RUN_ID
+# paused로 종료한 뒤 실행한다. 새 모델 호출은 하지 않는다.
+bash Extraction/extraction.sh recover-text --run-id OLD_RUN_ID
+```
+
+복구는 원본 DB와 이미 done인 결과 바이트·시도 횟수를 보존한다. 별도 fingerprint의 복사본에서 미완료 행의 최신 저장 응답을 로컬로 다시 검증한다. 모델 재호출이나 사용량 중복 집계 없이 회복할 수 있는 행을 done으로 저장하고, 나머지는 새 계약의 시도 예산으로 남긴다. 과거 복구 이력·요청·응답·사용량도 유지한다. 불명 요청이나 다른 임상 검증 오류가 있으면 거절한다. 이전의 수용 결과 0개 전용 recover 명령과 다른 복구 경로다.
+
+출력의 새 RUN_ID를 사용한다. 이미 복구한 경우 아래 재개만 실행하며, 이 명령부터 실제 모델 호출이 시작된다.
+
+```sh
+bash Extraction/extraction.sh resume --provider nova_dev --run-id NEW_RUN_ID --install
+```
+
+### `PROVIDER_RESPONSE_INVALID`와 요청 ID 복구
+
+NOVA가 유효한 모델 응답을 제공하지 못한 경우다. [현재 공식 개발 가이드](https://nova.snubhai.org/docs/)는 이 명시적 오류에는 새 요청을 사용하고, 결과가 불명인 전송·PROVIDER_UNAVAILABLE·REQUEST_PENDING에는 같은 ID를 유지하도록 안내한다. 모델이 반환한 JSON을 로컬에서 거절한 경우와 구별한다.
+
+수정 실행기는 확정된 오류의 요청·payload·오류를 failed로 보존하고, 같은 모델·설정·내용에 새 request_id를 발급한다. 최대 5회 전송 시도 후 중단하며 모델이나 공급자를 바꾸지 않는다. 요청 교체를 출력 검증 시도로 추가 집계하지 않는다. 로그의 `provider_response_failed`는 HTTP 상태와 실패 ID를, `provider_retry_new_request_id`는 이전·새 ID를 보여준다. 응답 수용은 실제 성공한 요청 ID에 기록한다.
+
+수정 전 이미지에서 같은 ID를 반복하다 `persistent_provider_failure:PROVIDER_RESPONSE_INVALID`로 실패한 정규화 실행은 아래 명령으로 복구한다. 불명 결과는 이 명령으로 처리하지 않는다.
+
+```sh
+# 실패한 worker가 종료한 뒤 실행한다. 이 복구 자체는 모델을 부르지 않는다.
+bash Extraction/extraction.sh recover-provider --run-id OLD_RUN_ID
+# 출력의 새 ID로 재개한다. 이 명령부터 실제 NOVA 요청을 시작한다.
+bash Extraction/extraction.sh resume --provider nova_dev --run-id NEW_RUN_ID --install
+```
+
+입력·프롬프트·모델·임상 계약이 일치하는 별도 fingerprint의 복사본을 만든다. 완료 결과·입력 cursor·모든 시도 횟수·수용 요청·사용량을 보존한다. 명시적 오류가 남은 요청만 failed로 분류하고 미완료 작업을 pending으로 바꾼다. 원본 DB와 이전 복구 이력은 보존하며 재개 시 완료 작업을 다시 부르지 않는다. 이미 실행 중이면 중복 재개하지 않고 status/watch/logs로 확인한다.
 
 ## 실제 생성 때 선택할 실행
 

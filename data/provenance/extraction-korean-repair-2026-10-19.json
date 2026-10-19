@@ -1,0 +1,140 @@
+{
+  "contract": "d49-korean-phase-repair-1",
+  "created_at": "2026-10-19T10:35:21.903676+00:00",
+  "revision": "c83310893daf8009cedc8b85be62f842fcdc4fda",
+  "dirty": true,
+  "cause": [
+    "Normalize generated English executable text outside the Korean question phase",
+    "Duration and category questions set affirmative=true despite presence-only binding"
+  ],
+  "pause": {
+    "actor": "repair_agent",
+    "mode": "safe pause request",
+    "in_flight_response": "saved",
+    "original_run_id": "cd25fa99307faf8b89b5c691df203c45",
+    "original_state": "paused",
+    "original_error": null
+  },
+  "changes": [
+    "Constrain normalize schema action fields to null and defer premature fields before acceptance",
+    "Preserve clinical fields raw responses and stored done results",
+    "Generate Korean executable text in questions and later completion with Hangul NFC and rendered length checks",
+    "Report concrete field length language and question validation messages",
+    "Recover latest saved pending responses in a new fingerprint with unchanged usage and full recovery history"
+  ],
+  "image": {
+    "tag": "ontoward-extraction:local",
+    "id": "sha256:ea8e3bf39648a6367810043c2340fb7c6d83edd9510be7ea55aad3178bd53207"
+  },
+  "recovery": {
+    "status": "pass",
+    "source_run_id": "cd25fa99307faf8b89b5c691df203c45",
+    "run_id": "42ff7f33bc2fcec39a379623a1ac5550",
+    "source_sha256_before": "97a22276b08f25967d6dd2475022ec71f14e5f7600520b32c04a20fe49215207",
+    "source_sha256_after": "97a22276b08f25967d6dd2475022ec71f14e5f7600520b32c04a20fe49215207",
+    "done_jobs_preserved_byte_identical": 7,
+    "saved_response_jobs_recovered": 3,
+    "jobs": {
+      "done": 10,
+      "pending": 6419
+    },
+    "requests_preserved": 10,
+    "usage_preserved": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 10,
+        "input_tokens": 42412,
+        "output_tokens": 24867
+      }
+    ],
+    "raw_tables_preserved": {
+      "rf2": 12567353,
+      "source_rows": 19674,
+      "jobs": 6429,
+      "requests": 10
+    },
+    "input_cursors_unchanged": true,
+    "recovery_history_preserved": true,
+    "code_and_prompt_fingerprint": "pass",
+    "state": "ready",
+    "model_calls_started": 0,
+    "active_manifest": "not_installed"
+  },
+  "verification": {
+    "dev_tests": 45,
+    "image_network_none_tests": 45,
+    "saved_response_replay": "pass",
+    "actual_checkpoint_preservation": "pass",
+    "keyless_status": "ready",
+    "additional_model_calls_started": 0,
+    "submission_working_tree_diff": "empty",
+    "active_manifest": "not_installed"
+  },
+  "next_command": "bash Extraction/extraction.sh resume --provider nova_dev --run-id 42ff7f33bc2fcec39a379623a1ac5550 --install",
+  "deferred": [
+    "Corrected live model generation",
+    "Live Korean question output quality",
+    "Actual bundle installation",
+    "Clinical validation",
+    "Production packaging",
+    "Official evaluation",
+    "Commits publication and deployment"
+  ],
+  "sha256": {
+    "Extraction/ontoward_extraction/__init__.py": "b0fa6a1d5eb69c16800185180e7ac1c42cd4df30ef34af3162cbfc8f9cadc597",
+    "Extraction/ontoward_extraction/__main__.py": "a208bbb9d8bcf6298fb0dc365975e738f8e5c8fb9fdb4e32556195b87cce1218",
+    "Extraction/ontoward_extraction/build.py": "4c3e56544bff08a19f712100c4938a559513bca294daf5ff2e75d683ed6d371a",
+    "Extraction/ontoward_extraction/compile.py": "2159ad46cfcaa235facbf5b1714f17b8b45f8580161351ba32c26cd8290cedbf",
+    "Extraction/ontoward_extraction/guidelines.py": "bcf7b88be2d84f5a0c6394c449b613c87480928091e26b30105e98c42f11288c",
+    "Extraction/ontoward_extraction/inputs.py": "c8f0aee3bb11913c7f9221ea6f64226839407d2c74c05cb84b3330e4f2aa95cb",
+    "Extraction/ontoward_extraction/install.py": "e59e68ea4521724b94feb68ba72b116506262e834e183736751d8db53dbea25d",
+    "Extraction/ontoward_extraction/jobs.py": "a964023308e09c3b8ae86821c68fadb2b2a03e1639e22a74a93f3dbbcd22fdd9",
+    "Extraction/ontoward_extraction/llm.py": "327dc457ecebbe93f893583305dd1559cec8bff5d62880ac2e84a765ffb52711",
+    "Extraction/ontoward_extraction/models.py": "f4410f71d2ca4b3d074b32059060d21af073c61c2676e2c732c2097b4335afc6",
+    "Extraction/ontoward_extraction/normalize.py": "6e20443fd48d997b065ceab2d35adacc4e01030cd2ceead4ae7dab0671c3b359",
+    "Extraction/ontoward_extraction/progress.py": "9950cfda223fdf6aa7dcd7d3f0d36cf121035243cb1320c4775dee1970bb8962",
+    "Extraction/ontoward_extraction/recovery.py": "3ac111aed2a881c9dd354c15fdf363908d5986b90d1ffb1e7e576d849a47fff4",
+    "Extraction/ontoward_extraction/verify.py": "b50174706e41e439ed40819b077b09f43bacc1d25e51082764acca742a9a8b6c",
+    "Extraction/prompts/draft.txt": "c7e5fd8cd9d89c20c1a24772bae8d9674c8a36eefd7160284035600f46e1a7e6",
+    "Extraction/prompts/final.txt": "70e7c3422285b3e4537c18e5c1502031532abfae8d398ab45366828ac6ed9d56",
+    "Extraction/prompts/normalize.txt": "a1bf53ebf5f310a94e3c8715be5700db6d2b4c64313b469456692e0de11f4b0f",
+    "Extraction/prompts/questions.txt": "a81c8b12f6731afffda3b910c2bf515364d1156519375ec4785ea2a6b5e1a553",
+    "Extraction/tests/image_acceptance.py": "e0c0927ea1431d1818c8130cd853296303b24c35e7447e8acdd33b8d29860374",
+    "Extraction/tests/support.py": "688ece2de55c86a78d031927560fa9820b9779a15b555ad33b09d10a18507137",
+    "Extraction/tests/test_extraction.py": "c541445bf84d36b3e6e7edea16e9905a4cf8cd141e50854ae29578fbdab597e3",
+    "Extraction/tests/test_index_progress.py": "027d362bf0526ce4c5dd2444075f21660eecae38188a0aabf7729951d61cedfd",
+    "Extraction/tests/test_korean_phase.py": "48b99f33d148908c6d6278c12174584e067b639fd9d79983c09d5313d297e8af",
+    "Extraction/tests/test_normalize_recovery.py": "af35cc93fb7fc0e185ce6a88e0e8c5a2059b6fa302fd14343fe2e5be2daa25b6",
+    "Extraction/tests/test_providers.py": "cf47dbfa43336a139497444c69ccc8e39dfeaa1949257df99219de591913a3fb",
+    "Extraction/extraction.sh": "09f7627c1d1aeb511bcb3075189a2a813e1721805ea4aeb9132ccf118e64b861",
+    "Extraction/compose.yaml": "6921926ce432a0ec59af476c1f713cd04315a420aaf2e0ee6aec6d435dfe911b",
+    "Extraction/config.json": "7ad2974511e475f65c0dc0bf3a2684b4a617a1021e742277ff638f0777fdf980",
+    "AGENTS.md": "ef8401e6b8a3fcbda9ddb5d693a722f651b6967d0462eba73663ca52322aea9a",
+    "Extraction/AGENTS.md": "00275353d7701b07cf13f262e34a7e88c5022db3413c26997148ab59acfe1ac0",
+    "data/AGENTS.md": "33234536a0da96ded9f4c30695eaf8cb838746dd411748bbf63a415b3b4f5e29",
+    "PRD.md": "ccc35e4f21a809870b4899b703f28f39cbb24aac5c8b373b60c36ee257925614",
+    "README.md": "2f81f912bea8c38984cd46a922130ff05ea21603fe30839ef09ba898dfc7e36c",
+    "Extraction/README.md": "f67c190dc0cfb18a71c6e58604de83e3b818297cb5ac20264ba9cbad4f3da97b",
+    "PROJECT_STATE.md": "e6cca13f1bcc39f462313a9f8383f61bfce1566c0a4dd006df06cc72b20ca028",
+    "data/PROJECT_STATE.md": "4f1b6ee9d0c27d135671f8a5d78614279275c1a9e645b51b0c0db91d1d011002",
+    "submission/PROJECT_STATE.md": "e00b2df30e3b70e81999c165e557e30b51084d3aff64cc5cb6fdbaf3837cdc42",
+    "Tmp/extraction-korean-repair-2026-10-19/image-build.log": "0369f353625f949542609b8ef495829aa21972a23339de7c7c6d045de396327f",
+    "Tmp/extraction-korean-repair-2026-10-19/image-inspect.json": "b722293cc39c347920a0060d9de8e0fa5c1bc0244095a76dc8c7b319a4f49868",
+    "Tmp/extraction-korean-repair-2026-10-19/image-tests.log": "f1dcedf0034c7ec7613ab2f53844eaeec136ae2a23515a98be1677cdbe5cf1cd",
+    "Tmp/extraction-korean-repair-2026-10-19/inspection.json": "64026b290eff5dcd1d678767df9583308b22f29735191e5bcc0281513f21a7b4",
+    "Tmp/extraction-korean-repair-2026-10-19/inspection.log": "d874a341eabb112b5c63b576a5add60718854a7e71bc5ed842446dbac09d6510",
+    "Tmp/extraction-korean-repair-2026-10-19/probe_korean.py": "0e7fb3e5e1387e1c42e0d3553962d74d8b8bab46a22647afe458ae38ca469c0a",
+    "Tmp/extraction-korean-repair-2026-10-19/receipt.py": "4e773aa1b02c96e0f149a14a14d6957ef49702294cf980dbe25527eb4dd6e8b6",
+    "Tmp/extraction-korean-repair-2026-10-19/recovery.log": "2f737bf9f0a41120bfbb1cdd9280e09aedab335106ad5843365955b517530f9e",
+    "Tmp/extraction-korean-repair-2026-10-19/replay.json": "40cbc68987dcf8681cc58b90faf4bbd4e04be82771022483a51fff252a2dc203",
+    "Tmp/extraction-korean-repair-2026-10-19/replay.log": "efa9e686ad3af61b3ced32ebaabd582ed20447b8cacfe1778222e92505577165",
+    "Tmp/extraction-korean-repair-2026-10-19/replay_phase.py": "84d094b973ae05aa143264f70f6dc709e1c4454c357140067f5677ba902dbe58",
+    "Tmp/extraction-korean-repair-2026-10-19/status.log": "d2d59a7658bffb5e26dd8109da60d70df249e127de7f35863589088883274c98",
+    "Tmp/extraction-korean-repair-2026-10-19/tests.log": "fe66410ca71893419f99f82736bf90bf7a2e574c68251caa5d4609261d81143f",
+    "Tmp/extraction-korean-repair-2026-10-19/verification.json": "0780d40103ee75264a2edf18c85f38dcda9d00b4a13f543cb1fff129ccef47ef",
+    "Tmp/extraction-korean-repair-2026-10-19/verification.log": "055158c3411df43fd51474ca29f0ba9f0239230e616ca3970fe6067632b3b6fb",
+    "Tmp/extraction-korean-repair-2026-10-19/verify_checkpoint.py": "d257e119a8b6ad84ffe10b0a85781cccee39e38f0cfd4b5f16144603eee44b42",
+    "data/extraction/v5-enum/work/42ff7f33bc2fcec39a379623a1ac5550/recovery.json": "5d7a13dbb0201a204c09f573e9a7d8d5296015fb2b896e4b875df466b5fd581e"
+  }
+}

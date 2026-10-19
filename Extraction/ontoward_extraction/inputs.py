@@ -4,10 +4,13 @@ import io
 import json
 import re
 import tarfile
+import time
 import zipfile
 from contextlib import contextmanager
 from pathlib import Path
 from .models import canonical
+
+CSV_FIELD_LIMIT = 16 * 1024 * 1024
 
 BODHI_HEADERS = {
     'nodes_condition': {'snomed_id', 'concept_type', 'name'},
@@ -107,8 +110,18 @@ def discover(root, configured=None, boundary=lambda: None):
 def rows(entry):
     with stream(entry) as source:
         if entry['role'] == 'rf2' or entry['role'].startswith('bodhi:'):
-            with io.TextIOWrapper(source,encoding='utf-8-sig') as text:
-                yield from csv.DictReader(text, delimiter='\t' if entry['role']=='rf2' else ',')
+            csv.field_size_limit(CSV_FIELD_LIMIT)
+            with io.TextIOWrapper(source,encoding='utf-8-sig',newline='') as text:
+                # RF2 is literal TSV: quotes are clinical text, not CSV delimiters.
+                reader=csv.DictReader(text,delimiter='\t' if entry['role']=='rf2' else ',',
+                    quoting=csv.QUOTE_NONE if entry['role']=='rf2' else csv.QUOTE_MINIMAL,strict=True)
+                try:
+                    for row in reader:
+                        if None in row or any(value is None for value in row.values()):
+                            raise ValueError(f'input_column_count_mismatch:{entry["relative_path"]}:line={reader.line_num}')
+                        yield row
+                except csv.Error as error:
+                    raise ValueError(f'input_parse_error:{entry["relative_path"]}:line={reader.line_num}:{error}') from error
         else:
             data = json.load(source)
             if entry['role'] == 'astra':
@@ -137,6 +150,7 @@ def index(jobs, entries, chunk_size=1000):
         cursor = jobs.get('cursor:'+key,0)
         if jobs.get('indexed:'+key):
             continue
+        print(canonical({'event':'index_file_started','path':entry['relative_path'],'cursor':cursor}),flush=True)
         batch = []
         for offset,row in enumerate(rows(entry),1):
             if offset <= cursor:
@@ -145,10 +159,13 @@ def index(jobs, entries, chunk_size=1000):
             if len(batch) >= chunk_size:
                 commit_rows(jobs,entry,key,batch)
                 batch=[]
+                if offset % 100000 == 0:
+                    print(canonical({'event':'index_checkpoint','path':entry['relative_path'],'rows':offset}),flush=True)
                 jobs.boundary()
         if batch:
             commit_rows(jobs,entry,key,batch)
         jobs.set('indexed:'+key,True)
+        print(canonical({'event':'index_file_complete','path':entry['relative_path'],'rows':jobs.get('cursor:'+key,0)}),flush=True)
         jobs.boundary()
     validate_dependencies(jobs,entries)
 
@@ -174,6 +191,7 @@ def commit_rows(jobs, entry, key, batch):
                 jobs.db.execute('INSERT OR REPLACE INTO source_rows VALUES(?,?,?)',
                     (entry['role'],key+':'+str(offset),canonical(row)))
         jobs.db.execute('INSERT OR REPLACE INTO meta VALUES(?,?)',('cursor:'+key,canonical(batch[-1][0])))
+        jobs.db.execute('INSERT OR REPLACE INTO meta VALUES(?,?)',('updated_at',canonical(time.time())))
 
 
 def validate_dependencies(jobs, entries):

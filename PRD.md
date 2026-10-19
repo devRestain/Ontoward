@@ -99,6 +99,12 @@ Extraction/은 네 원자료에서 빈 SQLite 작업 DB로 시작한다. RF2 Sna
 
 run·status·pause·verify·install을 제공한다. 조회·중단·검증은 client/개발 키 없이 동작한다. 입력/설정/공급자/모델/프롬프트/생성 계약 hash와 단계·chunk cursor·job 결과·재시도·usage를 SQLite transaction으로 저장하고 worker는 하나만 실행한다. 같은 fingerprint의 --resume만 허용하고 완료·neutral을 재호출하지 않는다. 전송 전 payload/인자/job ID/request ID를 기록하고 응답을 먼저 보존한다. pause·SIGINT·SIGTERM은 새 전송을 막고 한 in-flight 응답의 유효 행을 저장한 뒤 paused로 정상 종료한다. 쿼터 대기 중에도 중단할 수 있다.
 
+NOVA에는 JSON Schema 전체를 system 메시지에 포함하고 로컬에서 엄격하게 검증한다. 요청 시작·수용/무효 건수·검증 원인을 로그에 남기며, 시도 상한에 도달한 작업만 실패로 표시한다. 스키마 전달이 누락된 버전에서 정규화가 실패했고 수용 결과가 0개인 경우에 한해 recover-normalize를 명시적으로 실행할 수 있다. 네트워크·키 없이 입력·모델·파서·스키마·실행 계약의 일치를 확인하고 완료된 원자료 인덱스를 새 fingerprint에 복사한다. 원본 DB와 요청·사용량·과거 시도는 보존하며 복구 명령 자체는 모델 호출·설치를 시작하지 않는다. 불명 요청·미완성 인덱스·수용된 결과가 있으면 이 복구를 거절한다.
+
+정규화는 임상 개념·역할을 만들고 question·exam_text·attribute_role.clarification은 null로 둔다. 이 단계에서 잘못 생성된 행동 문구는 원본 응답에 보존하고 수용 전에 제외하며, 기존 완료 결과도 저장된 바이트를 바꾸지 않고 같은 방식으로 읽는다. questions 단계가 한국어 행동 문구를 생성하고 Hangul·NFC·치환 후 1–30자와 presence 전용 affirmative·수치 질문 전용 units 계약을 검증한다. 이 경계 오류가 있는 일시 중단된 정규화 실행에는 recover-normalize-text를 명시적으로 사용한다. 동일 입력·임상 계약을 확인한 새 fingerprint에 완료 결과를 그대로 보존하고, 미완료 행은 저장된 최신 응답에서 로컬 복구하며 사용량을 중복 집계하지 않는다.
+
 강제 종료 후 저장 응답이 없으면 outcome_unknown이다. NOVA는 지원되는 같은 ID/payload 복구를 사용하며 API/CLI는 원격 중복 방지를 가정하지 않는다. 운영자의 --retry-unknown이 있어야 새 시도를 허용하고 이전 불명 기록을 보존한다. 설치는 검증된 build 전용 파일을 먼저 쓰고 manifest를 마지막에 원자적으로 바꾼다. 완료/일시 중단 뒤 자동 재시작하지 않는다.
+
+NOVA의 명시적 PROVIDER_RESPONSE_INVALID는 실패한 요청을 보존하고 같은 모델·설정·내용에 새 request_id를 발급하여 최대 5회 전송 시도 안에서 재시도한다. 이 전송 교체로 출력 검증 시도 횟수를 추가 소모하지 않는다. 전송 결과를 모르는 경우와 PROVIDER_UNAVAILABLE·REQUEST_PENDING은 같은 ID로 복구한다. 과거 버전의 같은-ID 오류 반복으로 정규화가 실패했다면 recover-normalize-provider를 명시적으로 사용한다. 동일 입력·프롬프트·모델·임상 계약을 검증한 새 fingerprint에 완료 결과와 모든 시도 횟수·사용량을 보존하고, 확정된 오류 기록만 failed로 바꿔 미완료 작업을 새 요청으로 재개한다. 불명 결과는 이 경로로 바꾸지 않는다.
 
 이미지는 ontoward-extraction:local이며 Python 3.12·기존 고정 Python 의존성·@openai/codex@0.162.1을 포함한다. 이미지 빌드 다운로드만 이번에 허용했고 실제 로그인·유료 DB 생성·실제 설치·정식 ZIP은 실행하지 않는다. 기존 자산/점수 builder를 활성 경로에서 철회하고 과거 원자료·준비 결과·수용 ZIP·증거는 보존한다. 이번 완료는 이미지와 무점수 워크플로우의 구현·오프라인 수용으로 한정하며 다음 작업은 공급자 선택·인증 후 실제 생성/설치다.

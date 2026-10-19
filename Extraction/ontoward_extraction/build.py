@@ -17,6 +17,48 @@ from .install import install
 PHASES = ('normalize','questions','draft','final','conflict','patch')
 
 
+def normalization_result(row):
+    value=dict(row)
+    if not isinstance(row.get('concepts',[]),list): return value
+    value['concepts']=[]
+    for node in row.get('concepts',[]):
+        if not isinstance(node,dict):
+            value['concepts'].append(node)
+            continue
+        node=dict(node,question=None,exam_text=None)
+        if isinstance(node.get('attribute_role'),dict):
+            node['attribute_role']=dict(node['attribute_role'],clarification=None)
+        value['concepts'].append(node)
+    return value
+
+
+def phase_schema(phase):
+    schema=response_schema()
+    definitions=schema['$defs']
+    if phase=='normalize':
+        for field in ('question','exam_text'):
+            definitions['Concept']['properties'][field]={'type':'null'}
+        definitions['AttributeRole']['properties']['clarification']={'type':'null'}
+    else:
+        definitions['QuestionTemplate']['properties']['text'].update(minLength=1,maxLength=30)
+        for owner,field in [('Concept','exam_text'),('AttributeRole','clarification')]:
+            for alternative in definitions[owner]['properties'][field]['anyOf']:
+                if alternative.get('type')=='string': alternative.update(minLength=1,maxLength=30)
+    return schema
+
+
+def validate_action_text(node):
+    for field,text in [('exam_text',node.exam_text),
+        ('attribute_role.clarification',node.attribute_role.clarification if node.attribute_role else None),
+        ('question.text',node.question.text.replace('{symptom}',node.korean) if node.question else None)]:
+        if text is None: continue
+        nfc=unicodedata.normalize('NFC',text)==text
+        korean=any('\uac00'<=letter<='\ud7a3' for letter in text)
+        if not nfc or not korean or not 1<=len(text)<=30:
+            raise ValueError('invalid_executable_korean_text:'+canonical(dict(concept_id=node.id,field=field,
+                rendered_length=len(text),maximum=30,nfc=nfc,contains_korean=korean)))
+
+
 def wait_until(jobs, deadline):
     jobs.set('state','waiting_quota')
     while time.time()<deadline:
@@ -28,19 +70,33 @@ def wait_until(jobs, deadline):
 def accept_response(jobs, request, response):
     ids=json.loads(request['job_ids']);valid={};invalid={ident:'missing_result' for ident in ids}
     try:
-        raw=json.loads(response['content']) if response['finish_reason'] in {'stop','length'} else {}
-        rows=raw.get('results',[]) if isinstance(raw,dict) and set(raw)=={'results'} else []
-    except (ValueError,TypeError):
+        if response['finish_reason'] not in {'stop','length'}:
+            raise ValueError('response_finish_reason:'+response['finish_reason'])
+        try:
+            raw=json.loads(response['content'])
+        except (ValueError,TypeError) as error:
+            raise ValueError('invalid_json:'+str(error)[:180]) from error
+        if not isinstance(raw,dict) or set(raw)!={'results'}:
+            keys=','.join(sorted(str(key) for key in raw)) if isinstance(raw,dict) else type(raw).__name__
+            raise ValueError('invalid_batch_envelope:expected_only_results;got='+keys[:160])
+        if not isinstance(raw['results'],list):
+            raise ValueError('invalid_results_array')
+        rows=raw['results']
+    except ValueError as error:
+        invalid={ident:str(error) for ident in ids}
         rows=[]
-    duplicates={row.get('job_id') for row in rows if isinstance(row,dict) and
+    duplicates={row.get('job_id') for row in rows if isinstance(row,dict) and isinstance(row.get('job_id'),str) and
         sum(isinstance(other,dict) and other.get('job_id')==row.get('job_id') for other in rows)>1}
     for row in rows:
         ident=row.get('job_id') if isinstance(row,dict) else None
-        if ident not in invalid or ident in duplicates:
+        if not isinstance(ident,str) or ident not in invalid:
+            continue
+        if ident in duplicates:
+            invalid[ident]='duplicate_job_id'
             continue
         try:
-            result=Result.model_validate(row)
             phase=jobs.db.execute('SELECT phase FROM jobs WHERE job_id=?',(ident,)).fetchone()[0]
+            result=Result.model_validate(normalization_result(row) if phase=='normalize' else row)
             if phase in {'normalize','questions'} and not result.concepts:
                 raise ValueError('missing_generated_concepts')
             source=json.loads(jobs.db.execute('SELECT normalized_input FROM jobs WHERE job_id=?',(ident,)).fetchone()[0])
@@ -73,12 +129,13 @@ def accept_response(jobs, request, response):
                         if any(value not in vocabulary.get(feature.attribute,{}).get('values',[]) for value in values):
                             raise ValueError('unregistered_attribute_value')
             for node in result.concepts:
-                for text in [node.exam_text, node.attribute_role.clarification if node.attribute_role else None,
-                    node.question.text.replace('{symptom}',node.korean) if node.question else None]:
-                    if text is not None and (unicodedata.normalize('NFC',text)!=text or not 1<=len(text)<=30):
-                        raise ValueError('invalid_rendered_korean_length_or_normalization')
+                validate_action_text(node)
             valid[ident]=result.model_dump();invalid.pop(ident)
-        except (ValidationError,ValueError) as error:
+        except ValidationError as error:
+            invalid[ident]='output_validation_failed:'+canonical([
+                {'path':'.'.join(str(part) for part in item['loc']), 'type':item['type'],'message':item['msg']}
+                for item in error.errors(include_url=False,include_input=False,include_context=False)])
+        except ValueError as error:
             invalid[ident]=str(error)
     jobs.accept(request['request_id'],valid,invalid,response.get('usage'))
     if response['finish_reason']=='refusal':
@@ -104,8 +161,9 @@ def run_phase(jobs, phase, config, provider=None, retry_unknown=False):
             accept_response(jobs,request,response);continue
         if request['state']=='prepared' or provider.name=='nova_dev':
             jobs.boundary()
-            response=transmit(jobs,provider,request['request_id'],payload,config)
-            accept_response(jobs,request,response)
+            actual_id,response=transmit(jobs,provider,request['request_id'],payload,config)
+            actual=jobs.db.execute('SELECT * FROM requests WHERE request_id=?',(actual_id,)).fetchone()
+            accept_response(jobs,actual,response)
         elif retry_unknown:
             jobs.request_state(request['request_id'],'superseded',error='explicit_retry_unknown')
         else:
@@ -116,7 +174,7 @@ def run_phase(jobs, phase, config, provider=None, retry_unknown=False):
         jobs.boundary()
         if any(row['attempt_count']>=6 for row in pending):
             with jobs.db:
-                jobs.db.execute("UPDATE jobs SET status='failed' WHERE phase=? AND status!='done'",(phase,))
+                jobs.db.execute("UPDATE jobs SET status='failed' WHERE phase=? AND status!='done' AND attempt_count>=6",(phase,))
             raise RuntimeError('output_contract_failed:'+phase)
         if any(row['attempt_count']>=2 for row in pending): size=max(1,size//2)
         if any(row['attempt_count']>=3 for row in pending): size=1
@@ -127,12 +185,16 @@ def run_phase(jobs, phase, config, provider=None, retry_unknown=False):
             'validation_error':row['error']} for row in batch]
         messages=[{'role':'system','content':prompt_path.read_text()},
             {'role':'user','content':canonical({'phase':phase,'jobs':data})}]
-        request_id=str(uuid4());payload=provider.payload(request_id,messages,response_schema(),final)
+        request_id=str(uuid4());payload=provider.payload(request_id,messages,phase_schema(phase),final)
         ids=[row['job_id'] for row in batch]
         jobs.prepare_request(request_id,provider.name,payload,ids)
-        response=transmit(jobs,provider,request_id,payload,config)
+        print(canonical({'event':'request_started','phase':phase,'request_id':request_id,'jobs':len(ids)}),flush=True)
+        request_id,response=transmit(jobs,provider,request_id,payload,config)
         request=jobs.db.execute('SELECT * FROM requests WHERE request_id=?',(request_id,)).fetchone()
         invalid=accept_response(jobs,request,response)
+        print(canonical({'event':'request_validated','phase':phase,'request_id':request_id,
+            'finish_reason':response['finish_reason'],'accepted':len(ids)-len(invalid),'invalid':len(invalid),
+            'errors':[{'job_id':ident,'error':error[:500]} for ident,error in list(invalid.items())[:3]]}),flush=True)
         if response['finish_reason']=='length' or invalid: size=max(1,size//2)
         jobs.boundary()
 
@@ -148,9 +210,21 @@ def transmit(jobs, provider, request_id, payload, config):
         try:
             response=provider.send(payload)
             jobs.request_state(request_id,'received',response)
-            return response
+            return request_id,response
         except ProviderError as error:
-            if error.unknown:
+            if error.new_request and provider.name=='nova_dev' and not error.unknown:
+                jobs.request_state(request_id,'failed',error=str(error))
+                print(canonical({'event':'provider_response_failed','request_id':request_id,
+                    'error':str(error),'http_status':error.status,'attempt':attempt+1}),flush=True)
+                if attempt==4: raise RuntimeError('persistent_provider_failure:'+str(error)) from error
+                jobs.boundary()
+                previous_id=request_id
+                request=jobs.db.execute('SELECT job_ids FROM requests WHERE request_id=?',(request_id,)).fetchone()
+                request_id=str(uuid4());payload=dict(payload,request_id=request_id)
+                jobs.prepare_request(request_id,provider.name,payload,json.loads(request['job_ids']),count_attempt=False)
+                print(canonical({'event':'provider_retry_new_request_id','previous_request_id':previous_id,
+                    'request_id':request_id,'error':str(error),'attempt':attempt+2}),flush=True)
+            elif error.unknown:
                 jobs.request_state(request_id,'outcome_unknown',error=str(error))
                 if provider.name!='nova_dev': raise OutcomeUnknown(str(error)) from error
             elif error.retry_at and provider.name=='nova_dev':
@@ -199,7 +273,7 @@ def seed_normalization(jobs):
 
 
 def collected(jobs, phases):
-    rows=[result for phase in phases for result in jobs.results(phase)]
+    rows=[normalization_result(result) if phase=='normalize' else result for phase in phases for result in jobs.results(phase)]
     nodes,mapping,values=normalize_concepts([node for row in rows for node in row['concepts']])
     relations=[normalize_relation(relation,mapping,values) for row in rows for relation in row['relations']]
     paths=[path for row in rows for path in row['value_matches']]
