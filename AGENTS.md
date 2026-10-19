@@ -14,7 +14,8 @@
 ## Runtime contract
 
 - Keep submission/run.py as the unchanged SDK entrypoint exposing prepare and consult from workflow/runtime.py.
-- Keep Consultation as the sole session coordinator. Assign input to DoctorEar, clinical ranking and question selection to session objects, English plans to EducationSession, all LLM execution to one DoctorBrain, expression and SAY/EXAM to DoctorMouth, and SOAP/DIAGNOSE to SubmissionWriter.
+- Keep Consultation as the sole session coordinator. Assign input to DoctorEar, clinical ranking and question selection to session objects, English plans and Education delivery scheduling to EducationSession, all LLM execution to one DoctorBrain, expression and SAY/EXAM to DoctorMouth, and SOAP/DIAGNOSE to SubmissionWriter.
+- Pass a current successful CC Assessment to ContextFactor through Consultation; keep sessions independent of other session objects. Keep Education rendering free of queue and delivery-status writes and reuse queued or receipted plan groups on reentry.
 - Keep one CaseFact store and one Assessment; freeze the latest revision, chief, and assessment before Education and Python SOAP.
 - Use qualitative v5-enum-1 relations and explicit target_scope/applicability. Remove clinical scores, source-required runtime metadata, supporting-context side paths, and policy fallbacks.
 - Recall new candidates through positive-effect Target or applicability paths; retain prior candidates only while a valid current scoped graph path remains.

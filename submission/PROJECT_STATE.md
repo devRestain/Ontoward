@@ -1,10 +1,11 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=c4797449b1f66ae01a47d5248a15321f6fa5a5f8 dirty=true updated=2026-10-19T17:02:15+09:00
+/checkpoint revision=085fc454d0472feeaf5942c0c98d565c67bfb6b5 dirty=true updated=2026-10-19T17:24:19+09:00
 /goal phase=history id=APP.D48 state=complete action="Assemble task-specific prompts in Python and verify the existing workflow through completed submission"
-/goal phase=current id=APP.D49 state=complete action="Replace numeric knowledge dependencies with qualitative scoped graph effects"
+/goal phase=current id=APP.WORKFLOW_REVIEW19 state=complete action="Centralize Context handoff and Education delivery scheduling without changing D49 clinical behavior"
 /goal phase=next id=APP.BUILD49 state=deferred action="Verify a real installed v5-enum-1 bundle and representative consultations after the separately authorized build"
+/goal phase=history id=APP.D49 state=complete action="Replace numeric knowledge dependencies with qualitative scoped graph effects"
 /goal phase=history id=APP.D47 state=complete action="Implement and verify session-owned tasks one DoctorBrain and unified patient facts"
 /goal phase=history id=APP.STATE19 state=complete action="Reconcile application state with current D46 source and the accepted offline evidence"
 /goal phase=history id=APP.D46 state=complete action="Implement and verify Ear Brain Mouth graph decisions frozen Assessment and Python SOAP through completed submission"
@@ -317,4 +318,17 @@
 /evidence id=APP.D49.E6 class=external_service result=not_run source=../data/provenance/algorithm-d49-2026-10-19.json observed="Leave actual LLM semantics new clinical data actual model-knowledge plan quality clinical validity official NOVA and deployment unrun"
 /scope id=APP.D49.S1 state=in action="Own v5-enum-1 loader qualitative matching question prerequisites scoped evidence clinical inputs and runtime documentation"
 /scope id=APP.D49.S2 state=out action="Exclude actual new knowledge installation model/provider changes in consultation and historical receipt mutations"
-/handoff state=ready action="Review the completed D49 offline slice; keep real generation deferred until a new user instruction and selected provider authentication"
+/accept id=APP.WORKFLOW_REVIEW19.A1 state=pass action="Isolate Context assessment handoff and Education scheduling from rendering" evidence=APP.WORKFLOW_REVIEW19.E1
+/accept id=APP.WORKFLOW_REVIEW19.A2 state=pass action="Preserve current call cadence budget exits frozen state and SOAP through offline regressions" evidence=APP.WORKFLOW_REVIEW19.E1,APP.WORKFLOW_REVIEW19.E2,APP.WORKFLOW_REVIEW19.E3
+/accept id=APP.WORKFLOW_REVIEW19.A3 state=pass action="Complete independent synthetic ZIP consultations through the unchanged SDK entrypoint" evidence=APP.WORKFLOW_REVIEW19.E4,APP.WORKFLOW_REVIEW19.E5,APP.WORKFLOW_REVIEW19.E6,APP.WORKFLOW_REVIEW19.E7
+/evidence id=APP.WORKFLOW_REVIEW19.E1 class=runtime result=pass source=../Tmp/workflow-review-2026-10-19/workflow.log observed="Pass 152 maintained tests including five new checks for valid Context handoff all early-session budget exits model-unavailable chief fallback result-only rendering and repeat preparation without duplicate model calls or receipts"
+/evidence id=APP.WORKFLOW_REVIEW19.E2 class=runtime result=pass source=../Tmp/workflow-review-2026-10-19/preservation.json observed="Match three complete consultations across 434 node updates model payloads actions SOAP and final state against the pre-change baseline; preserve seventy-nine protected SDK settings prompt knowledge and extraction files and the absent active manifest"
+/evidence id=APP.WORKFLOW_REVIEW19.E3 class=runtime result=pass source=../Tmp/workflow-review-2026-10-19/observer/verification.json observed="Match observed and unobserved behavior across fourteen scenarios and 1259 node updates without replay on recording failure"
+/evidence id=APP.WORKFLOW_REVIEW19.E4 class=artifact result=pass source=../Tmp/workflow-review-2026-10-19/artifact.json observed="Verify the independent ninety-three-file synthetic ZIP with SHA256 9a8aae12ddff8826d5c9e561312d55485533941a0ed8a96747dda0b87306bf2d current runtime bytes six knowledge files and excluded development fixtures"
+/evidence id=APP.WORKFLOW_REVIEW19.E5 class=runtime result=pass source=../Tmp/workflow-review-2026-10-19/isolated-workflow.log observed="Pass all 152 maintained tests from the independent extracted read-only ZIP in a network-disabled project container"
+/evidence id=APP.WORKFLOW_REVIEW19.E6 class=runtime result=pass source=../Tmp/workflow-review-2026-10-19/isolated/admitted/verification.json observed="Complete three independent synthetic consultations with Education disabled or enabled and unknown present or absent Context through frozen Assessment fifteen SOAP fields and completed submission"
+/evidence id=APP.WORKFLOW_REVIEW19.E7 class=runtime result=pass source=../Tmp/workflow-review-2026-10-19/isolated/sdk-http.json observed="Complete unchanged run.py and original SDK HTTP loopback with ready handshake forty-six requests twenty-one actions fifteen SOAP fields and completed receipt without development credentials"
+/evidence id=APP.WORKFLOW_REVIEW19.E8 class=external_service result=not_run source=../Tmp/workflow-review-2026-10-19/verification.json observed="Leave actual model semantics latency clinical validity real knowledge generation installation official NOVA evaluation publication commits and deployment unrun in this slice"
+/scope id=APP.WORKFLOW_REVIEW19.S1 state=in action="Own coordinator handoff Education queue preparation rendering boundary and focused regression tests"
+/scope id=APP.WORKFLOW_REVIEW19.S2 state=out action="Exclude clinical policy knowledge assets prompt changes model settings extraction and historical artifact mutation"
+/handoff state=ready action="Review the completed ownership slice and preserve D49 clinical semantics D48 modules D47 cadence and the separate real-bundle installation goal"

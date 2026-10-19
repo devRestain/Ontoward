@@ -59,7 +59,7 @@ class DeliveryTests(unittest.TestCase):
         s = f.chief(f.state('Education',initialized=True))
         f.freeze_for_education(c,s)
         c.sessions["Education"].prepare_plan(s,c.client)
-        c.mouth.prepare_education(s,c.client)
+        c.sessions['Education'].prepare_delivery(s,c.client)
         self.assertEqual(len(s.case.plan),5)
         self.assertFalse(s.interview.queue)
         self.assertEqual(len([p for p in c.client.requests if p['task']=='education_doctor']),2)
@@ -180,7 +180,7 @@ class DeliveryTests(unittest.TestCase):
         k.labels[str(f.OW.Alpha)] = '조금 긴 가상 질환 이름'
         c,s = f.consultation(prepared=f.resources(k, education=True)),f.chief(f.state('Education',initialized=True))
         f.freeze(s,kind='disease',name='Disease alpha')
-        self.assertTrue(c.mouth.prepare_diagnosis(s,c.client,k))
+        self.assertTrue(c.sessions['Education'].prepare_diagnosis(s,c.client))
         self.assertEqual(s.interview.queue[0].text, '조금 긴 가상 질환 이름 의심됩니다.')
         self.assertLessEqual(len(s.interview.queue[0].text), 30)
         self.assertFalse(c.client.requests)
@@ -195,7 +195,7 @@ class DeliveryTests(unittest.TestCase):
         c,s = f.consultation(f.FakeSDK(chat_handler=response),f.resources(k,education=True)),f.chief(f.state('Education',initialized=True))
         f.freeze(s,kind='disease',name='Disease alpha')
         before = s.case.model_dump()
-        self.assertTrue(c.mouth.prepare_diagnosis(s,c.client,k))
+        self.assertTrue(c.sessions['Education'].prepare_diagnosis(s,c.client))
         self.assertEqual(s.interview.queue[0].text, '가상질환A가 의심됩니다.')
         self.assertEqual(s.case.model_dump(), before)
 
@@ -237,7 +237,7 @@ class DeliveryTests(unittest.TestCase):
         s = f.chief(f.state('Education',initialized=True))
         f.freeze_for_education(c,s)
         c.sessions["Education"].prepare_plan(s,c.client)
-        c.mouth.prepare_education(s,c.client)
+        c.sessions['Education'].prepare_delivery(s,c.client)
         self.assertFalse(s.interview.queue)
         self.assertTrue(all(a.outcome=='undelivered' for a in s.interview.answers))
 
@@ -280,7 +280,7 @@ class DeliveryTests(unittest.TestCase):
         c,s = f.consultation(prepared=f.resources(education=True)),f.chief(f.state('Education',initialized=True))
         f.freeze_for_education(c,s)
         c.sessions["Education"].prepare_plan(s,c.client)
-        c.mouth.prepare_education(s,c.client)
+        c.sessions['Education'].prepare_delivery(s,c.client)
         s.session.models_available=False
         q=s.interview.queue[0]
         c.interactions.select_question(s,q)

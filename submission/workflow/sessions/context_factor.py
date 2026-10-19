@@ -26,10 +26,9 @@ class ContextFactorSession:
         self.error = rank_exchange(state, client, self.brain, self.config, work,
             lambda raw: self.accept(state, raw, work))
 
-    def enter(self, state, chief_session):
-        assessment = state.case.assessment
+    def enter(self, state, assessment):
         self.candidate_ids = tuple(self.knowledge.term_id(e.name, 'Disease') for e in assessment.differential
-            if e.kind == 'disease') if chief_session.closed and not chief_session.error and assessment else ()
+            if e.kind == 'disease') if assessment else ()
         if not self.candidate_ids:
             state.interview.collection['ContextFactor:candidates'] = 'cc_assessment_unavailable'
 

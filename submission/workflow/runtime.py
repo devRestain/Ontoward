@@ -54,7 +54,7 @@ def assemble_consultation(client, resources, *, now=utc_now, sleep=None, new_req
     args = (resources.knowledge, resources.config, tools, brain)
     sessions = dict(Initiation=InitiationSession(*args), ChiefComplaint=ChiefComplaintSession(*args),
         ContextFactor=ContextFactorSession(*args), DifferentialDiagnosis=DifferentialDiagnosisSession(*args),
-        Education=EducationSession(resources.knowledge, resources.config, brain, mouth))
+        Education=EducationSession(resources.knowledge, resources.config, brain, mouth, questions, budget))
     writer = SubmissionWriter(client, resources.knowledge, resources.config, executor, nova_session, new_request_id)
     return Consultation(client, ear, brain, mouth, writer, nova_session, budget, questions, interactions,
         resources.knowledge, resources.config, tools, sessions)

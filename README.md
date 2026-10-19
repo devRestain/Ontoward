@@ -23,6 +23,8 @@ Context도 같은 CaseFact를 사용하며 가족 구성원·시점·관찰·epi
 
 첫 세 세션은 정상 종료에 한 번 순위를 판단하고 DD는 첫 행동에 기존 평가를 사용한 뒤 unknown을 포함한 새 응답마다 판단한다. 최신 평가·facts·chief를 고정한 뒤 Education과 SOAP가 공유한다. Education 답변은 대화 기록만 남긴다. 진료 모델은 기존 openai/gpt-6-luna이며 임상·영어 계획 high, Ear·Mouth medium이다. 추출 공급자 선택과 진료 모델 설정은 별개다.
 
+Consultation이 검증한 CC 평가 자료만 ContextFactor에 전달한다. EducationSession은 영어 계획과 전달 순서·턴 배분·큐·준비 상태를 관리하고, Mouth는 한국어 표현과 행동 실행을 담당한다. 이미 큐나 전달·미전달 결과가 있는 교육 계획 그룹은 재진입해도 다시 표현하지 않는다.
+
 ## 추출 이미지
 
 `ontoward-extraction:local`은 Python 3.12, 고정 프로젝트 의존성, Codex CLI 0.162.1을 포함한다. 공급자는 `nova_dev`, `codex_subscription`, `openai_api` 중 한 빌드에 하나다. 초안 gpt-6-luna·최종 gpt-6.1-sol 모두 medium이며 모델·공급자 fallback은 없다.

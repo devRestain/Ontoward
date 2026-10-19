@@ -186,7 +186,7 @@ class PromptTests(unittest.TestCase):
         f.freeze_for_education(c, state)
         frozen = copy.deepcopy(state.case.assessment)
         c.sessions['Education'].prepare_plan(state, client)
-        c.mouth.prepare_education(state, client)
+        c.sessions['Education'].prepare_delivery(state, client)
         calls = [(p, text) for p, text in client.exchanges if p['task'] == 'education_doctor']
         self.assertEqual(len(calls), 3)
         self.assertNotIn('Recover the unavailable or truncated generation', calls[0][1])
@@ -207,7 +207,7 @@ class PromptTests(unittest.TestCase):
                     'kind': kind, 'name': 'Disease beta' if kind == 'disease' else 'Test complaint'})
                 state.case.assessment = state.case.assessment.model_copy(update={'differential': (primary,)})
                 c.knowledge.label = lambda ident: 'Long English diagnosis name'
-                self.assertTrue(c.mouth.prepare_diagnosis(state, client, c.knowledge))
+                self.assertTrue(c.sessions['Education'].prepare_diagnosis(state, client))
                 payload, prompt = next((p, text) for p, text in client.exchanges if p['task'] == 'education_doctor')
                 self.assertEqual(payload['fixed_diagnosis']['kind'], kind)
                 self.assertNotIn('Translate and simplify each requested English plan sentence', prompt)

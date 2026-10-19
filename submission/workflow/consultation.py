@@ -18,7 +18,13 @@ class Consultation:
         state.interview.status = 'collecting'
         scope = state.interview.current
         if scope == 'ContextFactor':
-            self.sessions[scope].enter(state, self.sessions['ChiefComplaint'])
+            chief = self.sessions['ChiefComplaint']
+            assessment = state.case.assessment
+            if (not chief.closed or chief.error or assessment is None or assessment.frozen
+                    or (assessment.based_on_case_revision, assessment.based_on_chief_fact_id) != (
+                        state.case.revision, state.case.chief_fact_id)):
+                assessment = None
+            self.sessions[scope].enter(state, assessment)
         if scope == 'Education':
             self.interactions.skip_empathy(state,'education_record_only')
         self.prepare_session(state)

@@ -16,9 +16,11 @@ Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수�
 | 원본 NOVA SDK | 세션 조회, 지정 모델, SAY·EXAM·DIAGNOSE와 완료 확인 |
 | Docker | 의존성·개발·검증·독립 ZIP 환경 |
 
-DoctorEar는 입력 전처리·해석·사실 수용을, 다섯 세션 객체는 세션별 수집·임상 판단·응답 검증을 소유한다. EducationSession이 영어 계획을 준비하고 검증한다. DoctorMouth는 공감·한국어 표현·SAY·EXAM 실행을 소유한다. DoctorBrain은 증례당 하나인 공통 LLM 실행기로서 지정 모델·effort·호출 한도·사용량·전송 오류와 동일 요청 재전송만 담당한다. 모든 호출자에 같은 객체를 주입하며 별도 ModelClient는 없다.
+DoctorEar는 입력 전처리·해석·사실 수용을, 다섯 세션 객체는 세션별 수집·임상 판단·응답 검증을 소유한다. EducationSession이 영어 계획의 준비·검증과 진단 안내·계획 전달 순서·턴 배분·큐 등록·준비 상태를 소유한다. DoctorMouth는 공감·한국어 표현·SAY·EXAM 실행을 소유하며 교육 표현 결과를 반환할 때 전달 큐나 준비 상태를 수정하지 않는다. DoctorBrain은 증례당 하나인 공통 LLM 실행기로서 지정 모델·effort·호출 한도·사용량·전송 오류와 동일 요청 재전송만 담당한다. 모든 호출자에 같은 객체를 주입하며 별도 ModelClient는 없다.
 
 지정 모델은 기존 `openai/gpt-6-luna`다. Ear·Mouth는 medium, 세션의 임상 판단과 영어 P 호출은 high를 사용한다. SOAP 작성에는 LLM을 호출하지 않는다. Consultation은 유일한 생애주기 조정자이고 SubmissionWriter만 SOAP 제출과 DIAGNOSE 완료를 처리한다.
+
+세션 사이에는 다른 세션 객체를 전달하지 않는다. Consultation이 CC 종료 성공 여부와 평가의 현재 revision·chief 일치 및 미고정 상태를 확인한 뒤 ContextFactor에 평가 자료만 전달한다. 평가를 사용할 수 없으면 기본 병력과 준비 불가 사유를 유지한다.
 
 ## 환자 정보와 다섯 내부 세션
 
@@ -63,6 +65,8 @@ D45에서 SDK `client.session()`의 `turns_remaining`이 행동 예산의 기준
 새 행동 전에 응답 해석, 최종 임상 판단과 허용 복구, 활성 P·한국어 안내와 제출 시간을 보호한다. Education 7턴·상한 10턴, 공감의 별도 행동 계산, 응답·최종화 시간 경계를 유지한다. 받은 마지막 답변은 잔여 턴이 0이어도 먼저 처리하고 DIAGNOSE를 제출한다. 일시 전송 오류는 같은 ID·payload로 2초 뒤 한 번 재전송하며 불명 결과는 명시적으로 종료한다.
 
 Education은 고정 1위를 먼저 알린 뒤 원문 지침·일반 지식의 출처를 구별하여 영어 P를 만든다. 한국어는 독립 NFC 1–30 codepoint 문장으로 검증하며 조건부 문장 묶음을 부분 전달하지 않는다. 공급자 응답 복구 한 번과 문구 검증 복구 한 번을 구별하고 실패해도 영어 P를 보존한다. 환자 답변으로 facts·진단·A를 갱신하지 않는다. 명시적 `ONTOWARD_EDUCATION_ENABLED=false`는 교육 행동·예약·P.education 없이 동작한다.
+
+Education 전달 준비에 재진입해도 이미 큐에 있거나 전달·미전달 결과가 기록된 계획 그룹은 다시 표현하지 않는다. 준비 실패의 제한된 복구는 해당 표현 호출 안에서만 수행하며, 재진입으로 실패 그룹을 자동 재시도하거나 결과를 중복 기록하지 않는다. 실제 행동 완료·취소는 공통 QuestionLifecycle을 사용한다.
 
 SOAP는 통합 사실·frozen Assessment·영어 계획·실제 전달 결과를 Python으로 묶는다. age·sex는 HPI 선두, 보고값은 S, 신뢰된 초기 객관 구간과 실제 EXAM의 소견·속성·적격 객관 사실는 O다. O에는 실제 취득 turn을 보존한다. 같은 관찰의 조건·시점·단위를 잃지 않으며 A는 같은 S/O 사실 문구를 재사용한다.
 

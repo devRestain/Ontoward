@@ -101,7 +101,7 @@ class BrainTests(unittest.TestCase):
         c.sessions['ChiefComplaint'].close(s,c.client)
         s.interview.current='ContextFactor'
         context=c.sessions['ContextFactor']
-        context.enter(s,c.sessions['ChiefComplaint']);context.prepare_context(s)
+        c.enter_session(s);context.prepare_context(s)
         self.assertTrue(any(q.target=='Test history' and q.time_context=='current' for q in s.interview.queue))
         details=graph_candidates(s.case,k)[str(f.OW.Beta)].details
         self.assertTrue(any(condition['status']=='absent' for detail in details for condition in detail['conditions']))

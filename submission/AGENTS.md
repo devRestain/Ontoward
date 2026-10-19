@@ -4,7 +4,10 @@
 
 - Apply D49 qualitative scoped knowledge before historical score/source/policy rules; preserve D48 prompt modules, D47 clinical ownership/facts/cadence, D40 collection, D43 interpretation, and D45 turns.
 - Keep run.py as the unchanged SDK callback entrypoint and Consultation as the sole five-session coordinator.
-- Assign input interpretation and acceptance to DoctorEar clinical ranking and questions to the five session objects English plans to EducationSession all model execution to one injected DoctorBrain and patient expression and SAY/EXAM execution to DoctorMouth.
+- Assign input interpretation and acceptance to DoctorEar clinical ranking and questions to the five session objects English plans and Education delivery scheduling to EducationSession all model execution to one injected DoctorBrain and patient expression and SAY/EXAM execution to DoctorMouth.
+- Pass only a current successful unfrozen CC Assessment into ContextFactor through Consultation without passing another session object.
+- Keep EducationSession responsible for announcement and plan group ordering turn allocation queue registration undelivered preparation receipts and preparation status; keep Mouth Education rendering result-only and use QuestionLifecycle for shared completion and cancellation.
+- Reuse queued or receipted Education plan groups on reentry without rendering them again or retrying failed groups.
 - Keep SubmissionWriter responsible for deterministic SOAP validation DIAGNOSE and completed confirmation without model or reasoner access.
 - Prepare patient-free graph indexes terms question assets and text configuration once.
 - Keep exactly case interview session and optional turn in WorkflowState with node copy and Pydantic isolation.

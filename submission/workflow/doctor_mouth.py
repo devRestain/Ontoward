@@ -4,7 +4,7 @@ from nova_sdk import NovaError
 from .model_context import messages
 from .rules.action import ActionResponse, REFUSAL_ERRORS, RESPONSE_FORMAT_ERRORS, content_error, failure_outcome
 from .rules.limits import LIMITS
-from .state.models import Answer, Question
+from .state.models import Question
 from .state.evidence import patient_payload
 from .output_types import EmpathyReply, RenderedGroup
 
@@ -72,12 +72,8 @@ class DoctorMouth:
             format_repairs += 1
         return (rendered, {ident: value['code'] if isinstance(value, dict) else value for ident, value in errors.items()})
 
-    def prepare_diagnosis(self, state, client, knowledge):
-        prefix = 'Education:diagnosis:'
-        if any((a.question_id.startswith(prefix) for a in state.interview.answers)):
-            return False
-        if any((q.item_id.startswith(prefix) for q in state.interview.queue)):
-            return True
+    def render_diagnosis(self, state, client, knowledge):
+        """Return the Korean announcement without scheduling or recording delivery."""
         diagnosis = state.case.primary()
         kind = 'Disease' if diagnosis.kind == 'disease' else 'Symptom'
         name = knowledge.label(knowledge.term_id(diagnosis.name, kind))
@@ -92,53 +88,12 @@ class DoctorMouth:
             base = {'task': 'education_doctor', 'fixed_diagnosis': diagnosis.model_dump(), 'patient': patient_payload(state.case), 'turn_budget': 1, 'announcement': True}
             rendered, errors = self._render(state, client, base, [{'id': 'diagnosis', 'text': diagnosis.name}], {'diagnosis': 1})
             text = next(iter(rendered.get('diagnosis', [])), prepared)
-        if text is None:
-            state.interview.answers.append(Answer(question_id=prefix + '0', source_ref='', scope='Education', purpose='education', outcome='undelivered', reason=errors.get('diagnosis', 'diagnosis_render_failed')))
-            return False
-        utterances = [text]
-        if diagnosis.kind == 'symptom' and self.budget.action_capacity(state) > 1:
-            utterances.append(texts.symptom_cause_unknown)
-        for number, value in enumerate(utterances):
-            self.questions.register(state, Question(item_id=prefix + str(number), purpose='education', text=value, order=-1000 + number))
-        return True
+        return text, errors
 
-    def prepare_education(self, state, client):
-        capacity = max(0, self.budget.action_capacity(state) - len(state.interview.queue))
+    def render_education(self, state, client, sentences, budgets, capacity):
+        """Render the session's allocated groups without changing their lifecycle."""
         base = {'task': 'education_doctor', 'fixed_diagnosis': state.case.fixed_diagnosis(), 'patient': patient_payload(state.case), 'turn_budget': capacity}
-        remaining, core = (list(state.case.plan), [])
-        for field in ('education', 'tests', 'treatment', 'disposition', 'follow_up'):
-            sentence = next((s for s in remaining if s.field == field), None)
-            if sentence:
-                core.append(sentence)
-                remaining.remove(sentence)
-        ordered = [*core, *sorted(remaining, key=lambda s: s.priority != 'safety')]
-        budgets = {sentence.id: 1 for sentence in ordered[:capacity]}
-        for ident in list(budgets)[:max(0, capacity - len(budgets))]:
-            budgets[ident] += 1
-        batch = [{'id': sentence.id, 'text': sentence.text} for sentence in ordered if sentence.id in budgets]
-        rendered, failures = ({}, {s.id: 'delivery_budget' for s in ordered if s.id not in budgets})
-        notice_error = next((a.reason for a in state.interview.answers if a.question_id.startswith('Education:diagnosis:') and a.outcome == 'undelivered'), None)
-        if notice_error:
-            failures['diagnosis'] = notice_error
-        if batch:
-            values, errors = self._render(state, client, base, batch, budgets)
-            rendered.update(values)
-            failures.update(errors)
-        order = 0
-        for sentence in ordered:
-            utterances = rendered.get(sentence.id)
-            reason = failures.get(sentence.id, 'rendering_not_completed') if not utterances else 'delivery_budget' if len(utterances) > capacity else None
-            if reason:
-                state.interview.answers.append(Answer(question_id=f'Education:{sentence.id}', source_ref='', scope='Education', purpose='education', outcome='undelivered', plan_sentence_id=sentence.id, reason=reason))
-                continue
-            for number, text in enumerate(utterances):
-                self.questions.register(state, Question(item_id=f'Education:{sentence.id}:{number}', purpose='education', text=text, order=order, plan_sentence_id=sentence.id))
-                order += 1
-            capacity -= len(utterances)
-        if failures:
-            delivered = any((a.purpose == 'education' and a.outcome == 'delivered' for a in state.interview.answers))
-            state.interview.education_status = 'partial' if rendered or delivered else 'failed'
-            state.interview.education_reason = next(iter(failures.values()))
+        return self._render(state, client, base, sentences, budgets)
 
     def prepare_empathy(self, state, client, event):
         payload = {'task': 'empathy', 'emotion': event.emotion, 'intent': event.intent, 'patient': patient_payload(state.case), 'previous_deliveries': sum((a.purpose == 'empathy' and a.outcome != 'undelivered' for a in state.interview.answers))}

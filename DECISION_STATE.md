@@ -580,6 +580,7 @@
 - **중단:** 명시적 pause와 종료 signal에서 진행 중 응답을 저장하고 안전하게 종료합니다. 완료 작업은 재호출하지 않으며 공급자별 복구 가능성과 outcome_unknown을 구별합니다.
 - **실행 범위:** 이미지 빌드와 오프라인 대역 검증만 수행합니다. 필요한 Docker Hub·PyPI·files.pythonhosted.org·registry.npmjs.org 빌드 다운로드를 허용하며 로그인·유료 생성·실제 설치·정식 ZIP은 실행하지 않습니다.
 - **전환:** 실제 새 번들 전에는 prepare와 정식 패키징을 knowledge_bundle_not_installed로 중단합니다. 이번 수용과 실제 DB 생성·임상 품질·공식 평가는 구별합니다.
+- **워크플로우 후속 검토:** 사용자가 D47 기준 외부 검토를 현재 구현에 대조해 적용하도록 요청했습니다. D49·D48 정본을 유지하고 DB 지적은 이번 수정에서 제외합니다. 남아 있던 CC→ContextFactor 세션 객체 전달은 Consultation이 현재 유효한 평가 자료만 전달하는 방식으로 바꾸고, Education 전달 순서·턴 배분·큐·준비 상태는 EducationSession으로 모읍니다. Mouth는 한국어 표현 결과와 행동 실행을 담당합니다. 큐나 결과가 있는 계획 그룹은 재진입으로 다시 표현하지 않습니다. D49 임상 알고리즘 표지·모델·프롬프트·정상 호출 일정은 유지하며 조기 자원 종료의 최신 평가·chief fallback은 회귀로 확인합니다. 수행 결과는 ROOT.WORKFLOW_REVIEW19와 APP.WORKFLOW_REVIEW19가 소유합니다.
 
 ## 결정 기록 방법
 

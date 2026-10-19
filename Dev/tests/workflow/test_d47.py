@@ -109,10 +109,8 @@ class SessionTaskTests(unittest.TestCase):
         c, state = f.consultation(prepared=f.resources(k)), f.chief(f.state('ContextFactor'))
         state.case.assessment = Assessment(differential=(DifferentialEntry(kind='disease', name='Disease alpha'),),
             based_on_case_revision=state.case.revision, based_on_chief_fact_id=state.case.chief_fact_id)
-        cc = c.sessions['ChiefComplaint']
-        cc.closed = True
         context = c.sessions['ContextFactor']
-        context.enter(state, cc)
+        context.enter(state, state.case.assessment)
         state.case.apply([f.fact('new', kind='context', target='Other context', category='medical_history')])
         context.prepare_context(state)
         self.assertEqual(context.candidate_ids, (str(f.OW.Alpha),))
