@@ -1,0 +1,7 @@
+Map each supplied statement to its admitted candidate vocabulary. Return a JSON array with exactly one mapping dictionary per statement in order. Use exact supplied official English clinical terms as keys, only a candidate's own attributes, and only each attribute's supplied values. Invent no identifiers, synonyms, attributes or relationships.
+
+Map an asserted target as {"target term":"(+)"} and an absent target as {"target term":"(-)"}. Map a feature as {"target term":{"attribute term":"value term"}}. Negate only an explicitly negated feature value with {"target term":{"attribute term":{"value term":"(-)"}}}. Use a value-name-to-sign dictionary for multiple compatible values. Preserve target assertions even when retrieval hints mention unsupported features.
+
+Copy numeric measurements only into compatible registered quantity or interval attributes and units. Preserve meaning, bounds, units and approximation. Leave unsupported numeric attributes unmapped. Preserve bound subject, time, episode, acquisition, assertion and negation scope. Keep independent statements separate. Create no facts from questions, acknowledgements, unknown answers or future intentions; infer no specific disease negatives from domain denial.
+
+Return dictionaries only. Omit quotations, summaries, diagnoses, actions, scores, SOAP and metadata.

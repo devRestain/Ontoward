@@ -2,7 +2,7 @@
 
 ## 목적과 실행 경계
 
-Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D47](DECISION_STATE.md#D47), 임상 자산은 D42의 manifest 핀, 정보 수명은 D44, 공식 행동 예산은 D45를 따른다.
+Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D49](DECISION_STATE.md#D49)의 무점수 지식 계약을 적용하고 D48 프롬프트 모듈, D47 객체·사실·호출 일정, D44 정보 수명, D45 공식 행동 예산을 유지한다. 기존 DB의 활성 사용은 철회했으며 실제 새 번들 설치 전 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
 
 진료 중에는 ZIP 내부의 읽기 전용 RDFLib Graph를 사용한다. 원본 RF2·BODHI·DDXPlus·준비 SQLite는 개발 자산이다. 등록되지 않은 질환·관계·질문을 런타임에서 만들지 않는다. 제공 가이드라인 원문은 진단을 고정한 뒤 지정 마운트에서만 읽는다. 실제 모델 품질과 공식 평가는 로컬 실행 증거와 구분한다.
 
@@ -42,7 +42,7 @@ DoctorEar는 입력 전처리·해석·사실 수용을, 다섯 세션 객체는
 
 ## 그래프·감별·질문 알고리즘
 
-현재 reasoning 사실의 Target→Pattern→Association→Disease 및 등록 Context 관계로 후보를 회수한다. 부분 패턴·음성·unknown·uncertain은 검토 경로가 될 수 있으나 자동 지지는 아니다. Pattern의 feature matching과 Association applicability를 따로 판정한다. 적용 조건 unknown은 미확인, false는 그 관계의 미적용이며 질환 전체 배제가 아니다.
+새 후보는 support 또는 strong_support 관계의 scoped Target→Pattern→Association→Disease 또는 applicability 경로로 회수한다. 전체 Pattern 일치는 후보 진입 조건이 아니며 against-only 경로로 무관한 새 후보를 확장하지 않는다. 기존 후보는 현재 유효한 그래프 경로가 남아 있으면 보존한다. 전체 Feature와 applicability가 모두 일치할 때만 등록 effect를 활성화한다. 부분 일치는 활성 지지가 아니고 불일치를 반대 효과로 뒤집지 않는다. 명시적 모순으로 불가능해진 관계의 나머지 조건은 질문하지 않는다.
 
 코드는 현재 supports·against·unresolved와 실제 fact·graph 참조를 유지한다. 수치·값 불일치는 실제 관찰 참조를 남기며 서로 다른 episode의 속성을 합치지 않는다. 일반 패턴의 부합은 refinement 미확인·불일치 때문에 사라지지 않는다. 같은 관찰의 반복 출처를 독립 근거처럼 계산하지 않는다.
 
@@ -50,7 +50,9 @@ CaseState.assessment가 유일한 감별 정본이다. 순서가 순위이며 �
 
 점수·chief coverage·완성 패턴·가상 답변 utility는 수용 gate가 아니다. 코드가 수용 LLM 순위를 재정렬하지 않는다. 정상 임상 출력은 4096토큰, 한 번의 복구는 8000토큰이다. 기능별로 필요한 Key와 Value를 명시적으로 선택해 문자열로 전달한다. 전체 상태·큰 schema·그래프 profile 전문을 주입하지 않으며 사실·조건·미확인은 지역 참조표에 한 번 정의한다. 기존 유효 후보·반대 근거·미확인을 보존하고 고정 Top-K를 두지 않는다. 프롬프트 바이트 측정·목표·제한·진단 통계와 이에 따른 절단·배치·압축 기능은 사용하지 않는다.
 
-필수 수집은 코드가 보장하고 선택적 질문은 LLM이 실행 가능한 선택지에서 고른다. 같은 질문은 합치되 질환별 기대 답을 보존한다. 존재 미확인 증상은 먼저 존재를 확인하며 질문의 등록 관계·문구·단계·주체·가족 구성원·시점·관찰·반복·자원을 검사한다. 유효 순위와 잘못된 행동을 분리하여 행동만 한 번 복구할 수 있다.
+공개 ONTOWARD_PROMPTS manifest에 책임·출력·상황별 프롬프트 모듈을 등록한다. Ear·세션·Education·Mouth가 Python에서 현재 작업과 initial·reply·EXAM, 일반·강제 매핑, 질환·증상 안내, 실제 복구에 필요한 모듈만 선택한다. LLM에 여러 작업의 조건 분기를 해석시켜 작업을 고르게 하지 않는다. 지시와 key-value 입력을 분리하고 실제 임상 조건은 입력 데이터로 보존한다. 같은 manifest와 모듈을 독립 ZIP에 포함하고 관측기에서 해시·경로 조합을 확인한다.
+
+필수 수집은 코드가 보장하고 선택적 질문은 LLM이 실행 가능한 선택지에서 고른다. 공유 근거와 expected_by_disease에는 effect·scope·전체 Pattern·applicability를 첫 DD action-only 입력에도 전달한다. 같은 질문은 합치되 질환별 기대 답을 보존한다. 질문 순서·SOAP category·clarification은 새 attribute_roles에서 읽는다. Context는 같은 CaseFact로 매칭하고 별도 supporting-context 경로를 두지 않는다. rule any와 구체 질문의 current/past/unspecified를 분리하며 해결 여부는 원래 rule scope로 검사한다. 속성만 있는 Pattern을 포함하여 같은 Target·scope의 존재를 확인한 뒤 속성 질문을 실행하며 질문의 등록 관계·문구·단계·주체·가족 구성원·시점·관찰·반복·자원을 검사한다. 유효 순위와 잘못된 행동을 분리하여 행동만 한 번 복구할 수 있다.
 
 DD 종료는 마지막 응답 수용→최신 평가 확인·허용 복구→현재 미확인·한계 확정→Assessment와 기반 facts·chief 고정→Education 이동이다. 자원 종료도 같은 고정 절차를 사용한다. 최신 질환 평가를 얻지 못하면 확인된 등록 chief 하나의 symptom-only 평가를 고정하고, chief도 없으면 실패한다. Writer에서 다시 진단을 고르지 않는다.
 
@@ -77,6 +79,22 @@ SOAP는 통합 사실·frozen Assessment·영어 계획·실제 전달 결과를
 
 WorkflowState에는 case·interview·session과 현재 turn만 둔다. CaseState는 통합 facts·chief·Assessment·plan·revision, InterviewState는 현재 질문·작은 Answer·수집 중단, SessionContext는 최신 제약·사용량·종료를 소유한다. SOAP는 제출 turn에만 존재한다. 그래프 후보 자료·LLM 교환·복구·원문 조각은 지역값이며 과거 순위·별도 진단 정본·가상 답변·런타임 audit를 보관하지 않는다.
 
-프로젝트 Docker에서 유지 행동 회귀, 실제 수용 RDF 상담, 관측 유무 일치, 독립 읽기 전용 ZIP과 원본 SDK HTTP 완료를 검증한다. Test가 프로토콜 대역·재현·관측·비교를 소유하고 Dev/tests/workflow가 유지 회귀를 소유한다. 고정 응답 통과를 실제 모델 정확도나 임상 성능으로 해석하지 않는다.
+프로젝트 Docker에서 유지 행동 회귀, 임시 새 합성 번들의 상담, 관측 유무 일치, 독립 읽기 전용 ZIP과 원본 SDK HTTP 완료를 검증한다. Test가 프로토콜 대역·재현·관측·비교를 소유하고 Dev/tests/workflow가 유지 회귀를 소유한다. 고정 응답 통과를 실제 모델 정확도나 임상 성능으로 해석하지 않는다.
 
-제출 ZIP에는 실행 Python·고정 requirements·공개 .env·필요 프롬프트·manifest 자산만 넣는다. 루트 개발 키·Test·Dev·원본 자료·준비 DB·문서·상태·캐시는 제외한다. 구현 설명은 [한국어 백서](submission/README.md), 사용자 선택은 [결정 문서](DECISION_STATE.md), 관측 결과는 세 운영 상태와 [D47 증빙](data/provenance/algorithm-d47-2026-10-19.json)에서 관리한다. 임상 코퍼스 확장·실제 유료 호출·공식 평가·게시·배포는 이 구현 수용과 별도다.
+제출 ZIP에는 실행 Python·고정 requirements·공개 .env·필요 프롬프트·manifest 자산만 넣는다. 루트 개발 키·Test·Dev·원본 자료·준비 DB·문서·상태·캐시는 제외한다. 구현 설명은 [한국어 백서](submission/README.md), 사용자 선택은 [결정 문서](DECISION_STATE.md), 관측 결과는 세 운영 상태와 [D49 증빙](data/provenance/algorithm-d49-2026-10-19.json)에서 관리한다. 임상 코퍼스 확장·실제 유료 호출·공식 평가·게시·배포는 이 구현 수용과 별도다.
+
+## 새 지식 번들과 추출 자동화
+
+실행 지식은 schema_version 5.0, knowledge_contract v5-enum-1이다. manifest는 build_id와 schema·vocabulary·clinical·questions·guidelines 다섯 asset의 상대 경로·SHA-256만 가진다. 경로는 manifest 디렉터리 기준이며 절대 경로·경계 이탈·hash 불일치를 거절한다. 번들은 manifest 포함 여섯 파일이고 questions JSON은 attribute_roles를 포함한다. 한·영 표제와 별칭은 새 vocabulary가 제공한다. 이전 형식과의 호환 변환·policy fallback은 없다.
+
+Disease→Association→Pattern→Feature를 유지하고 ContextFactor를 Target에 추가한다. Association은 명시적 target_scope·applicability와 정성 effect를 가진다. 생성 effect는 support·strong_support·against·strong_against·neutral이며 neutral은 작업 DB에 완료 결과로 보존하고 RDF에서는 제외한다. 점수·가중치·전형성·ScoringPolicy·scoring/reasoning policy·관계 source/confidence/reviewer·옛 admission 필수 검증을 제거한다. 환자 취득 source/turn·주체·시점과 Education의 문서 경로/hash/인용은 유지한다. 수치 진단 점수 제거는 나이·실측값·기간·통증 수치·단위·비교 연산자 제거를 뜻하지 않는다.
+
+Extraction/은 네 원자료에서 빈 SQLite 작업 DB로 시작한다. RF2 Snapshot·배포 의존성, 실제 BODHI CSV, DDXPlus evidence/condition metadata, Astra 후보·속성·값·CPX 범위를 사용한다. 환자 ZIP·이전 생성 DB/질문/어휘/source-custody SQLite·Astra 과거 snapshot/등록 정책을 새 정본으로 사용하지 않는다. 입력 인덱싱→개념/역할 정규화→질문/진찰→유한 관계 초안→최종 분류/충돌 해소→한 번의 결손 보완→staging 컴파일/검증/명시적 설치를 수행한다. 원자료가 부족한 일반 관계는 최종 모델 내부 지식으로 완성하되 환자 관찰은 생성하지 못한다.
+
+공급자는 nova_dev·codex_subscription·openai_api 중 빌드당 하나다. 초안 gpt-6-luna·최종 gpt-6.1-sol의 effort는 모두 medium이다. NOVA는 원본 SDK의 세션 밖 Client.chat, 구독은 새 전용 volume의 사용자 ChatGPT device login과 도구를 비활성화한 read-only codex exec, API는 도구 없는 Responses 구조화 출력을 사용한다. 인증은 선택 경로에만 전달하고 자동 모델 변경·provider fallback·계정 전환은 없다. NOVA/API 출력 상한은 8000/32000이고 CLI에는 강제 토큰 상한을 주장하지 않는다. 요청/CLI 제한은 600초, Compose 종료 유예는 660초다. NOVA KST 일일 한도와 다른 공급자의 한도·재시도 시점을 구별한다.
+
+run·status·pause·verify·install을 제공한다. 조회·중단·검증은 client/개발 키 없이 동작한다. 입력/설정/공급자/모델/프롬프트/생성 계약 hash와 단계·chunk cursor·job 결과·재시도·usage를 SQLite transaction으로 저장하고 worker는 하나만 실행한다. 같은 fingerprint의 --resume만 허용하고 완료·neutral을 재호출하지 않는다. 전송 전 payload/인자/job ID/request ID를 기록하고 응답을 먼저 보존한다. pause·SIGINT·SIGTERM은 새 전송을 막고 한 in-flight 응답의 유효 행을 저장한 뒤 paused로 정상 종료한다. 쿼터 대기 중에도 중단할 수 있다.
+
+강제 종료 후 저장 응답이 없으면 outcome_unknown이다. NOVA는 지원되는 같은 ID/payload 복구를 사용하며 API/CLI는 원격 중복 방지를 가정하지 않는다. 운영자의 --retry-unknown이 있어야 새 시도를 허용하고 이전 불명 기록을 보존한다. 설치는 검증된 build 전용 파일을 먼저 쓰고 manifest를 마지막에 원자적으로 바꾼다. 완료/일시 중단 뒤 자동 재시작하지 않는다.
+
+이미지는 ontoward-extraction:local이며 Python 3.12·기존 고정 Python 의존성·@openai/codex@0.162.1을 포함한다. 이미지 빌드 다운로드만 이번에 허용했고 실제 로그인·유료 DB 생성·실제 설치·정식 ZIP은 실행하지 않는다. 기존 자산/점수 builder를 활성 경로에서 철회하고 과거 원자료·준비 결과·수용 ZIP·증거는 보존한다. 이번 완료는 이미지와 무점수 워크플로우의 구현·오프라인 수용으로 한정하며 다음 작업은 공급자 선택·인증 후 실제 생성/설치다.

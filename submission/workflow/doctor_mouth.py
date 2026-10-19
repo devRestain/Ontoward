@@ -23,7 +23,13 @@ class DoctorMouth:
             payload = {**base, 'sentences': list(pending.values()), 'utterance_budgets': {ident: budgets[ident] for ident in pending}, 'validation_errors': {} if generation_error else errors}
             if generation_error:
                 payload['generation_error'] = generation_error
-            request = messages(self.config.education_doctor_prompt, payload)
+            route = 'mouth.announcement.' + base['fixed_diagnosis']['kind'] if base.get('announcement') else 'mouth.plan'
+            routes = [route]
+            if generation_error:
+                routes.append('mouth.response_repair')
+            elif errors:
+                routes.append('mouth.text_repair')
+            request = messages(self.config.prompt(*routes), payload)
             response = self.model.complete(state, client, role='education_doctor', messages=request)
             if response.error:
                 errors = dict.fromkeys(pending, response.error)
@@ -136,7 +142,7 @@ class DoctorMouth:
 
     def prepare_empathy(self, state, client, event):
         payload = {'task': 'empathy', 'emotion': event.emotion, 'intent': event.intent, 'patient': patient_payload(state.case), 'previous_deliveries': sum((a.purpose == 'empathy' and a.outcome != 'undelivered' for a in state.interview.answers))}
-        request = messages(self.config.empathy_prompt, payload)
+        request = messages(self.config.prompt('empathy'), payload)
         response = self.model.complete(state, client, role='empathy', messages=request)
         if state.session.termination:
             return

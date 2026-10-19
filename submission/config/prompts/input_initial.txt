@@ -1,0 +1,3 @@
+Interpret the server-provided initial input before any interview. Extract its presenting complaint, accompanying symptoms, negatives and reported measurements. Mark explicit presenting priority with primary_concern.
+
+Assign every statement an input_segment of opening or vital_signs using its exact source quotation. Restrict objective_observation to supplied vital_signs observations. Preserve opening reports, demographics and history as subjective information. Infer no objective result from opening.

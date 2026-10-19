@@ -1,14 +1,21 @@
 """Read packaged public settings without replacing runner credentials."""
 
 import os
+import json
 from pathlib import Path
 
+ALGORITHM_VERSION = "d49.1"
 ROOT = Path(__file__).resolve().parent
 SETTING = "ONTOWARD_KNOWLEDGE_MANIFEST"
-SETTINGS = {SETTING, "ONTOWARD_PARSER_PROMPT", "ONTOWARD_NORMALIZATION_PROMPT", "ONTOWARD_CLINICAL_PROMPT", "ONTOWARD_EMPATHY_PROMPT",
-            "ONTOWARD_INITIATION_PROMPT", "ONTOWARD_CHIEF_COMPLAINT_PROMPT", "ONTOWARD_CONTEXT_FACTOR_PROMPT", "ONTOWARD_DIFFERENTIAL_DIAGNOSIS_PROMPT",
-            "ONTOWARD_TEXTS", "ONTOWARD_EDUCATION_ENABLED", "ONTOWARD_EDUCATION_PROMPT",
-            "ONTOWARD_EDUCATION_DOCTOR_PROMPT"}
+SETTINGS = {SETTING, 'ONTOWARD_PROMPTS', 'ONTOWARD_TEXTS', 'ONTOWARD_EDUCATION_ENABLED'}
+PROMPT_ROUTES = {
+    'input.initial', 'input.reply', 'input.exam', 'input.repair', 'input.rows_repair', 'input.chief_repair',
+    'mapping.select', 'mapping.forced', 'mapping.repair',
+    'clinical.rank', 'clinical.decision', 'clinical.action', 'clinical.repair',
+    'session.Initiation', 'session.ChiefComplaint', 'session.ContextFactor', 'session.DifferentialDiagnosis',
+    'plan.generate', 'plan.repair', 'mouth.plan', 'mouth.announcement.disease', 'mouth.announcement.symptom',
+    'mouth.response_repair', 'mouth.text_repair', 'empathy',
+}
 
 
 def packaged_settings() -> dict[str, str]:
@@ -43,6 +50,18 @@ def knowledge_path(value: str) -> Path:
 
 def configured_path(key: str, directory: str) -> Path:
     return contained_path(os.environ.get(key, packaged_settings()[key]), directory)
+
+
+def prompt_paths(manifest: Path) -> dict[str, list[Path]]:
+    routes = json.loads(manifest.read_text(encoding='utf-8'))
+    if not isinstance(routes, dict) or routes.keys() != PROMPT_ROUTES:
+        raise ValueError('Prompt manifest must define the runtime task routes')
+    result = {}
+    for route, parts in routes.items():
+        if not isinstance(parts, list) or not parts or any(not isinstance(p, str) for p in parts):
+            raise ValueError(f'Invalid prompt modules: {route}')
+        result[route] = [contained_path(part, 'config') for part in parts]
+    return result
 
 
 def knowledge_manifest() -> Path:

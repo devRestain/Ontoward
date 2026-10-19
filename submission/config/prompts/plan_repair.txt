@@ -1,0 +1,1 @@
+Repair the management plan against the supplied validation_errors or generation_error. Preserve accepted sentences exactly and return only missing or invalid items in the P fields. Keep empty arrays for fields already complete. Treat unavailable generation as unaccepted output. Preserve the fixed diagnosis and canonical facts; generate no additional repair request.

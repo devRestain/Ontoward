@@ -39,7 +39,12 @@ class DecisionWork:
 
 
 def clinical_messages(config, work):
-    return messages(config.clinical_prompt + '\n' + config.session_prompts[work.payload['stage']], work.payload)
+    route = {'clinical_rank': 'clinical.rank', 'clinical_decision': 'clinical.decision',
+             'clinical_action': 'clinical.action'}[work.payload['task']]
+    routes = [route, 'session.' + work.payload['stage']]
+    if 'validation_error' in work.payload:
+        routes.append('clinical.repair')
+    return messages(config.prompt(*routes), work.payload)
 
 
 def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False):
@@ -104,7 +109,7 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False)
             name = knowledge.term(value['concept'])
             return name if value.get('match', 'exact') == 'exact' else {'subsumption': name}
         if value.get('kind') == 'concept_set':
-            return {value['selection']: [knowledge.term(v) for v in value['concepts']]}
+            return {value['selection']: [knowledge.term(v) for v in value['concepts']], 'match': value.get('match','exact')}
         return {key: item for key, item in value.items() if item is not None and item != [] and
                 key not in {'concept', 'concepts', 'selection', 'match'} and
                 not (key in {'lower_inclusive', 'upper_inclusive'} and item is True)}
@@ -112,7 +117,7 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False)
     def conditions(rows):
         if not rows:
             return None
-        value = [dict(target=c['name'], status=c['status'], subject=c['subject'], time=c['time_context']) for c in rows]
+        value = [dict(target=c['name'], status=c['status'], subject=c['subject'], member=c.get('subject_member'), time=c['time_context']) for c in rows]
         signature = json.dumps(value, sort_keys=True)
         if signature not in condition_refs:
             ident = f'condition_{len(condition_refs) + 1}'
@@ -125,7 +130,8 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False)
         detail = next((d for d in details if d['association'] == (graph.association_id or graph.id)), None)
         row = dict(level=graph.kind, facts=[fact_refs[i] for i in ref.fact_ids])
         if detail:
-            row['target'] = detail['target']
+            row.update(target=detail['target'], effect=detail['effect'], rule_scope=detail['target_scope'],
+                full_pattern=[dict(attribute=f['attribute'], expected_status=f['expected_status'], expected=expected(f['expected'])) for f in detail['features']])
             features = detail['features'] if graph.kind == 'association' else [f for f in detail['features'] if f['id'] == graph.id]
             row['expects'] = {f['attribute'] or 'presence': expected(f['expected']) for f in features}
             if detail['conditions']:
@@ -170,8 +176,11 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False)
                 graph = missing.graph_ref
                 detail = next((d for d in candidates[disease].details if d['association'] == graph.association_id), None)
                 feature = next((f for f in detail['features'] if f['id'] == graph.id), None) if detail else None
-                value = dict(expected=expected(feature['expected']) if feature else 'present',
-                    applicability=[dict(target=c['name'], status=c['status'], subject=c['subject'], time=c['time_context'])
+                context_expected = next((c['status'] for c in detail['conditions'] if c['concept_id'] == graph.id), 'present') if detail else 'present'
+                value = dict(expected=expected(feature['expected']) if feature else context_expected,
+                    effect=detail['effect'] if detail else None, rule_scope=detail['target_scope'] if detail else None,
+                    full_pattern=[dict(attribute=f['attribute'],expected_status=f['expected_status'],expected=expected(f['expected'])) for f in detail['features']] if detail else [],
+                    applicability=[dict(target=c['name'], status=c['status'], subject=c['subject'], member=c.get('subject_member'), time=c['time_context'])
                         for c in detail['conditions']] if detail else [])
                 if value not in entries:
                     entries.append(value)

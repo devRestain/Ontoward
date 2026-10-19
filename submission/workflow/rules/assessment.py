@@ -16,7 +16,7 @@ class Candidate:
 
 
 def scope_key(knowledge, target, attribute=None, base=None, chief=None, *, subject='patient', member=None, timing='current'):
-    episode = base.episode_id if base else chief.episode_id if chief else None
+    episode = base.episode_id if base else chief.episode_id if chief and subject == "patient" and timing == "current" and not knowledge.has_type(target, "ContextFactor") else None
     observation = base.observation_id if base else None
     if not observation and subject == 'patient' and not knowledge.has_type(target, 'ContextFactor'):
         observation = 'observation:' + hashlib.sha256(f'{target}:{episode}:current'.encode()).hexdigest()[:24]
@@ -69,114 +69,125 @@ def match_feature(knowledge, feature, bases, attributes):
     return status, tuple(sorted(refs))
 
 
+def scope_matches(record, scope, *, status=None):
+    if record.subject != scope.subject or scope.subject_member is not None and record.subject_member != scope.subject_member:
+        return False
+    if scope.subject == 'family' and scope.subject_member is None and status == 'absent' and record.subject_member is not None:
+        return False
+    return scope.time_context == 'any' or record.time_context == scope.time_context
+
+
+def scoped_records(records, scope, status=None):
+    return [record for record in records if scope_matches(record, scope, status=status)]
+
+
 def applicability(conditions, contexts):
     refs, unknown = set(), False
     for condition in conditions:
-        records = [c for c in contexts if (c.target, c.subject, c.time_context) ==
-            (condition.concept_id, condition.subject, condition.time_context)]
+        records = scoped_records([c for c in contexts if c.target == condition.concept_id], condition, condition.status)
         states = {c.status for c in records}
         refs.update(c.id for c in records)
+        # A positive family-history rule can be established by one named member.
+        if condition.subject == 'family' and condition.subject_member is None and condition.status == 'present':
+            if any(c.status == 'present' for c in records):
+                continue
+            states = {c.status for c in records if c.subject_member is None}
         if len(states) == 1 and states <= {'present', 'absent'} and states != {condition.status}:
             return 'contradicted', tuple(sorted(refs))
         unknown |= states != {condition.status}
     return ('unknown' if unknown else 'matched'), tuple(sorted(refs))
 
 
+def context_questions(knowledge, disease_ids):
+    result = {}
+    for disease in disease_ids:
+        for profile in knowledge.get_disease_patterns(disease):
+            rows = [(profile.target, profile.target_scope)] if knowledge.has_type(profile.target, 'ContextFactor') else []
+            rows += [(condition.concept_id, condition) for condition in profile.applicability]
+            for target, scope in rows:
+                key = (target, scope.model_dump_json())
+                result[key] = (target, scope)
+    return sorted(result.values(), key=lambda row: (row[0], row[1].time_context == 'any', row[1].subject_member or '', row[1].time_context))
+
+
 def graph_candidates(case, knowledge, interview=None):
     index = EvidenceIndex.from_case(case, knowledge)
     chief = next((e for e in index.entries if e.id == case.chief_fact_id), None)
+    prior = {knowledge.term_id(entry.name, 'Disease') for entry in case.assessment.differential} if case.assessment else set()
     routes = {}
     for fact in index.entries:
-        if fact.kind == 'context':
-            diseases = {p.disease_id for p in knowledge.associations_by_context.get(
-                (fact.target, fact.subject, fact.time_context), ())}
-            diseases.update(knowledge.diseases_by_supporting_context.get((fact.target, fact.subject), ()))
-        elif fact.subject == 'patient' and fact.time_context != 'past':
-            diseases = {p.disease_id for p in knowledge.get_patterns_by_target(fact.target)}
-        else:
-            continue
-        for disease in diseases:
-            routes.setdefault(disease, set()).add(fact.target)
-    candidates, matched_cache, applies_cache = {}, {}, {}
+        profiles = knowledge.get_patterns_by_target(fact.target)
+        profiles += knowledge.associations_by_context.get(fact.target, [])
+        for profile in profiles:
+            positive = profile.effect in {'support', 'strong_support'}
+            if not positive and profile.disease_id not in prior:
+                continue
+            target_path = fact.target == profile.target and scope_matches(fact, profile.target_scope)
+            context_path = any(c.concept_id == fact.target and scope_matches(fact, c) for c in profile.applicability)
+            if target_path or context_path:
+                routes.setdefault(profile.disease_id, set()).add(fact.target)
+    candidates = {}
     for disease, paths in sorted(routes.items()):
         supports, against, unresolved, details, whole = [], [], [], [], []
-        profiles = knowledge.get_disease_patterns(disease)
-        feature_index = {f.id:f for p in profiles for f in knowledge.get_pattern_features(p.id)}
-        for profile in profiles:
+        for profile in knowledge.get_disease_patterns(disease):
             features = knowledge.get_pattern_features(profile.id)
-            applies, context_refs = applies_cache.setdefault(profile.association_id,
-                applicability(profile.applicability, index.contexts))
-            groups = [g for g in index.groups.values() if any(b.target == profile.target for b in g['base'])]
-            for group in groups or [{'base': [], 'attributes': []}]:
-                bases = [b for b in group['base'] if b.target == profile.target]
-                attributes = [a for a in group['attributes'] if a.target == profile.target]
-                base = bases[0] if bases else None
-                checks = []
-                for feature in features:
-                    cache_key = (feature.id, tuple(b.id for b in bases), tuple(a.id for a in attributes))
-                    if cache_key not in matched_cache:
-                        matched_cache[cache_key] = match_feature(knowledge, feature, bases, attributes)
-                    status, refs = matched_cache[cache_key]
-                    key = scope_key(knowledge, profile.target, feature.attribute, base, chief)
-                    ref = GraphRef(kind='feature', id=feature.id, association_id=profile.association_id)
-                    checks.append((feature, status, refs, key, ref))
-                pattern_status = ('contradicted' if any(c[1] == 'contradicted' for c in checks) else
-                    'incomplete' if any(c[1] == 'unknown' for c in checks) else 'matched')
-                details.append(dict(association=profile.association_id, pattern=profile.id,
-                    target=knowledge.term(profile.target), applicability=applies,
-                    conditions=[dict(name=knowledge.term(condition.concept_id),**condition.model_dump())
-                        for condition in profile.applicability],
-                    features=[dict(id=f.id, attribute=knowledge.term(f.attribute) if f.attribute else None,
+            applies, context_refs = applicability(profile.applicability, index.contexts)
+            groups = []
+            for group in index.groups.values():
+                bases = scoped_records([b for b in group['base'] if b.target == profile.target], profile.target_scope)
+                attributes = scoped_records([a for a in group['attributes'] if a.target == profile.target], profile.target_scope)
+                if bases or attributes:
+                    groups.append((bases, attributes))
+            for bases, attributes in groups or [([], [])]:
+                base = next(iter(bases or attributes), None)
+                checks = [(feature, *match_feature(knowledge, feature,
+                    scoped_records(bases, profile.target_scope, feature.status), attributes)) for feature in features]
+                pattern_status = ('contradicted' if any(status == 'contradicted' for _,status,_ in checks) else
+                    'incomplete' if any(status == 'unknown' for _,status,_ in checks) else 'matched')
+                detail = dict(association=profile.association_id, pattern=profile.id, target=knowledge.term(profile.target),
+                    effect=profile.effect, target_scope=profile.target_scope.model_dump(), applicability=applies,
+                    conditions=[dict(name=knowledge.term(c.concept_id), **c.model_dump()) for c in profile.applicability],
+                    features=[dict(id=f.id, attribute=knowledge.term(f.attribute) if f.attribute else None, expected_status=f.status,
                         expected=f.expected.model_dump(exclude_none=True) if f.expected else f.status,
-                        status=status, fact_ids=refs) for f,status,refs,_,_ in checks]))
+                        status=status, fact_ids=refs) for f,status,refs in checks])
+                details.append(detail)
+                if applies == 'contradicted' or pattern_status == 'contradicted':
+                    continue
                 if applies == 'matched' and pattern_status == 'matched':
-                    refs = tuple(sorted({i for _,_,ids,_,_ in checks for i in ids} | set(context_refs)))
-                    whole.append((profile, (base.subject,base.subject_member,base.observation_id,base.episode_id,base.time_context) if base else (), EvidenceRef(
-                        graph_ref=GraphRef(kind='association', id=profile.association_id), fact_ids=refs)))
-                else:
-                    for _, status, refs, key, ref in checks:
-                        if applies == 'matched' and status != 'unknown':
-                            (supports if status == 'matched' else against).append(EvidenceRef(graph_ref=ref, fact_ids=refs))
-                        elif applies != 'contradicted':
-                            unresolved.append(UnresolvedRef(graph_ref=ref, fact_ids=refs, scope=key,
-                                reason='applicability_unknown' if applies == 'unknown' else unresolved_reason(interview, key)))
+                    refs = tuple(sorted({ident for _,_,ids in checks for ident in ids} | set(context_refs)))
+                    scope = (base.subject,base.subject_member,base.observation_id,base.episode_id,base.time_context) if base else ()
+                    whole.append((profile, scope, EvidenceRef(graph_ref=GraphRef(kind='association', id=profile.association_id), fact_ids=refs)))
+                    continue
+                timing = knowledge.execution_time(profile.target, profile.target_scope)
+                for feature, status, refs in checks:
+                    if status != 'unknown':
+                        continue
+                    key = scope_key(knowledge, profile.target, feature.attribute, base, chief,
+                        subject=profile.target_scope.subject, member=profile.target_scope.subject_member, timing=timing)
+                    unresolved.append(UnresolvedRef(graph_ref=GraphRef(kind='feature', id=feature.id,
+                        association_id=profile.association_id), fact_ids=refs, scope=key,
+                        reason='applicability_unknown' if applies == 'unknown' else unresolved_reason(interview,key)))
+                    if feature.attribute and not any(b.status == 'present' for b in bases):
+                        presence_key = scope_key(knowledge, profile.target, base=base, chief=chief,
+                            subject=profile.target_scope.subject, member=profile.target_scope.subject_member, timing=timing)
+                        unresolved.append(UnresolvedRef(graph_ref=GraphRef(kind='association', id=profile.association_id,
+                            association_id=profile.association_id), fact_ids=(), scope=presence_key, reason='presence_required'))
                 if applies == 'unknown':
                     for condition in profile.applicability:
-                        key = scope_key(knowledge, condition.concept_id, chief=None,
-                            subject=condition.subject, timing=condition.time_context)
+                        if applicability([condition], index.contexts)[0] != 'unknown':
+                            continue
+                        key = scope_key(knowledge, condition.concept_id, subject=condition.subject,
+                            member=condition.subject_member, timing=knowledge.execution_time(condition.concept_id, condition))
                         unresolved.append(UnresolvedRef(graph_ref=GraphRef(kind='context', id=condition.concept_id,
                             association_id=profile.association_id), fact_ids=context_refs, scope=key,
-                            reason=unresolved_reason(interview, key)))
-        for profile, scopes, ref in whole:
-            if not any(other.applicability == profile.applicability and other_scopes == scopes
-                and knowledge.pattern_refines(other.id, profile.id) for other,other_scopes,_ in whole):
-                supports.append(ref)
-        for context in knowledge.get_supporting_context(disease):
-            subject = 'family' if context['type'] == 'family_history' else 'patient'
-            records = [r for r in index.contexts if r.target == context['id'] and r.subject == subject]
-            if records and {r.status for r in records} == {'present'}:
-                supports.append(EvidenceRef(graph_ref=GraphRef(kind='context', id=context['id']),
-                    fact_ids=tuple(sorted(r.id for r in records))))
-            elif not records or any(r.status in {'unknown', 'uncertain'} for r in records):
-                key = scope_key(knowledge, context['id'], subject=subject, timing='unspecified')
-                unresolved.append(UnresolvedRef(graph_ref=GraphRef(kind='context', id=context['id']),
-                    fact_ids=tuple(sorted(r.id for r in records)), scope=key, reason=unresolved_reason(interview, key)))
-        def unique(refs):
-            result, seen = [], set()
-            for ref in refs:
-                graph = ref.graph_ref
-                if graph.kind == 'feature':
-                    feature = feature_index[graph.id]
-                    meaning = ('feature', str(feature.signature()))
-                elif graph.kind == 'association':
-                    profile = next(p for p in knowledge.get_disease_patterns(disease) if p.association_id == graph.id)
-                    meaning = ('association', profile.id, str(profile.applicability))
-                else:
-                    meaning = (graph.kind, graph.id, graph.association_id)
-                key = (meaning, ref.fact_ids, getattr(ref, 'scope', ()))
-                if key not in seen:
-                    seen.add(key); result.append(ref)
-            return tuple(result)
+                            reason='applicability_unknown'))
+        for profile, observation, ref in whole:
+            if not any(other.target_scope == profile.target_scope and other.effect == profile.effect
+                and other.applicability == profile.applicability and scope == observation
+                and knowledge.pattern_refines(other.id,profile.id) for other,scope,_ in whole):
+                (supports if profile.effect in {'support','strong_support'} else against).append(ref)
+        def unique(rows):
+            return tuple({row.model_dump_json():row for row in rows}.values())
         candidates[disease] = Candidate(disease, DifferentialEntry(kind='disease', name=knowledge.term(disease),
             supports=unique(supports), against=unique(against), unresolved=unique(unresolved)), paths, details)
     return candidates

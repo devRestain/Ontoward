@@ -1,0 +1,1 @@
+Select one executable supplied question with {"kind":"ask","question_ref":"q_..."}, or finish DD with {"kind":"finish_collection"}. Consider diagnostic uncertainty, contrasting expected answers and remaining resources. Use a useful single action without requiring it to complete a pattern. Preserve unknown answers and avoid repeating answered questions.

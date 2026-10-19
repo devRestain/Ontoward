@@ -1,0 +1,11 @@
+{
+  "provider": "nova_dev",
+  "models": {"draft": "gpt-6-luna", "final": "gpt-6.1-sol"},
+  "effort": "medium",
+  "max_tokens": {"draft": 8000, "final": 32000},
+  "timeout_seconds": 600,
+  "batch_size": 10,
+  "index_chunk_size": 1000,
+  "nova_daily_calls": {"draft": 1000, "final": 100},
+  "inputs": {}
+}

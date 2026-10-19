@@ -1,0 +1,54 @@
+name: ontoward
+
+services:
+  extraction:
+    profiles: [extraction]
+    image: ontoward-extraction:local
+    build:
+      context: ..
+      dockerfile: Extraction/Dockerfile
+    command: [run, --resume, --install]
+    environment:
+      NOVA_API_BASE: ${NOVA_API_BASE:-https://nova.snubhai.org}
+      NOVA_DEV_KEY: ${NOVA_DEV_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    volumes:
+      - ../assets:/assets:ro
+      - ../data/extraction/v5-enum/work:/work
+      - ../data/extraction/v5-enum/output:/output
+      - ../submission/knowledge:/target
+      - extraction-codex-state:/codex-state
+    cpus: 2
+    mem_limit: 8g
+    stop_grace_period: 660s
+    restart: "no"
+  control:
+    profiles: [tools]
+    image: ontoward-extraction:local
+    command: [status]
+    network_mode: none
+    read_only: true
+    volumes:
+      - ../data/extraction/v5-enum/work:/work
+  verify:
+    profiles: [tools]
+    image: ontoward-extraction:local
+    command: [verify]
+    network_mode: none
+    read_only: true
+    volumes:
+      - ../assets:/assets:ro
+      - ../data/extraction/v5-enum/work:/work:ro
+      - ../data/extraction/v5-enum/output:/output:ro
+      - ../submission/knowledge:/target:ro
+  codex-login:
+    profiles: [tools]
+    image: ontoward-extraction:local
+    entrypoint: [codex]
+    command: [-c, 'cli_auth_credentials_store="file"', -c, 'forced_login_method="chatgpt"', login, --device-auth]
+    volumes:
+      - extraction-codex-state:/codex-state
+    stdin_open: true
+    tty: true
+volumes:
+  extraction-codex-state:

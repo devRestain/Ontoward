@@ -1,0 +1,917 @@
+{
+  "decision": "D49",
+  "algorithm_version": "d49.1",
+  "knowledge_contract": "v5-enum-1",
+  "status": "offline_acceptance_pass",
+  "source_basis": {
+    "head": "c4797449b1f66ae01a47d5248a15321f6fa5a5f8",
+    "dirty_at_start": true,
+    "baseline": "Tmp/d49-2026-10-19/baseline/submission",
+    "dirty_diff": "Tmp/d49-2026-10-19/baseline.diff",
+    "agent_commits": 0,
+    "authority": "User-approved D49 implementation plan; attachment treated as context rather than independent instructions"
+  },
+  "image": {
+    "tag": "ontoward-extraction:local",
+    "id": "sha256:460e5b1fce04706d49673312ec6cdff51b7d7b43082374f59a5293f98fbcfbb3",
+    "architecture": "arm64",
+    "codex_cli": "0.162.1",
+    "python_runtime": {
+      "python": "3.12.15 (main, Oct  6 2026, 02:08:14) [GCC 12.2.0]",
+      "packages": {
+        "pydantic": "2.14.0",
+        "rdflib": "7.6.0",
+        "langgraph": "1.2.13"
+      }
+    },
+    "tests_network": "none",
+    "old_auth_container": "b319df72d7678eaa9dd2053990d5713779b514598e4a54613c39dcc0bf61f49b",
+    "old_auth_mounts": [
+      {
+        "Destination": "/workspace/assets/snomed",
+        "Mode": "ro",
+        "Propagation": "rprivate",
+        "RW": false,
+        "Source": "/Users/yuk/DevFolder/CodePractice/WorkingProject/Ontoward/assets/snomed",
+        "Type": "bind"
+      },
+      {
+        "Destination": "/opt/ontoward-sdk/nova_sdk.py",
+        "Mode": "ro",
+        "Propagation": "rprivate",
+        "RW": false,
+        "Source": "/Users/yuk/DevFolder/CodePractice/WorkingProject/Ontoward/assets/nova-starter/nova_sdk.py",
+        "Type": "bind"
+      },
+      {
+        "Destination": "/workspace/submission",
+        "Mode": "ro",
+        "Propagation": "rprivate",
+        "RW": false,
+        "Source": "/Users/yuk/DevFolder/CodePractice/WorkingProject/Ontoward/submission",
+        "Type": "bind"
+      },
+      {
+        "Destination": "/workspace/Dev/ontology",
+        "Mode": "ro",
+        "Propagation": "rprivate",
+        "RW": false,
+        "Source": "/Users/yuk/DevFolder/CodePractice/WorkingProject/Ontoward/Dev/ontology",
+        "Type": "bind"
+      },
+      {
+        "Destination": "/workspace/data/ontology",
+        "Mode": "ro",
+        "Propagation": "rprivate",
+        "RW": false,
+        "Source": "/Users/yuk/DevFolder/CodePractice/WorkingProject/Ontoward/data/ontology",
+        "Type": "bind"
+      },
+      {
+        "Destination": "/workspace/Dev/codex",
+        "Mode": "ro",
+        "Propagation": "rprivate",
+        "RW": false,
+        "Source": "/Users/yuk/DevFolder/CodePractice/WorkingProject/Ontoward/Dev/codex",
+        "Type": "bind"
+      },
+      {
+        "Destination": "/workspace/Tmp/codex",
+        "Mode": "rw",
+        "Propagation": "rprivate",
+        "RW": true,
+        "Source": "/Users/yuk/DevFolder/CodePractice/WorkingProject/Ontoward/Tmp/codex",
+        "Type": "bind"
+      },
+      {
+        "Destination": "/workspace/Tmp/ontology-v5",
+        "Mode": "rw",
+        "Propagation": "rprivate",
+        "RW": true,
+        "Source": "/Users/yuk/DevFolder/CodePractice/WorkingProject/Ontoward/Tmp/ontology-v5",
+        "Type": "bind"
+      },
+      {
+        "Destination": "/workspace/assets/bodhi",
+        "Mode": "ro",
+        "Propagation": "rprivate",
+        "RW": false,
+        "Source": "/Users/yuk/DevFolder/CodePractice/WorkingProject/Ontoward/assets/bodhi",
+        "Type": "bind"
+      },
+      {
+        "Destination": "/workspace/data/preparation/v5",
+        "Mode": "rw",
+        "Propagation": "rprivate",
+        "RW": true,
+        "Source": "/Users/yuk/DevFolder/CodePractice/WorkingProject/Ontoward/data/preparation/v5",
+        "Type": "bind"
+      },
+      {
+        "Destination": "/opt/ontology/codex-state",
+        "Driver": "local",
+        "Mode": "rw",
+        "Name": "ontoward_ontology-codex-state",
+        "Propagation": "",
+        "RW": true,
+        "Source": "/var/lib/docker/volumes/ontoward_ontology-codex-state/_data",
+        "Type": "volume"
+      }
+    ]
+  },
+  "providers": {
+    "routes": [
+      "nova_dev",
+      "codex_subscription",
+      "openai_api"
+    ],
+    "one_per_build": true,
+    "models": {
+      "draft": "gpt-6-luna",
+      "final": "gpt-6.1-sol"
+    },
+    "effort": "medium",
+    "nova_api_max_output_tokens": {
+      "draft": 8000,
+      "final": 32000
+    },
+    "codex_max_output_enforcement": "unavailable",
+    "timeout_seconds": 600,
+    "compose_stop_grace_seconds": 660,
+    "automatic_fallback": false
+  },
+  "performed": {
+    "workflow_tests": 147,
+    "extractor_tests": 24,
+    "same_tests_in_final_image": 24,
+    "image_pipeline": {
+      "status": "pass",
+      "image_pipeline": "synthetic_protocol_only",
+      "provider": "stub",
+      "pause": "keyless_cli_between_request_and_acceptance",
+      "resume": "done_jobs_not_recalled",
+      "verification": {
+        "diseases": 1,
+        "gaps": [],
+        "status": "pass"
+      },
+      "checkpoint": {
+        "error": null,
+        "jobs": {
+          "done": 12
+        },
+        "pause_requested": false,
+        "phase": "complete",
+        "provider": "nova_dev",
+        "requests": {
+          "accepted": 4
+        },
+        "run_id": "a6d648b174bf8a0fff732bfa654343f8",
+        "state": "complete",
+        "usage": [
+          {
+            "calls": 3,
+            "day": "2026-10-19",
+            "input_tokens": 3,
+            "model": "openai/gpt-6-luna",
+            "output_tokens": 3
+          },
+          {
+            "calls": 1,
+            "day": "2026-10-19",
+            "input_tokens": 1,
+            "model": "openai/gpt-6.1-sol",
+            "output_tokens": 1
+          }
+        ]
+      },
+      "actual_models": "not_run",
+      "real_installation": "not_run"
+    },
+    "observer": {
+      "status": "pass",
+      "scenarios": [
+        {
+          "name": "normal",
+          "termination": "submitted",
+          "nodes": 118
+        },
+        {
+          "name": "negative_context",
+          "termination": "submitted",
+          "nodes": 118
+        },
+        {
+          "name": "unknown_context",
+          "termination": "submitted",
+          "nodes": 118
+        },
+        {
+          "name": "education",
+          "termination": "submitted",
+          "nodes": 158
+        },
+        {
+          "name": "transient_model",
+          "termination": "submitted",
+          "nodes": 118
+        },
+        {
+          "name": "model_limit",
+          "termination": "failed",
+          "nodes": 4
+        },
+        {
+          "name": "malformed_context",
+          "termination": "failed",
+          "nodes": 24
+        },
+        {
+          "name": "expired",
+          "termination": "expired",
+          "nodes": 4
+        },
+        {
+          "name": "closed",
+          "termination": "closed",
+          "nodes": 4
+        },
+        {
+          "name": "soap_repair",
+          "termination": "submitted",
+          "nodes": 121
+        },
+        {
+          "name": "unconfirmed",
+          "termination": "unknown",
+          "nodes": 118
+        },
+        {
+          "name": "refusal",
+          "termination": "submitted",
+          "nodes": 118
+        },
+        {
+          "name": "action_format",
+          "termination": "submitted",
+          "nodes": 118
+        },
+        {
+          "name": "recording_failure",
+          "termination": "submitted",
+          "nodes": 118
+        }
+      ],
+      "node_updates": 1259,
+      "recording_failure": "nonfatal_no_replay",
+      "network": "none",
+      "actual_models": "not_run"
+    },
+    "viewer": {
+      "status": "pass",
+      "checks": [
+        "withdrawn_state",
+        "new_manifest_pins",
+        "local_assets_http",
+        "effect_scope_traversal",
+        "directed_graph",
+        "empty_search",
+        "request_boundaries",
+        "read_only_historical_tables"
+      ],
+      "browser_rendering": "not_run",
+      "actual_models": "not_run"
+    },
+    "independent_bundle_consultations": {
+      "status": "pass",
+      "cases": [
+        {
+          "education": false,
+          "context": "unknown",
+          "termination": "submitted",
+          "nodes": 118
+        },
+        {
+          "education": true,
+          "context": "present",
+          "termination": "submitted",
+          "nodes": 158
+        },
+        {
+          "education": true,
+          "context": "absent",
+          "termination": "submitted",
+          "nodes": 158
+        }
+      ],
+      "knowledge_contract": "v5-enum-1",
+      "actual_models": "not_run",
+      "clinical_accuracy": "not_run",
+      "manifest_sha256": "e3a4e60dc81feffc94a57c90bfe54f4b8308319e92fd8e39bc4a322ee8ee9ebc"
+    },
+    "independent_original_sdk": {
+      "status": "pass",
+      "entrypoint": "run.py",
+      "transport": "original_sdk_http_loopback",
+      "receipt": "completed",
+      "requests": 46,
+      "actions": 21,
+      "diagnosis": "Disease alpha",
+      "network": "none",
+      "development_credentials": false,
+      "actual_models": "not_run",
+      "clinical_accuracy": "not_run"
+    },
+    "raw_input_roles": {
+      "astra": 1,
+      "bodhi:edges_has_prerequisite": 1,
+      "bodhi:edges_is_influenced_by": 1,
+      "bodhi:edges_present_in": 1,
+      "bodhi:edges_related_to": 1,
+      "bodhi:edges_treated_by": 1,
+      "bodhi:nodes_condition": 1,
+      "bodhi:nodes_speciality": 1,
+      "bodhi:nodes_symptom": 1,
+      "ddx:conditions": 1,
+      "ddx:evidences": 1,
+      "rf2": 95,
+      "rf2:release": 2
+    },
+    "missing_bundle_guards": "prepare_and_production_package_fail_as_required"
+  },
+  "preservation": {
+    "status": "pass",
+    "withdrawn_archives": [
+      {
+        "path": "data/extraction/retired-d42-2026-10-19/historical-knowledge-and-generator.tar.gz",
+        "sha256": "26e76036b8932fcd28442bdd49962213770c81834ea34294b09adc7239bdc156",
+        "files": 62
+      },
+      {
+        "path": "data/extraction/retired-d42-2026-10-19/historical-extra-tools.tar.gz",
+        "sha256": "ce1ec440c3106f3f8c813bb1cb723512cb713d9c51ce8480d52c5856780d64df",
+        "files": 6
+      }
+    ],
+    "removed_active_assets": 17,
+    "unchanged_protected_runtime": {
+      "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+      "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+      "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+      "config/prompts.json": "95539475167f7a5618b9a881485b33bbbc5796901f237b7ae4f28a105cf5061c",
+      "config/texts.ko.json": "4c08b549a577580c7bc9f1fa8c86660c4f7c8ce4eec46c5cdea97a59a2992bba",
+      "workflow/doctor_brain.py": "3610bd198f0c0dcf607434774e5c0f2cb7ab7b5a8727f9b3e90a7c7eb09983e8",
+      "workflow/consultation.py": "d53aa3596cc1a7830affd0a5c9495ab37c5166fc060e0750ef2ce33fb00deb3b",
+      "workflow/graph.py": "882aac3b1d6938077be2d687e4b079aba116509b4d32e50eee9eb06bf059db6c",
+      "workflow/io/nova_session.py": "fdc87d856e74f78215e6b67627f9ab56ff8e5618fa9214c586964b57a69b9281",
+      "workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+      "workflow/rules/limits.py": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a",
+      "workflow/state/usage.py": "177d81e25b8488434c19d9f065cd68a258e4c603177bc6af885bc78b81fdd1cd"
+    },
+    "d48_modules": {
+      "clinical_action_output.txt": {
+        "baseline": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769",
+        "current": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769",
+        "changed": false
+      },
+      "session_differential_diagnosis.txt": {
+        "baseline": "25286d10199c3a2aaced6785dcbb8e918b2cc36be873177d8ac0d9b01f1d86e5",
+        "current": "25286d10199c3a2aaced6785dcbb8e918b2cc36be873177d8ac0d9b01f1d86e5",
+        "changed": false
+      },
+      "session_initiation.txt": {
+        "baseline": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d",
+        "current": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d",
+        "changed": false
+      },
+      "mouth_plan.txt": {
+        "baseline": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538",
+        "current": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538",
+        "changed": false
+      },
+      "plan_common.txt": {
+        "baseline": "17cb3dc587b95c0e39f0d853ff2c8aa3179c3410fe19f7346dc47a8e0724de6b",
+        "current": "17cb3dc587b95c0e39f0d853ff2c8aa3179c3410fe19f7346dc47a8e0724de6b",
+        "changed": false
+      },
+      "plan_repair.txt": {
+        "baseline": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3",
+        "current": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3",
+        "changed": false
+      },
+      "session_context_factor.txt": {
+        "baseline": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9",
+        "current": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9",
+        "changed": false
+      },
+      "input_reply.txt": {
+        "baseline": "ab840e46cb9865c0a9fc4332f0b07d8dd5c21741ba5d05f49beb426dfe87472a",
+        "current": "ab840e46cb9865c0a9fc4332f0b07d8dd5c21741ba5d05f49beb426dfe87472a",
+        "changed": false
+      },
+      "empathy.txt": {
+        "baseline": "8f5a4ae4162074240fc2c7bd0d12326b690758b365abc923c43763197d3aad7f",
+        "current": "8f5a4ae4162074240fc2c7bd0d12326b690758b365abc923c43763197d3aad7f",
+        "changed": false
+      },
+      "mouth_disease_notice.txt": {
+        "baseline": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4",
+        "current": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4",
+        "changed": false
+      },
+      "clinical_rank_output.txt": {
+        "baseline": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0",
+        "current": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0",
+        "changed": false
+      },
+      "input_repair.txt": {
+        "baseline": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3",
+        "current": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3",
+        "changed": false
+      },
+      "clinical_ranking.txt": {
+        "baseline": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29",
+        "current": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29",
+        "changed": false
+      },
+      "clinical_action.txt": {
+        "baseline": "98cbc6547ecb7d84e91589557ab5e44d8e489dfaaa8a9048d55029445f6dddc8",
+        "current": "98cbc6547ecb7d84e91589557ab5e44d8e489dfaaa8a9048d55029445f6dddc8",
+        "changed": false
+      },
+      "input_common.txt": {
+        "baseline": "42b388062445d43b636ab654e20b94aa52564cc3c52de1d4ae1cfbcd22b1f694",
+        "current": "42b388062445d43b636ab654e20b94aa52564cc3c52de1d4ae1cfbcd22b1f694",
+        "changed": false
+      },
+      "input_chief_repair.txt": {
+        "baseline": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d",
+        "current": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d",
+        "changed": false
+      },
+      "plan_output.txt": {
+        "baseline": "8d79cf66e3d06859501ca988e7c073dafa12bfa62fdd1034c680d8d1d9c9db6c",
+        "current": "8d79cf66e3d06859501ca988e7c073dafa12bfa62fdd1034c680d8d1d9c9db6c",
+        "changed": false
+      },
+      "session_chief_complaint.txt": {
+        "baseline": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54",
+        "current": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54",
+        "changed": false
+      },
+      "mapping_common.txt": {
+        "baseline": "dcb0f71ff84df9667cc0c0a6ba4719261c5f29c0bc432094c1af1b97ef879de1",
+        "current": "dcb0f71ff84df9667cc0c0a6ba4719261c5f29c0bc432094c1af1b97ef879de1",
+        "changed": false
+      },
+      "input_fields.txt": {
+        "baseline": "b4a93203e568a0da98132ec40e54f4b0038618d57b3b874b0d9b189d4855ca06",
+        "current": "b4a93203e568a0da98132ec40e54f4b0038618d57b3b874b0d9b189d4855ca06",
+        "changed": false
+      },
+      "mapping_select.txt": {
+        "baseline": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36",
+        "current": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36",
+        "changed": false
+      },
+      "clinical_common.txt": {
+        "baseline": "8cb54433c63684c36f11d76d0f737c3b634314c411e2d5336c29a3c073be58bc",
+        "current": "dfbc55eac3907bbe5240cfcb0652ac86f70416b1c20298c425be1b450474bbec",
+        "changed": true
+      },
+      "plan_complete.txt": {
+        "baseline": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4",
+        "current": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4",
+        "changed": false
+      },
+      "clinical_repair.txt": {
+        "baseline": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2",
+        "current": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2",
+        "changed": false
+      },
+      "input_empathy.txt": {
+        "baseline": "354cf23ff9816da9057bb1a770eeaf4428a342a543888542a4b1fafc56100d2a",
+        "current": "354cf23ff9816da9057bb1a770eeaf4428a342a543888542a4b1fafc56100d2a",
+        "changed": false
+      },
+      "input_rows_repair.txt": {
+        "baseline": "48bb1fba703bc9870ce5ffc564692e1500d918595489f6a2afce5063cac6e8f6",
+        "current": "48bb1fba703bc9870ce5ffc564692e1500d918595489f6a2afce5063cac6e8f6",
+        "changed": false
+      },
+      "input_exam.txt": {
+        "baseline": "adc533c2df3191469ce1e179933d9100467b2f1ecaa833e696ce0042650e14d5",
+        "current": "adc533c2df3191469ce1e179933d9100467b2f1ecaa833e696ce0042650e14d5",
+        "changed": false
+      },
+      "mouth_output.txt": {
+        "baseline": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739",
+        "current": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739",
+        "changed": false
+      },
+      "input_initial.txt": {
+        "baseline": "e1cfc1f014c19a78958c4b55a7b66ee4d43e91c78e4c918e13b5bb2ce7673c9e",
+        "current": "e1cfc1f014c19a78958c4b55a7b66ee4d43e91c78e4c918e13b5bb2ce7673c9e",
+        "changed": false
+      },
+      "mapping_repair.txt": {
+        "baseline": "a86620b89b49b21c1c9d6eda91ca44a17d2196738ae4de8723ee8d18b991d3f3",
+        "current": "a86620b89b49b21c1c9d6eda91ca44a17d2196738ae4de8723ee8d18b991d3f3",
+        "changed": false
+      },
+      "mouth_common.txt": {
+        "baseline": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19",
+        "current": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19",
+        "changed": false
+      },
+      "clinical_decision_output.txt": {
+        "baseline": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25",
+        "current": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25",
+        "changed": false
+      },
+      "mouth_symptom_notice.txt": {
+        "baseline": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493",
+        "current": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493",
+        "changed": false
+      },
+      "mapping_forced.txt": {
+        "baseline": "bc16a755bf505d77f90a0e99295bc2c8655b58ccf85bb4b76c6d977b818850d6",
+        "current": "bc16a755bf505d77f90a0e99295bc2c8655b58ccf85bb4b76c6d977b818850d6",
+        "changed": false
+      },
+      "data.txt": {
+        "baseline": "fe62e08b48a1c9bffcce289b3e672a963efb7b12b03d2ec8057721f0d81cd08f",
+        "current": "fe62e08b48a1c9bffcce289b3e672a963efb7b12b03d2ec8057721f0d81cd08f",
+        "changed": false
+      },
+      "mouth_response_repair.txt": {
+        "baseline": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31",
+        "current": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31",
+        "changed": false
+      },
+      "mouth_text_repair.txt": {
+        "baseline": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5",
+        "current": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5",
+        "changed": false
+      }
+    },
+    "saved_runs": {
+      "Tmp/test-evaluator/C03-20261019T045722Z-fa33440098": {
+        "files": 20,
+        "unchanged": true,
+        "changed": []
+      },
+      "Tmp/test-evaluator/C03-20261019T015834Z-18f944a5e9": {
+        "files": 20,
+        "unchanged": true,
+        "changed": []
+      }
+    },
+    "previous_d48_archive": {
+      "path": "Tmp/d48-2026-10-19/ontoward-submission-d48.zip",
+      "sha256": "af7541ad2f245b6b395dfc064c616da33a7131ea99b134127a737230652fd3d6"
+    },
+    "synthetic_archive": {
+      "path": "Tmp/d49-2026-10-19/ontoward-submission-d49-synthetic.zip",
+      "sha256": "ba8b429811b12524b4ea7c4a55bd5d9084c6aec081961d7230850b3f7e419214",
+      "file_count": 93,
+      "bytes": 105047,
+      "source_matched_runtime": {
+        ".env": "9c2e46b5b22e0f0c47f026cb0cc5a047b10b8cabc7e44e625640513cf6cf6595",
+        "config/prompts/clinical_action.txt": "98cbc6547ecb7d84e91589557ab5e44d8e489dfaaa8a9048d55029445f6dddc8",
+        "config/prompts/clinical_action_output.txt": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769",
+        "config/prompts/clinical_common.txt": "dfbc55eac3907bbe5240cfcb0652ac86f70416b1c20298c425be1b450474bbec",
+        "config/prompts/clinical_decision_output.txt": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25",
+        "config/prompts/clinical_rank_output.txt": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0",
+        "config/prompts/clinical_ranking.txt": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29",
+        "config/prompts/clinical_repair.txt": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2",
+        "config/prompts/data.txt": "fe62e08b48a1c9bffcce289b3e672a963efb7b12b03d2ec8057721f0d81cd08f",
+        "config/prompts/empathy.txt": "8f5a4ae4162074240fc2c7bd0d12326b690758b365abc923c43763197d3aad7f",
+        "config/prompts/input_chief_repair.txt": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d",
+        "config/prompts/input_common.txt": "42b388062445d43b636ab654e20b94aa52564cc3c52de1d4ae1cfbcd22b1f694",
+        "config/prompts/input_empathy.txt": "354cf23ff9816da9057bb1a770eeaf4428a342a543888542a4b1fafc56100d2a",
+        "config/prompts/input_exam.txt": "adc533c2df3191469ce1e179933d9100467b2f1ecaa833e696ce0042650e14d5",
+        "config/prompts/input_fields.txt": "b4a93203e568a0da98132ec40e54f4b0038618d57b3b874b0d9b189d4855ca06",
+        "config/prompts/input_initial.txt": "e1cfc1f014c19a78958c4b55a7b66ee4d43e91c78e4c918e13b5bb2ce7673c9e",
+        "config/prompts/input_repair.txt": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3",
+        "config/prompts/input_reply.txt": "ab840e46cb9865c0a9fc4332f0b07d8dd5c21741ba5d05f49beb426dfe87472a",
+        "config/prompts/input_rows_repair.txt": "48bb1fba703bc9870ce5ffc564692e1500d918595489f6a2afce5063cac6e8f6",
+        "config/prompts/mapping_common.txt": "dcb0f71ff84df9667cc0c0a6ba4719261c5f29c0bc432094c1af1b97ef879de1",
+        "config/prompts/mapping_forced.txt": "bc16a755bf505d77f90a0e99295bc2c8655b58ccf85bb4b76c6d977b818850d6",
+        "config/prompts/mapping_repair.txt": "a86620b89b49b21c1c9d6eda91ca44a17d2196738ae4de8723ee8d18b991d3f3",
+        "config/prompts/mapping_select.txt": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36",
+        "config/prompts/mouth_common.txt": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19",
+        "config/prompts/mouth_disease_notice.txt": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4",
+        "config/prompts/mouth_output.txt": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739",
+        "config/prompts/mouth_plan.txt": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538",
+        "config/prompts/mouth_response_repair.txt": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31",
+        "config/prompts/mouth_symptom_notice.txt": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493",
+        "config/prompts/mouth_text_repair.txt": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5",
+        "config/prompts/plan_common.txt": "17cb3dc587b95c0e39f0d853ff2c8aa3179c3410fe19f7346dc47a8e0724de6b",
+        "config/prompts/plan_complete.txt": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4",
+        "config/prompts/plan_output.txt": "8d79cf66e3d06859501ca988e7c073dafa12bfa62fdd1034c680d8d1d9c9db6c",
+        "config/prompts/plan_repair.txt": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3",
+        "config/prompts/session_chief_complaint.txt": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54",
+        "config/prompts/session_context_factor.txt": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9",
+        "config/prompts/session_differential_diagnosis.txt": "25286d10199c3a2aaced6785dcbb8e918b2cc36be873177d8ac0d9b01f1d86e5",
+        "config/prompts/session_initiation.txt": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d",
+        "config/prompts.json": "95539475167f7a5618b9a881485b33bbbc5796901f237b7ae4f28a105cf5061c",
+        "config/texts.ko.json": "4c08b549a577580c7bc9f1fa8c86660c4f7c8ce4eec46c5cdea97a59a2992bba",
+        "knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "knowledge/conditions.py": "8bbb743e5bd1908ac56409d87066ea555a88955fb522ec832ccf6672f8a3af49",
+        "knowledge/graph.py": "3494c790d4a2bdf6219730bc39dad5acec9e4bb2efa9c0c6f1986d556ffa59c2",
+        "knowledge/guidelines.py": "f15aa5cd3df15e3c1322b54593a4c66e1efa6123954cc8c582b3676693c90853",
+        "knowledge/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+        "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+        "requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+        "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+        "settings.py": "87ef36e0a9aa1c0befa12a9fa76248a91a85081c07e98ed1cae27172e343a957",
+        "workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "workflow/consultation.py": "d53aa3596cc1a7830affd0a5c9495ab37c5166fc060e0750ef2ce33fb00deb3b",
+        "workflow/doctor_brain.py": "3610bd198f0c0dcf607434774e5c0f2cb7ab7b5a8727f9b3e90a7c7eb09983e8",
+        "workflow/doctor_ear.py": "9487ecff575a6b7da0a1f8ec50e312d09ec220f988f515926e1b248f219d717b",
+        "workflow/doctor_mouth.py": "296369acb6e8402b703dc3a8cde5c87e9dc36bdae62d5d0bc2d6c4d49a0d54d8",
+        "workflow/education.py": "033b07754f0b3cac7b5eadf2c9bcccd97378f3cea97f8d1ca5e9ac5b2d78339a",
+        "workflow/graph.py": "882aac3b1d6938077be2d687e4b079aba116509b4d32e50eee9eb06bf059db6c",
+        "workflow/input_types.py": "ad3d9daf7f8f8c8666c901a1d286c37b18febeec01e0dc4a31e88d25e7564466",
+        "workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "workflow/io/nova_session.py": "fdc87d856e74f78215e6b67627f9ab56ff8e5618fa9214c586964b57a69b9281",
+        "workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+        "workflow/model_context.py": "f3ba8a3244aef683c2d43128608a6496c44781bf3afcf9ff82480a19635184fa",
+        "workflow/output_types.py": "ba25dbe85ae1a0e590a3ebef8ec24447f952f6652fd08ec0011eee2d523f0c5e",
+        "workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "workflow/rules/action.py": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb",
+        "workflow/rules/assessment.py": "3eba2851757c011118406d636e3fb702e798213405860cb83f8dc0a05f656b88",
+        "workflow/rules/budget.py": "24aa337740014504b845cd3e7cb7f76a6ab3c04e23f2a1b07259cccce804ea17",
+        "workflow/rules/collection.py": "ff2d5d755e9c2393a4a7bf2df7624d5e68dcde5188e319f668c9e3529f045048",
+        "workflow/rules/decision.py": "c6e9e0d5d62dfe50ebbf434044428b00ca09440f6a8d2fe7008aa78f0f64e257",
+        "workflow/rules/input.py": "93788b76e9836c004d88a80002b88141550b36176ab7aa3839aa0a095c564165",
+        "workflow/rules/limits.py": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a",
+        "workflow/rules/normalization.py": "582b51da7e6c78f48c3c02ad7e8f329936dca5a65d94f82dec943b50ac3d07fc",
+        "workflow/rules/questions.py": "8abe2ec3d8960ac482ae47f3810e70e421b227d12b3cac5b595ccf3c40a042dc",
+        "workflow/rules/submission.py": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267",
+        "workflow/runtime.py": "362a89c0247f5081e32587f8f99bd6fdb5bfe27f039234a34228be887a6e5d75",
+        "workflow/sessions/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "workflow/sessions/chief_complaint.py": "a57b1d04e59936db9886b3bfe43dbcbfc83547c448e2c386ba1a9ae9be2fd1ec",
+        "workflow/sessions/context_factor.py": "f33bfaea80046373c9012322bf8b8245a9baa3e83d4668760a61191baf7054cc",
+        "workflow/sessions/differential_diagnosis.py": "b56d41c1c2cb102e5b606f71ce375be1479468b1f217fd37d09525a01edd70c5",
+        "workflow/sessions/education.py": "aaafaed4de1ee886624716f93109ce0f68ebf1191f1632d657089c25b1fb6264",
+        "workflow/sessions/initiation.py": "30b5dbf2b52aaeba50b8def1dec39c65657277df5ed8f7ed7520d50b78b0c36f",
+        "workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "workflow/state/evidence.py": "9eea0578ee4f9bfdcf0568a52452dc42b80e0fb4efb4b851e8be40bb66465eef",
+        "workflow/state/interactions.py": "0ed1c3ecc9bf8fb793b417310ae71feda2ccb187bdd6fac8144a09e76f3ec44d",
+        "workflow/state/models.py": "7f87681492ff3903400c5c1f3408964f71c08d41932cab94760fb248005efda4",
+        "workflow/state/questions.py": "01ac8ccb16dfa068daa33777740aaba5f998a604d2ad2b628fdc79a87e321830",
+        "workflow/state/usage.py": "177d81e25b8488434c19d9f065cd68a258e4c603177bc6af885bc78b81fdd1cd",
+        "workflow/submission_writer.py": "8b7e4953ea3e8c2aac6548b8450f99de5080c9fa8ce4b4003fec7280886e6af0",
+        "workflow/text_config.py": "762072cfe0e59874f42b10c9a3e31aa7e33e009dd148241e52012aec3568601f"
+      }
+    },
+    "active_manifest": "not_installed",
+    "real_work_databases": [],
+    "new_actual_generation": "not_run"
+  },
+  "source_files": {
+    ".dockerignore": "725587274ec66f1b8f6fe1546476e7dc20735608ba3c5046ffb4a7d08b27022d",
+    "Dev/packaging/package_submission.py": "2616fd26881f777ac16e996c3b19c38536cedbe294a2911427f559f2c3f045a0",
+    "Dockerfile": "c7efa8c4a290b37aa203ce9ae019c4804ef7fd04238f7985eeaaf3e7959b2bd8",
+    "Extraction/Dockerfile": "45214c634d6f28b8d8e0ae872edf3c8e2c00858bbf1a50a63979182fb29dbba7",
+    "Extraction/Dockerfile.dockerignore": "046abf19ed47ba22fe4fe1db22769c417097e7f5b451a55cd15ff45fe7fc56a8",
+    "Extraction/compose.yaml": "be3df63f6615218ffef3a9b75b7a9f37e3a66318f24453a281c7def51d6b4040",
+    "Extraction/config.json": "7ad2974511e475f65c0dc0bf3a2684b4a617a1021e742277ff638f0777fdf980",
+    "Extraction/ontoward_extraction/__init__.py": "b0fa6a1d5eb69c16800185180e7ac1c42cd4df30ef34af3162cbfc8f9cadc597",
+    "Extraction/ontoward_extraction/__main__.py": "2c761aa967c74e131fbc9b4d2ae45e7bfe3623f32d3d35eabdab40e123135946",
+    "Extraction/ontoward_extraction/build.py": "024373a60f5738b8ae78b55af41711c0e4921cca9102082341273b0c79cfbe55",
+    "Extraction/ontoward_extraction/compile.py": "2159ad46cfcaa235facbf5b1714f17b8b45f8580161351ba32c26cd8290cedbf",
+    "Extraction/ontoward_extraction/guidelines.py": "bcf7b88be2d84f5a0c6394c449b613c87480928091e26b30105e98c42f11288c",
+    "Extraction/ontoward_extraction/inputs.py": "0fb5d34231dab7bd1e74df0dccbbe9e224ffc841ab2d1338fc916006b4f27dff",
+    "Extraction/ontoward_extraction/install.py": "e59e68ea4521724b94feb68ba72b116506262e834e183736751d8db53dbea25d",
+    "Extraction/ontoward_extraction/jobs.py": "c8b689cb83976e4265830123abf5b2341dba7d081d34ba6c8b4bc5f7d91b1df9",
+    "Extraction/ontoward_extraction/llm.py": "bba6cd4c790a648c8d3522221f7c7725f4dd7227119bd94fd5428b2912171771",
+    "Extraction/ontoward_extraction/models.py": "f4410f71d2ca4b3d074b32059060d21af073c61c2676e2c732c2097b4335afc6",
+    "Extraction/ontoward_extraction/normalize.py": "6e20443fd48d997b065ceab2d35adacc4e01030cd2ceead4ae7dab0671c3b359",
+    "Extraction/ontoward_extraction/verify.py": "b50174706e41e439ed40819b077b09f43bacc1d25e51082764acca742a9a8b6c",
+    "Extraction/prompts/draft.txt": "c7e5fd8cd9d89c20c1a24772bae8d9674c8a36eefd7160284035600f46e1a7e6",
+    "Extraction/prompts/final.txt": "70e7c3422285b3e4537c18e5c1502031532abfae8d398ab45366828ac6ed9d56",
+    "Extraction/prompts/normalize.txt": "493da4eff15c4285ec1909bc38dc2117b49c78343831ef10c84f31d9804cb814",
+    "Extraction/prompts/questions.txt": "b60d3ab0b9a20d62c87338c8e2861ba64340b5ed9c88d91b96c1f5c402c1e7e6",
+    "Extraction/requirements.txt": "81796ac0f9dfb486bc57301821e97bebb2a1028921da12e0b5df2819dc8127a4",
+    "compose.yaml": "df37c67301982760978a301595b8bd9134a6d9f0b4114f2a023ecc5eee5e6a99",
+    "data/ontology/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "submission/.env": "9c2e46b5b22e0f0c47f026cb0cc5a047b10b8cabc7e44e625640513cf6cf6595",
+    "submission/config/prompts/clinical_action.txt": "98cbc6547ecb7d84e91589557ab5e44d8e489dfaaa8a9048d55029445f6dddc8",
+    "submission/config/prompts/clinical_action_output.txt": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769",
+    "submission/config/prompts/clinical_common.txt": "dfbc55eac3907bbe5240cfcb0652ac86f70416b1c20298c425be1b450474bbec",
+    "submission/config/prompts/clinical_decision_output.txt": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25",
+    "submission/config/prompts/clinical_rank_output.txt": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0",
+    "submission/config/prompts/clinical_ranking.txt": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29",
+    "submission/config/prompts/clinical_repair.txt": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2",
+    "submission/config/prompts/data.txt": "fe62e08b48a1c9bffcce289b3e672a963efb7b12b03d2ec8057721f0d81cd08f",
+    "submission/config/prompts/empathy.txt": "8f5a4ae4162074240fc2c7bd0d12326b690758b365abc923c43763197d3aad7f",
+    "submission/config/prompts/input_chief_repair.txt": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d",
+    "submission/config/prompts/input_common.txt": "42b388062445d43b636ab654e20b94aa52564cc3c52de1d4ae1cfbcd22b1f694",
+    "submission/config/prompts/input_empathy.txt": "354cf23ff9816da9057bb1a770eeaf4428a342a543888542a4b1fafc56100d2a",
+    "submission/config/prompts/input_exam.txt": "adc533c2df3191469ce1e179933d9100467b2f1ecaa833e696ce0042650e14d5",
+    "submission/config/prompts/input_fields.txt": "b4a93203e568a0da98132ec40e54f4b0038618d57b3b874b0d9b189d4855ca06",
+    "submission/config/prompts/input_initial.txt": "e1cfc1f014c19a78958c4b55a7b66ee4d43e91c78e4c918e13b5bb2ce7673c9e",
+    "submission/config/prompts/input_repair.txt": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3",
+    "submission/config/prompts/input_reply.txt": "ab840e46cb9865c0a9fc4332f0b07d8dd5c21741ba5d05f49beb426dfe87472a",
+    "submission/config/prompts/input_rows_repair.txt": "48bb1fba703bc9870ce5ffc564692e1500d918595489f6a2afce5063cac6e8f6",
+    "submission/config/prompts/mapping_common.txt": "dcb0f71ff84df9667cc0c0a6ba4719261c5f29c0bc432094c1af1b97ef879de1",
+    "submission/config/prompts/mapping_forced.txt": "bc16a755bf505d77f90a0e99295bc2c8655b58ccf85bb4b76c6d977b818850d6",
+    "submission/config/prompts/mapping_repair.txt": "a86620b89b49b21c1c9d6eda91ca44a17d2196738ae4de8723ee8d18b991d3f3",
+    "submission/config/prompts/mapping_select.txt": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36",
+    "submission/config/prompts/mouth_common.txt": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19",
+    "submission/config/prompts/mouth_disease_notice.txt": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4",
+    "submission/config/prompts/mouth_output.txt": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739",
+    "submission/config/prompts/mouth_plan.txt": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538",
+    "submission/config/prompts/mouth_response_repair.txt": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31",
+    "submission/config/prompts/mouth_symptom_notice.txt": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493",
+    "submission/config/prompts/mouth_text_repair.txt": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5",
+    "submission/config/prompts/plan_common.txt": "17cb3dc587b95c0e39f0d853ff2c8aa3179c3410fe19f7346dc47a8e0724de6b",
+    "submission/config/prompts/plan_complete.txt": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4",
+    "submission/config/prompts/plan_output.txt": "8d79cf66e3d06859501ca988e7c073dafa12bfa62fdd1034c680d8d1d9c9db6c",
+    "submission/config/prompts/plan_repair.txt": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3",
+    "submission/config/prompts/session_chief_complaint.txt": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54",
+    "submission/config/prompts/session_context_factor.txt": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9",
+    "submission/config/prompts/session_differential_diagnosis.txt": "25286d10199c3a2aaced6785dcbb8e918b2cc36be873177d8ac0d9b01f1d86e5",
+    "submission/config/prompts/session_initiation.txt": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d",
+    "submission/config/prompts.json": "95539475167f7a5618b9a881485b33bbbc5796901f237b7ae4f28a105cf5061c",
+    "submission/config/texts.ko.json": "4c08b549a577580c7bc9f1fa8c86660c4f7c8ce4eec46c5cdea97a59a2992bba",
+    "submission/knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "submission/knowledge/conditions.py": "8bbb743e5bd1908ac56409d87066ea555a88955fb522ec832ccf6672f8a3af49",
+    "submission/knowledge/graph.py": "3494c790d4a2bdf6219730bc39dad5acec9e4bb2efa9c0c6f1986d556ffa59c2",
+    "submission/knowledge/guidelines.py": "f15aa5cd3df15e3c1322b54593a4c66e1efa6123954cc8c582b3676693c90853",
+    "submission/knowledge/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "submission/nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    "submission/requirements.txt": "b17a2905b8cbcff0f55f726ac5273298ab9c8dbe559e1999ecdeff05e60eb011",
+    "submission/run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+    "submission/settings.py": "87ef36e0a9aa1c0befa12a9fa76248a91a85081c07e98ed1cae27172e343a957",
+    "submission/workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/consultation.py": "d53aa3596cc1a7830affd0a5c9495ab37c5166fc060e0750ef2ce33fb00deb3b",
+    "submission/workflow/doctor_brain.py": "3610bd198f0c0dcf607434774e5c0f2cb7ab7b5a8727f9b3e90a7c7eb09983e8",
+    "submission/workflow/doctor_ear.py": "9487ecff575a6b7da0a1f8ec50e312d09ec220f988f515926e1b248f219d717b",
+    "submission/workflow/doctor_mouth.py": "296369acb6e8402b703dc3a8cde5c87e9dc36bdae62d5d0bc2d6c4d49a0d54d8",
+    "submission/workflow/education.py": "033b07754f0b3cac7b5eadf2c9bcccd97378f3cea97f8d1ca5e9ac5b2d78339a",
+    "submission/workflow/graph.py": "882aac3b1d6938077be2d687e4b079aba116509b4d32e50eee9eb06bf059db6c",
+    "submission/workflow/input_types.py": "ad3d9daf7f8f8c8666c901a1d286c37b18febeec01e0dc4a31e88d25e7564466",
+    "submission/workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/io/nova_session.py": "fdc87d856e74f78215e6b67627f9ab56ff8e5618fa9214c586964b57a69b9281",
+    "submission/workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+    "submission/workflow/model_context.py": "f3ba8a3244aef683c2d43128608a6496c44781bf3afcf9ff82480a19635184fa",
+    "submission/workflow/output_types.py": "ba25dbe85ae1a0e590a3ebef8ec24447f952f6652fd08ec0011eee2d523f0c5e",
+    "submission/workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/rules/action.py": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb",
+    "submission/workflow/rules/assessment.py": "3eba2851757c011118406d636e3fb702e798213405860cb83f8dc0a05f656b88",
+    "submission/workflow/rules/budget.py": "24aa337740014504b845cd3e7cb7f76a6ab3c04e23f2a1b07259cccce804ea17",
+    "submission/workflow/rules/collection.py": "ff2d5d755e9c2393a4a7bf2df7624d5e68dcde5188e319f668c9e3529f045048",
+    "submission/workflow/rules/decision.py": "c6e9e0d5d62dfe50ebbf434044428b00ca09440f6a8d2fe7008aa78f0f64e257",
+    "submission/workflow/rules/input.py": "93788b76e9836c004d88a80002b88141550b36176ab7aa3839aa0a095c564165",
+    "submission/workflow/rules/limits.py": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a",
+    "submission/workflow/rules/normalization.py": "582b51da7e6c78f48c3c02ad7e8f329936dca5a65d94f82dec943b50ac3d07fc",
+    "submission/workflow/rules/questions.py": "8abe2ec3d8960ac482ae47f3810e70e421b227d12b3cac5b595ccf3c40a042dc",
+    "submission/workflow/rules/submission.py": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267",
+    "submission/workflow/runtime.py": "362a89c0247f5081e32587f8f99bd6fdb5bfe27f039234a34228be887a6e5d75",
+    "submission/workflow/sessions/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/sessions/chief_complaint.py": "a57b1d04e59936db9886b3bfe43dbcbfc83547c448e2c386ba1a9ae9be2fd1ec",
+    "submission/workflow/sessions/context_factor.py": "f33bfaea80046373c9012322bf8b8245a9baa3e83d4668760a61191baf7054cc",
+    "submission/workflow/sessions/differential_diagnosis.py": "b56d41c1c2cb102e5b606f71ce375be1479468b1f217fd37d09525a01edd70c5",
+    "submission/workflow/sessions/education.py": "aaafaed4de1ee886624716f93109ce0f68ebf1191f1632d657089c25b1fb6264",
+    "submission/workflow/sessions/initiation.py": "30b5dbf2b52aaeba50b8def1dec39c65657277df5ed8f7ed7520d50b78b0c36f",
+    "submission/workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/state/evidence.py": "9eea0578ee4f9bfdcf0568a52452dc42b80e0fb4efb4b851e8be40bb66465eef",
+    "submission/workflow/state/interactions.py": "0ed1c3ecc9bf8fb793b417310ae71feda2ccb187bdd6fac8144a09e76f3ec44d",
+    "submission/workflow/state/models.py": "7f87681492ff3903400c5c1f3408964f71c08d41932cab94760fb248005efda4",
+    "submission/workflow/state/questions.py": "01ac8ccb16dfa068daa33777740aaba5f998a604d2ad2b628fdc79a87e321830",
+    "submission/workflow/state/usage.py": "177d81e25b8488434c19d9f065cd68a258e4c603177bc6af885bc78b81fdd1cd",
+    "submission/workflow/submission_writer.py": "8b7e4953ea3e8c2aac6548b8450f99de5080c9fa8ce4b4003fec7280886e6af0",
+    "submission/workflow/text_config.py": "762072cfe0e59874f42b10c9a3e31aa7e33e009dd148241e52012aec3568601f"
+  },
+  "evidence": [
+    {
+      "path": "Tmp/d49-2026-10-19/workflow.log",
+      "sha256": "478232c37693e56d6cf959d314b5afe5c902fe009cb9f6508b46f3615b2d5528",
+      "bytes": 956
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/extraction.log",
+      "sha256": "a5f7cd183e977e1b202f3bdf0cfea5f0c4eadfec615f34df2ee9d121bf7691de",
+      "bytes": 4320
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/image-tests.log",
+      "sha256": "2db51afa62d635decfcc230b7363716553ada65ffed8cf21010409ed5beb3fcc",
+      "bytes": 3936
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/image-pipeline.log",
+      "sha256": "81395e1f55d0eef15732c6ad577b33f0e8d10b8c644d0129165efff95dd29326",
+      "bytes": 738
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/image-build-final.log",
+      "sha256": "fef31616853c4b7fc81c3b6a873c310d9bb6ef9b92e0f79c9658429b56723d2e",
+      "bytes": 2708
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/package-build.log",
+      "sha256": "c94e6c228b61d6dff1e60b8ace3b5a0164613b700ca6ef7f3bd61ceba5fd471e",
+      "bytes": 1057
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/observer/verification.json",
+      "sha256": "15bd7b21941d03f06b88a2626984248c90be0348c766f749b9e96cf1268a60f7",
+      "bytes": 1481
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/viewer/verification.json",
+      "sha256": "f106ffb2e7b438ec435929cd093e3972245394585991b94b45e804bcc33a5890",
+      "bytes": 311
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/preservation.json",
+      "sha256": "114c70edd147294cc224f1e19f58b2642a9c4c023d7abde8c69e9883706e99e9",
+      "bytes": 20406
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/preservation.log",
+      "sha256": "831902bf2c053ea2a823f028c8df3639d6a7ca89d18cc35b999afdc4ea7cb7d3",
+      "bytes": 598
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/raw-input-inventory.json",
+      "sha256": "4111746beb971f529b9906cc92a6c8977eb6fedb51b992305b048340141af3ea",
+      "bytes": 34118
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/isolated-accepted/admitted/verification.json",
+      "sha256": "b560e22fc1433f923af2c056a6169fde42b75f08e633473a98f981943ecc1591",
+      "bytes": 587
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/isolated-accepted/sdk-http.json",
+      "sha256": "4049f926d50298f310c898b47cf06fd57ad5f43ba74092670886f1816bd1f15f",
+      "bytes": 308
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/prepare-withdrawn.log",
+      "sha256": "e3b917a72aab45852925b500eb3880b7fb644d923ea434aa76f3cd28b5eb1dc9",
+      "bytes": 819
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/production-package.log",
+      "sha256": "0583eb7205c1f01db028ffd1a6fe5101e163a3124c86fb4b0653e7457692e83c",
+      "bytes": 670
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/fixture-package.log",
+      "sha256": "8535382271d093ef4ce8caf575cc65c8eef29f59b63c4a1727e20ac9620993bf",
+      "bytes": 4012
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/keyless-status.log",
+      "sha256": "bfc33549f4ff52eda75583b860d603bba17b3e62643601999765ee1dca9a9afc",
+      "bytes": 396
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/keyless-pause.log",
+      "sha256": "9c95fa69bec35b080351688a4bc4966557dc805783ab6d330a0514a8d7352fd4",
+      "bytes": 761
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/keyless-verify.log",
+      "sha256": "c48c0d2d71facfa0cef06b9c312aee567ea997f686129a63832c0433e8dfaf16",
+      "bytes": 411
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/codex-cli-help.log",
+      "sha256": "c8a63e0bd91f3fefe73b76056c0c00c638ab54ed5503155934e4f901adb287d5",
+      "bytes": 4434
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/image-runtime.json",
+      "sha256": "6caa910ee83078af4a59163a9fb5742685dec0f60fcce6883cf4c92ca8abbc5a",
+      "bytes": 165
+    },
+    {
+      "path": "Tmp/d49-2026-10-19/handoff.json",
+      "sha256": "9be2a7ce5a93f53876d04442ef0cc15244d02465ef44c2e5d584f8378cd535ad",
+      "bytes": 5425
+    }
+  ],
+  "not_run": [
+    "real_provider_login",
+    "actual_model_access",
+    "paid_model_generation",
+    "full_real_source_index_build",
+    "real_bundle_installation",
+    "production_submission_zip",
+    "actual_model_semantic_quality",
+    "clinical_validity",
+    "browser_visual_qa",
+    "official_nova_evaluation",
+    "publication",
+    "deployment"
+  ],
+  "next_bounded_action": "Select and authenticate one provider, then explicitly start a real new DB build and verified installation"
+}

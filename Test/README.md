@@ -1,5 +1,7 @@
 # 웹에서 실행하는 공개 샘플 테스트
 
+**D49 현재 상태:** 실제 새 지식 manifest가 없어 현재 submission으로 새 상담을 시작하면 knowledge_bundle_not_installed로 실패한다. 과거 결과·리포트는 계속 읽을 수 있다. 실제 생성/설치는 [Extraction 안내](../Extraction/README.md)를 따른다. 이번 검증은 Tmp/의 합성 새 번들로만 수행했다.
+
 `Test/`는 기존 `submission/run.py`와 SDK를 그대로 실행하면서, 공모전의 세션 API와 예선 컨테이너 제약을 로컬에서 재현한다. 공개 `C01`·`C03`·`C10`의 `case.json`을 읽으며 공식 서버의 비공개 구현이나 채점 기준을 재현하지 않는다. 모든 결과의 채점 상태는 `not_scored`다.
 
 에이전트 컨테이너에는 `submission/`과 자신의 출력 폴더만 연결한다. CPU 2코어·RAM 8GB·읽기 전용 루트와 제출 코드·512MB `/tmp`를 사용한다. 내부 네트워크에서 로컬 평가 API에 접근하며, 환자 대본·진찰표·개발 키와 시뮬레이터 출력은 읽을 수 없다. 테스트 하네스 코드는 컨테이너 이미지 안에 있다. 실행 입력은 ZIP 압축 해제본 대신 현재 `submission/` 디렉터리이므로 ZIP 구성 자체의 검증은 기존 package 서비스가 맡는다.
@@ -34,7 +36,7 @@ sh Test/knowledge.sh stop
 sh Test/knowledge.sh verify
 ```
 
-`verify`는 네트워크 없는 프로젝트 dev 컨테이너에서 실제 그래프와 두 SQLite를 확인한다. 결과는 `Tmp/knowledge-viewer/verification.json`에 저장하며 브라우저 확인 기록은 별도로 둔다. 뷰어를 이용하는 데 아래 평가기 빌드는 필요하지 않다.
+`verify`는 네트워크 없는 프로젝트 dev 컨테이너에서 manifest 부재 상태, 임시 새 manifest/hash/effect/scope 그래프, HTTP 경계와 역사적 SQLite 읽기 전용 동작을 확인한다. 결과는 `Tmp/knowledge-viewer/verification.json`에 저장하며 브라우저 확인 기록은 별도로 둔다. 뷰어를 이용하는 데 아래 평가기 빌드는 필요하지 않다.
 
 ## 평가기 빌드
 
@@ -131,7 +133,7 @@ Note 뷰어의 동작 검사는 `Test/test_viewer.js`가 실제 뷰어 코드를
 ```sh
 docker run --rm --pull never --network none --read-only --entrypoint node \
   --mount type=bind,src="$(pwd)/Test",dst=/test,readonly \
-  ontology-extraction:local /test/test_viewer.js
+  ontoward-extraction:local /test/test_viewer.js
 ```
 
 같은 실행에서 `/test/test_viewer.js` 대신 `/test/test_app.js`를 지정하면 실제 웹 제어 코드의 설정 접기·모바일 focus 경계·리포트 및 기록 선택 유지·중복 실행 차단을 검사한다. 이 검사는 텍스트 DOM 대역을 사용하며 실제 브라우저의 화면 배치·스크린샷·접근성 검사를 대체하지 않는다.
@@ -201,4 +203,24 @@ python -B Test/compare_d47.py --run Tmp/test-evaluator/C03-20261019T015834Z-18f9
 
 원본 C03의 네 수용 상태를 통합 사실로 변환해 모든 사실·정규화된 조건·age·sex·보고 성장 수치와 기존 후보 전달, revision 변경, 동일 요청 공급자 오류 재현을 확인한다. 프롬프트 바이트는 측정하거나 비교하지 않는다. 원본 결과와 실패는 보존하며 실제 모델 정확도·속도·새 NOVA·공식 평가는 not_run이다. 최신 경로·해시는 [D47 증빙](../data/provenance/algorithm-d47-2026-10-19.json)을 따른다.
 
-Test/compare_d46.py와 Dev의 이전 비교 도구는 명시적으로 선택한 과거 소스 스냅샷의 재현에만 쓴다. 현재 코드의 수용 경로는 compare_d47.py와 유지 회귀다. 원본 SDK HTTP의 C10 경로는 합성 복통 fixture의 하네스 식별자이며 실제 공개 C10 품질 평가와 구별한다. 공개 시작 정보·숨은 대본·정답을 에이전트 입력에 섞지 않는다.
+Test/compare_d46.py와 Dev의 이전 비교 도구는 명시적으로 선택한 과거 소스 스냅샷의 재현에만 쓴다. D49에서는 compare_d47.py도 과거 스냅샷 재현용이며 현재 수용은 유지 회귀와 새 합성 번들/독립 ZIP 검증이다. 원본 SDK HTTP의 C10 경로는 합성 복통 fixture의 하네스 식별자이며 실제 공개 C10 품질 평가와 구별한다. 공개 시작 정보·숨은 대본·정답을 에이전트 입력에 섞지 않는다.
+
+## D48 프롬프트 모듈 관측
+
+현재 실행은 D47의 사실·세션 계약에 D48의 Python 프롬프트 선택을 적용한다. [설정 안내](../submission/config/README.md)와 [작업별 조합](../submission/config/prompts.json)에서 실제 모듈을 확인한다. 새 trace의 settings.runtime에는 설정·prompt manifest·참조 모듈의 해시와 prompt_routes를 기록한다. SDK 요청과 model-calls에는 조립된 실제 messages가 남는다. 기존 저장 실행과 report는 수정하지 않는다.
+
+C03-20261019T045722Z-fa33440098은 첫 input_context의 upstream HTTP 530이 원본 SDK에서 INVALID_API_RESPONSE가 된 실패다. 로컬 동일 요청 재전송은 캐시된 오류를 반환했고 upstream 요청은 한 번이다. 당시 응답 본문은 보존되지 않았다. 사용자 제공 Cloudflare Tunnel 1033은 주최측 서비스 장애라는 추정을 뒷받침하며, 이 프롬프트 작업은 SDK·Brain·bridge·재시도·캐시 동작을 변경하지 않는다. [D48 증빙](../data/provenance/algorithm-d48-2026-10-19.json)에서 오프라인 재현과 새 서비스 실행 not_run을 구별한다.
+
+## D49 무점수 번들과 독립 ZIP
+
+활성 manifest가 없으면 지식 뷰어는 knowledge_bundle_not_installed와 빈 실행 그래프를 표시한다. 이전 Source custody/Competition mappings 테이블은 별도 역사적 준비 자료다. 새 manifest를 읽으면 다섯 asset hash와 effect·targetScope·Pattern/applicability를 표시하며 관계 출처/점수 side path를 요구하지 않는다.
+
+Tmp/에 새 합성 번들을 만든 뒤 package 서비스의 /submission·/output을 그 임시 디렉터리에 연결해 ZIP을 만든다. 압축 해제본은 다음처럼 독립 프로세스로 검사한다. D49_SUBMISSION은 실제 압축 해제본의 절대 경로다.
+
+```sh
+D49_SUBMISSION=/absolute/path/to/Tmp/synthetic/submission \
+D49_OUTPUT=/absolute/path/to/Tmp/synthetic/evidence \
+docker compose -f Test/compose.d49.yaml run --rm -T d49-archive
+```
+
+하네스는 read-only root/submission·network none·2CPU·8GB에서 원본 run.py와 SDK를 실행한다. 외부 fixture responder가 loopback HTTP로 ready·chat·SAY/EXAM·DIAGNOSE를 제공하고 fifteen-field SOAP와 completed를 확인한다. 개발 키·부모 data·원자료·환자 대본은 agent에 전달하지 않는다. 프로토콜 검증이며 실제 모델·임상·공식 품질은 not_run이다. D49의 source·이미지·합성 ZIP과 세 운영 상태는 [증빙](../data/provenance/algorithm-d49-2026-10-19.json)에 연결한다.

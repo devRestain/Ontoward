@@ -1,1 +1,0 @@
-This is the end of ChiefComplaint. Update the ranking using the chief details and Open Inquiry. ContextFactor will use this accepted disease set to prepare related history questions. Do not select a question or assume uncollected ROS findings.

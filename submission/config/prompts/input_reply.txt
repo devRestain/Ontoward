@@ -1,0 +1,1 @@
+Interpret the current patient or caregiver reply against the actual spoken_question and supplied question scope. Resolve short answers using that question. Preserve unknown, denial and inapplicability as distinct outcomes. Keep patient-reported findings, history and examination refusal subjective. Infer no acquired examination result from speech. Omit input_segment.

@@ -52,11 +52,10 @@ class EvidenceIndex:
         for item in records:
             if item.kind == 'context':
                 contexts.append(item)
-            elif item.subject == 'patient' and item.time_context != 'past':
-                original = case.facts[item.id]
-                objective = original.acquisition == 'EXAM' or original.source_ref == 'initial:vital_signs'
-                key = (item.subject, item.subject_member, item.observation_id or item.id,
-                    item.episode_id or item.id, item.time_context, objective)
-                group = groups.setdefault(key, {'base':[], 'attributes':[]})
-                group['attributes' if item.kind == 'attribute' else 'base'].append(item)
+            original = case.facts[item.id]
+            objective = original.acquisition == 'EXAM' or original.source_ref == 'initial:vital_signs'
+            key = (item.subject, item.subject_member, item.observation_id or item.id,
+                item.episode_id or item.id, item.time_context, objective)
+            group = groups.setdefault(key, {'base':[], 'attributes':[]})
+            group['attributes' if item.kind == 'attribute' else 'base'].append(item)
         return cls(tuple(records), groups, tuple(contexts))

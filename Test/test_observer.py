@@ -88,6 +88,11 @@ def verify_trace(rows, name):
         if row['kind']=='node_end' and objects is not None:
             assert objects==current,(name,row['seq'],'object/node snapshots disagree')
     if name=='normal':
+        runtime = next(r['runtime'] for r in rows if r['kind'] == 'settings')
+        assert 'config/prompts.json' in runtime['source_sha256']
+        assert 'config/prompts/input_initial.txt' in runtime['source_sha256']
+        assert 'config/prompts/input_initial.txt' in runtime['prompt_routes']['input.initial']
+        assert 'config/prompts/input_initial.txt' not in runtime['prompt_routes']['input.reply']
         for owner, method in [('InputBinding','exact_mapping'),('InputBinding','make_fact'),
                               ('GraphEvidence','graph_candidates'),('InitiationSession','prepare_decision'),
                               ('DoctorBrain','complete')]:

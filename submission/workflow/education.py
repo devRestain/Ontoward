@@ -74,7 +74,7 @@ def parse_plan(raw, contexts, progress):
 def _request(state, client, model, config, progress, payload, parser):
     accepted = []
     for attempt in range(2):
-        request = messages(config.education_prompt, payload)
+        request = messages(config.prompt('plan.repair' if attempt else 'plan.generate'), payload)
         response = model.complete(state, client, role='education', messages=request)
         content = response.content
         if response.error:

@@ -1,0 +1,1 @@
+Select equivalent terminology, then a compatible broader observable concept. Return {} for an unresolved statement. Preserve polarity and scope.

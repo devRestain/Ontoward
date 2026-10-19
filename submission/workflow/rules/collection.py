@@ -1,8 +1,5 @@
 INTAKE = ('onset', 'course', 'recurrence', 'previous_care')
 HISTORY = ('medical_history', 'medication', 'allergy', 'family_history', 'social_history')
-ATTRIBUTE_CATEGORIES = {'TimeSinceOnset':'onset', 'Onset':'onset', 'Course':'course',
-    'EpisodeDuration':'duration', 'Quality':'quality', 'PainQuality':'quality',
-    'AggravatingFactor':'aggravating_factor', 'RelievingFactor':'relieving_factor'}
 CATEGORY_FIELDS = {**dict.fromkeys((*INTAKE, 'duration', 'quality', 'aggravating_factor', 'relieving_factor',
     'associated_symptoms', 'presentation', 'patient_context', 'measurement'), 'S.hpi'),
     **dict.fromkeys(('medical_history', 'medication', 'allergy', 'surgery', 'developmental_history'), 'S.pmh'),

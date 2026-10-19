@@ -1,0 +1,1 @@
+Assess the patient after ChiefComplaint has collected applicable chief attributes and Open Inquiry. Use the accepted complaint details without requesting focused ROS in this session.

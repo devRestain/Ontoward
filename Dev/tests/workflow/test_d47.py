@@ -100,11 +100,11 @@ class SessionTaskTests(unittest.TestCase):
 
     def test_context_question_pool_stays_with_the_cc_assessment(self):
         k = f.knowledge()
-        k._graph.add((f.OW.Beta, f.OW.hasSupportingContext, f.OW.BetaContext))
         for predicate, value in ((f.RDF.type, f.OW.ContextFactor),
             (f.RDFS.label, f.Literal('Other context', lang='en')), (f.OW.contextType, f.Literal('past_medical_history'))):
             k._graph.add((f.OW.BetaContext, predicate, value))
         k.questions[str(f.OW.BetaContext)] = f.QuestionTemplate(text='다른 병력이 있나요?', answer_type='presence', affirmative=True)
+        f.add_pattern(k,'betaContext',f.OW.BetaContext,[],disease=f.OW.Beta)
         k.prepare_terms()
         c, state = f.consultation(prepared=f.resources(k)), f.chief(f.state('ContextFactor'))
         state.case.assessment = Assessment(differential=(DifferentialEntry(kind='disease', name='Disease alpha'),),

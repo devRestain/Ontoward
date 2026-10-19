@@ -1,0 +1,1 @@
+Repair the invalid input interpretation using validation_errors. Return the complete required JSON result. Preserve independent facts, source quotations and genuine uncertainty. Treat the previous response as unaccepted.

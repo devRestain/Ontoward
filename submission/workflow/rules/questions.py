@@ -1,6 +1,6 @@
 import hashlib
 
-from .collection import INTAKE, HISTORY, ATTRIBUTE_CATEGORIES, answered, slot_resolved
+from .collection import INTAKE, HISTORY, answered, slot_resolved
 from .limits import LIMITS
 from ..state.models import Question
 
@@ -85,8 +85,7 @@ class QuestionTools:
         self.usage.record_clarification(state)
         values = original.model_dump() if original and original.kind == 'SAY' else {}
         attribute = self.knowledge.term_id(original.attribute, 'FindingAttribute') if original and original.attribute else None
-        local = (attribute or '').rsplit(':', 1)[-1]
-        text = self.config.texts.clarification_questions.get(local, self.config.texts.clarification_question)
+        text = self.knowledge.clarification(attribute, self.config.texts.clarification_question)
         if original and original.target and not original.attribute:
             text = original.text
         if primary_choice:
@@ -117,6 +116,8 @@ class QuestionTools:
               subject='patient', time_context='current', subject_member=None):
         exam = self.knowledge.has_type(target, 'ExamFinding')
         if exam:
+            if subject != 'patient' or time_context != 'current':
+                return None
             methods = self.knowledge.get_exam_methods(target)
             if not methods:
                 return None
@@ -140,7 +141,7 @@ class QuestionTools:
         values = {k:v for k,v in spec.items() if k not in {'field', 'target_id', 'attribute_id', 'assessment'}}
         return Question(item_id=ident, target=self.knowledge.term(spec['target_id']),
             attribute=self.knowledge.term(spec['attribute_id']) if spec['attribute_id'] else None,
-            category=ATTRIBUTE_CATEGORIES.get((spec['attribute_id'] or '').rsplit(':', 1)[-1]),
+            category=self.knowledge.attribute_category(spec['attribute_id']),
             order=order, priority=priority, **values)
 
     def _register(self, state, spec, order, priority):
@@ -148,11 +149,6 @@ class QuestionTools:
         if spec['purpose'] == 'clarification':
             ident += f':clarification:{state.session.clarifications}'
         self.questions.register(state, self._question(spec, ident, order, priority))
-
-    def _occurrences(self, state, target):
-        name = self.knowledge.term(target)
-        return {(f.observation_id, f.episode_id, f.status) for f in state.case.current_facts()
-                if f.target == name and f.kind in {'symptom', 'finding'} and f.subject == 'patient' and f.time_context != 'past'}
 
     def _eligible(self, state, spec, *, future=False):
         target, attribute = spec['target_id'], spec['attribute_id']
@@ -168,12 +164,14 @@ class QuestionTools:
             if not prior or any(a.purpose == 'clarification' or a.outcome in {'unknown','not_applicable','unsupported','nonclinical'}
                                 for a in prior) or not self.budget.can_clarify(state):
                 return False
-            local = (attribute or '').rsplit(':', 1)[-1]
-            spec.update(purpose='clarification', text=self.config.texts.clarification_questions.get(local,
+            spec.update(purpose='clarification', text=self.knowledge.clarification(attribute,
                          self.config.texts.clarification_question), affirmative_presence=False)
         if attribute and spec['kind'] == 'SAY' and not future:
-            return any(o == spec['observation_id'] and e == spec['episode_id'] and status == 'present'
-                       for o,e,status in self._occurrences(state, target))
+            return any(f.target == self.knowledge.term(target) and not f.attribute and f.status == 'present'
+                and f.evidence_use == 'reasoning' and f.polarity_scope == 'general'
+                and (f.subject,f.subject_member,f.time_context,f.observation_id,f.episode_id) ==
+                    (spec['subject'],spec.get('subject_member'),spec['time_context'],spec['observation_id'],spec['episode_id'])
+                for f in state.case.current_facts())
         return True
 
     def _allowed_now(self, state, spec):

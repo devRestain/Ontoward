@@ -2,7 +2,6 @@ import hashlib
 import re
 
 from ..state.models import CaseFact, GraphBinding
-from .collection import ATTRIBUTE_CATEGORIES
 
 
 def initial_objective(source):
@@ -58,8 +57,7 @@ def make_fact(case, knowledge, statement, decoded, *, source, index, offset, tur
     occurrence = statement.anchor if statement.anchor is not None else index
     observation = observation or 'observation:' + hashlib.sha256(f'{source}:{occurrence}'.encode()).hexdigest()[:24]
     episode = episode or observation
-    category = statement.record_category or (ATTRIBUTE_CATEGORIES.get(
-        (knowledge.term_id(attribute, 'FindingAttribute') or '').rsplit(':', 1)[-1]) if attribute else None)
+    category = statement.record_category or (knowledge.attribute_category(knowledge.term_id(attribute, 'FindingAttribute')) if attribute else None)
     if category is None and question and (same or question.purpose in {'intake', 'history'}):
         category = question.category
     if kind == 'symptom' and status == 'present' and statement.subject == 'patient' and statement.time_context != 'past':

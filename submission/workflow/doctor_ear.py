@@ -159,9 +159,13 @@ class DoctorEar:
             binding['kind'] = question.kind
         payload = {'task': 'input_context', 'phase': 'context', 'input': text, 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'patient_context': {n.context_key: n.value for n in state.case.current_facts() if n.context_key and n.subject == 'patient' and (n.status == 'present')}, 'input_segments': segments, **self._project_context(state, question, text)}
         context, indices = (None, None)
+        route = 'input.exam' if question and question.kind == 'EXAM' else 'input.reply' if question else 'input.initial'
         for attempt in range(2):
             payload['phase'] = 'context_repair' if attempt else 'context'
-            response = self._call(state, client, payload, self.config.parser_prompt, recovery=bool(attempt))
+            routes = [route]
+            if attempt:
+                routes.append('input.rows_repair' if indices is not None else 'input.repair')
+            response = self._call(state, client, payload, self.config.prompt(*routes), recovery=bool(attempt))
             if state.session.termination:
                 break
             try:
@@ -183,7 +187,7 @@ class DoctorEar:
         if question is None and ambiguous and (not state.session.termination):
             repair = deepcopy(payload)
             repair.update(phase='initial_chief_repair', statement_indices=ambiguous, repair_statements=[{'index': i, 'statement': context.statements[i].model_dump(exclude_defaults=True)} for i in ambiguous], validation_errors=['Separate an observed presenting complaint from uncertainty about its cause. Keep genuine unknown existence.'])
-            response = self._call(state, client, repair, self.config.parser_prompt)
+            response = self._call(state, client, repair, self.config.prompt('input.initial', 'input.chief_repair'))
             try:
                 context, errors = self._read_context(strict_json(response.content), repair, text, context, ambiguous)
                 if errors:
@@ -208,7 +212,8 @@ class DoctorEar:
             if not remaining:
                 break
             payload = self._mapping_payload(statements, remaining, contracts, phase, feedback)
-            response = self._call(state, client, payload, self.config.normalization_prompt, recovery=phase == 'forced')
+            route = 'mapping.select' if phase == 'mapping' else 'mapping.forced'
+            response = self._call(state, client, payload, self.config.prompt(route), recovery=phase == 'forced')
             wire = [{} for _ in remaining]
             for attempt in range(2 if not format_used else 1):
                 try:
@@ -222,7 +227,7 @@ class DoctorEar:
                         break
                     format_used = True
                     payload.update(phase='format_repair', repair_phase=phase, validation_errors=[str(error)])
-                    response = self._call(state, client, payload, self.config.normalization_prompt, recovery=True)
+                    response = self._call(state, client, payload, self.config.prompt(route, 'mapping.repair'), recovery=True)
             unresolved, feedback = ([], [])
             for i, mapping in zip(remaining, wire):
                 try:

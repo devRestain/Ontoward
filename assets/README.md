@@ -24,11 +24,11 @@
 
 지침 폴더는 교과서형 개요, 근거 리뷰, 환자용 설명, 임상 지침을 함께 담는다. 필요한 문서의 유형·언어·날짜·발행기관·라이선스를 확인하며, KR·US 접두사를 언어 표시로 사용하지 않는다. 자세한 차이는 [출처별 설명](Architecture.md#진료지침-자료의-16개-출처)에 있다.
 
-새 안내 파일은 원본 임상 자료가 아니다. 현재 v5.0 준비는 공급된 SNOMED CT·BODHI-S를 사용하고 안내용 Markdown을 임상 원천으로 읽지 않는다. guidelines/와 catalog는 deprecated 문헌 준비의 원본·탐색 증거로 보존한다. 문서별 추출·검토 결과와 승인된 출처별 Turtle 묶음은 `data/`가 소유하며, 진료 중에는 준비된 RDF 지식만 조회한다.
+새 안내 파일은 원본 임상 자료가 아니다. D49는 RF2·BODHI CSV·DDXPlus evidence/condition metadata·Astra 후보/속성/값/CPX 범위를 새 준비 입력으로 사용하고 안내용 Markdown을 임상 원천으로 읽지 않는다. guidelines/catalog는 새 질환의 문서 탐색 인덱스와 Education 원문 검증에 사용하며 이전 생성 인덱스와 관계 출처 정책을 재사용하지 않는다. 지속 결과는 data/가 소유하고 진료 중에는 새 manifest가 고정한 RDF와 JSON만 조회한다. 현재 실제 새 번들은 설치하지 않았다.
 
 ## 프로젝트와 연결
 
-자료를 바꾸지 않고 원래 위치에서 읽는다. 제출 전 준비 코드는 `Dev/`, 제출 에이전트와 실행 조회는 `submission/`, 출처 기록과 지속 응답·준비 결과·파생 자료는 `data/`가 담당한다. 현재 준비 환경은 [Dev 안내](../Dev/README.md), 실제 자료 진행은 [데이터 상태](../data/PROJECT_STATE.md), 전체 제품 요구사항은 [PRD](../PRD.md), 책임 구조는 [프로젝트 안내](../README.md)에서 확인한다.
+자료를 바꾸지 않고 원래 위치에서 읽는다. 새 추출 코드는 `Extraction/`, 검사·패키징은 `Dev/`, 제출 에이전트와 실행 조회는 `submission/`, 출처 기록과 지속 응답·준비 결과·파생 자료는 `data/`가 담당한다. 현재 준비 환경은 [Extraction 안내](../Extraction/README.md), 실제 자료 진행은 [데이터 상태](../data/PROJECT_STATE.md), 전체 제품 요구사항은 [PRD](../PRD.md), 책임 구조는 [프로젝트 안내](../README.md)에서 확인한다.
 
 공식 배포 맥락이 더 필요하면 [NOVA 개발 가이드](https://nova.snubhai.org/docs/)를 확인한다. 자료를 이해하기 위한 설명과 모델 연결·샘플 실행·제출은 별도의 작업 범위다.
 

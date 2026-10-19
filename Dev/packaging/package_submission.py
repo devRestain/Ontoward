@@ -47,27 +47,36 @@ REQUIRED = {
     'workflow/state/usage.py',
     'workflow/submission_writer.py',
     'workflow/text_config.py',
-    "knowledge/__init__.py", "knowledge/graph.py", "knowledge/conditions.py", "knowledge/scoring_policy.json", "knowledge/schema.ttl",
+    "knowledge/__init__.py", "knowledge/graph.py", "knowledge/conditions.py",
 }
 EXCLUDED = {"AGENTS.md", "README.md", "PROJECT_STATE.md", ".DS_Store"}
 
 
 def main() -> None:
     sys.path.insert(0, str(SOURCE))
-    from settings import SETTING, contained_path, knowledge_path, packaged_settings
+    from settings import SETTING, contained_path, knowledge_path, packaged_settings, prompt_paths
 
     settings = packaged_settings()
     text_files = {contained_path(settings[key], "config").relative_to(SOURCE).as_posix()
-                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_NORMALIZATION_PROMPT", "ONTOWARD_CLINICAL_PROMPT", "ONTOWARD_EMPATHY_PROMPT",
-                              "ONTOWARD_INITIATION_PROMPT", "ONTOWARD_CHIEF_COMPLAINT_PROMPT", "ONTOWARD_CONTEXT_FACTOR_PROMPT", "ONTOWARD_DIFFERENTIAL_DIAGNOSIS_PROMPT",
-                              "ONTOWARD_EDUCATION_PROMPT", "ONTOWARD_EDUCATION_DOCTOR_PROMPT", "ONTOWARD_TEXTS")}
+                  for key in ('ONTOWARD_PROMPTS', 'ONTOWARD_TEXTS')}
+    modules = prompt_paths(contained_path(settings['ONTOWARD_PROMPTS'], 'config'))
+    text_files.update(path.relative_to(SOURCE).as_posix() for parts in modules.values() for path in parts)
     manifest_path = knowledge_path(settings[SETTING])
     knowledge_files = {manifest_path.relative_to(SOURCE).as_posix()}
-    if manifest_path.is_file():
-        manifest_data = json.loads(manifest_path.read_text())
-        assets = [manifest_data[key] for key in ("schema", "vocabulary", "scoring_policy", "reasoning_policy", "questions", "labels", "plans", "guidelines")
-                  if key in manifest_data] + manifest_data.get("bundles", [])
-        knowledge_files.update(knowledge_path(asset["path"]).relative_to(SOURCE).as_posix() for asset in assets)
+    if not manifest_path.is_file():
+        raise ValueError("knowledge_bundle_not_installed")
+    manifest_data = json.loads(manifest_path.read_text())
+    if set(manifest_data) != {"schema_version", "knowledge_contract", "build_id", "schema", "vocabulary", "clinical", "questions", "guidelines"} or manifest_data["knowledge_contract"] != "v5-enum-1":
+        raise ValueError("Invalid knowledge contract")
+    for role in ("schema", "vocabulary", "clinical", "questions", "guidelines"):
+        asset = manifest_data[role]
+        relative = Path(asset["path"])
+        path = (manifest_path.parent / relative).resolve()
+        if relative.is_absolute() or ".." in relative.parts or not path.is_relative_to(manifest_path.parent):
+            raise ValueError("Knowledge asset escapes its manifest bundle")
+        if hashlib.sha256(path.read_bytes()).hexdigest() != asset["sha256"]:
+            raise ValueError("Knowledge digest mismatch")
+        knowledge_files.add(path.relative_to(SOURCE).as_posix())
     required = REQUIRED | text_files | knowledge_files
     files = []
     for path in sorted(SOURCE.rglob("*")):
@@ -92,10 +101,6 @@ def main() -> None:
     names = {name for _, name in files}
     if required - names:
         raise ValueError(f"Missing runtime files: {sorted(required - names)}")
-    manifest = knowledge_path(settings[SETTING]).relative_to(SOURCE).as_posix()
-    if any(name.startswith("knowledge/") and Path(name).suffix in {".ttl", ".json"}
-           and name not in {"knowledge/scoring_policy.json", "knowledge/schema.ttl"} for name in names) and manifest not in names:
-        raise ValueError("Knowledge assets require their configured manifest inside submission/knowledge")
     for line in (SOURCE / "requirements.txt").read_text().splitlines():
         if line.strip() and not line.startswith("#") and not re.fullmatch(r"[A-Za-z0-9_.-]+==[A-Za-z0-9_.+-]+", line):
             raise ValueError("Submission dependencies must use name==version")

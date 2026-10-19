@@ -143,31 +143,25 @@ ACI CSV의 대화·기록에는 따옴표와 여러 줄이 들어가므로 줄 �
 
 출처 그룹 하나에도 서로 다른 라이선스가 들어 있다. 출처·조건을 유지하고, 요약·번역·재구성·색인·인용문·제출 포함 여부는 문서별 조건과 요청 범위에 따라 판단한다. 폴더 이름이나 호스팅 서비스만으로 일괄 이용 조건을 정하지 않는다.
 
-임상 추출 입력은 `catalog.csv`에 있는 문서 경로를 기준으로 고른다. `KR_*/*.md`처럼 확장자만으로 모으면 새 `AGENTS.md`까지 임상 입력에 들어갈 수 있다. 새로 작성한 안내와 원본 임상 자료의 입력 경계는 [지침 계약](guidelines/AGENTS.md)에 명시되어 있다.
-
-원본 임상 Markdown의 총크기는 597,185,304바이트다. 문서별 추출·검토 결과를 예정된 `data/extracted/`에 관리하고 승인된 결과가 있는 기존 출처 그룹별로 `data/knowledge/`의 Turtle 묶음과 manifest를 구성한다. 문서별 중간 결과는 제출에서 제외한다. 파일명만으로 출처를 대신하지 않고 관계별 원본 문서·절·적용 조건과 공통 개념 URI를 보존한다. 이 구조는 준비·검토·제출 관리를 위한 것이며, 전체를 같은 실행 그래프에 로드할 때 메모리가 줄어든다는 증거가 아니다. 산출물은 아직 생성하지 않았고 실제 자원·제출 적합성은 후속 검증 대상이다.
+D49의 일반 지식 추출 입력은 RF2 Snapshot·BODHI CSV·DDXPlus metadata·Astra 후보 범위다. 원본 임상 문헌은 catalog.csv의 문서 경로로 탐색하고 진단 고정 후 Education에서 hash·인용을 검증한다. 안내용 AGENTS.md를 임상 입력에 포함하지 않는다. 이전 점수·관계 출처 정책·생성 DB는 활성 사용을 철회했으며 과거 원본·준비 결과·수용 ZIP과 증거는 보존한다.
 
 ## 애플리케이션·데이터 범위와의 관계
 
-아래 그림은 자료를 사용하는 책임 관계를 설명한다. 구현이나 평가가 실행되었다는 증거가 아니며 실제 진행은 각 담당 상태 문서가 관리한다.
-
 ```mermaid
 flowchart LR
-    G["guidelines: 임상 근거 원본"] --> B["Dev: 제출 전 추출·검증·RDF 생성 코드"]
-    B --> D["data: 문서별 추출·검토 결과"]
-    D --> K["data: 승인된 출처별 Turtle 묶음·manifest"]
-    K --> L["submission: prepare에서 하나의 RDFLib Graph로 로드"]
-    L --> A["submission: 증례 에이전트·읽기 전용 조회"]
-    S["nova-starter: SDK·기본 예제"] -. "구현 참고" .-> A
-    C["샘플 시작 정보"] --> A
-    P["샘플 대본·진찰표"] --> V["nova-devkit: 환자·진찰 시뮬레이터"]
-    A <-->|"행동과 실제 응답"| V
-    A --> O["data: 실행·기록 검토 결과"]
-    R["모범 기록"] --> O
-    E["참고 벤치마크"] -. "별도 연구·평가 범위" .-> O
+    Raw["RF2·BODHI·DDXPlus metadata·Astra scope"] --> Build["Extraction: 새 SQLite·생성·검증"]
+    Build --> Data["data: build별 checkpoint·여섯 파일"]
+    Data --> Knowledge["submission: 새 manifest·읽기 전용 Graph"]
+    Initial["공개 시작 정보"] --> Agent["submission: 진료 에이전트"]
+    Knowledge --> Agent
+    Patient["숨은 대본·진찰표"] --> Simulator["Test: 환자·진찰 역할"]
+    Agent <-->|"행동과 응답"| Simulator
+    Documents["guidelines: catalog·원문"] --> Education["고정 진단 후 Education"]
+    Agent --> Education
+    Agent --> Evidence["Tmp: 실행 관측·SOAP·receipt"]
 ```
 
-원본은 `assets/`, 제출 전 준비 코드는 `Dev/`, 제출 에이전트·실행 조회는 `submission/`, 출처·판본·지속 응답·검토·파생 자산은 `data/`가 소유한다. `Tmp/`는 임시 입력·초안이며 인증은 전용 프로젝트 Docker volume으로 분리하도록 설계했다. 운영 상태는 루트·`submission/`·`data/`의 세 범위로 유지하고 Dev·Tmp는 루트가 기록한다. 사람은 [프로젝트 README](../README.md), [개발 도구 안내](../Dev/README.md), [애플리케이션 안내](../submission/README.md), [데이터 안내](../data/README.md)에서 전체 책임을 확인할 수 있다.
+Extraction·Dev·Test·Tmp의 운영 진행은 루트 상태가 조정하고 submission·data는 각 상태가 관리한다. 인증은 새 전용 Docker volume에 두고 제출 artifact에서 제외한다. 현재 새 실제 manifest는 없으며 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패한다. 실제 모델 생성·로그인·설치는 이번 오프라인 이미지 수용 뒤의 별도 작업이다. 사람은 [프로젝트 안내](../README.md)·[추출 안내](../Extraction/README.md)·[진료 백서](../submission/README.md)·[데이터 안내](../data/README.md)에서 현재 책임을 확인한다.
 
 제공 자료의 배포 맥락은 [NOVA 개발 가이드](https://nova.snubhai.org/docs/)에서 확인할 수 있다. 게시된 ZIP 체크섬은 원래 배포 압축파일의 식별자이며, 안내 파일이 추가된 추출 디렉토리의 동일성을 증명하지 않는다.
 

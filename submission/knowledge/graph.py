@@ -2,129 +2,102 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 import unicodedata
 from string import Formatter
 
 from pydantic import BaseModel, ConfigDict, Field
 from rdflib import Graph, Namespace, RDF, RDFS, SKOS, URIRef
-from settings import ROOT, knowledge_path
 from .guidelines import GuidelineLibrary
 
-from .conditions import Applicability, AssociationProfile, ExpectedValue, FeatureCondition, QuestionTemplate, ScoringPolicy, numeric_match
+from .conditions import Applicability, AssociationProfile, ExpectedValue, FeatureCondition, QuestionTemplate, TargetScope, AttributeRole, numeric_match
 
 OW = Namespace("urn:ontoward:")
-HPI_ORDER = tuple(str(OW[name]) for name in (
-    "Location", "Laterality", "Quality", "PainQuality", "Onset", "TimeSinceOnset", "Course", "EpisodeDuration", "Frequency",
-    "Timing", "Severity", "Trigger", "AggravatingFactor", "RelievingFactor", "RadiationLocation", "Radiation",
-))
 
 
 class Asset(BaseModel):
-    model_config = ConfigDict(extra="allow")
+    model_config = ConfigDict(extra="forbid")
     path: str
     sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
 
 
 class Manifest(BaseModel):
-    model_config = ConfigDict(extra="allow")
+    model_config = ConfigDict(extra="forbid")
     schema_version: str = Field(pattern=r"^5\.0$")
-    registry_version: str = Field(min_length=1)
-    normalization_version: str = Field(min_length=1)
-    source_snapshots: list[dict[str, object]] = Field(min_length=1)
-    scoring_policy_version: str = Field(min_length=1)
-    scoring_policy: Asset
+    knowledge_contract: str = Field(pattern=r"^v5-enum-1$")
+    build_id: str = Field(min_length=1)
     schema_asset: Asset = Field(alias="schema")
     vocabulary: Asset
-    bundles: list[Asset] = Field(min_length=1)
-    questions: Asset | None = None
-    labels: Asset | None = None
-    plans: Asset | None = None
-    guidelines: Asset | None = None
-
-
-class Plan(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    tests: str = ""
-    treatment: str = ""
-    disposition: str = ""
-    follow_up: str = ""
-    education: list[str] = Field(default_factory=list)
+    clinical: Asset
+    questions: Asset
+    guidelines: Asset
 
 
 class ClinicalKnowledge:
-    def __init__(self, graph: Graph, questions: dict[str, QuestionTemplate] | None = None, plans: dict[str, Plan] | None = None,
-                 policy: ScoringPolicy | None = None, labels: dict[str, str] | None = None):
+    def __init__(self, graph: Graph, questions=None, attribute_roles=None):
         self._graph = graph
         self.questions = questions or {}
-        self.plans = plans or {}
+        self.attribute_roles = attribute_roles or {}
         self.guidelines = None
-        self.policy = policy or ScoringPolicy.load_default()
-        self.labels = labels or {}
-        self._feature_cache = {}
-        self._profile_cache = {}
-        self._refinement_cache = {}
-        self._target_profiles = None
-        self._disease_profiles = None
-        self._pattern_profiles = {}
-        self._refinement_parents = None
-        self._alias_grams = {}
-        self._label_index = None
-        self._labels = {}
-        self._concept_cache = None
-        self._target_values = {}
-        self._types = None
-        self._supporting_cache = {}
-        self._term_ids = {}
-        self._value_ids = {}
+        self.labels = {}
+        self._feature_cache, self._profile_cache, self._refinement_cache = {}, {}, {}
+        self._target_profiles = self._disease_profiles = self._refinement_parents = None
+        self._pattern_profiles, self._alias_grams, self._labels = {}, {}, {}
+        self._label_index = self._concept_cache = self._types = None
+        self._target_values, self._term_ids, self._value_ids = {}, {}, {}
 
     @classmethod
     def load(cls, manifest_path: Path) -> ClinicalKnowledge:
-        manifest_path = knowledge_path(manifest_path.relative_to(ROOT).as_posix())
-        raw_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        if raw_manifest.get("preparation_status") == "withdrawn_by_D18":
-            raise ValueError("D18 source-only reset withdrew previous clinical knowledge; admit a new pinned source batch before consultation")
-        if raw_manifest.get("preparation_status") == "graph_admitted_text_pending":
-            raise ValueError("D20 graph is approved; complete and admit its pinned interview and examination text assets before consultation")
-        manifest = Manifest.model_validate(raw_manifest)
-        if getattr(manifest, "preparation_status", None) == "preview_only":
-            raise ValueError("Preview knowledge requires explicit batch admission")
+        manifest_path = Path(manifest_path).resolve()
+        if not manifest_path.is_file():
+            raise ValueError("knowledge_bundle_not_installed")
+        manifest = Manifest.model_validate_json(manifest_path.read_text(encoding="utf-8"))
+        root = manifest_path.parent
 
-        def read(asset: Asset, suffix: str) -> bytes:
-            path = knowledge_path(asset.path)
-            if path.suffix != suffix:
-                raise ValueError(f"Expected {suffix} asset: {asset.path}")
+        def read(asset, suffix):
+            relative = Path(asset.path)
+            path = (root / relative).resolve()
+            if relative.is_absolute() or ".." in relative.parts or not path.is_relative_to(root) or path.suffix != suffix:
+                raise ValueError("Knowledge asset must stay inside its manifest bundle")
             data = path.read_bytes()
             if hashlib.sha256(data).hexdigest() != asset.sha256:
                 raise ValueError(f"Knowledge digest mismatch: {asset.path}")
             return data
 
+        paths=[(root/asset.path).resolve() for asset in (manifest.schema_asset,manifest.vocabulary,manifest.clinical,manifest.questions,manifest.guidelines)]
+        if len(set(paths))!=5 or manifest_path in paths:
+            raise ValueError('Knowledge bundle requires five distinct assets')
         graph = Graph()
-        for asset in [manifest.schema_asset, manifest.vocabulary, *manifest.bundles]:
+        for asset in (manifest.schema_asset, manifest.vocabulary, manifest.clinical):
             graph.parse(data=read(asset, ".ttl").decode("utf-8"), format="turtle")
-        questions = json.loads(read(manifest.questions, ".json")) if manifest.questions else {}
-        if not isinstance(questions, dict):
-            raise ValueError("Question assets must map identifiers to answer contracts")
-        questions = {key: QuestionTemplate.model_validate(value) for key, value in questions.items()}
-        labels = json.loads(read(manifest.labels, ".json")) if manifest.labels else {}
-        if not isinstance(labels, dict) or any(not isinstance(k, str) or not isinstance(v, str) or not v.strip()
-                or unicodedata.normalize("NFC", v) != v or not list(graph.objects(URIRef(k), RDF.type))
-                for k, v in labels.items()):
-            raise ValueError("Display labels require admitted identifiers and nonempty NFC text")
-        raw_plans = json.loads(read(manifest.plans, ".json")) if manifest.plans else {}
-        if not isinstance(raw_plans, dict):
-            raise ValueError("Plan assets must map disease URIs to plans")
-        policy = ScoringPolicy.model_validate_json(read(manifest.scoring_policy, ".json"))
-        if policy.version != manifest.scoring_policy_version:
-            raise ValueError("Scoring policy version differs from the manifest")
-        knowledge = cls(graph, questions, {key: Plan.model_validate(value) for key, value in raw_plans.items()}, policy, labels)
+        assets = json.loads(read(manifest.questions, ".json"))
+        if not isinstance(assets, dict) or set(assets) != {"questions", "attribute_roles"}:
+            raise ValueError("Questions require question contracts and attribute roles")
+        knowledge = cls(graph,
+            {key: QuestionTemplate.model_validate(value) for key, value in assets["questions"].items()},
+            {key: AttributeRole.model_validate(value) for key, value in assets["attribute_roles"].items()})
         knowledge.validate_graph()
         knowledge.validate_question_assets()
         knowledge.prepare_terms()
-        if manifest.guidelines:
-            knowledge.guidelines = GuidelineLibrary.load(read(manifest.guidelines, ".json"),
-                raw_manifest.get("build_id"), {str(node) for node in graph.subjects(RDF.type, OW.Disease)})
+        knowledge.guidelines = GuidelineLibrary.load(read(manifest.guidelines, ".json"), manifest.build_id,
+            {str(node) for node in graph.subjects(RDF.type, OW.Disease)})
         return knowledge
+
+    def attribute_category(self, attribute):
+        role = self.attribute_roles.get(attribute)
+        return role.category if role else None
+
+    def clarification(self, attribute, default):
+        role = self.attribute_roles.get(attribute)
+        return role.clarification if role and role.clarification else default
+
+    def execution_time(self, target, rule_scope):
+        if rule_scope.time_context != "any":
+            return rule_scope.time_context
+        if target not in self.questions:
+            raise ValueError('Any rule requires a concrete question scope')
+        return self.questions[target].time_context
 
     def prepare_terms(self):
         terms, values = {}, {}
@@ -224,7 +197,7 @@ class ClinicalKnowledge:
 
     def get_symptom_attributes(self, symptom_id: str) -> list[str]:
         values = {str(value) for value in self._graph.objects(URIRef(symptom_id), OW.hasAttribute)}
-        return sorted(values, key=lambda value: (HPI_ORDER.index(value) if value in HPI_ORDER else len(HPI_ORDER), value))
+        return sorted(values, key=lambda value: (self.attribute_roles[value].order if value in self.attribute_roles else 1000000, value))
 
     def get_symptom_systems(self, symptom_id: str) -> list[str]:
         return sorted({str(value) for value in self._graph.objects(URIRef(symptom_id), OW.inSystem)
@@ -261,19 +234,11 @@ class ClinicalKnowledge:
         if len(owners) != 1:
             raise ValueError("Association requires exactly one disease")
         pattern = self._one(association, OW.pattern)
-        prediction = self._optional(association, OW.predictiveness)
-        basis = self._optional(association, OW.relationBasis)
-        scope = self._optional(association, OW.derivationScope) or "exact"
-        score, weight_basis = self.policy.weight(prediction, basis, scope)
-        strong = self._optional(association, OW.strongPredictor)
-        if strong not in {None, "true", "false"}:
-            raise ValueError("Strong predictor must be true, false or absent")
         profile = AssociationProfile(id=str(pattern), association_id=str(association), disease_id=str(next(iter(owners))),
             target=str(self._one(pattern, OW.targets)),
             applicability=[Applicability.model_validate(item) for item in sorted(json.loads(self._optional(association, OW.applicability) or "[]"), key=lambda item: json.dumps(item, sort_keys=True))],
-            predictiveness=prediction, typicality=self._optional(association, OW.typicality),
-            strong_predictor=None if strong is None else strong == "true", relation_basis=basis, derivation_scope=scope,
-            source_refs=sorted(str(ref) for ref in self._graph.objects(association, OW.sourceRef)), score=score, weight_basis=weight_basis)
+            target_scope=TargetScope.model_validate_json(str(self._one(association, OW.targetScope))),
+            effect=str(self._one(association, OW.diagnosticEffect)))
         self._profile_cache[str(association)] = profile
         return profile
 
@@ -383,12 +348,6 @@ class ClinicalKnowledge:
                 if child != parent and signatures[parent] <= matched and self.pattern_refines(child, parent):
                     yield child, parent
 
-    def get_supporting_context(self, disease_id: str) -> list[dict[str, str]]:
-        if disease_id not in self._supporting_cache:
-            self._supporting_cache[disease_id] = [{"id": str(context), "type": str(self._one(context, OW.contextType))}
-                for context in sorted(self._graph.objects(URIRef(disease_id), OW.hasSupportingContext), key=str)]
-        return self._supporting_cache[disease_id]
-
     def get_context_type(self, context_id: str) -> str:
         return str(self._one(URIRef(context_id), OW.contextType))
 
@@ -418,6 +377,13 @@ class ClinicalKnowledge:
         return self._pattern_profiles.get(pattern_id, [])
 
     def validate_question_assets(self):
+        for profile in (p for disease in self._graph.subjects(RDF.type,OW.Disease) for p in self.get_disease_patterns(str(disease))):
+            self.execution_time(profile.target,profile.target_scope)
+            for condition in profile.applicability:
+                self.execution_time(condition.concept_id,condition)
+        attributes = {str(node) for node in self._graph.subjects(RDF.type, OW.FindingAttribute)}
+        if set(self.attribute_roles) != attributes:
+            raise ValueError("Every FindingAttribute requires an explicit role")
         for key, template in self.questions.items():
             for _, field, spec, conversion in Formatter().parse(template.text):
                 if field not in {None, "symptom"} or spec or conversion:
@@ -437,7 +403,7 @@ class ClinicalKnowledge:
                 if not template.interviewable or (target in self.questions and not self.questions[target].interviewable):
                     continue
                 text = self.question(attribute, target)
-                if unicodedata.normalize("NFC", text) != text or not 1 <= len(text) <= 30:
+                if unicodedata.normalize("NFC", text) != text or not 1 <= len(text) <= 30 or not re.search('[가-힣]',text):
                     raise ValueError("Prepared question must contain 1 to 30 NFC codepoints")
 
     def _one(self, subject, predicate, required=True):
@@ -451,7 +417,6 @@ class ClinicalKnowledge:
         return str(value) if value is not None else None
 
     def validate_graph(self, *, require_action_assets=True) -> None:
-        self._supporting_cache.clear()
         self._feature_cache.clear()
         self._profile_cache.clear()
         self._refinement_cache.clear()
@@ -466,12 +431,15 @@ class ClinicalKnowledge:
             raise ValueError("Knowledge graph requires schema version 5.0")
         if any(list(self._graph.subject_objects(predicate)) for predicate in (OW.hasPattern, OW.expectsValue, OW.clinicalRole, OW.importance)):
             raise ValueError("v5.0 rejects v4.2 ownership, values and manual roles")
+        forbidden = ("sourceRef", "predictiveness", "typicality", "strongPredictor", "relationBasis", "derivationScope", "score", "hasSupportingContext")
+        if any(list(self._graph.subject_objects(OW[name])) for name in forbidden):
+            raise ValueError("Withdrawn clinical metadata is not part of v5-enum-1")
         for pattern in self._graph.subjects(RDF.type, OW.ClinicalPattern):
             target = self._one(pattern, OW.targets)
             associations = set(self._graph.subjects(OW.pattern, pattern))
             if not associations or not all((a, RDF.type, OW.DiseasePatternAssociation) in self._graph for a in associations):
                 raise ValueError("Pattern requires an association")
-            if sum((target, RDF.type, OW[kind]) in self._graph for kind in ("Symptom", "ExamFinding")) != 1:
+            if sum((target, RDF.type, OW[kind]) in self._graph for kind in ("Symptom", "ExamFinding", "ContextFactor")) != 1:
                 raise ValueError("Pattern requires one finding target")
             features = self.get_pattern_features(str(pattern))
             if any(not self.has_type(feature.id, "ClinicalFeature") for feature in features):
@@ -500,8 +468,6 @@ class ClinicalKnowledge:
         for path in self._graph.subjects(RDF.type, OW.ValueMatch):
             if self._optional(path, OW.relationKind) not in {"is_a", "regional_part", "approved_region"}:
                 raise ValueError("Value match must preserve its relation type")
-            if not list(self._graph.objects(path, OW.sourceRef)):
-                raise ValueError("Value match requires path evidence")
             for predicate in (OW.observedConcept, OW.expectedConcept):
                 if not self.has_type(str(self._one(path, predicate)), "AttributeValue"):
                     raise ValueError("Value match endpoints must be admitted values")
@@ -510,14 +476,16 @@ class ClinicalKnowledge:
             profile = self._profile(association)
             if not self.has_type(profile.disease_id, "Disease") or not self.has_type(profile.id, "ClinicalPattern"):
                 raise ValueError("Association endpoints must be admitted")
-            if profile.typicality is not None and profile.typicality not in self.policy.labels:
-                raise ValueError("Unknown typicality label")
-            if profile.relation_basis in {"external_association", "authored_association"} and (
-                    profile.typicality is not None or profile.strong_predictor is not None):
-                raise ValueError("Qualitative associations cannot imply typicality or strong prediction")
             if any(not self.has_type(condition.concept_id, "ContextFactor") for condition in profile.applicability):
                 raise ValueError("Applicability requires admitted contexts")
-            identity = (profile.disease_id, profile.id, tuple(c.model_dump_json() for c in profile.applicability))
+            if self.has_type(profile.target, "ContextFactor"):
+                if any(feature.attribute for feature in self.get_pattern_features(profile.id)):
+                    raise ValueError("Context targets use presence conditions")
+                if (self.get_context_type(profile.target) == "family_history") != (profile.target_scope.subject == "family"):
+                    raise ValueError("Context target scope differs from its role")
+            if any(condition.concept_id == profile.target for condition in profile.applicability):
+                raise ValueError("A target cannot duplicate its applicability")
+            identity = (profile.disease_id, profile.id, profile.target_scope.model_dump_json(), tuple(c.model_dump_json() for c in profile.applicability))
             if identity in identities:
                 raise ValueError("Duplicate disease-pattern-applicability association")
             identities.add(identity)
@@ -550,9 +518,6 @@ class ClinicalKnowledge:
         for context in self._graph.subjects(RDF.type, OW.ContextFactor):
             if self._optional(context, OW.contextType) not in context_types:
                 raise ValueError("Invalid ContextFactor type")
-        for disease, context in self._graph.subject_objects(OW.hasSupportingContext):
-            if not self.has_type(str(disease), "Disease") or not self.has_type(str(context), "ContextFactor"):
-                raise ValueError("Supporting context requires Disease and ContextFactor endpoints")
         for target, system in self._graph.subject_objects(OW.inSystem):
             if not any(self.has_type(str(target), kind) for kind in ("Symptom", "ExamFinding")) or not self.has_type(str(system), "BodySystem"):
                 raise ValueError("Interview system requires a finding and BodySystem endpoints")
@@ -562,27 +527,19 @@ class ClinicalKnowledge:
             if not self.get_exam_methods(str(finding)):
                 raise ValueError("ExamFinding requires a detection method")
             for method in self.get_exam_methods(str(finding)):
-                if unicodedata.normalize("NFC", method["text"]) != method["text"] or not 1 <= len(method["text"]) <= 30:
+                if unicodedata.normalize("NFC", method["text"]) != method["text"] or not 1 <= len(method["text"]) <= 30 or not re.search('[가-힣]',method['text']):
                     raise ValueError("Prepared examination must contain 1 to 30 NFC codepoints")
-        for plan in self.plans.values():
-            if any(unicodedata.normalize("NFC", text) != text or not 1 <= len(text) <= 30 for text in plan.education):
-                raise ValueError("Prepared education must contain 1 to 30 NFC codepoints")
         self.concepts()
         self.resolve_concept("")
         self._types = {}
         for subject, kind in self._graph.subject_objects(RDF.type):
             self._types.setdefault(str(subject), set()).add(str(kind))
         self.patterns_by_input, self.associations_by_context = {}, {}
-        self.diseases_by_supporting_context = {}
         for profile in profiles:
             for feature in self.get_pattern_features(profile.id):
                 key = (profile.target, feature.attribute)
                 self.patterns_by_input.setdefault(key, set()).add(profile.id)
             self.patterns_by_input.setdefault((profile.target, None), set()).add(profile.id)
             for condition in profile.applicability:
-                key = (condition.concept_id, condition.subject, condition.time_context)
+                key = condition.concept_id
                 self.associations_by_context.setdefault(key, []).append(profile)
-        for disease in sorted({p.disease_id for p in profiles}):
-            for context in self.get_supporting_context(disease):
-                subject = "family" if context["type"] == "family_history" else "patient"
-                self.diseases_by_supporting_context.setdefault((context["id"], subject), set()).add(disease)

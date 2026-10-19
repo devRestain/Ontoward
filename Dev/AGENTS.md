@@ -1,84 +1,12 @@
-# Preparation Tools Contract
+# Development Tools Contract
 
-## Ownership
-
-- Own pre-submission source projection, normalization, RDF generation, preview validation, and bundle preparation.
-- Keep runtime code and graph readers in root submission/ and durable provenance and preparation results in root data/.
-- Keep disposable fixtures and reports in root Tmp/ and operational progress in root PROJECT_STATE.md.
-- Own tests/workflow, tests/ontology, architecture/WORKFLOW_RULES.md, and packaging/package_submission.py.
-- Own guidelines/map.py and tests/guidelines for D30 catalog-allowlisted disease mappings, exact evidence replay, and bounded session-free NOVA gpt-6-luna review.
-- Use guidelines/map.py runtime-export for D37 build-pinned navigation and data-owned admission without copying original documents.
-- Package only submission runtime files and public settings; keep preparation code, tests, guidance, state, source originals, and credentials outside the ZIP.
-- Read archive inputs only from /submission and write output only to /output.
-
-## v5.0 Source Projection
-
-- Apply D42 as the authorized local multi-source rebuild after D41; preserve raw-only audit boundaries and admit prepared aliases and registered formats rather than adding runtime mapping tables.
-- Keep DDXPlus evidence and condition metadata separate from all patient archives and preserve complete exclusion reasons and explicit author provenance.
-
-- Read root AGENTS.md, PROJECT_STATE.md, PRD.md, DECISION_STATE.md D02/D05/D07/D08/D09, the data contracts, and applicable asset contracts before handling sources.
-- Use ontology/source_projection.py as the build/export/admit entrypoint, database.py for SQLite source custody, model_normalization.py for bounded source normalization, admission.py for reviewed integration, and v5.py for RDF construction.
-- Treat the removed v4.2 SNOMED and guideline extraction pipelines as deprecated; do not restore or adapt them for compatibility.
-- Apply D18 source-only reset.py and preserve original assets, deletion receipts, and the clean empty v5 base; remove old seeds, derived batches, and obsolete approvals.
-- Ingest every supplied International and Korean RF2 Snapshot TXT plus release metadata and all eight BODHI-S CSVs; preserve source licenses and upstream descriptions without downloads or mutation.
-- Pin release metadata, module dependency versions, source file hashes, normalization version, registry version, and the public scoring policy.
-- Select the latest RF2 component row before applying active status; reject same-version conflicts, future rows, and unsatisfied module dependencies.
-- Preserve SCTIDs as strings, BODHI UUIDs and raw identifier fields, RF2 relationship groups and paths, source rows and positions, and mapping judgments.
-- Apply D18's full-source and all-schema request; derive identifiers from source identities without starter-vocabulary lookup.
-- Verify Disease identity against the active SNOMED disorder hierarchy and BODHI source classification. Record history, family history, invalid IDs, and non-disease entities as excluded or unresolved.
-- Keep a source variant's required conditions together; never union features from different variants solely because Disease and Target agree.
-- Normalize the typed D08 value contract without inventing units, thresholds, conjunctions, or linked findings.
-- Defer other required findings and ambiguous relationship-group scope as whole dependent variants with explicit reasons.
-- Preserve quantities and intervals with operators and units; distinguish elapsed time from episode duration and calendar units from fixed time.
-- Reuse a Pattern only when its Target, conditions, operators, units, negation, timing, and combination scope agree.
-- Retain all source assertions for each Disease–Pattern–applicability association and select BODHI directional labels before equivalent SNOMED fallback.
-- Generate conditional atomic or joint FeatureContribution deltas; never distribute a joint delta across individual features.
-- Keep registry entries as candidates and preview_only outputs in data/preparation/v5/ until separate human review and runtime admission.
-- Keep source builds offline by default and execute current Korean work through D22's project-container NOVA route with pinned finite budgets, sequential calls, persistent reservations, and authorized fresh attempts after failure.
-- Keep model judgments candidate-only; never infer relationships, identifiers, likelihoods, missing units, or linked findings from model knowledge and never resume older jobs.
-- Resume only an explicitly selected current build with identical source, schema, and normalization pins; preserve unknown or differently pinned artifacts and regenerate only a recognized same-build preview from its canonical database.
-- Require a pinned approval receipt covering association and mapping dependencies before admit writes clinical assets.
-- Use D23 as the user acceptance of complete source-backed competition candidates and reviewed patient actions; preserve technical exclusions rather than requesting another clinical decision.
-- Use source_catalog.py for competition-linked source roles across every v5 class; report unsupported classes explicitly without broad taxonomy inflation.
-- Keep full raw source custody and original edge roles in preparation; select the competition dependency vocabulary and export only complete executable expressions as clinical RDF.
-- Preserve korean.py's historical complete label/question worksets and use patient_text.py for D22 patient-only actions with its base budget and explicitly authorized same-day continuation ceiling.
-- Preserve Korean RF2 terms and historical model_translation provenance; bind current clinical questions to observable Targets and Attributes and compare every generated text in a separate D22 NOVA request.
-- Stop D18-D21 runs on failure, uncertainty, semantic rejection, or invalid NFC/length. Apply D22's explicitly authorized NOVA-only fresh attempts within its pinned same-day ceiling; preserve every request identity and never reuse a failed request ID or continue after quota exhaustion.
-- Keep unsupported detectedBy/evaluatedBy/inSystem/context mappings unresolved rather than inferring new source assertions.
-- Apply D20 connections.py for reviewed source-derived inSystem, contextType, hasSupportingContext, and prerequisite applicability; preserve each derivation's source rows and policy.
-- Keep BODHI Context identities distinct from SCTID mappings and preserve one scored acquisition role per source finding identifier.
-- Use D20 graph-only admission without Korean generation; preserve strict consultation text requirements and reuse the shared source-custody database read-only.
-- Apply D19 findings.py discovery independently of BODHI symptom roots; distinguish direct physical methods, unresolved acquisition, grouped interpretation values, and Observable model metadata.
-- Keep source-findings.ttl candidate-only; do not insert missing methods, request wording, units, thresholds, or duplicate acquisition-channel scores into executable clinical RDF.
-- Report every BODHI specialty and supplied ClinicalObservable domain with evidence coverage and explicit gaps; do not claim clinical sufficiency from counts.
-- Use provenance.py shared reference sets and target-specific link evidence in Korean jobs; keep detailed audit rows in SQLite and use storage.py for hash-verified lossless archival of superseded large JSON.
-- Apply D21 patient_text.py to the admitted D20 graph; generate only patient-reachable SAY and EXAM text, freeze a fresh finite budget, and preserve separate semantic comparison and failure-without-retry.
-- Prioritize the explicitly authorized NOVA_DEV_KEY development chat route with openai/gpt-6-luna medium; use only the pinned SNU education workspace for the alternative Docker Codex CLI route.
-- Apply D22 NOVA-only continuation, compact request-local IDs, exact anatomical scope, preserved reviewed results, and user-authorized failure resumption until completion or the same-day request or service limit.
-- Use evidence.py to package replay code, schema, policy, source inventories, hashes, coverage, and verification for organizer review separately from the runtime archive.
-
-## Containers and Verification
-
-- Use the proven project dev container with tests/workflow/compose.offline.yaml for current projection and checks; keep dependencies off the host.
-- Preserve the existing extraction image and dedicated authentication volume; use the declared extraction service for the explicitly requested Korean run without downloading dependencies.
-- Run python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py' for maintained lifecycle binding reasoning delivery and transport behavior.
-- Run python -B -m unittest discover -s Dev/tests/workflow -p test_binding.py for D47 exact binding selective forced completion unified facts and information preservation.
-- Run python -B Dev/tests/workflow/test_intake_soap.py for D40 C03 input custody semantic SOAP protected collection and record-only Education.
-- Run python -B -m unittest discover -s Dev/tests/workflow -p test_brain.py for D47 matching candidate retention ranking action repair scope and frozen submission.
-- Use tests/workflow/compare_algorithms.py with a frozen baseline submission and its original fixtures for the bounded D38 comparison.
-- Run python -B Dev/tests/workflow/test_input_empathy.py for D41 typed empathy generation response reservations and last-reply delivery behavior.
-- Run python -B Dev/tests/workflow/test_education.py for D37 full-document context fixed diagnosis English plans and bounded Korean delivery.
-- Run python -B Dev/tests/workflow/test_evidence_consistency.py for acquisition-safe corrections shared evidence and raw-free SOAP through confirmed submission.
-- Run python -B Dev/tests/workflow/test_admitted.py --submission PATH --output PATH for actual admitted knowledge and archive isolation with scripted patient and model responses.
-- Run python -B Dev/tests/workflow/test_admitted.py --submission PATH --output PATH for exact prepared Korean delivery, Context polarity, and separate examination acquisition through SOAP and confirmed submission.
-- Run python -B Dev/tests/ontology/test_database.py for source/approval/quota/Korean behavior and verify_database.py plus verify_catalog.py for real-source coverage, graph semantics, provenance, Korean coverage, and resource evidence.
-- Use tests/ontology/compose.build.yaml with the root dev image for two-CPU eight-GB builds and isolated prepare checks; keep source mounts read-only.
-- Run the isolated package Compose service for actual ZIP evidence.
-- Keep synthetic workflow results, real-source structural projection, clinical review, runtime admission, authenticated SDK execution, and diagnostic performance distinct.
-- Report only performed checks and reconcile root, submission, and data states before handoff.
-- Keep the D17 review adoption record in architecture/D17_REVIEW_ADOPTION.md and leave diagnostic performance claims outside offline acceptance.
-
-- Maintain D47 lifecycle binding session cadence brain record delivery and transport checks in tests/workflow; use Test/compare_d47.py for preserved C03 accepted-state comparison and keep older comparators limited to their explicit historical snapshots.
-- Use the existing ontoward-dev image with tests/workflow/compose.offline.yaml for network-disabled verification without an implicit dependency build.
-
-- Keep source feature contribution export in ontology/contributions.py outside the submission runtime and preserve its prepared metadata contract.
+- Keep maintained workflow tests in tests/workflow/, package validation in packaging/package_submission.py, and historical architecture documents in architecture/.
+- Keep extraction code and prompts in root Extraction/, runtime readers in submission/, durable custody in data/, and synthetic artifacts in Tmp/.
+- Treat the archived Dev/ontology, Dev/codex, Dev/guidelines and their score/admission checks as withdrawn under D49; never restore them as active builders or policy fallbacks.
+- Preserve existing D47/D48 fixtures and extend behavior checks only for changed runtime contracts. Use test_d49.py for qualitative effects, complete conditions, scopes, and question prerequisites.
+- Run python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py' in the root network-disabled dev service with Dev/tests/workflow/compose.offline.yaml.
+- Run Extraction/tests in the project container with PYTHONPATH=/workspace/submission:/workspace/Extraction. Keep dependencies off the host.
+- Use fixture_bundle.py only to stage a fresh synthetic submission beneath Tmp/. Verify complete consultations with test_admitted.py and the independent Test/compose.d49.yaml SDK process.
+- Require a valid v5-enum-1 bundle before packaging. Read only /submission and write only /output in the package service; include manifest-referenced assets and prompt modules.
+- Keep tests, synthetic assets, source packages, preparation data, guidance, state, and credentials outside the ZIP.
+- Record Dev operational progress in root PROJECT_STATE.md and artifact custody in data/PROJECT_STATE.md. Distinguish protocol acceptance from clinical and actual-model quality.

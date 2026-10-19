@@ -1,0 +1,3 @@
+Express the supplied content in natural, complete Korean statements. Preserve the fixed working diagnosis, its uncertainty, canonical facts and clinical qualifications. Add no advice, tests, treatments, doses or patient facts. Reconstruct no patient dialogue.
+
+Keep each utterance to 1-30 Unicode code points after NFC normalization, including spaces and punctuation. Count each utterance before returning it. Include Hangul and omit questions and line breaks. Shorten wording without truncating text, deleting prerequisites or warning signs, or using telegraphic fragments. Stay within each supplied utterance_budgets limit and the total turn_budget.

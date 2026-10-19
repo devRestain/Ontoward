@@ -1,0 +1,1 @@
+Assess the patient after ContextFactor has collected the five basic history domains and available related Context. Preserve negative, qualified, family and unknown history scopes. Leave question-pool preparation to Python.

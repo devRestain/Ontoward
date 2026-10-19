@@ -1,5 +1,8 @@
 name: ontoward
 
+include:
+  - Extraction/compose.yaml
+
 services:
   dev:
     build:
@@ -36,65 +39,3 @@ services:
       - type: bind
         source: ./Tmp/packaging
         target: /output
-
-  ontology-extraction:
-    image: ontology-extraction:local
-    build:
-      context: .
-      dockerfile: Dev/codex/Dockerfile
-    working_dir: /workspace
-    cpus: 2.0
-    mem_limit: 8g
-    environment:
-      CODEX_HOME: /opt/ontology/codex-state
-    networks:
-      - ontology-extraction
-    volumes:
-      - type: bind
-        source: ./Dev/codex
-        target: /workspace/Dev/codex
-        read_only: true
-      - type: bind
-        source: ./Dev/ontology
-        target: /workspace/Dev/ontology
-        read_only: true
-      - type: bind
-        source: ./assets/snomed
-        target: /workspace/assets/snomed
-        read_only: true
-      - type: bind
-        source: ./assets/bodhi
-        target: /workspace/assets/bodhi
-        read_only: true
-      - type: bind
-        source: ./assets/nova-starter/nova_sdk.py
-        target: /opt/ontoward-sdk/nova_sdk.py
-        read_only: true
-      - type: bind
-        source: ./data/ontology
-        target: /workspace/data/ontology
-        read_only: true
-      - type: bind
-        source: ./submission
-        target: /workspace/submission
-        read_only: true
-      - type: bind
-        source: ./Tmp/codex
-        target: /workspace/Tmp/codex
-      - type: bind
-        source: ./Tmp/ontology-v5
-        target: /workspace/Tmp/ontology-v5
-      - type: bind
-        source: ./data/preparation/v5
-        target: /workspace/data/preparation/v5
-      - type: volume
-        source: ontology-codex-state
-        target: /opt/ontology/codex-state
-    stdin_open: true
-    tty: true
-
-volumes:
-  ontology-codex-state:
-
-networks:
-  ontology-extraction:

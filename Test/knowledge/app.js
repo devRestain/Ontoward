@@ -369,7 +369,7 @@ function renderOverview() {
   }
   target.append(metrics);
   const notice = el("div", "notice");
-  notice.append(el("p", "", "지식 탐색은 현재 manifest에 고정된 실행 그래프 전체를 읽습니다. 준비 DB의 후보·원천 행은 별도로 열람합니다."), el("p", "", "원천 지지 등급은 진단 확률이 아닙니다. 표시 이름은 읽기를 위한 표현이며 저장된 URI와 원래 데이터는 유지됩니다."));
+  notice.append(el("p", "", "지식 탐색은 현재 manifest에 고정된 실행 그래프 전체를 읽습니다. 준비 DB의 후보·원천 행은 별도로 열람합니다."), el("p", "", "정성 효과와 전체 조건을 함께 읽으세요. 새 번들 설치 전에는 knowledge_bundle_not_installed가 표시됩니다. 과거 준비 DB는 새 추출의 입력으로 사용하지 않습니다."));
   target.append(notice);
   const facts = el("dl", "facts");
   for (const [key, value] of [["수용 상태", overview.status], ["그래프 build", overview.build_id], ["Manifest SHA-256", overview.manifest_sha256], ["읽은 시각", new Date(overview.loaded_at).toLocaleString("ko-KR")]]) facts.append(el("dt", "", key), el("dd", "mono", value));

@@ -1,0 +1,1 @@
+Return exactly {"ranked_disease_refs":["d_..."]}. Perform ranking only; omit next_action.

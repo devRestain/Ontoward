@@ -12,7 +12,7 @@
 
 ## Application
 
-- Use this dataset for a separately scoped sequential-questioning or differential-diagnosis study.
+- Use release_evidences.json and release_conditions.json as D49 knowledge-preparation metadata. Keep patient ZIPs reserved for separately scoped evaluation and never ingest them into Extraction/.
 - Resolve `E_*` and encoded value suffixes through the evidence dictionary before interpreting answers.
 - Parse list-shaped CSV strings as data without evaluating them as executable expressions.
 - Reveal only the requested evidence through a constructed simulator boundary.

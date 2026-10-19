@@ -1,0 +1,1 @@
+Render only the fixed working-diagnosis notice as one short Korean statement naming the same disease in its standard concise Korean form. State suspicion without claiming confirmation. Select no other diagnosis and add no management advice.

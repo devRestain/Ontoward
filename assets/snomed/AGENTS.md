@@ -7,6 +7,6 @@
 - Select the latest effectiveTime for a component across supplied snapshots before active filtering; reject conflicting same-version rows and unsatisfied dependencies.
 - Preserve SCTIDs as strings, component modules and dates, relationship groups, language expressions, and file hashes.
 - Link Korean descriptions to the same SCTID and preserve Korean-specific module origin.
-- Keep preparation code in Dev/ontology/source_projection.py and derivative evidence in data/preparation/v5/ under D09.
+- Keep current preparation code in Extraction/ontoward_extraction/ and new durable evidence in data/extraction/v5-enum/ under D49; preserve old data/preparation/v5/ custody read-only.
 - Treat identifier presence, taxonomy role, semantic mapping review, and runtime admission as distinct checks.
 - Keep source identities and module versions in preparation manifests; exclude original RF2 from submission archives.

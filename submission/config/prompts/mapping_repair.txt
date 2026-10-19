@@ -1,0 +1,1 @@
+Repair only syntax, schema and listed validation errors in the current mapping batch. Preserve the selected mapping policy and each statement's meaning. Return the same ordered array contract. Leave frozen accepted statements outside this batch unchanged.

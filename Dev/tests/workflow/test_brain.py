@@ -24,7 +24,7 @@ class BrainTests(unittest.TestCase):
         s.case.apply([f.fact('loc',kind='attribute',attribute='Location',values=('head',),status='absent',category=None)])
         contradicted=graph_candidates(s.case,k)[str(f.OW.Alpha)].entry
         self.assertTrue(any(r.graph_ref.id==str(f.OW.alphaBase) for r in contradicted.supports))
-        self.assertTrue(any('loc' in r.fact_ids for r in contradicted.against))
+        self.assertFalse(any('loc' in r.fact_ids for r in contradicted.against))
 
     def test_no_positive_support_gate_and_new_fact_candidate_expansion(self):
         c,s=f.consultation(),f.state('DifferentialDiagnosis')
@@ -59,7 +59,7 @@ class BrainTests(unittest.TestCase):
         c,s=f.consultation(),f.chief(f.state('DifferentialDiagnosis'))
         c.differential.decide(s,c.client)
         s.case.apply([f.fact(status='absent')]);c.differential.decide(s,c.client)
-        self.assertTrue(any('chief' in r.fact_ids for e in s.case.assessment.differential for r in e.against))
+        self.assertFalse(any('chief' in r.fact_ids for e in s.case.assessment.differential for r in e.against))
         self.assertFalse(any('chief' in r.fact_ids for e in s.case.assessment.differential for r in e.supports))
         feature=FeatureCondition(id='numeric',attribute=str(f.OW.Location),
             expected=ExpectedValue(kind='quantity',value=3,unit='day',operator='ge'))
@@ -108,8 +108,7 @@ class BrainTests(unittest.TestCase):
 
     def test_valid_ranking_survives_bad_question_and_action_only_repair(self):
         k=f.knowledge();f.add_pattern(k,'strongChief',f.OW.Complaint,[],disease=f.OW.Alpha)
-        self.assertGreater(max(p.score for p in k.get_disease_patterns(str(f.OW.Alpha)) if p.target==str(f.OW.Complaint)),
-            max(p.score for p in k.get_disease_patterns(str(f.OW.Beta)) if p.target==str(f.OW.Complaint)))
+        self.assertTrue(any(p.effect=='strong_support' for p in k.get_disease_patterns(str(f.OW.Alpha))))
         for invalid in ('unregistered_question', 'missing_action', 'wrong_type'):
             with self.subTest(invalid=invalid):
                 tasks=[]

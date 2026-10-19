@@ -39,11 +39,11 @@ ow:ExpectedValue a rdfs:Class ;
 
 ow:DiseasePatternAssociation a rdfs:Class ;
     rdfs:label "DiseasePatternAssociation"@en ;
-    rdfs:comment "A disease-pattern-applicability association with selected source assessment and retained source references."@en .
+    rdfs:comment "A scoped disease-pattern association with one qualitative diagnostic effect."@en .
 
 ow:ValueMatch a rdfs:Class ;
     rdfs:label "ValueMatch"@en ;
-    rdfs:comment "A directed, evidenced concept comparison path preserving is_a, regional_part or approved_region semantics."@en .
+    rdfs:comment "A directed concept comparison path preserving is_a, regional_part or approved_region semantics."@en .
 
 ow:ContextFactor a rdfs:Class ;
     rdfs:label "ContextFactor"@en ;
@@ -73,7 +73,7 @@ ow:pattern a rdf:Property ;
 
 ow:targets a rdf:Property ;
     rdfs:domain ow:ClinicalPattern ;
-    rdfs:comment "Exactly one Symptom or ExamFinding, validated without RDFS intersection semantics."@en .
+    rdfs:comment "Exactly one Symptom, ExamFinding or ContextFactor, validated without RDFS intersection semantics."@en .
 
 ow:hasFeature a rdf:Property ;
     rdfs:domain ow:ClinicalPattern ;
@@ -114,10 +114,6 @@ ow:expectedConcept a rdf:Property ;
     rdfs:range ow:AttributeValue ;
     rdfs:comment "The expectation satisfied by the evidenced comparison path."@en .
 
-ow:hasSupportingContext a rdf:Property ;
-    rdfs:domain ow:Disease ;
-    rdfs:range ow:ContextFactor ;
-    rdfs:comment "Capped positive support for an already retrieved candidate."@en .
 
 ow:inSystem a rdf:Property ;
     rdfs:domain ow:Symptom ;
@@ -148,39 +144,16 @@ ow:expectedStatus a rdf:Property ;
     rdfs:range xsd:string ;
     rdfs:comment "Optional present or absent expectation, scoped to the target and qualifiers."@en .
 
-ow:predictiveness a rdf:Property ;
-    rdfs:domain ow:DiseasePatternAssociation ;
-    rdfs:range xsd:string ;
-    rdfs:comment "BODHI symptom-to-condition ordinal label; zero is an assigned value."@en .
 
-ow:typicality a rdf:Property ;
-    rdfs:domain ow:DiseasePatternAssociation ;
-    rdfs:range xsd:string ;
-    rdfs:comment "BODHI condition-to-symptom ordinal label for interview priority."@en .
 
-ow:strongPredictor a rdf:Property ;
-    rdfs:domain ow:DiseasePatternAssociation ;
-    rdfs:range xsd:string ;
-    rdfs:comment "Optional true or false source marker; omission is unknown and adds no score."@en .
 
-ow:relationBasis a rdf:Property ;
-    rdfs:domain ow:DiseasePatternAssociation ;
-    rdfs:range xsd:string ;
-    rdfs:comment "bodhi_present_in, due_to, associated_with or subtype_intersection."@en .
 
-ow:derivationScope a rdf:Property ;
-    rdfs:domain ow:DiseasePatternAssociation ;
-    rdfs:range xsd:string ;
-    rdfs:comment "exact or descendant source linkage; never a clinical probability."@en .
 
 ow:applicability a rdf:Property ;
     rdfs:domain ow:DiseasePatternAssociation ;
     rdfs:range rdf:JSON ;
     rdfs:comment "Context conditions with subject, time_context and status; unknown does not activate support."@en .
 
-ow:sourceRef a rdf:Property ;
-    rdfs:range xsd:string ;
-    rdfs:comment "A compact source or approved comparison-path identifier; no patient evidence."@en .
 
 ow:relationKind a rdf:Property ;
     rdfs:domain ow:ValueMatch ;
@@ -192,12 +165,11 @@ ow:contextType a rdf:Property ;
     rdfs:range xsd:string ;
     rdfs:comment "The existing ten history, exposure and demographic categories."@en .
 
-ow:urgencyLabel a rdf:Property ;
-    rdfs:domain ow:Disease ;
-    rdfs:range xsd:string ;
-    rdfs:comment "Descriptive metadata without ranking or routing behavior."@en .
 
 ow:examRequestText a rdf:Property ;
     rdfs:domain ow:ExamMethod ;
     rdfs:range xsd:string ;
     rdfs:comment "A reviewed one-maneuver request with NFC length 1-30 code points."@en .
+
+ow:targetScope a rdf:Property ; rdfs:domain ow:DiseasePatternAssociation ; rdfs:range rdf:JSON .
+ow:diagnosticEffect a rdf:Property ; rdfs:domain ow:DiseasePatternAssociation ; rdfs:range xsd:string .

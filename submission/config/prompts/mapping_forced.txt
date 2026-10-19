@@ -1,0 +1,1 @@
+Choose the closest type-compatible admitted candidate for every remaining asserted clinical statement, including an approximate candidate. Preserve polarity and scope. Leave nonclinical or unknown content and unsupported numeric attributes unmapped.

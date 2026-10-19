@@ -1,0 +1,1 @@
+Render only the fixed symptom-diagnosis notice as one short Korean statement naming the same symptom in its standard concise Korean form. Preserve the undetermined cause. Select no disease and add no management advice.

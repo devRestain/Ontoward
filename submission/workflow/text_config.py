@@ -1,7 +1,7 @@
 from string import Formatter
 
 from pydantic import BaseModel, ConfigDict
-from settings import configured_path, education_enabled
+from settings import configured_path, education_enabled, prompt_paths
 from .rules.action import content_error
 
 
@@ -53,30 +53,23 @@ class Texts(BaseModel):
 
 
 class TextConfig(BaseModel):
-    clinical_prompt: str
-    session_prompts: dict[str, str]
-    parser_prompt: str
-    normalization_prompt: str
-    empathy_prompt: str
-    education_prompt: str
-    education_doctor_prompt: str
+    prompts: dict[str, str]
     texts: Texts
     education_enabled: bool = False
 
+    def prompt(self, *routes):
+        return '\n\n'.join(self.prompts[route] for route in routes)
+
     @classmethod
     def load(cls):
-        clinical = configured_path('ONTOWARD_CLINICAL_PROMPT', 'config').read_text(encoding='utf-8').strip()
-        session_prompts = {scope: configured_path('ONTOWARD_' + key + '_PROMPT', 'config').read_text(encoding='utf-8').strip()
-            for scope, key in [('Initiation', 'INITIATION'), ('ChiefComplaint', 'CHIEF_COMPLAINT'),
-                ('ContextFactor', 'CONTEXT_FACTOR'), ('DifferentialDiagnosis', 'DIFFERENTIAL_DIAGNOSIS')]}
-        prompt = configured_path("ONTOWARD_PARSER_PROMPT", "config").read_text(encoding="utf-8").strip()
-        normalization = configured_path("ONTOWARD_NORMALIZATION_PROMPT", "config").read_text(encoding="utf-8").strip()
-        empathy = configured_path("ONTOWARD_EMPATHY_PROMPT", "config").read_text(encoding="utf-8").strip()
-        education = configured_path("ONTOWARD_EDUCATION_PROMPT", "config").read_text(encoding="utf-8").strip()
-        education_doctor = configured_path("ONTOWARD_EDUCATION_DOCTOR_PROMPT", "config").read_text(encoding="utf-8").strip()
+        paths = prompt_paths(configured_path('ONTOWARD_PROMPTS', 'config'))
+        modules = {path: path.read_text(encoding='utf-8').strip() for parts in paths.values() for path in parts}
+        if not all(modules.values()):
+            raise ValueError('Empty prompt module')
+        prompts = {route: '\n\n'.join(modules[path] for path in parts) for route, parts in paths.items()}
         texts = Texts.model_validate_json(configured_path("ONTOWARD_TEXTS", "config").read_text(encoding="utf-8"))
-        if not all((clinical, *session_prompts.values(), prompt, normalization, empathy, education, education_doctor)) or set(texts.status_labels) != {"present", "absent", "uncertain", "unknown"}:
-            raise ValueError("Missing parser prompt or clinical status labels")
+        if set(texts.status_labels) != {"present", "absent", "uncertain", "unknown"}:
+            raise ValueError("Missing clinical status labels")
         if (set(texts.subject_labels) != {"patient", "family"} or set(texts.time_labels) != {"current", "past", "unspecified"}
                 or set(texts.operator_labels) != {"eq"}):
             raise ValueError("Missing clinical context or numeric labels")
@@ -119,6 +112,4 @@ class TextConfig(BaseModel):
         if any(content_error(text) for text in [*texts.clarification_questions.values(),
                 *texts.intake_questions.values(), *texts.history_questions.values()]):
             raise ValueError("Invalid prepared clarification")
-        return cls(clinical_prompt=clinical, session_prompts=session_prompts, parser_prompt=prompt, normalization_prompt=normalization, empathy_prompt=empathy,
-                   education_prompt=education, education_doctor_prompt=education_doctor,
-                   texts=texts, education_enabled=education_enabled())
+        return cls(prompts=prompts, texts=texts, education_enabled=education_enabled())

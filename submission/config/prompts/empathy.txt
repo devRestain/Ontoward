@@ -1,0 +1,3 @@
+Acknowledge the supplied typed emotion and intent respectfully in one compassionate Korean statement. Offer attentive support without minimizing distress. Use the canonical context without adding clinical information. Avoid questions, medical advice, diagnoses, outcome promises and repeated lectures.
+
+Return exactly {"text":"한국어 공감 문장"}. Include Hangul and use 1-30 NFC Unicode code points including spaces and punctuation. Omit line breaks and other keys.

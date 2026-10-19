@@ -66,8 +66,9 @@ class BudgetPolicy:
             chief = state.case.chief()
             if self.knowledge and chief:
                 profiles = self.knowledge.get_patterns_by_target(self.knowledge.term_id(chief.target, 'Symptom'))
-                available = {self.knowledge.term(c['id']) for p in profiles for c in self.knowledge.get_supporting_context(p.disease_id)}
-                available.update(self.knowledge.term(c.concept_id) for p in profiles for c in p.applicability)
+                from .assessment import context_questions
+                diseases = {p.disease_id for p in profiles}
+                available = {self.knowledge.term(target) for target,_ in context_questions(self.knowledge,diseases)}
                 graph = min(graph, len(available - covered))
             return sum(not answered(state, slot) for slot in HISTORY) + graph
         if scope == 'Education':

@@ -1,3 +1,5 @@
+from ..rules.assessment import context_questions, applicability
+from ..state.evidence import EvidenceIndex
 from ..rules.decision import prepare_decision, accept_ranking, rank_exchange
 from ..rules.limits import LIMITS
 from ..rules.collection import HISTORY
@@ -42,19 +44,17 @@ class ContextFactorSession:
         if len(covered) >= 2 and self.tools.budget.action_capacity(state) <= 0:
             return
         specs = {}
-        for disease in self.candidate_ids:
-            contexts = [(c['id'], 'family' if c['type'] == 'family_history' else 'patient', 'unspecified', False)
-                for c in self.tools.knowledge.get_supporting_context(disease)]
-            for profile in self.tools.knowledge.get_disease_patterns(disease):
-                contexts += [(c.concept_id, c.subject, c.time_context, True) for c in profile.applicability]
-            for ident, subject, timing, prerequisite in contexts:
-                if self.tools.knowledge.term(ident) in covered:
-                    continue
-                spec = self.tools._spec(state, ident, purpose='context', subject=subject, time_context=timing)
-                if spec and self.tools._eligible(state, spec):
-                    key = self.tools._key(spec)
-                    if key not in specs or prerequisite:
-                        specs[key] = (prerequisite, spec)
+        index = EvidenceIndex.from_case(state.case, self.knowledge)
+        for ident, rule_scope in context_questions(self.knowledge, self.candidate_ids):
+            from knowledge.conditions import Applicability
+            conditions = [Applicability(concept_id=ident,status=status,**{key:value for key,value in rule_scope.model_dump().items() if key not in {'concept_id','status'}})
+                for status in ('present','absent')]
+            if any(applicability([condition],index.contexts)[0] == 'matched' for condition in conditions):
+                continue
+            spec = self.tools._spec(state, ident, purpose='context', subject=rule_scope.subject,
+                subject_member=rule_scope.subject_member, time_context=self.knowledge.execution_time(ident,rule_scope))
+            if spec and self.tools._eligible(state,spec):
+                specs[self.tools._key(spec)] = (True,spec)
         if specs:
             _, spec = min(specs.values(), key=lambda row:(not row[0], row[1]['target_id']))
             self.tools._register(state, dict(spec, coverage=len(covered) < 2), 0, LIMITS.hpi_priority)

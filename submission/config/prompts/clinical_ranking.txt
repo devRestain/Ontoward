@@ -1,0 +1,1 @@
+Rank the supplied registered disease candidates by clinical fit. Include each prior_order reference exactly once and relevant new supplied candidates as appropriate. Return at least one reference from a nonempty candidate set; return [] only for no candidates. Avoid ranking by counts or source weights. Omit copied evidence and explanations.

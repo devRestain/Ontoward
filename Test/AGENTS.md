@@ -6,7 +6,7 @@
 - Keep consultation algorithms and the unchanged SDK in root submission/.
 - Keep the D31 personal web entrypoint and standalone report in this directory without changing submission/ code settings knowledge or state.
 - Keep the D32 project atlas in atlas.html with embedded styles and static diagrams; support direct file opening without scripts network requests builds or a server.
-- Keep the D39 knowledge browser in knowledge.py and knowledge/ with read-only manifest-pinned RDF and allowlisted preparation SQLite inputs.
+- Keep the D39 knowledge browser in knowledge.py and knowledge/ with read-only v5-enum-1 manifest-pinned RDF and separately labeled historical preparation SQLite inputs. Show knowledge_bundle_not_installed and an empty active graph when the manifest is absent.
 - Derive atlas explanations from project READMEs and current source; label the snapshot date illustrative examples runtime admission and deferred verification explicitly.
 - Read root D27 and the preserved devkit and competition references before changing simulator behavior.
 - Record operational progress in root PROJECT_STATE.md without creating another state scope.
@@ -38,10 +38,11 @@
 - Observe imported Python input-binding graph-candidate and English-plan functions at their actual call sites; record callable definition paths and distinguish functions from instance methods.
 - Store large serialized call values once by content hash in trace value events; resolve recorded references in the viewer without implying Python object identity or losing argument mutation paths.
 - Pin the observed runtime source hashes manifest collector hash compiled graph topology and WorkflowState schema at graph construction.
+- Pin the configured prompt manifest modules settings and route composition in new traces while preserving saved runs unchanged.
 - Derive inspection.json only from preserved trace and simulator records; expose incomplete calls SDK pairs graph paths frozen patient state revision primary diagnosis SOAP equality and completed receipts without rerunning clinical logic.
 - Keep execution settings in a collapsible rail and give reports a stable viewport with one content scroll; preserve the selected report and history control during unchanged polling and provide compact turn selection.
 - Lead reports with selectable execution flow and a schema-aware WorkflowState explorer for D44 three resident owners plus the disposable turn and preserved legacy traces; expose exact paths before and after values returned temporary objects and JSON string formatting without inferring field reads or unrecorded historical calls.
-- Keep inner hypothetical scoring loops and the Python heap outside observation and declare collector coverage; preserve service references without serializing credentials or arbitrary service dictionaries.
+- Keep the Python heap outside observation and declare collector coverage; preserve service references without serializing credentials or arbitrary service dictionaries.
 - Serve completed and failed runs through the same viewer and preserve a self-contained report.html for offline review.
 - Show D47 unified facts graph bindings final diagnosis plan current submission work and current or frozen Assessment; read older split facts and notes as historical formats; keep old fifteen-case-field traces readable and distinguish saved state from received SOAP without rerunning clinical logic.
 - Refresh saved report HTML from preserved logs when opened; keep LangSmith setup guidance distinct from an implemented exporter or authorized external upload.
@@ -67,6 +68,9 @@
 - Keep C10 scripted clinical failure separate from successful website execution and result delivery; never tune fixtures to a case answer or alter submission for a green report.
 - Report authenticated NOVA calls, official API execution, clinical accuracy, and official scoring separately.
 
-- Use brain_double.py for protocol-only clinical responses and compare_d47.py for preserved C03 accepted facts candidate retention cadence and provider failure replay without prompt byte measurements or clinical-quality claims; retain compare_d46.py only for explicit historical D46 snapshots.
+- Use brain_double.py for protocol-only clinical responses. Keep compare_d47.py, compare_d46.py, and atlas.html limited to explicit historical snapshots; do not run them as current D49 acceptance against absent old assets.
 - Keep initial_reports.json limited to public start_information opening and vital_signs and exclude patient scripts examination tables and reference records.
 - Permit the single clinical provider response repair within the existing shared request ceiling while preserving other service and unknown-result stops.
+
+- Use compose.d49.yaml and verify_d49_archive.py for a fresh synthetic ZIP consultation with read-only submission, network none, unchanged run.py, original SDK, ready handshake, fifteen-field SOAP, and completed receipt. Keep the fixture responder outside the archive and remove development credentials.
+- Read only the new effect, target_scope, Pattern/applicability, attribute_roles, and five asset pins in current graph inspection; do not restore score or source-required metadata.

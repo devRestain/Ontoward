@@ -1,0 +1,1 @@
+Emit empathy only for a current quoted emotional signal. Use {"quote":"exact current span","intent":"new_distress|renewed_request|repeat|acknowledgement","emotion":"fear|anxiety|pain|frustration|sadness|other"}. Omit empathy without a grounded signal.

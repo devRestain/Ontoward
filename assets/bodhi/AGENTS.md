@@ -6,6 +6,6 @@
 - Verify raw SNOMED fields against supplied RF2 before asserting a mapping; identifier presence alone does not prove semantic correctness.
 - Check Condition execution role before registering Disease; retain non-disease, history, inactive, and unknown-ID dispositions.
 - Keep symptom_given_condition and condition_given_symptom directions distinct; preserve strong_predictor without a score bonus.
-- Keep each source variant's required conditions together and defer unresolved linked findings as whole variants.
-- Use Dev/ontology/source_projection.py build/export/admit for full SQLite custody and reviewed v5.0 assets; retain original rows, hashes, role judgments, raw assertions, and unresolved variants in data/preparation/v5/.
+- Keep every source variant's required conditions together; let D49 final classification complete general relationships from model knowledge without fabricating patient observations.
+- Use Extraction/ontoward_extraction/ for a fresh D49 work DB and qualitative v5-enum-1 assets. Preserve old preparation custody and receipts as historical records; never use them as new builder inputs.
 - Keep clinical review and runtime admission separate from source projection and preserve upstream attribution and license notices.

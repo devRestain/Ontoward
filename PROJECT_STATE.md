@@ -1,8 +1,11 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=4bda3317bef63c516a44b5641529f2f650a2953f dirty=true updated=2026-10-19T13:52:18+09:00
-/goal phase=current id=ROOT.D47 state=complete action="Coordinate D47 session ownership model execution fact integration and offline artifact acceptance"
+/checkpoint revision=c4797449b1f66ae01a47d5248a15321f6fa5a5f8 dirty=true updated=2026-10-19T17:02:15+09:00
+/goal phase=history id=ROOT.D48 state=complete action="Classify the saved C03 service failure and coordinate modular prompt acceptance"
+/goal phase=current id=ROOT.D49 state=complete action="Implement the D49 extraction image runtime transition and offline acceptance"
+/goal phase=next id=ROOT.BUILD49 state=deferred action="Coordinate explicitly authorized provider authentication and the real new DB build and installation"
+/goal phase=history id=ROOT.D47 state=complete action="Coordinate D47 session ownership model execution fact integration and offline artifact acceptance"
 /goal phase=history id=ROOT.TESTVIEW46 state=complete action="Verify current pipeline observation compact recorded values and restructure the Test inspection workspace"
 /goal phase=history id=ROOT.STATE_ATLAS19 state=complete action="Reconcile maintained state ownership and refresh the current D46 offline atlas"
 /goal phase=history id=ROOT.D46 state=complete action="Coordinate D46 implementation Test integration and cross-scope offline handoff"
@@ -58,7 +61,7 @@
 /evidence id=ROOT.SOURCE18.E3 class=semantic result=pass source=submission/PROJECT_STATE.md observed="Reference application-owned regression evidence and preserve the explicit deferral of new Korean candidate consultation"
 /evidence id=ROOT.SOURCE18.E4 class=artifact result=pass source=data/preparation/v5/source-only-2026-10-16/build/evidence.json observed="Extract and verify all 86 evidence ZIP files with SHA256 5bfe320946a6da3e849a8848dce99d13c80a2a33a5a5abb91b4c6a04c1536c3a excluding raw source packages and credentials"
 /evidence id=ROOT.CLI18.E1 class=runtime result=fail source=data/preparation/v5/source-only-2026-10-16/build/execution-environment.json observed="Detect reserved built-in provider override in CLI 0.162.1 configuration loading before a model response and preserve the first attempt without retry"
-/evidence id=ROOT.CLI18.E2 class=external_service result=not_run source=Dev/ontology/codex_cli.py observed="Preserve the historical CLI configuration failure and record current patient-text generation only through D22 NOVA"
+/evidence id=ROOT.CLI18.E2 class=external_service result=not_run source=data/extraction/retired-d42-2026-10-19/withdrawal.json observed="Preserve the historical CLI configuration failure and record current patient-text generation only through D22 NOVA"
 /scope id=ROOT.SOURCE18.S1 state=in action="Own preparation tooling declared Docker execution verification evidence packaging and cross-scope handoff"
 /scope id=ROOT.SOURCE18.S2 state=out action="Record D18 exclusions for further Codex CLI work downloads commits publication deployment and runtime admission at that checkpoint"
 /scope id=ROOT.FINDING19.S1 state=in action="Own source extraction tooling compact preparation storage offline verification generation evidence and cross-scope handoff"
@@ -403,7 +406,6 @@
 /evidence id=ROOT.TESTVIEW46.E7 class=external_service result=not_run source=data/provenance/test-inspection-d46-2026-10-19.json observed="Leave actual model quality clinical accuracy official NOVA validation scoring uploads publication deployment and new external model requests unrun"
 /scope id=ROOT.TESTVIEW46.S1 state=in action="Own Test observer inspection output frontend checks local project container execution and root handoff"
 /scope id=ROOT.TESTVIEW46.S2 state=out action="Exclude runtime changes corpus changes downloads new model calls official evaluation commits publication and external browser control"
-/goal phase=next id=ROOT.QUALITY47 state=deferred action="Coordinate one separately authorized D47 actual-model quality case with a confirmed shared request ceiling"
 /accept id=ROOT.D47.A1 state=pass action="Coordinate the implemented application and preserved clinical custody" evidence=ROOT.D47.E1,ROOT.D47.E4
 /accept id=ROOT.D47.A2 state=pass action="Verify Test observation saved C03 comparison and offline evaluator integration" evidence=ROOT.D47.E2,ROOT.D47.E3
 /accept id=ROOT.D47.A3 state=pass action="Reconcile decisions contracts Korean orientation and all three maintained state scopes" evidence=ROOT.D47.E5
@@ -415,4 +417,28 @@
 /evidence id=ROOT.D47.E6 class=external_service result=not_run source=data/provenance/algorithm-d47-2026-10-19.json observed="Leave actual-model quality latency improvement clinical validation new NOVA execution official scoring uploads commits and deployment unrun"
 /scope id=ROOT.D47.S1 state=in action="Own Test integration packaging coordination documentation and the cross-scope offline handoff"
 /scope id=ROOT.D47.S2 state=out action="Exclude new corpus admission paid execution deferred clinical policy changes and deployment"
-/handoff state=ready action="Review the D47 offline artifact and evidence before defining the separate actual-model quality slice"
+/accept id=ROOT.D48.A1 state=pass action="Coordinate prompt modularization and classify the preserved service failure" evidence=ROOT.D48.E1,ROOT.D48.E2
+/accept id=ROOT.D48.A2 state=pass action="Verify Test prompt provenance and offline integration" evidence=ROOT.D48.E3,ROOT.D48.E4
+/accept id=ROOT.D48.A3 state=pass action="Reconcile the application artifact custody and all maintained documentation scopes" evidence=ROOT.D48.E5,ROOT.D48.E6
+/evidence id=ROOT.D48.E1 class=semantic result=pass source=Tmp/d48-2026-10-19/prompt-review.json observed="Apply prompt-writer to all submission runtime prompts and verify Python task source and repair selection through current callers"
+/evidence id=ROOT.D48.E2 class=runtime result=pass source=Tmp/d48-2026-10-19/failure-analysis.json observed="Identify cached HTTP 530 before Ear validation and reproduce INVALID_API_RESPONSE with the unchanged SDK; classify the user-reported Cloudflare 1033 as consistent external infrastructure evidence without claiming identical original body or service recovery"
+/evidence id=ROOT.D48.E3 class=runtime result=pass source=Tmp/d48-2026-10-19/observer/verification.json observed="Match observed and unobserved results across fourteen scenarios and 1259 node updates and verify prompt module and route source pins"
+/evidence id=ROOT.D48.E4 class=runtime result=pass source=Tmp/test-evaluator/verify-d48-20261019/verification.json observed="Pass fifty-three offline evaluator and web checks with unchanged model bridge SDK transport and cache behavior"
+/evidence id=ROOT.D48.E5 class=semantic result=pass source=Tmp/d48-2026-10-19/handoff.json observed="Align D48 decisions PRD ownership contracts Korean orientation public settings and three operational states while retaining D47 facts cadence and deferred model-quality work"
+/evidence id=ROOT.D48.E6 class=artifact result=pass source=data/PROJECT_STATE.md observed="Reference DATA.D48 for source-matched ZIP protected SDK clinical and prior archive custody and both original C03 runs; reference APP.D48 for complete runtime acceptance"
+/evidence id=ROOT.D48.E7 class=external_service result=not_run source=data/provenance/algorithm-d48-2026-10-19.json observed="Leave new NOVA requests organizer recovery actual-model quality latency clinical accuracy official evaluation upload commits and deployment unrun"
+/scope id=ROOT.D48.S1 state=in action="Own Test prompt provenance packaging integration common documentation and cross-scope offline acceptance"
+/scope id=ROOT.D48.S2 state=out action="Exclude transport policy changes organizer repair paid execution clinical corpus changes and deployment"
+/accept id=ROOT.D49.A1 state=pass action="Build and verify the independent extraction image and durable provider execution boundary" evidence=ROOT.D49.E1,ROOT.D49.E2
+/accept id=ROOT.D49.A2 state=pass action="Adapt read-only Test inspection and coordinate synthetic artifact acceptance" evidence=ROOT.D49.E3,ROOT.D49.E4,ROOT.D49.E5
+/accept id=ROOT.D49.A3 state=pass action="Reconcile D49 requirements ownership and all three maintained state scopes" evidence=ROOT.D49.E6
+/evidence id=ROOT.D49.E1 class=runtime result=pass source=Tmp/d49-2026-10-19/image-tests.log observed="Pass twenty-four provider checkpoint partial-output unknown-result quota lock deterministic-compile and install-interruption checks inside the final network-disabled extraction image"
+/evidence id=ROOT.D49.E2 class=runtime result=pass source=Tmp/d49-2026-10-19/image-proof-release/verification.json observed="Complete the four-format synthetic pipeline in the final image; keyless CLI pause saves the in-flight result and resume skips done jobs; keyless verification accepts the temporary installed bundle without model calls"
+/evidence id=ROOT.D49.E3 class=runtime result=pass source=Tmp/d49-2026-10-19/observer/verification.json observed="Match observed and unobserved execution across fourteen scenarios and 1259 node updates without replay on recording failure"
+/evidence id=ROOT.D49.E4 class=runtime result=pass source=Tmp/d49-2026-10-19/viewer/verification.json observed="Pass eight read-only viewer checks for absent active knowledge new pins effect/scope graph traversal local HTTP input boundaries and historical SQLite; browser rendering remains not_run"
+/evidence id=ROOT.D49.E5 class=artifact result=pass source=submission/PROJECT_STATE.md observed="Reference APP.D49 for qualitative runtime and independent ZIP consultations and DATA.D49 for exact image artifact source and preserved custody identity"
+/evidence id=ROOT.D49.E6 class=semantic result=pass source=Tmp/d49-2026-10-19/handoff.json observed="Align D49 with D47 cadence D48 modules PRD active ownership Korean orientation and root submission data goals; preserve retired source results and the existing auth container and volume"
+/evidence id=ROOT.D49.E7 class=external_service result=not_run source=data/provenance/algorithm-d49-2026-10-19.json observed="Leave real provider login model access paid generation actual DB indexing and installation production ZIP official evaluation publication commits and deployment unrun"
+/scope id=ROOT.D49.S1 state=in action="Own Extraction image and providers checkpoint execution Test integration packaging coordination and cross-scope documentation"
+/scope id=ROOT.D49.S2 state=out action="Exclude real generation login installation publication and historical accepted artifact mutations"
+/handoff state=ready action="Review the completed D49 offline slice; keep real generation deferred until a new user instruction and selected provider authentication"

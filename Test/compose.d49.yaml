@@ -1,0 +1,19 @@
+name: ontoward
+services:
+  d49-archive:
+    image: ontoward-dev:latest
+    command: [python, -B, /fixtures/Test/verify_d49_archive.py]
+    working_dir: /submission
+    environment:
+      PYTHONPATH: /submission
+      ONTOWARD_TEST_SUBMISSION: /submission
+    volumes:
+      - ${D49_SUBMISSION:?Set the extracted synthetic archive path}:/submission:ro
+      - ./../Dev/tests/workflow:/fixtures/Dev/tests/workflow:ro
+      - .:/fixtures/Test:ro
+      - ${D49_OUTPUT:-../Tmp/d49-2026-10-19/isolated}:/output
+    network_mode: none
+    read_only: true
+    tmpfs: [/tmp:size=64m]
+    cpus: 2
+    mem_limit: 8g

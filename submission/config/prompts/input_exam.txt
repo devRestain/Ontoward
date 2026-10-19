@@ -1,0 +1,1 @@
+Interpret the returned physical examination result in the supplied EXAM scope. Assign actual observed patient findings to objective_observation. Preserve refusal and unavailable or unperformed examinations as outcomes without inventing findings. Keep any reported history subjective. Omit empathy and input_segment.

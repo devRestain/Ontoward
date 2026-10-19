@@ -1,8 +1,11 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=4bda3317bef63c516a44b5641529f2f650a2953f dirty=true updated=2026-10-19T13:52:18+09:00
-/goal phase=current id=APP.D47 state=complete action="Implement and verify session-owned tasks one DoctorBrain and unified patient facts"
+/checkpoint revision=c4797449b1f66ae01a47d5248a15321f6fa5a5f8 dirty=true updated=2026-10-19T17:02:15+09:00
+/goal phase=history id=APP.D48 state=complete action="Assemble task-specific prompts in Python and verify the existing workflow through completed submission"
+/goal phase=current id=APP.D49 state=complete action="Replace numeric knowledge dependencies with qualitative scoped graph effects"
+/goal phase=next id=APP.BUILD49 state=deferred action="Verify a real installed v5-enum-1 bundle and representative consultations after the separately authorized build"
+/goal phase=history id=APP.D47 state=complete action="Implement and verify session-owned tasks one DoctorBrain and unified patient facts"
 /goal phase=history id=APP.STATE19 state=complete action="Reconcile application state with current D46 source and the accepted offline evidence"
 /goal phase=history id=APP.D46 state=complete action="Implement and verify Ear Brain Mouth graph decisions frozen Assessment and Python SOAP through completed submission"
 /goal phase=history id=APP.BUDGET45 state=complete action="Use authoritative session turns for budget checks and reconcile attempted action costs under D45"
@@ -278,7 +281,6 @@
 /accept id=APP.STATE19.A1 state=pass action="Verify current implementation archive correspondence and application state references" evidence=APP.STATE19.E1
 /evidence id=APP.STATE19.E1 class=semantic result=pass source=../Tmp/state-atlas-2026-10-19/verification.json observed="Review DoctorEar DoctorBrain DoctorMouth single Assessment and Python SOAP; execute strict prepare and compile eighteen nodes with thirty transitions; retain existing 116-test and 479-check receipts without rerunning the workflow suites"
 /evidence id=APP.STATE19.E2 class=external_service result=not_run source=../Tmp/state-atlas-2026-10-19/verification.json observed="Leave fresh actual Luna full public consultations clinical accuracy official NOVA validation scoring and new workflow-suite execution unrun in this documentation slice"
-/goal phase=next id=APP.QUALITY47 state=deferred action="Verify input ranking plan and delivery semantics in the separately authorized D47 quality case"
 /accept id=APP.D47.A1 state=pass action="Implement five session owners one model executor and unified patient facts" evidence=APP.D47.E1,APP.D47.E6
 /accept id=APP.D47.A2 state=pass action="Preserve admitted clinical acquisition Education SOAP and confirmed termination" evidence=APP.D47.E2,APP.D47.E4
 /accept id=APP.D47.A3 state=pass action="Verify the independent read-only archive against the same core paths" evidence=APP.D47.E3,APP.D47.E5
@@ -291,4 +293,28 @@
 /evidence id=APP.D47.E7 class=external_service result=not_run source=../data/provenance/algorithm-d47-2026-10-19.json observed="Leave real-model semantic quality clinical accuracy response-speed improvement new NOVA and official evaluation unrun"
 /scope id=APP.D47.S1 state=in action="Own Ear session tasks Brain execution Mouth deterministic SOAP and unchanged SDK callback and wire contracts"
 /scope id=APP.D47.S2 state=out action="Exclude corpus expansion separate clinical policy changes external model execution and deployment"
-/handoff state=ready action="Review the D47 offline artifact and evidence before defining the separate actual-model quality slice"
+/accept id=APP.D48.A1 state=pass action="Verify task-specific prompt assembly and bounded response acceptance" evidence=APP.D48.E1,APP.D48.E2
+/accept id=APP.D48.A2 state=pass action="Verify complete source and independent archive workflows" evidence=APP.D48.E3,APP.D48.E4,APP.D48.E5
+/accept id=APP.D48.A3 state=pass action="Preserve existing clinical fact execution and error contracts" evidence=APP.D48.E6,APP.D48.E7
+/evidence id=APP.D48.E1 class=semantic result=pass source=../Tmp/d48-2026-10-19/prompt-review.json observed="Select twenty-five task recipes from thirty-seven focused prompt modules with Python-owned initial reply EXAM mapping ranking action planning announcement expression and active repair decisions"
+/evidence id=APP.D48.E2 class=runtime result=pass source=../Tmp/d48-2026-10-19/workflow.log observed="Pass 136 workflow tests including nine prompt behavior checks for row repair forced mapping accepted-ranking action repair partial plans separate Mouth repairs diagnosis notices and completed SOAP"
+/evidence id=APP.D48.E3 class=runtime result=pass source=../Tmp/d48-2026-10-19/archive-workflow.log observed="Pass the same 136 workflow tests against the source-matching independent read-only ZIP without parent data or development credentials"
+/evidence id=APP.D48.E4 class=runtime result=pass source=../Tmp/d48-2026-10-19/admitted/verification.json observed="Pass 377 admitted RDF checks in source and independently in ../Tmp/d48-2026-10-19/isolated/admitted/verification.json with unchanged clinical assets and the d48.1 algorithm manifest"
+/evidence id=APP.D48.E5 class=runtime result=pass source=../Tmp/d48-2026-10-19/http/verification.json observed="Complete original SDK internal HTTP with thirty-eight action turns fifty Doctor calls fifteen SOAP strings and completed receipt; preserve frozen facts chief revision and Assessment for fifty-one nodes and verify prompt source pins without public-case or model-quality claims"
+/evidence id=APP.D48.E6 class=runtime result=pass source=../Tmp/d48-2026-10-19/comparison/comparison.json observed="Preserve all four saved C03 accepted fact inputs prior candidates and D47 call cadence; preserve the new C03 initial input through actual Ear preprocessing in ../Tmp/d48-2026-10-19/prompt-examples/C03-initial-after.json"
+/evidence id=APP.D48.E7 class=artifact result=pass source=../Tmp/d48-2026-10-19/preservation.json observed="Preserve DoctorBrain SDK executor limits Test bridge cache and clinical asset hashes; retain original service failure and both C03 run directories unchanged"
+/evidence id=APP.D48.E8 class=external_service result=not_run source=../data/provenance/algorithm-d48-2026-10-19.json observed="Leave actual model semantics latency clinical validation new NOVA execution organizer recovery verification official scoring uploads commits and deployment unrun"
+/scope id=APP.D48.S1 state=in action="Own runtime prompt modules task selection public configuration and algorithm-only manifest change"
+/scope id=APP.D48.S2 state=out action="Exclude transport policy clinical admission model choice dependencies and additional clinical policy changes"
+/accept id=APP.D49.A1 state=pass action="Replace numeric clinical knowledge with complete scoped qualitative relations" evidence=APP.D49.E1
+/accept id=APP.D49.A2 state=pass action="Preserve D47 and D48 workflow behavior through independent synthetic consultations" evidence=APP.D49.E2,APP.D49.E3
+/accept id=APP.D49.A3 state=pass action="Enforce the intentional missing-bundle boundary and preserve protected runtime ownership" evidence=APP.D49.E4,APP.D49.E5
+/evidence id=APP.D49.E1 class=runtime result=pass source=../Tmp/d49-2026-10-19/workflow.log observed="Pass 147 workflow tests including complete effects present/absent partial and contradicted patterns positive candidate entry prior retention family/member/time scopes same-scope presence prerequisites any execution time full first-DD condition input unknown response cadence freeze Education SOAP and completion"
+/evidence id=APP.D49.E2 class=runtime result=pass source=../Tmp/d49-2026-10-19/isolated-accepted/admitted/verification.json observed="Complete three temporary new-bundle consultations with Education disabled or model-knowledge Education enabled and Context unknown present or absent; preserve frozen Assessment fifteen SOAP fields and empty O.tests"
+/evidence id=APP.D49.E3 class=runtime result=pass source=../Tmp/d49-2026-10-19/isolated-accepted/sdk-http.json observed="Run unchanged run.py and original SDK from the independent read-only synthetic ZIP under network none with ready handshake 46 HTTP requests 21 actions fifteen-field SOAP and completed receipt without development credentials"
+/evidence id=APP.D49.E4 class=runtime result=pass source=../Tmp/d49-2026-10-19/prepare-withdrawn.log observed="Observe prepare fail with knowledge_bundle_not_installed while the real active manifest is absent; production packaging fails identically in production-package.log without creating a real new artifact"
+/evidence id=APP.D49.E5 class=artifact result=pass source=../Tmp/d49-2026-10-19/preservation.json observed="Preserve SDK entrypoint requirements Brain coordinator transport budgets and D48 prompt routes; change only clinical_common among thirty-seven prompt modules and keep synthetic knowledge outside submission"
+/evidence id=APP.D49.E6 class=external_service result=not_run source=../data/provenance/algorithm-d49-2026-10-19.json observed="Leave actual LLM semantics new clinical data actual model-knowledge plan quality clinical validity official NOVA and deployment unrun"
+/scope id=APP.D49.S1 state=in action="Own v5-enum-1 loader qualitative matching question prerequisites scoped evidence clinical inputs and runtime documentation"
+/scope id=APP.D49.S2 state=out action="Exclude actual new knowledge installation model/provider changes in consultation and historical receipt mutations"
+/handoff state=ready action="Review the completed D49 offline slice; keep real generation deferred until a new user instruction and selected provider authentication"

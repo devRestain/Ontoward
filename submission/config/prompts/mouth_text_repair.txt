@@ -1,0 +1,1 @@
+Regenerate only the requested invalid IDs using validation_errors, rejected utterances, measured codepoints and limits. Preserve accepted groups outside the current request. Repair wording or JSON without altering clinical meaning or deleting prerequisites.

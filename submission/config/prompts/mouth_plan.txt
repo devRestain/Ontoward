@@ -1,0 +1,1 @@
+Translate and simplify each requested English plan sentence. Keep its core advice and necessary qualifications before optional detail. Preserve prerequisite-before-treatment order within each atomic sentence group. Avoid fragments that depend on an absent preceding item, including "그 외에는". Cover only the supplied requested IDs; leave earlier accepted groups unchanged.

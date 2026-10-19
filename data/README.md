@@ -1,27 +1,20 @@
-# 원천과 온톨로지 준비 자료
+# 원자료·철회·새 빌드 결과
 
-data/는 공급된 원천의 식별·판본·파일 해시·매핑·지속 준비 결과를 소유한다. RF2·BODHI-S 원본과 주최자 패키지는 assets/에 그대로 보존하며 실제 상담과 환자 상태는 submission/이 소유한다.
+data/는 원천 식별·해시·지속 준비 결과·체크포인트·artifact 증빙을 소유한다. 원본은 assets/에 그대로 보존하며 실제 환자 facts는 submission/이 소유한다.
 
-현재 실행 데이터는 [D42 일반 호소 배치](preparation/v5/common-complaints-2026-10-18-r2/README.md)다. D41의 canonical 입력과 v5.0 구조를 유지하고, 기존 원천 복원·한국어 표현·로컬 DDXPlus metadata와 출처가 있는 작성 JSONL을 같은 준비·검증·수용 경로로 처리한다. [D42 영수증](provenance/common-complaints-d42-2026-10-18.json)이 임상 수용을 고정한다. 현재 d46.1 알고리즘·독립 ZIP·실제 검증은 [D46 영수증](provenance/algorithm-d46-2026-10-19.json)에 별도 고정하며 과거 수용·출처·ZIP은 보존한다. D46에서 임상 코퍼스와 자산 핀은 변경하지 않는다.
+D49에서 기존 임상 DB의 **활성 사용을 철회**했다. 과거 원자료·source-custody SQLite·준비 결과·수용 ZIP·기존 증거는 보존한다. 제출 경로의 옛 생성 RDF·질문·정책과 점수 전용 생성기는 [보관 디렉터리](extraction/retired-d42-2026-10-19/)에 원본 bytes와 해시를 남겼다. [withdrawal.json](extraction/retired-d42-2026-10-19/withdrawal.json)은 파일·archive 신원을 기록한다. 과거 D20–D48 수용은 역사적 증거이며 새 빌드의 입력·승인·기본 policy가 아니다.
 
 | 경로 | 역할 |
 |---|---|
-| [ontology/](ontology/README.md) | v5.0 구조 계약과 원천 투영 의미 |
-| [preparation/v5/](preparation/v5/source-only-2026-10-16/README.md) | 원천 DB·깨끗한 베이스·삭제 영수증·새 후보·한국어 작업·증빙 |
-| catalog/·provenance/ | 원본 탐색과 공모전 출처 식별 |
+| [ontology/](ontology/README.md) | 작성된 v5.0 / v5-enum-1 구조 계약 |
+| extraction/v5-enum/work/RUN_ID/ | 입력·설정 fingerprint, SQLite job/요청/응답/사용량, worker lock |
+| extraction/v5-enum/output/RUN_ID/ | 여섯 파일의 새 staging 번들 |
+| extraction/retired-d42-2026-10-19/ | 철회 runtime·builder 보관본과 검증 해시 |
+| preparation/·catalog/ | 보존된 과거 원천 custody·준비·수용 결과 |
+| provenance/ | 수행한 검증·소스·이미지·임시 artifact 신원 |
 
-D18에 따라 pre-v5 파생 데이터, 수동 seed와 번역, 이전 임상 배치·승인·교육 초안과 임시 사본을 삭제했다. 이전 승인을 새 빌드에 적용하지 않는다. 삭제 검증과 현재 처리 결과는 [데이터 상태](PROJECT_STATE.md)가 관리한다.
+새 추출은 [Extraction](../Extraction/README.md)의 네 원자료 경로에서 빈 작업 DB로 시작한다. 이전 생성 데이터·질문·어휘·source-custody SQLite와 Astra snapshot/정책을 새 정본으로 읽지 않는다. 한 fingerprint에는 공급자 하나만 사용하고 완료·neutral을 재호출하지 않는다. API/CLI 불명 전송은 운영자의 명시적 재시도 전까지 멈춘다.
 
-전체 International 2026-05-01 기반·Korean 2026-06-15 확장 Snapshot과 BODHI-S 8개 CSV를 준비 DB에 보존한다. 공모전 어휘는 유효한 원천 표현과 필요한 의존 개념으로 선택한다. 모든 클래스의 역할·원천 근거·처리 수·미해결 이유를 기록하며 관련 없는 넓은 계층 전체를 한국어 번역 대상으로 삼지 않는다.
+실행 RDF와 임상 입력에는 점수·가중치·관계 출처·confidence·reviewer를 넣지 않는다. 실제 환자 취득 source/turn과 Education 문서 경로/hash/인용은 각 실행 책임에서 보존한다. 라이선스·원자료 역할은 [DATA_USE.md](../Extraction/DATA_USE.md)에 분리한다.
 
-Korean RF2 명칭은 같은 SCTID로 연결하고 Description ID·원천 행·판본을 유지한다. 모델 번역은 공식 용어와 구분한다. 관찰 가능한 대상의 임상 질문은 NFC 1–30자로 검증하고 생성과 별도 자동 의미 대조 결과를 함께 보존한다. 실행은 [생성 도구](../Dev/ontology/README.md)의 고정 작업 집합·계산된 유한 호출 상한·실패 시 중단 규칙을 따른다.
-
-후보 RDF·원천 카탈로그·자동 의미 대조와 명시적 사용자 수용을 구분한다. D20은 [공모전 그래프](preparation/v5/competition-graph-2026-10-16/README.md)를 수용했고, D23은 완전한 원천 기반 후보·매핑과 D22의 한국어 환자 행동을 공모전용으로 승인한다. 추가 사용자·임상 승인 대기는 없으며 원천 의미·단위·획득 방식 누락은 기술적 제외로 구분한다. [런타임 수용 결과](preparation/v5/runtime-text-2026-10-16/README.md)는 새 영수증과 원래 그래프·문구 증빙을 연결한다. 원천 DB는 읽기 전용으로 공유하고 새 투영·승인·관계 근거만 별도 보존한다.
-
-D22는 내부 명칭의 전수 번역을 제외한 환자 행동 1,309개의 NOVA 생성과 별도 의미 대조를 완료했다. D23은 그 문구를 정확한 해시로 실행 수용하고 오프라인 한국어 상담과 독립 ZIP을 검증했다. 이전 Codex CLI 설정 오류와 미선택 전체 명칭 작업은 과거 준비 증빙으로 보존하며 현재 환자 행동의 실행을 차단하지 않는다.
-
-D24는 준비 자료의 저장과 Git 추적을 분리한다. 현재 공유 원천 DB와 모든 요청·반려 기록은 로컬 원래 경로에 유지하고, 과거 D18의 원천 베이스·빌드 DB는 [해시를 검증한 gzip 보관본](provenance/storage-cleanup-2026-10-16-archives.json)으로 보존한다. 해당 과거 검사에만 확장본 복원이 필요하며 상담은 submission 내부 실행 자산을 사용한다. Git에는 승인·출처·검증 요약과 깨끗한 base를 남기고, 준비 카탈로그·작업 집합·요청 원문·DB·보관본은 포함하지 않는다. 로컬 파일 보존과 Git 추적 해제, 호스트 여유 공간과 디렉터리 크기를 [정리 영수증](provenance/storage-cleanup-2026-10-16.json)에서 구분한다.
-
-## D37 교육 문서 연결 수용
-
-preparation/guideline-runtime/education-2026-10-17/admission.json은 D30의 843개 Disease·821개 고유 문서 연결을 현재 그래프 build와 런타임 인덱스에 고정한다. 원문·RDF·문진 문구 해시는 보존하며 원문을 제출 ZIP으로 복사하지 않는다. 증례별 영어 P와 한국어 전달 기록은 런타임 상태가 소유하고, 이 수용 영수증은 생성 계획의 임상적 정확성이나 실제 모델 품질을 승인하지 않는다.
+이번 D49 결과는 [증빙](provenance/algorithm-d49-2026-10-19.json)과 [상태](PROJECT_STATE.md)를 따른다. 실제 모델 DB 생성과 실제 설치는 not_run이며 활성 manifest는 없다. 합성 데이터와 ZIP은 Tmp/에만 존재한다. 다음 작업은 인증을 마친 선택 공급자로 실제 DB를 생성·검증·설치하는 것이다.

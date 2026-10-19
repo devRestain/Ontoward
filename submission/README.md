@@ -1,6 +1,6 @@
 # Ontoward 진료 워크플로우 백서
 
-현재 구현은 **D47·d47.1**이다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D47 결정](../DECISION_STATE.md#D47), [PRD](../PRD.md), [상태 정의](workflow/state/models.py), [실행·ZIP 증빙](../data/provenance/algorithm-d47-2026-10-19.json)을 기준으로 읽는다. D42 임상 핀과 D45 공식 턴 예산은 유지한다.
+현재 구현은 **D49·d49.1**이며 D48 프롬프트 모듈과 D47 객체·사실·호출 계약을 유지한다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D48 프롬프트 결정](../DECISION_STATE.md#D48), [D47 객체 결정](../DECISION_STATE.md#D47), [PRD](../PRD.md), [상태 정의](workflow/state/models.py), [D49 오프라인 증빙](../data/provenance/algorithm-d49-2026-10-19.json)을 기준으로 읽는다. 기존 DB의 활성 사용은 철회했고 D45 공식 턴 예산을 유지한다. 실제 새 manifest가 없는 현재 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패한다. 합성 번들은 Tmp/에서만 검증했다.
 
 <a id="workflow-graph"></a>
 ## 1. 진료 실행 흐름
@@ -77,9 +77,9 @@ Ear는 초기 opening과 vital_signs를 첫 SAY 전에 해석한다. 매 입력�
 <a id="reasoning"></a>
 ## 5. 목적별 임상 입력
 
-[rules/assessment.py](workflow/rules/assessment.py)가 현재 적격 사실과 등록 관계로 후보를 회수하고 supports·against·unresolved를 만든다. 부분 패턴·음성·미확인 applicability도 검토 경로가 될 수 있으나 자동 지지는 아니다. Feature 매칭과 Association 적용 조건을 따로 판정하며 관찰·episode·주체를 합쳐 완성하지 않는다. 수치·값 불일치에는 실제 fact 참조를 남긴다.
+[rules/assessment.py](workflow/rules/assessment.py)가 현재 적격 사실과 등록 관계로 후보를 회수하고 supports·against·unresolved를 만든다. 새 후보는 support·strong_support의 scoped Target 또는 applicability 경로로 넓게 회수하며 against-only 관계로 확장하지 않는다. 전체 Pattern과 applicability가 맞을 때만 등록 effect를 활성화한다. 부분 일치·불일치는 자동 지지/반대가 아니다. 명시적 모순으로 불가능해진 관계의 남은 조건은 질문하지 않는다. Feature 매칭과 Association 적용 조건을 따로 판정하며 관찰·episode·주체를 합쳐 완성하지 않는다. 수치·값 불일치에는 실제 fact 참조를 남긴다.
 
-[rules/decision.py](workflow/rules/decision.py)는 호출 목적에 필요한 Key와 Value만 고른다. 사실 f_, 후보 d_, 근거 e_, 질문 q_, 범위 s_, 조건 condition_를 지역 참조로 연결하고 같은 사실·조건·미확인을 한 번 정의한다. 전체 상태 model_dump·큰 Pydantic schema·그래프 profile 전문을 프롬프트에 넣지 않는다. 기존 유효 후보를 보존하고 고정 Top-K를 두지 않는다. 순위 전용 요청에는 질문을 넣지 않으며 행동 복구는 수용 순위와 실행 가능한 질문 중심이다.
+[rules/decision.py](workflow/rules/decision.py)는 호출 목적에 필요한 Key와 Value만 고른다. 사실 f_, 후보 d_, 근거 e_, 질문 q_, 범위 s_, 조건 condition_를 지역 참조로 연결하고 같은 사실·조건·미확인을 한 번 정의한다. 공유 근거와 expected_by_disease에 effect·scope·전체 Pattern·applicability를 첫 DD action-only 요청에도 보존한다. 전체 상태 model_dump·큰 Pydantic schema·그래프 profile 전문을 프롬프트에 넣지 않는다. 기존 유효 후보를 보존하고 고정 Top-K를 두지 않는다. 순위 전용 요청에는 질문을 넣지 않으며 행동 복구는 수용 순위와 실행 가능한 질문 중심이다.
 
 **프롬프트 바이트 측정·목표·제한·진단 통계·크기 비교는 없다.** 이를 맞추기 위한 절단·배치·조각 읽기·근거 결합 경로도 제거했다. 의미별 전처리와 공유 참조는 필요한 정보를 명확히 전달하기 위해 사용한다. 공식 토큰·호출·행동·시간 예산은 각자 유지한다.
 
@@ -92,7 +92,7 @@ Ear는 초기 opening과 vital_signs를 첫 SAY 전에 해석한다. 매 입력�
 <a id="question-selection"></a>
 ## 7. 질문과 평가 고정
 
-필수 chief 속성·Open Inquiry·기본 병력은 해당 세션이 준비한다. 공통 QuestionTools가 등록 문구·존재 전제·계통·주체·가족 구성원·시점·관찰·중복·예산을 검사한다. DD의 선택 질문은 후보의 미확인 feature와 진찰에서 구성하며 질환별 기대 답과 조건을 보존한다. ask는 공급한 실행 가능한 질문 하나를 선택해야 한다.
+필수 chief 속성·Open Inquiry·기본 병력은 해당 세션이 준비한다. 공통 QuestionTools가 등록 문구·존재 전제·계통·주체·가족 구성원·시점·관찰·중복·예산을 검사한다. 질문 순서·SOAP category·clarification은 attribute_roles에서 읽는다. Context는 별도 supporting-context 없이 같은 CaseFact를 매칭한다. rule any와 실제 질문의 current/past/unspecified를 분리하고 원래 rule scope로 해결 여부를 검사한다. 속성만 있는 Pattern도 같은 Target·scope의 존재 확인을 먼저 제공한다. DD의 선택 질문은 후보의 미확인 feature와 진찰에서 구성하며 질환별 기대 답과 조건을 보존한다. ask는 공급한 실행 가능한 질문 하나를 선택해야 한다.
 
 DD 종료는 **마지막 응답 수용→필요 판단→최신 평가 재사용→현재 미확인·한계 확정→Assessment·기반 facts·chief 고정→Education**이다. 최신 질환 평가를 얻지 못하면 확인된 chief의 symptom-only 평가를 고정하고 chief도 없으면 명시적으로 실패한다. Writer는 다시 진단을 고르지 않는다. Education과 SOAP 복구는 같은 고정 평가를 사용한다.
 
@@ -103,7 +103,7 @@ D45의 공식 turns_remaining이 행동 예산의 기준이다. SAY·EXAM의 실
 
 새 행동 전에 응답 해석·최종 판단과 복구·활성 계획·한국어 안내·제출을 보호한다. 임상 정상 출력은 4096·한 번의 복구 8000토큰이다. Education은 7턴을 보호하고 상한은 10이다. 명시적 비활성 설정은 교육 행동·예약·P.education을 사용하지 않는다. 일시 전송 오류는 동일 ID·payload로 2초 뒤 한 번 재전송한다.
 
-EducationSession은 고정 진단과 통합 환자 사실, manifest로 해시 검증한 지침 원문으로 영어 P를 준비한다. 인용과 일반 모델 지식을 구별한다. 원문 문서는 NOVA_GUIDELINES_DIR 마운트에서 읽고 ZIP에 넣지 않는다. Mouth가 진단을 먼저 안내하며 각 발화를 NFC 1–30자로 검증한다. 공급자 응답 복구와 문구 복구는 별도이고 미전달 계획은 전달 완료로 기록하지 않는다. 이 개편은 기존 교육 실패·안전 우선순위 정책을 별도 변경하지 않는다.
+EducationSession은 고정 진단과 통합 환자 사실, manifest로 해시 검증한 지침 원문으로 영어 P를 준비한다. 인용과 일반 모델 지식을 구별한다. 원문 문서는 NOVA_GUIDELINES_DIR 마운트에서 읽고 ZIP에 넣지 않는다. Mouth가 진단을 먼저 안내하며 각 발화를 NFC 1–30자로 검증한다. 공급자 응답 복구와 문구 복구는 별도이고 미전달 계획은 전달 완료로 기록하지 않는다. 새 Disease의 guideline selections가 비어 있어도 model-knowledge 출처로 계획을 생성한다. 선택한 원문은 경로·hash·인용 검증을 유지한다.
 
 ## 9. Python SOAP와 완료 계약
 
@@ -114,9 +114,9 @@ S의 cc/hpi/pmh/fh/sh/ros, O의 exam/tests, A의 evidence/differential, P의 tes
 <a id="configuration"></a>
 ## 10. 설정·검증·독립 ZIP
 
-[설정 안내](config/README.md)의 공개 경로로 임상 공통·세션별·Ear·Mouth·계획 프롬프트를 고른다. ONTOWARD_CLINICAL_PROMPT와 네 임상 세션 설정이 기존 brain.txt를 대체한다. 비밀 키와 서버 원문은 공개 설정에 넣지 않는다.
+[설정 안내](config/README.md)의 ONTOWARD_PROMPTS가 [작업별 조합](config/prompts.json)을 가리킨다. Ear·세션·Education·Mouth가 Python에서 현재 작업을 고르고 공통 규칙·작은 출력 계약·현재 상황 모듈만 조립한다. 초기 정보·문진·EXAM, 일반·강제 매핑, 순위·행동, 전체 계획·부분 복구, 질환·증상 안내와 한국어 전달은 서로 다른 경로를 사용한다. 복구 지시는 해당 복구 호출에만 넣는다. 이전 혼합 프롬프트와 개별 환경변수는 제거했으며 비밀 키·서버 원문은 공개 설정에 넣지 않는다.
 
-프로젝트 Docker에서 유지 행동 회귀·실제 수용 RDF 상담·관측 일치·SDK 내부 HTTP·읽기 전용 독립 ZIP을 구분해 검증한다. [Test/compare_d47.py](../Test/compare_d47.py)는 원본 C03의 네 수용 상태에서 모든 사실·기존 후보 전달과 공급자 오류 재현을 확인한다. 원본 결과는 보존하고 실제 모델 정확도·속도 개선·새 NOVA·공식 평가는 not_run으로 구분한다. 결과와 소스·ZIP 신원은 [D47 증빙](../data/provenance/algorithm-d47-2026-10-19.json)이 소유한다.
+프로젝트 Docker에서 유지 행동 회귀·임시 새 합성 RDF 상담·관측 일치·원본 SDK HTTP·읽기 전용 독립 ZIP을 검증한다. 과거 비교 도구와 atlas는 당시 스냅샷의 증거다. 이번 실제 모델·로그인·생성·실제 설치·정식 ZIP·공식 평가는 not_run이며 [D49 증빙](../data/provenance/algorithm-d49-2026-10-19.json)이 소스·이미지·합성 artifact 신원을 기록한다.
 
 ZIP에는 필요한 실행 Python·requirements·SDK·공개 설정·프롬프트·manifest 자산만 넣는다. 문서·상태·Test·Dev·준비 DB·개발 키·원본 지침은 제외한다. 독립본은 부모 data나 원본 준비 자료 없이 검증한다.
 
@@ -128,138 +128,43 @@ Ear는 환자의 보고와 조건을 하나의 CaseFact로 수용한다. 첫 세
 <a id="change-guide"></a>
 ## 12. 변경 경계
 
-입력 의미는 Ear, 그래프 매칭은 rules, 세션별 임상 작업은 sessions, 모델 실행은 Brain, 환자 표현·행동은 Mouth, 세션 이동은 Consultation, SOAP·완료는 Writer에서 바꾼다. 임상 자산 확장·강제 매핑 정책·초기 진술 정정·가족 Context 집계·교육 실패/안전 정책은 이번 범위 밖이다. 다음 제한 작업은 별도 실제 모델 품질 평가다.
+입력 의미는 Ear, 그래프 매칭은 rules, 세션별 임상 작업은 sessions, 모델 실행은 Brain, 환자 표현·행동은 Mouth, 세션 이동은 Consultation, SOAP·완료는 Writer에서 바꾼다. 일반 관계는 Extraction/에서 생성하고 런타임이 새로운 질환·관계를 만들지 않는다. 실제 모델 품질·임상 정확성은 별도다. 다음 제한 작업은 공급자 선택·인증 후 실제 새 DB 생성과 설치다.
 
 <a id="ontology-schema"></a>
-
-## 13. v5.0 스키마: 14개 클래스와 연결
-
-구조의 기준은 [schema.ttl](../data/ontology/schema.ttl)이며 실행 시에는 [manifest](knowledge/manifest.json)가 고정한 동일 스키마를 읽는다. 아래 세 그림은 같은 스키마를 질문별로 나누어 보여준다. 모든 연결은 클래스 사이의 허용 관계를 표현하며, 각 노드가 실제 환자의 관찰이라는 뜻은 아니다. [atlas의 SVG](../Test/atlas.html#ontology)는 관계 이름·설명·현재 인스턴스 수를 함께 제공한다.
-
-### 13.1 질환·공유 Pattern·Feature
+## 13. 새 v5.0 / v5-enum-1 지식
 
 ```mermaid
 flowchart LR
     Disease -->|hasAssociation| Association["DiseasePatternAssociation"]
     Association -->|pattern| Pattern["ClinicalPattern"]
-    Pattern -->|targets: 정확히 하나| Symptom
-    Pattern -->|targets: 둘 중 하나| ExamFinding
-    Pattern -->|hasFeature: 1개 이상| Feature["ClinicalFeature"]
-    Pattern -->|refinesPattern: 더 일반적인 Pattern| Pattern
+    Association --> Scope["targetScope·applicability·diagnosticEffect"]
+    Pattern -->|targets: 하나| Target["Symptom / ExamFinding / ContextFactor"]
+    Pattern -->|hasFeature| Feature["ClinicalFeature"]
+    Feature --> Expected["존재·부재 / ExpectedValue"]
 ```
 
-Association은 Disease 소유자 하나와 Pattern 하나를 가진다. Pattern의 Target은 Symptom·ExamFinding 중 정확히 하나다. Feature는 Pattern 하나에 귀속되고 그 Target을 상속한다. **Target은 별도 RDF 클래스가 아니라 Symptom·ExamFinding의 역할 이름이다.** 매칭 결과와 근거 참조는 Python 지역값이다. 원천 점수의 차분 `FeatureContribution`은 준비 도구에만 남고 제출 런타임은 점수를 계산하지 않는다. `refinesPattern`은 구체적인 Pattern에서 일반 Pattern을 향한다. 같은 관찰·같은 적용 조건에서 세부 Pattern까지 모두 맞을 때만 대표 지지를 세부 Pattern으로 줄이며, 미확인·불일치 세부 조건 때문에 일반 지지를 지우지 않는다.
+Association의 effect는 support·strong_support·against·strong_against다. neutral은 생성 작업 DB의 완료 결과로 남고 실행 RDF에는 없다. Pattern은 Target과 전체 조건으로 공유하며 Association 동일성은 질환·Pattern·target_scope·applicability로 정한다. 관계별 출처·confidence·reviewer·점수·전형성·weight·policy는 실행 계약에 없다. 실제 환자 취득 source/turn은 CaseFact에 유지한다.
 
-### 13.2 관찰 속성·기대 값·비교 경로
+ExpectedValue는 concept·concept_set·quantity·interval과 any_of/all_of·연산자·단위·구간 경계를 보존한다. ValueMatch는 등록된 is_a·regional_part·approved_region 방향성 값 비교 경로다. 속성 역할·질문은 URI localname 대신 새 JSON에서 읽는다. Context의 환자/가족·구성원·시점과 관찰/episode를 섞지 않으며 한 가족 구성원의 부재를 전체 가족 부재로 만들지 않는다. 같은 관찰·scope·applicability·effect에서 완전히 일치한 refinement만 일반 지지를 대표한다.
 
-```mermaid
-flowchart LR
-    Symptom -->|hasAttribute| Attribute["FindingAttribute"]
-    ExamFinding -->|hasAttribute| Attribute
-    Attribute -->|canHaveValue| Value["AttributeValue"]
-    Feature["ClinicalFeature"] -->|onAttribute| Attribute
-    Feature -->|expected| Expected["ExpectedValue"]
-    Expected -. "valueJSON 내부 concept/concepts 참조" .-> Value
-    Match["ValueMatch"] -->|observedConcept| Value
-    Match -->|expectedConcept| Value
-```
-
-존재만 비교하는 Feature는 `expectedStatus`를 사용한다. 속성 조건은 `onAttribute`와 `expected`를 한 쌍으로 가진다. ExpectedValue의 `valueJSON`은 `concept`, `concept_set`, `quantity`, `interval` 중 하나다. 개념 집합의 any_of/all_of, 수치 연산자·단위·구간 경계를 보존한다. 점선은 JSON 내부 참조이며 새 RDF predicate가 아니다. 수치 값은 범주 AttributeValue가 없어도 표현할 수 있다.
-
-ValueMatch는 `observedConcept → expectedConcept` 비교를 허용하는 근거 있는 방향성 경로다. `relationKind`의 is_a·regional_part·approved_region을 구분하고 `sourceRef`를 유지한다. 스키마에 정의되어 있어도 현재 수용 RDF의 ValueMatch 인스턴스는 0개다. 임의의 부위 포함 관계나 동의어를 이 클래스로 추가하지 않는다.
-
-### 13.3 문진 계통·Context·진찰·검사 계획
-
-```mermaid
-flowchart LR
-    Disease -->|hasSupportingContext| Context["ContextFactor"]
-    Association["DiseasePatternAssociation"] -. "applicability JSON 내부 조건" .-> Context
-    Symptom -->|inSystem| System["BodySystem"]
-    ExamFinding -->|detectedBy| Method["ExamMethod"]
-    Disease -->|evaluatedBy| Test
-```
-
-`hasSupportingContext`는 등록 Context로 Disease를 회수하고 양성 맥락 근거를 구성하는 연결이며, `applicability`는 해당 Association의 지지가 활성화되는 필수 조건이다. 둘은 같은 의미가 아니다. ContextFactor는 `contextType`을 가지며 환자·가족·과거·현재는 증례 근거에서 구분한다. BodySystem은 집중 ROS 탐색에만 사용하고 Disease 회수를 제한하지 않는다. ExamFinding은 검토된 ExamMethod와 `examRequestText`가 있어야 실제 EXAM으로 취득한다. Test와 `evaluatedBy`는 P.tests 계획 역할이며 예선 진단 중 TEST 행동을 실행하지 않는다. D37의 생성 P.tests는 이 클래스의 인스턴스 유무와 별도로 출처·내용을 검증한다.
-
-### 13.4 클래스별 역할과 현재 실행 인스턴스
-
-수치는 2026-10-19에 manifest 고정 schema·vocabulary·clinical bundle을 하나의 RDFLib Graph로 읽어 집계한 값이다. 원천 전체 카탈로그의 규모와 구분하며 활성 manifest가 바뀌면 다시 집계해야 한다.
-
-| 클래스 | 역할 | 실행 인스턴스 |
-|---|---|---:|
-| Disease | 질환 후보 | 843 |
-| Symptom | 환자가 보고할 수 있는 증상 Target | 533 |
-| ExamFinding | 실제 신체진찰 소견 Target | 2 |
-| FindingAttribute | 위치·양상·두 시간 축 등 비교 차원 | 36 |
-| AttributeValue | 속성에 허용된 범주 개념 | 1,153 |
-| ClinicalPattern | 단일 Target의 공유 조건 묶음 | 1,925 |
-| ClinicalFeature | Pattern에 귀속된 존재·속성 조건 | 3,530 |
-| ExpectedValue | 엄격한 타입 기대 값 | 430 |
-| DiseasePatternAssociation | 질환–Pattern–적용 조건·원천 평가 | 9,955 |
-| ValueMatch | 근거 있는 개념 비교 경로 | 0 |
-| ContextFactor | 병력·노출·인구학 맥락 | 310 |
-| BodySystem | 비배타적 문진 계통 | 12 |
-| ExamMethod | 준비된 진찰 방법 | 2 |
-| Test | 검사 계획 개념 | 0 |
-
-관계 화살표 이외의 스키마 속성은 다음과 같다. RDFS domain/range는 구조 설명이며 실제 개수·타입·의미 조건은 Python reader가 검증한다.
-
-| 소유자 | 속성 | 의미 |
-|---|---|---|
-| OntologySchema | `schemaVersion` | 구조 버전 5.0; 클래스 목록 밖의 스키마 식별 노드 |
-| ClinicalFeature | `expectedStatus` | 존재·부재 조건 |
-| ExpectedValue | `valueJSON` | 타입·연산자·단위·범주/수치 값 |
-| DiseasePatternAssociation | `predictiveness`, `typicality`, `strongPredictor` | 두 방향 원천 평가와 별도 원천 표지; strongPredictor를 추가 점수로 더하지 않음 |
-| DiseasePatternAssociation | `relationBasis`, `derivationScope`, `applicability` | 원천 관계·정확/일반화 범위·주체/시점/상태를 가진 JSON 필수 조건 |
-| ContextFactor | `contextType` | 정해진 열 가지 Context 분류 |
-| ValueMatch | `relationKind` | 승인된 비교 경로의 의미 |
-| Disease | `urgencyLabel` | 설명용 메타데이터; 라우팅·정렬 규칙 아님 |
-| ExamMethod | `examRequestText` | NFC 1–30 codepoint 단일 진찰 요청 |
-| 관련 지식 노드 | `sourceRef` | 원천·승인 비교 경로의 간결한 참조; 환자 근거 아님 |
+manifest에는 schema_version·knowledge_contract·build_id와 schema·vocabulary·clinical·questions·guidelines 다섯 asset의 상대 경로·SHA-256만 둔다. 번들은 manifest 포함 여섯 파일이다. 각 경로는 manifest 디렉터리를 기준으로 검증하며 경계 이탈·hash 불일치·이전 형식을 거절한다. 실제 설치 전 현재 실행 인스턴스 수는 제공하지 않는다. 스키마와 loader는 각각 [schema.ttl](knowledge/schema.ttl)·[graph.py](knowledge/graph.py), 상세 계약은 [지식 안내](knowledge/README.md)에서 확인한다.
 
 <a id="extraction-pipeline"></a>
+## 14. 원자료에서 새 실행 번들까지
 
-## 14. 원천에서 질문과 실행 자산까지
-
-준비 알고리즘은 `Dev/`에 있고 상담 코드는 이 파이프라인을 실행하지 않는다. 아래는 현재 결과를 만든 경로의 설명이며 새로운 원천 수집·모델 작업·배치 재개 명령이 아니다.
+[Extraction/](../Extraction/README.md)은 원자료 네 종류에서 빈 작업 SQLite로 시작한다. RF2 Snapshot/배포 의존성·BODHI CSV·DDXPlus metadata·Astra 후보/속성/값/CPX를 처리하며 옛 생성 DB·어휘·질문·source-custody SQLite·Astra snapshot/정책을 새 정본으로 읽지 않는다. 일반 관계는 최종 분류 모델의 내부 지식으로 완성할 수 있으나 환자 관찰을 생성하지 못한다.
 
 ```mermaid
 flowchart TD
-    RF2["International·Korean RF2 Snapshot·release metadata"] --> Custody["파일·행·모듈 의존성·해시를 SQLite에 보존"]
-    BODHI["BODHI-S 8개 CSV·두 방향 likelihood"] --> Custody
-    Custody --> Latest["최신 구성요소 선택 후 active 검사·식별자/역할 확인"]
-    Latest --> Normalize["관계 그룹·전체 변형 조건·타입 값 정규화"]
-    Normalize --> Shared["Target+조건으로 Pattern 공유·질환별 Association"]
-    Normalize --> Gap["역할·단위·조건 범위 불명: 이유와 원천 보존"]
-    Latest --> Discovery["D19: 전체 스키마 카탈로그·소견·Observable 발견"]
-    Shared --> Connect["D20: inSystem·Context·필수 조건·완전한 진찰 경로"]
-    Discovery --> Connect
-    Connect --> Graph["빌드·후보·정책 고정·D20 그래프 수용"]
-    Graph --> Workset["D22: 환자 도달 SAY·EXAM 작업 집합 동결"]
-    Workset --> Text["NOVA 생성·별도 의미 대조·NFC 1–30 검사"]
-    Text --> Admit["D23: 그래프+문구 출처를 새 영수증에 연결"]
-    Admit --> Runtime["submission/knowledge manifest·prepare 엄격 검증"]
-    Graph --> Guidelines["D30: Disease별 문서 검색·근거 선택·정확한 원문 재추출"]
-    Guidelines --> Index["D37: build 고정 탐색 인덱스·제공 원문 해시"]
-    Index --> Runtime
-    Policy["D46: 임상 자산 핀 보존·d46.1 실행 표지"] --> Runtime
-    Runtime --> Package["필요 runtime·공개 설정·자산만 독립 ZIP"]
+    Sources["RF2·BODHI·DDXPlus metadata·Astra scope"] --> Index["입력 hash·chunk cursor·빈 SQLite"]
+    Index --> Normalize["개념·역할·질문·진찰"]
+    Normalize --> Draft["유한 관계 초안: Luna medium"]
+    Draft --> Final["최종 분류·충돌: Sol medium"]
+    Final --> Gaps["결손 한 차례 보완"]
+    Gaps --> Stage["staging 여섯 파일·loader/hash 검증"]
+    Stage --> Install["build 전용 파일·manifest 마지막 교체"]
 ```
 
-| 단계·구현 | 알고리즘에서 보존하는 것 |
-|---|---|
-| [database.py](../Dev/ontology/database.py) | 전체 공급 파일·행·원본 식별자·RF2 관계 그룹·행 위치·모듈 의존성·출처 해시. 최신 버전을 선택한 뒤 active 필터를 적용 |
-| [source_projection.py](../Dev/ontology/source_projection.py)·[model_normalization.py](../Dev/ontology/model_normalization.py) | source variant의 모든 조건과 AND/OR 범위. 제한된 모델 정규화도 후보이며 누락 단위·수치·관계를 모델 지식으로 생성하지 않음 |
-| [v5.py](../Dev/ontology/v5.py) | Disease·source와 독립적인 Pattern 동일성, Disease+Pattern+applicability Association, source score·정교화·원자/공동 차분 |
-| [source_catalog.py](../Dev/ontology/source_catalog.py)·[findings.py](../Dev/ontology/findings.py) | 14개 클래스별 후보·원천 역할·직접 진찰 방법·grouped value·진료과 공백. 발견 후보와 실행 가능한 부분집합을 구분 |
-| [connections.py](../Dev/ontology/connections.py) | 원천 부위의 계통 경로→inSystem, 양성·0이 아닌 영향→typed Context 보강, prerequisite→필수 applicability. 불완전 진찰 후보의 실행 제외 |
-| [patient_text.py](../Dev/ontology/patient_text.py) | 그래프에 고정한 환자 행동만 생성. 요청 예약·실패 원문·별도 의미 대조·NFC/길이 결과를 보존하고 Korean RF2 용어와 모델 문구 출처를 구분 |
-| [admission.py](../Dev/ontology/admission.py) | 정확한 build·후보 집합·선택 항목·필수 규칙·수용 영수증. D23이 수용한 완전 후보에 새 승인 대기를 추가하지 않음 |
-| [guidelines/map.py](../Dev/guidelines/map.py) | 카탈로그 허용 문서·FTS5 검색·동일 SCTID 별칭·모델의 evidence_id 선택·Python의 원문 복사. background_only와 P 근거 공백을 보존 |
-| [package_submission.py](../Dev/packaging/package_submission.py) | 허용 파일과 해시·개수·크기, 원본·준비 DB·비밀값·문서·테스트의 제외 |
+nova_dev·codex_subscription·openai_api 중 한 빌드의 공급자를 고정한다. 요청 payload/ID·응답·유효 행·사용량·retry·unknown을 체크포인트에 보존하고 완료·neutral을 재호출하지 않는다. pause/SIGINT/SIGTERM은 진행 중 한 응답을 저장한 뒤 종료한다. 같은 fingerprint는 --resume, 불명 API/CLI 전송의 새 시도는 --retry-unknown이 필요하다. 설치는 검증된 파일 뒤 manifest를 원자적으로 바꾼다.
 
-`source_projection.py build/export/admit`는 원천 정본·후보·수용의 경계를, `connections`는 D20 파생 연결을 담당한다. D19의 `source-findings.ttl` 발견 자료 전체를 실행 그래프에 넣지 않는다. D20의 그래프만 수용한 중간 상태는 `graph_admitted_text_pending`이었으며 D23이 한국어 행동을 고정한 뒤 현재 `admitted`가 되었다. D37의 문서 탐색 인덱스와 D42의 일반 호소 배치를 유지한다. D46은 D38 점수·가상 답변 선택기를 대체하며 원래 그래프·행동 수용 기록과 점수 메타데이터를 보존한다. 과거 추론 정책 JSON은 현재 ZIP의 실행 입력이 아니다.
-
-진료 중 RF2·BODHI 원본이나 부모 준비 DB를 다시 읽지 않는다. **추론은 ZIP 내부 RDF와 JSON, Education은 고정 탐색 인덱스와 제공 원문 마운트**를 사용한다. 환자의 실제 기록은 이 파이프라인의 새 일반 지식으로 되돌려 쓰지 않는다. 공모전 수용과 독립 임상 검증·실제 모델 품질·공식 평가의 최신 경계는 [D46 개편 기록](../data/provenance/algorithm-d46-2026-10-19.json)에 정리한다. 이전 [D43 입력 복구 기록](../data/provenance/input-recovery-d43-2026-10-18.json), [D41 수용 기록](../data/provenance/algorithm-d41-2026-10-18.json)과 [운영 상태](PROJECT_STATE.md)에 연결되어 있다.
-
-D42의 [현재 데이터 배치와 작성 안내](../data/preparation/v5/common-complaints-2026-10-18-r2/README.md)는 기존 843개 질환·9,401개 Association을 보존하고 추가한 데이터와 남은 공백을 설명한다. 새 출처의 정성적 연관은 별도 정책 점수 1을 사용하며, 작성자 지정 수준은 작성자 판단으로 보존한다. 일반 구어·기록 속성·출처 재배포가 점수 보너스가 되지 않는다. 새 임상 그래프·문구·정책은 [D42 수용 기록](../data/provenance/common-complaints-d42-2026-10-18.json)의 새 manifest와 영수증으로 구분한다.
+옛 생성기·정책·runtime 자산은 [철회 영수증](../data/extraction/retired-d42-2026-10-19/withdrawal.json)과 과거 준비 결과에 보존한다. 이번에는 이미지 빌드와 합성 오프라인 수용만 완료한다. 실제 로그인·유료 생성·실제 설치·정식 패키징을 실행하지 않았고 원문·이전 ZIP도 변경하지 않았다.

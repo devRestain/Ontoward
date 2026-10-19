@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import json
-import math
-from pathlib import Path
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -114,11 +112,21 @@ class FeatureCondition(Strict):
         return (self.attribute or "", self.expected.signature() if self.expected else "", self.status or "")
 
 
-class Applicability(Strict):
+class TargetScope(Strict):
+    subject: Literal["patient", "family"]
+    subject_member: str | None
+    time_context: Literal["current", "past", "unspecified", "any"]
+
+    @model_validator(mode="after")
+    def member(self):
+        if self.subject == "patient" and self.subject_member is not None:
+            raise ValueError("Only a family scope can name a member")
+        return self
+
+
+class Applicability(TargetScope):
     concept_id: str
-    status: Literal["present", "absent"] = "present"
-    subject: Literal["patient", "family"] = "patient"
-    time_context: Literal["current", "past", "unspecified"] = "current"
+    status: Literal["present", "absent"]
 
 
 class AssociationProfile(Strict):
@@ -127,14 +135,14 @@ class AssociationProfile(Strict):
     disease_id: str
     target: str
     applicability: list[Applicability] = Field(default_factory=list)
-    predictiveness: str | None = None
-    typicality: str | None = None
-    strong_predictor: bool | None = None
-    relation_basis: Literal["bodhi_present_in", "due_to", "associated_with", "subtype_intersection", "external_association", "authored_association"]
-    derivation_scope: Literal["exact", "descendant"] = "exact"
-    source_refs: list[str] = Field(min_length=1)
-    score: float
-    weight_basis: str
+    target_scope: TargetScope
+    effect: Literal["support", "strong_support", "against", "strong_against"]
+
+
+class AttributeRole(Strict):
+    order: int = Field(ge=0)
+    category: Literal["onset", "duration", "course", "quality", "aggravating_factor", "relieving_factor", "associated_symptoms", "measurement", "other"]
+    clarification: str | None = None
 
 
 class QuestionTemplate(Strict):
@@ -144,6 +152,7 @@ class QuestionTemplate(Strict):
     interviewable: bool = True
     reason: str | None = None
     units: list[str] = Field(default_factory=list)
+    time_context: Literal["current", "past", "unspecified"] = "unspecified"
 
     @model_validator(mode="after")
     def validate_contract(self):
@@ -156,55 +165,6 @@ class QuestionTemplate(Strict):
         if not self.interviewable and not self.reason:
             raise ValueError("Blocked questions require an explicit reason")
         return self
-
-
-class ScoringPolicy(Strict):
-    version: str = Field(min_length=1)
-    labels: dict[str, float]
-    relations: dict[str, float]
-    generalized: float
-    qualitative: dict[str, float] = Field(default_factory=dict)
-
-    @model_validator(mode="after")
-    def validate_policy(self):
-        labels = ("zero", "rare", "low", "medium", "high", "very_high")
-        if set(self.labels) != set(labels) or set(self.relations) != {"due_to", "associated_with", "subtype_intersection"}:
-            raise ValueError("Scoring policy must define every supported label and relation")
-        scores = [self.labels[label] for label in labels]
-        if scores != sorted(scores) or any(v < 0 for v in [*scores, *self.relations.values(), self.generalized]):
-            raise ValueError("Support weights must be nonnegative and labels ordered")
-        if set(self.qualitative) - {"external_association", "authored_association"} or any(
-                not 0 <= value <= 4 for value in self.qualitative.values()):
-            raise ValueError("Qualitative source weights must be explicit scores between zero and four")
-        return self
-
-    @classmethod
-    def load_default(cls):
-        return cls.model_validate_json(Path(__file__).with_name("scoring_policy.json").read_text(encoding="utf-8"))
-
-    def weight(self, predictiveness, relation_basis, derivation_scope):
-        if relation_basis in self.qualitative:
-            if derivation_scope != "exact":
-                raise ValueError("Qualitative source associations cannot imply inherited support")
-            if predictiveness is not None:
-                if relation_basis != "authored_association":
-                    raise ValueError("External qualitative associations cannot invent directional likelihoods")
-                score = float(predictiveness)
-                if not math.isfinite(score) or not 0 <= score <= 4:
-                    raise ValueError("Author support must be finite and between zero and four")
-                return score, "author_judgment"
-            return self.qualitative[relation_basis], relation_basis
-        if relation_basis not in {"bodhi_present_in", *self.relations} or derivation_scope not in {"exact", "descendant"}:
-            raise ValueError("Unknown association source basis or scope")
-        if predictiveness is not None:
-            if predictiveness not in self.labels:
-                raise ValueError("Unknown directional likelihood label")
-            return self.labels[predictiveness], "bodhi_ordinal"
-        if relation_basis == "bodhi_present_in":
-            raise ValueError("BODHI association requires its directional likelihood")
-        if derivation_scope == "descendant":
-            return self.generalized, "snomed_generalized"
-        return self.relations[relation_basis], "snomed_relation"
 
 
 def number(value, unit):

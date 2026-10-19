@@ -35,10 +35,10 @@ RELATION_NAMES = {
     "hasAssociation": "질환의 연결", "pattern": "연결된 패턴", "targets": "대상 소견",
     "hasFeature": "필요한 조건", "onAttribute": "비교 속성", "expected": "기대값",
     "expectedStatus": "기대 상태", "hasAttribute": "관찰 속성", "canHaveValue": "가능한 값",
-    "inSystem": "문진 계통", "hasSupportingContext": "보강 맥락", "applicability": "적용 조건",
+    "inSystem": "문진 계통", "targetScope": "적용 주체와 시점", "diagnosticEffect": "정성 효과", "applicability": "적용 조건",
     "refinesPattern": "정교화 기준", "detectedBy": "획득 방법", "sourceRef": "원천 참조",
-    "predictiveness": "원천 지지 등급", "typicality": "원천 전형성", "valueJSON": "타입이 있는 값",
-    "relationBasis": "관계 근거", "derivationScope": "파생 범위", "examRequestText": "진찰 요청문",
+    "valueJSON": "타입이 있는 값",
+    "examRequestText": "진찰 요청문",
 }
 
 
@@ -64,16 +64,18 @@ class Knowledge:
         self.loaded = datetime.now(timezone.utc).isoformat()
         self.graph = Graph()
         self.manifest_path = self.root / "submission/knowledge/manifest.json"
-        self.manifest = json.loads(self.manifest_path.read_text())
+        self.manifest = json.loads(self.manifest_path.read_text()) if self.manifest_path.is_file() else None
         self.pins = []
-        for role in ("schema", "vocabulary", "questions", "guidelines", "scoring_policy", "reasoning_policy"):
-            self.verify_pin(role, self.manifest[role])
-        for entry in self.manifest["bundles"]:
-            self.verify_pin("bundle", entry)
-        for pin in self.pins:
-            if pin["role"] in {"schema", "vocabulary", "bundle"}:
-                self.graph.parse(self.root / "submission" / pin["path"], format="turtle")
-        self.questions = json.loads(self.pinned_path(self.manifest["questions"]).read_text())
+        self.questions = {}
+        if self.manifest is not None:
+            if self.manifest.get("knowledge_contract") != "v5-enum-1":
+                raise ValueError("Unsupported knowledge contract")
+            for role in ("schema", "vocabulary", "clinical", "questions", "guidelines"):
+                self.verify_pin(role, self.manifest[role])
+            for pin in self.pins:
+                if pin["role"] in {"schema", "vocabulary", "clinical"}:
+                    self.graph.parse(self.pinned_path(pin), format="turtle")
+            self.questions = json.loads(self.pinned_path(self.manifest["questions"]).read_text())["questions"]
         self.nodes = sorted({str(s) for s in self.graph.subjects() if isinstance(s, URIRef)})
         self.types = {node: sorted(short(t) for t in self.graph.objects(URIRef(node), RDF.type)) for node in self.nodes}
         self.incoming_features = {str(f): str(p) for p, f in self.graph.subject_objects(ONTO.hasFeature)}
@@ -88,7 +90,7 @@ class Knowledge:
             self.type_counts.setdefault(kind, 0)
 
     def pinned_path(self, entry):
-        path = (self.root / "submission" / entry["path"]).resolve()
+        path = (self.manifest_path.parent / entry["path"]).resolve()
         if not path.is_relative_to(self.root / "submission/knowledge"):
             raise ValueError("Manifest path is outside knowledge")
         return path
@@ -168,8 +170,8 @@ class Knowledge:
 
     def overview(self):
         return {
-            "loaded_at": self.loaded, "build_id": self.manifest["build_id"],
-            "manifest_sha256": file_hash(self.manifest_path), "status": self.manifest["preparation_status"],
+            "loaded_at": self.loaded, "build_id": self.manifest["build_id"] if self.manifest else "not_installed",
+            "manifest_sha256": file_hash(self.manifest_path) if self.manifest else "not_installed", "status": "installed" if self.manifest else "knowledge_bundle_not_installed",
             "triples": len(self.graph), "nodes": len(self.nodes),
             "types": [{"id": k, "label": TYPE_NAMES.get(k, k), "count": v} for k, v in sorted(self.type_counts.items())],
             "pins": self.pins,
@@ -222,7 +224,7 @@ class Knowledge:
         if node not in self.records:
             raise ValueError("Unknown graph node")
         predicates = {ONTO[x] for x in ("hasAssociation", "pattern", "targets", "hasFeature", "expected", "onAttribute",
-                                      "hasAttribute", "canHaveValue", "inSystem", "hasSupportingContext", "refinesPattern", "detectedBy")}
+                                      "hasAttribute", "canHaveValue", "inSystem", "refinesPattern", "detectedBy")}
         edges = set()
         seen = {node}
         frontier = [(node, "both")]

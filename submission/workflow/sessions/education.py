@@ -1,5 +1,4 @@
 from ..education import generate_plan
-from ..state.models import PlanSentence
 
 
 class EducationSession:
@@ -14,13 +13,6 @@ class EducationSession:
             generate_plan(state, client, self.knowledge, self.config, self.brain)
         else:
             state.interview.education_status = 'disabled'
-            primary = state.case.primary()
-            selected = self.knowledge.term_id(primary.name, 'Disease') if primary.kind == 'disease' else None
-            plan = self.knowledge.plans.get(selected)
-            if plan:
-                for field in ('tests', 'treatment', 'disposition', 'follow_up'):
-                    if text := getattr(plan, field):
-                        state.case.plan.append(PlanSentence(id=f'plan:{field}:0', field=field, text=text, basis='model_knowledge'))
 
     def prepare(self, state, client):
         state.case.primary()

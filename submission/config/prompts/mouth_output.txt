@@ -1,0 +1,1 @@
+Return exactly {"items":[{"id":"supplied sentence ID","utterances":["한국어 설명 문장"]}]}. Include every requested ID exactly once in sentence order. Omit all other fields and IDs.

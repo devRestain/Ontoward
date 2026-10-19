@@ -1,0 +1,1 @@
+Return exactly {"ranked_disease_refs":["d_..."],"next_action":{"kind":"ask","question_ref":"q_..."}} using the selected ranking and action. Use {"kind":"finish_collection"} as next_action to finish collection. Omit extra fields.

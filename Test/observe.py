@@ -42,7 +42,7 @@ class Trace:
         self.sequence, self.labels, self.failed = 0, set(), False
         self.calls, self.stack, self.object_state = 0, [], None
         self.restore, self.objects = [], []
-        self.scoring_depth, self.suppressed = 0, Counter()
+        self.decision_depth, self.suppressed = 0, Counter()
         self.values = {}
 
     def value(self, value):
@@ -94,7 +94,7 @@ class Trace:
         def call(*args, **kwargs):
             if self.failed:
                 return operation(*args, **kwargs)
-            if self.scoring_depth and owner in {'EvidenceIndex', 'ClinicalKnowledge', 'BudgetPolicy'}:
+            if self.decision_depth and owner in {'EvidenceIndex', 'ClinicalKnowledge', 'BudgetPolicy'}:
                 self.suppressed[f'{owner}.{name}'] += 1
                 return operation(*args, **kwargs)
             self.calls += 1
@@ -113,9 +113,9 @@ class Trace:
             except Exception as error:
                 self.emit('observation_error', error=type(error).__name__)
             self.stack.append(call_id)
-            scoring = (owner.endswith('Session') and name in {'prepare', 'prepare_decision', 'decide', 'close'}) or owner == 'QuestionTools'
-            if scoring:
-                self.scoring_depth += 1
+            deciding = (owner.endswith('Session') and name in {'prepare', 'prepare_decision', 'decide', 'close'}) or owner == 'QuestionTools'
+            if deciding:
+                self.decision_depth += 1
             try:
                 result = operation(*args, **kwargs)
             except BaseException as error:
@@ -141,8 +141,8 @@ class Trace:
                     self.emit('observation_error', error=type(error).__name__)
                 return result
             finally:
-                if scoring:
-                    self.scoring_depth -= 1
+                if deciding:
+                    self.decision_depth -= 1
                 self.stack.pop()
         return call
 
@@ -304,15 +304,22 @@ def observing(path):
         compiled = original_build(consultation, knowledge)
         from workflow.state.models import WorkflowState
         try:
+            from settings import configured_path, prompt_paths
             root = Path(inspect.getfile(WorkflowState)).resolve().parents[2]
-            sources = sorted(str(path.relative_to(root)) for path in (root / 'workflow').rglob('*.py')) + ['knowledge/manifest.json']
-            manifest = json.loads((root / 'knowledge/manifest.json').read_text())
+            prompt_manifest = configured_path('ONTOWARD_PROMPTS', 'config')
+            modules = prompt_paths(prompt_manifest)
+            sources = {path.relative_to(root).as_posix() for path in (root / 'workflow').rglob('*.py')}
+            sources.update({'.env', 'settings.py', prompt_manifest.relative_to(root).as_posix()})
+            if (root / 'knowledge/manifest.json').is_file(): sources.add('knowledge/manifest.json')
+            sources.update(path.relative_to(root).as_posix() for parts in modules.values() for path in parts)
             topology = compiled.get_graph()
             trace.emit('settings', education_enabled=consultation.budget.education_enabled, objects=trace.objects,
                        state_schema=WorkflowState.model_json_schema(),
-                       runtime={'algorithm': manifest.get('algorithm_version'),
+                       runtime={'algorithm': __import__('settings').ALGORITHM_VERSION,
                                 'collector_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                                'source_sha256': {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in sources}},
+                                'source_sha256': {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in sorted(sources)},
+                                'prompt_routes': {route: [path.relative_to(root).as_posix() for path in parts]
+                                                  for route, parts in modules.items()}},
                        graph={'nodes': list(topology.nodes), 'edges': [dict(source=e.source, target=e.target,
                                conditional=e.conditional) for e in topology.edges]},
                        observation_scope='Selected collaborator and input binding boundaries, graph candidate output, model exchanges, state writes and SDK bodies; exclude Python heap and repeated inner dictionary and affordability lookups')

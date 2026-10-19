@@ -1,8 +1,11 @@
 /state version=1
 /project id=ontoward-data
 /status value=complete
-/checkpoint revision=4bda3317bef63c516a44b5641529f2f650a2953f dirty=true updated=2026-10-19T13:52:18+09:00
-/goal phase=current id=DATA.D47 state=complete action="Bind D47 source archive and verification identity while preserving clinical and C03 custody"
+/checkpoint revision=c4797449b1f66ae01a47d5248a15321f6fa5a5f8 dirty=true updated=2026-10-19T17:02:15+09:00
+/goal phase=history id=DATA.D48 state=complete action="Bind D48 source artifact prompt and preserved run evidence without changing clinical assets"
+/goal phase=current id=DATA.D49 state=complete action="Preserve withdrawn assets and bind the new D49 build and acceptance evidence"
+/goal phase=next id=DATA.BUILD49 state=deferred action="Record the separately authorized real provider build source hashes results and verified installation"
+/goal phase=history id=DATA.D47 state=complete action="Bind D47 source archive and verification identity while preserving clinical and C03 custody"
 /goal phase=history id=DATA.TESTVIEW46 state=complete action="Record Test inspection runtime fixture hashes preserved clinical pins and bounded local evidence"
 /goal phase=history id=DATA.STATE19 state=complete action="Reconcile data state references and verify current clinical and archive custody"
 /goal phase=history id=DATA.D46 state=complete action="Preserve clinical pins and record the D46 source independent ZIP and verification custody"
@@ -198,7 +201,6 @@
 /evidence id=DATA.TESTVIEW46.E1 class=artifact result=pass source=provenance/test-inspection-d46-2026-10-19.json observed="Pin Test source accepted SDK fixture and new offline evidence; match sixty-nine protected submission files to the initial snapshot preserve the separate child state update and record the verified lossless unbounded-probe archive without changing clinical data or prior receipts"
 /evidence id=DATA.TESTVIEW46.E2 class=runtime result=pass source=../Tmp/test-rebuild-2026-10-19/verification.json observed="Reference fifty-three API checks fourteen observer scenarios successful forty-four-turn synthetic SDK consultation complete failed public C10 trace text-DOM and local HTTP checks without promoting them to actual model or clinical quality"
 /evidence id=DATA.TESTVIEW46.E3 class=external_service result=not_run source=provenance/test-inspection-d46-2026-10-19.json observed="Leave new clinical admission source expansion model generation actual NOVA scoring publication and deployment unrun"
-/goal phase=next id=DATA.QUALITY47 state=deferred action="Bind source archive and observed provenance for the separately authorized D47 quality case"
 /accept id=DATA.D47.A1 state=pass action="Bind source-matched D47 archive and unchanged clinical custody" evidence=DATA.D47.E1,DATA.D47.E2
 /accept id=DATA.D47.A2 state=pass action="Preserve the complete original C03 result and separate offline evidence from model quality" evidence=DATA.D47.E2,DATA.D47.E3
 /evidence id=DATA.D47.E1 class=artifact result=pass source=provenance/algorithm-d47-2026-10-19.json observed="Pin the 67-member standalone ZIP Tmp/d47-2026-10-19/ontoward-submission-d47.zip with SHA256 d6d35a7caa34a25f47a12822890ea4a5dc346d6fac7542d815445dd22a3b3a31 and match every runtime member to current source"
@@ -208,4 +210,24 @@
 /evidence id=DATA.D47.E5 class=external_service result=not_run source=provenance/algorithm-d47-2026-10-19.json observed="Record zero new external model requests and leave new source acquisition clinical admission actual models official scoring publication and deployment unrun"
 /scope id=DATA.D47.S1 state=in action="Own D47 artifact source and verification hashes preserved clinical pins and original C03 custody"
 /scope id=DATA.D47.S2 state=out action="Exclude new clinical admission source expansion actual-model generation official evaluation and publication"
-/handoff state=ready action="Review the D47 offline artifact and evidence before defining the separate actual-model quality slice"
+/accept id=DATA.D48.A1 state=pass action="Bind the exact D48 runtime archive and referenced prompt modules" evidence=DATA.D48.E1,DATA.D48.E2
+/accept id=DATA.D48.A2 state=pass action="Preserve clinical SDK original run and prior archive custody" evidence=DATA.D48.E3
+/accept id=DATA.D48.A3 state=pass action="Bind performed checks and unrun external boundaries" evidence=DATA.D48.E4,DATA.D48.E5
+/evidence id=DATA.D48.E1 class=artifact result=pass source=../Tmp/d48-2026-10-19/artifact.json observed="Match all ninety-five independent ZIP members to source with twenty-five recipes and thirty-seven referenced prompt modules; bind SHA256 af7541ad2f245b6b395dfc064c616da33a7131ea99b134127a737230652fd3d6 and exclude docs state Test Dev and credentials"
+/evidence id=DATA.D48.E2 class=runtime result=pass source=../Tmp/d48-2026-10-19/isolated/isolation.json observed="Verify read-only root and submission two CPUs eight GB loopback-only network no parent data and no development key for independent archive execution"
+/evidence id=DATA.D48.E3 class=artifact result=pass source=../Tmp/d48-2026-10-19/preservation.json observed="Preserve all forty files across both original C03 runs plus SDK entrypoint requirements clinical assets original Brain executor limits and Test bridge/cache; retain the accepted D47 ZIP unchanged and change only algorithm_version in the knowledge manifest"
+/evidence id=DATA.D48.E4 class=artifact result=pass source=provenance/algorithm-d48-2026-10-19.json observed="Bind baseline revision prompt and member hashes original HTTP 530 failure interpretation actual source archive RDF observer evaluator and SDK evidence without modifying historical acceptance receipts"
+/evidence id=DATA.D48.E5 class=external_service result=not_run source=provenance/algorithm-d48-2026-10-19.json observed="Leave new NOVA execution organizer recovery actual-model quality latency clinical accuracy official scoring uploads commits and deployment unrun"
+/scope id=DATA.D48.S1 state=in action="Own D48 source archive evidence and original run custody"
+/scope id=DATA.D48.S2 state=out action="Exclude clinical corpus admission original inputs SDK dependencies and prior acceptance mutations"
+/accept id=DATA.D49.A1 state=pass action="Preserve withdrawn clinical assets and historical generators with exact custody" evidence=DATA.D49.E1
+/accept id=DATA.D49.A2 state=pass action="Bind the new image runtime synthetic artifact and offline evidence" evidence=DATA.D49.E2,DATA.D49.E3
+/accept id=DATA.D49.A3 state=pass action="Keep real generation and installation distinct from synthetic acceptance" evidence=DATA.D49.E4,DATA.D49.E5
+/evidence id=DATA.D49.E1 class=artifact result=pass source=extraction/retired-d42-2026-10-19/withdrawal.json observed="Verify both historical archives and every recorded member hash; remove seventeen old active generated runtime assets while preserving original schema custody old preparation results accepted ZIPs and source-custody SQLite"
+/evidence id=DATA.D49.E2 class=artifact result=pass source=../Tmp/d49-2026-10-19/preservation.json observed="Verify the 93-member synthetic ZIP and match every required runtime member to current source bytes; preserve twelve protected runtime files thirty-seven D48 modules except the intended clinical_common change both saved C03 runs and the accepted D48 archive"
+/evidence id=DATA.D49.E3 class=artifact result=pass source=provenance/algorithm-d49-2026-10-19.json observed="Pin final image code prompts authored schema fixture ZIP and performed verification without rewriting past receipts; preserve the existing extraction auth container and volume"
+/evidence id=DATA.D49.E4 class=artifact result=pass source=../Tmp/d49-2026-10-19/raw-input-inventory.json observed="Discover and hash ninety-five RF2 Snapshot files two release metadata files eight BODHI CSVs DDXPlus evidence/condition metadata and one Astra input read-only; do not index the real corpus or use historical generated DBs as new inputs"
+/evidence id=DATA.D49.E5 class=external_service result=not_run source=provenance/algorithm-d49-2026-10-19.json observed="Keep active manifest not_installed and actual work DBs absent; leave login paid generation real installation production packaging clinical accuracy official evaluation publication and deployment unrun"
+/scope id=DATA.D49.S1 state=in action="Own withdrawal custody authored schema new build result locations and D49 evidence/source/artifact hashes"
+/scope id=DATA.D49.S2 state=out action="Exclude real generated knowledge and mutation of supplied source bytes prior receipts or accepted archives"
+/handoff state=ready action="Review the completed D49 offline slice; keep real generation deferred until a new user instruction and selected provider authentication"

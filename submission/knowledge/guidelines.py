@@ -29,7 +29,7 @@ class GuidelineLibrary:
         if len(entries) != len(rows) or set(entries) != set(disease_ids):
             raise ValueError("Guideline index must cover exactly the admitted Diseases")
         for selections in entries.values():
-            if not selections or len({s["document_id"] for s in selections}) != len(selections):
+            if len({s["document_id"] for s in selections}) != len(selections):
                 raise ValueError("Require distinct mapped guideline documents")
             for source in selections:
                 relative_document(source["path"])
