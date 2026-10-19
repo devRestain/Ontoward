@@ -1,12 +1,10 @@
 from dataclasses import dataclass
 
+from ..model_context import fact_record
+
 
 def patient_payload(case):
-    fields = {'id', 'kind', 'target', 'attribute', 'values', 'measurement', 'status', 'subject',
-              'subject_member', 'reported_by', 'time_context', 'observation_id', 'episode_id',
-              'acquisition', 'polarity_scope', 'evidence_use', 'binding'}
-    return {'facts':[f.model_dump(include=fields, exclude_none=True) for f in case.current_facts()
-        if f.evidence_use=='reasoning' and f.polarity_scope!='qualified']}
+    return {'facts': [fact_record(f, f'f_{index}') for index, f in enumerate(case.current_facts(), 1)]}
 
 
 @dataclass(frozen=True)

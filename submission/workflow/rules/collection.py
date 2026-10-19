@@ -12,7 +12,7 @@ CATEGORY_FIELDS = {**dict.fromkeys((*INTAKE, 'duration', 'quality', 'aggravating
 
 def slot_records(case, slot):
     chief = case.chief()
-    return [f for f in (*case.current_facts(), *case.notes.values()) if f.category == slot
+    return [f for f in case.current_facts() if f.category == slot
             and (slot not in INTAKE or f.subject == 'patient' and (not chief or not f.observation_id
                  or (f.observation_id, f.episode_id) == (chief.observation_id, chief.episode_id)))]
 

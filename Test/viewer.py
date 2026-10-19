@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+from inspection import inspect_run
+
 
 UI = Path(__file__).with_name('ui')
 
@@ -45,29 +47,42 @@ def collect(root):
             meta = {'case': args[0], 'backend': args[1], 'maximum': args[2]}
         except (OSError, IndexError):
             pass
-    return {'run_id': root.name, 'result': read('result.json', {}), 'process': read('agent/process.json', {}),
+    try:
+        run_id = (root / 'run-id').read_text().strip()
+    except OSError:
+        run_id = root.name
+    data = {'run_id': meta.get('id') or run_id, 'result': read('result.json', {}), 'process': read('agent/process.json', {}),
             'summary': read('simulator/summary.json', {}), 'run': meta,
             'transcript': read('simulator/transcript.json', {}), 'requests': read('simulator/requests.json', {}),
             'record': read('simulator/record.json', {}), 'models': lines('simulator/model-calls.jsonl'),
             'trace': {'status': 'complete' if complete else 'incomplete' if events else 'not_collected', 'events': events},
             'logs': {'runner': tail('runner.log'), 'stderr': tail('agent/stderr.log'), 'stdout': tail('agent/stdout.log')},
             'warnings': warnings}
+    data['inspection'] = inspect_run(data)
+    structural = {'call_boundaries', 'node_boundaries', 'sdk_boundaries', 'state_reconstruction', 'recorded_values'}
+    if events and any(c['status'] == 'fail' and c['id'] in structural for c in data['inspection']['checks']):
+        data['trace']['status'] = 'incomplete'
+    return data
 
 
 def render(root):
     root = Path(root)
     data = collect(root)
+    inspection = root / 'inspection.json'
+    inspection.with_suffix('.json.tmp').write_text(json.dumps(data['inspection'], ensure_ascii=False, indent=2) + '\n')
+    inspection.with_suffix('.json.tmp').replace(inspection)
     # Keep untrusted patient/model strings inside inert JSON, including on file://.
     packed = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c').replace('&', '\\u0026')
     html = '''<!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Ontoward · 진료 과정 리포트</title>
 <style>@@CSS@@</style></head><body class="report-page">
-<header class="report-heading"><div><h1>진료 내부 흐름</h1><p id="report-meta" class="muted"></p></div><span id="trace-status" class="badge"></span></header>
+<header class="report-heading"><div><h1>진료 내부 흐름</h1><p id="report-meta" class="muted"></p><p id="report-outcome" class="error-text small" hidden></p></div><div class="report-tools"><span id="trace-status" class="badge"></span><a href="inspection.json" download>검증 JSON</a></div></header>
 <section id="summary" class="metrics" aria-label="실행 요약"></section>
-<details class="final-record"><summary>최종 진단 · SOAP · 실행 검사</summary><div id="final-record"></div></details>
-<div class="report-layout"><aside class="timeline-panel"><label for="session-filter">내부 세션</label><select id="session-filter"><option value="">전체 세션</option></select><nav id="timeline" aria-label="세션과 턴"></nav></aside>
-<main id="turn-detail" aria-live="polite"></main></div>
+<div class="report-layout"><aside class="timeline-panel"><label for="session-filter">내부 세션</label><select id="session-filter"><option value="">전체 세션</option></select><label class="turn-picker-label" for="turn-picker">관측 턴</label><select id="turn-picker" class="turn-picker"></select><nav id="timeline" aria-label="세션과 턴"></nav></aside>
+<div class="report-content"><details class="final-record"><summary>최종 제출 · SOAP · 수신 확인</summary><div id="final-record"></div></details>
+<main id="turn-detail" aria-live="polite"></main>
 <details class="all-logs"><summary>실행 로그 · 수집 상태</summary><div id="all-logs"></div></details>
+</div></div>
 <script type="application/json" id="report-data">@@DATA@@</script><script>@@JS@@</script></body></html>'''
     scripts = (UI / 'viewer.js').read_text() + '\n' + (UI / 'flow.js').read_text()
     html = html.replace('@@CSS@@', (UI / 'style.css').read_text()).replace('@@JS@@', scripts).replace('@@DATA@@', packed)

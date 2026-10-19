@@ -84,7 +84,7 @@ class SubmissionWriter:
         texts = self.config.texts
         fields = {f'{section}.{name}':[] for section,names in RECORD_FIELDS.items() for name in names}
         references, episodes, groups = {}, {}, {}
-        facts = case.current_facts()
+        facts = tuple(f for f in case.current_facts() if f.graph_binding)
         for fact in facts:
             if fact.episode_id:
                 episodes.setdefault((fact.subject,fact.target,fact.episode_id),len(episodes)+1)
@@ -93,7 +93,7 @@ class SubmissionWriter:
             fields['S.cc'].append(self._line(texts.soap_labels['cc'],chief.target))
         used = set()
         for key, label in [('age','Age'),('sex','Sex'),('reporter','Historian')]:
-            for note in case.notes.values():
+            for note in case.current_facts():
                 if note.context_key!=key or note.subject!='patient':
                     continue
                 content = self._measurement(note.measurement) if note.measurement else note.value
@@ -117,10 +117,8 @@ class SubmissionWriter:
             parts = []
             for fact in sorted(members,key=lambda f:(bool(f.attribute),f.turn,f.id)):
                 phrase = self._describe(fact,episodes)
-                if fact.polarity_scope=='qualified':
-                    conditions=[n.value for n in case.notes.values() if n.value and (n.subject,n.subject_member,n.observation_id,n.episode_id,n.time_context)==(fact.subject,fact.subject_member,fact.observation_id,fact.episode_id,fact.time_context)]
-                    if conditions:
-                        phrase += ' ('+'; '.join(dict.fromkeys(conditions))+')'
+                if fact.value:
+                    phrase += ' (' + fact.value + ')'
                 if destination=='O.exam':
                     phrase = (texts.initial_exam_format.format(text=phrase) if fact.acquisition=='initial'
                         else texts.exam_turn_format.format(text=phrase,turn=fact.turn))
@@ -129,8 +127,8 @@ class SubmissionWriter:
                     parts.append(phrase)
             fields[destination].append(self._line(texts.soap_labels['exam'] if destination=='O.exam' else
                 texts.soap_labels['hpi'] if destination=='S.hpi' else members[0].target,'; '.join(parts)))
-        for note in case.notes.values():
-            if note.id in used:
+        for note in case.current_facts():
+            if note.id in used or note.graph_binding:
                 continue
             if note.category=='objective_observation' and objective(note.acquisition,note.source_ref):
                 destination='O.exam'

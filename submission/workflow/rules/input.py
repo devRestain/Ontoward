@@ -1,7 +1,7 @@
 import hashlib
 import re
 
-from ..state.models import ClinicalFact, NoteFact
+from ..state.models import CaseFact, GraphBinding
 from .collection import ATTRIBUTE_CATEGORIES
 
 
@@ -24,12 +24,12 @@ def note_fact(statement, source, index, turn, question=None):
     acquisition = question.kind if question else 'initial'
     if category == 'objective_observation' and (statement.subject!='patient' or not objective(acquisition, source)):
         return None
-    return NoteFact(id=f'{source}:note:{index}', category=category, value=value, measurement=statement.measurement,
+    return CaseFact(id=f'{source}:note:{index}', category=category, value=value, measurement=statement.measurement,
         status=statement.assertion, subject=statement.subject, subject_member=statement.subject_member,
         reported_by=statement.reported_by, time_context=statement.time_context,
         observation_id=statement.observation_id or (question.observation_id if question else None),
         episode_id=statement.episode_id or (question.episode_id if question else None), source_ref=source, turn=turn,
-        acquisition=acquisition)
+        acquisition=acquisition, polarity_scope=statement.polarity_scope)
 
 
 def make_fact(case, knowledge, statement, decoded, *, source, index, offset, turn, question, forced=False):
@@ -73,12 +73,12 @@ def make_fact(case, knowledge, statement, decoded, *, source, index, offset, tur
         raise ValueError('Correction requires an acquired fact')
     acquisition = question.kind if question else 'initial'
     ident = previous.id if previous else f'{source}:fact:{index}:{offset}'
-    fact = ClinicalFact(id=ident, target=target, attribute=attribute, values=tuple(values), measurement=measurement,
-        kind=kind, status=status, subject=statement.subject, subject_member=statement.subject_member,
+    fact = CaseFact(id=ident, graph_binding=GraphBinding(target=target, attribute=attribute, values=tuple(values),
+        kind=kind, method='forced' if forced else 'exact'), measurement=measurement or statement.measurement,
+        value=statement.note_value or '', status=status, subject=statement.subject, subject_member=statement.subject_member,
         reported_by=statement.reported_by, time_context=statement.time_context,
         observation_id=observation, episode_id=episode, category=category,
-        acquisition=acquisition, source_ref=source, turn=turn, polarity_scope=statement.polarity_scope,
-        binding='forced' if forced else 'exact')
+        acquisition=acquisition, source_ref=source, turn=turn, polarity_scope=statement.polarity_scope)
     resolved = case.facts.get(question.clarifies_id) if question and question.clarifies_id else None
     if resolved and resolved.kind == fact.kind and resolved.key() == fact.key():
         fact = fact.model_copy(update={'resolves':(resolved.id,)})
@@ -98,6 +98,6 @@ def make_fact(case, knowledge, statement, decoded, *, source, index, offset, tur
 def isolate_attributes(facts, case):
     bases = {(f.target, f.subject, f.subject_member, f.observation_id, f.episode_id, f.time_context)
              for f in (*case.current_facts(), *facts) if f.kind in {'symptom', 'finding'} and f.status == 'present'}
-    return [f.model_copy(update={'evidence_use':'record_only'}) if f.kind == 'attribute'
+    return [f.model_copy(update={'graph_binding':f.graph_binding.model_copy(update={'eligible':False})}) if f.kind == 'attribute'
             and (f.target, f.subject, f.subject_member, f.observation_id, f.episode_id, f.time_context) not in bases else f
             for f in facts]

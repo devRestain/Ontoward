@@ -75,10 +75,15 @@ class Runs:
             seconds = max(0, round(ended - started))
         except ValueError:
             seconds = 0
+        try:
+            created = float(read(path / 'started'))
+        except ValueError:
+            created = (path / 'run.args').stat().st_mtime if (path / 'run.args').is_file() else path.stat().st_mtime
         return {'id': run_id, 'case': meta.get('case') or (args[0] if args else summary.get('case_id', 'unknown')),
                 'backend': meta.get('backend') or (args[1] if len(args) > 1 else summary.get('backend', 'unknown')),
                 'maximum': meta.get('maximum') or (args[2] if len(args) > 2 else None),
-                'created': meta.get('created', path.stat().st_mtime), 'state': state, 'seconds': seconds,
+                'fixture_kind': meta.get('fixture_kind'),
+                'created': meta.get('created', created), 'state': state, 'seconds': seconds,
                 'result': result.get('status', 'unknown'), 'error': error,
                 'report_url': f'/runs/{run_id}/report.html' if state not in ACTIVE else None}
 
@@ -194,13 +199,14 @@ def http_server(runs, address=('0.0.0.0', 8080)):
                                               'busy': runs.lock.exists() or bool(read(runs.control / 'active'))})
                 if path.startswith('/api/runs/'):
                     return self.respond(200, runs.status(path[len('/api/runs/'):]))
-                if path.startswith('/runs/') and path.endswith('/report.html'):
-                    run_id = path[len('/runs/'):-len('/report.html')]
+                if path.startswith('/runs/') and path.rsplit('/', 1)[-1] in {'report.html', 'inspection.json'}:
+                    run_id, filename = path[len('/runs/'):].rsplit('/', 1)
                     folder = runs.directory(run_id)
                     runs.status(run_id)
                     with runs.guard:
                         render(folder)
-                    return self.respond(200, (folder / 'report.html').read_bytes(), 'text/html; charset=utf-8')
+                    kind = 'text/html' if filename == 'report.html' else 'application/json'
+                    return self.respond(200, (folder / filename).read_bytes(), kind + '; charset=utf-8')
                 files = {'/': ('index.html', 'text/html'), '/app.js': ('app.js', 'text/javascript'),
                          '/style.css': ('style.css', 'text/css')}
                 if path in files:

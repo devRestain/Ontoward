@@ -115,6 +115,7 @@ if [ -d "$TEST_OUTPUT" ] && [ "${TEST_WEB_RUN:-}" != "$TEST_RUN_ID" ]; then
 fi
 mkdir -p "$TEST_OUTPUT/agent" "$TEST_OUTPUT/simulator"
 output_owned=1
+printf '%s\n' "$TEST_RUN_ID" > "$TEST_OUTPUT/run-id"
 printf '%s\n' "$test_case" "$test_mode" "$TEST_MAX_NOVA_REQUESTS" > "$TEST_OUTPUT/run.args"
 date +%s > "$TEST_OUTPUT/started"
 set_status starting

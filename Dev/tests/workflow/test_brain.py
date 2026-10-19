@@ -29,7 +29,7 @@ class BrainTests(unittest.TestCase):
     def test_no_positive_support_gate_and_new_fact_candidate_expansion(self):
         c,s=f.consultation(),f.state('DifferentialDiagnosis')
         s.case.apply([f.fact(status='unknown')])
-        c.brain.refresh_assessment(s,c.client)
+        c.differential.decide(s,c.client)
         self.assertTrue(s.case.assessment.differential)
         self.assertTrue(all(not e.supports for e in s.case.assessment.differential))
         k=f.knowledge();f.add_pattern(k,'newOther',f.OW.Other,[],disease=f.OW.Beta)
@@ -57,88 +57,88 @@ class BrainTests(unittest.TestCase):
 
     def test_correction_reclassifies_evidence_and_numeric_mismatch_keeps_actual_ref(self):
         c,s=f.consultation(),f.chief(f.state('DifferentialDiagnosis'))
-        c.brain.refresh_assessment(s,c.client)
-        s.case.apply([f.fact(status='absent')]);c.brain.refresh_assessment(s,c.client)
+        c.differential.decide(s,c.client)
+        s.case.apply([f.fact(status='absent')]);c.differential.decide(s,c.client)
         self.assertTrue(any('chief' in r.fact_ids for e in s.case.assessment.differential for r in e.against))
         self.assertFalse(any('chief' in r.fact_ids for e in s.case.assessment.differential for r in e.supports))
         feature=FeatureCondition(id='numeric',attribute=str(f.OW.Location),
             expected=ExpectedValue(kind='quantity',value=3,unit='day',operator='ge'))
         actual=EvidenceRecord(id='actual',kind='attribute',target=str(f.OW.Complaint),status='present',
             attribute=str(f.OW.Location),measurement=ObservedNumber(kind='quantity',value=1,unit='day'))
-        self.assertEqual(match_feature(c.brain.knowledge,feature,[],[actual]),('contradicted',('actual',)))
+        self.assertEqual(match_feature(c.knowledge,feature,[],[actual]),('contradicted',('actual',)))
 
     def test_one_question_keeps_disease_specific_expected_answers(self):
         k=f.knowledge()
         f.add_pattern(k,'elsewhere',f.OW.Complaint,[(f.OW.Location,dict(kind='concept',concept=str(f.OW.Elsewhere)))])
         c,s=f.consultation(prepared=f.resources(k)),f.chief(f.state('DifferentialDiagnosis'))
-        payload,_,_=c.brain._payload(s,graph_candidates(s.case,k),False)
+        payload=c.differential.prepare_decision(s).payload
         location=[q for q in payload['questions'] if q.get('attribute')=='Location']
-        self.assertEqual(len(location),1);self.assertEqual(len(location[0]['disease_refs']),2)
-        expected=str([r['relations'] for r in payload['candidates']])
-        self.assertIn('urn:ontoward:Here',expected);self.assertIn('urn:ontoward:Elsewhere',expected)
+        self.assertEqual(len(location),1);self.assertEqual(len(location[0]['expected_by_disease']),2)
+        expected=str(payload['evidence'])
+        self.assertIn('head',expected);self.assertIn('abdomen',expected)
 
     def test_rank_rejects_unregistered_duplicate_or_omitted_previous_candidates(self):
         for mode in ('unknown','duplicate','omitted'):
             c,s=f.consultation(),f.chief(f.state('DifferentialDiagnosis'))
-            c.brain.refresh_assessment(s,c.client);old=s.case.assessment
+            c.differential.decide(s,c.client);old=s.case.assessment
             def bad(payload):
                 if payload['task']=='clinical_decision':
                     rank=payload['prior_order'][:1] if mode=='omitted' else ['missing'] if mode=='unknown' else ['d_1','d_1']
                     return dict(ranked_disease_refs=rank,next_action={'kind':'finish_collection'})
             c.client.chat_handler=bad
             s.case.apply([f.fact('loc',kind='attribute',attribute='Location',values=('head',),category=None)])
-            c.brain.refresh_assessment(s,c.client)
+            c.differential.decide(s,c.client)
             self.assertEqual(s.case.assessment,old)
             self.assertNotEqual(s.case.assessment.based_on_case_revision,s.case.revision)
-            s.interview.queue.clear();c.brain.close_differential(s,c.client)
+            s.interview.queue.clear();c.differential.close(s,c.client)
             self.assertEqual(s.case.primary().kind,'symptom');self.assertEqual(len(s.case.assessment.differential),1)
 
     def test_grouped_question_retains_applicability_and_expected_negative_context(self):
         k=f.knowledge()
         f.add_pattern(k,'conditionalAbsent',f.OW.Complaint,[],applicability=[dict(concept_id=str(f.OW.Context),
             status='absent',subject='patient',time_context='current')])
-        c,s=f.consultation(prepared=f.resources(k)),f.chief(f.state('DifferentialDiagnosis'))
-        payload,_,_=c.brain._payload(s,graph_candidates(s.case,k),False)
-        question=next(q for q in payload['questions'] if q.get('target')=='Test history' and q.get('time_context')=='current')
-        expected=[value for values in question['expected_by_disease'].values() for value in values]
-        self.assertTrue(any(v['expected']=='absent' and any(condition['status']=='absent'
-            for condition in v['applicability']) for v in expected))
+        c,s=f.consultation(prepared=f.resources(k)),f.chief(f.state('ChiefComplaint'))
+        c.sessions['ChiefComplaint'].close(s,c.client)
+        s.interview.current='ContextFactor'
+        context=c.sessions['ContextFactor']
+        context.enter(s,c.sessions['ChiefComplaint']);context.prepare_context(s)
+        self.assertTrue(any(q.target=='Test history' and q.time_context=='current' for q in s.interview.queue))
+        details=graph_candidates(s.case,k)[str(f.OW.Beta)].details
+        self.assertTrue(any(condition['status']=='absent' for detail in details for condition in detail['conditions']))
 
     def test_valid_ranking_survives_bad_question_and_action_only_repair(self):
-        tasks=[]
-        def reply(payload):
-            tasks.append(payload['task']);value=clinical_response(payload)
-            if payload['task']=='clinical_decision':
-                value['ranked_disease_refs'].reverse();value['next_action']={'kind':'ask','question_ref':'missing'}
-            return value
         k=f.knowledge();f.add_pattern(k,'strongChief',f.OW.Complaint,[],disease=f.OW.Alpha)
         self.assertGreater(max(p.score for p in k.get_disease_patterns(str(f.OW.Alpha)) if p.target==str(f.OW.Complaint)),
             max(p.score for p in k.get_disease_patterns(str(f.OW.Beta)) if p.target==str(f.OW.Complaint)))
-        c,s=f.consultation(f.FakeSDK(chat_handler=reply),f.resources(k)),f.chief(f.state('DifferentialDiagnosis'))
-        c.brain.refresh_assessment(s,c.client)
-        self.assertEqual(tasks,['clinical_decision','clinical_action'])
-        self.assertEqual(s.case.assessment.differential[0].name,'Disease beta')
-        s.interview.queue.clear();c.close_collection(s);c.writer.build_soap(s)
-        self.assertEqual(s.turn.payload['diagnosis'],'Disease beta')
-        self.assertIn('Disease beta',s.turn.payload['note']['A']['evidence'])
+        for invalid in ('unregistered_question', 'missing_action', 'wrong_type'):
+            with self.subTest(invalid=invalid):
+                tasks=[]
+                def reply(payload):
+                    tasks.append(payload['task']);value=clinical_response(payload)
+                    if payload['task']=='clinical_decision':
+                        value['ranked_disease_refs'].reverse()
+                        if invalid=='missing_action':
+                            value.pop('next_action')
+                        else:
+                            value['next_action']=7 if invalid=='wrong_type' else {'kind':'ask','question_ref':'missing'}
+                    return value
+                c,s=f.consultation(f.FakeSDK(chat_handler=reply),f.resources(k)),f.chief(f.state('DifferentialDiagnosis'))
+                c.differential.decide(s,c.client)
+                self.assertEqual(tasks,['clinical_decision','clinical_action'])
+                self.assertEqual(s.case.assessment.differential[0].name,'Disease beta')
+                s.interview.queue.clear();c.close_collection(s);c.writer.build_soap(s)
+                self.assertEqual(s.turn.payload['diagnosis'],'Disease beta')
+                self.assertIn('Disease beta',s.turn.payload['note']['A']['evidence'])
 
-    def test_against_is_code_owned_and_unknown_does_not_rerank(self):
+    def test_against_is_code_owned_and_unknown_response_runs_one_dd_decision(self):
         c,s=f.consultation(),f.chief(f.state('DifferentialDiagnosis'))
-        s.case.apply([f.fact(status='absent')]);c.brain.refresh_assessment(s,c.client)
+        s.case.apply([f.fact(status='absent')]);c.differential.decide(s,c.client)
         old=copy.deepcopy(s.case.assessment);calls=len(c.client.requests)
         s.interview.answers.append(Answer(question_id='unknown',source_ref='unknown',scope='DifferentialDiagnosis',
             purpose='feature',outcome='unknown'))
-        c.brain.refresh_assessment(s,c.client)
-        self.assertEqual(len(c.client.requests),calls)
+        c.differential.decide(s,c.client)
+        self.assertEqual(len(c.client.requests),calls+1)
         self.assertEqual([e.against for e in old.differential],[e.against for e in s.case.assessment.differential])
-
-    def test_prompt_overflow_preserves_previous_evaluation_as_stale(self):
-        c,s=f.consultation(),f.chief(f.state('DifferentialDiagnosis'))
-        c.brain.refresh_assessment(s,c.client);old=s.case.assessment
-        s.case.apply([f.fact('loc',kind='attribute',attribute='Location',values=('head',),category=None)])
-        c.brain._bytes=lambda _:10**9;c.brain.refresh_assessment(s,c.client)
-        self.assertEqual(s.case.assessment,old)
-        self.assertEqual(c.brain._error,'clinical_protected_context_overflow')
 
     def test_freeze_blocks_input_and_submission_repair_does_not_call_llm(self):
         c,s=f.consultation(),f.chief(f.state('DifferentialDiagnosis'));c.close_collection(s)
@@ -151,13 +151,13 @@ class BrainTests(unittest.TestCase):
         c,s=f.consultation(),f.chief(f.state('ChiefComplaint',initialized=True))
         s.case.apply([f.fact('other',kind='attribute',target='Other symptom',attribute='Quality',values=('dull',),
             observation_id='other',episode_id='other',category='quality')])
-        self.assertEqual(c.brain.chief_statuses(s)['Quality'],'unasked')
+        self.assertEqual(c.tools.chief_statuses(s)['Quality'],'unasked')
         mother=Question(item_id='mother',purpose='context',text='병력이 있나요?',target='Test history',
             subject='family',subject_member='mother')
         father=mother.model_copy(update={'item_id':'father','subject_member':'father'})
         self.assertNotEqual(mother.semantic_key(),father.semantic_key())
         c.questions.complete(s,mother,'mother',outcome='unknown')
-        self.assertFalse(c.brain.was_asked(s,'Test history',subject='family',subject_member='father'))
+        self.assertFalse(c.tools.was_asked(s,'Test history',subject='family',subject_member='father'))
 
     def test_calendar_and_open_world_truth_tables(self):
         for a,unit,b,other,result in [(1,'year',12,'month','matched'),(1,'month',30,'day','unknown')]:

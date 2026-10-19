@@ -34,18 +34,23 @@
 - Default the website to C10 NOVA and 200 total role requests; require an explicit start action and retain one active run without queuing or automatic resumption.
 - Observe the original run.py through Test-only in-memory graph and SDK wrappers; delegate once and preserve errors retries routing and all clinical decisions.
 - Store the initial state and reversible node changes with actual node names session turn request IDs and source labels; mark missing or partial traces explicitly.
-- Observe DoctorEar DoctorBrain DoctorMouth and other collaborator methods from Test-only wrappers without runtime audit injection and preserve each original call exception and method binding once.
+- Observe DoctorEar DoctorBrain DoctorMouth the five session objects QuestionTools and other collaborator methods from Test-only wrappers without runtime audit injection and preserve each original call exception and method binding once.
+- Observe imported Python input-binding graph-candidate and English-plan functions at their actual call sites; record callable definition paths and distinguish functions from instance methods.
+- Store large serialized call values once by content hash in trace value events; resolve recorded references in the viewer without implying Python object identity or losing argument mutation paths.
+- Pin the observed runtime source hashes manifest collector hash compiled graph topology and WorkflowState schema at graph construction.
+- Derive inspection.json only from preserved trace and simulator records; expose incomplete calls SDK pairs graph paths frozen patient state revision primary diagnosis SOAP equality and completed receipts without rerunning clinical logic.
+- Keep execution settings in a collapsible rail and give reports a stable viewport with one content scroll; preserve the selected report and history control during unchanged polling and provide compact turn selection.
 - Lead reports with selectable execution flow and a schema-aware WorkflowState explorer for D44 three resident owners plus the disposable turn and preserved legacy traces; expose exact paths before and after values returned temporary objects and JSON string formatting without inferring field reads or unrecorded historical calls.
 - Keep inner hypothetical scoring loops and the Python heap outside observation and declare collector coverage; preserve service references without serializing credentials or arbitrary service dictionaries.
 - Serve completed and failed runs through the same viewer and preserve a self-contained report.html for offline review.
-- Show typed facts notes final diagnosis plan and current submission work and the D46 current and frozen Assessment; keep old fifteen-case-field traces readable and distinguish saved state from received SOAP without rerunning clinical logic.
+- Show D47 unified facts graph bindings final diagnosis plan current submission work and current or frozen Assessment; read older split facts and notes as historical formats; keep old fifteen-case-field traces readable and distinguish saved state from received SOAP without rerunning clinical logic.
 - Refresh saved report HTML from preserved logs when opened; keep LangSmith setup guidance distinct from an implemented exporter or authorized external upload.
 - Use the separate compose.nova.yaml overlay for explicitly scoped NOVA execution.
 - Preserve each run in a fresh root Tmp/test-evaluator directory and disable automatic resumption.
 - Preserve request identity, completed responses, refused turns, failed requests, and final submission receipts.
 - Preserve actual Gateway request bodies and responses in simulator output so transmitted candidates can be audited without exposing credentials.
 - Keep the scripted Gateway case-independent and limited to supplied source names and aliases; do not add case-to-concept fixtures or clinical synonym tables.
-- Handle D46 DoctorEar input_context and input_mapping DoctorBrain clinical_decision and clinical_action and DoctorMouth empathy tasks in scripted doubles without treating protocol fixtures as semantic-quality evidence.
+- Handle DoctorEar input_context and input_mapping session clinical_rank clinical_decision and clinical_action and DoctorMouth empathy tasks through the common DoctorBrain executor in scripted doubles without treating protocol fixtures as semantic-quality evidence.
 - Handle D37 education and education_doctor protocol fixtures and forward the requested reasoning effort through the model bridge.
 - Permit the runtime's single bounded Education response repair after PROVIDER_RESPONSE_INVALID within the shared request ceiling; preserve the failed reservation and keep other service and uncertain failures stopped.
 - Return D41 context statements and database dictionary batches while keeping scripted patient replies case-independent without clinical synonym tables.
@@ -57,10 +62,11 @@
 - Mark scripted replies as test fixtures and all local results as unscored.
 - Record fixture and runtime hashes in the data-owned provenance receipt.
 - Run sh Test/run.sh verify for API and web controls and Test/test_observer.py in the root offline dev service for full workflow parity and trace reconstruction.
+- Run test_viewer.js and test_app.js in an existing project-owned Node image without downloads; distinguish text-DOM and HTTP checks from actual browser layout and accessibility evidence.
 - Run sh Test/knowledge.sh verify for actual graph traversal source-row lookup table browsing and read-only preservation; record browser evidence separately.
 - Keep C10 scripted clinical failure separate from successful website execution and result delivery; never tune fixtures to a case answer or alter submission for a green report.
 - Report authenticated NOVA calls, official API execution, clinical accuracy, and official scoring separately.
 
-- Use brain_double.py for protocol-only clinical responses and compare_d46.py for fixed accepted facts against an explicit frozen baseline without clinical-quality claims.
+- Use brain_double.py for protocol-only clinical responses and compare_d47.py for preserved C03 accepted facts candidate retention cadence and provider failure replay without prompt byte measurements or clinical-quality claims; retain compare_d46.py only for explicit historical D46 snapshots.
 - Keep initial_reports.json limited to public start_information opening and vital_signs and exclude patient scripts examination tables and reference records.
 - Permit the single clinical provider response repair within the existing shared request ceiling while preserving other service and unknown-result stops.

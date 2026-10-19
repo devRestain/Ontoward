@@ -1,148 +1,134 @@
 # Ontoward 진료 워크플로우 백서
 
-이 문서는 **D46·d46.1 DoctorEar·DoctorBrain·DoctorMouth 알고리즘**을 설명한다. 그래프가 후보·근거·질문을 제공하고 DoctorBrain이 감별 순위와 다음 행동을 선택한다. DD 종료 때 고정한 단일 Assessment를 Education과 Python SOAP가 함께 소비한다. [D46 결정](../DECISION_STATE.md#D46), [PRD](../PRD.md), [상태 정의](workflow/state/models.py), [검증·산출물 기록](../data/provenance/algorithm-d46-2026-10-19.json)을 기준으로 읽는다. 기존 임상 자산 핀과 D45 공식 턴 예산을 유지한다.
+현재 구현은 **D47·d47.1**이다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D47 결정](../DECISION_STATE.md#D47), [PRD](../PRD.md), [상태 정의](workflow/state/models.py), [실행·ZIP 증빙](../data/provenance/algorithm-d47-2026-10-19.json)을 기준으로 읽는다. D42 임상 핀과 D45 공식 턴 예산은 유지한다.
 
 <a id="workflow-graph"></a>
 ## 1. 진료 실행 흐름
 
-외부 진입점은 [run.py](run.py)의 `prepare()`·`consult()`다. `prepare()`는 제출 내부 경로·스키마·수용 영수증·해시·준비 한국어 문구를 검사하고 읽기 전용 RDFLib Graph 하나를 준비한다. `consult()`는 증례별 실행 객체를 만들고 초기 입력을 실제 SAY 이전에 처리한다. [LangGraph](workflow/graph.py)는 다음 순서를 실행한다.
+[run.py](run.py)는 원본 SDK의 prepare·consult 진입점을 유지한다. prepare는 제출 내부 경로·manifest·해시·스키마·준비 문구를 확인하고 읽기 전용 Graph를 준비한다. consult는 증례당 Brain 하나와 Ear·Mouth·다섯 세션을 조립한다. [Consultation](workflow/consultation.py)만 세션과 자원 종료를 조정한다.
 
 ```mermaid
 flowchart TD
-    Start["초기 opening·vital_signs"] --> Ear["DoctorEar: 사실·note·완료 결과 수용"]
-    Ear --> Brain["DoctorBrain: 필수 수집·현재 평가·다음 행동"]
-    Brain --> Budget["공식 세션 자원 검사"]
-    Budget -->|질문| Mouth["DoctorMouth: 문구 검증·SAY/EXAM"]
-    Mouth -->|받은 마지막 응답부터| Ear
-    Budget -->|세션 완료| Next["Consultation: 다음 내부 세션"]
-    Next --> Brain
-    Budget -->|DD 완료 또는 자원 종료| Freeze["최신 평가 확인·한계 확정·freeze"]
-    Freeze --> Plan["DoctorBrain: 고정 평가의 영어 P"]
-    Plan --> Delivery["DoctorMouth: 진단 안내·한국어 교육"]
-    Delivery --> Writer["SubmissionWriter: Python SOAP"]
-    Writer --> Submit["15개 문자열·별도 diagnosis 검증·DIAGNOSE"]
-    Submit -->|completed 수신| End["정상 종료"]
+    Initial["opening·vital_signs"] --> Ear["DoctorEar 전처리·입력 수용"]
+    Ear --> Facts["CaseState.facts: CaseFact"]
+    Facts --> Session["현재 세션: 수집·목적별 입력 준비"]
+    Session --> Brain["DoctorBrain: LLM 실행·사용량·전송 복구"]
+    Brain --> Accept["호출자: Pydantic·참조·의미 검증"]
+    Accept --> Budget["Consultation: 공식 자원·세션 이동"]
+    Budget -->|질문| Mouth["DoctorMouth: SAY·EXAM"]
+    Mouth --> Ear
+    Budget -->|DD 종료·자원 종료| Freeze["최신 평가·사실·chief 고정"]
+    Freeze --> Education["EducationSession: 영어 P·한국어 전달 준비"]
+    Education --> Writer["SubmissionWriter: Python SOAP·DIAGNOSE"]
+    Writer -->|completed| End["정상 종료"]
 ```
 
-실제 그래프에는 초기 입력·후속 입력·판단 갱신·세션 진입·예산·질문 선택·행동 검증/실행·세션 전환·SOAP·제출 검증/복구/전송/확인·finish/abort의 16개 실행 노드가 있다. Consultation만 세션 이동과 종료를 조정한다. 전송 결과가 불명확하면 새 환자 행동으로 진행하지 않고 명시적 실패·unknown으로 종료한다.
+[실제 LangGraph](workflow/graph.py)는 START·END 포함 18개 정점·30개 연결이다. 내부 계산이나 모델 호출을 행동 턴으로 계산하지 않는다. 전송 결과가 불명확하면 다음 행동으로 넘기지 않고 명시적으로 종료한다.
 
 <a id="session-pipelines"></a>
-## 2. 다섯 세션과 필수 수집
+## 2. 다섯 세션의 책임과 호출 시점
 
-| 세션 | 코드가 보호하는 수집 | 선택적 판단 |
+| 객체 | 수집과 기능 | 임상 호출 |
 |---|---|---|
-| Initiation | 준비 인사, 발병·기간·경과·재발 등 초기 문맥 | 초기부터 잠정 감별 평가 |
-| ChiefComplaint | 대표 등록 Symptom 하나, 같은 관찰의 전체 등록 속성, Open Inquiry | 같은 계통의 제한된 ROS·속성 |
-| ContextFactor | 기본 병력과 준비 가능한 등록 Context 수집 | 현재 후보와 관계가 있는 Context |
-| DifferentialDiagnosis | 받은 응답 처리와 최신 평가 확보 | 미확인 feature·applicability·등록 진찰·제한된 명료화 |
-| Education | 고정 진단 안내, 활성화된 영어 계획과 한국어 전달 | 진단이나 사실을 다시 선택하지 않음 |
+| InitiationSession | 초기 입력 연결·인사·chief 명료화·공통 경과 | 정상 종료 때 최초 순위 1회 |
+| ChiefComplaintSession | 대표 chief의 적용 가능한 전체 속성·Open Inquiry | 정상 종료 때 순위 1회 |
+| ContextFactorSession | 기본 병력 다섯 영역·보호 Context·추가 Context | 정상 종료 때 순위 1회 |
+| DifferentialDiagnosisSession | 집중 ROS·감별 문진·EXAM·다음 행동·평가 고정 | 진입 첫 행동은 기존 평가 사용; 이후 응답마다 순위와 행동 |
+| EducationSession | 고정 진단·영어 P·Mouth 전달 준비 | 계획·표현 작업별 호출; 순위 갱신 없음 |
 
-대표 주호소는 환자가 우선시한 하나의 현재 증상이다. 부수 증상은 별도 관찰로 유지한다. 필수 항목은 `acquired / unknown / recorded_unmapped / not_applicable / unsupported / conflict / blocked_asset / budget_stopped` 등 실제 결과를 남긴다. LLM의 종료 제안이 대기 중 필수 수집을 없애지 못한다. 자원 때문에 끝나면 완료로 바꾸지 않고 한계에 기록한다.
+turn 0과 첫 세 세션 중간에는 순위를 계산하지 않는다. 후보가 없어도 정상 종료 요청은 수행하고 빈 순위만 받는다. 첫 세 세션의 평가는 각 세션 객체가 전처리→Brain 호출→검증·수용한다. DD의 unknown 응답도 응답 식별자로 판단하고 동일 응답의 내부 재진입은 중복 호출하지 않는다. 고정 시 이미 성공한 최신 판단을 재사용한다.
 
-세션의 조건부 목표/상한은 D40의 **5/7·7/14·7/9·3/10·5/10**이다. 목표 턴은 무조건 채우는 할당량이 아니다. 수집할 유효 항목과 남은 공식 자원을 함께 검사하고 다른 세션의 상한을 빌리지 않는다.
+다섯 세션의 조건부 문진 목표/상한은 5/7·7/14·7/9·3/10·5/10이다. CC 마지막 슬롯은 Open Inquiry에 보호한다. 집중 ROS는 DD에서 chief 계통·최대 여섯 대상·중복·존재 확인을 지키며 기존 10행동 상한을 공유한다. 기본 병력은 과거력·약물·알레르기·가족력·사회력이다. Context 질문의 질환 출처는 CC 종료의 유효 평가로 고정하고 현재 답변으로 실행 가능성만 검사한다. 유효 평가가 없으면 기본 병력과 준비 불가 사유를 남긴다.
 
-<a id="roles-and-state"></a>
+<a id="ownership"></a>
 ## 3. 실행 객체와 상태 수명
 
-| 소유자 | 권한 | 보관하는 증례 정보 |
-|---|---|---|
-| [DoctorEar](workflow/doctor_ear.py) | 초기·SAY·EXAM 해석, 정확한 Python 연결, 선택적 DB 정규화, 수용 | 후속 지시어 해석에 필요한 원문 대화 한 벌 |
-| [DoctorBrain](workflow/doctor_brain.py) | 그래프 자료 구성, Assessment 갱신, 필수/선택 질문, 영어 P | 마지막 판단 revision·chief와 행동 입력 표지, 현재 오류만 |
-| [DoctorMouth](workflow/doctor_mouth.py) | 준비 문구 검증, 공감·한국어 안내, SAY·EXAM 실행 | 별도 임상 정본 없음 |
-| [Consultation](workflow/consultation.py) | 입력→판단→행동, 세션 전환, 예산 종료와 freeze | 세 실행 소유자와 공용 전송 참조 |
-| [SubmissionWriter](workflow/submission_writer.py) | 고정 자료의 SOAP 변환·검증·DIAGNOSE·수신 확인 | 별도 진단·reasoner·LLM 없음 |
-
-모든 LLM 호출은 이 세 역할 중 하나에 속한다. `ModelClient`·공식 SDK·동일 요청 재전송·사용량 계산은 공용 기반이다. Ear와 Mouth는 medium, Brain의 임상 판단과 영어 계획은 high를 사용한다. 모델은 모두 `openai/gpt-6-luna`다. 기존 이름의 호환 객체는 두지 않는다.
-
-`WorkflowState`에는 다음 네 경계만 상주한다.
-
-| 영역 | 내용과 수명 |
+| 소유자 | 책임 |
 |---|---|
-| `case` | 검증된 facts·notes, 대표 chief ID, 단일 assessment, 영어 plan. 사실의 source·취득 turn·관찰·episode를 보존. DD 고정 뒤 임상 변경 거절 |
-| `interview` | 현재 세션·대기 질문, compact Answer, 수집 결과, 미전달 공감, 교육 상태. 완료 질문 객체는 제거하고 반복 방지 범위만 Answer에 유지 |
-| `session` | 공식 세션 ID·기한·turns_remaining, 행동/모델 사용량, 자원 상한, 종료·수신 결과 |
-| 선택적 `turn` | 지금 선택/전송/수신 중인 행동 또는 제출 payload와 복구 횟수. 입력 처리 또는 제출 확인 후 제거 |
+| DoctorBrain | 지정 모델·역할별 effort/한도·사용량·오류 분류·동일 요청 일시 재전송 |
+| DoctorEar | 입력 전처리·문맥 해석·정규화·통합 사실 수용; 원문 대화 한 벌 |
+| 다섯 세션 | 목적별 수집·그래프 자료·프롬프트 선택·출력 검증·임상 수용 |
+| DoctorMouth | 공감·한국어 표현 자료·출력 검증·검증된 SAY/EXAM 실행 |
+| Consultation | 세션 진입·입력 수용 후 작업·종료·자원 종료 조정 |
+| SubmissionWriter | 통합 사실·frozen Assessment·계획·전달 결과의 SOAP·DIAGNOSE·완료 확인 |
 
-`case.assessment`는 순서가 곧 순위인 후보, 후보별 `supports / against / unresolved` 참조, 기반 revision·chief, frozen 여부, 한계만 담는다. 별도 진단 정본·후보 이력·SOAP 상태가 없다. 모델 요청·매칭·후보·질문 자료는 호출 지역값이다. 환자와 무관한 graph index는 PreparedResources에서 재사용한다. 상세 이벤트·비교·재현·비용 분석은 Test가 외부 래퍼로 담당한다.
+별도 ModelClient 계층이나 환자 상태 사본·세션 프레임워크는 없다. 작은 공통 그래프·질문 함수만 재사용한다. 모델은 openai/gpt-6-luna이고 임상·영어 P는 high, Ear·Mouth는 medium이다. Brain은 임상 schema·그래프 조회·의미 수용을 소유하지 않는다.
+
+| 상주 경계 | 내용 |
+|---|---|
+| case | 통합 facts·chief ID·단일 Assessment·영어 plan·revision |
+| interview | 현재 세션·대기 질문·compact Answer·수집 사유·공감·교육 상태 |
+| session | 공식 제약·사용량·종료·completed receipt |
+| 선택적 turn | 현재 행동/입력/제출; 처리 뒤 해제 |
+
+후보 views·지역 참조·LLM 교환·복구는 각 호출 작업의 지역값이다. Test가 외부 관측으로 실제 호출·변환·상태 변경을 보존한다.
 
 <a id="gateway"></a>
-## 4. 입력 계약과 관찰 보존
+## 4. 통합 사실과 입력 수용
 
-[DoctorEar](workflow/doctor_ear.py)는 매 임상 입력의 문맥을 먼저 분석한다. 모델의 영문 typed statement를 Python이 등록 Target·Attribute·값에 정확히 연결하고, 모호한 항목만 제한된 DB 후보 정규화를 호출한다. 구조·참조·문구 검증 실패는 정해진 복구 경계에서 처리하며 각 행을 독립 수용한다. 잘못된 한 행이 나머지 사실을 지우지 않는다.
+ClinicalFact·NoteFact·CaseState.notes를 제거했다. CaseFact에 정규화된 영어 내용·상태·범주·수치·단위·주체·가족 구성원·보고자·시점·관찰·episode·조건·acquisition·source·turn을 보관한다. 선택적 graph_binding이 등록 target·attribute·values·연결 방식·그래프 사용 자격을 보관한다. 한 진술의 매핑과 설명을 중복 저장하지 않는다.
 
-`opening`과 `vital_signs`는 코드가 발급한 별도 초기 구간이다. 모델의 quote가 실제 지정 구간에 있어야 해당 출처를 쓸 수 있다. 환자가 보고한 수치·집에서 측정한 값은 S, 신뢰된 초기 객관 구간과 실제 EXAM의 finding·attribute는 O로 간다. 기록 note도 `objective_observation`과 객관 취득 경계를 모두 충족해야 O에 들어간다.
+age·sex·historian·약물·보고 성장 수치·조건부 정보도 같은 정본에서 임상 판단과 계획으로 간다. 그래프 매칭과 supports/against에는 명시적으로 적격인 연결만 쓰며 조건부 표현을 무조건적 양성으로 바꾸지 않는다. 내용·수치·조건·상태가 바뀌면 revision을 올리고 Assessment 수용 자체는 올리지 않는다.
 
-환자 age·sex·명시한 historian은 typed `patient_context` note로 한 번 수용한다. 보호자 자신의 나이·병력은 가족 주체로 분리한다. 중복은 합치고 명시 정정은 대체하며 해결되지 않은 서로 다른 값은 uncertain으로 남긴다. 현재 자산에는 age·sex를 이용할 typed 적용 관계가 없으므로 HPI에만 기록한다.
+Ear는 초기 opening과 vital_signs를 첫 SAY 전에 해석한다. 매 입력의 문맥을 분석하고 정확한 영어 연결은 Python이 처리하며 미해결 항목만 공급 DB 후보로 정규화한다. 유효 행은 보존하고 무효 행·형식·강제 완료의 기존 한도를 유지한다. 내부 ID·source·turn은 Python이 부여한다. 실제 모름과 미표현을 구별한다.
 
-임상 사실은 주체·가족 구성원·시점·관찰·episode·취득 방식·상태를 가진다. 불명·부정·조건부 표현을 양성으로 바꾸지 않는다. DB에 표현할 수 없는 유용한 기록과 조건문은 note에 남긴다. `record_only`와 조건부 `qualified` 보고는 진단 입력으로 승격하지 않는다. 환자 원문은 Ear의 대화 해석에만 사용하고 Brain·계획·SOAP는 수용된 typed 정보만 읽는다. Education 응답은 대화에만 남고 임상 사실을 바꾸지 않는다.
+초기 구간 인용·취득 검증을 지키며 보고값·가정 측정은 S, 신뢰된 객관 구간·실제 EXAM은 O에 둔다. 정정은 기존 취득·범위 정책을 유지한다. 환자 원문은 Ear의 참조 해석에만 남고 임상·계획·SOAP에는 전달하지 않는다. Education 답변은 transcript-only다.
 
 <a id="reasoning"></a>
-## 5. 알고리즘 ① 초기 그래프 설정과 지속 갱신
+## 5. 목적별 임상 입력
 
-[rules/assessment.py](workflow/rules/assessment.py)는 초기 사실부터 현재 reasoning 정보의 Target·Attribute·등록 Context 관계로 관련 질환을 회수한다. 부분 패턴·실제 음성·unknown·미확인 applicability도 관련 질환을 검토하는 경로다. 회수와 지지는 별개다.
+[rules/assessment.py](workflow/rules/assessment.py)가 현재 적격 사실과 등록 관계로 후보를 회수하고 supports·against·unresolved를 만든다. 부분 패턴·음성·미확인 applicability도 검토 경로가 될 수 있으나 자동 지지는 아니다. Feature 매칭과 Association 적용 조건을 따로 판정하며 관찰·episode·주체를 합쳐 완성하지 않는다. 수치·값 불일치에는 실제 fact 참조를 남긴다.
 
-Feature matcher는 일치·불일치·미확인과 실제 fact ID를 반환한다. Pattern의 상태와 Association의 applicability를 따로 판정하고 코드가 supports·against·unresolved를 만든다. 수치 구간은 등록 단위와 경계를 비교하고, 개념 집합은 any_of/all_of와 개방 세계의 미확인을 보존한다. 기대 값의 명시적 부정과 실제 수치 불일치는 실제 fact 참조를 가진 반대 근거가 된다.
+[rules/decision.py](workflow/rules/decision.py)는 호출 목적에 필요한 Key와 Value만 고른다. 사실 f_, 후보 d_, 근거 e_, 질문 q_, 범위 s_, 조건 condition_를 지역 참조로 연결하고 같은 사실·조건·미확인을 한 번 정의한다. 전체 상태 model_dump·큰 Pydantic schema·그래프 profile 전문을 프롬프트에 넣지 않는다. 기존 유효 후보를 보존하고 고정 Top-K를 두지 않는다. 순위 전용 요청에는 질문을 넣지 않으며 행동 복구는 수용 순위와 실행 가능한 질문 중심이다.
 
-서로 다른 관찰·episode·주체의 속성을 합쳐 완성 Pattern을 만들지 않는다. 세부 조건이 미확인·불일치여도 일반 Pattern의 지지는 유지한다. 같은 관찰의 반복 출처는 독립 임상 지지로 늘리지 않는다. 불충족 applicability는 질환 전체의 부정을 뜻하지 않는다.
+**프롬프트 바이트 측정·목표·제한·진단 통계·크기 비교는 없다.** 이를 맞추기 위한 절단·배치·조각 읽기·근거 결합 경로도 제거했다. 의미별 전처리와 공유 참조는 필요한 정보를 명확히 전달하기 위해 사용한다. 공식 토큰·호출·행동·시간 예산은 각자 유지한다.
 
-기존 유효 후보는 다음 요청에 모두 보호하고 신규 후보는 실제 근거 경로별로 고르게 배분한다. 전체 `messages` 직렬화가 **64 KiB**를 넘지 않게 하며 고정 Top-K를 두지 않는다. 먼저 compact 근거·조건을 제공하고 남는 공간에 상세 관계와 실행 가능한 질문을 넣는다. 보호된 현재 후보와 필수 사실만으로 상한을 넘으면 명시적 오류로 처리하며 후보를 조용히 삭제하지 않는다.
+## 6. 작은 응답과 독립 수용
 
-## 6. 알고리즘 ② 감별 순위·주진단·DD 고정
+입력 해석·후보 매핑·순위·행동·계획 문장·한국어 표현은 작은 작업별 JSON으로 받는다. 호출자는 Pydantic 구조 검증 뒤 등록 참조·현재 범위·중복·누락·질문 실행 가능성을 검사한다. 첫 세 종료 응답은 ranked_disease_refs만, DD 정상 응답은 순위와 next_action만 받는다. Python이 전체 Assessment와 질문 객체를 조립한다.
 
-Brain의 정상 판단 출력은 `ranked_disease_refs`와 `next_action`뿐이다. 질환·질문 참조는 요청 지역값이다. 유효한 기존 후보 누락·미등록 질환·중복·잘못된 참조는 계약 오류다. 모델이 수용한 순위를 Python 점수로 재정렬하지 않는다. 근거는 코드가 연결하므로 모델 출력에서 반대 근거를 생략해도 사라지지 않는다.
-
-임상 revision·chief가 바뀐 버전마다 정상 판단을 최대 한 번 하고 구조·참조 복구를 한 번 허용한다. unknown처럼 임상 사실이 바뀌지 않으면 현재 근거와 미확인 사유만 갱신한다. 행동 변경이 필요하면 순위 없는 `clinical_action`을 호출한다. 후보의 실제 현재 연결 경로가 모두 소실된 때만 무효화한다. 낮은 순위·지지 없음·프롬프트 공간 부족은 무효화 사유가 아니다.
-
-DD 종료는 **마지막 응답 수용 → 최신 평가 확인 → 미확인·한계 확정 → assessment와 기반 facts·notes·chief 고정 → Education** 순서다. 최신 평가가 끝내 없으면 확인된 등록 chief 하나의 symptom-only Assessment로 이 경계에서 종결한다. 확인된 chief도 없으면 실패한다. Writer에는 fallback이 없다. freeze 뒤 입력·계획·한국어 전달·SOAP repair는 임상 순위와 A를 바꿀 수 없다.
+기존 유효 후보 누락·미등록·중복 참조는 거절한다. 그래프 경로가 소실된 후보만 코드가 무효화한다. Python 점수로 수용 순위를 재정렬하지 않는다. 유효 순위와 잘못된 행동을 따로 처리하고 행동만 한 번 복구한다. Brain에는 임상 응답 검증을 넣지 않는다.
 
 <a id="question-selection"></a>
-## 7. 알고리즘 ③ 필수 수집과 선택 질문
+## 7. 질문과 평가 고정
 
-필수 질문은 코드가 준비하고 완료 범위를 검사한다. 선택 질문은 현재 후보의 미확인 feature·applicability·구별 특징에서 만든다. `continue_required / ask / advance_stage / finish_collection`만 허용하고 `ask`는 제공된 질문 참조 하나를 선택한다.
+필수 chief 속성·Open Inquiry·기본 병력은 해당 세션이 준비한다. 공통 QuestionTools가 등록 문구·존재 전제·계통·주체·가족 구성원·시점·관찰·중복·예산을 검사한다. DD의 선택 질문은 후보의 미확인 feature와 진찰에서 구성하며 질환별 기대 답과 조건을 보존한다. ask는 공급한 실행 가능한 질문 하나를 선택해야 한다.
 
-같은 실행 질문은 하나로 묶되 질환별 기대 답과 적용 조건을 함께 전달한다. 질문 구조가 같아도 질환 후보는 합치지 않는다. 미확인 증상은 존재 여부부터 확인하며 속성 질문은 같은 관찰에서 존재가 확인된 뒤 허용한다. 등록 관계·준비 문구·단계·취득 방식·주체·가족 구성원·시점·완료 여부·남은 자원을 실행 직전에 검사한다.
-
-`Question.subject_member`는 8항목 의미 키와 Answer 완료 범위에 들어간다. 보조 증상의 속성은 chief 속성을 완료시키지 않고 generic 가족 답변은 특정 어머니·아버지의 수집을 완료시키지 않는다. unknown·unsupported 등 이미 시도한 항목을 무한 반복하지 않는다.
-
-유효 순위와 잘못된 행동은 분리한다. 순위가 수용되었다면 행동만 한 번 복구하며 순위를 바꾸지 않는다. 반복 실패는 수집의 명시적 미완료 사유다. 임의 질문으로 대체하거나 충분한 수집으로 기록하지 않는다. D38의 가상 답변·utility·전체 후속 경로 완성 gate·양수 점수·완성 chief Pattern 진단 gate는 현재 런타임에 없다.
+DD 종료는 **마지막 응답 수용→필요 판단→최신 평가 재사용→현재 미확인·한계 확정→Assessment·기반 facts·chief 고정→Education**이다. 최신 질환 평가를 얻지 못하면 확인된 chief의 symptom-only 평가를 고정하고 chief도 없으면 명시적으로 실패한다. Writer는 다시 진단을 고르지 않는다. Education과 SOAP 복구는 같은 고정 평가를 사용한다.
 
 <a id="budgets-and-submission"></a>
-## 8. 예산·Education·종료
+## 8. 공식 자원·Education·종료
 
-D45의 공식 `turns_remaining`이 환자 행동 예산의 기준이다. SAY·EXAM의 실제 처리 비용을 공식 응답/조회로 정산하며 같은 요청 재전송은 동일 identity를 유지한다. 내부 판단·세션 조회·SOAP·DIAGNOSE는 행동 턴을 쓰지 않는다. 공통 상한은 **50턴·모델 200회·입력 500,000·출력 100,000토큰**이다.
+D45의 공식 turns_remaining이 행동 예산의 기준이다. SAY·EXAM의 실제 소비를 응답/조회로 정산하고 같은 요청 재전송은 중복 계산하지 않는다. 공통 상한은 50행동·모델 200회·입력 500,000·출력 100,000토큰이다. 내부 처리·모델 호출·세션 조회·SOAP·DIAGNOSE는 행동 턴이 아니다.
 
-새 행동 전에 받은 응답의 Ear 처리, 최신 Brain 판단과 허용 복구, 활성화된 영어 P·한국어 안내, 제출 시간을 보호한다. Brain 정상 출력 상한은 4,096, 복구는 8,000토큰이고 두 호출 모두 high다. Education 활성 시 진단 안내·증상 진단 설명·다섯 계획 영역을 위해 7턴을 보호한다. 비활성 설정에서는 교육 행동·예약이 없다. 공감은 별도 사용량으로 계산하지만 같은 공식 행동·모델 예산을 쓴다.
+새 행동 전에 응답 해석·최종 판단과 복구·활성 계획·한국어 안내·제출을 보호한다. 임상 정상 출력은 4096·한 번의 복구 8000토큰이다. Education은 7턴을 보호하고 상한은 10이다. 명시적 비활성 설정은 교육 행동·예약·P.education을 사용하지 않는다. 일시 전송 오류는 동일 ID·payload로 2초 뒤 한 번 재전송한다.
 
-고정 뒤 Brain은 고정 진단·canonical 환자 정보와 build-pinned 가이드라인 인덱스로 영어 P를 생성한다. 원문은 `NOVA_GUIDELINES_DIR` 아래에서 해시 확인 후 필요한 부분만 읽는다. 원문 근거와 모델 지식 보완을 구분한다. Mouth가 고정 진단을 먼저 안내하고 계획을 NFC **1–30 codepoint** 한국어로 전달한다. 기존 공급자 응답 복구와 한국어 문구 검증 복구를 유지한다. 준비·미전달 계획을 전달 완료로 기록하지 않는다.
+EducationSession은 고정 진단과 통합 환자 사실, manifest로 해시 검증한 지침 원문으로 영어 P를 준비한다. 인용과 일반 모델 지식을 구별한다. 원문 문서는 NOVA_GUIDELINES_DIR 마운트에서 읽고 ZIP에 넣지 않는다. Mouth가 진단을 먼저 안내하며 각 발화를 NFC 1–30자로 검증한다. 공급자 응답 복구와 문구 복구는 별도이고 미전달 계획은 전달 완료로 기록하지 않는다. 이 개편은 기존 교육 실패·안전 우선순위 정책을 별도 변경하지 않는다.
 
-자원 종료도 이미 받은 마지막 응답부터 처리한 뒤 같은 freeze 절차를 거친다. 정상 완료는 유효 SOAP 전송 후 `DIAGNOSE completed` 수신까지다. 전송·검증 실패와 불명 수신을 정상 종료로 바꾸지 않는다.
+## 9. Python SOAP와 완료 계약
 
-## 9. 알고리즘 ④ 관찰 단위 Python SOAP
+Writer는 통합 사실·frozen Assessment·영어 P·실제 전달 결과만 사용한다. age·sex·historian을 HPI 선두에 쓰고 보고 수치는 S에, 실제 객관 취득은 turn과 함께 O에 둔다. 조건·가족·시점·수치 범위를 보존하고 같은 S/O 문구를 frozen A의 근거에서 재사용한다.
 
-Writer는 현재 facts·유효 notes·frozen Assessment·영어 P·compact 전달 결과만 사용한다. 별도 모델 호출이나 진단 재선택이 없다. 환자 age·sex·historian을 HPI 앞에 두고 같은 관찰의 존재·속성·수치를 함께 표현한다. 실제 EXAM 속성은 O에 두며 각 취득 turn을 유지한다. 가족·과거·episode·조건·단위·수치 구간을 보존한다.
-
-S/O를 만들며 fact ID→실제 문구의 지역 mapping을 만들고 A에서 재사용한다. A는 고정 순위와 코드가 연결한 지지·덜 부합·미확인을 읽는다. 미질문을 음성으로, 계획을 시행 결과로 바꾸지 않는다. P는 계획과 실제 전달 여부를 구별한다. SOAP repair는 같은 고정 평가를 다시 직렬화하며 Brain을 호출하지 않는다.
-
-최종 계약은 S의 `cc/hpi/pmh/fh/sh/ros`, O의 `exam/tests`, A의 `evidence/differential`, P의 `tests/treatment/disposition/follow_up/education`이라는 **15개 문자열**과 별도 **diagnosis 문자열**이다. 예선의 `O.tests`는 비우고 diagnosis는 frozen 1위와 일치해야 한다.
+S의 cc/hpi/pmh/fh/sh/ros, O의 exam/tests, A의 evidence/differential, P의 tests/treatment/disposition/follow_up/education **15개 문자열**과 별도 diagnosis를 전송한다. 예선 O.tests는 빈 문자열이고 diagnosis는 고정 1위다. 형식 복구는 같은 평가로 한 번 재구성한다. 정상 완료는 DIAGNOSE의 completed 수신이다.
 
 <a id="configuration"></a>
 ## 10. 설정·검증·독립 ZIP
 
-[공개 .env](.env)는 제출 내부 파일만 선택한다. 새 판단 프롬프트는 `ONTOWARD_BRAIN_PROMPT=config/brain.txt`다. Ear·정규화·공감·영어 계획·Mouth 프롬프트와 임상 문구도 `config/`에서 분리한다. 개발 키와 서버 원문은 공개 설정에 넣지 않는다.
+[설정 안내](config/README.md)의 공개 경로로 임상 공통·세션별·Ear·Mouth·계획 프롬프트를 고른다. ONTOWARD_CLINICAL_PROMPT와 네 임상 세션 설정이 기존 brain.txt를 대체한다. 비밀 키와 서버 원문은 공개 설정에 넣지 않는다.
 
-검증은 프로젝트 소유 컨테이너의 `Dev/tests/workflow` 행동 회귀, 실제 수용 RDF의 대표 상담, Test 관측 유무 비교, SDK HTTP 경계, 독립 ZIP 실행으로 구분한다. Brain 고정 응답은 [Test/brain_double.py](../Test/brain_double.py)의 프로토콜 대역이다. 고정 이전 산출물과의 비교도 [Test/compare_d46.py](../Test/compare_d46.py)에서 수행한다. 재현·상세 로그 수집은 제출 실행 코드에 주입하지 않는다.
+프로젝트 Docker에서 유지 행동 회귀·실제 수용 RDF 상담·관측 일치·SDK 내부 HTTP·읽기 전용 독립 ZIP을 구분해 검증한다. [Test/compare_d47.py](../Test/compare_d47.py)는 원본 C03의 네 수용 상태에서 모든 사실·기존 후보 전달과 공급자 오류 재현을 확인한다. 원본 결과는 보존하고 실제 모델 정확도·속도 개선·새 NOVA·공식 평가는 not_run으로 구분한다. 결과와 소스·ZIP 신원은 [D47 증빙](../data/provenance/algorithm-d47-2026-10-19.json)이 소유한다.
 
-ZIP에는 필요한 runtime Python·고정 requirements·원본 SDK·공개 설정·프롬프트·실행 자산만 포함한다. 문서·상태·테스트·준비 DB·원본 문서·개발 키·과거 점수 정책은 제외한다. 압축 해제본은 부모 data 없이 네트워크 차단 상태로 확인하고 SDK HTTP 검증은 별도 프로젝트 내부망에서 한다. 모델·임상 정확도·공식 NOVA 평가는 이 오프라인 증거에 포함하지 않는다. 최신 실제 실행 수치·해시는 [D46 증빙](../data/provenance/algorithm-d46-2026-10-19.json)과 [운영 상태](PROJECT_STATE.md)를 따른다.
+ZIP에는 필요한 실행 Python·requirements·SDK·공개 설정·프롬프트·manifest 자산만 넣는다. 문서·상태·Test·Dev·준비 DB·개발 키·원본 지침은 제외한다. 독립본은 부모 data나 원본 준비 자료 없이 검증한다.
 
 <a id="runtime-dialogue"></a>
-## 11. 한 턴에서 일어나는 일
+## 11. 응답 하나의 변환
 
-예를 들어 복통과 별개 호흡 증상이 초기 보고되면 Ear가 각 관찰과 조건을 구별해 수용한다. Brain은 두 Target의 등록 경로에서 질환 후보를 회수하고 코드 근거와 질문 자료를 구성한다. LLM은 제공된 질환 참조 순서와 행동만 반환한다. 복통 속성이 필수 수집으로 남아 있으면 코드가 그 질문을 먼저 준비한다. 답변이 unknown이면 해당 수집 결과를 기록하고 같은 임상 revision의 순위는 다시 생성하지 않는다. 마지막 DD 답변이 새 사실이면 평가를 갱신한 뒤 고정하고, Education과 SOAP는 그 평가를 그대로 읽는다.
+Ear는 환자의 보고와 조건을 하나의 CaseFact로 수용한다. 첫 세 세션은 수집을 계속하다 종료 때 순위만 판단한다. DD에서는 질문 응답이 unknown이어도 새 응답 식별자로 순위·행동을 판단한다. 같은 응답으로 그래프 노드가 재진입하면 성공한 판단을 재사용한다. 마지막 응답 처리 후 고정한 사실·chief·순위를 Education과 SOAP가 함께 읽는다.
 
 <a id="change-guide"></a>
-## 12. 변경할 때 확인할 경계
+## 12. 변경 경계
 
-입력 의미는 Ear와 typed 계약, 질환 근거는 순수 matcher, 순위·질문은 Brain, 환자 전달은 Mouth, 세션 전환은 Consultation, SOAP와 완료는 Writer에서 바꾼다. 임상 텍스트 변경과 임상 자산 수용은 별개다. 새 source·문구·관계는 준비와 수용 영수증을 거치며 이번 알고리즘 개편에는 코퍼스 확장이 없다. 실제 수행 여부는 세 범위의 상태와 근거 파일에서 확인한다.
+입력 의미는 Ear, 그래프 매칭은 rules, 세션별 임상 작업은 sessions, 모델 실행은 Brain, 환자 표현·행동은 Mouth, 세션 이동은 Consultation, SOAP·완료는 Writer에서 바꾼다. 임상 자산 확장·강제 매핑 정책·초기 진술 정정·가족 Context 집계·교육 실패/안전 정책은 이번 범위 밖이다. 다음 제한 작업은 별도 실제 모델 품질 평가다.
 
 <a id="ontology-schema"></a>
 

@@ -1,7 +1,20 @@
 const $ = id => document.getElementById(id);
 const activeStates = new Set(['starting', 'running']);
 const names = {starting:'시작 준비 중',running:'실행 중',completed:'실행 완료',failed:'실행 실패',timeout:'시간 초과',interrupted:'실행 중단',saved:'저장된 실행'};
-let runs = [], selected = location.hash.slice(1), busy = true, online = false, posting = false, polling = false, loaded = '', pendingRun = '';
+const caseLabel = run => run.fixture_kind === 'protocol_fixture' ? '합성 프로토콜' : run.case;
+let runs = [], selected = location.hash.slice(1), busy = true, online = false, posting = false, polling = false, loaded = '', pendingRun = '', historyVersion = '';
+const toggle = $('toggle-controls');
+const compact = window.matchMedia('(max-width: 900px)');
+function setControls(open) {
+  document.body.classList.toggle('controls-collapsed', !open);
+  $('control-panel').hidden = !open;
+  toggle.setAttribute('aria-expanded', String(open));
+  toggle.textContent = open ? '실행 설정 접기' : '실행 설정 열기';
+  $('results').inert = open && compact.matches;
+}
+setControls(!compact.matches);
+compact.addEventListener('change', () => setControls(!compact.matches));
+toggle.addEventListener('click', () => setControls(toggle.getAttribute('aria-expanded') !== 'true'));
 
 function modeHelp() {
   const nova = $('backend').value === 'nova';
@@ -17,6 +30,7 @@ function controls() {
   modeHelp();
 }
 function status(text, detail, warn=false) {
+  if ($('run-status').textContent === text + detail) return;
   $('run-status').replaceChildren();
   const badge = document.createElement('span'); badge.className = `badge${warn?' warn':''}`; badge.textContent = text;
   const description = document.createElement('strong'); description.textContent = detail;
@@ -25,6 +39,8 @@ function status(text, detail, warn=false) {
 function showResult() {
   const run = runs.find(row => row.id === selected);
   const url = run?.report_url;
+  $('selected-run').textContent = run?.id || '';
+  $('result-title').textContent = run ? `${caseLabel(run)} · ${names[run.state] || run.state}` : '실행 결과';
   $('report').hidden = $('standalone').hidden = !url;
   $('empty').hidden = !!url;
   if (url) {
@@ -35,7 +51,7 @@ function showResult() {
     $('standalone').href = url;
   } else {
     $('empty').textContent = run && activeStates.has(run.state)
-      ? '테스트가 진행 중입니다. 완료되면 결과를 표시합니다. 이 페이지를 새로고침해도 실행은 계속됩니다.'
+      ? '테스트가 진행 중입니다. 완료되면 결과를 표시합니다. 저장된 다른 실행도 선택할 수 있습니다.'
       : '저장된 실행을 선택하거나 새 테스트를 시작하세요. 정보 흐름에서 호출 순서와 입출력을, 객체 탐색에서 턴별 데이터 변화를 볼 수 있습니다.';
   }
 }
@@ -51,20 +67,24 @@ async function poll() {
     busy = data.busy || !!pendingRun;
     const active = runs.find(row => activeStates.has(row.state));
     if (!selected || (!pendingRun && !runs.some(row => row.id === selected))) selected = active?.id || runs[0]?.id || '';
-    const history = $('history'); history.replaceChildren();
-    if (!runs.length) { const option = document.createElement('option'); option.textContent='실행 기록 없음'; option.value=''; history.append(option); }
-    for (const run of runs) {
-      const option = document.createElement('option'); option.value=run.id;
-      option.textContent=`${run.case} · ${run.backend} · ${new Date(run.created*1000).toLocaleString('ko-KR')} · ${names[run.state] || run.state}`;
-      history.append(option);
+    const history = $('history'),version=JSON.stringify(runs.map(run=>[run.id,run.case,run.backend,run.created,run.state,run.fixture_kind]));
+    if(version!==historyVersion){
+      historyVersion=version;history.replaceChildren();
+      if (!runs.length) { const option = document.createElement('option'); option.textContent='실행 기록 없음'; option.value=''; history.append(option); }
+      for (const run of runs) {
+        const option = document.createElement('option'); option.value=run.id;
+        option.textContent=`${caseLabel(run)} · ${run.backend} · ${new Date(run.created*1000).toLocaleString('ko-KR')} · ${names[run.state] || run.state}`;
+        history.append(option);
+      }
     }
     history.value=selected;
+    if (!runs.length) $('launch-settings').open = true;
     if (!online) status('실행기 연결 끊김', '시작한 터미널을 확인하거나 sh Test/web.sh로 사이트를 시작하세요.', true);
-    else if (active) status(names[active.state], `${active.case} · ${active.backend} · ${Math.floor(active.seconds/60)}분 ${active.seconds%60}초 경과`);
+    else if (active) status(names[active.state], `${caseLabel(active)} · ${active.backend} · ${Math.floor(active.seconds/60)}분 ${active.seconds%60}초 경과`);
     else if (busy) status('다른 실행 진행 중', '기존 웹 또는 CLI 테스트가 끝나면 새로 실행할 수 있습니다.');
     else {
       const current = runs.find(row => row.id === selected);
-      status(current ? names[current.state] || current.state : '실행 준비됨', current ? `${current.case} · ${current.backend}${current.result==='pass'?' · 로컬 검사 통과':current.result==='fail'?' · 로컬 검사 실패':''}` : '한 번에 한 증례를 실행합니다.', current && ['failed','timeout','interrupted'].includes(current.state));
+      status(current ? names[current.state] || current.state : '실행 준비됨', current ? `${caseLabel(current)} · ${current.backend}${current.result==='pass'?' · 로컬 검사 통과':current.result==='fail'?' · 로컬 검사 실패':''}` : '한 번에 한 증례를 실행합니다.', current && ['failed','timeout','interrupted'].includes(current.state));
     }
     $('progress').classList.toggle('running', !!active);
     controls(); showResult();
@@ -85,6 +105,7 @@ $('launch').addEventListener('submit', async event => {
   finally { posting=false; controls(); }
 });
 $('history').addEventListener('change',()=>{ selected=$('history').value; location.hash=selected; showResult(); });
+window.addEventListener('hashchange',()=>{selected=location.hash.slice(1);$('history').value=selected;showResult();});
 $('backend').addEventListener('change',modeHelp);
 $('maximum').addEventListener('input',modeHelp);
 poll(); setInterval(poll,2000);

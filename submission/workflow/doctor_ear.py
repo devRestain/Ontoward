@@ -1,20 +1,13 @@
 import json
 from copy import deepcopy
-from functools import lru_cache
 from pydantic import ValidationError
 from .input_types import ContextInput, ContextStatement, EmpathySignal, InputResult, PatientContextFact
-from .io.model_client import ModelResult
+from .output_types import MappingBatch
+from .model_context import messages, fact_record
 from .rules.input import isolate_attributes, make_fact, note_fact
-from .state.models import NoteFact
+from .state.models import CaseFact
 from .rules.limits import LIMITS
-from .rules.normalization import candidate_contracts, compact_schema, exact_mapping, force_mapping, mapping_schema, measurement_value, numeric_schema, statement_outcome, strict_json, validate_mapping
-
-@lru_cache(maxsize=1)
-def parser_schema():
-    schema = compact_schema(ContextInput.model_json_schema())
-    schema['$defs']['ObservedNumber'] = numeric_schema()
-    schema['required'] = ['statements']
-    return schema
+from .rules.normalization import candidate_contracts, exact_mapping, force_mapping, measurement_value, statement_outcome, strict_json, validate_mapping
 
 class DoctorEar:
 
@@ -59,15 +52,15 @@ class DoctorEar:
         result = self._parse_text(state, knowledge, client, text, source, number, segments) if not raw.get('error') else InputResult(outcomes=['unknown'])
         if state.session.termination:
             return
-        state.case.apply(result.facts, result.notes, preferred=result.preferred)
+        state.case.apply(result.facts, preferred=result.preferred)
         if result.empathy:
             self.interactions.queue_empathy(state, result.empathy, source)
         if question:
 
             def same_scope(fact):
                 return (question.subject, question.subject_member) == (fact.subject, fact.subject_member) and (question.observation_id is None or question.observation_id == fact.observation_id) and (question.episode_id is None or question.episode_id == fact.episode_id)
-            matched = [f.id for f in result.facts if same_scope(f) and (question.purpose in {'chief', 'open_inquiry'} or (question.purpose in {'intake', 'history'} and question.category == f.category) or (question.purpose not in {'intake', 'history'} and question.target == f.target and (question.attribute == f.attribute) and (question.time_context == f.time_context)))]
-            notes = [n for n in result.notes if question.category and n.category == question.category and same_scope(n)]
+            matched = [f.id for f in result.facts if f.graph_binding and same_scope(f) and (question.purpose in {'chief', 'open_inquiry'} or (question.purpose in {'intake', 'history'} and question.category == f.category) or (question.purpose not in {'intake', 'history'} and question.target == f.target and (question.attribute == f.attribute) and (question.time_context == f.time_context)))]
+            notes = [n for n in result.facts if not n.graph_binding and question.category and n.category == question.category and same_scope(n)]
             outcomes = result.outcomes
             current = {f.id: f for f in state.case.current_facts()}
             conflict = any((current.get(ident) and current[ident].status == 'uncertain' for ident in matched))
@@ -75,34 +68,16 @@ class DoctorEar:
             self.questions.complete(state, question, source, outcome=outcome, fact_ids=matched, turn=raw.get('turn'))
         state.turn = None
 
-    @staticmethod
-    def _size(messages):
-        return len(json.dumps(messages, ensure_ascii=False, separators=(',', ':'), allow_nan=False).encode())
-
-    def _fit_request(self, prompt, payload, byte_limit):
-        while True:
-            messages = [{'role': 'system', 'content': prompt}, {'role': 'user', 'content': json.dumps(payload, ensure_ascii=False, separators=(',', ':'), allow_nan=False)}]
-            if self._size(messages) <= byte_limit:
-                return messages
-            if payload.get('dialogue'):
-                payload['dialogue'].pop()
-            elif payload.get('records'):
-                payload['records'].pop()
-            else:
-                return None
-
-    def _call(self, state, client, payload, prompt, limit, *, recovery=False):
-        fitted = self._fit_request(prompt, payload, limit)
-        if fitted is None:
-            return ModelResult(error='GATEWAY_REQUEST_OVERFLOW')
-        return self.model.complete(state, client, role='gateway', messages=fitted, max_tokens=LIMITS.gateway_recovery_tokens if recovery else LIMITS.gateway_tokens)
+    def _call(self, state, client, payload, prompt, *, recovery=False):
+        return self.model.complete(state, client, role='gateway', messages=messages(prompt, payload),
+            max_tokens=LIMITS.gateway_recovery_tokens if recovery else LIMITS.gateway_tokens)
 
     def _project_context(self, state, question, text):
         related = set()
         if question and question.observation_id:
             related = {f.id for f in state.case.current_facts() if f.observation_id == question.observation_id and f.episode_id == question.episode_id}
         facts = sorted(state.case.current_facts(), key=lambda f: (f.id not in related, -f.turn, f.id))
-        records = [f.model_dump(exclude_defaults=True) for f in facts[:LIMITS.expanded_context_records]]
+        records = [dict(fact_record(f), source_ref=f.source_ref) for f in facts[:LIMITS.expanded_context_records]]
         refs = list(dict.fromkeys([*(f['source_ref'] for f in records), *(row['id'] for row in reversed(self.dialogue[-2:]))]))
         current = state.turn.request_id or 'initial'
         by_id = {row['id']: row for row in self.dialogue}
@@ -167,7 +142,6 @@ class DoctorEar:
                 demographic.append(item)
             except (TypeError, ValueError, ValidationError):
                 pass
-        ambiguous = {f.key for f in demographic if len({d.value for d in demographic if d.key == f.key}) > 1}
         context.patient_context = demographic
         if raw.get('empathy') is not None:
             try:
@@ -183,15 +157,11 @@ class DoctorEar:
         binding = question.model_dump(exclude_none=True, exclude_defaults=True, exclude={'text', 'priority', 'order', 'coverage', 'empathy_key', 'plan_sentence_id'}) if question else None
         if binding is not None:
             binding['kind'] = question.kind
-        payload = {'task': 'input_context', 'phase': 'context', 'input': text, 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'patient_context': {n.context_key: n.value for n in state.case.notes.values() if n.context_key and n.subject == 'patient' and (n.status == 'present')}, 'input_segments': segments, 'schema': deepcopy(parser_schema()), **self._project_context(state, question, text)}
-        context, indices, last_error = (None, None, None)
+        payload = {'task': 'input_context', 'phase': 'context', 'input': text, 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'patient_context': {n.context_key: n.value for n in state.case.current_facts() if n.context_key and n.subject == 'patient' and (n.status == 'present')}, 'input_segments': segments, **self._project_context(state, question, text)}
+        context, indices = (None, None)
         for attempt in range(2):
             payload['phase'] = 'context_repair' if attempt else 'context'
-            limit = LIMITS.expanded_gateway_request_bytes if attempt else LIMITS.gateway_request_bytes
-            if last_error == 'CONTEXT_LIMIT_EXCEEDED':
-                limit = LIMITS.compact_gateway_request_bytes
-            response = self._call(state, client, payload, self.config.parser_prompt, limit, recovery=bool(attempt))
-            last_error = response.error
+            response = self._call(state, client, payload, self.config.parser_prompt, recovery=bool(attempt))
             if state.session.termination:
                 break
             try:
@@ -200,7 +170,6 @@ class DoctorEar:
                     break
                 indices = [e['index'] for e in errors]
                 payload.update(statement_indices=indices, repair_statements=errors, frozen_statements=[{'index': i, 'quote': s.quote} for i, s in enumerate(context.statements) if i not in indices])
-                payload['schema']['properties']['statements'].update(minItems=len(indices), maxItems=len(indices))
             except (TypeError, ValueError, ValidationError) as error:
                 errors = [{'reason': response.error or str(error)[:320]}]
             payload['validation_errors'] = errors
@@ -214,8 +183,7 @@ class DoctorEar:
         if question is None and ambiguous and (not state.session.termination):
             repair = deepcopy(payload)
             repair.update(phase='initial_chief_repair', statement_indices=ambiguous, repair_statements=[{'index': i, 'statement': context.statements[i].model_dump(exclude_defaults=True)} for i in ambiguous], validation_errors=['Separate an observed presenting complaint from uncertainty about its cause. Keep genuine unknown existence.'])
-            repair['schema']['properties']['statements'].update(minItems=len(ambiguous), maxItems=len(ambiguous))
-            response = self._call(state, client, repair, self.config.parser_prompt, LIMITS.expanded_gateway_request_bytes)
+            response = self._call(state, client, repair, self.config.parser_prompt)
             try:
                 context, errors = self._read_context(strict_json(response.content), repair, text, context, ambiguous)
                 if errors:
@@ -226,7 +194,7 @@ class DoctorEar:
 
     @staticmethod
     def _mapping_payload(statements, indices, contracts, phase, feedback):
-        return {'task': 'input_mapping', 'phase': phase, 'statement_indices': indices, 'statements': [{'quote': statements[i].quote, 'focus': statements[i].focus, 'assertion': statements[i].assertion, 'candidates': contracts[i], **({'measurement': measurement_value(statements[i].measurement)} if statements[i].measurement else {})} for i in indices], 'schema': {'type': 'array', 'prefixItems': [mapping_schema(contracts[i]) for i in indices], 'minItems': len(indices), 'maxItems': len(indices)}, 'validation_errors': feedback}
+        return {'task': 'input_mapping', 'phase': phase, 'statement_indices': indices, 'statements': [{'quote': statements[i].quote, 'focus': statements[i].focus, 'assertion': statements[i].assertion, 'candidates': contracts[i], **({'measurement': measurement_value(statements[i].measurement)} if statements[i].measurement else {})} for i in indices], 'validation_errors': feedback}
 
     def _map_batch(self, state, knowledge, client, statements, indices, contracts):
         decoded, remaining, feedback, format_used = ({}, list(indices), [], False)
@@ -240,18 +208,11 @@ class DoctorEar:
             if not remaining:
                 break
             payload = self._mapping_payload(statements, remaining, contracts, phase, feedback)
-            limit = LIMITS.gateway_request_bytes if phase == 'mapping' else LIMITS.expanded_gateway_request_bytes
-            while self._fit_request(self.config.normalization_prompt, payload, limit) is None:
-                largest = max(remaining, key=lambda i: len(contracts[i]))
-                if len(contracts[largest]) <= 1:
-                    break
-                contracts[largest].pop()
-                payload = self._mapping_payload(statements, remaining, contracts, phase, feedback)
-            response = self._call(state, client, payload, self.config.normalization_prompt, limit, recovery=phase == 'forced')
+            response = self._call(state, client, payload, self.config.normalization_prompt, recovery=phase == 'forced')
             wire = [{} for _ in remaining]
             for attempt in range(2 if not format_used else 1):
                 try:
-                    wire = strict_json(response.content)
+                    wire = MappingBatch.model_validate(strict_json(response.content)).root
                     if not isinstance(wire, list) or len(wire) != len(remaining):
                         raise ValueError('mapping_batch_length_or_type')
                     break
@@ -261,7 +222,7 @@ class DoctorEar:
                         break
                     format_used = True
                     payload.update(phase='format_repair', repair_phase=phase, validation_errors=[str(error)])
-                    response = self._call(state, client, payload, self.config.normalization_prompt, LIMITS.compact_gateway_request_bytes if response.error == 'CONTEXT_LIMIT_EXCEEDED' else limit, recovery=True)
+                    response = self._call(state, client, payload, self.config.normalization_prompt, recovery=True)
             unresolved, feedback = ([], [])
             for i, mapping in zip(remaining, wire):
                 try:
@@ -283,7 +244,7 @@ class DoctorEar:
     def _parse_text(self, state, knowledge, client, text, source, number, segments=None):
         context = self._context(state, knowledge, client, text, segments)
         result = InputResult(empathy=context.empathy)
-        result.notes.extend(self._demographic_notes(state, context.patient_context, source, number, segments))
+        result.facts.extend(self._demographic_facts(state, context.patient_context, source, number, segments))
         question = state.question()
         contracts, decoded, waiting = ({}, {}, [])
         for i, statement in enumerate(context.statements):
@@ -299,15 +260,8 @@ class DoctorEar:
                 decoded[i] = (validate_mapping(exact, statement, contracts[i]), False)
             else:
                 waiting.append(i)
-        batch = []
-        for i in waiting:
-            trial = self._mapping_payload(context.statements, [*batch, i], contracts, 'mapping', [])
-            if batch and self._fit_request(self.config.normalization_prompt, trial, LIMITS.gateway_request_bytes) is None:
-                decoded.update(self._map_batch(state, knowledge, client, context.statements, batch, contracts))
-                batch = []
-            batch.append(i)
-        if batch:
-            decoded.update(self._map_batch(state, knowledge, client, context.statements, batch, contracts))
+        if waiting:
+            decoded.update(self._map_batch(state, knowledge, client, context.statements, waiting, contracts))
         preferred = []
         for i, statement in enumerate(context.statements):
             outcome = statement_outcome(statement)
@@ -324,17 +278,13 @@ class DoctorEar:
                         pass
             result.facts.extend(accepted)
             if accepted:
-                if statement.polarity_scope=='qualified' and statement.note_value:
-                    note=note_fact(statement,self._source(statement,source,segments),i,number,question)
-                    if note:
-                        result.notes.append(note.model_copy(update={'observation_id':accepted[0].observation_id,'episode_id':accepted[0].episode_id}))
                 result.outcomes.append('mapped')
             elif statement.role in {'clinical', 'uncertain', 'unknown'} or statement.role == 'not_applicable':
                 note = note_fact(statement, self._source(statement, source, segments), i, number, question)
                 if note and note.category == 'patient_context' and any((d.quote == statement.quote for d in context.patient_context)):
                     note = None
                 if note:
-                    result.notes.append(note)
+                    result.facts.append(note)
                 result.outcomes.append(outcome or ('recorded' if note else 'unsupported'))
             else:
                 result.outcomes.append(outcome or 'nonclinical')
@@ -350,7 +300,7 @@ class DoctorEar:
         name = statement.input_segment or ('opening' if statement.quote in segments['opening'] else 'vital_signs')
         return 'initial:' + name
 
-    def _demographic_notes(self, state, rows, source, turn, segments):
+    def _demographic_facts(self, state, rows, source, turn, segments):
         import re
         accepted = {}
         for row in rows:
@@ -359,13 +309,13 @@ class DoctorEar:
             if row.key == 'sex' and row.value not in {'male', 'female', 'intersex', 'other', 'unknown'}:
                 continue
             ident = f"patient_context:{row.subject}:{row.subject_member or ''}:{row.key}"
-            previous = accepted.get(ident) or state.case.notes.get(ident)
+            previous = accepted.get(ident) or state.case.facts.get(ident)
             value, measurement, status = (row.value, row.measurement, 'unknown' if row.value=='unknown' else 'present')
             if previous and (previous.value, previous.measurement) != (value, measurement) and (not row.correction):
                 value = '; '.join(dict.fromkeys([previous.value, value]))
                 measurement, status = (None, 'uncertain')
             ref = 'initial:opening' if segments is not None else source
-            accepted[ident] = NoteFact(id=ident, category='patient_context' if row.subject == 'patient' else 'family_history', context_key=row.key if row.subject == 'patient' else None, value=value, measurement=measurement, status=status, subject=row.subject, subject_member=row.subject_member, reported_by='patient', source_ref=ref, turn=turn, acquisition=state.question().kind if state.question() else 'initial')
-        historian = accepted.get('patient_context:patient::reporter') or state.case.notes.get('patient_context:patient::reporter')
+            accepted[ident] = CaseFact(id=ident, category='patient_context' if row.subject == 'patient' else 'family_history', context_key=row.key if row.subject == 'patient' else None, value=value, measurement=measurement, status=status, subject=row.subject, subject_member=row.subject_member, reported_by='patient', source_ref=ref, turn=turn, acquisition=state.question().kind if state.question() else 'initial')
+        historian = accepted.get('patient_context:patient::reporter') or state.case.facts.get('patient_context:patient::reporter')
         reporter = historian.value if historian and historian.status == 'present' else 'unknown' if historian else 'patient'
         return [note.model_copy(update={'reported_by': reporter}) for note in accepted.values()]

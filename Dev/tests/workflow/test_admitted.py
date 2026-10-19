@@ -38,12 +38,11 @@ def verify(submission, output):
             super().__init__(target=k.term(target_id),context=context)
             self.target_id,self.numeric=target_id,numeric
         def chat(self,messages,**kwargs):
-            payload=json.loads(messages[-1]['content'])
+            payload=f.decode_context(messages[-1]['content'])
             self.requests.append(payload)
             clinical=clinical_response(payload)
             if clinical is not None:
                 require(kwargs['reasoning_effort']=='high','Brain_high_effort')
-                require(len(json.dumps(messages,ensure_ascii=False,separators=(',',':')).encode())<=65536,'Brain_whole_message_cap')
                 return self.completion(clinical)
             education=education_response(payload)
             if education is not None:
@@ -121,9 +120,9 @@ def verify(submission, output):
         context=next(context for disease in candidates for context in k.get_supporting_context(disease)
                      if k.questions[context['id']].interviewable)
         subject='family' if context['type']=='family_history' else 'patient'
-        spec=c.brain._spec(state,context['id'],purpose='context',field='S.fh' if subject=='family' else 'S.pmh',subject=subject,time_context='unspecified')
-        c.brain._register(state,spec,0,1)
-        c.brain.select_question(state)
+        spec=c.tools._spec(state,context['id'],purpose='context',field='S.fh' if subject=='family' else 'S.pmh',subject=subject,time_context='unspecified')
+        c.tools._register(state,spec,0,1)
+        c.tools.select_question(state)
         c.mouth.validate_action(state)
         c.mouth.execute_action(state,client)
         c.ear.process_input(state,k,client)
@@ -144,8 +143,8 @@ def verify(submission, output):
     state=c.nova_session.initialize_case(client)
     c.ear.process_input(state,k,client)
     state.interview.current,state.interview.status='DifferentialDiagnosis','collecting'
-    c.brain._register(state,c.brain._spec(state,exam,episode='one'),0,1)
-    c.brain.select_question(state)
+    c.tools._register(state,c.tools._spec(state,exam,episode='one'),0,1)
+    c.tools.select_question(state)
     c.mouth.validate_action(state)
     c.mouth.execute_action(state,client)
     c.ear.process_input(state,k,client)

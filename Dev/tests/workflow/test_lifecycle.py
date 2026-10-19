@@ -82,15 +82,15 @@ class LifecycleTests(unittest.TestCase):
 
     def test_one_assessment_and_one_call_per_input_revision(self):
         c,s = f.consultation(),f.chief(f.state('DifferentialDiagnosis'))
-        c.brain.refresh_assessment(s,c.client)
+        c.differential.decide(s,c.client)
         first = s.case.assessment
         calls = len(c.client.requests)
-        c.brain.refresh_assessment(s,c.client)
+        c.differential.decide(s,c.client)
         self.assertEqual(len(c.client.requests),calls)
         self.assertEqual(s.case.assessment,first)
         s.interview.queue.clear()
         s.case.apply([f.fact('attr',kind='attribute',attribute='Location',values=('head',),category=None)])
-        c.brain.refresh_assessment(s,c.client)
+        c.differential.decide(s,c.client)
         self.assertEqual(len(c.client.requests),calls+1)
         self.assertEqual(s.case.assessment.based_on_case_revision,s.case.revision)
         self.assertFalse(hasattr(c.writer,'reasoner'))
@@ -139,7 +139,7 @@ class LifecycleTests(unittest.TestCase):
     def test_budget_evaluation_is_pure_and_preserves_open_inquiry(self):
         s = f.chief(f.state('ChiefComplaint',turns=18,initialized=True))
         c = f.consultation()
-        c.brain.prepare_chief_complaint(s)
+        c.sessions["ChiefComplaint"].prepare(s)
         before = s.model_dump()
         decision = c.budget.evaluate(s)
         self.assertEqual(s.model_dump(),before)
@@ -152,7 +152,7 @@ class LifecycleTests(unittest.TestCase):
         c = f.consultation(prepared=f.resources(education=True))
         s = f.chief(f.state('DifferentialDiagnosis',initialized=True))
         s.session.finalizing = True
-        result = build_graph(c,c.brain.knowledge).invoke(s.model_dump(mode='json'),
+        result = build_graph(c,c.knowledge).invoke(s.model_dump(mode='json'),
             {'recursion_limit':c.budget.graph_step_limit(s)})
         done = WorkflowState.model_validate(result)
         self.assertEqual(done.session.termination, 'submitted')
@@ -168,14 +168,14 @@ class LifecycleTests(unittest.TestCase):
         s = f.chief(f.state('DifferentialDiagnosis',initialized=True))
         s.session.models_available = False
         s.session.doctor_successes = 1
-        result = build_graph(c,c.brain.knowledge).invoke(s.model_dump(mode='json'),
+        result = build_graph(c,c.knowledge).invoke(s.model_dump(mode='json'),
             {'recursion_limit':c.budget.graph_step_limit(s)})
         done = WorkflowState.model_validate(result)
         self.assertEqual(done.session.termination, 'submitted')
         self.assertEqual(done.interview.collection['DifferentialDiagnosis:completion'], 'model_call_budget')
         self.assertEqual(len(c.client.actions), 2)
         self.assertEqual(done.case.primary().kind,'symptom')
-        self.assertIn(c.brain.knowledge.label(str(f.OW.Complaint)),c.client.actions[0]['content'])
+        self.assertIn(c.knowledge.label(str(f.OW.Complaint)),c.client.actions[0]['content'])
 
     def test_time_or_turn_budget_stop_does_not_start_education_actions(self):
         for turns, seconds in ((0, 500), (20, 200)):
@@ -191,11 +191,11 @@ class LifecycleTests(unittest.TestCase):
 
     def test_chief_change_invalidates_old_question_binding(self):
         s,c = f.chief(f.state('ChiefComplaint',initialized=True)),f.consultation()
-        c.brain.prepare_chief_complaint(s)
+        c.sessions["ChiefComplaint"].prepare(s)
         old = {q.item_id for q in s.interview.queue if q.purpose=='hpi'}
         new = f.fact('replacement',target='Other symptom',observation_id='obs2',episode_id='episode2')
         s.case.apply([new],preferred=new.id)
-        c.brain.prepare_chief_complaint(s)
+        c.sessions["ChiefComplaint"].prepare(s)
         self.assertFalse(old & {q.item_id for q in s.interview.queue})
         self.assertEqual(s.case.chief().id,'replacement')
         self.assertIn('chief',s.case.facts)
@@ -206,7 +206,7 @@ class LifecycleTests(unittest.TestCase):
         c.close_collection(s)
         c.writer.build_soap(s)
         self.assertEqual(s.turn.kind,'submission')
-        self.assertEqual(set(s.case.model_dump()),{'facts','notes','chief_fact_id','assessment','plan','revision'})
+        self.assertEqual(set(s.case.model_dump()),{'facts','chief_fact_id','assessment','plan','revision'})
         c.writer.validate_submission(s)
         c.writer.submit_diagnosis(s)
         c.writer.confirm_submission(s)

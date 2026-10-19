@@ -19,7 +19,16 @@ REQUIRED = {
     'workflow/doctor_ear.py',
     'workflow/doctor_brain.py',
     'workflow/io/__init__.py',
-    'workflow/io/model_client.py',
+    'workflow/model_context.py',
+    'workflow/output_types.py',
+    'workflow/rules/decision.py',
+    'workflow/rules/questions.py',
+    'workflow/sessions/__init__.py',
+    'workflow/sessions/initiation.py',
+    'workflow/sessions/chief_complaint.py',
+    'workflow/sessions/context_factor.py',
+    'workflow/sessions/differential_diagnosis.py',
+    'workflow/sessions/education.py',
     'workflow/io/nova_session.py',
     'workflow/io/request_executor.py',
     'workflow/rules/__init__.py',
@@ -49,7 +58,8 @@ def main() -> None:
 
     settings = packaged_settings()
     text_files = {contained_path(settings[key], "config").relative_to(SOURCE).as_posix()
-                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_NORMALIZATION_PROMPT", "ONTOWARD_BRAIN_PROMPT", "ONTOWARD_EMPATHY_PROMPT",
+                  for key in ("ONTOWARD_PARSER_PROMPT", "ONTOWARD_NORMALIZATION_PROMPT", "ONTOWARD_CLINICAL_PROMPT", "ONTOWARD_EMPATHY_PROMPT",
+                              "ONTOWARD_INITIATION_PROMPT", "ONTOWARD_CHIEF_COMPLAINT_PROMPT", "ONTOWARD_CONTEXT_FACTOR_PROMPT", "ONTOWARD_DIFFERENTIAL_DIAGNOSIS_PROMPT",
                               "ONTOWARD_EDUCATION_PROMPT", "ONTOWARD_EDUCATION_DOCTOR_PROMPT", "ONTOWARD_TEXTS")}
     manifest_path = knowledge_path(settings[SETTING])
     knowledge_files = {manifest_path.relative_to(SOURCE).as_posix()}

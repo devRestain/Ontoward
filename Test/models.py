@@ -47,7 +47,7 @@ class NovaModels:
             response = self.client.chat(messages, model=MODEL, reasoning_effort=reasoning_effort,
                                         max_tokens=max_tokens, request_id=request_id)
         except NovaError as error:
-            if not (role in {'education', 'education_doctor', 'clinical_decision', 'clinical_action'} and error.code == 'PROVIDER_RESPONSE_INVALID'):
+            if not (role in {'education', 'education_doctor', 'clinical_rank', 'clinical_decision', 'clinical_action'} and error.code == 'PROVIDER_RESPONSE_INVALID'):
                 self.stopped = error.code
             self.record({**entry, 'status': 'failed_or_unknown', 'error': error.code})
             raise
@@ -60,6 +60,7 @@ class NovaModels:
 
 
 from brain_double import clinical_response
+from protocol import decode_context
 
 
 class ScriptedModels:
@@ -70,7 +71,7 @@ class ScriptedModels:
 
     def complete(self, role, messages, max_tokens, request_id, *, reasoning_effort='medium'):
         self.calls += 1
-        payload = json.loads(messages[-1]['content'])
+        payload = decode_context(messages[-1]['content'])
         clinical = clinical_response(payload)
         if clinical is not None:
             return completion(json.dumps(clinical))

@@ -65,54 +65,32 @@ class ObservedNumber(Model):
         return bounds(self)
 
 
-class ClinicalFact(Model):
+class GraphBinding(Model):
     model_config = ConfigDict(extra='forbid', frozen=True)
-    id: str
     kind: Literal['symptom', 'finding', 'context', 'attribute']
     target: str
     attribute: str | None = None
     values: tuple[str, ...] = ()
-    measurement: ObservedNumber | None = None
-    status: Status
-    subject: Literal['patient', 'family'] = 'patient'
-    subject_member: str | None = None
-    reported_by: str = 'patient'
-    time_context: Literal['current', 'past', 'unspecified'] = 'unspecified'
-    observation_id: str | None = None
-    episode_id: str | None = None
-    category: RecordCategory | None = None
-    acquisition: Literal['initial', 'SAY', 'EXAM']
-    source_ref: str
-    turn: int = 0
-    polarity_scope: Literal['general', 'qualified'] = 'general'
-    evidence_use: Literal['reasoning', 'record_only'] = 'reasoning'
-    binding: Literal['exact', 'broader', 'forced'] = 'exact'
-    resolves: tuple[str, ...] = ()
+    method: Literal['exact', 'broader', 'forced'] = 'exact'
+    eligible: bool = True
 
     @model_validator(mode='after')
-    def atomic(self):
+    def terms(self):
         if any(v and v.startswith(('urn:', 'http://', 'https://')) for v in (self.target, self.attribute, *self.values)):
-            raise ValueError('Patient facts require clinical terms, not RDF identifiers')
-        if self.kind == 'attribute':
-            if not self.attribute or bool(self.values) == bool(self.measurement):
-                raise ValueError('Attribute requires categorical values or an observed number')
-        elif self.attribute or self.values or self.measurement:
-            raise ValueError('Target assertion cannot carry attribute values')
+            raise ValueError('Patient bindings require clinical terms, not RDF identifiers')
+        if self.kind != 'attribute' and (self.attribute or self.values):
+            raise ValueError('Target assertions cannot carry attribute values')
         return self
 
-    def key(self):
-        return (self.subject, self.subject_member, self.observation_id, self.episode_id,
-                self.target, self.attribute, self.time_context, self.polarity_scope,
-                self.acquisition if self.kind == 'finding' or self.kind == 'attribute' and self.acquisition == 'EXAM'
-                else 'patient_report')
 
-
-class NoteFact(Model):
+class CaseFact(Model):
     model_config = ConfigDict(extra='forbid', frozen=True)
     id: str
-    category: RecordCategory
+    graph_binding: GraphBinding | None = None
     value: str = ''
     measurement: ObservedNumber | None = None
+    category: RecordCategory | None = None
+    context_key: Literal['age', 'sex', 'reporter'] | None = None
     status: Status = 'present'
     subject: Literal['patient', 'family'] = 'patient'
     subject_member: str | None = None
@@ -120,10 +98,50 @@ class NoteFact(Model):
     time_context: Literal['current', 'past', 'unspecified'] = 'unspecified'
     observation_id: str | None = None
     episode_id: str | None = None
-    context_key: Literal['age', 'sex', 'reporter'] | None = None
     acquisition: Literal['initial', 'SAY', 'EXAM'] | None = None
     source_ref: str
     turn: int = 0
+    polarity_scope: Literal['general', 'qualified'] = 'general'
+    resolves: tuple[str, ...] = ()
+
+    @model_validator(mode='after')
+    def atomic(self):
+        if self.kind == 'attribute':
+            if not self.attribute or bool(self.values) == bool(self.measurement):
+                raise ValueError('Attribute requires categorical values or an observed number')
+        if not self.graph_binding and (not self.category or not self.value and self.measurement is None):
+            raise ValueError('An unbound fact requires a category and normalized content')
+        return self
+
+    @property
+    def kind(self):
+        return self.graph_binding.kind if self.graph_binding else 'note'
+
+    @property
+    def target(self):
+        return self.graph_binding.target if self.graph_binding else ''
+
+    @property
+    def attribute(self):
+        return self.graph_binding.attribute if self.graph_binding else None
+
+    @property
+    def values(self):
+        return self.graph_binding.values if self.graph_binding else ()
+
+    @property
+    def evidence_use(self):
+        return 'reasoning' if self.graph_binding and self.graph_binding.eligible else 'record_only'
+
+    @property
+    def binding(self):
+        return self.graph_binding.method if self.graph_binding else None
+
+    def key(self):
+        return (self.subject, self.subject_member, self.observation_id, self.episode_id,
+                self.target, self.attribute, self.time_context, self.polarity_scope,
+                self.acquisition if self.kind == 'finding' or self.kind == 'attribute' and self.acquisition == 'EXAM'
+                else 'patient_report')
 
 
 class GraphRef(Model):
@@ -178,8 +196,7 @@ class PlanSentence(Model):
 
 
 class CaseState(Model):
-    facts: dict[str, ClinicalFact] = Field(default_factory=dict)
-    notes: dict[str, NoteFact] = Field(default_factory=dict)
+    facts: dict[str, CaseFact] = Field(default_factory=dict)
     chief_fact_id: str | None = None
     assessment: Assessment | None = None
     plan: list[PlanSentence] = Field(default_factory=list)
@@ -240,15 +257,13 @@ class CaseState(Model):
             self.chief_fact_id = next(iter(current)) if len(current) == 1 else None
         return self.chief()
 
-    def apply(self, facts=(), notes=(), *, preferred=None):
+    def apply(self, facts=(), *, preferred=None):
         if self.assessment and self.assessment.frozen:
-            if facts or notes or preferred is not None:
+            if facts or preferred is not None:
                 raise ValueError('Clinical information is frozen')
             return
-        changed = any(self.facts.get(f.id) != f and (f.evidence_use == 'reasoning'
-            or self.facts.get(f.id) and self.facts[f.id].evidence_use == 'reasoning') for f in facts)
+        changed = any(self.facts.get(f.id) != f for f in facts)
         self.facts.update((f.id, f) for f in facts)
-        self.notes.update((n.id, n) for n in notes)
         before = self.chief_fact_id
         self.select_primary(preferred)
         if changed or before != self.chief_fact_id:

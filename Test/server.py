@@ -297,8 +297,9 @@ class Evaluation:
             raise NovaError('MODEL_TOKEN_BUDGET', 429)
         role = 'gateway'
         try:
-            task = json.loads(messages[-1]['content'])
-            if isinstance(task, dict) and task.get('task') in {'gateway', 'input_context', 'input_mapping', 'terminology', 'empathy', 'education', 'education_doctor', 'clinical_decision', 'clinical_action'}:
+            from protocol import decode_context
+            task = decode_context(messages[-1]['content'])
+            if isinstance(task, dict) and task.get('task') in {'gateway', 'input_context', 'input_mapping', 'terminology', 'empathy', 'education', 'education_doctor', 'clinical_rank', 'clinical_decision', 'clinical_action'}:
                 role = task['task']
         except (ValueError, TypeError):
             pass

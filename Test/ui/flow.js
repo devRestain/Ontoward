@@ -1,17 +1,20 @@
 const stateObjects = {
   interview: ['InterviewState', '질문과 수집 진행', '현재 세션 대기열, 작은 완료 기록, 필요한 중단 사유'],
   turn: ['TurnContext', '현재 작업', '노드 간 요청과 응답, 처리 후 해제'],
-  case: ['CaseState', '환자 사실과 진단', '정규화된 기록, 취득 경로, 원문 참조, 고정 진단'],
+  case: ['CaseState', '환자 사실과 평가', '통합 facts와 graph_binding, chief, 현재·고정 Assessment와 영어 계획'],
   session: ['SessionContext', '세션과 예산', '현재 세션, 남은 턴, 모델 사용량, 종료 준비'],
   differential: ['DifferentialState', '추론 결과', '질환 후보, Pattern, 점수 기여, 선택된 후보'],
   questions: ['QuestionPlan', '질문 계획', '등록된 질문, 수집 상태, 선택 평가, 교육 계획'],
   interaction: ['InteractionState', '입출력과 전달', '입력, 선택 행동, 대화, 파서 결과, 제출 payload']
 };
 const roleNames = {
-  DoctorEar: '입력 해석', DoctorBrain: '임상 판단', DoctorMouth: '환자 전달',
+  DoctorEar: '입력 해석', DoctorBrain: 'LLM 호출', DoctorMouth: '환자 전달',
+  InitiationSession: '초기 수집·평가', ChiefComplaintSession: '주호소 수집·평가',
+  ContextFactorSession: '맥락 수집·평가', DifferentialDiagnosisSession: '감별·다음 행동', EducationSession: '계획·교육',
+  InputBinding: 'Python 입력 연결', GraphEvidence: '그래프 후보·근거', EnglishPlan: '영어 계획',
   InputInterpreter: '해석', ClinicalKnowledge: 'DB 조회', ClinicalReasoner: '추론',
   InterviewPlanner: '계획', Doctor: '행동', SubmissionWriter: '제출',
-  Consultation: '조정', ModelClient: '모델', RequestExecutor: '전송',
+  Consultation: '조정', ModelClient: '이전 모델 실행기', RequestExecutor: '전송', QuestionTools: '질문 계약',
   NovaSessionClient: '서버 상태', BudgetPolicy: '예산', InteractionLifecycle: '전달 상태',
   QuestionLifecycle: '질문 상태', UsageAccounting: '사용량', CanonicalSnapshot: '표준화', EvidenceIndex: '근거'
 };
@@ -28,9 +31,10 @@ for (const event of events) {
 }
 const stateSchema = events.find(event => event.kind === 'settings')?.state_schema;
 const same = (left, right) => JSON.stringify(left) === JSON.stringify(right);
-const atPath = (value, path) => path.reduce((item, key) => item?.[key], value);
+const atPath = (value, path) => path.reduce((item, key) => resolveValue(item)?.[key], value);
 
 function shortValue(value) {
+  value = resolveValue(value);
   if (value === undefined) return '관측 없음';
   if (value === null) return 'null';
   if (typeof value === 'string') return value === '' ? '빈 문자열' : value;
@@ -51,6 +55,8 @@ function resolveSchema(schema) {
 }
 
 function dataTree(value, name = 'data', depth = 0, schema) {
+  const reference=value?.trace_value_ref;
+  value=resolveValue(value);
   schema = resolveSchema(schema);
   const complex = value !== null && typeof value === 'object';
   const encoded = typeof value === 'string' && /^[\s]*[\[{]/.test(value);
@@ -66,6 +72,7 @@ function dataTree(value, name = 'data', depth = 0, schema) {
   const heading = el('summary');
   const typeName = schema?.properties && schema.title ? `${schema.title} · ` : '';
   heading.append(el('span', name, 'tree-key'), el('span', decoded !== undefined ? 'JSON 문자열 · 원문 보존' : typeName + shortValue(value), 'tree-type'));
+  if(reference)heading.append(el('span',`저장 값 ${reference.slice(0,10)}`,'tree-type'));
   box.append(heading);
   let built = false;
   const build = () => {
@@ -120,8 +127,10 @@ function nodeSteps(group) {
 function stepName(step) {
   const event = step.start;
   if (step.kind === 'sdk') return `${event.method} ${event.path}`;
-  return step.kind === 'call' ? `${event.owner}.${event.method}` : event.operation || event.node || '초기 상태';
+  return step.kind === 'call' ? callName(event) : event.operation || event.node || '초기 상태';
 }
+
+function callName(event) { return event.call_kind === 'function' ? event.callable : `${event.owner}.${event.method}`; }
 
 function stepState(step, end = false) {
   const event = end ? step.end : step.start;
@@ -165,9 +174,10 @@ function stepInspector(step, root) {
   root.replaceChildren();
   const start = step.start, end = step.end, failed = end?.kind?.endsWith('error');
   const before = stepState(step), after = stepState(step, true);
-  root.append(el('span', step.kind === 'sdk' ? '실제 SDK 전송' : step.kind === 'call' ? '관측된 객체 호출' : '그래프 노드', 'inspector-kind'),
+  root.append(el('span', step.kind === 'sdk' ? '실제 SDK 전송' : step.kind === 'call' ? start.call_kind==='function'?'관측된 Python 함수':'관측된 객체 호출' : '그래프 노드', 'inspector-kind'),
     el('h3', stepName(step)), note(`seq ${start.seq}${end ? ` → ${end.seq}` : ' · 종료 미수집'}${end?.elapsed !== undefined ? ` · ${(end.elapsed * 1000).toFixed(1)} ms` : ''}`));
   if (start.object_id) root.append(el('code', start.object_id, 'instance-path'));
+  if (start.callable) root.append(note(`정의 위치: ${start.callable}`));
   if (failed) root.append(el('p', `${end.error}: ${end.message || ''}`, 'inline-error'));
   if (step.kind === 'sdk') {
     root.append(note(`상위 호출 #${start.parent_call_id ?? '미수집'} · request_id: ${start.request_id ?? '없음'}`),
@@ -177,19 +187,19 @@ function stepInspector(step, root) {
   }
   if (step.kind === 'call') {
     const parent = callStarts.get(start.parent_call_id);
-    root.append(note(parent ? `호출한 객체: ${parent.owner}.${parent.method} → ${start.owner}.${start.method}` : '그래프 노드가 호출한 최상위 객체입니다.'),
+    root.append(note(parent ? `호출한 객체: ${callName(parent)} → ${callName(start)}` : '그래프 노드가 호출한 최상위 객체입니다.'),
       el('h4', '입력 · 이름과 실제 자료형'), dataTree(start.inputs, 'arguments'));
     if (Object.values(start.inputs || {}).some(value => value?.state_reference)) {
       root.append(dataTree(before, 'WorkflowState · 호출 직전', 0, stateSchema));
     }
     root.append(el('h4', '출력 · return'), end ? dataTree(end.output, 'return') : note('반환값이 수집되지 않았습니다.'));
-    if (parent && end && !failed) root.append(note(`반환 경로: ${start.owner}.${start.method} → ${parent.owner}.${parent.method}`));
+    if (parent && end && !failed) root.append(note(`반환 경로: ${callName(start)} → ${callName(parent)}`));
     if (end && end.output === null) root.append(note('return은 None입니다. 상태를 직접 갱신하는 메서드의 결과는 아래 변경분에 나타납니다.'));
     if (end?.argument_writes?.length) root.append(el('h4', '입력 인자에 직접 기록한 값'), changeRows(start.inputs, end.arguments_after, end.argument_writes));
   } else {
     root.append(note('WorkflowState를 deep copy한 뒤 검증된 dict로 다음 그래프 노드에 전달합니다.'),
       dataTree(before, 'WorkflowState · 입력', 0, stateSchema), dataTree(after, 'dict · 검증된 노드 출력', 0, stateSchema));
-    if (Object.keys(end?.suppressed_calls || {}).length) root.append(note('가상 분기 내부의 반복 조회는 횟수만 기록합니다. 선택 결과와 실제 상태 변경은 이 노드의 출력에서 확인합니다.'), dataTree(end.suppressed_calls, '내부 반복 호출 · 상세 값 미수집'));
+    if (Object.keys(end?.suppressed_calls || {}).length) root.append(note('임상 판단 안의 반복 DB·예산 조회는 횟수만 기록합니다. 그래프 후보 구성과 판단 결과는 별도 호출의 입력·반환에서 확인합니다.'), dataTree(end.suppressed_calls, '내부 반복 호출 · 상세 값 미수집'));
   }
   root.append(el('h4', '상태에 쓴 결과 · 하위 호출 포함'));
   const writes = step.kind === 'call' ? end?.writes : end?.patch;
@@ -216,6 +226,7 @@ function flowPanel(group, before, after) {
   const heading = el('div', null, 'flow-legend');
   heading.append(el('span', `그래프 ${nodes.length}단계`), el('span', `내부 호출 ${calls.length}회`), el('span', `SDK 전송 ${group.events.filter(e => e.kind === 'sdk_request').length}회`));
   root.append(heading, stateStrip(before, after, key => { objectSelection = key; tab = 'objects'; detail(); $('tab-objects').focus(); }));
+  root.append(pipelinePath(group.events));
   if (!nodes.length) { root.append(note(after ? '초기 WorkflowState입니다. 각 상태 객체를 선택해 초기 데이터를 확인하세요.' : '이 구간에는 내부 실행 관측이 없습니다. 대화와 수신 기록 탭에서 보존된 결과를 확인하세요.')); return root; }
   const workbench = el('div', null, 'flow-workbench'), sequence = el('div', null, 'flow-sequence'), inspector = el('aside', null, 'flow-inspector');
   inspector.setAttribute('aria-label', '선택한 실행 단계의 입출력');
@@ -254,7 +265,7 @@ function flowPanel(group, before, after) {
           for (; count < limit; count++) {
             const child = step.children[count], button = makeButton(child, stepName(child), child.kind === 'sdk' ? 'flow-call sdk-call' : 'flow-call');
             const parent = step.children.find(item => item.start.call_id === child.start.parent_call_id);
-            if (parent) button.append(el('small', `호출자: ${parent.start.owner}.${parent.start.method}`, 'caller-name'));
+            if (parent) button.append(el('small', `호출자: ${callName(parent.start)}`, 'caller-name'));
             nested.append(button);
             if (flowSelection.get(selected) === child.start.seq + ':' + child.kind) { initial = [child, button]; choose(child, button); }
           }
@@ -334,6 +345,59 @@ function diffValues(before, after, path = []) {
   const result = [];
   for (const key of new Set([...Object.keys(before), ...Object.keys(after)])) result.push(...diffValues(before[key], after[key], [...path, key]));
   return result;
+}
+
+function jumpToEvent(event) {
+  const index=groups.findIndex(group=>group.events.some(row=>row.seq===event.seq));
+  if(index<0)return;
+  $('session-filter').value='';tab='flow';
+  flowSelection.set(index,`${event.seq}:call`);select(index);
+  $('tab-flow').focus();
+}
+
+function pipelinePath(rows) {
+  const root=el('div',null,'pipeline-path');root.setAttribute('aria-label','관측된 역할별 호출');
+  for(const [owner,title] of [['DoctorEar','입력 → 통합 사실'],['InitiationSession','초기 수집 → 첫 평가'],
+    ['ChiefComplaintSession','주호소 → 종료 평가'],['ContextFactorSession','CC 감별 → 맥락 → 평가'],
+    ['DifferentialDiagnosisSession','응답 → 순위·질문 → 고정'],['EducationSession','고정 진단 → 계획'],
+    ['DoctorBrain','준비된 입력 → LLM 응답'],['DoctorMouth','표현 → SAY·EXAM'],['SubmissionWriter','SOAP → DIAGNOSE']]){
+    const calls=rows.filter(row=>row.kind==='call_start'&&row.owner===owner);
+    const button=el('button',null,'pipeline-stage');button.type='button';button.disabled=!calls.length;
+    button.append(el('strong',owner),el('small',title),el('small',calls.length?`${calls.length}회 · 첫 호출 보기`:'이 구간에서 호출 미관측'));
+    button.addEventListener('click',()=>jumpToEvent(calls[0]));root.append(button);
+  }
+  return root;
+}
+
+function executionPanel() {
+  const root=panel('전체 실행 검증과 관측 범위'),inspection=data.inspection;
+  root.append(note('보존된 trace와 수신 기록만 검사합니다. 고정 응답 실행의 의미 해석·임상 정확도와 공식 채점은 검증하지 않습니다.'),pipelinePath(events));
+  if(!inspection){root.append(el('p','이 저장 리포트에는 실행 검증 파일이 없습니다. 웹에서 리포트를 다시 열면 보존 로그로 생성합니다.','coverage-message'));return root;}
+  root.append(kv([['실행 알고리즘',inspection.runtime?.algorithm||'당시 미수집'],['상태 구조',inspection.state_layout],
+    ['관측 검사',inspection.status],['Assessment 고정',inspection.frozen?`seq ${inspection.frozen.seq} · ${inspection.frozen.primary}`:'미관측']]));
+  const titles={event_sequence:'이벤트 순서',trace_boundaries:'수집 시작·종료',recorded_values:'저장 값 참조의 완전성',call_boundaries:'객체 호출·반환과 부모 연결',node_boundaries:'노드 시작·종료',sdk_boundaries:'SDK 요청·응답',state_reconstruction:'전체 노드 상태 복원',graph_transitions:'실제 그래프 경로',frozen_patient_state:'고정 후 사실·평가 보존',assessment_revision:'고정 평가의 revision·chief 일치',submission_primary:'고정 1위와 제출 진단 일치',received_soap:'전송 SOAP와 수신 기록 일치',confirmed_completion:'로컬 완료 영수증과 종료 상태'};
+  for(const check of inspection.checks){
+    const row=el('div',null,'inspection-check'),status=el('span',({pass:'확인',fail:'불일치',not_collected:'미수집'})[check.status]||check.status,`badge ${check.status==='pass'?'good':'warn'}`);
+    const content=el('div');content.append(el('strong',titles[check.id]||check.id),jsonDetail('판정 근거',check.detail));row.append(status,content);root.append(row);
+  }
+  const graph=el('details',null,'detail-json');graph.append(el('summary','런타임 그래프 · 실제로 지난 연결과 미실행 분기'));
+  graph.addEventListener('toggle',()=>{
+    if(!graph.open||graph.querySelector('table'))return;
+    if(!inspection.graph){graph.append(note('이전 trace에는 그래프 구조가 수집되지 않았습니다.'));return;}
+    const table=el('table',null,'data-table'),head=el('tr');for(const title of ['출발 노드','도착 노드','관측 횟수'])head.append(el('th',title));table.append(head);
+    for(const edge of inspection.graph.edges){const count=inspection.transitions.find(item=>item.source===edge.source&&item.target===edge.target)?.count||0,row=el('tr'),boundary=edge.source==='__start__'||edge.target==='__end__';for(const value of [edge.source,edge.target,count||(boundary?'경계 · 호출 관측 제외':'미실행')])row.append(el('td',value));table.append(row);}graph.append(table);
+  });
+  root.append(graph,jsonDetail('노드별 revision · facts · Assessment · TurnContext 생애',inspection.checkpoints),
+    jsonDetail('실제 실행 소스 SHA256 · manifest',inspection.runtime||{status:'당시 미수집'}));
+  const coverage=el('details',null,'detail-json');coverage.append(el('summary','관측 대상 메서드 · 실제 호출 수'));
+  coverage.addEventListener('toggle',()=>{
+    if(!coverage.open||coverage.querySelector('table'))return;
+    const table=el('table',null,'data-table');
+    for(const object of inspection.declared_objects)for(const method of object.methods){const row=el('tr');row.append(el('td',object.callable||`${object.type}.${method}`),el('td',inspection.observed_methods[`${object.owner||object.type}.${method}`]||'이 실행에서 미호출'));table.append(row);}
+    coverage.append(table);
+  });
+  root.append(coverage,note(inspection.limits.scope),note('큰 직렬화 값은 내용 해시로 한 번 저장하고 펼칠 때 참조를 해독합니다. 같은 저장 값은 내용의 일치만 뜻하며 Python 인스턴스의 동일성을 뜻하지 않습니다.'),note('반복 조회의 상세 값·Python heap·개별 필드 읽기는 수집하지 않습니다. 미실행 분기와 과거 로그의 미수집 정보를 추정하지 않습니다.'));
+  return root;
 }
 
 timeline(); detail();

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import re
 from typing import Annotated, Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, field_validator, model_validator
 
-from .state.models import ClinicalFact, Model, NoteFact, ObservedNumber, RecordCategory
+from .state.models import CaseFact, Model, ObservedNumber, RecordCategory
 
 
 class EmpathySignal(Model):
@@ -59,6 +60,14 @@ class ContextStatement(Model):
     measurement: ObservedNumber | None = None
     note_value: str | None = Field(default=None, max_length=240, pattern=r'^[^\r\n]*$')
 
+    @field_validator('note_value')
+    @classmethod
+    def normalized_content(cls, value):
+        if value and (not re.search('[A-Za-z]', value) or re.search('[가-힣]', value)
+                or value.startswith(('urn:', 'http://', 'https://'))):
+            raise ValueError('Normalized content requires English clinical text')
+        return value
+
 
 class ContextInput(Model):
     statements: list[ContextStatement] = Field(default_factory=list)
@@ -68,8 +77,7 @@ class ContextInput(Model):
 
 @dataclass
 class InputResult:
-    facts: list[ClinicalFact] = field(default_factory=list)
-    notes: list[NoteFact] = field(default_factory=list)
+    facts: list[CaseFact] = field(default_factory=list)
     outcomes: list[str] = field(default_factory=list)
     empathy: EmpathySignal | None = None
     preferred: str | None = None

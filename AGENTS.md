@@ -2,7 +2,7 @@
 
 ## Project Philosophy and Anti-Slop
 
-- Apply D46 DoctorEar DoctorBrain DoctorMouth and one frozen Assessment before older scoring and object layouts; preserve D40 collection D42 clinical pins D43 input and D45 official turn authority.
+- Apply D47 session-owned preprocessing and response acceptance one DoctorBrain executor unified CaseFact storage and one frozen Assessment before older object layouts; preserve D40 collection D42 clinical pins D43 input and D45 official turn authority.
 
 - Treat competition submission as the project endpoint.
 - Implement only capabilities required by the selected competition workflow and the documented acceptance slice.
@@ -42,11 +42,11 @@
 - Treat root, `submission/`, and `data/` as the three maintained state scopes.
 - Keep generated directories and upstream archive internals under their existing owner.
 - Apply D17 prepared interviews Pattern-first fit bounded parsing and adaptive budgets while preserving D11 session and submission boundaries.
-- Apply D46 to graph-bound candidates code-owned evidence LLM ranking executable questions and deterministic SOAP while retaining protected collection and transcript-only Education replies.
+- Apply D47 to session-exit ranking DD per-response decisions graph-bound candidates code-owned evidence executable questions and deterministic SOAP while retaining protected collection and transcript-only Education replies.
 - Apply D44 always-called context analysis exact Python binding selective DB normalization forced completion and typed consumers with D40 protected collection budgets and transcript-only Education replies.
 - Apply D42 to source-bound common complaints local DDXPlus metadata and explicit authored JSONL through a new v5.0 admission while preserving D41 canonical consumers and frozen acceptance.
 - Apply D43 explicit turn-zero interpretation compact target-versus-attribute context independent row recovery and chief-bound intake while preserving D42 clinical pins and raw-free consumers.
-- Assign input to DoctorEar clinical ranking question selection and English planning to DoctorBrain patient expression and SAY/EXAM to DoctorMouth and DIAGNOSE to SubmissionWriter.
+- Assign input to DoctorEar clinical ranking and question selection to session objects English planning to EducationSession all model execution to DoctorBrain patient expression and SAY/EXAM to DoctorMouth and DIAGNOSE to SubmissionWriter.
 - Maintain the implemented Korean workflow white paper in submission/README.md and keep root README as project orientation.
 - Do not resume cancelled model jobs or expand the corpus without a new user request.
 - Apply D18's source-only reset; exclude source downloads, submission publication, and WSL2 deployment.
@@ -59,7 +59,7 @@
 - Apply D29 for case-independent chief mapping to one supplied Symptom, source-backed bilingual aliases, and one bounded full-index lookup recovery.
 - Preserve D30 source mappings and apply D37 manifest-pinned navigation to the organizer guideline mount without packaging original documents.
 - Generate D37 English P sentences with Luna high and render independent NFC 1-30 Korean Doctor statements while retaining source and model-knowledge provenance.
-- Render D46 English SOAP from current clinical fields typed notes and the frozen Assessment without patient-original spans or diagnostic recomputation.
+- Render D47 English SOAP from unified CaseFacts and the frozen Assessment without patient-original spans or diagnostic recomputation.
 - Apply D36 resolved-destination acquisition checks and D40 shared current evidence for chief selection question resolution reasoning SOAP and symptom fallback.
 - Apply D41 per-statement DB binding bounded semantic and format repairs and forced completion while retaining separate budgeted D34 empathy SAY.
 - Exclude JEV, Laya, HPOA, deployment, and compatibility matrices from this slice; keep maintained workflow tests in Dev/tests/workflow and generated synthetic assets and evidence in Tmp.
@@ -76,7 +76,7 @@
 - Use D07 for preserved preparation evidence, separately admitted submission bundles, and one runtime RDFLib Graph.
 - Use D08 and data/ontology/AGENTS.md for shared patterns, typed conditions, disease associations, conditional weights, and SDK text mapping.
 - Use specific clinical pain complaints as D08 retrieval targets and preserve finer Location values, raw wording, interpretation uncertainty, and separate episodes.
-- Use D17 for the five sessions D40 for protected collection D45 for server action turns D46 for clinical decisions and D12 for the submission wire format.
+- Use D17 for the five sessions D40 for protected collection D45 for server action turns D47 for session-owned clinical decisions and D12 for the submission wire format.
 - Apply D15 for information-preserving SOAP and bounded Gateway vocabulary; use D18 for all knowledge and Korean text preparation.
 - Preserve D36 acquisition checks and restrict downstream patient information to canonical facts and typed outcomes; assign detailed observation and replay to Test.
 - Apply newer explicit user decisions before stale operational plans or next goals; record implementation and execution only from observed evidence.
@@ -89,7 +89,7 @@
 - Keep runtime Turtle, required JSON schemas, and their manifest inside submission/knowledge/ for both execution and tests.
 - Use package-relative imports within runtime packages and settings.py for file-relative submission data paths.
 - Apply D13 responsibility names and keep Consultation as the sole internal-session coordinator.
-- Keep graph matching and boundary checks in workflow/rules and lifecycle operations in workflow/state; keep candidate views and model exchanges local to DoctorBrain operations.
+- Keep graph matching and boundary checks in workflow/rules and lifecycle operations in workflow/state; keep candidate views and model exchanges local to their calling session or input and expression operation.
 - Run maintained offline workflow checks with Dev/tests/workflow/compose.offline.yaml and exclude tests and synthetic assets from the submission.
 - Require D08 v5.0 alignment before generating or admitting new clinical artifacts.
 - Use Dev/ontology/source_projection.py build/export/admit, database.py, model_normalization.py, admission.py, and v5.py for full source ingestion, candidate projection, and pinned batch admission.

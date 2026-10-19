@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import fixtures as f
 from workflow.graph import run_node
-from workflow.io.model_client import ModelResult
+from workflow.doctor_brain import ModelResult
 from workflow.rules.action import content_error
 from workflow.rules.submission import validate_payload
 from workflow.state.models import Question
@@ -84,7 +84,7 @@ class TransportTests(unittest.TestCase):
         c.mouth.execute_action(s,c.client)
         self.assertEqual(calls[0],calls[1])
         self.assertEqual(s.session.usage['Initiation'].actions,1)
-        c.ear.process_input(s,c.brain.knowledge,c.client)
+        c.ear.process_input(s,c.knowledge,c.client)
         self.assertIsNone(s.turn)
         c.interactions.select_question(s,q)
         c.questions.register(s,q)
@@ -95,7 +95,7 @@ class TransportTests(unittest.TestCase):
             raise f.NovaError('PATIENT_RESPONSE_INVALID')
         c.client.say=malformed
         c.mouth.execute_action(s,c.client)
-        c.ear.process_input(s,c.brain.knowledge,c.client)
+        c.ear.process_input(s,c.knowledge,c.client)
         self.assertEqual(len(calls),1)
         self.assertIsNone(s.turn)
 
@@ -188,11 +188,11 @@ class TransportTests(unittest.TestCase):
         resources=f.resources()
         a,b=f.consultation(prepared=resources),f.consultation(prepared=resources)
         s=f.chief(f.state())
-        a.brain.refresh_assessment(s,a.client)
+        a.differential.decide(s,a.client)
         a.ear.dialogue.append({'id':'private','patient':'secret'})
-        self.assertIsNone(b.brain._attempted)
+        self.assertIsNone(b.differential.last_input)
         self.assertFalse(b.ear.dialogue)
-        self.assertIs(a.brain.knowledge,b.brain.knowledge)
+        self.assertIs(a.knowledge,b.knowledge)
 
 
 if __name__=='__main__':

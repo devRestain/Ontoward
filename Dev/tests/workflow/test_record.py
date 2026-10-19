@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 import fixtures as f
-from workflow.state.models import NoteFact, Question, TurnContext
+from workflow.state.models import CaseFact, Question, TurnContext
 
 PUBLIC_STARTS=json.loads((Path(__file__).resolve().parents[3]/'Test/initial_reports.json').read_text())
 
@@ -15,7 +15,7 @@ def initial(rows, opening, *, demographics=(), vitals=None, state=None, knowledg
     c=f.consultation(f.FakeSDK(chat_handler=response),f.resources(knowledge))
     s=state or f.state()
     s.turn=TurnContext(kind='initial',response={'opening':opening,**({'vital_signs':vitals} if vitals else {})})
-    c.ear.process_input(s,c.brain.knowledge,c.client)
+    c.ear.process_input(s,c.knowledge,c.client)
     return c,s
 
 
@@ -28,7 +28,7 @@ class RecordTests(unittest.TestCase):
         demographics=[dict(key='age',value='6 years',quote='여섯 살'),dict(key='sex',value='male',quote='남자아이'),
             dict(key='reporter',value='mother',quote='엄마'),dict(key='age',value='37 years',quote='서른일곱 살',subject='family',subject_member='mother')]
         c,s=initial(rows,opening,demographics=demographics,vitals=PUBLIC_STARTS['C03']['vital_signs'])
-        self.assertTrue(all(n.reported_by=='mother' for n in s.case.notes.values()
+        self.assertTrue(all(n.reported_by=='mother' for n in f.unbound(s.case).values()
             if n.category=='patient_context' or n.subject=='family'))
         c.close_collection(s);c.writer.build_soap(s);note=s.turn.payload['note']
         self.assertTrue(note['S']['hpi'].startswith('Age: 6 years'))
@@ -53,7 +53,7 @@ class RecordTests(unittest.TestCase):
         self.assertIn('56 to 49 kg over 3 months',' '.join(fields['S.hpi']))
         self.assertIn('Pulse 102 beats/min',' '.join(fields['O.exam']))
         self.assertNotIn('49 kg',' '.join(fields['O.exam']))
-        self.assertTrue(all(n.source_ref=='initial:vital_signs' for n in s.case.notes.values()
+        self.assertTrue(all(n.source_ref=='initial:vital_signs' for n in f.unbound(s.case).values()
             if n.category=='objective_observation'))
 
     def test_same_initial_text_report_and_objective_segment_remain_distinct(self):
@@ -75,21 +75,21 @@ class RecordTests(unittest.TestCase):
     def test_demographic_duplicate_conflict_and_explicit_correction(self):
         c,s=initial([], '6 years',demographics=[dict(key='age',value='6 years',quote='6 years')])
         _,s=initial([], '6 years',state=s,demographics=[dict(key='age',value='6 years',quote='6 years')])
-        self.assertEqual(len(s.case.notes),1)
+        self.assertEqual(len(f.unbound(s.case)),1)
         _,s=initial([], '7 years',state=s,demographics=[dict(key='age',value='7 years',quote='7 years')])
-        self.assertEqual(next(iter(s.case.notes.values())).status,'uncertain')
+        self.assertEqual(next(iter(f.unbound(s.case).values())).status,'uncertain')
         _,s=initial([], '7 years',state=s,demographics=[dict(key='age',value='7 years',quote='7 years',correction=True)])
-        note=next(iter(s.case.notes.values()));self.assertEqual((note.value,note.status),('7 years','present'))
+        note=next(iter(f.unbound(s.case).values()));self.assertEqual((note.value,note.status),('7 years','present'))
 
     def test_exam_attributes_keep_acquisition_turn_and_subjective_notes_remain_s(self):
         c,s=f.consultation(),f.chief(f.state())
         s.case.apply([f.fact('exam',kind='finding',target='Test examination finding',category=None,
             acquisition='EXAM',source_ref='exam-4',turn=4,observation_id='exam',episode_id='episode'),
             f.fact('attribute',kind='attribute',target='Test examination finding',attribute='Location',values=('head',),
-            acquisition='EXAM',source_ref='exam-5',turn=5,observation_id='exam',episode_id='episode')],
-            [NoteFact(id='objective',category='objective_observation',value='Observed additional sign',
+            acquisition='EXAM',source_ref='exam-5',turn=5,observation_id='exam',episode_id='episode'),
+             CaseFact(id='objective',category='objective_observation',value='Observed additional sign',
                 acquisition='EXAM',source_ref='exam-4',turn=4),
-             NoteFact(id='history',category='medical_history',value='Reported past condition',
+             CaseFact(id='history',category='medical_history',value='Reported past condition',
                 acquisition='EXAM',source_ref='exam-4',turn=4)])
         fields,_=c.writer.build_record_view(s.case)
         exam=' '.join(fields['O.exam'])
@@ -99,8 +99,8 @@ class RecordTests(unittest.TestCase):
 
     def test_qualified_notes_preserve_c01_and_c10_conditions_without_calculations(self):
         c,s=f.consultation(),f.chief(f.state())
-        s.case.apply(notes=[NoteFact(id='sleep',category='previous_care',value='Symptoms when medication is withheld; bedtime dose 1 mg',
-            acquisition='SAY',source_ref='one'),NoteFact(id='exercise',category='associated_symptoms',
+        s.case.apply([CaseFact(id='sleep',category='previous_care',value='Symptoms when medication is withheld; bedtime dose 1 mg',
+            acquisition='SAY',source_ref='one'),CaseFact(id='exercise',category='associated_symptoms',
             value='Breathlessness during exercise, absent at rest; loose stool, denies diarrhea',acquisition='SAY',source_ref='two')])
         c.close_collection(s);c.writer.build_soap(s);text=str(s.turn.payload['note']['S'])
         for value in ('when medication is withheld','bedtime dose 1 mg','during exercise','absent at rest','loose stool','denies diarrhea'):
@@ -109,16 +109,16 @@ class RecordTests(unittest.TestCase):
 
     def test_planned_education_without_delivery_is_not_claimed_as_delivered(self):
         c,s=f.consultation(prepared=f.resources(education=True)),f.chief(f.state('Education'))
-        c.close_collection(s);c.brain.prepare_education(s,c.client);c.writer.build_soap(s)
+        f.freeze_for_education(c,s);c.sessions["Education"].prepare_plan(s,c.client);c.writer.build_soap(s)
         self.assertIn('planned (not delivered)',s.turn.payload['note']['P']['education'])
 
     def test_education_requires_freeze_and_last_input_changes_primary_before_freeze(self):
         c,s=f.consultation(),f.chief(f.state('DifferentialDiagnosis'))
-        with self.assertRaises(ValueError): c.brain.prepare_education(s,c.client)
-        c.brain.refresh_assessment(s,c.client);s.interview.queue.clear()
+        with self.assertRaises(ValueError): c.sessions["Education"].prepare_plan(s,c.client)
+        c.differential.decide(s,c.client);s.interview.queue.clear()
         from brain_double import clinical_response
         def reply(payload):
-            if payload['task']=='clinical_decision':
+            if payload['task'] in {'clinical_decision','clinical_rank'}:
                 value=clinical_response(payload);value['ranked_disease_refs'].reverse();return value
         c.client.chat_handler=reply
         s.case.apply([f.fact('last',kind='attribute',attribute='Location',values=('head',),category=None)])
@@ -130,7 +130,7 @@ class RecordTests(unittest.TestCase):
         q=Question(item_id='q',purpose='feature',text='증상을 알려주세요.',target='Test complaint')
         s,c,_=f.interpret([f.statement('Reported sign',target_terms=[],record_category='objective_observation',
             note_value='Reported sign')],q=q)
-        self.assertFalse(any(n.category=='objective_observation' for n in s.case.notes.values()))
+        self.assertFalse(any(n.category=='objective_observation' for n in f.unbound(s.case).values()))
         self.assertFalse(c.writer.build_record_view(s.case)[0]['O.exam'])
 
     def test_qualified_report_keeps_actual_condition_and_is_not_reasoning_input(self):
@@ -138,7 +138,7 @@ class RecordTests(unittest.TestCase):
             note_value='Only during exercise, absent at rest')
         s,c,_=f.interpret([row])
         from workflow.state.evidence import EvidenceIndex, patient_payload
-        self.assertFalse(EvidenceIndex.from_case(s.case,c.brain.knowledge).entries)
-        self.assertFalse(patient_payload(s.case)['facts'])
+        self.assertFalse(EvidenceIndex.from_case(s.case,c.knowledge).entries)
+        self.assertIn('Only during exercise, absent at rest',str(patient_payload(s.case)['facts']))
         fields,_=c.writer.build_record_view(s.case)
         self.assertIn('Only during exercise, absent at rest',str(fields))

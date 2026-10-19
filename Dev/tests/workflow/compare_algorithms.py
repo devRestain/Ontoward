@@ -125,7 +125,6 @@ def worker(runtime,output):
         includes_model_history=False,includes_reasoning_in_state=not modern,
         fixed_input_facts=input_facts,fixed_input_calls=len(client.requests),
         fixed_input_semantics=input_semantics,
-        fixed_input_request_bytes=sum(len(json.dumps(messages,ensure_ascii=False,separators=(',',':')).encode()) for messages in client.requests),
         clinical_bundle_sha256=hashlib.sha256(next((runtime/'knowledge').glob('*-clinical.ttl')).read_bytes()).hexdigest())
     output.write_text(json.dumps(report,indent=2)+'\n')
 

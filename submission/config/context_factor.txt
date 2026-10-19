@@ -1,0 +1,1 @@
+This is the end of ContextFactor. Update the ranking using the acquired history and context, including normalized medication, family, development and measurement information. Preserve their scope. Do not select a question.

@@ -17,9 +17,9 @@ class OfficialBudgetTests(unittest.TestCase):
             result=c.ear.model.complete(s,c.client,role='gateway',messages=[])
             self.assertEqual(result.error,'MODEL_UNAVAILABLE');c.client.chat.assert_not_called()
             for _ in range(2):
-                self.assertIsNone(c.brain.model.complete(s,c.client,role='clinical',messages=[]).error)
+                self.assertIsNone(c.brain.complete(s,c.client,role='clinical',messages=[]).error)
             if enabled:
-                self.assertIsNone(c.brain.model.complete(s,c.client,role='education',messages=[]).error)
+                self.assertIsNone(c.brain.complete(s,c.client,role='education',messages=[]).error)
                 self.assertIsNone(c.mouth.model.complete(s,c.client,role='education_doctor',messages=[]).error)
             self.assertEqual(c.budget.calls_left(s.session),0)
             s.session.doctor_calls=0
@@ -38,6 +38,8 @@ class OfficialBudgetTests(unittest.TestCase):
     def ready_action(self, *, kind='SAY', purpose='feature', turns=50, education=False):
         c = f.consultation(prepared=f.resources(education=education))
         s = f.chief(f.state('Education' if education else 'DifferentialDiagnosis', turns=turns, initialized=True))
+        if education:
+            f.freeze(s)
         c.client.remaining = turns
         q = Question(item_id='budget-action', kind=kind, purpose=purpose,
                      text='증상이 있나요?' if kind == 'SAY' else '복부 청진하겠습니다')
@@ -225,7 +227,7 @@ class OfficialBudgetTests(unittest.TestCase):
         c.ear.model.complete(s, c.client, role='gateway', messages=[])
         c.mouth.execute_action(s, c.client)
         self.assertEqual(s.session.turns_remaining, 0)
-        c.ear.process_input(s, c.brain.knowledge, c.client)
+        c.ear.process_input(s, c.knowledge, c.client)
         self.assertIsNone(s.turn)
         c.check_budget(s)
         self.assertTrue(s.session.finalizing)

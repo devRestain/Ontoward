@@ -38,15 +38,18 @@ class DeliveryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             references([{'document_id':'doc','quote':'invented'}],{'doc':[(0,'actual')]})
 
-    def test_source_fragments_cover_all_bytes_and_work_is_not_in_state(self):
-        from workflow.education import _fragments, messages, message_bytes
-        text = ('Clinical source.\n\n'*5000)+'끝'
-        doc = {'document_id':'d','text':text}
-        chunks = list(_fragments(doc,{},'prompt'))
-        self.assertEqual(''.join(c['text'] for c in chunks),text)
-        self.assertEqual(chunks[-1]['end_byte'],len(text.encode()))
-        self.assertTrue(all(a['end_byte']==b['start_byte'] for a,b in zip(chunks,chunks[1:])))
-        self.assertTrue(all(message_bytes(messages('prompt',{'documents':[c]}))<=LIMITS.education_request_bytes for c in chunks))
+    def test_full_source_context_is_preserved_in_plan_request(self):
+        source = 'Source text.\n' * 10000
+        c = f.consultation(prepared=f.resources(education=True))
+        c.knowledge.guidelines.read = lambda disease: ([{'document_id': 'd', 'text': source}], [])
+        state = f.chief(f.state('DifferentialDiagnosis'))
+        c.close_collection(state)
+        state.interview.current = 'Education'
+        c.sessions['Education'].prepare_plan(state, c.client)
+        requests = [row for row in c.client.requests if row['task'] == 'education']
+        self.assertEqual(len(requests), 1)
+        self.assertEqual(requests[0]['documents'][0]['text'], source)
+        self.assertEqual(len(state.case.plan), 5)
 
     def test_invalid_render_is_bounded_without_losing_english_plan(self):
         def response(payload):
@@ -54,8 +57,8 @@ class DeliveryTests(unittest.TestCase):
                 return {'items':[{'id':r['id'],'utterances':['x'*31]} for r in payload['sentences']]}
         c = f.consultation(f.FakeSDK(chat_handler=response),f.resources(education=True))
         s = f.chief(f.state('Education',initialized=True))
-        c.close_collection(s)
-        c.brain.prepare_education(s,c.client)
+        f.freeze_for_education(c,s)
+        c.sessions["Education"].prepare_plan(s,c.client)
         c.mouth.prepare_education(s,c.client)
         self.assertEqual(len(s.case.plan),5)
         self.assertFalse(s.interview.queue)
@@ -68,7 +71,7 @@ class DeliveryTests(unittest.TestCase):
         client = f.FakeSDK()
         original, requests = client.chat, []
         def chat(**request):
-            payload = json.loads(request['messages'][-1]['content'])
+            payload = f.decode_context(request['messages'][-1]['content'])
             if payload['task'] == 'education_doctor':
                 requests.append(copy.deepcopy(request))
                 if len(requests) == 1:
@@ -81,7 +84,7 @@ class DeliveryTests(unittest.TestCase):
         self.assertEqual(s.session.usage['Education'].actions, 6)
         self.assertEqual([r['max_tokens'] for r in requests], [8000, 8000])
         self.assertNotEqual(requests[0]['request_id'], requests[1]['request_id'])
-        repair = json.loads(requests[1]['messages'][-1]['content'])
+        repair = f.decode_context(requests[1]['messages'][-1]['content'])
         self.assertEqual(repair['generation_error'], 'PROVIDER_RESPONSE_INVALID')
         self.assertEqual(repair['validation_errors'], {})
         self.assertTrue(all(client.submissions[0]['note']['P'].values()))
@@ -157,7 +160,7 @@ class DeliveryTests(unittest.TestCase):
         self.assertEqual(plan_request['documents'], [])
         self.assertTrue(all(sentence.basis == 'model_knowledge' for sentence in s.case.plan))
         self.assertTrue(all(c.client.submissions[0]['note']['P'].values()))
-        self.assertTrue(any(a['content'] == c.brain.config.texts.symptom_cause_unknown for a in c.client.actions))
+        self.assertTrue(any(a['content'] == c.config.texts.symptom_cause_unknown for a in c.client.actions))
 
     def test_diagnosis_notice_is_delivered_before_plan_generation(self):
         client = f.FakeSDK()
@@ -167,8 +170,8 @@ class DeliveryTests(unittest.TestCase):
                 notice.append(client.actions[-1]['content'])
         client.chat_handler = response
         c,s,_ = f.run(client, prepared=f.resources(education=True))
-        ident = c.brain.knowledge.term_id(s.case.primary().name, 'Disease')
-        expected = c.brain.config.texts.diagnosis_announcement.format(diagnosis=c.brain.knowledge.label(ident))
+        ident = c.knowledge.term_id(s.case.primary().name, 'Disease')
+        expected = c.config.texts.diagnosis_announcement.format(diagnosis=c.knowledge.label(ident))
         self.assertEqual(notice, [expected])
         self.assertEqual(s.interview.answers[-6].question_id, 'Education:diagnosis:0')
 
@@ -232,8 +235,8 @@ class DeliveryTests(unittest.TestCase):
                                  for r in payload['sentences']]}
         c = f.consultation(f.FakeSDK(chat_handler=response),f.resources(education=True))
         s = f.chief(f.state('Education',initialized=True))
-        c.close_collection(s)
-        c.brain.prepare_education(s,c.client)
+        f.freeze_for_education(c,s)
+        c.sessions["Education"].prepare_plan(s,c.client)
         c.mouth.prepare_education(s,c.client)
         self.assertFalse(s.interview.queue)
         self.assertTrue(all(a.outcome=='undelivered' for a in s.interview.answers))
@@ -249,24 +252,24 @@ class DeliveryTests(unittest.TestCase):
                 return raw
         c = f.consultation(f.FakeSDK(chat_handler=response),f.resources(education=True))
         s = f.chief(f.state('Education'))
-        c.close_collection(s)
-        c.brain.prepare_education(s,c.client)
-        c.brain.prepare_education(s,c.client)
+        f.freeze_for_education(c,s)
+        c.sessions["Education"].prepare_plan(s,c.client)
+        c.sessions["Education"].prepare_plan(s,c.client)
         self.assertEqual(count,2)
         self.assertEqual(len(s.case.plan),4)
         self.assertEqual(s.interview.education_status,'partial')
 
     def test_education_fixes_one_diagnosis_and_ignores_late_emotion(self):
         c,s = f.consultation(prepared=f.resources(education=True)),f.chief(f.state('Education'))
-        c.close_collection(s)
-        c.brain.prepare_education(s,c.client)
+        f.freeze_for_education(c,s)
+        c.sessions["Education"].prepare_plan(s,c.client)
         before = s.case.model_dump()
         q = Question(item_id='education',purpose='education',text='계획을 안내드릴게요.',plan_sentence_id=s.case.plan[0].id)
         c.questions.register(s,q)
         c.interactions.select_question(s,q)
         s.turn.stage,s.turn.response='received',{'content':'New disease and fear','turn':1}
         calls = s.session.doctor_calls
-        c.ear.process_input(s,c.brain.knowledge,c.client)
+        c.ear.process_input(s,c.knowledge,c.client)
         c.refresh_after_input(s)
         self.assertEqual(s.case.model_dump(),before)
         self.assertEqual(s.session.doctor_calls,calls)
@@ -275,15 +278,15 @@ class DeliveryTests(unittest.TestCase):
 
     def test_education_can_deliver_prepared_questions_without_models(self):
         c,s = f.consultation(prepared=f.resources(education=True)),f.chief(f.state('Education',initialized=True))
-        c.close_collection(s)
-        c.brain.prepare_education(s,c.client)
+        f.freeze_for_education(c,s)
+        c.sessions["Education"].prepare_plan(s,c.client)
         c.mouth.prepare_education(s,c.client)
         s.session.models_available=False
         q=s.interview.queue[0]
         c.interactions.select_question(s,q)
         c.mouth.validate_action(s)
         c.mouth.execute_action(s,c.client)
-        c.ear.process_input(s,c.brain.knowledge,c.client)
+        c.ear.process_input(s,c.knowledge,c.client)
         self.assertEqual(s.interview.answers[-1].outcome,'delivered')
 
     def test_empathy_keeps_codes_and_canonical_facts_without_patient_raw(self):
@@ -316,7 +319,7 @@ class DeliveryTests(unittest.TestCase):
         event=PendingEmpathy(source_ref='s',emotion='fear',intent='new_distress',key='k')
         s.interview.empathy=event
         c.mouth.prepare_empathy(s,client,event)
-        self.assertEqual(s.question().text,c.brain.config.texts.empathy_fallback)
+        self.assertEqual(s.question().text,c.config.texts.empathy_fallback)
 
 
 if __name__=='__main__':

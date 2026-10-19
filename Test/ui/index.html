@@ -1,10 +1,15 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ontoward · 로컬 테스트</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
-<body>
-<header class="topbar"><span class="brand">ONTOWARD <span class="muted">/ TEST</span></span><span class="badge">로컬 공개 증례</span></header>
-<main class="app-shell">
-  <div class="intro"><div><h1>진료 흐름 테스트</h1><p class="muted">턴마다 어떤 객체가 정보를 받고, 바꾸고, 전달했는지 확인하세요.</p></div></div>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ontoward · 테스트 워크스페이스</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body class="workspace">
+<a class="skip-link" href="#results">결과로 이동</a>
+<header class="topbar"><div class="brand">Ontoward <span>Test workspace</span></div><button id="toggle-controls" type="button" aria-expanded="true" aria-controls="control-panel">실행 설정 접기</button></header>
+<div class="app-shell">
+  <aside id="control-panel" class="control-panel" aria-label="테스트 실행과 기록">
+  <div class="rail-heading"><h1>진료 흐름 테스트</h1><p class="muted">현재 파이프라인을 실행하고,<br>정보가 이동하는 과정을 확인하세요.</p></div>
+  <div id="run-status" class="run-status" role="status" aria-live="polite"><span class="badge">연결 중</span><strong>실행기를 확인하고 있습니다.</strong></div>
+  <div id="progress" class="progress-line" aria-hidden="true"></div>
+  <details id="launch-settings" class="launch-settings"><summary>새 테스트 설정</summary>
   <form id="launch" class="launch-form">
     <div class="field"><label for="case">공개 증례</label><select id="case" name="case"><option value="C10">C10 · 체중 감소</option><option value="C01">C01 · 수면 불편</option><option value="C03">C03 · 성장 우려</option></select></div>
     <div class="field"><label for="backend">응답 방식</label><select id="backend" name="backend"><option value="nova">NOVA 모델</option><option value="scripted">오프라인 고정 응답</option></select></div>
@@ -12,10 +17,14 @@
     <button id="start" type="submit" class="primary" disabled>NOVA 테스트 실행</button>
     <p id="mode-help" class="form-help">루트 .env의 키로 개발 크레딧을 사용합니다. 환자·진찰·Gateway 호출을 합쳐 최대 200회 요청합니다.</p>
   </form>
-  <div id="run-status" class="run-status" role="status" aria-live="polite"><span class="badge">연결 중</span><strong>실행기를 확인하고 있습니다.</strong></div>
-  <div id="progress" class="progress-line" aria-hidden="true"></div>
-  <div class="results-header"><h2>실행 결과</h2><div class="history-control"><label for="history">저장된 실행</label><select id="history"><option value="">실행 기록 없음</option></select><a id="standalone" href="#" target="_blank" rel="noopener" hidden>별도 열기</a></div></div>
-  <p id="empty" class="empty">저장된 실행을 선택하거나 새 테스트를 시작하세요.<br>정보 흐름에서 호출 순서와 입출력을, 객체 탐색에서 턴별 데이터 변화를 볼 수 있습니다.</p>
+  </details>
+  <div class="history-control"><label for="history">저장된 실행</label><select id="history"><option value="">실행 기록 없음</option></select><p id="selected-run" class="small muted"></p></div>
+  <p class="rail-note">실행은 한 번에 하나씩 진행됩니다.<br>저장된 결과는 재실행 없이 열립니다.</p>
+  </aside>
+  <main id="results" class="results-workspace" tabindex="-1">
+  <div class="results-header"><h2 id="result-title">실행 결과</h2><a id="standalone" href="#" target="_blank" rel="noopener" hidden>리포트 별도 열기</a></div>
+  <div id="empty" class="empty"><strong>검토할 실행을 선택하세요.</strong><p>저장된 실행을 선택하거나 새 테스트를 시작하세요.<br>정보 흐름에서 입출력을, 실행 검증에서 관측 범위와 종료 근거를 확인합니다.</p></div>
   <iframe id="report" title="선택한 테스트의 진료 과정 리포트" hidden></iframe>
-</main>
+  </main>
+</div>
 </body></html>

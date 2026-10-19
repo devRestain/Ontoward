@@ -18,15 +18,6 @@ def strict_json(content):
     return json.loads(content, object_pairs_hook=object_pairs, parse_constant=invalid_constant)
 
 
-def compact_schema(value):
-    if isinstance(value, dict):
-        return {key: compact_schema(item) for key, item in value.items()
-                if key not in {"title", "description", "default"}}
-    if isinstance(value, list):
-        return [compact_schema(item) for item in value]
-    return value
-
-
 def statement_outcome(statement):
     if statement.role == "not_applicable":
         return "not_applicable"
@@ -129,21 +120,6 @@ def candidate_contracts(knowledge, statement, question, *, expanded=False, compl
     return result
 
 
-def numeric_schema(units=None):
-    number = {"type": "number"}
-    unit = {"enum": units} if units is not None else {"type": "string", "minLength": 1}
-    quantity = {"type": "object", "properties": {"kind": {"const": "quantity"}, "value": number,
-        "unit": unit, "operator": {"const": "eq"}, "approximate": {"type": "boolean"}},
-        "required": ["kind", "value", "unit", "operator"], "additionalProperties": False}
-    interval = {"type": "object", "properties": {"kind": {"const": "interval"},
-        "lower": {"anyOf": [number, {"type": "null"}]}, "upper": {"anyOf": [number, {"type": "null"}]},
-        "unit": unit, "upper_unit": {"enum": [*units, None]} if units is not None else {"anyOf": [unit, {"type": "null"}]},
-        "lower_inclusive": {"type": "boolean"}, "upper_inclusive": {"type": "boolean"},
-        "approximate": {"type": "boolean"}},
-        "required": ["kind", "unit"], "additionalProperties": False}
-    return {"anyOf": [quantity, interval]}
-
-
 def measurement_value(measured):
     keys = {"kind", "value", "unit", "operator", "approximate"} if measured.kind == "quantity" else {
         "kind", "lower", "upper", "unit", "upper_unit", "lower_inclusive", "upper_inclusive", "approximate"}
@@ -151,28 +127,6 @@ def measurement_value(measured):
     if measured.kind == 'quantity':
         value['operator'] = 'eq'
     return value
-
-
-def mapping_schema(contracts):
-    properties = {}
-    for target in contracts:
-        if not target["attributes"]:
-            properties[target["id"]] = {"enum": ["(+)", "(-)"]}
-            continue
-        attrs = {}
-        for attribute in target["attributes"]:
-            values = [v["id"] for v in attribute["values"]]
-            options = []
-            if values:
-                options.extend([{"enum": values}, {"type": "object", "properties": {
-                    value: {"enum": ["(+)", "(-)"]} for value in values},
-                    "additionalProperties": False, "minProperties": 1}])
-            if attribute["units"]:
-                options.append(numeric_schema(attribute["units"]))
-            attrs[attribute["id"]] = {"anyOf": options} if options else {"not": {}}
-        properties[target["id"]] = {"type": "object", "properties": attrs,
-            "additionalProperties": False, "minProperties": 1}
-    return {"type": "object", "properties": properties, "additionalProperties": False, "maxProperties": 1}
 
 
 def validate_mapping(mapping, statement, contracts):

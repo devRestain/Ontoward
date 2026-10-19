@@ -16,13 +16,14 @@ from rdflib import Graph, Literal, RDF, RDFS
 from knowledge.graph import ClinicalKnowledge, OW
 from knowledge.conditions import ExpectedValue, QuestionTemplate
 from workflow.runtime import PreparedResources, assemble_consultation, prepare
-from workflow.state.models import ClinicalFact, NoteFact, ObservedNumber, Question, SessionContext, WorkflowState
+from workflow.state.models import CaseFact, GraphBinding, ObservedNumber, Question, SessionContext, WorkflowState
 from workflow.state.evidence import EvidenceIndex, EvidenceRecord
 from workflow.text_config import TextConfig
 from nova_sdk import NovaError, RECORD_FIELDS
 from education_fixtures import education_response
 sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'Test'))
 from brain_double import clinical_response, attach_sink
+from protocol import decode_context
 
 FIXED = datetime(2026, 10, 18, tzinfo=timezone.utc)
 CONFIG = TextConfig.load().model_copy(update={'education_enabled':False})
@@ -62,11 +63,32 @@ def state(scope='Initiation', *, turns=50, initialized=False):
     return s
 
 
+def graph_fact(**values):
+    binding = {key: values.pop(key) for key in ('kind', 'target', 'attribute', 'values') if key in values}
+    binding['method'] = values.pop('binding', 'exact')
+    binding['eligible'] = values.pop('evidence_use', 'reasoning') == 'reasoning'
+    return CaseFact(graph_binding=GraphBinding(**binding), **values)
+
+
+def unbound(case):
+    return {key: value for key, value in case.facts.items() if value.graph_binding is None}
+
+
+def graph_facts(case):
+    return {key: value for key, value in case.facts.items() if value.graph_binding is not None}
+
+
+def freeze_for_education(consultation, state):
+    state.interview.current = 'DifferentialDiagnosis'
+    consultation.close_collection(state)
+    state.interview.current = 'Education'
+
+
 def fact(ident='chief', **changes):
     values = dict(id=ident, kind='symptom', target='Test complaint', status='present', acquisition='SAY',
         source_ref=ident, observation_id='obs1', episode_id='episode1', time_context='current', category='presentation')
     values.update(changes)
-    return ClinicalFact(**values)
+    return graph_fact(**values)
 
 
 def chief(s):
@@ -96,7 +118,7 @@ class FakeSDK:
         return {'choices':[{'message':{'content':value if isinstance(value,str) else json.dumps(value,ensure_ascii=False)},
                             'finish_reason':finish_reason}], 'usage':{'prompt_tokens':20,'completion_tokens':10}}
     def chat(self, messages, **kwargs):
-        payload = json.loads(messages[-1]['content'])
+        payload = decode_context(messages[-1]['content'])
         self.requests.append(copy.deepcopy(payload))
         if self.chat_handler:
             reply = self.chat_handler(payload)
@@ -159,7 +181,7 @@ def run(client=None, prepared=None, *, audit=None, cache=True):
     c = consultation(client, prepared, audit=audit, cache=cache)
     s = c.nova_session.initialize_case(c.client)
     snapshots = []
-    for update in build_graph(c,c.brain.knowledge).stream(s.model_dump(mode='json'),
+    for update in build_graph(c,c.knowledge).stream(s.model_dump(mode='json'),
             {'recursion_limit':c.budget.graph_step_limit(s)},stream_mode='updates'):
         name, raw = next(iter(update.items()))
         snapshots.append((name,copy.deepcopy(raw)))

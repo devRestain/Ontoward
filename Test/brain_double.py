@@ -2,7 +2,7 @@
 
 
 def clinical_response(payload):
-    if payload.get('task') not in {'clinical_decision','clinical_action'}:
+    if payload.get('task') not in {'clinical_rank','clinical_decision','clinical_action'}:
         return None
     questions = payload.get('questions',[])
     if payload['required']:
@@ -12,8 +12,8 @@ def clinical_response(payload):
         action = {'kind':'ask','question_ref':question['ref']}
     else:
         action = {'kind':'finish_collection' if payload['stage']=='DifferentialDiagnosis' else 'advance_stage'}
-    result = {'next_action':action}
-    if payload['task']=='clinical_decision':
+    result = {} if payload['task']=='clinical_rank' else {'next_action':action}
+    if payload['task'] in {'clinical_rank','clinical_decision'}:
         ranked = list(payload['prior_order'])
         for candidate in payload['candidates']:
             if candidate['ref'] not in ranked and len(ranked)<2:

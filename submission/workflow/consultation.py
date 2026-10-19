@@ -5,37 +5,41 @@ from .rules.limits import LIMITS, SESSION_ORDER
 
 
 class Consultation:
-    def __init__(self, client, ear, brain, mouth, writer, nova_session, budget, questions, interactions):
+    def __init__(self, client, ear, brain, mouth, writer, nova_session, budget, questions, interactions,
+                 knowledge, config, tools, sessions):
         self.client, self.ear, self.brain, self.mouth, self.writer = client, ear, brain, mouth, writer
         self.nova_session, self.budget, self.questions, self.interactions = nova_session, budget, questions, interactions
+        self.knowledge, self.config, self.tools, self.sessions = knowledge, config, tools, sessions
+        self.differential = sessions['DifferentialDiagnosis']
 
     def enter_session(self, state):
         if state.session.termination or state.turn or state.interview.status == 'collecting':
             return
         state.interview.status = 'collecting'
         scope = state.interview.current
-        if scope != 'Education':
-            self.brain.replan(state,self.client,force=True)
-        else:
+        if scope == 'ContextFactor':
+            self.sessions[scope].enter(state, self.sessions['ChiefComplaint'])
+        if scope == 'Education':
             self.interactions.skip_empathy(state,'education_record_only')
-            state.case.primary()
-            if self.brain.config.education_enabled:
-                notice = self.mouth.prepare_diagnosis(state,self.client,self.brain.knowledge)
-                if notice or state.session.termination:
-                    return
-            self.brain.prepare_education(state,self.client)
-            if self.brain.config.education_enabled and not state.session.termination:
-                self.mouth.prepare_education(state,self.client)
+        self.prepare_session(state)
+
+    def prepare_session(self, state):
+        current = state.interview.current
+        if current in {'DifferentialDiagnosis', 'Education'}:
+            self.sessions[current].prepare(state, self.client)
+        else:
+            self.sessions[current].prepare(state)
 
     def refresh_after_input(self, state):
         if state.session.termination or state.case.assessment and state.case.assessment.frozen:
             return
-        self.brain.replan(state,self.client)
+        if state.interview.status == 'collecting' and not state.turn:
+            self.prepare_session(state)
 
     def close_collection(self, state):
         if state.turn:
             raise ValueError('Cannot close collection before input acceptance')
-        self.brain.close_differential(state,self.client)
+        self.differential.close(state,self.client)
 
     def check_budget(self, state):
         if state.session.termination:
@@ -86,7 +90,7 @@ class Consultation:
                     return
             else:
                 self.interactions.skip_empathy(state, 'empathy_budget')
-        self.brain.select_question(state)
+        self.tools.select_question(state)
 
     def advance_session(self, state):
         if state.turn or state.interview.queue:
@@ -95,13 +99,17 @@ class Consultation:
             self.enter_session(state)
             return
         if state.interview.current == 'Education':
-            if self.brain.config.education_enabled and state.interview.education_status == 'not_started':
+            if self.config.education_enabled and state.interview.education_status == 'not_started':
                 state.interview.status = 'uninitialized'
             else:
                 state.session.finalizing = True
         else:
             if state.interview.current == 'DifferentialDiagnosis':
                 self.close_collection(state)
+                if state.session.termination:
+                    return
+            else:
+                self.sessions[state.interview.current].close(state, self.client)
                 if state.session.termination:
                     return
             state.interview.current = SESSION_ORDER[SESSION_ORDER.index(state.interview.current) + 1]
@@ -112,9 +120,9 @@ class Consultation:
             return
         self.close_collection(state)
         if not state.session.termination:
-            if self.brain.config.education_enabled:
+            if self.config.education_enabled:
                 state.interview.current = 'Education'
-            self.brain.prepare_education(state, self.client)
+            self.sessions['Education'].prepare_plan(state, self.client)
             self.questions.discard_unasked(state, {q.item_id for q in state.interview.queue}, reason='finalization_budget')
             self.writer.build_soap(state)
 

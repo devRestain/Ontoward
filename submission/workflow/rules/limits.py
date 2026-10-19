@@ -17,8 +17,6 @@ class Limits:
     finalization_seconds: int = 120
     response_seconds: int = 120
     education_turns: int = 7
-    education_request_bytes: int = 65536
-    clinical_request_bytes: int = 65536
     education_tokens: int = 8000
     education_doctor_tokens: int = 8000
     model_calls: int = 200
@@ -32,9 +30,6 @@ class Limits:
     hpi_priority: int = 10000
     open_inquiry_priority: int = 1000000
     clarification_priority: int = 2000000
-    gateway_request_bytes: int = 12288
-    expanded_gateway_request_bytes: int = 16384
-    compact_gateway_request_bytes: int = 8192
     content_codepoints: int = 30
     diagnosis_bytes: int = 500
     record_bytes: int = 100000

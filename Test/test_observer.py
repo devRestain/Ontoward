@@ -1,4 +1,4 @@
-"""Compare observed and unobserved D44 execution and reconstruct every node."""
+"""Compare observed and unobserved D46 execution and reconstruct every node."""
 from contextlib import nullcontext
 import copy
 import json
@@ -10,6 +10,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,os.environ.get('ONTOWARD_WORKFLOW_FIXTURES',str(ROOT/'Dev/tests/workflow')))
 import fixtures as f
 from observe import observing, plain
+from inspection import inspect_run
 from workflow.graph import build_graph
 from workflow.state.models import WorkflowState
 
@@ -47,7 +48,7 @@ def capture(name,observed):
     with context:
         initial=c.nova_session.initialize_case(client)
         from workflow import graph
-        updates=list(graph.build_graph(c,c.brain.knowledge).stream(initial.model_dump(mode='json'),
+        updates=list(graph.build_graph(c,c.knowledge).stream(initial.model_dump(mode='json'),
             {'recursion_limit':c.budget.graph_step_limit(initial)},stream_mode='updates'))
     return plain({'initial':initial.model_dump(mode='json'),'updates':updates,'wire':wire}),path
 
@@ -71,6 +72,30 @@ def apply(state,change):
     return state
 
 
+def verify_trace(rows, name):
+    inspection = inspect_run(dict(trace={'events': rows}, warnings=[], summary={}, record={}))
+    assert not [c for c in inspection['checks'] if c['status']=='fail'], (name, inspection['checks'])
+    current = objects = None
+    for row in rows:
+        if row['kind']=='initial':
+            current=copy.deepcopy(row['state'])
+        for change in row.get('patch', []):
+            current=apply(current, change)
+        if 'object_state' in row:
+            objects=copy.deepcopy(row['object_state'])
+        for change in row.get('object_patch', []):
+            objects=apply(objects, change)
+        if row['kind']=='node_end' and objects is not None:
+            assert objects==current,(name,row['seq'],'object/node snapshots disagree')
+    if name=='normal':
+        for owner, method in [('InputBinding','exact_mapping'),('InputBinding','make_fact'),
+                              ('GraphEvidence','graph_candidates'),('InitiationSession','prepare_decision'),
+                              ('DoctorBrain','complete')]:
+            calls={r['call_id'] for r in rows if r['kind']=='call_start' and (r['owner'],r['method'])==(owner,method)}
+            assert any(r['kind']=='call_end' and r['call_id'] in calls and r.get('output') is not None for r in rows),(owner,method)
+    return inspection
+
+
 def verify():
     OUTPUT.mkdir(parents=True,exist_ok=True)
     scenarios=[]
@@ -86,6 +111,7 @@ def verify():
             current=None
             reconstructed=[]
             rows=[json.loads(line) for line in path.read_text().splitlines()]
+            verify_trace(rows, name)
             assert not any(row['kind']=='observation_error' for row in rows),name
             for row in rows:
                 if row['kind']=='initial':

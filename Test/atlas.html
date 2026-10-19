@@ -1,441 +1,1896 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-snapshot="2026-10-19" data-algorithm="d46.1">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
-  <title>Ontoward — 프로젝트 흐름 지도</title>
-  <style>
-    :root {
-      --paper: #ffffff;
-      --canvas: #f4f6f3;
-      --ink: #202c28;
-      --muted: #5d6a63;
-      --line: #d9e1da;
-      --green: #25634b;
-      --green-soft: #e9f3eb;
-      --blue: #315f83;
-      --blue-soft: #edf3fa;
-      --ochre: #815b23;
-      --ochre-soft: #fbf3e5;
-      --red: #934d45;
-      --red-soft: #f9efec;
-      --radius: 8px;
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
-      color: var(--ink);
-      background: var(--paper);
-      font-synthesis: none;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-size: 15px; line-height: 1.8; word-break: keep-all; overflow-wrap: anywhere; }
-    a { color: var(--green); text-underline-offset: 4px; }
-    a:hover { text-decoration-thickness: 2px; }
-    a:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--blue); outline-offset: 5px; }
-    .skip { position: fixed; top: -100px; left: 16px; z-index: 5; padding: 8px 16px; background: white; }
-    .skip:focus { top: 12px; }
-    .sidebar { position: fixed; inset: 0 auto 0 0; width: 224px; padding: 38px 24px; background: var(--canvas); border-right: 1px solid var(--line); display: flex; flex-direction: column; }
-    .brand { color: var(--ink); font-size: 23px; font-weight: 760; letter-spacing: -1px; text-decoration: none; }
-    .brand-dot { display: inline-block; width: 10px; height: 10px; border: 3px solid var(--green); border-radius: 50%; margin-right: 8px; }
-    .sidebar-sub { margin: 4px 0 34px 22px; font-size: 12px; color: var(--muted); }
-    nav { display: grid; gap: 5px; }
-    nav a { display: flex; gap: 14px; padding: 9px 10px; border-radius: 5px; text-decoration: none; color: var(--muted); font-size: 14px; }
-    nav a:hover, nav a:focus-visible { background: #e5ece5; color: var(--green); }
-    nav span { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; padding-top: 3px; }
-    .sidebar-foot { margin-top: auto; padding-top: 32px; font-size: 12px; color: var(--muted); }
-    .sidebar-foot p { margin: 6px 0; }
-    main { margin-left: 224px; padding: 48px clamp(24px, 4vw, 68px) 40px; max-width: 1460px; }
-    header { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; border-bottom: 1px solid var(--line); padding-bottom: 26px; }
-    h1 { margin: 0; font-size: clamp(28px, 3vw, 38px); font-weight: 730; line-height: 1.35; letter-spacing: -1.6px; }
-    .intro { max-width: 730px; margin: 12px 0 0; color: var(--muted); line-height: 1.9; }
-    .edition { flex-shrink: 0; font-size: 12px; line-height: 1.8; text-align: right; color: var(--muted); padding-top: 5px; }
-    .edition strong { display: block; color: var(--ink); font-variant-numeric: tabular-nums; font-size: 13px; }
-    section { padding: 48px 0 52px; border-bottom: 1px solid var(--line); scroll-margin-top: 20px; }
-    .section-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 13px; }
-    .section-no { color: var(--green); font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
-    h2 { margin: 0; font-size: 26px; line-height: 1.4; letter-spacing: -0.8px; font-weight: 720; }
-    h3 { font-size: 18px; line-height: 1.5; letter-spacing: -0.35px; margin: 28px 0 12px; }
-    h4 { font-size: 15px; margin: 0 0 6px; font-weight: 720; }
-    p { margin: 10px 0; }
-    .lede { color: var(--muted); max-width: 850px; margin-bottom: 24px; }
-    .small { font-size: 13px; color: var(--muted); }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.83em; overflow-wrap: anywhere; }
-    .source { margin-top: 23px; font-size: 12px; color: var(--muted); }
-    .source a { margin-right: 12px; }
-    .legend { display: flex; gap: 20px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-bottom: 12px; }
-    .legend span { display: inline-flex; align-items: center; gap: 7px; }
-    .swatch { display: inline-block; width: 9px; height: 9px; background: var(--green); border-radius: 2px; }
-    .swatch.blue { background: var(--blue); }
-    .swatch.ochre { background: var(--ochre); }
-    .figure { margin: 20px 0; }
-    .diagram { overflow-x: auto; background: var(--canvas); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
-    .diagram svg { display: block; width: 100%; min-width: var(--diagram-width, 1000px); height: auto; }
-    .diagram .caption { font-size: 14px; }
-    .diagram .edge-label { font-size: 13px; fill: var(--muted); paint-order: stroke; stroke: var(--canvas); stroke-width: 6px; stroke-linejoin: round; }
-    .diagram .edge-red { fill: none; stroke: var(--red); stroke-width: 1.5; marker-end: url(#redhead); }
-    .diagram text { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; fill: var(--ink); font-size: 15px; }
-    .diagram .caption { fill: var(--muted); }
-    #overview .caption { font-size: 12px; }
-    .diagram .node-title { font-size: 16px; font-weight: 700; }
-    .diagram .lane-title { font-size: 12px; font-weight: 700; fill: var(--muted); letter-spacing: 1px; }
-    .diagram .node { fill: white; stroke: var(--line); stroke-width: 1.2; }
-    .diagram .node-green { fill: var(--green-soft); stroke: #a0bea9; stroke-width: 1.2; }
-    .diagram .node-blue { fill: var(--blue-soft); stroke: #a2b9d0; stroke-width: 1.2; }
-    .diagram .node-ochre { fill: var(--ochre-soft); stroke: #ccb58c; stroke-width: 1.2; }
-    .diagram .edge { fill: none; stroke: #7d9286; stroke-width: 1.5; marker-end: url(#arrowhead); }
-    .diagram .edge-blue { fill: none; stroke: #6e92b2; stroke-width: 1.5; marker-end: url(#bluehead); }
-    .diagram .dashed { stroke-dasharray: 5 4; }
-    figcaption { color: var(--muted); font-size: 12px; margin-top: 9px; line-height: 1.8; }
-    .note { margin: 22px 0; padding: 14px 18px; border-left: 3px solid var(--green); background: var(--green-soft); font-size: 14px; }
-    .note p { margin: 0; }
-    .note.ochre { border-color: var(--ochre); background: var(--ochre-soft); }
-    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-    .split > * { min-width: 0; }
-    .list { list-style: none; padding: 0; margin: 0; }
-    .list li { padding: 11px 0; border-bottom: 1px solid var(--line); }
-    .list li:last-child { border-bottom: 0; }
-    .list strong { display: block; font-size: 14px; }
-    .list p { margin: 3px 0 0; font-size: 13px; color: var(--muted); }
-    .sessions { list-style: none; margin: 24px 0 0; padding: 0; }
-    .sessions > li { display: grid; grid-template-columns: 34px 180px 1fr; column-gap: 18px; position: relative; padding-bottom: 23px; }
-    .sessions > li::before { content: ""; position: absolute; left: 15px; top: 31px; bottom: 0; border-left: 1px solid #a8c4b1; }
-    .sessions > li:last-child::before { display: none; }
-    .step-dot { display: grid; place-items: center; width: 31px; height: 31px; background: var(--green-soft); color: var(--green); border: 1px solid #b6cdbb; border-radius: 50%; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; z-index: 1; }
-    .session-name { line-height: 1.5; padding-top: 3px; }
-    .session-name strong { font-size: 14px; display: block; }
-    .session-name span { font-size: 12px; color: var(--muted); }
-    .session-body p { margin: 0; font-size: 14px; }
-    .session-body .small { margin-top: 4px; font-size: 12px; }
-    .loop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; list-style: none; padding: 0; margin: 18px 0 0; }
-    .loop li { padding: 16px 18px; border-top: 2px solid #b6cdbb; background: var(--canvas); }
-    .loop .order { display: block; color: var(--green); font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; margin-bottom: 7px; }
-    .loop h4 { font-size: 14px; }
-    .loop p { font-size: 12px; line-height: 1.75; color: var(--muted); margin: 0; }
-    .loop-return { margin: 0; padding: 9px 15px; border-bottom: 1px dashed #8ba896; color: var(--green); text-align: right; font-size: 12px; }
-    .states { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
-    .state { border-left: 2px solid var(--green); padding: 3px 0 3px 14px; }
-    .state:nth-child(2) { border-color: var(--red); }
-    .state:nth-child(3) { border-color: var(--ochre); }
-    .state strong { display: block; font-size: 14px; }
-    .state p { font-size: 12px; color: var(--muted); margin: 3px 0 0; }
-    .formula { display: flex; align-items: stretch; flex-wrap: wrap; gap: 10px; padding: 24px; margin: 20px 0 14px; background: var(--green-soft); border-radius: var(--radius); }
-    .formula-part { flex: 1; min-width: 125px; }
-    .formula-part strong { display: block; font-size: 19px; color: var(--green); line-height: 1.4; }
-    .formula-part span { display: block; font-size: 12px; margin-top: 5px; color: var(--muted); }
-    .operator { align-self: center; font: 21px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--green); padding: 0 8px; }
-    .table-scroll { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
-    caption { text-align: left; font-size: 12px; color: var(--muted); padding: 0 0 10px; }
-    th { background: var(--canvas); font-weight: 650; color: var(--muted); }
-    th, td { padding: 10px 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
-    .soap { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.25fr; border-top: 2px solid var(--green); margin: 20px 0 14px; }
-    .soap > div { padding: 15px; border-right: 1px solid var(--line); background: var(--canvas); }
-    .soap > div:last-child { border-right: 0; }
-    .soap strong { font-size: 23px; color: var(--green); font-weight: 650; }
-    .soap strong small { font-size: 12px; font-weight: 500; color: var(--muted); padding-left: 6px; }
-    .soap p { font-size: 12px; margin: 6px 0 0; color: var(--muted); }
-    .boundary { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 16px; }
-    .boundary h3 { padding-bottom: 10px; border-bottom: 2px solid var(--green); }
-    .boundary > div:nth-child(2) h3 { border-color: var(--ochre); }
-    footer { display: flex; gap: 20px; justify-content: space-between; padding-top: 24px; color: var(--muted); font-size: 12px; }
-    @media (min-width: 1600px) { main { margin-right: auto; } }
-    @media (max-width: 1100px) {
-      .sidebar { position: static; width: auto; padding: 16px 24px 8px; border-right: 0; border-bottom: 1px solid var(--line); }
-      .brand { font-size: 20px; }
-      .sidebar-sub, .sidebar-foot { display: none; }
-      nav { display: flex; flex-wrap: wrap; gap: 0 5px; margin-top: 6px; }
-      nav a { padding: 10px 8px; min-height: 44px; align-items: center; font-size: 12px; }
-      nav span { display: none; }
-      main { margin-left: 0; padding: 30px 28px; }
-      .edition { font-size: 11px; }
-    }
-    @media (max-width: 700px) {
-      body { font-size: 14px; }
-      main { padding: 26px 19px; }
-      .sidebar { padding-inline: 19px; }
-      header { display: block; padding-bottom: 20px; }
-      h1 { font-size: 28px; }
-      .edition { text-align: left; padding-top: 16px; }
-      .edition strong { display: inline; margin-right: 8px; }
-      section { padding: 34px 0; }
-      h2 { font-size: 23px; }
-      .section-head { gap: 11px; }
-      .diagram { padding: 10px; }
-      .split, .boundary { grid-template-columns: 1fr; gap: 4px; }
-      .sessions > li { grid-template-columns: 31px 1fr; gap: 6px 14px; }
-      .session-body { grid-column: 2; }
-      .sessions > li::before { left: 15px; }
-      .session-name strong { display: inline; margin-right: 7px; }
-      .loop { grid-template-columns: 1fr 1fr; }
-      .states { grid-template-columns: 1fr; gap: 14px; }
-      .formula { padding: 17px; gap: 7px; }
-      .formula-part { flex-basis: 70%; }
-      .formula .operator { width: 22px; padding: 0; }
-      .formula-part:first-child { flex-basis: 100%; }
-      .soap { grid-template-columns: 1fr 1fr; }
-      .soap > div { border-bottom: 1px solid var(--line); }
-      .soap > div:nth-child(2) { border-right: 0; }
-      footer { display: block; }
-      th, td { padding: 9px; }
-    }
-    @media print {
-      @page { size: A4 landscape; margin: 13mm; }
-      body { font-size: 11px; }
-      .sidebar, .skip { display: none; }
-      main { margin: 0; padding: 0; max-width: none; }
-      header { padding-bottom: 15px; }
-      h1 { font-size: 28px; }
-      h2 { font-size: 21px; }
-      h3 { break-after: avoid; }
-      section { padding: 22px 0; }
-      .diagram { overflow: visible; padding: 10px; }
-      .diagram svg { min-width: 0; max-height: 165mm; }
-      .table-scroll { overflow: visible; }
-      figure, .formula, .vector, .soap, .sessions > li, .pipeline li, tr { break-inside: avoid; }
-      a { color: inherit; }
-      .edition { font-size: 10px; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="description" content="D46 구현과 D42 임상 자산, 정보 소유권, 진료 그래프와 확인된 증거를 연결한 Ontoward 오프라인 프로젝트 지도">
+<title>Ontoward | 현재 상태와 진료 흐름 지도</title>
+<style>
+:root {
+  --paper:#ffffff; --canvas:#f3f7fb; --ink:#14283f; --muted:#4c6075;
+  --line:#d7e1eb; --blue:#205f9b; --blue-soft:#edf4fc;
+  --green:#006b68; --green-soft:#e8f5f1; --ochre:#8d4c08; --ochre-soft:#fff3df;
+  --red:#9b3f42; --red-soft:#fceff0;
+  font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  color:var(--ink); background:var(--canvas); font-synthesis:none;
+}
+* { box-sizing:border-box }
+html { scroll-padding-top:30px }
+body { margin:0; font-size:16px; line-height:1.8; word-break:keep-all; overflow-wrap:anywhere }
+a { color:var(--blue); text-decoration-thickness:1px; text-underline-offset:4px }
+a:hover { color:var(--green); text-decoration-thickness:2px }
+a:focus-visible,summary:focus-visible,[tabindex]:focus-visible { outline:3px solid var(--blue); outline-offset:5px }
+.skip { position:fixed; left:16px; top:-100px; padding:12px 20px; background:var(--paper); z-index:8 }
+.skip:focus { top:12px }
+.sidebar { position:fixed; inset:0 auto 0 0; width:220px; padding:38px 20px 24px 26px; border-right:1px solid var(--line); display:flex; flex-direction:column; overflow-y:auto }
+.brand { display:flex; align-items:center; gap:10px; font-family:"Helvetica Neue",Arial,sans-serif; font-weight:750; font-size:24px; letter-spacing:-1px; color:var(--ink); text-decoration:none }
+.mark { width:25px; height:25px; flex-shrink:0 }
+.subbrand { margin:5px 0 30px 36px; color:var(--muted); font-size:13px }
+nav { display:grid; gap:5px }
+nav a { display:flex; align-items:center; min-height:44px; padding:8px 12px; border-left:2px solid transparent; text-decoration:none; color:var(--muted); font-size:15px }
+nav a:hover,nav a:focus-visible { color:var(--ink); background:var(--paper); border-left-color:var(--green); border-radius:0 6px 6px 0 }
+.sidebar-foot { margin-top:auto; padding-top:28px; font-size:13px; color:var(--muted) }
+.sidebar-foot p { margin:0 0 9px }
+main { margin-left:220px; background:var(--paper); min-height:100vh }
+.page-head,section,footer { padding:46px clamp(24px,4.8vw,80px); max-width:1560px; margin-inline:auto }
+.page-head { padding-top:52px; padding-bottom:30px }
+.edition { display:flex; flex-wrap:wrap; gap:8px 20px; align-items:center; margin-bottom:22px; color:var(--muted); font-size:14px }
+.edition time { font-weight:700; color:var(--ink) }
+h1,h2,h3 { line-height:1.35; letter-spacing:-.04em; text-wrap:balance }
+h1 { margin:0 0 22px; font-size:clamp(32px,3.6vw,52px); font-weight:750; max-width:22ch }
+h2 { font-size:30px; margin:0 0 18px; font-weight:750 }
+h3 { font-size:21px; margin:30px 0 12px }
+p { max-width:76ch; margin:0 0 17px }
+.intro { font-size:19px; line-height:1.75; max-width:63ch; color:var(--muted) }
+.snapshot-status { margin:27px 0 0; display:flex; flex-wrap:wrap; gap:10px 22px; font-size:14px; align-items:center }
+.badge { display:inline-flex; align-items:center; gap:8px; padding:3px 10px; background:var(--green-soft); color:var(--green); border:1px solid #a4c9bf; border-radius:6px; font-size:13px; font-weight:700; white-space:nowrap }
+.badge::before { content:"✓"; font-size:13px }
+.badge.pending { background:var(--ochre-soft); color:var(--ochre); border-color:#dfbb8c }
+.badge.pending::before { content:"○" }
+.badge.static { background:var(--blue-soft); color:var(--blue); border-color:#b8cde1 }
+.badge.static::before { content:"·" }
+section { border-top:1px solid var(--line); scroll-margin-top:26px }
+.section-heading { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:4px 24px; margin-bottom:18px }
+.section-heading h2 { margin:0 }
+.section-heading .anchor { font-size:14px; text-decoration:none; color:var(--muted); padding:8px 0 }
+.lede { font-size:18px; color:var(--muted); max-width:72ch }
+.legend { display:flex; flex-wrap:wrap; gap:10px 24px; font-size:14px; color:var(--muted); margin:22px 0 14px }
+.legend span { display:flex; align-items:center; gap:8px }
+.swatch { display:inline-block; width:22px; height:10px; border:1px solid var(--green); background:var(--green-soft); border-radius:2px }
+.swatch.blue { background:var(--blue-soft); border-color:var(--blue) }
+.swatch.ochre { background:var(--ochre-soft); border-color:var(--ochre) }
+.figure { margin:24px 0 28px; border:1px solid var(--line); border-radius:12px; padding:18px; background:var(--canvas) }
+.diagram { overflow-x:auto; overscroll-behavior-x:contain; padding:4px 0 10px }
+.diagram svg { display:block; width:100%; min-width:min(var(--diagram-width,1000px),1050px); height:auto; font-family:"Apple SD Gothic Neo","Malgun Gothic",sans-serif }
+.diagram text { fill:var(--ink); font-size:16px }
+.diagram .caption { fill:var(--muted); font-size:14px }
+.diagram .node-title { fill:var(--ink); font-size:18px; font-weight:700 }
+.diagram .lane-title { fill:var(--muted); font-size:14px; font-weight:700 }
+.diagram .node { fill:var(--paper); stroke:#aebfce; stroke-width:1.3 }
+.diagram .node-green,.diagram .node.green { fill:var(--green-soft); stroke:#78b5a5 }
+.diagram .node-blue,.diagram .node.blue { fill:var(--blue-soft); stroke:#91b2d0 }
+.diagram .node-ochre,.diagram .node.ochre { fill:var(--ochre-soft); stroke:#c7a36e }
+.diagram .node-red { fill:var(--red-soft); stroke:#bd8185 }
+.diagram .edge { fill:none; stroke:var(--green); stroke-width:1.6; marker-end:url(#arrowhead) }
+.diagram .edge-blue,.diagram .edge.blue { fill:none; stroke:var(--blue); stroke-width:1.6; marker-end:url(#bluehead) }
+.diagram .edge-red,.diagram .edge.red { fill:none; stroke:var(--red); stroke-width:1.5; marker-end:url(#redhead) }
+.diagram .dashed { stroke-dasharray:6 5 }
+.diagram .edge-label { fill:var(--muted); font-size:14px; paint-order:stroke; stroke:var(--canvas); stroke-width:5px; stroke-linejoin:round }
+figcaption { font-size:14px; color:var(--muted); line-height:1.7; margin-top:12px; max-width:90ch }
+.table-scroll { width:100%; overflow-x:auto; margin:22px 0; border:1px solid var(--line); border-radius:8px; overscroll-behavior-x:contain }
+table { border-collapse:collapse; width:100%; text-align:left; min-width:650px; font-size:15px; line-height:1.7 }
+caption { text-align:left; padding:15px 18px; color:var(--muted); font-size:14px; background:var(--canvas) }
+th,td { padding:15px 18px; border-bottom:1px solid var(--line); vertical-align:top }
+thead th { font-size:14px; color:var(--muted); background:var(--canvas); font-weight:600; white-space:nowrap }
+tbody th { font-weight:650 }
+tbody tr:last-child>* { border-bottom:0 }
+tbody tr:hover { background:#f8fbfe }
+code { font-family:"SFMono-Regular",Consolas,monospace; font-size:.85em; overflow-wrap:anywhere }
+.hash { display:block; font-size:13px; color:var(--muted); margin:6px 0; word-break:break-all }
+.note { padding:17px 20px; margin:24px 0; border-left:4px solid var(--green); background:var(--green-soft); border-radius:0 8px 8px 0 }
+.note p { margin:0 }
+.note.ochre { background:var(--ochre-soft); border-color:var(--ochre) }
+.split { display:grid; grid-template-columns:1fr 1fr; gap:30px; margin:25px 0 }
+.split>* { min-width:0 }
+.split h3 { margin-top:0 }
+.list { padding-left:22px }
+.list li { padding:5px 0 }
+.source { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 16px; max-width:none; margin-top:22px; font-size:14px; color:var(--muted) }
+details { margin:24px 0; padding:0 20px; border:1px solid var(--line); border-radius:9px }
+summary { cursor:pointer; padding:16px 0; font-weight:650; min-height:52px }
+details[open]>summary { border-bottom:1px solid var(--line); margin-bottom:20px }
+details>.figure { border-radius:8px; margin-block:20px }
+.journey { display:grid; grid-template-columns:repeat(5,1fr); padding:0; margin:25px 0; list-style:none; border-block:1px solid var(--line) }
+.journey li { padding:20px 16px 20px 0; position:relative }
+.journey li+li { padding-left:16px; border-left:1px solid var(--line) }
+.journey strong { display:block; font-family:"Helvetica Neue",Arial,sans-serif; font-size:15px; letter-spacing:-.025em }
+.journey span { display:block; font-size:14px; color:var(--muted); margin-top:6px }
+.metric { font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:650 }
+footer { border-top:1px solid var(--line); padding-block:30px 50px; color:var(--muted); font-size:14px }
+@media (min-width:1700px) { .diagram svg { min-width:0 } }
+@media (max-width:1100px) { .sidebar { width:190px; padding-inline:18px } main { margin-left:190px } .page-head,section,footer { padding-inline:28px } .journey { grid-template-columns:1fr } .journey li,.journey li+li { padding:12px 0; border-left:0; border-bottom:1px solid var(--line) } .journey li:last-child { border-bottom:0 } }
+@media (max-width:760px) { .sidebar { position:static; width:auto; padding:20px 20px 12px; display:block; border-right:0; border-bottom:1px solid var(--line); overflow:visible } .subbrand,.sidebar-foot { display:none } nav { display:flex; flex-wrap:wrap; gap:3px 8px; margin-top:14px } nav a { font-size:14px; padding:8px; min-height:44px } main { margin:0 } .page-head,section,footer { padding:30px 20px } .split { grid-template-columns:1fr; gap:18px } h2 { font-size:26px } .intro,.lede { font-size:17px } .figure { padding:12px; margin-inline:0 } .diagram svg { min-width:960px } details { padding-inline:12px } }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important } }
+@media print { :root { --paper:#fff; --canvas:#fff; --ink:#000; --muted:#333; --line:#bbb } body { font-size:10pt } .sidebar,.skip,.anchor { display:none } main { margin:0 } .page-head,section,footer { max-width:none; padding:16pt 0 } h1 { font-size:28pt } h2 { font-size:21pt } h3 { font-size:14pt } .diagram { overflow:visible } .diagram svg { min-width:0!important; width:100% } .figure,details,table { break-inside:avoid } .table-scroll { overflow:visible } table { min-width:0; font-size:9pt } th,td { padding:7pt } .split { gap:20pt } a { color:inherit } .badge { white-space:normal } details>summary { font-size:11pt } }
+</style>
 </head>
 <body>
-  <a class="skip" href="#content">본문으로 이동</a>
-  <svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden">
-    <defs>
-      <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#7d9286" stroke-width="1.5"/></marker>
-      <marker id="bluehead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#6e92b2" stroke-width="1.5"/></marker>
-      <marker id="redhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#934d45" stroke-width="1.5"/></marker>
-    </defs>
-  </svg>
-  <aside class="sidebar" aria-label="문서 탐색">
-    <a class="brand" href="#overview"><span class="brand-dot" aria-hidden="true"></span>Ontoward</a>
-    <p class="sidebar-sub">프로젝트 흐름 지도</p>
-    <nav aria-label="목차">
-      <a href="#overview"><span>01</span>전체 지도</a>
-      <a href="#ontology"><span>02</span>v5.0 온톨로지</a>
-      <a href="#consultation"><span>03</span>LangGraph·진료</a>
-      <a href="#reasoning"><span>04</span>공유 추론·진단</a>
-      <a href="#questions"><span>05</span>다음 질문의 선택</a>
-      <a href="#preparation"><span>06</span>추출·준비·수용</a>
-      <a href="#boundaries"><span>07</span>코드와 검증 경계</a>
-    </nav>
-    <div class="sidebar-foot">
-      <p>문서와 구현을 읽기 위한<br>개인용 오프라인 안내서</p>
-      <p>HTML 한 파일 · 자동 갱신 없음</p>
-      <a href="../submission/README.md">워크플로우 백서 원문</a>
-    </div>
-  </aside>
-  <main id="content">
-    <aside class="note ochre"><p><strong>D40 시점의 보존된 지도입니다.</strong> 아래 점수·utility와 이전 객체 설명은 역사적 구현을 보여줍니다. 현재 D46의 세 소유자·LLM 순위·평가 고정·Python SOAP는 <a href="../submission/README.md">현행 워크플로우 백서</a>를 따릅니다. 소스 링크는 대응하는 현재 소유자로 연결합니다.</p></aside>
-    <header>
-      <div>
-        <h1>흐름으로 읽는 Ontoward</h1>
-        <p class="intro">원천 지식이 질문이 되고, 환자의 답이 진단 근거가 되는 과정.<br>14개 클래스의 연결, LangGraph 실행, 추출 알고리즘을 그림으로 읽습니다.</p>
-      </div>
-      <div class="edition"><strong>2026. 10. 18.</strong>D08 · D20–D23 · D33–D43<br>구현·manifest 정적 스냅샷</div>
-    </header>
-
-    <section id="overview" aria-labelledby="overview-title">
-      <div class="section-head"><span class="section-no">01</span><h2 id="overview-title">먼저, 전체 지도</h2></div>
-      <p class="lede">진료 전에는 일반 지식과 한국어 행동 문구를 준비합니다. 진료 중에는 수용된 그래프를 읽으며 한 환자의 사실만 갱신하고, 마지막에 SOAP와 주진단을 제출합니다.</p>
-      <div class="legend" aria-label="도식 범례"><span><i class="swatch blue" aria-hidden="true"></i>사전 준비</span><span><i class="swatch" aria-hidden="true"></i>현재 진료 경로</span><span><i class="swatch ochre" aria-hidden="true"></i>조건·기술적 제외</span></div>
-      <figure class="figure">
-        <div class="diagram" tabindex="0" role="region" aria-label="프로젝트 전체 흐름. 작은 화면에서는 좌우로 스크롤할 수 있습니다.">
-          <svg viewBox="0 0 1040 445" role="img" aria-labelledby="map-title map-desc">
-            <title id="map-title">준비, 진료, 제출의 세 구간</title>
-            <desc id="map-desc">SNOMED CT와 BODHI-S를 Dev에서 투영하고 data에서 그래프와 한국어 문구를 수용한다. submission의 manifest를 검증한 뒤 초기 입력, 문진과 진찰, 입력 해석, Pattern 추론을 반복하고 SOAP와 주진단을 제출한다. Test는 원본 진료 흐름을 관측한다. D30 문서 연결은 D37 Education의 원문 탐색에 사용하고 진단 고정 후 영어 P와 한국어 안내를 생성한다.</desc>
-            <text class="lane-title" x="22" y="27">진료 전 · Dev / data</text>
-            <rect class="node-blue" x="22" y="47" width="210" height="77" rx="6"/>
-            <text class="node-title" x="39" y="77">SNOMED CT · BODHI-S</text><text class="caption" x="39" y="102">개념·동의어·관계·원천 가중치</text>
-            <path class="edge-blue" d="M232 85H272"/>
-            <rect class="node-blue" x="276" y="47" width="210" height="77" rx="6"/>
-            <text class="node-title" x="293" y="77">추출 · v5.0 투영</text><text class="caption" x="293" y="102">SQLite 원천 보존 / 후보 RDF</text>
-            <path class="edge-blue" d="M486 85H526"/>
-            <rect class="node-blue" x="530" y="47" width="210" height="77" rx="6"/>
-            <text class="node-title" x="547" y="77">그래프 · 문구 수용</text><text class="caption" x="547" y="102">D20 그래프 + D22 문구 / D23</text>
-            <path class="edge-blue" d="M740 85H780"/>
-            <rect class="node-green" x="784" y="47" width="234" height="77" rx="6"/>
-            <text class="node-title" x="801" y="77">submission/knowledge</text><text class="caption" x="801" y="102">RDF·문구·정책·지침 인덱스</text>
-            <path class="edge" d="M901 124V165H127V208"/>
-            <rect x="441" y="149" width="382" height="30" rx="5" fill="#f4f6f3"/>
-            <text class="caption" x="457" y="169">prepare()로 경로·해시·문구 확인 → ready → consult()</text>
-            <text class="lane-title" x="22" y="197">진료 중 · submission / 증례별 상태</text>
-            <rect class="node" x="22" y="218" width="210" height="82" rx="6"/>
-            <text class="node-title" x="39" y="249">초기 정보 · 문진 · 진찰</text><text class="caption" x="39" y="275">준비된 SAY / EXAM 전달</text>
-            <path class="edge" d="M232 259H272"/>
-            <rect class="node" x="276" y="218" width="210" height="82" rx="6"/>
-            <text class="node-title" x="293" y="249">해석 · 사실 검증</text><text class="caption" x="293" y="275">문맥 분석 → DB dictionary 검증</text>
-            <path class="edge" d="M486 259H526"/>
-            <rect class="node-green" x="530" y="218" width="210" height="82" rx="6"/>
-            <text class="node-title" x="547" y="249">Pattern 추론 · 재계획</text><text class="caption" x="547" y="275">질환 적합도 / 다음 질문 선택</text>
-            <path class="edge" d="M635 300V330H127V302"/>
-            <rect x="270" y="315" width="232" height="28" rx="5" fill="#f4f6f3"/>
-            <text class="caption" x="288" y="334">새 사실과 예산에 따라 수집 반복</text>
-            <path class="edge" d="M740 259H780"/>
-            <text class="caption" x="749" y="244">교육·최종화</text>
-            <rect class="node-green" x="784" y="218" width="234" height="82" rx="6"/>
-            <text class="node-title" x="801" y="249">진단 고정·교육·SOAP 제출</text><text class="caption" x="801" y="275">DIAGNOSE completed 확인</text>
-            <path class="edge-blue dashed" d="M381 300V365"/>
-            <rect class="node-blue" x="22" y="370" width="464" height="54" rx="6"/>
-            <text x="39" y="394" font-weight="700">Test · 실행 관측·지식 열람</text><text class="caption" x="39" y="413">D31 진료 리포트 / D39 읽기 전용 RDF·준비 DB 탐색</text>
-            <rect class="node-ochre" x="530" y="370" width="488" height="54" rx="6"/>
-            <text x="547" y="394" font-weight="700">D30 · 가이드라인 문서 매핑</text><text class="caption" x="547" y="413">문서 연결 인덱스 / D37 진단 후 원문 기반 계획</text>
-          </svg>
-        </div>
-        <figcaption>핵심 경로를 묶어 표현한 개념도입니다. Test는 실행을 관측하고, 환자 사실은 증례 상태에 남습니다. 작은 화면의 도식은 좌우로 스크롤할 수 있습니다.</figcaption>
-      </figure>
-      <div class="split">
-        <div><h3>컴포넌트를 읽는 기준</h3><ul class="list"><li><strong>Python이 선택하고 계산합니다.</strong><p>질문 순서, 그래프 이동, 점수, 진단, SOAP 직렬화는 코드가 결정합니다. 영어 P 내용은 D37에서 모델이 생성하고 검증합니다.</p></li><li><strong>모델은 환자의 말을 사실 후보로 해석합니다.</strong><p>지정 Luna Gateway의 결과는 Python 검증을 거쳐 기록에 들어갑니다. Doctor는 준비 임상 문구와 검증된 공감·교육 생성 문구를 전달합니다.</p></li></ul></div>
-        <div><h3>현재 채택된 실행 설정</h3><ul class="list"><li><strong>지식·한국어 문구: admitted</strong><p>manifest가 실행 자산을 고정합니다. 원천 의미·단위·획득 경로가 부족한 항목은 기술적으로 제외됩니다.</p></li><li><strong>Education: 기본 활성화</strong><p>진단을 고정하고 영어 P를 생성한 뒤 한국어로 안내합니다. 앞선 수집에서 5턴을 보호합니다.</p></li></ul></div>
-      </div>
-      <p class="source">근거: <a href="../README.md">프로젝트 안내</a><a href="../submission/README.md#workflow-graph">워크플로우 백서 §1</a><a href="../submission/knowledge/manifest.json">실행 manifest</a></p>
-    </section>
-
-    <section id="ontology" aria-labelledby="ontology-title">
-      <div class="section-head"><span class="section-no">02</span><h2 id="ontology-title">v5.0 온톨로지: 14개 클래스와 연결</h2></div>
-      <p class="lede">같은 스키마를 세 관점으로 나누어 읽습니다. 실선은 RDF 관계, 점선은 JSON 내부 참조입니다. 클래스 정의와 현재 실행 인스턴스 수를 구분합니다.</p><h3>① 질환별 원천 평가와 공유 조건</h3><figure class="figure" id="ontology-core">
-        <div class="diagram" style="--diagram-width:1200px" tabindex="0" role="region" aria-label="Disease → Association → 공유 Pattern → Feature。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
-          <svg viewBox="0 0 1200 515" role="img" aria-labelledby="ontology-core-title ontology-core-desc">
-            <title id="ontology-core-title">Disease → Association → 공유 Pattern → Feature</title><desc id="ontology-core-desc">Disease가 소유하는 Association은 하나의 공유 Pattern을 가리킨다. Pattern의 Target은 Symptom 또는 ExamFinding 중 하나이며, 각 Feature는 그 Target을 상속한다. 정교화는 더 일반적인 Pattern을 가리킨다.</desc>
-            <g data-schema-source="Disease" data-schema-predicate="hasAssociation" data-schema-target="DiseasePatternAssociation"><path class="edge" d="M175 230H310"/><text class="edge-label" text-anchor="middle" x="242" y="210">hasAssociation</text></g><g data-schema-source="DiseasePatternAssociation" data-schema-predicate="pattern" data-schema-target="ClinicalPattern"><path class="edge" d="M560 230H680"/><text class="edge-label" text-anchor="middle" x="620" y="210">pattern</text></g><g data-schema-source="ClinicalPattern" data-schema-predicate="targets" data-schema-target="Symptom"><path class="edge" d="M880 210H940V95H1010"/><text class="edge-label" text-anchor="middle" x="970" y="75">targets</text></g><g data-schema-source="ClinicalPattern" data-schema-predicate="targets" data-schema-target="ExamFinding"><path class="edge" d="M880 250H940V375H1010"/><text class="edge-label" text-anchor="middle" x="970" y="355">targets</text></g><g data-schema-source="ClinicalPattern" data-schema-predicate="hasFeature" data-schema-target="ClinicalFeature"><path class="edge" d="M780 290V380"/><text class="edge-label" text-anchor="middle" x="835" y="340">hasFeature</text></g><g data-schema-source="ClinicalPattern" data-schema-predicate="refinesPattern" data-schema-target="ClinicalPattern"><path class="edge" d="M715 180V65H855V180"/><text class="edge-label" text-anchor="middle" x="785" y="48">refinesPattern</text></g><g data-schema-class="Disease"><rect class="node" x="20" y="180" width="155" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="211">Disease</text><text class="caption" x="35" y="237">질환별 연결의 소유자</text><text class="caption" x="35" y="258">843개</text></g><g data-schema-class="DiseasePatternAssociation"><rect class="node-green" x="310" y="180" width="250" height="110" rx="6"/><text class="node-title" style="font-size:14px" x="325" y="211">DiseasePatternAssociation</text><text class="caption" x="325" y="237">질환 × Pattern × 적용 조건</text><text class="caption" x="325" y="258">원천 평가·출처 / 9,955개</text></g><g data-schema-class="ClinicalPattern"><rect class="node" x="680" y="180" width="200" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="695" y="211">ClinicalPattern</text><text class="caption" x="695" y="237">질환·출처와 독립적인 조건</text><text class="caption" x="695" y="258">공유 Pattern 1,925개</text></g><g data-schema-class="Symptom"><rect class="node-blue" x="1010" y="50" width="170" height="90" rx="6"/><text class="node-title" style="font-size:16px" x="1025" y="81">Symptom</text><text class="caption" x="1025" y="107">환자 보고 / 533개</text></g><g data-schema-class="ExamFinding"><rect class="node-blue" x="1010" y="330" width="170" height="90" rx="6"/><text class="node-title" style="font-size:16px" x="1025" y="361">ExamFinding</text><text class="caption" x="1025" y="387">신체진찰 소견 / 2개</text></g><g data-schema-class="ClinicalFeature"><rect class="node-blue" x="680" y="380" width="200" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="695" y="411">ClinicalFeature</text><text class="caption" x="695" y="437">Pattern에 귀속된 조건</text><text class="caption" x="695" y="458">Target 상속 / 3,530개</text></g><text class="caption" x="20" y="440">targets는 두 클래스 중 정확히 하나만 선택합니다.</text><text class="caption" x="20" y="465">refinesPattern은 구체적인 Pattern → 일반 Pattern 방향입니다.</text>
-          </svg>
-        </div><figcaption>Pattern은 여러 질환이 공유하고, 점수는 질환별 Association에서 결정합니다. Feature에 임의의 독립 가중치를 더하지 않습니다.</figcaption>
-      </figure><h3>② 속성의 허용 값과 실제 비교 조건</h3><figure class="figure" id="ontology-values">
-        <div class="diagram" style="--diagram-width:1200px" tabindex="0" role="region" aria-label="Target의 속성·타입 기대 값·근거 있는 개념 비교。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
-          <svg viewBox="0 0 1200 550" role="img" aria-labelledby="ontology-values-title ontology-values-desc">
-            <title id="ontology-values-title">Target의 속성·타입 기대 값·근거 있는 개념 비교</title><desc id="ontology-values-desc">Symptom과 ExamFinding은 FindingAttribute와 연결되고 속성은 허용 AttributeValue를 가진다. ClinicalFeature는 onAttribute와 ExpectedValue를 쌍으로 갖거나 expectedStatus만 사용한다. ValueMatch는 observedConcept과 expectedConcept을 연결하는 비교 경로다.</desc>
-            <g data-schema-source="Symptom" data-schema-predicate="hasAttribute" data-schema-target="FindingAttribute"><path class="edge" d="M200 100H450"/><text class="edge-label" text-anchor="middle" x="325" y="80">hasAttribute</text></g><g data-schema-source="ExamFinding" data-schema-predicate="hasAttribute" data-schema-target="FindingAttribute"><path class="edge" d="M200 300H310V130H450"/><text class="edge-label" text-anchor="middle" x="310" y="245">hasAttribute</text></g><g data-schema-source="FindingAttribute" data-schema-predicate="canHaveValue" data-schema-target="AttributeValue"><path class="edge" d="M670 105H920"/><text class="edge-label" text-anchor="middle" x="795" y="85">canHaveValue</text></g><g data-schema-source="ClinicalFeature" data-schema-predicate="onAttribute" data-schema-target="FindingAttribute"><path class="edge" d="M240 450H350V200H560V160"/><text class="edge-label" text-anchor="middle" x="420" y="190">onAttribute</text></g><g data-schema-source="ClinicalFeature" data-schema-predicate="expected" data-schema-target="ExpectedValue"><path class="edge" d="M240 485H450"/><text class="edge-label" text-anchor="middle" x="345" y="467">expected</text></g><g><path class="edge-blue dashed" d="M560 350V235H800V135H920"/><text class="edge-label" text-anchor="middle" x="695" y="220">JSON 내부 concept/concepts</text></g><g data-schema-source="ValueMatch" data-schema-predicate="observedConcept" data-schema-target="AttributeValue"><path class="edge" d="M1000 350V160"/><text class="edge-label" text-anchor="middle" x="1000" y="235">observedConcept</text></g><g data-schema-source="ValueMatch" data-schema-predicate="expectedConcept" data-schema-target="AttributeValue"><path class="edge" d="M1115 350V160"/><text class="edge-label" text-anchor="middle" x="1115" y="285">expectedConcept</text></g><g data-schema-class="Symptom"><rect class="node" x="20" y="50" width="180" height="100" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="81">Symptom</text><text class="caption" x="35" y="107">보고 가능한 증상</text></g><g data-schema-class="ExamFinding"><rect class="node" x="20" y="250" width="180" height="100" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="281">ExamFinding</text><text class="caption" x="35" y="307">실제로 획득하는 소견</text></g><g data-schema-class="FindingAttribute"><rect class="node-blue" x="450" y="50" width="220" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="465" y="81">FindingAttribute</text><text class="caption" x="465" y="107">Target별 비교 차원 / 36개</text><text class="caption" x="465" y="128">위치·양상·경과·지속시간 등</text></g><g data-schema-class="AttributeValue"><rect class="node-blue" x="920" y="50" width="260" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="935" y="81">AttributeValue</text><text class="caption" x="935" y="107">허용된 범주 개념 / 1,153개</text><text class="caption" x="935" y="128">관계에 없는 값은 추정하지 않음</text></g><g data-schema-class="ClinicalFeature"><rect class="node" x="20" y="420" width="220" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="451">ClinicalFeature</text><text class="caption" x="35" y="477">존재: expectedStatus</text><text class="caption" x="35" y="498">속성: onAttribute + expected</text></g><g data-schema-class="ExpectedValue"><rect class="node-green" x="450" y="350" width="300" height="150" rx="6"/><text class="node-title" style="font-size:16px" x="465" y="381">ExpectedValue</text><text class="caption" x="465" y="407">concept / concept_set</text><text class="caption" x="465" y="428">quantity / interval</text><text class="caption" x="465" y="449">valueJSON · 단위·경계 / 430개</text></g><g data-schema-class="ValueMatch"><rect class="node-ochre" x="920" y="350" width="260" height="150" rx="6"/><text class="node-title" style="font-size:16px" x="935" y="381">ValueMatch</text><text class="caption" x="935" y="407">관찰 값 → 기대 값 비교 경로</text><text class="caption" x="935" y="428">relationKind·sourceRef</text><text class="caption" x="935" y="449">현재 실행 인스턴스 0개</text></g>
-          </svg>
-        </div><figcaption>ExpectedValue의 숫자·구간은 범주 AttributeValue 없이도 표현할 수 있습니다. 개념 집합의 any_of/all_of, 수치 단위·연산자·경계를 보존합니다. 점선은 RDF predicate가 아닙니다.</figcaption>
-      </figure><h3>③ 문진 계통·필수 Context·진찰·검사 계획</h3><figure class="figure" id="ontology-acquisition">
-        <div class="diagram" style="--diagram-width:1200px" tabindex="0" role="region" aria-label="Context 보강과 필수 조건, 문진과 실제 획득을 구분。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
-          <svg viewBox="0 0 1200 615" role="img" aria-labelledby="ontology-acquisition-title ontology-acquisition-desc">
-            <title id="ontology-acquisition-title">Context 보강과 필수 조건, 문진과 실제 획득을 구분</title><desc id="ontology-acquisition-desc">Disease의 hasSupportingContext는 제한 보강이고 Association의 applicability는 필수 JSON 조건이다. Symptom은 BodySystem으로 ROS를 탐색하고, ExamFinding은 ExamMethod로 획득한다. Disease의 evaluatedBy는 Test 계획에만 사용한다.</desc>
-            <g data-schema-source="Disease" data-schema-predicate="hasSupportingContext" data-schema-target="ContextFactor"><path class="edge" d="M220 105H450"/><text class="edge-label" text-anchor="middle" x="335" y="85">hasSupportingContext</text></g><g data-schema-source="Disease" data-schema-predicate="evaluatedBy" data-schema-target="Test"><path class="edge" d="M220 135H310V210H1040V160"/><text class="edge-label" text-anchor="middle" x="785" y="198">evaluatedBy</text></g><g><path class="edge-blue dashed" d="M270 355H365V140H450"/><text class="edge-label" text-anchor="middle" x="350" y="280">applicability JSON 조건</text></g><g data-schema-source="Symptom" data-schema-predicate="inSystem" data-schema-target="BodySystem"><path class="edge" d="M690 350H920"/><text class="edge-label" text-anchor="middle" x="805" y="330">inSystem</text></g><g data-schema-source="ExamFinding" data-schema-predicate="detectedBy" data-schema-target="ExamMethod"><path class="edge" d="M690 520H920"/><text class="edge-label" text-anchor="middle" x="805" y="500">detectedBy</text></g><g data-schema-class="Disease"><rect class="node" x="20" y="50" width="200" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="81">Disease</text><text class="caption" x="35" y="107">이미 회수한 질환 후보</text><text class="caption" x="35" y="128">추론·계획의 서로 다른 연결</text></g><g data-schema-class="ContextFactor"><rect class="node-blue" x="450" y="50" width="240" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="465" y="81">ContextFactor</text><text class="caption" x="465" y="107">병력·노출·인구학 맥락</text><text class="caption" x="465" y="128">contextType / 310개</text></g><g data-schema-class="Test"><rect class="node-ochre" x="920" y="50" width="260" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="935" y="81">Test</text><text class="caption" x="935" y="107">SOAP P.tests 전용 개념</text><text class="caption" x="935" y="128">진단 TEST 행동 없음 / 0개</text></g><g data-schema-class="DiseasePatternAssociation"><rect class="node-green" x="20" y="300" width="250" height="110" rx="6"/><text class="node-title" style="font-size:14px" x="35" y="331">DiseasePatternAssociation</text><text class="caption" x="35" y="357">필수 조건: 충족해야 지지 활성화</text><text class="caption" x="35" y="378">Context 보강과 구분</text></g><g data-schema-class="Symptom"><rect class="node" x="450" y="300" width="240" height="100" rx="6"/><text class="node-title" style="font-size:16px" x="465" y="331">Symptom</text><text class="caption" x="465" y="357">대표 CC에서 ROS 계통 고정</text></g><g data-schema-class="BodySystem"><rect class="node-blue" x="920" y="300" width="260" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="935" y="331">BodySystem</text><text class="caption" x="935" y="357">문진 계통 / 12개</text><text class="caption" x="935" y="378">Disease 회수 필터 아님</text></g><g data-schema-class="ExamFinding"><rect class="node" x="450" y="470" width="240" height="100" rx="6"/><text class="node-title" style="font-size:16px" x="465" y="501">ExamFinding</text><text class="caption" x="465" y="527">detectedBy와 요청 문구 필요</text></g><g data-schema-class="ExamMethod"><rect class="node-blue" x="920" y="470" width="260" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="935" y="501">ExamMethod</text><text class="caption" x="935" y="527">준비된 진찰 방법 / 2개</text><text class="caption" x="935" y="548">examRequestText · NFC 1–30자</text></g>
-          </svg>
-        </div><figcaption>BodySystem은 질환 후보 회수의 필터가 아닙니다. Test 인스턴스 0개와 별개로 D37은 검증된 영어 P.tests 문장을 생성할 수 있으며, 예선 O.tests는 빈 문자열로 유지합니다.</figcaption>
-      </figure><h3>14개 클래스의 역할과 현재 인스턴스</h3><div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서는 좌우로 스크롤할 수 있습니다."><table ><caption>2026-10-18 · manifest 고정 schema + vocabulary + clinical bundle의 합집합. 원천 전체 카탈로그와 구분합니다.</caption><thead><tr><th scope="col">클래스</th><th scope="col">역할</th><th scope="col">현재 RDF 인스턴스</th></tr></thead><tbody><tr><td><code>Disease</code></td><td>질환 후보</td><td><span data-class-count="Disease" data-count="843">843</span></td></tr><tr><td><code>Symptom</code></td><td>환자가 보고하는 증상 Target</td><td><span data-class-count="Symptom" data-count="533">533</span></td></tr><tr><td><code>ExamFinding</code></td><td>실제 신체진찰 소견 Target</td><td><span data-class-count="ExamFinding" data-count="2">2</span></td></tr><tr><td><code>FindingAttribute</code></td><td>Target별 비교 차원</td><td><span data-class-count="FindingAttribute" data-count="36">36</span></td></tr><tr><td><code>AttributeValue</code></td><td>허용된 범주 값</td><td><span data-class-count="AttributeValue" data-count="1153">1,153</span></td></tr><tr><td><code>ClinicalPattern</code></td><td>단일 Target의 공유 조건 묶음</td><td><span data-class-count="ClinicalPattern" data-count="1925">1,925</span></td></tr><tr><td><code>ClinicalFeature</code></td><td>Pattern에 귀속된 존재·속성 조건</td><td><span data-class-count="ClinicalFeature" data-count="3530">3,530</span></td></tr><tr><td><code>ExpectedValue</code></td><td>엄격한 타입 기대 값</td><td><span data-class-count="ExpectedValue" data-count="430">430</span></td></tr><tr><td><code>DiseasePatternAssociation</code></td><td>질환별 적용 조건·원천 평가·출처</td><td><span data-class-count="DiseasePatternAssociation" data-count="9955">9,955</span></td></tr><tr><td><code>ValueMatch</code></td><td>근거 있는 방향성 개념 비교</td><td><span data-class-count="ValueMatch" data-count="0">0</span></td></tr><tr><td><code>ContextFactor</code></td><td>병력·노출·인구학 맥락</td><td><span data-class-count="ContextFactor" data-count="310">310</span></td></tr><tr><td><code>BodySystem</code></td><td>비배타적 ROS 문진 계통</td><td><span data-class-count="BodySystem" data-count="12">12</span></td></tr><tr><td><code>ExamMethod</code></td><td>준비된 한 가지 진찰 방법</td><td><span data-class-count="ExamMethod" data-count="2">2</span></td></tr><tr><td><code>Test</code></td><td>검사 계획 개념</td><td><span data-class-count="Test" data-count="0">0</span></td></tr></tbody></table></div><div class="note"><p><strong>그래프의 노드는 일반 지식입니다.</strong> Target은 Symptom·ExamFinding의 역할 이름이며 별도 RDF 클래스가 아닙니다. 환자 관찰·PatternMatch·ScoreContribution·FeatureContribution은 Python 증례/파생 레코드입니다. 현재 ValueMatch·Test 인스턴스 0개를 임의 관계로 채우지 않습니다.</p></div><h3>관계 화살표 외의 속성도 의미를 보존합니다</h3><div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서는 좌우로 스크롤할 수 있습니다."><table ><thead><tr><th scope="col">소유자</th><th scope="col">스키마 속성</th><th scope="col">보존하는 의미</th></tr></thead><tbody><tr><td>OntologySchema</td><td><code data-schema-property="schemaVersion">schemaVersion</code></td><td>구조 버전 5.0. 클래스가 아닌 스키마 식별 노드</td></tr><tr><td>ClinicalFeature</td><td><code data-schema-property="expectedStatus">expectedStatus</code></td><td>present/absent 존재 조건</td></tr><tr><td>ExpectedValue</td><td><code data-schema-property="valueJSON">valueJSON</code></td><td>타입·범주·연산자·단위·경계. concept/concepts는 JSON 내부 참조</td></tr><tr><td>DiseasePatternAssociation</td><td><code data-schema-property="predictiveness">predictiveness</code> · <code data-schema-property="typicality">typicality</code> · <code data-schema-property="strongPredictor">strongPredictor</code></td><td>서로 다른 방향의 원천 평가·표지. strongPredictor 가산 없음</td></tr><tr><td>DiseasePatternAssociation</td><td><code data-schema-property="relationBasis">relationBasis</code> · <code data-schema-property="derivationScope">derivationScope</code> · <code data-schema-property="applicability">applicability</code></td><td>원천 관계·파생 범위·주체/시점/상태를 가진 JSON 필수 조건</td></tr><tr><td>ValueMatch</td><td><code data-schema-property="relationKind">relationKind</code></td><td>is_a / regional_part / approved_region을 구분</td></tr><tr><td>ContextFactor</td><td><code data-schema-property="contextType">contextType</code></td><td>정해진 열 가지 병력·노출·인구학 분류</td></tr><tr><td>Disease</td><td><code data-schema-property="urgencyLabel">urgencyLabel</code></td><td>설명용 메타데이터. 라우팅·정렬 규칙 아님</td></tr><tr><td>ExamMethod</td><td><code data-schema-property="examRequestText">examRequestText</code></td><td>NFC 1–30 codepoint 단일 진찰 요청</td></tr><tr><td>관련 지식 노드</td><td><code data-schema-property="sourceRef">sourceRef</code></td><td>간결한 원천·승인 비교 경로 참조. 환자 근거와 구분</td></tr></tbody></table></div><p class="source">구조 근거: <a href="../data/ontology/schema.ttl">v5.0 schema.ttl</a><a href="../submission/knowledge/manifest.json">실행 manifest</a><a href="../submission/knowledge/conditions.py">타입 비교</a><a href="../submission/README.md#ontology-schema">백서 §11</a></p></section>
-
-    <section id="consultation" aria-labelledby="consultation-title">
-      <div class="section-head"><span class="section-no">03</span><h2 id="consultation-title">한 환자의 진료는 어떻게 흐를까</h2></div>
-      <p class="lede">공식 NOVA 세션 하나 안에서 <code>Consultation</code>이 다섯 내부 단계를 조정합니다. 각 단계의 대화 수는 고정되어 있지 않으며, 같은 행동 루프와 공통 예산을 사용합니다.</p>
-      <figure class="figure" id="langgraph">
+<a class="skip" href="#content">본문으로 이동</a>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden">
+<defs>
+<marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M1 1L9 5L1 9" fill="none" stroke="#006b68" stroke-width="1.5"/>
+</marker>
+<marker id="bluehead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M1 1L9 5L1 9" fill="none" stroke="#205f9b" stroke-width="1.5"/>
+</marker>
+<marker id="redhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M1 1L9 5L1 9" fill="none" stroke="#9b3f42" stroke-width="1.5"/>
+</marker>
+</defs>
+</svg>
+<aside class="sidebar" aria-label="프로젝트 지도 목차">
+<a class="brand" href="#content">
+<svg class="mark" viewBox="0 0 26 26" aria-hidden="true">
+<path d="M5 6H13V13H21M13 13V21" fill="none" stroke="#006b68" stroke-width="2"/>
+<circle cx="5" cy="6" r="3" fill="#205f9b"/>
+<circle cx="21" cy="13" r="3" fill="#006b68"/>
+<circle cx="13" cy="21" r="3" fill="#006b68"/>
+</svg>Ontoward</a>
+<p class="subbrand">현재 상태와 진료 흐름</p>
+<nav aria-label="페이지 목차">
+<a href="#status">지금 프로젝트는 어디에 있나</a>
+<a href="#owners">답을 듣고, 판단하고, 전달하기</a>
+<a href="#lifecycle">환자 정보는 어디에 남는가</a>
+<a href="#consultation">한 증례의 실행 경로</a>
+<a href="#decisions">그래프 근거에서 감별과 질문으로</a>
+<a href="#ontology">v5.0 지식은 어떻게 연결되는가</a>
+<a href="#preparation">원천에서 실행 자산으로</a>
+<a href="#submission">하나의 고정 평가로 교육과 SOAP까지</a>
+<a href="#evidence">무엇이 확인되었고, 무엇이 남았나</a>
+</nav>
+<div class="sidebar-foot">
+<p>D46 구현 · D42 임상 자산<br>2026-10-19 정적 스냅샷</p>
+<p>파일로 바로 열어 읽습니다.<br>서버·스크립트·외부 자산 없음</p>
+<a href="../submission/README.md">진료 워크플로우 백서</a>
+</div>
+</aside>
+<main id="content" tabindex="-1">
+<header class="page-head">
+<div class="edition">
+<time datetime="2026-10-19">2026. 10. 19.</time>
+<span>현재 소스·결정·증거를 대조한 지도</span>
+</div>
+<h1>환자의 말이<br>하나의 고정 평가가 되기까지</h1>
+<p class="lede"><strong>D46 역사적 지도.</strong> 현재 D47은 세션별 전처리·응답 수용, 공통 DoctorBrain 실행기, 통합 CaseFact를 사용합니다. 아래 D46 도식은 당시 책임 구조의 기록입니다. <a href="../submission/README.md">현재 D47 백서</a>와 <a href="../data/provenance/algorithm-d47-2026-10-19.json">D47 증빙</a>을 함께 확인하세요.</p>
+<p class="intro">Ear가 듣고, Brain이 등록 그래프에서 판단하고, Mouth가 전달합니다. 어떤 결정이 적용되고, 정보가 어디에 남으며, 어디까지 검증됐는지 연결해서 읽습니다.</p>
+<div class="snapshot-status">
+<span class="badge">D46 오프라인 수용</span>
+<span class="badge static">d46.1 / schema 5.0</span>
+<span class="badge pending">최신 실모델 검증 보류</span>
+</div>
+</header>
+<section id="status" aria-labelledby="status-heading">
+<div class="section-heading">
+<h2 id="status-heading">지금 프로젝트는 어디에 있나</h2>
+<a class="anchor" href="#content" aria-label="페이지 처음으로">처음으로</a>
+</div>
+<p class="lede">D46 구현과 독립 ZIP의 오프라인 수용은 완료되어 있습니다. 이번 문서는 그 결과와 현재 파일을 대조한 2026-10-19 스냅샷입니다.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서 좌우로 스크롤할 수 있습니다.">
+<table>
+<thead>
+<tr>
+<th scope="col">상태 소유자</th>
+<th scope="col">관리 범위</th>
+<th scope="col">이번 확인</th>
+<th scope="col">남는 경계</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">
+<a href="../PROJECT_STATE.md">루트</a>
+</th>
+<td>문서·Test·Dev·패키징의 조정</td>
+<td>
+<span class="badge">정합성·atlas 갱신 완료</span>
+</td>
+<td>D46 구현 이력·다음 실모델 실행은 보류</td>
+</tr>
+<tr>
+<th scope="row">
+<a href="../submission/PROJECT_STATE.md">submission</a>
+</th>
+<td>진료·입력·판단·SOAP의 실행 상태</td>
+<td>
+<span class="badge">현재 구현·증거 대조 완료</span>
+</td>
+<td>D46 오프라인 수용 유지·실모델 의미 검증 보류</td>
+</tr>
+<tr>
+<th scope="row">
+<a href="../data/PROJECT_STATE.md">data</a>
+</th>
+<td>임상 핀·archive·출처의 보관</td>
+<td>
+<span class="badge">핀·영수증 대조 완료</span>
+</td>
+<td>D42 임상 수용·D46 산출물 보존</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="note ochre">
+<p>
+<strong>공모전 전체 완료는 아직 입증하지 않았습니다.</strong> 실제 Luna로 수행한 최신 전체 증례, 독립 임상 정확성, 공식 서버 검증·점수·업로드는 이번 스냅샷의 증거가 아닙니다. 다음 실모델 실행은 범위·요청 수·비용을 별도로 정한 뒤 진행하는 보류 작업입니다.</p>
+</div>
+<h3>최신 결정은 이전 결정 위에 무엇을 바꿨나</h3>
+<figure id="authority" class="figure">
+      <div class="diagram" style="--diagram-width:1100px" tabindex="0" role="region" aria-label="D46과 유지되는 결정의 관계。도식은 좌우로 스크롤할 수 있으며 아래 설명으로도 읽을 수 있습니다.">
+      <svg viewBox="0 0 1100 465" role="img" aria-labelledby="authority-title authority-desc">
+      <title id="authority-title">D46과 유지되는 결정의 관계</title>
+<desc id="authority-desc">D46이 알고리즘을 교체하며 D40 수집, D42 임상 자산, D43 입력, D44 수명, D45 공식 턴을 유지한다.</desc>
+<g data-node="decision46">
+<rect class="node green" x="390" y="24" width="320" height="112" rx="10"/>
+<text class="node-title" x="408" y="55">D46 · 현재 알고리즘</text>
+<text class="caption" x="408" y="80">Ear / Brain / Mouth</text>
+<text class="caption" x="408" y="102">감별·질문·고정 Assessment</text>
+</g>
+<g data-node="collection40">
+<rect class="node " x="20" y="207" width="220" height="82" rx="10"/>
+<text class="node-title" x="38" y="238">D40 · 보호 수집</text>
+<text class="caption" x="38" y="263">필수 문진·다섯 세션</text>
+</g>
+<g data-node="clinical42">
+<rect class="node blue" x="300" y="207" width="220" height="82" rx="10"/>
+<text class="node-title" x="318" y="238">D42 · 임상 자산</text>
+<text class="caption" x="318" y="263">수용된 그래프·어휘·문구</text>
+</g>
+<g data-node="input43">
+<rect class="node " x="580" y="207" width="220" height="82" rx="10"/>
+<text class="node-title" x="598" y="238">D43 · 초기 입력</text>
+<text class="caption" x="598" y="263">turn 0·독립 행 복구</text>
+</g>
+<g data-node="lifecycle44">
+<rect class="node " x="160" y="354" width="300" height="82" rx="10"/>
+<text class="node-title" x="178" y="385">D44 · 정보 수명</text>
+<text class="caption" x="178" y="410">상주 3개 + 현재 turn</text>
+</g>
+<g data-node="budget45">
+<rect class="node " x="640" y="354" width="300" height="82" rx="10"/>
+<text class="node-title" x="658" y="385">D45 · 공식 턴</text>
+<text class="caption" x="658" y="410">SAY·EXAM의 서버 잔여량</text>
+</g>
+<path class="edge  " d="M130 207V164H440V136"/>
+<text class="edge-label" text-anchor="middle" x="260" y="156">유지</text>
+<path class="edge blue " d="M410 207V136"/>
+<text class="edge-label" text-anchor="middle" x="353" y="177">핀 보존</text>
+<path class="edge  " d="M690 207V136"/>
+<text class="edge-label" text-anchor="middle" x="739" y="177">유지</text>
+<path class="edge  " d="M310 354V323H544V136"/>
+<text class="edge-label" text-anchor="middle" x="436" y="316">상태 구조 유지</text>
+<path class="edge  " d="M790 354V323H1080V156H650V136"/>
+<text class="edge-label" text-anchor="middle" x="1010" y="310">예산 유지</text>
+</svg>
+</div>
+      <figcaption>화살표는 유지되는 계약이 D46 구현의 조건이 된다는 뜻입니다. 결정의 채택과 구현·검증 결과는 각각 결정 문서와 운영 상태가 소유합니다.</figcaption>
+</figure>
+<div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서 좌우로 스크롤할 수 있습니다.">
+<table>
+<thead>
+<tr>
+<th scope="col">현재 기준</th>
+<th scope="col">현재 동작</th>
+<th scope="col">이전 설명과의 관계</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">D46</th>
+<td>코드가 등록 관계·근거를 계산하고 LLM이 감별 순위·선택 행동을 반환</td>
+<td>D38 fit·chief coverage·가상 답변 utility gate를 교체</td>
+</tr>
+<tr>
+<th scope="row">D44 + D46</th>
+<td>case·interview·session + 선택적인 turn, case.assessment 하나</td>
+<td>과거 점수·복수 진단 정본·런타임 audit는 현재 경로에서 제거</td>
+</tr>
+<tr>
+<th scope="row">D43 + D44</th>
+<td>항상 문맥 분석 → 정확한 Python 연결 → 미해결 진술만 DB 정규화</td>
+<td>D41의 항상 별도 매핑 호출은 D44가 대체</td>
+</tr>
+<tr>
+<th scope="row">D45</th>
+<td>client.session()의 공식 turns_remaining으로 행동 소비 정산</td>
+<td>모델 호출·내부 노드·DIAGNOSE를 행동 턴으로 세지 않음</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="source">근거 <a href="../DECISION_STATE.md#D46">D46 결정</a> <a href="../PRD.md">현재 PRD</a> <a href="../data/provenance/algorithm-d46-2026-10-19.json">D46 증빙</a>
+</p>
+</section>
+<section id="owners" aria-labelledby="owners-heading">
+<div class="section-heading">
+<h2 id="owners-heading">답을 듣고, 판단하고, 전달하기</h2>
+<a class="anchor" href="#content" aria-label="페이지 처음으로">처음으로</a>
+</div>
+<p class="lede">Consultation이 다섯 내부 세션과 자원 종료를 조정합니다. Ear·Brain·Mouth는 같은 지정 모델을 쓰되 서로 다른 입력과 책임을 가집니다.</p>
+<div class="legend">
+<span>
+<i class="swatch blue" aria-hidden="true">
+</i>입력·지식·관측</span>
+<span>
+<i class="swatch" aria-hidden="true">
+</i>판단·고정 결과</span>
+<span>
+<i class="swatch ochre" aria-hidden="true">
+</i>미확인·별도 경계</span>
+</div>
+<figure id="owner-flow" class="figure">
+      <div class="diagram" style="--diagram-width:1080px" tabindex="0" role="region" aria-label="DoctorEar DoctorBrain DoctorMouth와 고정 평가의 정보 흐름。도식은 좌우로 스크롤할 수 있으며 아래 설명으로도 읽을 수 있습니다.">
+      <svg viewBox="0 0 1080 530" role="img" aria-labelledby="owner-flow-title owner-flow-desc">
+      <title id="owner-flow-title">DoctorEar DoctorBrain DoctorMouth와 고정 평가의 정보 흐름</title>
+<desc id="owner-flow-desc">Ear가 사실을 수용하고 Brain이 등록 지식과 현재 근거에서 판단한다. Mouth가 환자 행동을 실행하고 응답은 Ear로 돌아간다. 수집 종료 후 같은 고정 평가를 Education과 Writer가 사용한다. Test는 관측만 수행한다.</desc>
+<g data-node="knowledge">
+<rect class="node blue" x="370" y="20" width="340" height="82" rx="10"/>
+<text class="node-title" x="388" y="51">수용된 지식 · v5.0</text>
+<text class="caption" x="388" y="76">D42 임상 핀 / 등록 관계·문구</text>
+</g>
+<g data-node="ear">
+<rect class="node blue" x="20" y="170" width="300" height="115" rx="10"/>
+<text class="node-title" x="38" y="201">DoctorEar</text>
+<text class="caption" x="38" y="226">들어서 사실로 수용</text>
+<text class="caption" x="38" y="248">문맥 → 정확 연결 → 제한 정규화</text>
+</g>
+<g data-node="brain">
+<rect class="node green" x="390" y="170" width="300" height="115" rx="10"/>
+<text class="node-title" x="408" y="201">DoctorBrain</text>
+<text class="caption" x="408" y="226">현재 근거에서 판단</text>
+<text class="caption" x="408" y="248">감별 순위·다음 질문·영어 P</text>
+</g>
+<g data-node="mouth">
+<rect class="node " x="760" y="170" width="300" height="115" rx="10"/>
+<text class="node-title" x="778" y="201">DoctorMouth</text>
+<text class="caption" x="778" y="226">한국어로 전달·행동 실행</text>
+<text class="caption" x="778" y="248">NFC 1–30자 / SAY·EXAM</text>
+</g>
+<path class="edge blue " d="M540 102V170"/>
+<text class="edge-label" text-anchor="middle" x="610" y="140">그래프 근거</text>
+<path class="edge  " d="M320 227H390"/>
+<text class="edge-label" text-anchor="middle" x="354" y="210">facts</text>
+<path class="edge  " d="M690 227H760"/>
+<text class="edge-label" text-anchor="middle" x="725" y="210">행동</text>
+<path class="edge  " d="M910 285V335H170V285"/>
+<text class="edge-label" text-anchor="middle" x="540" y="326">수신한 답변 → 수집 중에만 해석·현재 사실 갱신</text>
+<g data-node="freeze">
+<rect class="node green" x="390" y="390" width="300" height="112" rx="10"/>
+<text class="node-title" x="408" y="421">고정 Assessment</text>
+<text class="caption" x="408" y="446">마지막 답 수용 뒤 같은 1위</text>
+<text class="caption" x="408" y="468">Education·SOAP·제출에 공유</text>
+</g>
+<g data-node="writer">
+<rect class="node " x="760" y="390" width="300" height="112" rx="10"/>
+<text class="node-title" x="778" y="421">SubmissionWriter</text>
+<text class="caption" x="778" y="446">Python SOAP 15필드</text>
+<text class="caption" x="778" y="468">DIAGNOSE → completed</text>
+</g>
+<path class="edge  " d="M540 285V390"/>
+<text class="edge-label" text-anchor="middle" x="610" y="372">수집 종료</text>
+<path class="edge  " d="M690 446H760"/>
+<text class="edge-label" text-anchor="middle" x="725" y="425">같은 진단</text>
+<g data-node="test">
+<rect class="node blue" x="20" y="390" width="300" height="112" rx="10"/>
+<text class="node-title" x="38" y="421">Test · 관측·재현</text>
+<text class="caption" x="38" y="446">실제 호출·임시 반환·상태 차이</text>
+<text class="caption" x="38" y="468">실행 결과를 다시 계산하지 않음</text>
+</g>
+<path class="edge blue dashed" d="M320 446H390"/>
+<text class="edge-label" text-anchor="middle" x="354" y="425">읽기만</text>
+</svg>
+</div>
+      <figcaption>실선은 진료 정보의 흐름, 점선은 Test의 읽기 전용 관측 관계입니다. 실제 교육 환자 답변은 대화에만 남으며 수집 루프의 facts 갱신으로 돌아가지 않습니다.</figcaption>
+</figure>
+<div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서 좌우로 스크롤할 수 있습니다.">
+<table>
+<caption>지정 모델: openai/gpt-6-luna. 코드의 계약 검증과 LLM의 의미 품질은 서로 다른 증거입니다.</caption>
+<thead>
+<tr>
+<th scope="col">실제 소유자</th>
+<th scope="col">입력 → 반환·실행</th>
+<th scope="col">저장하거나 해제하는 것</th>
+<th scope="col">모델 노력</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">
+<a href="../submission/workflow/doctor_ear.py">DoctorEar</a>
+</th>
+<td>초기 입력·수집 응답 → 수용 facts·typed notes</td>
+<td>실제 대화 1개 / Consultation.release에서 해제</td>
+<td>medium</td>
+</tr>
+<tr>
+<th scope="row">
+<a href="../submission/workflow/doctor_brain.py">DoctorBrain</a>
+</th>
+<td>현재 reasoning facts·그래프 → 순위·질문·영어 P</td>
+<td>case.assessment·plan / 후보 자료·교환은 지역값</td>
+<td>high</td>
+</tr>
+<tr>
+<th scope="row">
+<a href="../submission/workflow/doctor_mouth.py">DoctorMouth</a>
+</th>
+<td>진단·계획·공감 의도 → 한국어 SAY·EXAM</td>
+<td>실제 전달 결과·현재 행동 / 응답 수용 후 turn 해제</td>
+<td>medium</td>
+</tr>
+<tr>
+<th scope="row">
+<a href="../submission/workflow/submission_writer.py">SubmissionWriter</a>
+</th>
+<td>고정 평가·사실·notes·P → 15필드 SOAP·DIAGNOSE</td>
+<td>현재 제출 turn → completed 확인 후 해제</td>
+<td>호출 없음</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="source">근거 <a href="../submission/workflow/runtime.py">조립·prepare·consult</a> <a href="../submission/workflow/consultation.py">Consultation</a> <a href="observe.py">Test 관측</a>
+</p>
+</section>
+<section id="lifecycle" aria-labelledby="lifecycle-heading">
+<div class="section-heading">
+<h2 id="lifecycle-heading">환자 정보는 어디에 남는가</h2>
+<a class="anchor" href="#content" aria-label="페이지 처음으로">처음으로</a>
+</div>
+<p class="lede">일반 지식과 환자 사실은 분리됩니다. WorkflowState는 세 상주 소유자와 선택적인 현재 턴만 전달하며, 노드마다 깊은 복사와 Pydantic 검증을 적용합니다.</p>
+<figure id="state-owners" class="figure">
+      <div class="diagram" style="--diagram-width:1070px" tabindex="0" role="region" aria-label="세 상주 상태와 현재 턴의 소유권。도식은 좌우로 스크롤할 수 있으며 아래 설명으로도 읽을 수 있습니다.">
+      <svg viewBox="0 0 1070 385" role="img" aria-labelledby="state-owners-title state-owners-desc">
+      <title id="state-owners-title">세 상주 상태와 현재 턴의 소유권</title>
+<desc id="state-owners-desc">CaseState는 사실과 단일 평가, InterviewState는 현재 세션 질문과 작은 완료 결과, SessionContext는 외부 제약과 사용량을 보관한다. TurnContext의 입력, 행동 또는 제출은 처리 뒤 해제한다.</desc>
+<g data-node="case">
+<rect class="node green" x="20" y="45" width="495" height="112" rx="10"/>
+<text class="node-title" x="38" y="76">CaseState · 환자 사실과 현재 결과</text>
+<text class="caption" x="38" y="101">facts / notes / chief_fact_id / assessment</text>
+<text class="caption" x="38" y="123">plan / revision</text>
+</g>
+<g data-node="interview">
+<rect class="node " x="555" y="45" width="495" height="112" rx="10"/>
+<text class="node-title" x="573" y="76">InterviewState · 현재 세션</text>
+<text class="caption" x="573" y="101">queue / 작은 Answer / collection / empathy</text>
+<text class="caption" x="573" y="123">Education 전달 상태</text>
+</g>
+<g data-node="session">
+<rect class="node " x="20" y="240" width="495" height="112" rx="10"/>
+<text class="node-title" x="38" y="271">SessionContext · 외부 제약과 소비</text>
+<text class="caption" x="38" y="296">공식 잔여 턴 / 시간 / 모델·토큰 사용량</text>
+<text class="caption" x="38" y="318">termination / completed receipt</text>
+</g>
+<g data-node="turn">
+<rect class="node ochre" x="555" y="240" width="495" height="112" rx="10"/>
+<text class="node-title" x="573" y="271">TurnContext · 현재 작업만</text>
+<text class="caption" x="573" y="296">initial 응답 / action / submission payload</text>
+<text class="caption" x="573" y="318">수용 또는 제출 확인 뒤 해제</text>
+</g>
+<path class="edge  " d="M267 157V202H802V240"/>
+<text class="edge-label" text-anchor="middle" x="535" y="194">세 소유자와 선택적인 turn을 WorkflowState로 전달</text>
+</svg>
+</div>
+      <figcaption>후보 그래프 뷰·매칭·prompt 참조·복구 응답은 연산 중 지역값입니다. 재현 이력과 상세 관측은 Test가 보관합니다.</figcaption>
+</figure>
+<div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서 좌우로 스크롤할 수 있습니다.">
+<table>
+<thead>
+<tr>
+<th scope="col">정보</th>
+<th scope="col">정본·소비 경로</th>
+<th scope="col">보존 조건</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">임상 사실</th>
+<td>ClinicalFact → 현재 근거·질문·SOAP</td>
+<td>주체·가족 구성원·보고자·시점·관찰·episode·단위·polarity·취득·turn</td>
+</tr>
+<tr>
+<th scope="row">typed note</th>
+<td>NoteFact → SOAP·수집 판단</td>
+<td>age·sex·historian·DB 미표현 기록 / 질환 판단·Education의 reasoning 사실과 구분</td>
+</tr>
+<tr>
+<th scope="row">환자 원문</th>
+<td>DoctorEar.dialogue → 참조 해석</td>
+<td>임상 순위·SOAP에 원문 덤프를 보내지 않음 / Education 답변은 대화 전용</td>
+</tr>
+<tr>
+<th scope="row">고정 평가</th>
+<td>case.assessment → Education·SOAP·제출 복구</td>
+<td>revision·chief·근거·미확인·한계 / 같은 1위</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="note">
+<p>
+<strong>보고와 실제 취득을 구분합니다.</strong> SAY 보고는 S에 기록하고, 신뢰된 초기 객관 구간과 실제 EXAM에서 취득한 소견만 O에 둡니다. 환자의 새 말이 초기 객관 자료나 EXAM을 덮어쓰지 못합니다.</p>
+</div>
+<p class="source">근거 <a href="../submission/workflow/state/models.py">실제 상태 모델</a> <a href="../submission/workflow/state/evidence.py">현재 사실 payload</a> <a href="../submission/workflow/rules/input.py">수용·취득 경계</a>
+</p>
+</section>
+<section id="consultation" aria-labelledby="consultation-heading">
+<div class="section-heading">
+<h2 id="consultation-heading">한 증례의 실행 경로</h2>
+<a class="anchor" href="#content" aria-label="페이지 처음으로">처음으로</a>
+</div>
+<p class="lede">다섯 내부 세션은 하나의 공식 NOVA 세션 안에서 같은 행동 루프를 공유합니다. 목표는 조건부이며 확인한 내용을 반복해서 채우지 않습니다.</p>
+<ol class="journey">
+<li>
+<strong>Initiation</strong>
+<span>초기 해석·인사·chief·기본 경과</span>
+<span>목표 5 / 상한 7</span>
+</li>
+<li>
+<strong>ChiefComplaint</strong>
+<span>전체 적용 속성·Open Inquiry·ROS</span>
+<span>목표 7 / 상한 14</span>
+</li>
+<li>
+<strong>ContextFactor</strong>
+<span>기본 병력 5영역·관련 Context 최대 2개</span>
+<span>목표 7 / 상한 9</span>
+</li>
+<li>
+<strong>DifferentialDiagnosis</strong>
+<span>등록 질문·실제 진찰·평가 고정</span>
+<span>목표 3 / 상한 10</span>
+</li>
+<li>
+<strong>Education</strong>
+<span>고정 진단 안내·영어 P·한국어 전달</span>
+<span>목표 5 / 상한 10</span>
+</li>
+</ol>
+<p>실행은 <code>process_initial_input</code>에서 시작합니다. 첫 SAY 전에 opening·vital_signs를 수용하고, 각 수집 답변은 <code>process_input → refresh_after_input → check_budget</code>를 거칩니다. Education은 별도 그래프 노드가 아니라 내부 세션입니다.</p>
+<details>
+<summary>실제 LangGraph 전체 보기 · 18노드 / 30전이</summary>
+<figure class="figure" id="langgraph">
         <div class="diagram" style="--diagram-width:1360px" tabindex="0" role="region" aria-label="실제 LangGraph: 작업 노드 16개·START/END·전이 30개。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
           <svg viewBox="0 0 1360 1255" role="img" aria-labelledby="langgraph-title langgraph-desc">
-            <title id="langgraph-title">실제 LangGraph: 작업 노드 16개·START/END·전이 30개</title><desc id="langgraph-desc">turn 0 process_initial_input에서 주호소와 부수 정보를 정규화한 뒤 process_input으로 질문과 실제 응답의 순환을 수행하고, check_budget에서 세션 진입과 전환 또는 최종화를 선택한다. 제출 검증과 한 번의 복구 후 DIAGNOSE completed를 확인해야 finish로 간다. 명시적 실패는 abort를 거친다.</desc>
-            <g data-workflow-source="__start__" data-workflow-target="process_initial_input"><path class="edge" d="M600 60H890V150"/></g><g data-workflow-source="process_initial_input" data-workflow-target="refresh_after_input"><path class="edge" d="M890 235V260H475V285"/></g><g data-workflow-source="process_input" data-workflow-target="refresh_after_input"><path class="edge" d="M475 235V285"/></g><g data-workflow-source="refresh_after_input" data-workflow-target="check_budget"><path class="edge" d="M475 370V420"/></g><g data-workflow-source="check_budget" data-workflow-target="enter_session"><path class="edge" d="M350 450H240"/><text class="edge-label" text-anchor="middle" x="290" y="434">진입 필요</text></g><g data-workflow-source="enter_session" data-workflow-target="check_budget"><path class="edge" d="M240 495H350"/><text class="edge-label" text-anchor="middle" x="290" y="541">준비 후</text></g><g data-workflow-source="check_budget" data-workflow-target="advance_session"><path class="edge" d="M350 490H270V640H240"/><text class="edge-label" text-anchor="middle" x="270" y="590">질문 끝</text></g><g data-workflow-source="advance_session" data-workflow-target="check_budget"><path class="edge" d="M240 675H315V515H350"/><text class="edge-label" text-anchor="middle" x="273" y="718">전환 후</text></g><g data-workflow-source="check_budget" data-workflow-target="select_question"><path class="edge" d="M475 520V610"/><text class="edge-label" text-anchor="middle" x="545" y="577">질문·공감 있음</text></g><g data-workflow-source="select_question" data-workflow-target="validate_action"><path class="edge" d="M475 695V745"/></g><g data-workflow-source="validate_action" data-workflow-target="execute_action"><path class="edge" d="M475 830V880"/><text class="edge-label" text-anchor="middle" x="535" y="865">준비 완료</text></g><g data-workflow-source="execute_action" data-workflow-target="process_input"><path class="edge" d="M350 920H290V192H350"/><text class="edge-label" text-anchor="middle" x="240" y="305">응답 수신</text></g><g data-workflow-source="validate_action" data-workflow-target="check_budget"><path class="edge" d="M600 785H620V495H600"/><text class="edge-label" text-anchor="middle" x="654" y="575">선택 없음·거절</text></g><g data-workflow-source="execute_action" data-workflow-target="check_budget"><path class="edge" d="M600 940H640V510H600"/><text class="edge-label" text-anchor="middle" x="670" y="720">응답 없음</text></g><g data-workflow-source="check_budget" data-workflow-target="build_soap"><path class="edge" d="M600 465H760"/><text class="edge-label" text-anchor="middle" x="680" y="447">최종화</text></g><g data-workflow-source="build_soap" data-workflow-target="validate_submission"><path class="edge" d="M890 520V610"/><text class="edge-label" text-anchor="middle" x="944" y="577">구성 가능</text></g><g data-workflow-source="validate_submission" data-workflow-target="submit_diagnosis"><path class="edge" d="M890 695V745"/><text class="edge-label" text-anchor="middle" x="944" y="731">검증 통과</text></g><g data-workflow-source="validate_submission" data-workflow-target="repair_submission"><path class="edge" d="M1020 635H1090"/><text class="edge-label" text-anchor="middle" x="1055" y="621">오류</text></g><g data-workflow-source="repair_submission" data-workflow-target="validate_submission"><path class="edge" d="M1090 675H1020"/><text class="edge-label" text-anchor="middle" x="1055" y="718">재검증</text></g><g data-workflow-source="submit_diagnosis" data-workflow-target="repair_submission"><path class="edge" d="M1020 785H1210V695"/><text class="edge-label" text-anchor="middle" x="1195" y="820">수정 가능한 기록 오류</text></g><g data-workflow-source="submit_diagnosis" data-workflow-target="confirm_submission"><path class="edge" d="M890 830V880"/><text class="edge-label" text-anchor="middle" x="944" y="865">결과 확인</text></g><g data-workflow-source="confirm_submission" data-workflow-target="finish"><path class="edge" d="M890 965V1015"/><text class="edge-label" text-anchor="middle" x="945" y="997">completed</text></g><g data-workflow-source="confirm_submission" data-workflow-target="abort"><path class="edge-red dashed" d="M760 925H700V1125H135V1100"/><text class="edge-label" text-anchor="middle" x="535" y="1112">미확인 종료</text></g><g data-workflow-source="check_budget" data-workflow-target="abort"><path class="edge-red dashed" d="M350 510H260V985H75V1015"/></g><g data-workflow-source="validate_action" data-workflow-target="abort"><path class="edge-red dashed" d="M350 790H280V995H105V1015"/></g><g data-workflow-source="execute_action" data-workflow-target="abort"><path class="edge-red dashed" d="M350 950H310V1005H150V1015"/></g><g data-workflow-source="build_soap" data-workflow-target="abort"><path class="edge-red dashed" d="M760 500H680V980H180V1015"/></g><g data-workflow-source="validate_submission" data-workflow-target="abort"><path class="edge-red dashed" d="M760 655H660V990H205V1015"/></g><g data-workflow-source="abort" data-workflow-target="__end__"><path class="edge" d="M240 1060H280V1192H350"/></g><g data-workflow-source="finish" data-workflow-target="__end__"><path class="edge" d="M760 1060H730V1192H600"/></g><g data-workflow-node="__start__"><rect class="node" x="350" y="25" width="250" height="65" rx="6"/><text class="node-title" style="font-size:16px" x="365" y="56">START</text><text class="caption" x="365" y="82">초기화된 증례 상태</text></g><g data-workflow-node="process_input"><rect class="node" x="350" y="150" width="250" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="365" y="181">process_input</text><text class="caption" x="365" y="207">수집 SAY·EXAM 실제 응답 처리</text></g><g data-workflow-node="process_initial_input"><rect class="node" x="760" y="150" width="260" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="775" y="181">process_initial_input</text><text class="caption" x="775" y="207">turn 0 주호소·부수 정보 정규화</text></g><g data-workflow-node="refresh_after_input"><rect class="node" x="350" y="285" width="250" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="365" y="316">refresh_after_input</text><text class="caption" x="365" y="342">근거 갱신·추론·미전송 재계획</text></g><g data-workflow-node="check_budget"><rect class="node-green" x="350" y="420" width="250" height="100" rx="6"/><text class="node-title" style="font-size:16px" x="365" y="451">check_budget</text><text class="caption" x="365" y="477">종료 → 최종화 → 진입 → 선택</text></g><g data-workflow-node="enter_session"><rect class="node" x="30" y="420" width="210" height="100" rx="6"/><text class="node-title" style="font-size:16px" x="45" y="451">enter_session</text><text class="caption" x="45" y="477">현재 내부 세션 준비</text></g><g data-workflow-node="advance_session"><rect class="node" x="30" y="610" width="210" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="45" y="641">advance_session</text><text class="caption" x="45" y="667">다음 세션 또는 최종화</text></g><g data-workflow-node="select_question"><rect class="node" x="350" y="610" width="250" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="365" y="641">select_question</text><text class="caption" x="365" y="667">임상·공감·교육의 다음 행동</text></g><g data-workflow-node="validate_action"><rect class="node" x="350" y="745" width="250" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="365" y="776">validate_action</text><text class="caption" x="365" y="802">NFC 1–30자·준비 계약 검증</text></g><g data-workflow-node="execute_action"><rect class="node" x="350" y="880" width="250" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="365" y="911">execute_action</text><text class="caption" x="365" y="937">경량 자원 검사·SAY/EXAM</text></g><g data-workflow-node="build_soap"><rect class="node-green" x="760" y="420" width="260" height="100" rx="6"/><text class="node-title" style="font-size:16px" x="775" y="451">build_soap</text><text class="caption" x="775" y="477">고정 진단·영어 P·최신 S/O</text></g><g data-workflow-node="validate_submission"><rect class="node" x="760" y="610" width="260" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="775" y="641">validate_submission</text><text class="caption" x="775" y="667">15필드·크기·필수 조건 검증</text></g><g data-workflow-node="repair_submission"><rect class="node" x="1090" y="610" width="240" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="1105" y="641">repair_submission</text><text class="caption" x="1105" y="667">보존 사실에서 전체 1회 복구</text></g><g data-workflow-node="submit_diagnosis"><rect class="node" x="760" y="745" width="260" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="775" y="776">submit_diagnosis</text><text class="caption" x="775" y="802">세션 재확인·DIAGNOSE</text></g><g data-workflow-node="confirm_submission"><rect class="node" x="760" y="880" width="260" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="775" y="911">confirm_submission</text><text class="caption" x="775" y="937">completed 응답 확인</text></g><g data-workflow-node="finish"><rect class="node-green" x="760" y="1015" width="260" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="775" y="1046">finish</text><text class="caption" x="775" y="1072">termination=submitted</text></g><g data-workflow-node="abort"><rect class="node-ochre" x="30" y="1015" width="210" height="85" rx="6"/><text class="node-title" style="font-size:16px" x="45" y="1046">abort</text><text class="caption" x="45" y="1072">failed / unknown</text><text class="caption" x="45" y="1093">expired / closed</text></g><g data-workflow-node="__end__"><rect class="node" x="350" y="1160" width="250" height="65" rx="6"/><text class="node-title" style="font-size:16px" x="365" y="1191">END</text><text class="caption" x="365" y="1217">그래프 종료</text></g><text class="caption" x="30" y="390">세션 준비</text><text class="caption" x="760" y="390">최종 제출</text><text class="caption" x="30" y="1000">점선: 각 단계의 명시적 종료 사유</text>
+            <title id="langgraph-title">실제 LangGraph: 작업 노드 16개·START/END·전이 30개</title>
+<desc id="langgraph-desc">turn 0 process_initial_input에서 주호소와 부수 정보를 정규화한 뒤 process_input으로 질문과 실제 응답의 순환을 수행하고, check_budget에서 세션 진입과 전환 또는 최종화를 선택한다. 제출 검증과 한 번의 복구 후 DIAGNOSE completed를 확인해야 finish로 간다. 명시적 실패는 abort를 거친다.</desc>
+            <g data-workflow-source="__start__" data-workflow-target="process_initial_input">
+<path class="edge" d="M600 60H890V150"/>
+</g>
+<g data-workflow-source="process_initial_input" data-workflow-target="refresh_after_input">
+<path class="edge" d="M890 235V260H475V285"/>
+</g>
+<g data-workflow-source="process_input" data-workflow-target="refresh_after_input">
+<path class="edge" d="M475 235V285"/>
+</g>
+<g data-workflow-source="refresh_after_input" data-workflow-target="check_budget">
+<path class="edge" d="M475 370V420"/>
+</g>
+<g data-workflow-source="check_budget" data-workflow-target="enter_session">
+<path class="edge" d="M350 450H240"/>
+<text class="edge-label" text-anchor="middle" x="290" y="434">진입 필요</text>
+</g>
+<g data-workflow-source="enter_session" data-workflow-target="check_budget">
+<path class="edge" d="M240 495H350"/>
+<text class="edge-label" text-anchor="middle" x="290" y="541">준비 후</text>
+</g>
+<g data-workflow-source="check_budget" data-workflow-target="advance_session">
+<path class="edge" d="M350 490H270V640H240"/>
+<text class="edge-label" text-anchor="middle" x="270" y="590">질문 끝</text>
+</g>
+<g data-workflow-source="advance_session" data-workflow-target="check_budget">
+<path class="edge" d="M240 675H315V515H350"/>
+<text class="edge-label" text-anchor="middle" x="273" y="718">전환 후</text>
+</g>
+<g data-workflow-source="check_budget" data-workflow-target="select_question">
+<path class="edge" d="M475 520V610"/>
+<text class="edge-label" text-anchor="middle" x="545" y="577">질문·공감 있음</text>
+</g>
+<g data-workflow-source="select_question" data-workflow-target="validate_action">
+<path class="edge" d="M475 695V745"/>
+</g>
+<g data-workflow-source="validate_action" data-workflow-target="execute_action">
+<path class="edge" d="M475 830V880"/>
+<text class="edge-label" text-anchor="middle" x="535" y="865">준비 완료</text>
+</g>
+<g data-workflow-source="execute_action" data-workflow-target="process_input">
+<path class="edge" d="M350 920H290V192H350"/>
+<text class="edge-label" text-anchor="middle" x="240" y="305">응답 수신</text>
+</g>
+<g data-workflow-source="validate_action" data-workflow-target="check_budget">
+<path class="edge" d="M600 785H620V495H600"/>
+<text class="edge-label" text-anchor="middle" x="654" y="575">선택 없음·거절</text>
+</g>
+<g data-workflow-source="execute_action" data-workflow-target="check_budget">
+<path class="edge" d="M600 940H640V510H600"/>
+<text class="edge-label" text-anchor="middle" x="670" y="720">응답 없음</text>
+</g>
+<g data-workflow-source="check_budget" data-workflow-target="build_soap">
+<path class="edge" d="M600 465H760"/>
+<text class="edge-label" text-anchor="middle" x="680" y="447">최종화</text>
+</g>
+<g data-workflow-source="build_soap" data-workflow-target="validate_submission">
+<path class="edge" d="M890 520V610"/>
+<text class="edge-label" text-anchor="middle" x="944" y="577">구성 가능</text>
+</g>
+<g data-workflow-source="validate_submission" data-workflow-target="submit_diagnosis">
+<path class="edge" d="M890 695V745"/>
+<text class="edge-label" text-anchor="middle" x="944" y="731">검증 통과</text>
+</g>
+<g data-workflow-source="validate_submission" data-workflow-target="repair_submission">
+<path class="edge" d="M1020 635H1090"/>
+<text class="edge-label" text-anchor="middle" x="1055" y="621">오류</text>
+</g>
+<g data-workflow-source="repair_submission" data-workflow-target="validate_submission">
+<path class="edge" d="M1090 675H1020"/>
+<text class="edge-label" text-anchor="middle" x="1055" y="718">재검증</text>
+</g>
+<g data-workflow-source="submit_diagnosis" data-workflow-target="repair_submission">
+<path class="edge" d="M1020 785H1210V695"/>
+<text class="edge-label" text-anchor="middle" x="1195" y="820">수정 가능한 기록 오류</text>
+</g>
+<g data-workflow-source="submit_diagnosis" data-workflow-target="confirm_submission">
+<path class="edge" d="M890 830V880"/>
+<text class="edge-label" text-anchor="middle" x="944" y="865">결과 확인</text>
+</g>
+<g data-workflow-source="confirm_submission" data-workflow-target="finish">
+<path class="edge" d="M890 965V1015"/>
+<text class="edge-label" text-anchor="middle" x="945" y="997">completed</text>
+</g>
+<g data-workflow-source="confirm_submission" data-workflow-target="abort">
+<path class="edge-red dashed" d="M760 925H700V1125H135V1100"/>
+<text class="edge-label" text-anchor="middle" x="535" y="1112">미확인 종료</text>
+</g>
+<g data-workflow-source="check_budget" data-workflow-target="abort">
+<path class="edge-red dashed" d="M350 510H260V985H75V1015"/>
+</g>
+<g data-workflow-source="validate_action" data-workflow-target="abort">
+<path class="edge-red dashed" d="M350 790H280V995H105V1015"/>
+</g>
+<g data-workflow-source="execute_action" data-workflow-target="abort">
+<path class="edge-red dashed" d="M350 950H310V1005H150V1015"/>
+</g>
+<g data-workflow-source="build_soap" data-workflow-target="abort">
+<path class="edge-red dashed" d="M760 500H680V980H180V1015"/>
+</g>
+<g data-workflow-source="validate_submission" data-workflow-target="abort">
+<path class="edge-red dashed" d="M760 655H660V990H205V1015"/>
+</g>
+<g data-workflow-source="abort" data-workflow-target="__end__">
+<path class="edge" d="M240 1060H280V1192H350"/>
+</g>
+<g data-workflow-source="finish" data-workflow-target="__end__">
+<path class="edge" d="M760 1060H730V1192H600"/>
+</g>
+<g data-workflow-node="__start__">
+<rect class="node" x="350" y="25" width="250" height="65" rx="6"/>
+<text class="node-title" style="font-size:16px" x="365" y="56">START</text>
+<text class="caption" x="365" y="82">초기화된 증례 상태</text>
+</g>
+<g data-workflow-node="process_input">
+<rect class="node" x="350" y="150" width="250" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="365" y="181">process_input</text>
+<text class="caption" x="365" y="207">수집 SAY·EXAM 실제 응답 처리</text>
+</g>
+<g data-workflow-node="process_initial_input">
+<rect class="node" x="760" y="150" width="260" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="775" y="181">process_initial_input</text>
+<text class="caption" x="775" y="207">turn 0 주호소·부수 정보 정규화</text>
+</g>
+<g data-workflow-node="refresh_after_input">
+<rect class="node" x="350" y="285" width="250" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="365" y="316">refresh_after_input</text>
+<text class="caption" x="365" y="342">근거 갱신·Brain 판단·재계획</text>
+</g>
+<g data-workflow-node="check_budget">
+<rect class="node-green" x="350" y="420" width="250" height="100" rx="6"/>
+<text class="node-title" style="font-size:16px" x="365" y="451">check_budget</text>
+<text class="caption" x="365" y="477">종료 → 최종화 → 진입 → 선택</text>
+</g>
+<g data-workflow-node="enter_session">
+<rect class="node" x="30" y="420" width="210" height="100" rx="6"/>
+<text class="node-title" style="font-size:16px" x="45" y="451">enter_session</text>
+<text class="caption" x="45" y="477">현재 내부 세션 준비</text>
+</g>
+<g data-workflow-node="advance_session">
+<rect class="node" x="30" y="610" width="210" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="45" y="641">advance_session</text>
+<text class="caption" x="45" y="667">다음 세션 또는 최종화</text>
+</g>
+<g data-workflow-node="select_question">
+<rect class="node" x="350" y="610" width="250" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="365" y="641">select_question</text>
+<text class="caption" x="365" y="667">임상·공감·교육의 다음 행동</text>
+</g>
+<g data-workflow-node="validate_action">
+<rect class="node" x="350" y="745" width="250" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="365" y="776">validate_action</text>
+<text class="caption" x="365" y="802">NFC 1–30자·준비 계약 검증</text>
+</g>
+<g data-workflow-node="execute_action">
+<rect class="node" x="350" y="880" width="250" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="365" y="911">execute_action</text>
+<text class="caption" x="365" y="937">경량 자원 검사·SAY/EXAM</text>
+</g>
+<g data-workflow-node="build_soap">
+<rect class="node-green" x="760" y="420" width="260" height="100" rx="6"/>
+<text class="node-title" style="font-size:16px" x="775" y="451">build_soap</text>
+<text class="caption" x="775" y="477">고정 Assessment·영어 P·S/O</text>
+</g>
+<g data-workflow-node="validate_submission">
+<rect class="node" x="760" y="610" width="260" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="775" y="641">validate_submission</text>
+<text class="caption" x="775" y="667">15필드·크기·필수 조건 검증</text>
+</g>
+<g data-workflow-node="repair_submission">
+<rect class="node" x="1090" y="610" width="240" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="1105" y="641">repair_submission</text>
+<text class="caption" x="1105" y="667">같은 고정 평가에서 1회 재구성</text>
+</g>
+<g data-workflow-node="submit_diagnosis">
+<rect class="node" x="760" y="745" width="260" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="775" y="776">submit_diagnosis</text>
+<text class="caption" x="775" y="802">세션 재확인·DIAGNOSE</text>
+</g>
+<g data-workflow-node="confirm_submission">
+<rect class="node" x="760" y="880" width="260" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="775" y="911">confirm_submission</text>
+<text class="caption" x="775" y="937">completed 응답 확인</text>
+</g>
+<g data-workflow-node="finish">
+<rect class="node-green" x="760" y="1015" width="260" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="775" y="1046">finish</text>
+<text class="caption" x="775" y="1072">termination=submitted</text>
+</g>
+<g data-workflow-node="abort">
+<rect class="node-ochre" x="30" y="1015" width="210" height="85" rx="6"/>
+<text class="node-title" style="font-size:16px" x="45" y="1046">abort</text>
+<text class="caption" x="45" y="1072">failed / unknown</text>
+<text class="caption" x="45" y="1093">expired / closed</text>
+</g>
+<g data-workflow-node="__end__">
+<rect class="node" x="350" y="1160" width="250" height="65" rx="6"/>
+<text class="node-title" style="font-size:16px" x="365" y="1191">END</text>
+<text class="caption" x="365" y="1217">그래프 종료</text>
+</g>
+<text class="caption" x="30" y="390">세션 준비</text>
+<text class="caption" x="760" y="390">최종 제출</text>
+<text class="caption" x="30" y="1000">점선: 각 단계의 명시적 종료 사유</text>
           </svg>
-        </div><figcaption>실제 <code>workflow/graph.py</code>의 노드·전이입니다. 실선은 일반 전이, 점선은 abort 전이입니다. 노드 이동 횟수는 SDK 행동 턴 수와 다릅니다. Education은 별도 노드가 아닌 내부 세션입니다.</figcaption>
+        </div>
+<figcaption>실제 <code>workflow/graph.py</code>의 노드·전이입니다. 실선은 일반 전이, 점선은 abort 전이입니다. 노드 이동 횟수는 SDK 행동 턴 수와 다릅니다. Education은 별도 노드가 아닌 내부 세션입니다.</figcaption>
       </figure>
-      <h3>같은 그래프 안에서 바뀌는 다섯 내부 세션</h3>
-      <ol class="sessions">
-        <li><span class="step-dot">1</span><div class="session-name"><strong>Initiation</strong><span>초기 정보와 공통 문진</span></div><div class="session-body"><p>초기 정보를 먼저 구조화하고 “안녕하세요. 병원 오시는 길이 불편하진 않으셨나요?”로 시작합니다.</p><p class="small">미확인 onset·course·이전 유사 경험·치료 경험을 순서대로 묻습니다. 환자·보호자와 등록 수치·감사 전용 정보를 구별하며 이미 확인한 주호소를 반복 유도하지 않습니다.</p></div></li>
-        <li><span class="step-dot">2</span><div class="session-name"><strong>ChiefComplaint</strong><span>현재 불편의 구체화</span></div><div class="session-body"><p>환자가 우선시한 대표 CC 하나 → 연결된 전체 속성 처리 → Open Inquiry 한 번 → 유용한 ROS·필요 상세.</p><p class="small">get_symptom_attributes 전체 목록을 안정된 순서로 처리하고 acquired·recorded_unmapped·unknown·not_applicable·blocked_asset·budget_stopped를 구분합니다. 마지막 가용 슬롯은 Open Inquiry에 남깁니다. ROS는 대표 CC의 원래 계통에서 총 6회 이내이며 추가 증상으로 확장하지 않습니다.</p></div></li>
-        <li><span class="step-dot">3</span><div class="session-name"><strong>ContextFactor</strong><span>병력과 적용 조건</span></div><div class="session-body"><p>과거력·약물·알레르기·가족력·사회력의 미확인 영역 뒤 관련 Context 최대 두 개를 보호 수집합니다.</p><p class="small">미확인 전제·utility·새 병력 영역·URI 순으로 선택합니다. utility 0이나 가산점 포화만으로 생략하지 않으며 보호 수집을 마친 뒤 선택적 질문·진찰을 비교합니다.</p></div></li>
-        <li><span class="step-dot">4</span><div class="session-name"><strong>DifferentialDiagnosis</strong><span>감별을 위한 정보수집</span></div><div class="session-body"><p>가상 답에서 순위를 바꿀 수 있는 질문·진찰을 고르고, 실제 응답 뒤에 추론과 미전송 질문을 갱신합니다.</p><p class="small">속성 문진은 같은 관찰·발현의 Target 존재가 확인되어야 합니다. EXAM 거절·오류는 획득 소견으로 기록하지 않습니다.</p></div></li>
-        <li><span class="step-dot">5</span><div class="session-name"><strong>Education</strong><span>working 진단 후 계획·안내</span></div><div class="session-body"><p>working 진단과 미해결 평가를 고정하고 지침 원문·canonical 환자 사실·전달 가능 턴으로 영어 P와 한국어 설명을 준비합니다.</p><p class="small">현재 <code>ONTOWARD_EDUCATION_ENABLED=true</code>. 조건을 포함한 전체 묶음을 NFC 1–30자·용량 검증 뒤 연속 전달합니다. 환자 답변은 원문만 기록하며 해석·공감·임상 상태 변경을 실행하지 않습니다.</p></div></li>
-      </ol>
-      <div class="note"><p><strong>D40 조건부 목표 / 상한:</strong> Initiation 5/7 · ChiefComplaint 7/14 · ContextFactor 7/9 · DifferentialDiagnosis 3/10 · Education 5/10. 기확인·해당 없음·자산 부족으로 질문을 채워 넣지 않고 상한을 빌리지 않습니다. 선택적 질문·공감 전에 현재 필수 수집·뒤 세션 최소량·교육 5턴을 보호합니다. 공감도 공통 50턴을 소비하므로 모든 상한을 동시에 보장하지 않습니다.</p></div>
-      <h3>매 질문에서 반복하는 공통 루프</h3>
-      <ol class="loop">
-        <li><span class="order">01 / select_question</span><h4>미전송 질문 선택</h4><p>InterviewPlanner가 현재 단계와 사실에서 준비된 질문을 고릅니다.</p></li>
-        <li><span class="order">02 / validate_action</span><h4>문구와 행동 검증</h4><p>Doctor가 NFC 1–30자와 준비 계약을 확인합니다. 임상 문진·진찰은 준비 문구를, 공감·교육은 검증된 생성 문구를 사용하며 자르지 않습니다.</p></li>
-        <li><span class="order">03 / execute_action</span><h4>SAY 또는 EXAM 실행</h4><p>전송 직전 경량 자원 검사를 통과하면 SDK로 전달하고 실제 응답·전달 이력·사용량을 보존합니다.</p></li>
-        <li><span class="order">04 / process_input</span><h4>응답 수신과 역할별 처리</h4><p>초기 입력과 모든 수집 답은 문맥 분석·DB 정규화를 거칩니다. 원문은 해석 문맥과 감사에만 사용합니다. Education 답은 원문·수신·전달 완료만 기록합니다.</p></li>
-        <li><span class="order">05 / refresh_after_input</span><h4>수집 근거 갱신과 다음 행동</h4><p>수집 중 변경 근거로 재계획합니다. Education은 임상 상태를 유지하고 다음 유효 묶음의 전달 여유를 확인합니다.</p></li>
-      </ol>
-      <p class="loop-return">새 답 → 사실 갱신 → 다음 질문 또는 세션 전환 · 예산 부족 시 최종화</p>
-      <div class="note"><p><strong>모델 결과가 곧 환자 사실은 아닙니다.</strong> 현재 응답의 정확한 인용과 제공된 ID를 검증합니다. 독립 유효 사실은 보존하고 무효 의존 사실은 격리합니다. JSON·문맥·개념 연결·사실 복구는 응답당 추가 호출 한 번을 공유합니다.</p></div>
-      <div class="split">
-        <div><h3>예산을 다 쓰기 전에 제출 준비</h3><ul class="list"><li><strong>SAY·EXAM 공통 50턴</strong><p>모델은 증례 전체 최대 200회, 입력 500,000·출력 100,000토큰입니다. 그래프 노드 수는 행동 턴 수와 다릅니다.</p></li><li><strong>새 행동 전 응답·최종화 여유 확보</strong><p>수집은 문맥 분석·정규화 최소 2회·출력 8,192토큰을 확보하며 단계별 복구는 최대 8,000토큰을 요청합니다. 준비된 교육은 답변 모델을 예약하지 않습니다. 응답 120초·최종화 120초와 마지막 수신 소비를 유지합니다.</p></li></ul></div>
-        <div><h3>문제가 생기면 제한적으로 복구</h3><ul class="list"><li><strong>의미 명료화는 증례 전체 2회</strong><p>원문과 미해결 상태를 남깁니다. 후보를 끝내 확정하지 못하면 근거가 있는 주호소의 증상 진단을 검토합니다.</p></li><li><strong>일시 전송 오류는 같은 요청을 재확인</strong><p>같은 ID·payload로 2초 후 한 번 재전송하며 미해결이면 unknown으로 종료합니다. 환자·진찰 형식 오류는 새 ID 자동 재시도 없이 미확인으로 남깁니다. SOAP 재구성은 합쳐 1회입니다.</p></li></ul></div>
-      </div>
-      <h3>마지막은 SOAP 구성 → 검증 → DIAGNOSE → 영수증 확인</h3>
-      <div class="soap" aria-label="SOAP 15개 문자열 필드">
-        <div><strong>S<small>6개 필드</small></strong><p>cc · hpi · pmh · fh · sh · ros<br>환자가 보고한 증상·병력·맥락</p></div>
-        <div><strong>O<small>2개 필드</small></strong><p>exam · tests<br>초기 제공 정보·실제 진찰<br>예선 O.tests는 빈 문자열</p></div>
-        <div><strong>A<small>2개 필드</small></strong><p>evidence · differential<br>실제 획득 근거·적격 감별 최대 5개</p></div>
-        <div><strong>P<small>5개 필드</small></strong><p>tests · treatment · disposition<br>follow_up · education<br>고정 진단의 검증된 영어 문장</p></div>
-      </div>
-      <p class="small">별도 인수 <code>diagnosis</code>로 주진단 하나를 보냅니다. D33은 영어 <code>Category: Content</code>, 극성 (+)/(−), 원천 용어를 사용하고 D41·D43은 DB label·속성값·등록 수치와 검증된 메타데이터만 SOAP로 렌더링합니다. 원문은 해석·감사에 보존합니다. D37의 정상 생성은 P 다섯 항목에 영어 문장을 보존하며, 생성 실패의 빈 항목·한국어 미전달을 별도로 기록합니다.</p>
-      <div class="note"><p><strong>정상 종료 조건: <code>status == "completed"</code> → <code>termination=submitted</code>.</strong> 최종 응답이 실패·불명·만료·폐쇄이면 비정상 결과로 남깁니다.</p></div>
-      <p class="source">근거: <a href="../submission/README.md#session-pipelines">백서 §2</a><a href="../submission/README.md#gateway">§4 Gateway</a><a href="../submission/README.md#budgets-and-submission">§7 예산·제출</a><a href="../submission/workflow/graph.py">graph.py</a></p>
-    </section>
-
-    <section id="reasoning" aria-labelledby="reasoning-title">
-      <div class="section-head"><span class="section-no">04</span><h2 id="reasoning-title">대표 CC에 대한 근거가 적합도가 되는 과정</h2></div>
-      <p class="lede">실제 입력과 가상 답변은 같은 <code>ClinicalReasoner.evaluate / evaluate_delta</code>를 사용합니다. 후보 회수, 완전 지지, 진단 자격을 구분하며 점수를 진단 확률로 해석하지 않습니다.</p><figure class="figure" id="reasoner">
-        <div class="diagram" style="--diagram-width:1300px" tabindex="0" role="region" aria-label="현재 근거 → 공유 조건 → 질환별 원천 지지 → 적합도 → 진단。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
-          <svg viewBox="0 0 1300 425" role="img" aria-labelledby="reasoner-title reasoner-desc">
-            <title id="reasoner-title">현재 근거 → 공유 조건 → 질환별 원천 지지 → 적합도 → 진단</title><desc id="reasoner-desc">현재 근거를 관찰과 발현으로 나누어 Pattern을 평가하고 Association 적용 조건과 원천 점수를 확인한다. 정교화가 조상을 대체하고 같은 Disease Target을 한 번 집계한다. 대표 CC와 다른 Target의 지지를 분리하여 자격을 확인한다.</desc>
-            <g><path class="edge" d="M250 100H340"/><text class="edge-label" text-anchor="middle" x="295" y="80">근거별</text></g><g><path class="edge" d="M590 100H680"/><text class="edge-label" text-anchor="middle" x="635" y="80">완전 매칭</text></g><g><path class="edge" d="M930 100H1020"/><text class="edge-label" text-anchor="middle" x="975" y="80">정교화</text></g><g><path class="edge" d="M1140 155V270H800"/><text class="edge-label" text-anchor="middle" x="990" y="250">Target별 1회</text></g><g><path class="edge" d="M550 320H460"/><text class="edge-label" text-anchor="middle" x="505" y="300">자격 확인</text></g><g><rect class="node" x="20" y="45" width="230" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="76">현재 근거 + 대표 CC</text><text class="caption" x="35" y="102">DB mapping·검증된 취득 경로</text><text class="caption" x="35" y="123">정확한 Target·발현·시점</text></g><g><rect class="node" x="340" y="45" width="250" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="355" y="76">공유 Pattern 평가</text><text class="caption" x="355" y="102">존재·범주·수치·구간</text><text class="caption" x="355" y="123">matched / contradicted / incomplete</text></g><g><rect class="node" x="680" y="45" width="250" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="695" y="76">Association 적용</text><text class="caption" x="695" y="102">모든 Feature + applicability</text><text class="caption" x="695" y="123">선택 원천 가중치</text></g><g><rect class="node" x="1020" y="45" width="260" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="1035" y="76">정교화·중복 제거</text><text class="caption" x="1035" y="102">조상 대신 정교화</text><text class="caption" x="1035" y="123">같은 Target을 중복 가산하지 않음</text></g><g><rect class="node-green" x="550" y="270" width="250" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="565" y="301">대표 CC 적합도</text><text class="caption" x="565" y="327">CC 지지 + min(4, 추가 지지)</text><text class="caption" x="565" y="348">+ Context≤1 − 제한 반증</text></g><g><rect class="node-green" x="180" y="270" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="195" y="301">진단 선택</text><text class="caption" x="195" y="327">CC 양성 지지·조건 충족·fit&gt;0</text><text class="caption" x="195" y="348">없으면 확인 대표 CC의 증상 진단</text></g>
+<div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서 좌우로 스크롤할 수 있습니다.">
+<table>
+<caption>현재 build_graph(...).get_graph()에서 직접 확인한 인접 목록. SVG와 동일한 30개 전이입니다.</caption>
+<thead>
+<tr>
+<th scope="col">출발 노드</th>
+<th scope="col">다음 노드</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">
+<code>__start__</code>
+</th>
+<td>
+<code>process_initial_input</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>process_initial_input</code>
+</th>
+<td>
+<code>refresh_after_input</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>process_input</code>
+</th>
+<td>
+<code>refresh_after_input</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>refresh_after_input</code>
+</th>
+<td>
+<code>check_budget</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>enter_session</code>
+</th>
+<td>
+<code>check_budget</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>check_budget</code>
+</th>
+<td>
+<code>abort</code>
+<br>
+<code>advance_session</code>
+<br>
+<code>build_soap</code>
+<br>
+<code>enter_session</code>
+<br>
+<code>select_question</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>select_question</code>
+</th>
+<td>
+<code>validate_action</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>validate_action</code>
+</th>
+<td>
+<code>abort</code>
+<br>
+<code>check_budget</code>
+<br>
+<code>execute_action</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>execute_action</code>
+</th>
+<td>
+<code>abort</code>
+<br>
+<code>check_budget</code>
+<br>
+<code>process_input</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>advance_session</code>
+</th>
+<td>
+<code>check_budget</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>build_soap</code>
+</th>
+<td>
+<code>abort</code>
+<br>
+<code>validate_submission</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>validate_submission</code>
+</th>
+<td>
+<code>abort</code>
+<br>
+<code>repair_submission</code>
+<br>
+<code>submit_diagnosis</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>repair_submission</code>
+</th>
+<td>
+<code>validate_submission</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>submit_diagnosis</code>
+</th>
+<td>
+<code>confirm_submission</code>
+<br>
+<code>repair_submission</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>confirm_submission</code>
+</th>
+<td>
+<code>abort</code>
+<br>
+<code>finish</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>finish</code>
+</th>
+<td>
+<code>__end__</code>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>abort</code>
+</th>
+<td>
+<code>__end__</code>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</details>
+<div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서 좌우로 스크롤할 수 있습니다.">
+<table>
+<thead>
+<tr>
+<th scope="col">경계</th>
+<th scope="col">현재 규칙</th>
+<th scope="col">의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">필수 수집</th>
+<td>chief 하나·전체 적용 속성·Open Inquiry·기본 병력 5영역·관련 Context 최대 2개</td>
+<td>기확인·unknown·부적용·자산 차단·예산 중단을 구별</td>
+</tr>
+<tr>
+<th scope="row">공식 행동</th>
+<td>client.session().turns_remaining / 총 50턴</td>
+<td>SAY·EXAM은 실제 서버 소비를 정산</td>
+</tr>
+<tr>
+<th scope="row">별도 모델 자원</th>
+<td>200회 / 입력 500,000 / 출력 100,000토큰</td>
+<td>모델 호출·세션 조회·내부 노드·SOAP·DIAGNOSE는 행동 0턴</td>
+</tr>
+<tr>
+<th scope="row">보호량</th>
+<td>응답 해석·마지막 임상 판단·교육·제출 시간 / Education 7턴 보호</td>
+<td>잔여 0턴에도 받은 마지막 답을 처리한 뒤 DIAGNOSE 가능</td>
+</tr>
+<tr>
+<th scope="row">완료</th>
+<td>
+<code>confirm_submission → finish</code>
+</td>
+<td>DIAGNOSE의 completed 확인이 필요</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="source">근거 <a href="../submission/workflow/graph.py">실제 그래프</a> <a href="../submission/workflow/rules/budget.py">예산 판단</a> <a href="../submission/workflow/io/nova_session.py">공식 세션 조회</a> <a href="../submission/workflow/rules/limits.py">수치·세션 상한</a>
+</p>
+</section>
+<section id="decisions" aria-labelledby="decisions-heading">
+<div class="section-heading">
+<h2 id="decisions-heading">그래프 근거에서 감별과 질문으로</h2>
+<a class="anchor" href="#content" aria-label="페이지 처음으로">처음으로</a>
+</div>
+<p class="lede">코드는 어떤 사실과 등록 관계가 현재 성립하는지 제공합니다. LLM은 공급된 후보의 순서와 다음 행동을 선택하고, 코드는 그 반환이 계약 안에 있는지 확인합니다.</p>
+<figure id="assessment-flow" class="figure">
+      <div class="diagram" style="--diagram-width:1080px" tabindex="0" role="region" aria-label="D46 그래프 근거와 임상 순위의 역할 분리。도식은 좌우로 스크롤할 수 있으며 아래 설명으로도 읽을 수 있습니다.">
+      <svg viewBox="0 0 1080 395" role="img" aria-labelledby="assessment-flow-title assessment-flow-desc">
+      <title id="assessment-flow-title">D46 그래프 근거와 임상 순위의 역할 분리</title>
+<desc id="assessment-flow-desc">현재 facts에서 등록 관계로 후보를 회수하고 Python이 지지, 반대, 미확인을 만든다. DoctorBrain은 공급 참조로 순위와 행동을 반환한다. 유효 순위는 단일 Assessment에 저장하고 잘못된 행동만 따로 한 번 복구할 수 있다.</desc>
+<g data-node="facts">
+<rect class="node blue" x="20" y="30" width="280" height="110" rx="10"/>
+<text class="node-title" x="38" y="61">현재 reasoning facts</text>
+<text class="caption" x="38" y="86">환자·시점·관찰·episode 범위</text>
+<text class="caption" x="38" y="108">record_only는 임상 근거 밖</text>
+</g>
+<g data-node="recall">
+<rect class="node " x="390" y="30" width="280" height="110" rx="10"/>
+<text class="node-title" x="408" y="61">등록 관계에서 후보 회수</text>
+<text class="caption" x="408" y="86">Target → Pattern → Disease</text>
+<text class="caption" x="408" y="108">명시적인 Context 경로도 사용</text>
+</g>
+<g data-node="evidence">
+<rect class="node green" x="760" y="30" width="300" height="110" rx="10"/>
+<text class="node-title" x="778" y="61">Python · 현재 근거</text>
+<text class="caption" x="778" y="86">supports / against / unresolved</text>
+<text class="caption" x="778" y="108">매칭과 applicability 분리</text>
+</g>
+<path class="edge  " d="M300 85H390"/>
+<text class="edge-label" text-anchor="middle" x="345" y="67">수용된 사실</text>
+<path class="edge  " d="M670 85H760"/>
+<text class="edge-label" text-anchor="middle" x="715" y="67">등록 관계</text>
+<g data-node="ranking">
+<rect class="node blue" x="760" y="245" width="300" height="110" rx="10"/>
+<text class="node-title" x="778" y="276">DoctorBrain · 순위·행동</text>
+<text class="caption" x="778" y="301">공급된 질환·질문 참조만 반환</text>
+<text class="caption" x="778" y="323">기존 유효 후보의 누락 거절</text>
+</g>
+<g data-node="assessment">
+<rect class="node green" x="390" y="245" width="280" height="110" rx="10"/>
+<text class="node-title" x="408" y="276">Assessment · 단일 정본</text>
+<text class="caption" x="408" y="301">수용한 LLM 순서가 감별 순위</text>
+<text class="caption" x="408" y="323">코드가 점수로 재정렬하지 않음</text>
+</g>
+<g data-node="recovery">
+<rect class="node ochre" x="20" y="245" width="280" height="110" rx="10"/>
+<text class="node-title" x="38" y="276">유효 순위와 행동을 분리</text>
+<text class="caption" x="38" y="301">행동만 잘못되면 행동만 복구</text>
+<text class="caption" x="38" y="323">정상 판단은 revision당 최대 1회</text>
+</g>
+<path class="edge blue " d="M910 140V245"/>
+<text class="edge-label" text-anchor="middle" x="910" y="195">근거·제약·실행 선택지</text>
+<path class="edge  " d="M760 300H670"/>
+<text class="edge-label" text-anchor="middle" x="715" y="282">참조 검증</text>
+<path class="edge red dashed" d="M390 300H300"/>
+<text class="edge-label" text-anchor="middle" x="345" y="282">1회 제한 복구</text>
+</svg>
+</div>
+      <figcaption>부분 부합·음성·unknown도 검토 경로가 될 수 있습니다. 후보로 회수되었다는 사실은 양성 지지나 확진을 뜻하지 않습니다.</figcaption>
+</figure>
+<div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서 좌우로 스크롤할 수 있습니다.">
+<table>
+<thead>
+<tr>
+<th scope="col">판단 경계</th>
+<th scope="col">현재 처리</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">Pattern 매칭</th>
+<td>실제 존재·속성·수치 부합과 불일치 fact 참조를 보존. 서로 다른 episode의 속성을 합치지 않음</td>
+</tr>
+<tr>
+<th scope="row">Association 적용</th>
+<td>unknown은 미확인, false는 그 관계의 미적용. 질환 전체를 자동 배제하지 않음</td>
+</tr>
+<tr>
+<th scope="row">일반·정교화</th>
+<td>일반 부합을 보존하며 상세 조건의 미확인·불일치를 분리. 같은 관찰의 반복 출처를 독립 근거로 세지 않음</td>
+</tr>
+<tr>
+<th scope="row">후보·입력 상한</th>
+<td>기존 유효 후보·반대 근거·미확인 보호. 신규 후보는 근거 경로별로 배분. 프롬프트 바이트 정책은 D47에서 철회</td>
+</tr>
+<tr>
+<th scope="row">호출·복구</th>
+<td>임상 revision·chief당 정상 판단 최대 1회. 정상 출력 4096토큰, 한 번의 계약 복구 8000토큰</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>다음 질문은 필수 수집과 선택적 행동으로 나뉩니다</h3>
+<figure id="question-flow" class="figure">
+      <div class="diagram" style="--diagram-width:1080px" tabindex="0" role="region" aria-label="필수 수집을 보호한 다음 질문 선택。도식은 좌우로 스크롤할 수 있으며 아래 설명으로도 읽을 수 있습니다.">
+      <svg viewBox="0 0 1080 395" role="img" aria-labelledby="question-flow-title question-flow-desc">
+      <title id="question-flow-title">필수 수집을 보호한 다음 질문 선택</title>
+<desc id="question-flow-desc">코드가 필수 수집을 보장한다. 필수 질문 이후 그래프 미해결 조건에서 실행 가능한 질문을 만들고 LLM이 선택한다. Python이 등록 관계와 문구, 범위, 반복, 예산을 검증한 뒤 Mouth가 한 행동을 실행한다.</desc>
+<g data-node="protected">
+<rect class="node " x="20" y="30" width="300" height="112" rx="10"/>
+<text class="node-title" x="38" y="61">코드 · 보호 수집</text>
+<text class="caption" x="38" y="86">필수 질문이 남아 있음</text>
+<text class="caption" x="38" y="108">continue_required</text>
+</g>
+<g data-node="optional">
+<rect class="node green" x="390" y="30" width="300" height="112" rx="10"/>
+<text class="node-title" x="408" y="61">실행 가능한 선택지</text>
+<text class="caption" x="408" y="86">미해결 그래프 scope에서 생성</text>
+<text class="caption" x="408" y="108">등록 문구·주체·시점·비용 확인</text>
+</g>
+<g data-node="selection">
+<rect class="node blue" x="760" y="30" width="300" height="112" rx="10"/>
+<text class="node-title" x="778" y="61">Brain · 다음 행동</text>
+<text class="caption" x="778" y="86">ask / advance_stage</text>
+<text class="caption" x="778" y="108">DD에서 finish_collection</text>
+</g>
+<path class="edge  " d="M320 85H390"/>
+<text class="edge-label" text-anchor="middle" x="355" y="66">필수 충족 뒤</text>
+<path class="edge  " d="M690 85H760"/>
+<text class="edge-label" text-anchor="middle" x="725" y="66">질문 참조</text>
+<g data-node="guard">
+<rect class="node " x="390" y="245" width="300" height="112" rx="10"/>
+<text class="node-title" x="408" y="276">Python · 실행 계약 검증</text>
+<text class="caption" x="408" y="301">존재 먼저 → 속성</text>
+<text class="caption" x="408" y="323">중복·기확인·차단·잔여량 검증</text>
+</g>
+<g data-node="send">
+<rect class="node " x="760" y="245" width="300" height="112" rx="10"/>
+<text class="node-title" x="778" y="276">Mouth · 한 행동 실행</text>
+<text class="caption" x="778" y="301">준비된 SAY 또는 EXAM</text>
+<text class="caption" x="778" y="323">수신 → Ear → 현재 사실 반영</text>
+</g>
+<path class="edge  " d="M910 142V194H540V245"/>
+<text class="edge-label" text-anchor="middle" x="725" y="184">선택한 질문 하나</text>
+<path class="edge  " d="M690 301H760"/>
+<text class="edge-label" text-anchor="middle" x="725" y="283">검증 통과</text>
+</svg>
+</div>
+      <figcaption>질문 하나를 여러 질환이 공유해도 각 질환의 기대 답은 보존합니다. 미확인 증상은 존재를 먼저 확인하고 적용 가능한 속성을 묻습니다.</figcaption>
+</figure>
+<div class="note">
+<p>
+<strong>D46에서는 LLM 순위를 그대로 수용합니다.</strong> 이전 D38의 fit 합산, 양수 지지·chief coverage·완성 패턴 조건, 가상 답변 utility로 순위나 질문을 다시 고르지 않습니다. 수용 자산에 남은 원천 점수·평가 값은 출처 메타데이터로 보존합니다.</p>
+</div>
+<p class="source">근거 <a href="../submission/workflow/rules/assessment.py">후보·현재 근거</a> <a href="../submission/workflow/doctor_brain.py">판단·행동 계약</a> <a href="../submission/config/brain.txt">Brain prompt</a> <a href="../submission/workflow/rules/collection.py">필수 수집</a>
+</p>
+</section>
+<section id="ontology" aria-labelledby="ontology-heading">
+<div class="section-heading">
+<h2 id="ontology-heading">v5.0 지식은 어떻게 연결되는가</h2>
+<a class="anchor" href="#content" aria-label="페이지 처음으로">처음으로</a>
+</div>
+<p class="lede">14개 클래스와 29개 속성을 유지합니다. 아래 수는 manifest에 고정된 schema·vocabulary·clinical RDF의 합집합에서 직접 센 값이며, 원천 전체 카탈로그와 구별합니다.</p>
+<h3>질환·공유 Pattern·Target</h3>
+<figure class="figure" id="ontology-core">
+        <div class="diagram" style="--diagram-width:1200px" tabindex="0" role="region" aria-label="Disease → Association → 공유 Pattern → Feature。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
+          <svg viewBox="0 0 1200 515" role="img" aria-labelledby="ontology-core-title ontology-core-desc">
+            <title id="ontology-core-title">Disease → Association → 공유 Pattern → Feature</title>
+<desc id="ontology-core-desc">Disease가 소유하는 Association은 하나의 공유 Pattern을 가리킨다. Pattern의 Target은 Symptom 또는 ExamFinding 중 하나이며, 각 Feature는 그 Target을 상속한다. 정교화는 더 일반적인 Pattern을 가리킨다.</desc>
+            <g data-schema-source="Disease" data-schema-predicate="hasAssociation" data-schema-target="DiseasePatternAssociation">
+<path class="edge" d="M175 230H310"/>
+<text class="edge-label" text-anchor="middle" x="242" y="210">hasAssociation</text>
+</g>
+<g data-schema-source="DiseasePatternAssociation" data-schema-predicate="pattern" data-schema-target="ClinicalPattern">
+<path class="edge" d="M560 230H680"/>
+<text class="edge-label" text-anchor="middle" x="620" y="210">pattern</text>
+</g>
+<g data-schema-source="ClinicalPattern" data-schema-predicate="targets" data-schema-target="Symptom">
+<path class="edge" d="M880 210H940V95H1010"/>
+<text class="edge-label" text-anchor="middle" x="970" y="75">targets</text>
+</g>
+<g data-schema-source="ClinicalPattern" data-schema-predicate="targets" data-schema-target="ExamFinding">
+<path class="edge" d="M880 250H940V375H1010"/>
+<text class="edge-label" text-anchor="middle" x="970" y="355">targets</text>
+</g>
+<g data-schema-source="ClinicalPattern" data-schema-predicate="hasFeature" data-schema-target="ClinicalFeature">
+<path class="edge" d="M780 290V380"/>
+<text class="edge-label" text-anchor="middle" x="835" y="340">hasFeature</text>
+</g>
+<g data-schema-source="ClinicalPattern" data-schema-predicate="refinesPattern" data-schema-target="ClinicalPattern">
+<path class="edge" d="M715 180V65H855V180"/>
+<text class="edge-label" text-anchor="middle" x="785" y="48">refinesPattern</text>
+</g>
+<g data-schema-class="Disease">
+<rect class="node" x="20" y="180" width="155" height="110" rx="6"/>
+<text class="node-title" style="font-size:16px" x="35" y="211">Disease</text>
+<text class="caption" x="35" y="237">질환별 연결의 소유자</text>
+<text class="caption" x="35" y="258">843개</text>
+</g>
+<g data-schema-class="DiseasePatternAssociation">
+<rect class="node-green" x="310" y="180" width="250" height="110" rx="6"/>
+<text class="node-title" style="font-size:14px" x="325" y="211">DiseasePatternAssociation</text>
+<text class="caption" x="325" y="237">질환 × Pattern × 적용 조건</text>
+<text class="caption" x="325" y="258">원천 평가·출처 / 9,955개</text>
+</g>
+<g data-schema-class="ClinicalPattern">
+<rect class="node" x="680" y="180" width="200" height="110" rx="6"/>
+<text class="node-title" style="font-size:16px" x="695" y="211">ClinicalPattern</text>
+<text class="caption" x="695" y="237">질환·출처와 독립적인 조건</text>
+<text class="caption" x="695" y="258">공유 Pattern 1,925개</text>
+</g>
+<g data-schema-class="Symptom">
+<rect class="node-blue" x="1010" y="50" width="170" height="90" rx="6"/>
+<text class="node-title" style="font-size:16px" x="1025" y="81">Symptom</text>
+<text class="caption" x="1025" y="107">환자 보고 / 533개</text>
+</g>
+<g data-schema-class="ExamFinding">
+<rect class="node-blue" x="1010" y="330" width="170" height="90" rx="6"/>
+<text class="node-title" style="font-size:16px" x="1025" y="361">ExamFinding</text>
+<text class="caption" x="1025" y="387">신체진찰 소견 / 2개</text>
+</g>
+<g data-schema-class="ClinicalFeature">
+<rect class="node-blue" x="680" y="380" width="200" height="110" rx="6"/>
+<text class="node-title" style="font-size:16px" x="695" y="411">ClinicalFeature</text>
+<text class="caption" x="695" y="437">Pattern에 귀속된 조건</text>
+<text class="caption" x="695" y="458">Target 상속 / 3,530개</text>
+</g>
+<text class="caption" x="20" y="440">targets는 두 클래스 중 정확히 하나만 선택합니다.</text>
+<text class="caption" x="20" y="465">refinesPattern은 구체적인 Pattern → 일반 Pattern 방향입니다.</text>
           </svg>
-        </div><figcaption>present 또는 지원되는 uncertain Target으로 후보를 넓게 회수할 수 있지만, incomplete·uncertain만으로 확정 지지를 만들지 않습니다. 가상 패치는 격리된 근거에만 적용하며 실제 기록·사용량·SOAP·SDK를 바꾸지 않습니다.</figcaption>
-      </figure><div class="states"><div class="state"><strong>matched</strong><p>모든 Feature와 필수 적용 조건이 맞아야 지지를 활성화합니다.</p></div><div class="state"><strong>contradicted</strong><p>명시적 반증이 unknown보다 우선합니다. 상세 불일치가 곧 감점은 아닙니다.</p></div><div class="state"><strong>incomplete</strong><p>미확인 조건은 질문 경로로 남기며 실제 지지로 앞당겨 계산하지 않습니다.</p></div></div>
-      <div class="formula" aria-label="fit은 대표 CC 지지와 최대 4의 추가 지지, 최대 1의 Context에서 제한 반증을 뺀 값"><div class="formula-part"><strong>fit</strong><span>후보 적합도</span></div><span class="operator">=</span><div class="formula-part"><strong>CC 지지</strong><span>정확한 대표 관찰·발현·시점</span></div><span class="operator">+</span><div class="formula-part"><strong>min(4, 추가 지지)</strong><span>다른 Target별 선택 기여</span></div><span class="operator">+</span><div class="formula-part"><strong>Context ≤ 1</strong><span>확인된 지지 맥락</span></div><span class="operator">−</span><div class="formula-part"><strong>제한 반증 ≤ 2</strong><span>Target당 최대 1</span></div></div>
-      <p class="small">대표 CC와 같은 Target의 다른 관찰은 추가 보강에서 제외합니다. 제한 반증은 기본 존재 Pattern·충족된 applicability·활성 CC 발현의 명시적 현재 부재·양성 기록 없음에만 적용하며 typicality high=0.5, very_high=1입니다. unknown·미질문·상세 불일치·다른 발현 부재는 감점하지 않습니다.</p>
-      <h3>세부 정보가 추가되면 기존 점수를 대체합니다</h3><p>설명용 원천 가중치가 존재만 확인 2 → 위치 일치 1 → 위치·양상 일치 4라면 점수는 <strong>2 → 1 → 4</strong>로 바뀝니다. 2+1+4로 더하지 않으며 정교화 점수가 0이어도 조상 점수를 유지하지 않습니다.</p><div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서는 좌우로 스크롤할 수 있습니다."><table ><caption>condition_given_symptom → 지지 점수. 반대 방향 typicality와 strongPredictor를 구분합니다.</caption><thead><tr><th scope="col">원천 라벨</th><th scope="col">zero</th><th scope="col">rare</th><th scope="col">low</th><th scope="col">medium</th><th scope="col">high</th><th scope="col">very_high</th></tr></thead><tbody><tr><td>지지 점수</td><td>0</td><td>0.5</td><td>1</td><td>2</td><td>3</td><td>4</td></tr></tbody></table></div><h3>가장 높은 fit과 진단 자격은 다릅니다</h3><p>정렬은 fit 내림차순 → chief_score 내림차순 → 명시적 충돌 수 오름차순 → Disease URI입니다. 자격은 <strong>정확한 대표 CC의 양성 원천 지지·applicability 충족·fit&gt;0</strong>을 요구합니다. 모든 CC를 설명하는 이전 비율 정책을 사용하지 않습니다.</p><div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서는 좌우로 스크롤할 수 있습니다."><table ><caption>가상 수치 예제. 실제 환자 결과나 임상 성능이 아닙니다.</caption><thead><tr><th scope="col">설명용 후보</th><th scope="col">CC 지지</th><th scope="col">추가 지지 → 반영</th><th scope="col">Context</th><th scope="col">반증</th><th scope="col">fit</th><th scope="col">자격</th></tr></thead><tbody><tr><td>A</td><td>3</td><td>2 → 2</td><td>1</td><td>1.5</td><td>4.5</td><td>적격 중 첫 번째·주진단</td></tr><tr><td>B</td><td>0</td><td>7 → 4</td><td>1</td><td>0</td><td>5</td><td>대표 CC 지지 없어 부적격</td></tr><tr><td>C</td><td>4</td><td>0 → 0</td><td>0</td><td>0.5</td><td>3.5</td><td>감별 가능</td></tr></tbody></table></div><div class="note ochre"><p><strong>적격 Disease가 없으면 확인된 대표 CC를 증상 잠정진단으로 사용합니다.</strong> 임의의 첫 보고를 대신 선택하지 않습니다. 대표 CC가 끝내 미확정이면 primary_chief_unresolved 등 명시적 사유로 실패합니다.</p></div><p class="source">근거: <a href="../submission/README.md#reasoning">백서 §5</a><a href="../submission/workflow/doctor_brain.py">공유 커널</a><a href="../submission/workflow/state/evidence.py">현재 근거</a><a href="../submission/knowledge/d41-reasoning_policy.json">d41.1 정책</a></p></section>
-
-    <section id="questions" aria-labelledby="questions-title">
-      <div class="section-head"><span class="section-no">05</span><h2 id="questions-title">다음 질문도 같은 추론으로 비교합니다</h2></div>
-      <p class="lede">대표 CC 전체 속성과 Open Inquiry 이후에는 그래프 잔여 조건에서 질문을 만듭니다. D38의 구조적 판별 정책이며 질문 선택용 LLM이나 답변 확률 추정은 사용하지 않습니다.</p><figure class="figure" id="question-policy">
-        <div class="diagram" style="--diagram-width:1200px" tabindex="0" role="region" aria-label="잔여 조건 → 가능한 답변 → 공유 커널 → 가치 → 첫 질문。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
-          <svg viewBox="0 0 1200 425" role="img" aria-labelledby="question-policy-title question-policy-desc">
-            <title id="question-policy-title">잔여 조건 → 가능한 답변 → 공유 커널 → 가치 → 첫 질문</title><desc id="question-policy-desc">같은 의미의 조건을 질문 하나로 묶고 실제 가능한 typed 답변을 격리된 공유 커널로 평가한다. 상대 판단과 자격 변화, 최대 여섯 질문 완성 경로를 비교하고 완전히 평가한 양수 가치의 첫 질문만 전달한다.</desc>
-            <g><path class="edge" d="M290 100H450"/><text class="edge-label" text-anchor="middle" x="370" y="80">같은 의미 키 통합</text></g><g><path class="edge" d="M730 100H900"/><text class="edge-label" text-anchor="middle" x="815" y="80">8 + 4부터</text></g><g><path class="edge" d="M1040 155V265"/><text class="edge-label" text-anchor="middle" x="1115" y="220">격리된 가상 패치</text></g><g><path class="edge" d="M900 320H730"/><text class="edge-label" text-anchor="middle" x="815" y="300">점수·자격 변화</text></g><g><path class="edge" d="M450 320H290"/><text class="edge-label" text-anchor="middle" x="370" y="300">완전 평가·U&gt;0</text></g><g><path class="edge" d="M150 265V155"/><text class="edge-label" text-anchor="middle" x="205" y="220">실제 답 후 재계획</text></g><g><rect class="node" x="20" y="45" width="270" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="76">실제 근거·그래프 잔여 조건</text><text class="caption" x="35" y="102">Feature·Context 전제·정교화</text><text class="caption" x="35" y="123">대표 CC·질문 이력·남은 용량</text></g><g><rect class="node" x="450" y="45" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="465" y="76">자격과 미래 경로 확인</text><text class="caption" x="465" y="102">해결·모름·차단·거짓 전제 제외</text><text class="caption" x="465" y="123">존재 확인 전 속성 SAY 금지</text></g><g><rect class="node" x="900" y="45" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="915" y="76">비교 후보·typed 답변</text><text class="caption" x="915" y="102">현재 8 + 구조가 다양한 잠재 4</text><text class="caption" x="915" y="123">양수 없음 → 전체 CC 양립 후보</text></g><g><rect class="node-green" x="900" y="265" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="915" y="296">같은 추론 커널</text><text class="caption" x="915" y="322">evaluate_delta로 실제 규칙 재평가</text><text class="caption" x="915" y="343">모름·거절을 음성 분기로 넣지 않음</text></g><g><rect class="node-green" x="450" y="265" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="465" y="296">직접·후속·완성 경로 가치</text><text class="caption" x="465" y="322">(D + 0.25 E) / 비용 1</text><text class="caption" x="465" y="343">미래 할인 0.5 · 최대 6질문</text></g><g><rect class="node" x="20" y="265" width="270" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="296">첫 질문 하나만 전달</text><text class="caption" x="35" y="322">선택당 가상 평가 최대 512회</text><text class="caption" x="35" y="343">현재·미래 지지를 섞지 않음</text></g>
+        </div>
+<figcaption>Pattern은 여러 질환이 공유합니다. D46은 Association과 Feature의 현재 근거를 계산하고 DoctorBrain의 감별 순위를 검증합니다.</figcaption>
+      </figure>
+<h3>허용 속성·기대 값·비교 경로</h3>
+<figure class="figure" id="ontology-values">
+        <div class="diagram" style="--diagram-width:1200px" tabindex="0" role="region" aria-label="Target의 속성·타입 기대 값·근거 있는 개념 비교。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
+          <svg viewBox="0 0 1200 550" role="img" aria-labelledby="ontology-values-title ontology-values-desc">
+            <title id="ontology-values-title">Target의 속성·타입 기대 값·근거 있는 개념 비교</title>
+<desc id="ontology-values-desc">Symptom과 ExamFinding은 FindingAttribute와 연결되고 속성은 허용 AttributeValue를 가진다. ClinicalFeature는 onAttribute와 ExpectedValue를 쌍으로 갖거나 expectedStatus만 사용한다. ValueMatch는 observedConcept과 expectedConcept을 연결하는 비교 경로다.</desc>
+            <g data-schema-source="Symptom" data-schema-predicate="hasAttribute" data-schema-target="FindingAttribute">
+<path class="edge" d="M200 100H450"/>
+<text class="edge-label" text-anchor="middle" x="325" y="80">hasAttribute</text>
+</g>
+<g data-schema-source="ExamFinding" data-schema-predicate="hasAttribute" data-schema-target="FindingAttribute">
+<path class="edge" d="M200 300H310V130H450"/>
+<text class="edge-label" text-anchor="middle" x="310" y="245">hasAttribute</text>
+</g>
+<g data-schema-source="FindingAttribute" data-schema-predicate="canHaveValue" data-schema-target="AttributeValue">
+<path class="edge" d="M670 105H920"/>
+<text class="edge-label" text-anchor="middle" x="795" y="85">canHaveValue</text>
+</g>
+<g data-schema-source="ClinicalFeature" data-schema-predicate="onAttribute" data-schema-target="FindingAttribute">
+<path class="edge" d="M240 450H350V200H560V160"/>
+<text class="edge-label" text-anchor="middle" x="420" y="190">onAttribute</text>
+</g>
+<g data-schema-source="ClinicalFeature" data-schema-predicate="expected" data-schema-target="ExpectedValue">
+<path class="edge" d="M240 485H450"/>
+<text class="edge-label" text-anchor="middle" x="345" y="467">expected</text>
+</g>
+<g>
+<path class="edge-blue dashed" d="M560 350V235H800V135H920"/>
+<text class="edge-label" text-anchor="middle" x="695" y="220">JSON 내부 concept/concepts</text>
+</g>
+<g data-schema-source="ValueMatch" data-schema-predicate="observedConcept" data-schema-target="AttributeValue">
+<path class="edge" d="M1000 350V160"/>
+<text class="edge-label" text-anchor="middle" x="1000" y="235">observedConcept</text>
+</g>
+<g data-schema-source="ValueMatch" data-schema-predicate="expectedConcept" data-schema-target="AttributeValue">
+<path class="edge" d="M1115 350V160"/>
+<text class="edge-label" text-anchor="middle" x="1115" y="285">expectedConcept</text>
+</g>
+<g data-schema-class="Symptom">
+<rect class="node" x="20" y="50" width="180" height="100" rx="6"/>
+<text class="node-title" style="font-size:16px" x="35" y="81">Symptom</text>
+<text class="caption" x="35" y="107">보고 가능한 증상</text>
+</g>
+<g data-schema-class="ExamFinding">
+<rect class="node" x="20" y="250" width="180" height="100" rx="6"/>
+<text class="node-title" style="font-size:16px" x="35" y="281">ExamFinding</text>
+<text class="caption" x="35" y="307">실제로 획득하는 소견</text>
+</g>
+<g data-schema-class="FindingAttribute">
+<rect class="node-blue" x="450" y="50" width="220" height="110" rx="6"/>
+<text class="node-title" style="font-size:16px" x="465" y="81">FindingAttribute</text>
+<text class="caption" x="465" y="107">Target별 비교 차원 / 36개</text>
+<text class="caption" x="465" y="128">위치·양상·경과·지속시간 등</text>
+</g>
+<g data-schema-class="AttributeValue">
+<rect class="node-blue" x="920" y="50" width="260" height="110" rx="6"/>
+<text class="node-title" style="font-size:16px" x="935" y="81">AttributeValue</text>
+<text class="caption" x="935" y="107">허용된 범주 개념 / 1,153개</text>
+<text class="caption" x="935" y="128">관계에 없는 값은 추정하지 않음</text>
+</g>
+<g data-schema-class="ClinicalFeature">
+<rect class="node" x="20" y="420" width="220" height="110" rx="6"/>
+<text class="node-title" style="font-size:16px" x="35" y="451">ClinicalFeature</text>
+<text class="caption" x="35" y="477">존재: expectedStatus</text>
+<text class="caption" x="35" y="498">속성: onAttribute + expected</text>
+</g>
+<g data-schema-class="ExpectedValue">
+<rect class="node-green" x="450" y="350" width="300" height="150" rx="6"/>
+<text class="node-title" style="font-size:16px" x="465" y="381">ExpectedValue</text>
+<text class="caption" x="465" y="407">concept / concept_set</text>
+<text class="caption" x="465" y="428">quantity / interval</text>
+<text class="caption" x="465" y="449">valueJSON · 단위·경계 / 430개</text>
+</g>
+<g data-schema-class="ValueMatch">
+<rect class="node-ochre" x="920" y="350" width="260" height="150" rx="6"/>
+<text class="node-title" style="font-size:16px" x="935" y="381">ValueMatch</text>
+<text class="caption" x="935" y="407">관찰 값 → 기대 값 비교 경로</text>
+<text class="caption" x="935" y="428">relationKind·sourceRef</text>
+<text class="caption" x="935" y="449">현재 실행 인스턴스 0개</text>
+</g>
           </svg>
-        </div><figcaption>이전 rank_change·spread·unlock 사전식 벡터를 대체합니다. 새 사실·대표 CC·질문 이력·모름·세션·예산이 바뀌면 재계획합니다.</figcaption>
-      </figure><div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서는 좌우로 스크롤할 수 있습니다."><table ><thead><tr><th scope="col">정책 값</th><th scope="col">의미</th><th scope="col">현재 값</th></tr></thead><tbody><tr><td>D</td><td>답변 사이 후보 쌍의 상대 판단 변화·점수 차이 정규화</td><td>gap scale 4</td></tr><tr><td>E</td><td>실제 상태 대비 진단 자격이 바뀌는 후보 비율의 답변 평균</td><td>가중치 0.25</td></tr><tr><td>직접 가치</td><td>U1=(D+0.25E)/cost</td><td>cost=1</td></tr><tr><td>후속·완성 경로</td><td>답변별 두 단계 후속과 m질문 공동 판별 가치 비교</td><td>할인 0.5 · Uplan=0.5^(m−1)×Vjoint/m · m≤6</td></tr><tr><td>비교 범위</td><td>현재 + 잔여 구조가 다양한 잠재 후보; 필요하면 확대</td><td>8 + 4 → 전체 CC 양립 후보</td></tr><tr><td>계산 상한</td><td>한 번 선택할 때 가상 evaluate_delta 호출 한도</td><td>512회</td></tr><tr><td>전달 조건</td><td>완전히 평가한 양수 가치 질문 중 최선</td><td>첫 행동 하나만 전달</td></tr></tbody></table></div><div class="split"><div><h3>판별 가치의 작은 예</h3><p>적격 A=4·B=3인 상태에서 두 답의 결과가 (4,5)와 (4,3)이면 정규화한 상대값은 −0.25와 +0.25입니다. D=0.25·E=0·비용=1이면 직접 가치는 0.25입니다. 두 후보를 똑같이 +1 보강하는 답은 상대 판단을 바꾸지 않습니다.</p></div><div><h3>점수가 당장 바뀌지 않는 질문</h3><p>존재 확인 뒤 속성, Context 전제 뒤 마지막 조건처럼 미래에 완성되는 경로도 할인해 비교합니다. 실제로는 첫 질문만 전달하고 음성·모름으로 불가능해진 경로는 다시 계획합니다. 미래 지지는 실제 점수에 더하지 않습니다.</p></div></div>
-      <div class="note ochre"><p><strong>계산 한도와 정보 소진은 다릅니다.</strong> 완전 평가한 양수 질문이 없고 계산이 제한되면 <code>computation_limit</code>을, 충분히 계산했으나 가치가 없으면 <code>no_useful_question</code>을 기록합니다. ContextFactor에서 비Context 질문이 더 유용하면 감별로 넘어갑니다. D35 세션 상한·공통 예산·D37 교육 5턴 보호를 유지합니다.</p></div>
-      <p class="source">근거: <a href="../submission/README.md#question-selection">백서 §6</a><a href="../submission/workflow/doctor_brain.py">잔여 경로·후보·재계획</a><a href="../submission/workflow/rules/assessment.py">typed 답변·판별 가치</a><a href="../submission/knowledge/d41-reasoning_policy.json">정책 기본값</a></p></section>
-
-    <section id="preparation" aria-labelledby="preparation-title">
-      <div class="section-head"><span class="section-no">06</span><h2 id="preparation-title">원천 추출에서 실행 자산까지</h2></div><p>D42는 아래 D18–D23 원천 준비 경로를 보존하고, 로컬 일반 호소 복원·DDXPlus metadata·출처가 있는 작성 JSONL을 새 배치로 수용합니다. v5.0 구조와 843개 질환·기존 점수는 유지합니다. 현재 범위와 보류 사유는 <a href="../data/preparation/v5/common-complaints-2026-10-18-r2/README.md">D42 배치 안내</a>에서 확인합니다.</p>
-      <p class="lede">원천 보존 → 후보 투영 → 연결 → 환자 행동 준비 → 정확한 빌드의 실행 수용을 구분합니다. 아래는 이미 채택한 알고리즘과 결과의 설명이며 모델 작업 재개나 새 원천 다운로드를 수행하지 않습니다.</p><h3>① 원천 행과 조건을 보존하며 v5.0으로 투영</h3><figure class="figure" id="source-pipeline">
-        <div class="diagram" style="--diagram-width:1200px" tabindex="0" role="region" aria-label="RF2·BODHI → SQLite → 역할·타입 조건 → Pattern → 원천 연결。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
-          <svg viewBox="0 0 1200 625" role="img" aria-labelledby="source-pipeline-title source-pipeline-desc">
-            <title id="source-pipeline-title">RF2·BODHI → SQLite → 역할·타입 조건 → Pattern → 원천 연결</title><desc id="source-pipeline-desc">전체 원천을 SQLite에 보존하고 최신 RF2 구성요소를 선택한 뒤 active를 검사한다. 전체 변형 조건에서 Pattern과 Association을 구성하고 모든 스키마 클래스와 진찰 후보를 별도로 발견한다. 완전한 연결만 D20 그래프로 수용하고 불완전 의미는 이유와 함께 보존한다.</desc>
-            <g><path class="edge-blue" d="M300 100H460"/><text class="edge-label" text-anchor="middle" x="380" y="80">파일·행·해시</text></g><g><path class="edge-blue" d="M740 100H900"/><text class="edge-label" text-anchor="middle" x="820" y="80">원천 색인</text></g><g><path class="edge-blue" d="M1040 155V250"/><text class="edge-label" text-anchor="middle" x="1110" y="215">그룹·역할 보존</text></g><g><path class="edge-blue" d="M900 305H740"/><text class="edge-label" text-anchor="middle" x="820" y="285">조건 전체를 함께</text></g><g><path class="edge-blue" d="M970 155V205H160V250"/><text class="edge-label" text-anchor="middle" x="560" y="195">모든 클래스 후보 발견</text></g><g><path class="edge-blue" d="M600 360V470"/><text class="edge-label" text-anchor="middle" x="670" y="430">완전 표현만</text></g><g><path class="edge-blue" d="M300 325H370V510H460"/><text class="edge-label" text-anchor="middle" x="370" y="430">선택된 취득 경로</text></g><g><path class="edge-blue" d="M460 550H300"/><text class="edge-label" text-anchor="middle" x="380" y="585">고정 build·정책</text></g><g><path class="edge-blue dashed" d="M1040 360V470"/><text class="edge-label" text-anchor="middle" x="1110" y="430">불완전 역할·단위·조건</text></g><g><rect class="node-blue" x="20" y="45" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="76">공급 원본</text><text class="caption" x="35" y="102">International·Korean RF2 Snapshot</text><text class="caption" x="35" y="123">BODHI-S 8개 CSV</text></g><g><rect class="node-blue" x="460" y="45" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="475" y="76">SQLite 원천 보존</text><text class="caption" x="475" y="102">전체 행·식별자·그룹·출처 위치</text><text class="caption" x="475" y="123">원본 파일·모듈 의존성·해시</text></g><g><rect class="node-blue" x="900" y="45" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="915" y="76">최신 구성요소와 역할</text><text class="caption" x="915" y="102">최신 행 선택 → active 검사</text><text class="caption" x="915" y="123">질환·증상·소견의 원천 역할</text></g><g><rect class="node-blue" x="900" y="250" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="915" y="281">전체 변형 조건 정규화</text><text class="caption" x="915" y="307">존재·범주·수치·구간·단위</text><text class="caption" x="915" y="328">조건 범위·AND/OR 보존</text></g><g><rect class="node-blue" x="460" y="250" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="475" y="281">v5.0 공유 Pattern 투영</text><text class="caption" x="475" y="307">Target+조건으로 Pattern 공유</text><text class="caption" x="475" y="328">질환별 Association·원천 점수</text></g><g><rect class="node-blue" x="20" y="250" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="281">D19 카탈로그·소견 발견</text><text class="caption" x="35" y="307">14개 클래스·Observable·grouped value</text><text class="caption" x="35" y="328">진료과·방법·범위 공백 보존</text></g><g><rect class="node-blue" x="460" y="470" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="475" y="501">D20 원천 연결</text><text class="caption" x="475" y="527">inSystem·typed Context·필수 조건</text><text class="caption" x="475" y="548">완전한 단일 진찰 경로 선택</text></g><g><rect class="node-green" x="20" y="470" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="501">D20 그래프 수용</text><text class="caption" x="35" y="527">빌드·후보 집합·정책·영수증 고정</text><text class="caption" x="35" y="548">중간 상태: text_pending</text></g><g><rect class="node-ochre" x="900" y="470" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="915" y="501">기술적 제외·미해결</text><text class="caption" x="915" y="527">원천·이유를 준비 정본에 보존</text><text class="caption" x="915" y="548">관계·단위·취득 방식을 만들지 않음</text></g>
+        </div>
+<figcaption>ExpectedValue의 숫자·구간은 범주 AttributeValue 없이도 표현할 수 있습니다. 개념 집합의 any_of/all_of, 수치 단위·연산자·경계를 보존합니다. 점선은 RDF predicate가 아닙니다.</figcaption>
+      </figure>
+<details>
+<summary>Context·진찰·계통 관계와 클래스별 수 보기</summary>
+<figure class="figure" id="ontology-acquisition">
+        <div class="diagram" style="--diagram-width:1200px" tabindex="0" role="region" aria-label="Context 관계와 적용 조건, 문진과 실제 진찰을 구분。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
+          <svg viewBox="0 0 1200 615" role="img" aria-labelledby="ontology-acquisition-title ontology-acquisition-desc">
+            <title id="ontology-acquisition-title">Context 관계와 적용 조건, 문진과 실제 진찰을 구분</title>
+<desc id="ontology-acquisition-desc">D46은 등록된 hasSupportingContext 관계도 후보 회수와 근거 확인에 사용한다. Association의 applicability는 별도의 JSON 적용 조건이다. Symptom은 BodySystem으로 ROS를 탐색하고, ExamFinding은 ExamMethod로 획득한다. Disease의 evaluatedBy는 Test 계획에만 사용한다.</desc>
+            <g data-schema-source="Disease" data-schema-predicate="hasSupportingContext" data-schema-target="ContextFactor">
+<path class="edge" d="M220 105H450"/>
+<text class="edge-label" text-anchor="middle" x="335" y="85">hasSupportingContext</text>
+</g>
+<g data-schema-source="Disease" data-schema-predicate="evaluatedBy" data-schema-target="Test">
+<path class="edge" d="M220 135H310V210H1040V160"/>
+<text class="edge-label" text-anchor="middle" x="785" y="198">evaluatedBy</text>
+</g>
+<g>
+<path class="edge-blue dashed" d="M270 355H365V140H450"/>
+<text class="edge-label" text-anchor="middle" x="350" y="280">applicability JSON 조건</text>
+</g>
+<g data-schema-source="Symptom" data-schema-predicate="inSystem" data-schema-target="BodySystem">
+<path class="edge" d="M690 350H920"/>
+<text class="edge-label" text-anchor="middle" x="805" y="330">inSystem</text>
+</g>
+<g data-schema-source="ExamFinding" data-schema-predicate="detectedBy" data-schema-target="ExamMethod">
+<path class="edge" d="M690 520H920"/>
+<text class="edge-label" text-anchor="middle" x="805" y="500">detectedBy</text>
+</g>
+<g data-schema-class="Disease">
+<rect class="node" x="20" y="50" width="200" height="110" rx="6"/>
+<text class="node-title" style="font-size:16px" x="35" y="81">Disease</text>
+<text class="caption" x="35" y="107">등록 관계로 회수한 질환 후보</text>
+<text class="caption" x="35" y="128">추론·계획의 서로 다른 연결</text>
+</g>
+<g data-schema-class="ContextFactor">
+<rect class="node-blue" x="450" y="50" width="240" height="110" rx="6"/>
+<text class="node-title" style="font-size:16px" x="465" y="81">ContextFactor</text>
+<text class="caption" x="465" y="107">병력·노출·인구학 맥락</text>
+<text class="caption" x="465" y="128">contextType / 310개</text>
+</g>
+<g data-schema-class="Test">
+<rect class="node-ochre" x="920" y="50" width="260" height="110" rx="6"/>
+<text class="node-title" style="font-size:16px" x="935" y="81">Test</text>
+<text class="caption" x="935" y="107">SOAP P.tests 전용 개념</text>
+<text class="caption" x="935" y="128">진단 TEST 행동 없음 / 0개</text>
+</g>
+<g data-schema-class="DiseasePatternAssociation">
+<rect class="node-green" x="20" y="300" width="250" height="110" rx="6"/>
+<text class="node-title" style="font-size:14px" x="35" y="331">DiseasePatternAssociation</text>
+<text class="caption" x="35" y="357">필수 조건: 충족해야 지지 활성화</text>
+<text class="caption" x="35" y="378">등록 Context 관계와 구분</text>
+</g>
+<g data-schema-class="Symptom">
+<rect class="node" x="450" y="300" width="240" height="100" rx="6"/>
+<text class="node-title" style="font-size:16px" x="465" y="331">Symptom</text>
+<text class="caption" x="465" y="357">대표 CC에서 ROS 계통 고정</text>
+</g>
+<g data-schema-class="BodySystem">
+<rect class="node-blue" x="920" y="300" width="260" height="110" rx="6"/>
+<text class="node-title" style="font-size:16px" x="935" y="331">BodySystem</text>
+<text class="caption" x="935" y="357">문진 계통 / 12개</text>
+<text class="caption" x="935" y="378">Disease 회수 필터 아님</text>
+</g>
+<g data-schema-class="ExamFinding">
+<rect class="node" x="450" y="470" width="240" height="100" rx="6"/>
+<text class="node-title" style="font-size:16px" x="465" y="501">ExamFinding</text>
+<text class="caption" x="465" y="527">detectedBy와 요청 문구 필요</text>
+</g>
+<g data-schema-class="ExamMethod">
+<rect class="node-blue" x="920" y="470" width="260" height="110" rx="6"/>
+<text class="node-title" style="font-size:16px" x="935" y="501">ExamMethod</text>
+<text class="caption" x="935" y="527">준비된 진찰 방법 / 2개</text>
+<text class="caption" x="935" y="548">examRequestText · NFC 1–30자</text>
+</g>
           </svg>
-        </div><figcaption>후보 발견이 곧 실행 수용은 아닙니다. source-findings.ttl 전체를 실행 그래프에 합치지 않으며 단위·전제·진찰 경로가 완전한 부분집합을 선택합니다.</figcaption>
-      </figure><h3>② 환자 도달 행동 문구를 준비하고 그래프에 고정</h3><figure class="figure" id="text-pipeline">
-        <div class="diagram" style="--diagram-width:1200px" tabindex="0" role="region" aria-label="D20 그래프 → 환자 행동 동결 → 생성·의미 대조 → D23 → prepare。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
-          <svg viewBox="0 0 1200 405" role="img" aria-labelledby="text-pipeline-title text-pipeline-desc">
-            <title id="text-pipeline-title">D20 그래프 → 환자 행동 동결 → 생성·의미 대조 → D23 → prepare</title><desc id="text-pipeline-desc">그래프에 고정한 환자 행동 작업 집합을 생성하고 별도 의미 대조와 NFC 길이 검증을 거친다. D23은 원래 그래프와 D22 요청 출처를 새 영수증으로 연결하고 manifest admitted와 엄격한 prepare 검증을 제공한다.</desc>
-            <g><path class="edge-blue" d="M300 100H460"/><text class="edge-label" text-anchor="middle" x="380" y="80">그래프 핀</text></g><g><path class="edge-blue" d="M740 100H900"/><text class="edge-label" text-anchor="middle" x="820" y="80">환자 행동만</text></g><g><path class="edge-blue" d="M1040 155V250"/><text class="edge-label" text-anchor="middle" x="1115" y="215">생성·응답 보존</text></g><g><path class="edge-blue" d="M900 305H740"/><text class="edge-label" text-anchor="middle" x="820" y="285">검증된 문구</text></g><g><path class="edge" d="M460 305H300"/><text class="edge-label" text-anchor="middle" x="380" y="285">실행 자산</text></g><g><rect class="node-blue" x="20" y="45" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="76">수용 그래프</text><text class="caption" x="35" y="102">D20의 정확한 입력·정책·출처</text><text class="caption" x="35" y="123">원래 수용 영수증 보존</text></g><g><rect class="node-blue" x="460" y="45" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="475" y="76">D22 작업 집합 동결</text><text class="caption" x="475" y="102">환자 도달 SAY·EXAM만</text><text class="caption" x="475" y="123">유한 요청 상한·요청 예약</text></g><g><rect class="node-blue" x="900" y="45" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="915" y="76">NOVA 한국어 생성</text><text class="caption" x="915" y="102">원천 표현·Target·속성에 바인딩</text><text class="caption" x="915" y="123">실패·거절·새 시도 출처 보존</text></g><g><rect class="node-blue" x="900" y="250" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="915" y="281">별도 의미 대조·길이 검사</text><text class="caption" x="915" y="307">생성과 별개 요청으로 대조</text><text class="caption" x="915" y="328">독립 NFC 1–30 codepoint 검증</text></g><g><rect class="node-green" x="460" y="250" width="280" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="475" y="281">D23 그래프+문구 수용</text><text class="caption" x="475" y="307">새 영수증에 D20·D22 핀 연결</text><text class="caption" x="475" y="328">문진 1,308 + EXAM 요청 1</text></g><g><rect class="node-green" x="20" y="250" width="280" height="110" rx="6"/><text class="node-title" style="font-size:14px" x="35" y="281">manifest → prepare → ZIP</text><text class="caption" x="35" y="307">admitted·경로·해시·문구 검증</text><text class="caption" x="35" y="328">D41 정책 별도 핀·필요 자산만</text></g>
-          </svg>
-        </div><figcaption>Korean RF2의 공식 명칭과 모델 문구의 출처를 구분합니다. D23의 완전 후보에 새 승인 대기는 없으며, 실패 기록·미완성 후보를 자동 복구하거나 문장을 절단하지 않습니다.</figcaption>
-      </figure><h3>③ 가이드라인 문서 연결은 진단 뒤 계획의 입력</h3><figure class="figure" id="guideline-pipeline">
-        <div class="diagram" style="--diagram-width:1330px" tabindex="0" role="region" aria-label="Disease → D30 근거 매핑 → D37 탐색 인덱스 → Education。좌우 스크롤 또는 아래 표로 읽을 수 있습니다.">
-          <svg viewBox="0 0 1330 200" role="img" aria-labelledby="guideline-pipeline-title guideline-pipeline-desc">
-            <title id="guideline-pipeline-title">Disease → D30 근거 매핑 → D37 탐색 인덱스 → Education</title><desc id="guideline-pipeline-desc">수용 Disease와 동일 SCTID 별칭으로 허용 문서를 검색한다. 모델이 제공 evidence_id를 선택하고 Python이 원문을 복사한다. build와 문서 해시로 탐색 인덱스를 고정한 뒤 진단 후 원문과 전체 대화를 읽어 계획과 한국어 안내를 생성한다.</desc>
-            <g><path class="edge-blue" d="M260 100H340"/><text class="edge-label" text-anchor="middle" x="300" y="80">근거 선택</text></g><g><path class="edge-blue" d="M610 100H690"/><text class="edge-label" text-anchor="middle" x="650" y="80">build·문서 해시</text></g><g><path class="edge" d="M960 100H1040"/><text class="edge-label" text-anchor="middle" x="1000" y="80">진단 고정 후</text></g><g><rect class="node-blue" x="20" y="45" width="240" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="35" y="76">수용 Disease 843개</text><text class="caption" x="35" y="102">동일 SCTID 별칭·FTS5 검색</text><text class="caption" x="35" y="123">카탈로그 허용 문서</text></g><g><rect class="node-blue" x="340" y="45" width="270" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="355" y="76">D30 원문 근거 매핑</text><text class="caption" x="355" y="102">모델은 evidence_id 선택</text><text class="caption" x="355" y="123">Python이 원문 바이트 복사</text></g><g><rect class="node-blue" x="690" y="45" width="270" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="705" y="76">D37 탐색 인덱스</text><text class="caption" x="705" y="102">background_only·범위 보존</text><text class="caption" x="705" y="123">원문은 제공 마운트에 유지</text></g><g><rect class="node-green" x="1040" y="45" width="270" height="110" rx="6"/><text class="node-title" style="font-size:16px" x="1055" y="76">진단 후 Education</text><text class="caption" x="1055" y="102">원문 전체·실제 대화 → 영어 P</text><text class="caption" x="1055" y="123">별도 한국어 변환·SAY 전달</text></g>
-          </svg>
-        </div><figcaption>원문은 NOVA_GUIDELINES_DIR 아래에서 해시 확인 후 읽고 ZIP에 넣지 않습니다. 문서 연결, 환자별 권고 적용, 모델 지식 보완과 실제 한국어 전달은 각각 구분합니다.</figcaption>
-      </figure><div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서는 좌우로 스크롤할 수 있습니다."><table ><thead><tr><th scope="col">구현</th><th scope="col">파이프라인의 책임</th></tr></thead><tbody><tr><td><a href="../Dev/ontology/database.py">database.py</a></td><td>전체 원천 파일·행·식별자·관계 그룹·모듈 의존성·해시 정본</td></tr><tr><td><a href="../Dev/ontology/source_projection.py">source_projection.py</a> · <a href="../Dev/ontology/v5.py">v5.py</a></td><td>build/export/admit 경계, 타입 조건·공유 Pattern·Association·정교화·원천 점수</td></tr><tr><td><a href="../Dev/ontology/source_catalog.py">source_catalog.py</a> · <a href="../Dev/ontology/findings.py">findings.py</a></td><td>전체 스키마·소견·Observable 발견과 획득·범위 공백</td></tr><tr><td><a href="../Dev/ontology/connections.py">connections.py</a></td><td>원천 계통·양성 영향·prerequisite를 ROS·Context·필수 조건으로 연결</td></tr><tr><td><a href="../Dev/ontology/patient_text.py">patient_text.py</a> · <a href="../Dev/ontology/admission.py">admission.py</a></td><td>환자 행동 작업 집합·요청 출처·의미/길이 검증·빌드 고정 수용</td></tr><tr><td><a href="../Dev/guidelines/map.py">guidelines/map.py</a></td><td>문서 검색·근거 ID 선택·원문 복사·runtime-export</td></tr></tbody></table></div><div class="note"><p><strong>실행은 준비 DB에 의존하지 않습니다.</strong> 추론은 submission 내부 RDF·JSON을, Education은 고정 탐색 인덱스와 제공 원문 마운트를 읽습니다. 환자 사실은 consult별 상태에만 두며 일반 지식 Graph에 쓰지 않습니다. 패키지에는 필요한 runtime·고정 의존성·공개 설정·자산만 넣습니다.</p></div><p class="source">근거: <a href="../submission/README.md#extraction-pipeline">백서 §12</a><a href="../Dev/ontology/README.md">준비 도구 안내</a><a href="../Dev/guidelines/README.md">문서 매핑</a><a href="../data/provenance/algorithm-d41-2026-10-18.json">현재 정책 수용</a></p></section>
-
-    <section id="boundaries" aria-labelledby="boundaries-title">
-      <div class="section-head"><span class="section-no">07</span><h2 id="boundaries-title">어디를 읽고, 무엇을 구분할까</h2></div>
-      <p class="lede">궁금한 동작이 어느 책임에 있는지 찾는 지도입니다. 아래 Python 객체들은 하나의 진료 프로그램 안에서 역할을 나눕니다.</p>
-      <div class="table-scroll"><table><thead><tr><th scope="col">궁금한 것</th><th scope="col">책임</th><th scope="col">먼저 읽을 코드</th></tr></thead><tbody>
-        <tr><td>준비와 증례 조립</td><td>prepare / consult</td><td><a href="../submission/workflow/runtime.py">workflow/runtime.py</a></td></tr>
-        <tr><td>단계 전환과 재계획 시점</td><td>Consultation · LangGraph</td><td><a href="../submission/workflow/consultation.py">consultation.py</a> · <a href="../submission/workflow/graph.py">graph.py</a></td></tr>
-        <tr><td>환자에게 실제로 보낸 질문</td><td>Doctor</td><td><a href="../submission/workflow/doctor_mouth.py">doctor.py</a></td></tr>
-        <tr><td>자연어의 개념 연결과 수용 사실</td><td>InputInterpreter · 입력 검증</td><td><a href="../submission/workflow/doctor_ear.py">doctor_ear.py</a> · <a href="../submission/workflow/rules/input.py">rules/input.py</a></td></tr>
-        <tr><td>질문 순서와 미전송 계획</td><td>InterviewPlanner</td><td><a href="../submission/workflow/doctor_brain.py">doctor_brain.py</a></td></tr>
-        <tr><td>Pattern·원천 지지·진단 자격</td><td>ClinicalReasoner · 지식 reader</td><td><a href="../submission/workflow/doctor_brain.py">doctor_brain.py</a> · <a href="../submission/knowledge/graph.py">knowledge/graph.py</a></td></tr>
-        <tr><td>진단 후 영어 P·한국어 전달</td><td>InterviewPlanner · 교육 생성 함수 · Doctor</td><td><a href="../submission/workflow/education.py">education.py</a> · <a href="../submission/knowledge/guidelines.py">원문 reader</a></td></tr>
-        <tr><td>15개 SOAP와 제출 영수증</td><td>SubmissionWriter</td><td><a href="../submission/workflow/submission_writer.py">submission_writer.py</a></td></tr>
-        <tr><td>한 환자의 사실과 현재 계획</td><td>CaseState · InterviewState · SessionContext · TurnContext (현재 작업만)</td><td><a href="../submission/workflow/state/models.py">state/models.py</a></td></tr>
-        <tr><td>실제 지식·원천 행을 따라가기</td><td>D39 읽기 전용 지식 뷰어</td><td><a href="README.md#knowledge-viewer">지식 뷰어 안내</a> · <a href="knowledge.py">knowledge.py</a></td></tr>
-        <tr><td>실제 실행에서 일어난 대화·변화</td><td>Test 실행기 · 관측 리포트</td><td><a href="README.md">Test/README.md</a> · 실행별 report.html</td></tr>
-      </tbody></table></div>
-      <div class="boundary">
-        <div><h3>현재 구현과 검증 근거를 읽는 법</h3><ul class="list"><li><strong>원천 기반 지식과 문구는 수용됨</strong><p>D20–D23 원천·한국어 행동, D42 일반 호소 데이터, D37 탐색 인덱스와 D41 d41.1 정책을 manifest로 고정합니다.</p></li><li><strong>로컬 실행·관측 경로가 있음</strong><p>기존 Test 사이트와 실행별 리포트에서 대화·노드·근거를 읽습니다. scripted 실패도 실패로 표시합니다.</p></li><li><strong>현재 상태는 각 소유 문서가 관리</strong><p><a href="../PROJECT_STATE.md">루트</a> · <a href="../submission/PROJECT_STATE.md">submission</a> · <a href="../data/PROJECT_STATE.md">data</a>. 이 페이지는 자동으로 갱신되지 않습니다.</p></li></ul></div>
-        <div><h3>별도 검증·후속으로 남은 것</h3><ul class="list"><li><strong>실제 모델과 공식 서버 재검증</strong><p>오프라인 코드·자산 검사와 실제 Luna 의미 매핑·공식 서버 수락·공식 점수는 구분합니다.</p></li><li><strong>환자별 계획과 교육 근거</strong><p>D37은 원문과 전체 대화에서 P를 생성하고 한국어로 안내합니다. 실제 모델의 계획·번역 품질과 임상적 충분성은 별도 검증 대상이며 실패·미전달을 완료로 표시하지 않습니다.</p></li><li><strong>임상적 정확성과 충분성</strong><p>공모전용 자산 수용·완료 영수증·적합도 점수만으로 독립 임상 검증을 대신하지 않습니다.</p></li></ul></div>
-      </div>
-      <div class="note ochre"><p><strong>이 페이지는 2026-10-18 소스 기준 정적 설명입니다.</strong> 클래스 수·속성·노드·전이를 소스와 대조하는 검증과 실제 화면 렌더링은 별개입니다. 이 atlas의 브라우저·모바일·인쇄 렌더링은 검사한 프로젝트 이미지에 렌더러가 없어 not_run입니다. D39 뷰어의 별도 브라우저 검증은 이 정적 파일의 렌더링 증거로 사용하지 않습니다. 실제 Luna·공식 샘플·임상 정확성·공식 점수도 이 지도에서 입증하지 않습니다.</p></div><p class="source">읽기의 기준: <a href="../submission/README.md#change-guide">백서 §10 수정 방향과 경계</a><a href="../PRD.md">PRD</a><a href="../DECISION_STATE.md">사용자 결정</a><a href="../Dev/architecture/WORKFLOW_RULES.md">규칙 색인</a></p>
-    </section>
-    <footer><span>Ontoward · 개인용 프로젝트 안내서<br>본문과 도식은 이 HTML 안에 있습니다. 원문 링크는 프로젝트 폴더 안에서 열립니다.</span><span>스크립트·외부 폰트·CDN·서버 없음<br>브라우저의 찾기와 인쇄를 사용할 수 있습니다.</span></footer>
-  </main>
+        </div>
+<figcaption>BodySystem은 질환 후보 회수의 필터가 아닙니다. Test 인스턴스 0개와 별개로 DoctorBrain은 출처를 구분한 영어 P.tests 문장을 생성할 수 있으며, 예선 O.tests는 빈 문자열로 유지합니다.</figcaption>
+      </figure>
+<div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서 좌우로 스크롤할 수 있습니다.">
+<table>
+<caption>현재 합집합 113,062 triples. ValueMatch·Test의 0개도 구조의 일부입니다.</caption>
+<thead>
+<tr>
+<th scope="col">클래스</th>
+<th scope="col">현재 역할</th>
+<th scope="col">RDF 인스턴스</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">
+<code>Disease</code>
+</th>
+<td>등록 질환 후보</td>
+<td>
+<span class="metric" data-class-count="Disease" data-count="843">843</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>Symptom</code>
+</th>
+<td>환자 보고 Target</td>
+<td>
+<span class="metric" data-class-count="Symptom" data-count="533">533</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>ExamFinding</code>
+</th>
+<td>실제 진찰 Target</td>
+<td>
+<span class="metric" data-class-count="ExamFinding" data-count="2">2</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>FindingAttribute</code>
+</th>
+<td>Target의 속성 차원</td>
+<td>
+<span class="metric" data-class-count="FindingAttribute" data-count="36">36</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>AttributeValue</code>
+</th>
+<td>허용 범주 값</td>
+<td>
+<span class="metric" data-class-count="AttributeValue" data-count="1153">1,153</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>ClinicalPattern</code>
+</th>
+<td>공유하는 단일 Target 조건 묶음</td>
+<td>
+<span class="metric" data-class-count="ClinicalPattern" data-count="1925">1,925</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>ClinicalFeature</code>
+</th>
+<td>Pattern의 존재·속성 조건</td>
+<td>
+<span class="metric" data-class-count="ClinicalFeature" data-count="3530">3,530</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>ExpectedValue</code>
+</th>
+<td>concept·집합·수치·구간의 엄격한 기대 값</td>
+<td>
+<span class="metric" data-class-count="ExpectedValue" data-count="430">430</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>DiseasePatternAssociation</code>
+</th>
+<td>질환 × Pattern × 적용 조건·출처</td>
+<td>
+<span class="metric" data-class-count="DiseasePatternAssociation" data-count="9955">9,955</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>ValueMatch</code>
+</th>
+<td>출처가 있는 방향성 값 비교</td>
+<td>
+<span class="metric" data-class-count="ValueMatch" data-count="0">0</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>ContextFactor</code>
+</th>
+<td>병력·노출·인구학 맥락</td>
+<td>
+<span class="metric" data-class-count="ContextFactor" data-count="310">310</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>BodySystem</code>
+</th>
+<td>ROS 문진 그룹</td>
+<td>
+<span class="metric" data-class-count="BodySystem" data-count="12">12</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>ExamMethod</code>
+</th>
+<td>준비된 실제 진찰 방법</td>
+<td>
+<span class="metric" data-class-count="ExamMethod" data-count="2">2</span>
+</td>
+</tr>
+<tr>
+<th scope="row">
+<code>Test</code>
+</th>
+<td>P.tests 계획 개념</td>
+<td>
+<span class="metric" data-class-count="Test" data-count="0">0</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>관계 이외의 속성도 보존합니다</h3>
+<p>ExpectedValue의 <code>valueJSON</code>은 타입·단위·경계를, Association의 <code>applicability</code>는 주체·시점·상태 조건을 보존합니다. <code>sourceRef</code>는 일반 지식의 출처이며 환자 fact ID와 다릅니다.</p>
+<p>
+<code data-schema-property="applicability">applicability</code> · <code data-schema-property="canHaveValue">canHaveValue</code> · <code data-schema-property="contextType">contextType</code> · <code data-schema-property="derivationScope">derivationScope</code> · <code data-schema-property="detectedBy">detectedBy</code> · <code data-schema-property="evaluatedBy">evaluatedBy</code> · <code data-schema-property="examRequestText">examRequestText</code> · <code data-schema-property="expected">expected</code> · <code data-schema-property="expectedConcept">expectedConcept</code> · <code data-schema-property="expectedStatus">expectedStatus</code> · <code data-schema-property="hasAssociation">hasAssociation</code> · <code data-schema-property="hasAttribute">hasAttribute</code> · <code data-schema-property="hasFeature">hasFeature</code> · <code data-schema-property="hasSupportingContext">hasSupportingContext</code> · <code data-schema-property="inSystem">inSystem</code> · <code data-schema-property="observedConcept">observedConcept</code> · <code data-schema-property="onAttribute">onAttribute</code> · <code data-schema-property="pattern">pattern</code> · <code data-schema-property="predictiveness">predictiveness</code> · <code data-schema-property="refinesPattern">refinesPattern</code> · <code data-schema-property="relationBasis">relationBasis</code> · <code data-schema-property="relationKind">relationKind</code> · <code data-schema-property="schemaVersion">schemaVersion</code> · <code data-schema-property="sourceRef">sourceRef</code> · <code data-schema-property="strongPredictor">strongPredictor</code> · <code data-schema-property="targets">targets</code> · <code data-schema-property="typicality">typicality</code> · <code data-schema-property="urgencyLabel">urgencyLabel</code> · <code data-schema-property="valueJSON">valueJSON</code>
+</p>
+</details>
+<div class="note">
+<p>
+<strong>일반 지식의 노드와 환자의 관찰은 서로 다른 객체입니다.</strong> Target은 Symptom·ExamFinding의 역할 이름입니다. Assessment·ClinicalFact·NoteFact는 Python 증례 모델이며 RDF 클래스 수에 포함하지 않습니다. 등록되지 않은 인구학 규칙·관계·진찰 방법을 추정하지 않습니다.</p>
+</div>
+<p class="source">근거 <a href="../submission/knowledge/manifest.json">실행 manifest</a> <a href="../submission/knowledge/schema.ttl">v5.0 스키마</a> <a href="../submission/knowledge/graph.py">읽기 전용 그래프</a> <a href="../submission/knowledge/conditions.py">엄격한 값·조건 비교</a>
+</p>
+</section>
+<section id="preparation" aria-labelledby="preparation-heading">
+<div class="section-heading">
+<h2 id="preparation-heading">원천에서 실행 자산으로</h2>
+<a class="anchor" href="#content" aria-label="페이지 처음으로">처음으로</a>
+</div>
+<p class="lede">Dev가 추출·준비하고 data가 출처·검증·수용을 보관합니다. 진료는 submission 내부의 고정된 자산을 읽습니다. 준비용 DB와 원본 패키지는 실행 입력이 아닙니다.</p>
+<figure id="preparation-flow" class="figure">
+      <div class="diagram" style="--diagram-width:1080px" tabindex="0" role="region" aria-label="보존된 원천과 로컬 추가 자료의 준비, 수용, 실행 경계。도식은 좌우로 스크롤할 수 있으며 아래 설명으로도 읽을 수 있습니다.">
+      <svg viewBox="0 0 1080 615" role="img" aria-labelledby="preparation-flow-title preparation-flow-desc">
+      <title id="preparation-flow-title">보존된 원천과 로컬 추가 자료의 준비, 수용, 실행 경계</title>
+<desc id="preparation-flow-desc">보존된 RF2와 BODHI를 v5로 투영하고 D42의 로컬 metadata 및 작성 자료를 출처와 함께 수용한다. manifest의 해시 검증을 거쳐 실행한다. 지침 원문은 별도 지정 마운트에서 진단을 고정한 뒤 영어 P를 만들 때 읽는다.</desc>
+<g data-node="raw">
+<rect class="node blue" x="20" y="30" width="300" height="112" rx="10"/>
+<text class="node-title" x="38" y="61">보존된 원천</text>
+<text class="caption" x="38" y="86">RF2 Snapshot / BODHI-S</text>
+<text class="caption" x="38" y="108">출처·행·그룹·해시 보존</text>
+</g>
+<g data-node="projection">
+<rect class="node blue" x="390" y="30" width="300" height="112" rx="10"/>
+<text class="node-title" x="408" y="61">Dev · v5.0 투영</text>
+<text class="caption" x="408" y="86">원천 SQLite → 후보·관계</text>
+<text class="caption" x="408" y="108">source_catalog / findings</text>
+</g>
+<g data-node="admission">
+<rect class="node blue" x="760" y="30" width="300" height="112" rx="10"/>
+<text class="node-title" x="778" y="61">data · 수용 영수증</text>
+<text class="caption" x="778" y="86">D20 연결 / D22 환자 문구</text>
+<text class="caption" x="778" y="108">D23 수용 / D42 새 임상 배치</text>
+</g>
+<path class="edge blue " d="M320 86H390"/>
+<text class="edge-label" text-anchor="middle" x="355" y="67">source custody</text>
+<path class="edge blue " d="M690 86H760"/>
+<text class="edge-label" text-anchor="middle" x="725" y="67">검증·정확한 핀</text>
+<g data-node="additional">
+<rect class="node blue" x="20" y="250" width="300" height="112" rx="10"/>
+<text class="node-title" x="38" y="281">D42 · 로컬 추가 자료</text>
+<text class="caption" x="38" y="306">DDXPlus evidence·condition metadata</text>
+<text class="caption" x="38" y="328">출처가 명시된 authored JSONL</text>
+</g>
+<g data-node="manifest">
+<rect class="node green" x="390" y="250" width="300" height="112" rx="10"/>
+<text class="node-title" x="408" y="281">submission · manifest</text>
+<text class="caption" x="408" y="306">schema / vocabulary / clinical RDF</text>
+<text class="caption" x="408" y="328">questions / source policy / index</text>
+</g>
+<g data-node="prepare">
+<rect class="node green" x="760" y="250" width="300" height="112" rx="10"/>
+<text class="node-title" x="778" y="281">prepare() → 진료</text>
+<text class="caption" x="778" y="306">경로·해시·문구·수용 상태 확인</text>
+<text class="caption" x="778" y="328">부모 data SQLite를 읽지 않음</text>
+</g>
+<path class="edge blue " d="M170 250V192H540V142"/>
+<text class="edge-label" text-anchor="middle" x="355" y="181">기존 구조·출처를 보존한 새 배치</text>
+<path class="edge blue " d="M910 142V192H715V218H540V250"/>
+<text class="edge-label" text-anchor="middle" x="822" y="213">현재 D42 임상 핀</text>
+<path class="edge  " d="M690 307H760"/>
+<text class="edge-label" text-anchor="middle" x="725" y="288">고정된 자산만</text>
+<g data-node="guideline">
+<rect class="node blue" x="20" y="470" width="300" height="112" rx="10"/>
+<text class="node-title" x="38" y="501">D30 → D37 지침 탐색</text>
+<text class="caption" x="38" y="526">원문 문서와 exact source 연결</text>
+<text class="caption" x="38" y="548">ZIP에는 탐색 인덱스만</text>
+</g>
+<g data-node="mount">
+<rect class="node " x="390" y="470" width="300" height="112" rx="10"/>
+<text class="node-title" x="408" y="501">NOVA_GUIDELINES_DIR</text>
+<text class="caption" x="408" y="526">지정 마운트의 원문 해시 검증</text>
+<text class="caption" x="408" y="548">기본 /opt/nova/guidelines</text>
+</g>
+<g data-node="planning">
+<rect class="node " x="760" y="470" width="300" height="112" rx="10"/>
+<text class="node-title" x="778" y="501">진단 고정 뒤 영어 P</text>
+<text class="caption" x="778" y="526">guideline / model_knowledge / mixed</text>
+<text class="caption" x="778" y="548">진단 재계산 없이 계획 생성</text>
+</g>
+<path class="edge blue " d="M320 526H390"/>
+<text class="edge-label" text-anchor="middle" x="355" y="507">원문은 ZIP 밖</text>
+<path class="edge  " d="M690 526H760"/>
+<text class="edge-label" text-anchor="middle" x="725" y="507">검증된 원문</text>
+</svg>
+</div>
+      <figcaption>이 그림은 완료된 준비·수용 경로를 설명합니다. 새로운 다운로드·코퍼스 확장·모델 작업 재개를 예약하지 않습니다.</figcaption>
+</figure>
+<div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서 좌우로 스크롤할 수 있습니다.">
+<table>
+<thead>
+<tr>
+<th scope="col">단계</th>
+<th scope="col">구체적인 코드·산출물</th>
+<th scope="col">구분해야 할 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">원천 보존·투영</th>
+<td>
+<a href="../Dev/ontology/database.py">database.py</a> / <a href="../Dev/ontology/source_projection.py">source_projection.py</a> / <a href="../Dev/ontology/v5.py">v5.py</a>
+</td>
+<td>전체 원천 custody와 실행 dependency subset</td>
+</tr>
+<tr>
+<th scope="row">클래스·연결</th>
+<td>
+<a href="../Dev/ontology/source_catalog.py">source_catalog.py</a> / <a href="../Dev/ontology/findings.py">findings.py</a> / <a href="../Dev/ontology/connections.py">connections.py</a>
+</td>
+<td>명시적 acquisition·applicability와 미지원 원천 역할</td>
+</tr>
+<tr>
+<th scope="row">환자 문구·수용</th>
+<td>
+<a href="../Dev/ontology/patient_text.py">patient_text.py</a> / <a href="../Dev/ontology/admission.py">admission.py</a>
+</td>
+<td>NFC 1–30자·정확한 graph/text provenance·새 수용 영수증</td>
+</tr>
+<tr>
+<th scope="row">현재 임상 배치</th>
+<td>
+<a href="../data/preparation/v5/common-complaints-2026-10-18-r2/admission.json">D42 admission</a>
+</td>
+<td>843 Disease 유지 / DDXPlus 환자 CSV·정답·합성 확률은 제외</td>
+</tr>
+<tr>
+<th scope="row">준비 기여 기록</th>
+<td>
+<a href="../Dev/ontology/contributions.py">contributions.py</a>
+</td>
+<td>원천 기여 기록의 보존과 D46 임상 순위는 별개</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="source">근거 <a href="../data/PROJECT_STATE.md">데이터 상태·출처</a> <a href="../Dev/guidelines/map.py">지침 탐색 준비</a> <a href="../submission/knowledge/guidelines.py">원문 경로·해시 검증</a>
+</p>
+</section>
+<section id="submission" aria-labelledby="submission-heading">
+<div class="section-heading">
+<h2 id="submission-heading">하나의 고정 평가로 교육과 SOAP까지</h2>
+<a class="anchor" href="#content" aria-label="페이지 처음으로">처음으로</a>
+</div>
+<p class="lede">수집 종료는 마지막 답 수용과 최신 평가 확인을 거칩니다. Education 진입 뒤 환자의 새 답변은 사실·진단·A를 바꾸지 않습니다. SOAP 복구에서도 진단을 다시 선택하지 않습니다.</p>
+<figure id="freeze-flow" class="figure">
+      <div class="diagram" style="--diagram-width:1080px" tabindex="0" role="region" aria-label="마지막 응답 수용부터 평가 고정, 교육, SOAP, 제출 확인。도식은 좌우로 스크롤할 수 있으며 아래 설명으로도 읽을 수 있습니다.">
+      <svg viewBox="0 0 1080 410" role="img" aria-labelledby="freeze-flow-title freeze-flow-desc">
+      <title id="freeze-flow-title">마지막 응답 수용부터 평가 고정, 교육, SOAP, 제출 확인</title>
+<desc id="freeze-flow-desc">마지막 입력을 수용하고 최신 평가를 확인한다. 평가를 회복할 수 없으면 확인된 등록 chief 하나의 symptom-only 평가를 고정하며 chief도 없으면 실패한다. 같은 고정 평가로 진단 안내, 영어 P, 한국어 전달, Python SOAP와 DIAGNOSE completed를 처리한다.</desc>
+<g data-node="last-input">
+<rect class="node " x="20" y="30" width="300" height="112" rx="10"/>
+<text class="node-title" x="38" y="61">마지막 수집 응답</text>
+<text class="caption" x="38" y="86">Ear 수용을 먼저 완료</text>
+<text class="caption" x="38" y="108">잔여 행동 0이어도 반영</text>
+</g>
+<g data-node="current-assessment">
+<rect class="node green" x="390" y="30" width="300" height="112" rx="10"/>
+<text class="node-title" x="408" y="61">최신 평가·한계 확인</text>
+<text class="caption" x="408" y="86">revision / chief 일치</text>
+<text class="caption" x="408" y="108">허용 복구 또는 등록 chief fallback</text>
+</g>
+<g data-node="frozen">
+<rect class="node green" x="760" y="30" width="300" height="112" rx="10"/>
+<text class="node-title" x="778" y="61">Assessment 고정</text>
+<text class="caption" x="778" y="86">facts / notes / chief 함께 고정</text>
+<text class="caption" x="778" y="108">Education·A·diagnosis의 같은 1위</text>
+</g>
+<path class="edge  " d="M320 86H390"/>
+<text class="edge-label" text-anchor="middle" x="355" y="67">현재 사실</text>
+<path class="edge  " d="M690 86H760"/>
+<text class="edge-label" text-anchor="middle" x="725" y="67">frozen=true</text>
+<g data-node="education">
+<rect class="node blue" x="760" y="260" width="300" height="112" rx="10"/>
+<text class="node-title" x="778" y="291">진단 안내 → 계획 → 전달</text>
+<text class="caption" x="778" y="316">Brain 영어 P / Mouth 한국어</text>
+<text class="caption" x="778" y="338">답변은 transcript-only</text>
+</g>
+<g data-node="soap">
+<rect class="node " x="390" y="260" width="300" height="112" rx="10"/>
+<text class="node-title" x="408" y="291">Python SOAP</text>
+<text class="caption" x="408" y="316">S / O / A / P = 15 문자열</text>
+<text class="caption" x="408" y="338">A는 같은 S/O 사실 문구 재사용</text>
+</g>
+<g data-node="completed">
+<rect class="node " x="20" y="260" width="300" height="112" rx="10"/>
+<text class="node-title" x="38" y="291">DIAGNOSE → completed</text>
+<text class="caption" x="38" y="316">고정 1위와 diagnosis 일치</text>
+<text class="caption" x="38" y="338">같은 고정 평가로 1회 형식 복구</text>
+</g>
+<path class="edge  " d="M910 142V260"/>
+<text class="edge-label" text-anchor="middle" x="910" y="207">진단 먼저 전달</text>
+<path class="edge  " d="M760 316H690"/>
+<text class="edge-label" text-anchor="middle" x="725" y="298">영어 P·실제 전달</text>
+<path class="edge  " d="M390 316H320"/>
+<text class="edge-label" text-anchor="middle" x="355" y="298">검증된 payload</text>
+</svg>
+</div>
+      <figcaption>자원 종료도 같은 고정 절차를 사용합니다. 표현 실패로 한국어 안내를 전달하지 못해도 생성된 영어 P와 미전달 결과를 보존합니다.</figcaption>
+</figure>
+<div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서 좌우로 스크롤할 수 있습니다.">
+<table>
+<thead>
+<tr>
+<th scope="col">구역</th>
+<th scope="col">정확한 문자열 필드</th>
+<th scope="col">작성 기준</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">S</th>
+<td>
+<code>cc, hpi, pmh, fh, sh, ros</code>
+</td>
+<td>현재 보고 사실·적격 notes. age·sex는 HPI 선두</td>
+</tr>
+<tr>
+<th scope="row">O</th>
+<td>
+<code>exam, tests</code>
+</td>
+<td>실제 초기 객관 취득·EXAM·해당 turn. 예선 tests는 빈 문자열</td>
+</tr>
+<tr>
+<th scope="row">A</th>
+<td>
+<code>evidence, differential</code>
+</td>
+<td>frozen Assessment의 같은 순위·근거·미확인·한계</td>
+</tr>
+<tr>
+<th scope="row">P</th>
+<td>
+<code>tests, treatment, disposition, follow_up, education</code>
+</td>
+<td>영어 계획·출처·실제 전달을 구분. 별도 diagnosis는 고정 1위</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Education은 기본 활성화되어 있습니다. 명시적 <code>ONTOWARD_EDUCATION_ENABLED=false</code>에서는 교육 행동·예약·P.education 없이 진행합니다. 한국어는 독립 NFC 1–30 codepoint 문장을 검증하며 조건부 설명 묶음의 일부만 전달하지 않습니다.</p>
+<p class="source">근거 <a href="../submission/workflow/doctor_brain.py">평가 고정·영어 계획</a> <a href="../submission/workflow/education.py">계획·출처 검증</a> <a href="../submission/workflow/doctor_mouth.py">한국어·독립 복구</a> <a href="../submission/workflow/submission_writer.py">SOAP·제출·확인</a>
+</p>
+</section>
+<section id="evidence" aria-labelledby="evidence-heading">
+<div class="section-heading">
+<h2 id="evidence-heading">무엇이 확인되었고, 무엇이 남았나</h2>
+<a class="anchor" href="#content" aria-label="페이지 처음으로">처음으로</a>
+</div>
+<p class="lede">기존 D46 실행 결과는 보존된 영수증을 해시로 확인했습니다. 이번 갱신에서 새로 실행한 검사는 문서 정합성, strict prepare, 현재 그래프·클래스 집계와 ZIP·보존 해시 대조입니다.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="표. 작은 화면에서 좌우로 스크롤할 수 있습니다.">
+<table>
+<thead>
+<tr>
+<th scope="col">증거 층위</th>
+<th scope="col">관측된 결과</th>
+<th scope="col">정확한 근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">이번 문서·소스 대조</th>
+<td>
+<span class="badge static">정적·의미 대조</span>
+<br>세 운영 상태·결정·manifest·현재 소유권·18노드/30전이·14클래스/29속성</td>
+<td>
+<a href="../Tmp/state-atlas-2026-10-19/verification.json">이번 검증 보고서</a>
+</td>
+</tr>
+<tr>
+<th scope="row">이번 준비·산출물 확인</th>
+<td>
+<span class="badge">prepare·ZIP 일치</span>
+<br>strict prepare 성공 / 54개 ZIP member가 현재 submission과 일치</td>
+<td>
+<a href="../Tmp/state-atlas-2026-10-19/archive-review.json">이번 archive 대조</a>
+</td>
+</tr>
+<tr>
+<th scope="row">기존 D46 행동 회귀</th>
+<td>
+<span class="badge">보존된 실행 증거</span>
+<br>소스 116개·독립 archive 116개 / 이번에 재실행하지 않음</td>
+<td>
+<a href="../Tmp/d46-2026-10-19/evidence/workflow-final.log">소스 결과</a> / <a href="../Tmp/d46-2026-10-19/evidence/isolated-workflow.log">archive 결과</a>
+</td>
+</tr>
+<tr>
+<th scope="row">기존 수용 RDF 상담</th>
+<td>
+<span class="badge">scripted 완료</span>
+<br>소스·archive 각 479 checks / 세 상담 44·44·18행동 / 실제 모델 의미 품질과 구분</td>
+<td>
+<a href="../Tmp/d46-2026-10-19/evidence/source-admitted/verification.json">소스 상담</a> / <a href="../Tmp/d46-2026-10-19/isolated/admitted/verification.json">archive 상담</a>
+</td>
+</tr>
+<tr>
+<th scope="row">기존 원본 SDK HTTP</th>
+<td>
+<span class="badge">로컬 completed</span>
+<br>44턴·69 Doctor 호출·15 SOAP 문자열 / 합성 복통 fixture / 공식·공개 C10 증례 아님</td>
+<td>
+<a href="../Tmp/d46-2026-10-19/http-final-budget/verification.json">SDK HTTP 영수증</a>
+</td>
+</tr>
+<tr>
+<th scope="row">기존 Test·관측</th>
+<td>
+<span class="badge">보존된 프로토콜·동작 증거</span>
+<br>evaluator 47개 / 관측 유무 14시나리오·1287노드 갱신 / text-DOM viewer 5개<br>검토 중 별도 변경된 Test 코드는 이번에 재검증하지 않았습니다.</td>
+<td>
+<a href="../Tmp/d46-2026-10-19/evidence/observer/verification.json">관측 결과</a> / <a href="../Tmp/test-evaluator/verify-d46-final-20261019/verification.json">evaluator 결과</a>
+</td>
+</tr>
+<tr>
+<th scope="row">실제 모델·공식 평가</th>
+<td>
+<span class="badge pending">not_run</span>
+<br>최신 전체 공개 증례·Luna 의미 품질·임상 정확성·공식 서버·점수·업로드</td>
+<td>
+<a href="../data/provenance/algorithm-d46-2026-10-19.json">실행 범위·미실행 경계</a>
+</td>
+</tr>
+<tr>
+<th scope="row">atlas 실제 화면</th>
+<td>
+<span class="badge pending">not_run</span>
+<br>브라우저·모바일·인쇄 렌더링 / 확인한 프로젝트 dev 이미지에 렌더러 없음</td>
+<td>
+<a href="../Tmp/state-atlas-2026-10-19/verification.json">정적 검사와 렌더링 경계</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>현재 확인한 독립 ZIP</h3>
+<p>
+<a href="../Tmp/d46-2026-10-19/ontoward-submission-d46.zip">ontoward-submission-d46.zip</a> · 54 files · 1,664,522 bytes<code class="hash" data-archive-sha256="e810f750d966c7d1fd516bb33170872f8c9e5f5ee104de3cf86bbb0e46aa04e9">SHA256 e810f750d966c7d1fd516bb33170872f8c9e5f5ee104de3cf86bbb0e46aa04e9</code>
+</p>
+<div class="split">
+<div>
+<h3>다음에 읽을 곳</h3>
+<ul class="list">
+<li>
+<a href="../submission/README.md">진료 워크플로우 한국어 백서</a>
+</li>
+<li>
+<a href="../README.md">프로젝트 안내</a>
+</li>
+<li>
+<a href="README.md#knowledge-viewer">실제 RDF·SQLite를 읽는 D39 뷰어 안내</a>
+</li>
+</ul>
+</div>
+<div>
+<h3>다음 한정 작업</h3>
+<p>기존 D46 archive와 임상 핀을 유지한 단일 실모델 증례 검증이 보류되어 있습니다. 대상·공유 요청 상한·비용을 정한 별도 실행이 필요합니다. 이 문서는 실행을 시작하거나 재개하지 않습니다.</p>
+</div>
+</div>
+<p class="source">근거 <a href="../PROJECT_STATE.md">루트 운영 상태</a> <a href="../submission/PROJECT_STATE.md">실행 운영 상태</a> <a href="../data/PROJECT_STATE.md">출처 운영 상태</a> <a href="../DECISION_STATE.md">사용자 결정</a>
+</p>
+</section>
+<footer>
+<p>이 지도는 자동 갱신되지 않습니다. 상태의 정본은 루트·submission·data의 세 PROJECT_STATE.md이며, 사용자 선택은 DECISION_STATE.md가 소유합니다.</p>
+<p>브라우저 찾기로 용어를 검색하고, 넓은 도식은 좌우 스크롤 또는 옆의 표·설명으로 읽을 수 있습니다. 인쇄 전에 필요한 세부 도식을 펼쳐 주세요. 실제 화면·인쇄 렌더링은 이번 검사에서 not_run입니다.</p>
+</footer>
+</main>
 </body>
 </html>

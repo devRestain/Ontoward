@@ -1,5 +1,14 @@
 const data=JSON.parse(document.getElementById('report-data').textContent);
 const events=data.trace.events, labels=Object.assign({},...events.filter(e=>e.kind==='labels').map(e=>e.labels));
+const recordedValues=new Map(events.filter(event=>event.kind==='value').map(event=>[event.value_id,event.data]));
+function resolveValue(value){
+  const seen=new Set();
+  while(value?.trace_value_ref&&recordedValues.has(value.trace_value_ref)){
+    if(seen.has(value.trace_value_ref))return {trace_reference_error:'순환 참조 · 원본 로그를 확인하세요.'};
+    seen.add(value.trace_value_ref);value=recordedValues.get(value.trace_value_ref);
+  }
+  return value;
+}
 const scopes={Initiation:'시작',ChiefComplaint:'주호소',ContextFactor:'병력·맥락',DifferentialDiagnosis:'감별 진단',Education:'교육'};
 const $=id=>document.getElementById(id), copy=value=>JSON.parse(JSON.stringify(value));
 function el(tag,text,cls){const node=document.createElement(tag);if(text!==undefined&&text!==null)node.textContent=String(text);if(cls)node.className=cls;return node;}
@@ -46,13 +55,16 @@ let selected=0,tab='flow';
 function visible(){const scope=$('session-filter').value;return groups.map((g,i)=>({g,i})).filter(({g})=>!scope||g.session===scope);}
 function timeline(){
   const root=$('timeline');root.replaceChildren();
+  const picker=$('turn-picker');picker?.replaceChildren();
   for(const {g,i} of visible()){
+    if(picker){const option=el('option',`턴 ${g.turn} · ${scopes[g.session]||g.session}`);option.value=String(i);picker.append(option);}
     const button=el('button',null,'turn-button');button.type='button';button.setAttribute('aria-current',i===selected?'true':'false');
     button.append(el('span',`TURN ${String(g.turn).padStart(2,'0')}`,'number'),el('span',scopes[g.session]||'내부 상태 미수집','name'));
     const action=actions(g).find(row=>row.content);
     button.append(el('span',action?.content||g.events.find(row=>row.kind==='node_error')?.error||'상태 처리','preview'));
     button.addEventListener('click',()=>select(i));root.append(button);
   }
+  if(picker)picker.value=String(selected);
 }
 function select(index){selected=index;timeline();detail();}
 function speech(parent,who,text,doctor=false){if(text!==undefined&&text!==null){const node=el('div',null,`speech${doctor?' doctor':''}`);node.append(el('span',who,'who'),el('span',text));parent.append(node);}}
@@ -95,7 +107,7 @@ function evidence(parent,ids,state){
   }
 }
 function compactStatePanel(group,before,after){
-  const root=panel('턴 전후 상태 · D44');
+  const root=panel('턴 전후 상태 · D44 / D46');
   root.append(kv([['내부 세션',after.interview.current],['남은 턴',after.session.turns_remaining],
     ['모델 호출',after.session.doctor_calls],['종료 상태',after.session.termination||'진행 중']]));
   const prior=before?.case?.facts||{};
@@ -167,11 +179,12 @@ function noteRecord(item,before,state){
   card.append(jsonDetail('기록 원본 · 상태와 연결',item));return card;
 }
 function compactNotePanel(group,before,after){
-  const root=panel('환자 사실 · note · 최종 진단과 계획');
-  root.append(note('D44 상태의 사실과 note를 표시합니다. SOAP는 제출 시 생성하며, 미생성 필드를 추정하지 않습니다.'));
-  for(const [name,rows] of [['임상 사실',after.case.facts],['진단 점수에서 제외하는 note',after.case.notes]]){
+  const unified=!Object.hasOwn(after.case,'notes');
+  const root=panel(unified?'통합 환자 사실 · 평가와 계획':'환자 사실 · note · 최종 진단과 계획');
+  root.append(note(unified?'D47의 통합 사실과 선택적 graph_binding을 표시합니다. SOAP는 제출 시 생성합니다.':'과거 상태의 사실과 note를 저장 형식대로 표시합니다. SOAP는 제출 시 생성합니다.'));
+  for(const [name,rows] of (unified?[['통합 사실',after.case.facts]]:[['임상 사실',after.case.facts],['과거 별도 note',after.case.notes]])){
     const block=panel(name);
-    for(const row of Object.values(rows||{}))block.append(jsonDetail(`${row.target||row.category} · ${row.status} · ${row.id}`,row));
+    for(const row of Object.values(rows||{}))block.append(jsonDetail(`${row.graph_binding?.target||row.target||row.category} · ${row.status} · ${row.id}`,row));
     if(!Object.keys(rows||{}).length)block.append(note('이 시점에는 저장된 항목이 없습니다.'));
     root.append(block);
   }
@@ -230,6 +243,20 @@ function diagnosisPanel(before,after){
   if(after?.interview){
     const root=panel('최종 진단과 근거');
     if(after.case.assessment)root.append(kv([['현재 1위',after.case.assessment.differential?.[0]?.name??'미결정'],['평가 고정',after.case.assessment.frozen?'고정됨':'수집 중'],['후보 수',after.case.assessment.differential.length]]));
+    if(after.case.assessment){
+      root.append(note('순위는 DoctorBrain의 수용 결과입니다. supports·against·unresolved는 등록 그래프와 사실로 구성한 근거이며, 이 화면은 진단을 다시 계산하지 않습니다.'));
+      for(const [index,item] of after.case.assessment.differential.entries()){
+        const card=el('article',null,'record-block');card.append(el('strong',`${index+1}. ${item.name}`));
+        for(const [key,title] of [['supports','지지'],['against','반대'],['unresolved','미해결']]){
+          card.append(el('h4',`${title} · ${(item[key]||[]).length}개`));
+          for(const ref of item[key]||[]){
+            for(const id of ref.fact_ids||[]){const fact=after.case.facts?.[id];if(fact)card.append(note(`${id} · ${fact.target}${fact.attribute?' / '+fact.attribute:''} · ${fact.status} · ${fact.acquisition} · ${fact.source_ref}`));}
+            card.append(jsonDetail(ref.graph_ref?.id||ref.reason||title,ref));
+          }
+        }
+        root.append(card);
+      }
+    }
     root.append(jsonDetail(after.case.assessment?'CaseState.assessment':'CaseState.diagnosis',after.case.assessment??after.case.diagnosis));
     root.append(note('D46은 CaseState.assessment에 현재 감별 순위와 근거를 보관하고 DD 종료에서 고정합니다. 이전 D44 reasoner 기록은 원래 형식으로 표시합니다.'));
     return root;
@@ -274,22 +301,27 @@ function detail(){
   for(const [text,offset] of [['이전',-1],['다음',1]]){const button=el('button',text);button.type='button';button.disabled=position+offset<0||position+offset>=indices.length;button.addEventListener('click',()=>select(indices[position+offset]));controls.append(button);}heading.append(controls);root.append(heading);
   root.append(el('p',`실제 내부 세션: ${group.session} · ${group.events.filter(row=>row.kind==='node_end').length}개 노드 처리`,'session-note'));
   const tabs=el('div',null,'tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','턴 상세 보기');
-  const choices=[['flow','정보 흐름'],['objects','객체 탐색'],['dialogue','대화'],['note','Note 상태'],['state','상태 변화'],['diagnosis','진단 근거'],['models','모델 호출']];
+  const choices=[['flow','정보 흐름'],['execution','실행 검증'],['objects','객체 탐색'],['dialogue','대화'],['note','기록 · SOAP'],['state','상태 변화'],['diagnosis','진단 근거'],['models','모델 호출']];
   for(const [id,title] of choices){const button=el('button',title);button.type='button';button.id=`tab-${id}`;button.setAttribute('role','tab');button.setAttribute('aria-selected',tab===id?'true':'false');button.setAttribute('aria-controls','detail-panel');button.tabIndex=tab===id?0:-1;
     button.addEventListener('click',()=>{tab=id;detail();$(`tab-${id}`).focus();});
     button.addEventListener('keydown',event=>{let index=choices.findIndex(row=>row[0]===id);if(event.key==='ArrowRight')index=(index+1)%choices.length;else if(event.key==='ArrowLeft')index=(index+choices.length-1)%choices.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=choices.length-1;else return;event.preventDefault();tab=choices[index][0];detail();$(`tab-${tab}`).focus();});tabs.append(button);}
   root.append(tabs);
-  const body=tab==='flow'?flowPanel(group,before,after):tab==='objects'?objectPanel(group,before,after):tab==='note'?notePanel(group,before,after):tab==='state'?statePanel(group,before,after):tab==='diagnosis'?diagnosisPanel(before,after):tab==='models'?modelPanel(group,before,after):conversation(group,after);
+  const body=tab==='flow'?flowPanel(group,before,after):tab==='execution'?executionPanel():tab==='objects'?objectPanel(group,before,after):tab==='note'?notePanel(group,before,after):tab==='state'?statePanel(group,before,after):tab==='diagnosis'?diagnosisPanel(before,after):tab==='models'?modelPanel(group,before,after):conversation(group,after);
   body.id='detail-panel';body.setAttribute('role','tabpanel');body.setAttribute('aria-labelledby',`tab-${tab}`);root.append(body);
   const nodes=el('div',null,'node-list');for(const row of group.events.filter(row=>row.kind==='node_end'||row.kind==='node_error'))nodes.append(el('span',row.node));root.append(nodes);
 }
 const summary=data.summary,result=data.result,finalState=stateAt(events.length-1);
 const known=(...values)=>values.find(value=>value&&value!=='unknown');
 const backend=known(result.backend,summary.backend,data.run.backend);
-$('report-meta').textContent=`${known(result.case_id,summary.case_id,data.run.case)||'증례 미확인'} · ${backend||'모드 미확인'}${backend==='nova'&&data.run.maximum?` · 최대 ${data.run.maximum}회 요청`:''} · ${data.run_id}`;
+$('report-meta').textContent=`${data.run.fixture_kind==='protocol_fixture'?'합성 프로토콜 fixture · 공개 증례와 별개':known(result.case_id,summary.case_id,data.run.case)||'증례 미확인'} · ${backend||'모드 미확인'}${backend==='nova'&&data.run.maximum?` · 최대 ${data.run.maximum}회 요청`:''} · ${data.run_id}`;
 $('trace-status').textContent={complete:'내부 상태 수집 완료',incomplete:'내부 상태 일부 수집',not_collected:'내부 상태 미수집'}[data.trace.status];
 $('trace-status').classList.add(data.trace.status==='complete'?'good':'warn');
-if(finalState?.interaction?.reason){const outcome=el('p',`진료 종료: ${finalState.interaction.termination} · ${finalState.interaction.reason}`,'inline-error');$('summary').before(outcome);}
+const failure=finalState?.session?.reason||finalState?.interaction?.reason;
+if(failure){
+  const text=`진료 종료: ${finalState?.session?.termination||finalState?.interaction?.termination} · ${failure}`;
+  if($('report-outcome')){$('report-outcome').textContent=text;$('report-outcome').hidden=false;}
+  else $('all-logs').before(el('p',text,'inline-error'));
+}
 for(const [title,value,warning] of [['로컬 실행 검사',result.status==='pass'?'통과':result.status==='fail'?'실패':'결과 없음',result.status!=='pass'],['최종 진단',data.record.diagnosis||finalState?.case?.assessment?.differential?.[0]?.name||finalState?.case?.diagnosis?.name||finalState?.case?.diagnosis||'미제출',false],['사용한 턴',`${summary.turns??'—'} / 50`,false],['Gateway / 전체 모델',`${summary.doctor_calls??'—'} / ${summary.model_requests??'—'}`,false],['공식 채점','미실행 · not_scored',false]]){const box=el('div',null,'metric');box.append(el('small',title),el('strong',value,warning?'error-text':''));$('summary').append(box);}
 const final=$('final-record');
 final.append(kv([['진단',data.record.diagnosis||'제출 기록 없음'],['프로세스 종료',data.process.exit_code??data.process.status??'미수집'],['프로세스 경과 시간',data.process.seconds!==undefined?`${data.process.seconds}초`:'미수집'],['수신 확인',summary.receipt?.status||'없음'],['모드',summary.backend==='scripted'?'고정 응답 대역':summary.backend||data.run.backend||'미확인']]));
@@ -303,4 +335,5 @@ for(const scope of [...new Set(groups.map(group=>group.session))]){const option=
 const settings=events.find(row=>row.kind==='settings');
 if(settings?.education_enabled===false)$('final-record').after(el('p','교육 세션: 공개 설정에서 비활성화되어 발화와 예약 턴을 사용하지 않습니다.','session-note'));
 $('session-filter').addEventListener('change',()=>{const choices=visible();if(!choices.some(row=>row.i===selected)&&choices.length)selected=choices[0].i;timeline();detail();});
+$('turn-picker')?.addEventListener('change',()=>select(Number($('turn-picker').value)));
 const logs=$('all-logs');logs.append(jsonDetail('수집 상태와 경고',{trace:data.trace.status,warnings:data.warnings}),jsonDetail('실행기 로그 · 마지막 64 KiB',data.logs.runner),jsonDetail('에이전트 오류 · 마지막 64 KiB',data.logs.stderr),jsonDetail('에이전트 출력 · 마지막 64 KiB',data.logs.stdout));

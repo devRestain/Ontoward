@@ -25,7 +25,7 @@ class Element {
 function walk(root){return [root,...root.children.flatMap(walk)];}
 function load(data){
   const body=new Element('body');
-  for(const id of ['report-data','report-meta','trace-status','summary','final-record','session-filter','timeline','turn-detail','all-logs']){const node=new Element('div');node.id=id;if(id==='report-data')node.textContent=JSON.stringify(data);body.append(node);}
+  for(const id of ['report-data','report-meta','trace-status','summary','final-record','session-filter','turn-picker','timeline','turn-detail','all-logs']){const node=new Element('div');node.id=id;if(id==='report-data')node.textContent=JSON.stringify(data);body.append(node);}
   const document={getElementById:id=>walk(body).find(node=>node.id===id),createElement:tag=>new Element(tag)};
   const context=vm.createContext({document});
   vm.runInContext(fs.readFileSync(__dirname+'/ui/viewer.js','utf8')+'\n'+fs.readFileSync(__dirname+'/ui/flow.js','utf8'),context);
@@ -131,15 +131,33 @@ for(const path of process.argv.slice(2)){
   const saved=JSON.parse(fs.readFileSync(path,'utf8').match(/id="report-data">(.*?)<\/script>/s)[1]);
   const report=load(saved);walk(report.body).find(node=>node.className==='last-note').click();
   if(saved.trace.events.some(row=>row.kind==='initial')){
-    for(const [section,names] of Object.entries(fields))for(const name of names)assert.ok(report.text().includes(section+'.'+name));
-    assert.match(report.text(),/case.diagnosis/);
+    const modern=saved.trace.events.some(row=>row.kind==='initial'&&row.state?.interview);
+    if(!modern){
+      for(const [section,names] of Object.entries(fields))for(const name of names)assert.ok(report.text().includes(section+'.'+name));
+      assert.match(report.text(),/case.diagnosis/);
+    }else assert.match(report.text(),/환자 사실/);
     report.get('tab-flow').click();
     const step=walk(report.get('detail-panel')).find(node=>node.className.split(' ').includes('flow-node-button'));
     if(step){step.click();assert.ok(report.get('detail-panel').querySelector('.flow-inspector').textContent.length>0);}
     report.get('tab-objects').click();
-    for(const [key,type] of Object.entries({case:'CaseState',session:'SessionContext',differential:'DifferentialState',questions:'QuestionPlan',interaction:'InteractionState'})){
+    for(const [key,type] of Object.entries(modern?{case:'CaseState',interview:'InterviewState',session:'SessionContext',turn:'TurnContext'}:{case:'CaseState',session:'SessionContext',differential:'DifferentialState',questions:'QuestionPlan',interaction:'InteractionState'})){
       const button=walk(report.get('detail-panel')).find(node=>node.className==='object-button'&&node.children[0].textContent===type);
       button.click();assert.ok(report.text().includes('WorkflowState.'+key));
+    }
+    report.get('tab-execution').click();assert.match(report.text(),/전체 실행 검증/);
+    if(saved.inspection?.runtime){
+      assert.ok(report.text().includes(saved.inspection.runtime.algorithm));
+      const graph=walk(report.get('detail-panel')).find(node=>node.tagName==='details'&&node.children[0].textContent.startsWith('런타임 그래프'));
+      graph.open=true;graph.emit('toggle');assert.match(graph.textContent,/process_initial_input/);
+      const stage=walk(report.get('detail-panel')).find(node=>node.className==='pipeline-stage'&&!node.disabled);
+      if(stage){stage.click();assert.equal(report.get('tab-flow').attributes['aria-selected'],'true');assert.match(report.text(),/관측된 객체 호출/);}
+    }
+    report.get('turn-picker').value='0';report.get('turn-picker').emit('change');assert.match(report.get('turn-detail').textContent,/턴/);
+    const functionCall=saved.trace.events.find(row=>row.call_kind==='function');
+    if(functionCall){
+      vm.runInContext('jumpToEvent(events.find(row=>row.call_kind==="function"))',report.context);
+      assert.match(report.text(),/관측된 Python 함수/);
+      assert.ok(report.text().includes(functionCall.callable));
     }
   }
   console.log(`PASS: saved report ${saved.run_id} (${saved.trace.events.length} trace events)`);
@@ -165,3 +183,14 @@ const brainPage=load({...data,trace:{status:'complete',events:[{seq:1,kind:'init
 brainPage.get('tab-diagnosis').click();assert.match(brainPage.text(),/CaseState.assessment/);assert.match(brainPage.text(),/Brain primary/);
 brainPage.get('tab-note').click();assert.match(brainPage.text(),/Brain primary/);
 console.log('PASS: D46 current assessment ranking and frozen evidence display');
+
+const unified=JSON.parse(JSON.stringify(brainState));
+delete unified.case.notes;
+unified.case.facts.f1={id:'f1',graph_binding:{kind:'symptom',target:'Headache',eligible:true},value:'Headache after exercise',status:'present',source_ref:'source-1'};
+unified.case.facts.age={id:'age',category:'patient_context',context_key:'age',value:'6 years',measurement:{kind:'quantity',value:6,unit:'year'},status:'present',source_ref:'source-1'};
+const unifiedPage=load({...data,trace:{status:'complete',events:[{seq:1,kind:'initial',session:'DifferentialDiagnosis',turn:10,state:unified}]}});
+unifiedPage.get('tab-note').click();
+assert.match(unifiedPage.text(),/통합 환자 사실/);assert.match(unifiedPage.text(),/Headache/);
+assert.match(unifiedPage.text(),/patient_context/);assert.doesNotMatch(unifiedPage.text(),/과거 별도 note/);
+assert.equal(JSON.stringify(unified.case.facts.f1.graph_binding),JSON.stringify({kind:'symptom',target:'Headache',eligible:true}));
+console.log('PASS: D47 unified facts, graph bindings and demographic context without a duplicate note store');

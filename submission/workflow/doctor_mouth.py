@@ -1,11 +1,12 @@
 import json
 import unicodedata
 from nova_sdk import NovaError
-from .education import message_bytes, messages
+from .model_context import messages
 from .rules.action import ActionResponse, REFUSAL_ERRORS, RESPONSE_FORMAT_ERRORS, content_error, failure_outcome
 from .rules.limits import LIMITS
 from .state.models import Answer, Question
 from .state.evidence import patient_payload
+from .output_types import EmpathyReply, RenderedGroup
 
 class DoctorMouth:
 
@@ -23,9 +24,6 @@ class DoctorMouth:
             if generation_error:
                 payload['generation_error'] = generation_error
             request = messages(self.config.education_doctor_prompt, payload)
-            if message_bytes(request) > LIMITS.education_request_bytes:
-                errors = dict.fromkeys(pending, 'education_doctor_context_overflow')
-                break
             response = self.model.complete(state, client, role='education_doctor', messages=request)
             if response.error:
                 errors = dict.fromkeys(pending, response.error)
@@ -50,7 +48,7 @@ class DoctorMouth:
                 try:
                     if unknown or len(matches) != 1 or set(matches[0]) != {'id', 'utterances'}:
                         raise ValueError('missing_duplicate_or_unexpected_render_id')
-                    utterances = matches[0]['utterances']
+                    utterances = RenderedGroup.model_validate(matches[0]).utterances
                     if not isinstance(utterances, list) or not utterances or any((not isinstance(t, str) for t in utterances)):
                         utterances = []
                         raise ValueError('expected_utterance_list')
@@ -111,27 +109,15 @@ class DoctorMouth:
         budgets = {sentence.id: 1 for sentence in ordered[:capacity]}
         for ident in list(budgets)[:max(0, capacity - len(budgets))]:
             budgets[ident] += 1
-        batches, batch = ([], [])
-        for sentence in ordered:
-            if sentence.id not in budgets:
-                continue
-            row = {'id': sentence.id, 'text': sentence.text}
-            if batch and message_bytes(messages(self.config.education_doctor_prompt, {**base, 'sentences': [*batch, row], 'utterance_budgets': budgets})) > LIMITS.education_request_bytes:
-                batches.append(batch)
-                batch = []
-            batch.append(row)
-        if batch:
-            batches.append(batch)
+        batch = [{'id': sentence.id, 'text': sentence.text} for sentence in ordered if sentence.id in budgets]
         rendered, failures = ({}, {s.id: 'delivery_budget' for s in ordered if s.id not in budgets})
         notice_error = next((a.reason for a in state.interview.answers if a.question_id.startswith('Education:diagnosis:') and a.outcome == 'undelivered'), None)
         if notice_error:
             failures['diagnosis'] = notice_error
-        for batch in batches:
+        if batch:
             values, errors = self._render(state, client, base, batch, budgets)
             rendered.update(values)
             failures.update(errors)
-            if state.session.termination:
-                break
         order = 0
         for sentence in ordered:
             utterances = rendered.get(sentence.id)
@@ -151,18 +137,13 @@ class DoctorMouth:
     def prepare_empathy(self, state, client, event):
         payload = {'task': 'empathy', 'emotion': event.emotion, 'intent': event.intent, 'patient': patient_payload(state.case), 'previous_deliveries': sum((a.purpose == 'empathy' and a.outcome != 'undelivered' for a in state.interview.answers))}
         request = messages(self.config.empathy_prompt, payload)
-        if message_bytes(request) > LIMITS.gateway_request_bytes:
-            self.interactions.skip_empathy(state, 'empathy_request_overflow')
-            return
         response = self.model.complete(state, client, role='empathy', messages=request)
         if state.session.termination:
             return
         text = self.config.texts.empathy_fallback
         try:
-            raw = json.loads(response.content)
-            if not isinstance(raw, dict) or set(raw) != {'text'} or (not isinstance(raw['text'], str)):
-                raise ValueError('Invalid empathy response')
-            generated = unicodedata.normalize('NFC', raw['text'])
+            raw = EmpathyReply.model_validate_json(response.content)
+            generated = unicodedata.normalize('NFC', raw.text)
             if content_error(generated) or any((c in generated for c in '?？\r\n')) or (not any(('가' <= c <= '힣' for c in generated))):
                 raise ValueError('Invalid empathy statement')
             text = generated

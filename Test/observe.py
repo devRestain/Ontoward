@@ -3,6 +3,7 @@ from collections import Counter
 from dataclasses import fields, is_dataclass
 from functools import partial, wraps
 import inspect
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -42,10 +43,23 @@ class Trace:
         self.calls, self.stack, self.object_state = 0, [], None
         self.restore, self.objects = [], []
         self.scoring_depth, self.suppressed = 0, Counter()
+        self.values = {}
 
     def value(self, value):
+        result = self._value(value)
+        if isinstance(result, (dict, list)):
+            packed = json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+            if len(packed) > 2048:
+                ident = hashlib.sha256(packed.encode()).hexdigest()
+                if ident not in self.values:
+                    self.values[ident] = result
+                    self.emit('value', value_id=ident, data=result)
+                return {'trace_value_ref': ident}
+        return result
+
+    def _value(self, value):
         if hasattr(value, 'model_dump'):
-            return {'type': type(value).__name__, 'data': plain(value.model_dump())}
+            return {'type': type(value).__name__, 'data': self.value(plain(value.model_dump()))}
         if is_dataclass(value) and not isinstance(value, type):
             return {'type': type(value).__name__, 'data': {field.name: self.value(getattr(value, field.name)) for field in fields(value)}}
         if isinstance(value, dict):
@@ -59,6 +73,13 @@ class Trace:
         # Service references must not serialize client credentials or arbitrary __dict__ values.
         return {'type': type(value).__name__, 'reference_only': True}
 
+    def expanded(self, value):
+        if isinstance(value, dict):
+            if set(value) == {'trace_value_ref'}:
+                return self.expanded(self.values[value['trace_value_ref']])
+            return {key: self.expanded(item) for key, item in value.items()}
+        return [self.expanded(item) for item in value] if isinstance(value, list) else value
+
     def object_snapshot(self, state):
         if state is None:
             return {}
@@ -67,7 +88,7 @@ class Trace:
         self.object_state = value
         return result
 
-    def wrap(self, operation, owner, name, object_id):
+    def wrap(self, operation, owner, name, object_id, *, call_kind='method'):
         signature = inspect.signature(operation)
         @wraps(operation)
         def call(*args, **kwargs):
@@ -86,11 +107,13 @@ class Trace:
                 inputs = {key: {'type': 'WorkflowState', 'state_reference': True} if item is state and state is not None
                           else self.value(item) for key, item in arguments.items()}
                 self.emit('call_start', call_id=call_id, parent_call_id=parent, object_id=object_id,
-                          owner=owner, method=name, inputs=inputs, **self.object_snapshot(state))
+                          owner=owner, method=name, call_kind=call_kind,
+                          callable=f'{operation.__module__}.{operation.__qualname__}',
+                          inputs=inputs, **self.object_snapshot(state))
             except Exception as error:
                 self.emit('observation_error', error=type(error).__name__)
             self.stack.append(call_id)
-            scoring = owner == 'DoctorBrain' and name == 'replan'
+            scoring = (owner.endswith('Session') and name in {'prepare', 'prepare_decision', 'decide', 'close'}) or owner == 'QuestionTools'
             if scoring:
                 self.scoring_depth += 1
             try:
@@ -109,7 +132,7 @@ class Trace:
                     after = plain(state.model_dump(mode='json')) if state is not None else None
                     arguments_after = {key: {'type': 'WorkflowState', 'state_reference': True} if item is state and state is not None
                                        else self.value(item) for key, item in arguments.items()}
-                    argument_writes = changes(inputs, arguments_after)
+                    argument_writes = changes(self.expanded(inputs), self.expanded(arguments_after))
                     self.emit('call_end', call_id=call_id, owner=owner, method=name, output=self.value(result),
                               writes=changes(before, after) if before is not None else [],
                               argument_writes=argument_writes, **({'arguments_after': arguments_after} if argument_writes else {}),
@@ -125,12 +148,11 @@ class Trace:
 
     def attach(self, consultation, knowledge):
         selected = {
-            'DoctorEar': {'process_input', '_context', '_read_context', '_mapping_payload', '_map_batch',
-                                 '_parse_text', '_apply_facts', '_fit_request', '_validate_facts'},
-
-            'DoctorBrain': {'prepare_initiation', 'prepare_chief_complaint', 'prepare_open_inquiry',
-                                 'prepare_clarification', 'replan', 'prepare_context_questions',
-                                 'prepare_differential_questions', 'prepare_education', 'select_question', 'refresh_assessment', 'decide', '_payload', 'close_differential'},
+            'DoctorEar': {'process_input', 'record_delivery', '_context', '_read_context', '_project_context',
+                          '_mapping_payload', '_map_batch', '_parse_text', '_demographic_facts'},
+            'DoctorBrain': {'complete'},
+            'QuestionTools': {'_spec', '_question', '_register', '_options', 'chief_statuses',
+                              'prepare_clarification', 'select_question'},
             'BudgetPolicy': {'evaluate', 'can_start_action', 'can_empathize', 'model_allowance'},
             'ClinicalKnowledge': {'search_concepts', 'resolve_concept', 'get_symptom_attributes', 'concepts',
                                   'get_target_values', 'get_exam_methods'},
@@ -154,12 +176,32 @@ class Trace:
                 methods.append(name)
             self.objects.append({'id': path, 'type': owner, 'methods': methods})
             for name in ('ear', 'brain', 'mouth', 'writer', 'nova_session', 'budget',
-                         'questions', 'interactions', 'model', 'executor', 'usage'):
+                         'questions', 'interactions', 'model', 'executor', 'usage', 'tools'):
                 child = getattr(obj, name, None)
                 if child is not None and type(child).__module__.startswith('workflow.'):
                     visit(child, f'{path}.{name}')
+            for name, child in getattr(obj, 'sessions', {}).items():
+                visit(child, f'{path}.sessions.{name}')
         visit(consultation, 'consultation')
         visit(knowledge, 'knowledge')
+        # Wrap the symbols actually called by Ear/Brain, rather than altering the rules globally.
+        from workflow import doctor_ear
+        from workflow.rules import decision
+        from workflow.sessions import initiation, chief_complaint, context_factor, differential_diagnosis, education
+        boundaries = ((doctor_ear, 'InputBinding', ('candidate_contracts', 'exact_mapping', 'validate_mapping',
+                      'force_mapping', 'make_fact', 'note_fact', 'isolate_attributes')),
+                      (decision, 'GraphEvidence', ('graph_candidates',)),
+                      (differential_diagnosis, 'GraphEvidence', ('graph_candidates',)),
+                      (education, 'EnglishPlan', ('generate_plan',)),
+                      *((module, 'ClinicalInput', ('prepare_decision',)) for module in
+                        (initiation, chief_complaint, context_factor, differential_diagnosis)))
+        for module, owner, names in boundaries:
+            for name in names:
+                original = getattr(module, name)
+                setattr(module, name, self.wrap(original, owner, name, f'{module.__name__}.{name}', call_kind='function'))
+                self.restore.append((module, name, original, True))
+                self.objects.append({'id': f'{module.__name__}.{name}', 'type': 'function', 'owner': owner,
+                                     'callable': f'{original.__module__}.{original.__qualname__}', 'methods': [name]})
         from workflow.state.evidence import EvidenceIndex
         for cls, names in ((EvidenceIndex, ('from_case',)),):
             for name in names:
@@ -259,11 +301,24 @@ def observing(path):
             trace.attach(consultation, knowledge)
         except Exception as error:
             trace.emit('observation_error', error=type(error).__name__)
+        compiled = original_build(consultation, knowledge)
         from workflow.state.models import WorkflowState
-        trace.emit('settings', education_enabled=consultation.budget.education_enabled, objects=trace.objects,
-                   state_schema=WorkflowState.model_json_schema(),
-                   observation_scope='Case collaborators, parser stages, dictionary lookups, state writes and SDK bodies; exclude Python heap and inner hypothetical scoring loops')
-        return original_build(consultation, knowledge)
+        try:
+            root = Path(inspect.getfile(WorkflowState)).resolve().parents[2]
+            sources = sorted(str(path.relative_to(root)) for path in (root / 'workflow').rglob('*.py')) + ['knowledge/manifest.json']
+            manifest = json.loads((root / 'knowledge/manifest.json').read_text())
+            topology = compiled.get_graph()
+            trace.emit('settings', education_enabled=consultation.budget.education_enabled, objects=trace.objects,
+                       state_schema=WorkflowState.model_json_schema(),
+                       runtime={'algorithm': manifest.get('algorithm_version'),
+                                'collector_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                                'source_sha256': {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in sources}},
+                       graph={'nodes': list(topology.nodes), 'edges': [dict(source=e.source, target=e.target,
+                               conditional=e.conditional) for e in topology.edges]},
+                       observation_scope='Selected collaborator and input binding boundaries, graph candidate output, model exchanges, state writes and SDK bodies; exclude Python heap and repeated inner dictionary and affordability lookups')
+        except Exception as error:
+            trace.emit('observation_error', error=type(error).__name__)
+        return compiled
 
     def request(client, method, path, body=None):
         started = time.monotonic()
@@ -283,7 +338,7 @@ def observing(path):
 
     graph.run_node, graph.build_graph, runtime.build_graph = run_node, build_graph, build_graph
     nova_sdk.Client._request = request
-    trace.emit('start', format_version=2)
+    trace.emit('start', format_version=4)
     try:
         yield trace
     except BaseException as error:

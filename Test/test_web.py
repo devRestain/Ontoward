@@ -179,6 +179,71 @@ class WebTests(unittest.TestCase):
         self.assertEqual(len(data['trace']['events']), 1)
         self.assertTrue(data['warnings'])
 
+    def test_legacy_creation_time_remains_stable_after_report_refresh(self):
+        path = self.runs.root / 'legacy-run'
+        path.mkdir()
+        write(path / 'run.args', 'C10\nscripted\n200\n')
+        write(path / 'started', '12345')
+        before = self.runs.status(path.name)['created']
+        self.assertEqual(self.request('/runs/legacy-run/report.html')[0], 200)
+        self.assertEqual(self.runs.status(path.name)['created'], before)
+        self.assertEqual(before, 12345)
+
+    def test_closed_collector_with_open_calls_remains_incomplete(self):
+        run = self.start()
+        path = self.runs.directory(run['id'])
+        (path / 'agent').mkdir()
+        rows = [dict(seq=1, kind='initial', state={}),
+                dict(seq=2, kind='call_start', call_id=1, parent_call_id=None, owner='DoctorEar', method='process_input'),
+                dict(seq=3, kind='end')]
+        write(path / 'agent/trace.jsonl', '\n'.join(json.dumps(row) for row in rows))
+        data = render(path)
+        self.assertEqual(data['trace']['status'], 'incomplete')
+        self.assertEqual(data['inspection']['status'], 'fail')
+        self.assertEqual(next(c for c in data['inspection']['checks'] if c['id']=='call_boundaries')['status'], 'fail')
+        status, inspection = self.request(f"/runs/{run['id']}/inspection.json")
+        self.assertEqual(status, 200)
+        self.assertEqual(inspection, data['inspection'])
+        self.assertEqual(self.request(f"/runs/{run['id']}/agent/trace.jsonl")[0], 404)
+
+    def test_inspection_rejects_frozen_mutation_and_wrong_submission(self):
+        from inspection import inspect_run
+        case = {'facts': {'f': {'target': 'Headache'}}, 'notes': {}, 'revision': 1, 'chief_fact_id': 'f',
+                'assessment': {'frozen': True, 'based_on_case_revision': 1, 'based_on_chief_fact_id': 'f',
+                               'differential': [{'name': 'Headache'}]}}
+        rows = [dict(seq=1, kind='initial', state={'case': case, 'interview': {'current':'Education'}, 'session': {'termination':'submitted'}}),
+                dict(seq=2, kind='node_start', node='process_input'),
+                dict(seq=3, kind='node_end', node='process_input', patch=[{'op':'replace','path':['case','facts','f','target'],'value':'Changed'}]),
+                dict(seq=4, kind='sdk_request', path='/actions', request_id='submit', body={'action':'DIAGNOSE','diagnosis':'Different','note':{}}),
+                dict(seq=5, kind='sdk_response', path='/actions', request_id='submit', response={'status':'completed'}),
+                dict(seq=6, kind='end')]
+        saved = dict(trace={'events': rows}, warnings=[], summary={'status':'completed','receipt':{'status':'completed'}},
+                     record={'note':{},'diagnosis':'Another'})
+        before = copy.deepcopy(saved)
+        result = inspect_run(saved)
+        checks = {c['id']:c['status'] for c in result['checks']}
+        self.assertEqual(result['status'], 'fail')
+        for key in ('frozen_patient_state','submission_primary','received_soap'):
+            self.assertEqual(checks[key], 'fail', key)
+        self.assertEqual(checks['confirmed_completion'], 'pass')
+        self.assertEqual(saved, before)
+
+    def test_legacy_inspection_reports_missing_provenance_without_invention(self):
+        run = self.start()
+        path = self.runs.directory(run['id'])
+        data = render(path)
+        self.assertEqual(data['inspection']['status'], 'not_collected')
+        self.assertIsNone(data['inspection']['runtime'])
+        self.assertIsNone(data['inspection']['graph'])
+        self.assertTrue(all(c['status']=='not_collected' for c in data['inspection']['checks']))
+        from inspection import inspect_run
+        legacy = inspect_run(dict(trace={'events':[{'seq':1,'kind':'initial','state':{'session':{},'interaction':{'termination':'submitted'}}},
+                                                  {'seq':2,'kind':'end'}]}, warnings=[], record={},
+                                  summary={'status':'completed','receipt':{'status':'completed'}}))
+        checks = {c['id']:c['status'] for c in legacy['checks']}
+        self.assertEqual(checks['confirmed_completion'], 'pass')
+        self.assertEqual(checks['frozen_patient_state'], 'not_collected')
+
     def test_state_patches_reconstruct_nested_values_lists_and_removals(self):
         states = [{'a': [1, {'값': '이전'}, 3], 'removed': True},
                   {'a': [1, {'값': '이후'}, 3, {'new': []}], 'added': 'x'}, {'a': [2]}, {'a': 'replacement'}]
@@ -216,3 +281,22 @@ class WebTests(unittest.TestCase):
         self.assertEqual(value['snapshot']['data']['values'], {'type': 'tuple', 'data': [1, {'id': 'fact-1'}]})
         self.assertEqual(value['client'], {'type': 'Service', 'reference_only': True})
         self.assertNotIn('credential-never-serialized', json.dumps(value))
+
+    def test_large_return_values_preserve_content_without_repeated_serialization(self):
+        path = Path(self.temp.name) / 'values.jsonl'
+        trace = Trace(path)
+        original = {'candidates': [{'name': str(i), 'evidence': ['Registered evidence ' * 400]} for i in range(8)]}
+        first = trace.value(original)
+        second = trace.value(copy.deepcopy(original))
+        self.assertEqual(first, second)
+        self.assertEqual(trace.expanded(first), original)
+        rows = [json.loads(line) for line in path.read_text().splitlines()]
+        self.assertEqual(len({row['value_id'] for row in rows}), len(rows))
+        self.assertLess(path.stat().st_size, len(json.dumps(original).encode()) * 1.2)
+        self.assertEqual(len(rows), 1)
+
+    def test_mounted_output_preserves_launcher_run_identity(self):
+        path = self.runs.root / 'mounted-output'
+        path.mkdir()
+        write(path / 'run-id', 'actual-run-identity')
+        self.assertEqual(collect(path)['run_id'], 'actual-run-identity')
