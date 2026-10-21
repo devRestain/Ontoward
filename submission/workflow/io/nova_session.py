@@ -48,6 +48,8 @@ class NovaSessionClient:
             session_id=str(raw.get("session_id") or client.session_id),
             deadline=incoming.deadline, turns_remaining=incoming.turns_remaining,
         ))
+        state.case.presenting_text = incoming.initial.get('opening', '')
+        state.case.initial_vital_signs = incoming.initial.get('vital_signs')
         self.apply_snapshot(state, incoming)
         if not state.session.termination:
             state.turn = TurnContext(kind='initial', response=incoming.initial)

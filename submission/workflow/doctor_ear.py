@@ -152,7 +152,13 @@ class DoctorEar:
                 if (anchor.role != 'clinical' or anchor.focus != 'target'
                         or s.anchor == index or anchor.input_segment != s.input_segment
                         or (anchor.subject, anchor.subject_member, anchor.time_context) != (s.subject, s.subject_member, s.time_context)):
-                    context.statements[index] = ContextStatement(quote=s.quote, role='unknown')
+                    if partial and anchor.role == 'unknown':
+                        context.statements[index] = ContextStatement(quote=s.quote, role='unknown')
+                    elif any(row.get('area') == 'statements' and row.get('index') == s.anchor for row in errors):
+                        errors.append(dict(area='statements', index=index, reason='unresolved_statement_anchor', raw=s.model_dump()))
+                        context.statements[index] = ContextStatement(quote=s.quote, role='unknown')
+                    else:
+                        s.anchor = None
                 elif s.role != 'clinical':
                     s.anchor = None
                 elif s.focus == 'attribute' or s.measurement:
@@ -160,8 +166,7 @@ class DoctorEar:
         demographic = list(context.patient_context) if previous else []
         demographic_rows = raw.get('patient_context', [])
         if not isinstance(demographic_rows, list) or len(demographic_rows) > 8:
-            if not partial:
-                errors.append(dict(area='patient_context', index=0, reason='patient_context_requires_at_most_eight_rows'))
+            errors.append(dict(area='patient_context', index=(demographic_indices or [0])[0], reason='patient_context_requires_at_most_eight_rows'))
             demographic_rows = []
         if partial and demographic_indices is None:
             demographic_indices = []
@@ -224,6 +229,7 @@ class DoctorEar:
             payload['input'] = text
         context, indices, demographic_indices = (None, None, None)
         review_chief = False
+        errors = []
         route = 'input.exam' if question and question.kind == 'EXAM' else 'input.reply' if question else 'input.initial'
         for attempt in range(2):
             payload['phase'] = 'context_repair' if attempt else 'context'
@@ -263,6 +269,9 @@ class DoctorEar:
             if response.error and response.error not in {'OUTPUT_TRUNCATED', 'PROVIDER_RESPONSE_INVALID'}:
                 break
             payload['validation_errors'] = errors
+        if errors:
+            state.interview.collection[state.interview.current + ':input_context'] = (
+                response.error or '; '.join(row.get('reason', 'unresolved_context') for row in errors))[:1000]
         context = context or ContextInput(statements=[ContextStatement(quote=text, role='unknown')] if text.strip() else [])
         reply = text.strip().rstrip(self.config.texts.reply_trailing_punctuation)
         if reply in self.config.texts.unknown_replies:
@@ -351,6 +360,9 @@ class DoctorEar:
                     feedback.append({'statement_index': i, 'reason': str(error)[:240]})
                     unresolved.append(i)
             remaining = unresolved
+        if remaining and feedback:
+            state.interview.collection[state.interview.current + ':input_mapping'] = '; '.join(
+                row.get('reason', 'unresolved_mapping') for row in feedback)[:1000]
         return decoded
 
     def _parse_text(self, state, knowledge, client, text, source, number, segments=None):

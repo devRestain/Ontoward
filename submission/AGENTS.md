@@ -65,7 +65,7 @@
 - Preserve the inherited 500000 cumulative input and 100000 reported request-input limits, 8000 output per call, actual usage, call and action ceilings and deadlines. Keep cumulative output uncapped and omit the withdrawn Education token reserve.
 - Project patient and frozen diagnosis with one request-local fact map across plan generation Education rendering and announcement fallback; reject missing frozen evidence without dumping GraphRefs.
 - Start with unresolved Initiation intake or necessary chief clarification after initial input acceptance; exclude greeting and empathy implementation and account every SAY or EXAM in its session actions.
-- Select explicit task keys and normalized values without whole-state dumps large schemas or full graph profiles; keep clinical output at 4096 tokens and one recovery at 8000 tokens. Apply byte limits only to D59 Education.
+- Select explicit task keys and normalized values without whole-state dumps large schemas or full graph profiles; preserve the inherited 8000-token normal and recovery output caps. Apply byte limits only to D59 Education.
 - Load task recipes from ONTOWARD_PROMPTS inside config and select initial reply EXAM mapping ranking action plan expression and repair routes in the owning Python caller.
 - Keep each request's output contract and situation instructions specific to the active task; preserve clinical conditions as patient data and bounded repair decisions in Python.
 - Preserve official server turns separate from model tokens calls internal nodes and DIAGNOSE while protecting response final clinical decision Education and submission resources.

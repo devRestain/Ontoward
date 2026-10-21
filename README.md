@@ -2,7 +2,7 @@
 
 Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D61·d50.12**다. 중간 오류가 발생한 질문·작업은 실제 수신과 범위를 보존해 마감하고 후속 세션과 최종 작성으로 전진한다. 정상 Writer 실패에는 추가 모델·그래프 조회 없는 최소 SOAP를 사용한다. 실제 matching completed 응답만 제출 성공이며, 수신 미확정에도 생성한 note·diagnosis와 최종 요청 ID·오류는 반환한다. 준비·manifest·임상 출처·수치·scope 검증은 유지한다.
 
-[D61](DECISION_STATE.md#D61)은 그래프에서 모델로 보내는 relation·evidence·question·condition 표를 **각 최대 50개**, 임상 후보와 Assessment를 **최대 10개**, note.A.differential을 **최대 5개**로 제한한다. 기존 prior·route 순서와 완전한 관계 조건을 유지하며 제외 참조를 함께 정리한다. 환자 facts는 이 제한으로 삭제하지 않는다. 저장 C10 DD 입력의 오프라인 재구성은 user JSON 83,720→24,713 bytes와 환자 facts 30개 보존을 확인했다. 모델의 실제 수용·진단 품질은 별도다. [현재 검증](Tmp/d61-2026-10-22/verification.json)과 [packet 재구성](Tmp/d61-2026-10-22/packet-replay.json)을 따른다.
+[D61](DECISION_STATE.md#D61)은 그래프에서 모델로 보내는 relation·evidence·question·condition 표를 **각 최대 50개**, 임상 후보와 Assessment를 **최대 10개**, note.A.differential을 **최대 5개**로 제한한다. 기존 prior·route 순서와 완전한 관계 조건을 유지하며 제외 참조를 함께 정리한다. 환자 facts는 이 제한으로 삭제하지 않는다. 저장 C10 DD 입력의 오프라인 재구성은 user JSON 83,720→24,742 bytes와 환자 facts 30개 보존을 확인했다. 모델의 실제 수용·진단 품질은 별도다. [현재 검증](Tmp/d61-2026-10-22/verification.json)과 [packet 재구성](Tmp/d61-2026-10-22/packet-replay.json)을 따른다.
 
 작업 시작 시 이미 있던 변경과 중간에 관찰한 d50.11 입력 정책을 보존했다. 현재 로컬 설정은 누적 입력 500,000·보고된 요청 입력 100,000·호출 출력 8,000이며 누적 출력 상한과 Education 입력 reserve는 없다. 모델·effort·호출 수·행동·시간·같은 ID retry는 유지한다. [D60](DECISION_STATE.md#D60)의 당시 제한 해제와 [당시 검증](Tmp/d60-2026-10-22/verification.json)은 역사적 기록이다. 현재 공식 서버 정책을 새로 확인하거나 실제 모델 평가를 수행한 것은 아니다.
 
