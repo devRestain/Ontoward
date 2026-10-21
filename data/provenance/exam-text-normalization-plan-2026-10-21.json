@@ -1,0 +1,1651 @@
+{
+  "version": "v5-exam-text-1",
+  "parent": {
+    "build_id": "0fd42155c3171c9c9dcf66cb7f733245",
+    "manifest_sha256": "d0ff44bb5de4989eb97bd4262d4dc38b620137699b239ddff118b7d01211bfc8",
+    "assets": {
+      "schema": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "vocabulary": "3c5975cc90c0730067f4ad8359f63f5b0a9b9dc20c22cd9506f4a5a8b468f9b1",
+      "clinical": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06",
+      "questions": "c65c7083543867189c458e1fc7e13c32b7cb2266cef14510ef30d138ea1d4afd",
+      "guidelines": "de6a92abd3333dd2b4620aabfabf37a46342f115f00a04276afdf9e1d6756089"
+    }
+  },
+  "policy": "Normalize existing request text only; preserve method IDs, labels, links, modalities, maneuvers and scope",
+  "amendments": [
+    {
+      "method_id": "urn:ontoward:ExamMethod01d326c0d5203d3b4b5103ed",
+      "english": "Inspection of upper limb deformity",
+      "korean": "상지 변형 시진",
+      "before": "팔 모양을 살펴보도록 양팔을 보여 주세요.",
+      "after": "양팔 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingeac732fb3603c53093877a56",
+          "name": "Deformity of bone of upper limb"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod04b61e26b10b1c1bf0e84ac7",
+      "english": "Auscultation of respiratory sounds",
+      "korean": "호흡음 청진",
+      "before": "숨소리를 듣게 편하게 숨 쉬어주세요.",
+      "after": "흉부 청진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod0edb03a78c7ee83f6d534b7a",
+      "english": "Visual inspection",
+      "korean": "시진",
+      "before": "살펴볼 수 있게 불편한 부위를 보여 주세요.",
+      "after": "불편한 부위 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding265f707cab750eceaab80979",
+          "name": "Discoloration of skin"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding6306f8874006bce38d8aec1c",
+          "name": "Musset sign"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding63bb804e4e232cb7abdce7e5",
+          "name": "Prominent veins"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding75dda4f16759f59e632dc897",
+          "name": "Redness of skin over the vagina"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding8d4c90dccb09f9ee2349fae3",
+          "name": "Pimple of skin"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod13004986018a4c0c8cf556b0",
+      "english": "Visual inspection of the nose",
+      "korean": "코 시진",
+      "before": "코를 눈으로 살펴보겠습니다.",
+      "after": "코 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding9382486cdcaee4b7635efa6c",
+          "name": "Large nostrils"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod13204efecd5b6e3dd83a2ab5",
+      "english": "Inspection of lower limb alignment",
+      "korean": "하지 정렬 시진",
+      "before": "하지 정렬을 눈으로 살펴보세요",
+      "after": "하지 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingd2863c985233d1bce162f677",
+          "name": "Bowing deformity of lower limb"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod145e8deea8e4c94dc90f999b",
+      "english": "Pulse palpation",
+      "korean": "맥박 촉진",
+      "before": "손목에서 맥박의 규칙성을 짚어보겠습니다.",
+      "after": "손목 맥박 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding1970e9d01c190f66bddcfde6",
+          "name": "Irregular pulse"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod1aad7b938b44fdfbee691a2a",
+      "english": "Nipple inspection",
+      "korean": "유두 시진",
+      "before": "양쪽 유두의 모양을 살펴보겠습니다.",
+      "after": "양쪽 유두 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding9cff7531fcc8f87518758e11",
+          "name": "Nipple finding"
+        },
+        {
+          "id": "urn:ontoward:ExamFindingbb187f41042d2b4b09e90c97",
+          "name": "Abnormal nipple finding"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod1e049ef5ed41ec53a2c60b3b",
+      "english": "Visual inspection of skin and mucous membranes",
+      "korean": "피부 및 점막 시진",
+      "before": "피부와 점막을 살펴보세요.",
+      "after": "피부와 점막 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding2a716ce677d02a50fac547bb",
+          "name": "Cyanosis"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod216d1c52fb6e46162fe69c81",
+      "english": "Percussion over a peripheral nerve",
+      "korean": "말초 신경 타진",
+      "before": "말초 신경을 두드려 주세요",
+      "after": "말초 신경 타진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingc3c64b0aabaca78289516935",
+          "name": "Tinel sign"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod231e1152b6f554579ed5e3d5",
+      "english": "Bowel sound auscultation",
+      "korean": "장음 청진",
+      "before": "청진기로 배에서 나는 소리를 들어볼게요",
+      "after": "복부 청진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod272db8d288a0938aa246c724",
+      "english": "Visual inspection of the upper lip",
+      "korean": "윗입술 시진",
+      "before": "윗입술을 볼 수 있게 얼굴을 들어주세요.",
+      "after": "얼굴을 든 자세에서 윗입술 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindinga0ab6ff4225e468dcc8bd72f",
+          "name": "Retrusion of upper lip"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod2f921e7c95379edc18951bca",
+      "english": "Abdominal auscultation",
+      "korean": "복부 청진",
+      "before": "장 소리를 듣게 배에 힘을 빼주세요.",
+      "after": "복부 청진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingce05e2e143247e877bcf6b6d",
+          "name": "Hypoactive bowel sounds"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod3083398e5701d5dffbe307f8",
+      "english": "Palpation",
+      "korean": "촉진",
+      "before": "해당 부위를 촉진해 주세요",
+      "after": "해당 부위 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding822bfca5cffb623a1a98d249",
+          "name": "Crepitus"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod311480622c803c17bc685d35",
+      "english": "Rovsing sign elicitation by abdominal palpation",
+      "korean": "복부 촉진을 통한 로브싱 징후 유발 검사",
+      "before": "복부를 눌러 로브싱 징후를 확인하세요",
+      "after": "로브싱 징후 확인을 위해 복부 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding99716ca4481ed1ba2338699e",
+          "name": "Rovsing sign"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod33b3af60c6cafcddf8c11a90",
+      "english": "Skin inspection",
+      "korean": "피부 시진",
+      "before": "피부를 눈으로 살펴보세요.",
+      "after": "피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding1cbde9213bdca36f13532a2f",
+          "name": "Hyperlinearity of soles"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding36b3e28ab16c20f996383c13",
+          "name": "Janeway lesion"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding4adbd605c1b3a55b52022082",
+          "name": "Skin plaque"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding555fa39f95f3f807736bf0b7",
+          "name": "Eschar"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding770d7a4e616e8d7461855267",
+          "name": "Purpura"
+        },
+        {
+          "id": "urn:ontoward:ExamFindinga2a46d6eaf928064cabb8037",
+          "name": "Skin hyperpigmentation"
+        },
+        {
+          "id": "urn:ontoward:ExamFindingc20ad9d047e95eb7e5970397",
+          "name": "Purple striae"
+        },
+        {
+          "id": "urn:ontoward:ExamFindingc67bd46ca3df69a16ab4dd2c",
+          "name": "Café au lait spots"
+        },
+        {
+          "id": "urn:ontoward:ExamFindingcbb1f788f598aae6462181f8",
+          "name": "Scar of skin"
+        },
+        {
+          "id": "urn:ontoward:ExamFindinge9b9abd2c60c30c011c6f501",
+          "name": "Skin lesion"
+        },
+        {
+          "id": "urn:ontoward:Symptom201590d2818b782ed8f68a8e",
+          "name": "Skin nodule"
+        },
+        {
+          "id": "urn:ontoward:Symptomcbb1f788f598aae6462181f8",
+          "name": "Scar of skin"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod353b7c041f84ba53959f3cbf",
+      "english": "Conjunctival inspection",
+      "korean": "결막 시진",
+      "before": "눈꺼풀을 뒤집어 결막을 살펴보세요",
+      "after": "눈꺼풀을 뒤집고 결막 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding97c2bf23a3effe6ef39d503e",
+          "name": "Pallor"
+        },
+        {
+          "id": "urn:ontoward:ExamFindingd3ea5e8c6ac8f5c6736c8fa2",
+          "name": "Conjunctival injection"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod3543a9cf9a3d4f4520780108",
+      "english": "Liver palpation",
+      "korean": "간 촉진",
+      "before": "간을 만져볼 테니 배에 힘을 빼주세요.",
+      "after": "간 촉진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod3698f7e06ea80b7371834606",
+      "english": "Inspection and palpation of bone",
+      "korean": "뼈 시진 및 촉진",
+      "before": "뼈를 살펴보고 만져보세요",
+      "after": "뼈 시진합니다. 뼈 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding14516d93fb9b33139d3fbe0b",
+          "name": "Deformity of bone"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod37fa71d343c2b8e9a7b6dfe3",
+      "english": "Inspection of facial expression",
+      "korean": "얼굴 표정 시진",
+      "before": "얼굴 표정이 어떤지 살펴볼게요.",
+      "after": "얼굴 표정 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding1cbaaf0b3ef64e47aaa53034",
+          "name": "Elongated face"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding980ea807f2e0ba526d5bbd0e",
+          "name": "Parkinsonian facies"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod3abef21047c5f2b25d2d3730",
+      "english": "Inspection of the joints",
+      "korean": "관절 시진",
+      "before": "관절의 겉모양을 살펴볼게요",
+      "after": "관절 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingf9bbc895aa1b8e57098f2ad3",
+          "name": "Joint deformity"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod3c684a407d1925893164ebe1",
+      "english": "Pulmonary auscultation",
+      "korean": "폐 청진",
+      "before": "청진기로 폐의 숨소리를 들어볼게요",
+      "after": "폐 청진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingb242b010ffdafa54bdeaec62",
+          "name": "Wheezing on auscultation"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod427ea1c5c2faa55f1ac5ee51",
+      "english": "Palpation",
+      "korean": "촉진",
+      "before": "허리를 눌러 볼 테니 엎드려 주세요.",
+      "after": "엎드린 자세에서 허리 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding85269d980ea666e7acfc1765",
+          "name": "Lumbar tenderness"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod4848aa6161de3d3d8d9732cd",
+      "english": "Palpation of a joint during movement",
+      "korean": "관절을 움직이는 동안 촉진",
+      "before": "관절을 움직이며 만져보세요",
+      "after": "관절을 움직이며 발 관절 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindinged6fec7da2e464bf3bddb70d",
+          "name": "Joint crepitus of the foot"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod48df2670f93792e177d55d31",
+      "english": "Palpation",
+      "korean": "촉진",
+      "before": "이마굴 부위를 눌러 아픈지 확인할게요.",
+      "after": "이마굴 부위 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding2f060b4b5e9d4be3257532a1",
+          "name": "Frontal sinus tenderness"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod4ef83bdec62f2a364204f8cd",
+      "english": "Thyroid palpation",
+      "korean": "갑상선 촉진",
+      "before": "갑상선을 촉진하세요",
+      "after": "갑상선 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding56d96233260fd4e95eeb6495",
+          "name": "Thyroid enlargement"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod4f96e00e756ddde1f48d9f3c",
+      "english": "Thyroid gland palpation",
+      "korean": "갑상선 촉진",
+      "before": "목의 갑상선을 만져 확인할게요.",
+      "after": "갑상선 촉진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod4fbf65b42a923caafbb121c3",
+      "english": "Inspection and palpation of back",
+      "korean": "등 시진 및 촉진",
+      "before": "목 뒤에 지방이 불룩하게 쌓였는지 볼게요.",
+      "after": "목 뒤 시진합니다. 목 뒤 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding45f20a46a6cc74fec1f2d62d",
+          "name": "Buffalo hump"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod53027bab7c4fcc82e1ef3183",
+      "english": "Visual inspection of the tonsils",
+      "korean": "편도 시진",
+      "before": "편도를 눈으로 살펴보세요",
+      "after": "편도 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingb67ce1393288987b7c6ff798",
+          "name": "Abnormal appearance of tonsil"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod539ae5d200b4de5efa6db692",
+      "english": "Inspection of palms",
+      "korean": "손바닥 시진",
+      "before": "손바닥을 보여 주세요.",
+      "after": "손바닥 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding931f127a4d3739c17575f22b",
+          "name": "Palmar hyperlinearity"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod53c088cbabaeedbf2db5b78e",
+      "english": "Visual inspection of head skin",
+      "korean": "머리 피부 시진",
+      "before": "흉터를 살펴보도록 머리 피부를 보여 주세요.",
+      "after": "머리 피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding6fd976b13a7c85ec83783197",
+          "name": "Scar of skin of head"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod58bcb60d68659736f5b22266",
+      "english": "Inspection of the pupils",
+      "korean": "동공 시진",
+      "before": "동공을 살펴보세요",
+      "after": "동공 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding3ea2447d053d163323d41ac6",
+          "name": "Irregular pupil"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod5967efe9a259ca87a2ce4c05",
+      "english": "Inspection of fingers and nails",
+      "korean": "손가락 및 손톱 시진",
+      "before": "손가락과 손톱을 보여 주세요",
+      "after": "손가락 및 손톱 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding7934cd91982ea55a0762c3e8",
+          "name": "Digital clubbing"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod5cd1905d3855e0b182424d0d",
+      "english": "Eyelid inspection",
+      "korean": "눈꺼풀 시진",
+      "before": "눈꺼풀을 살펴보세요",
+      "after": "눈꺼풀 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding04914bdbb6cd72ae661ac33c",
+          "name": "Xanthelasma"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod5e01c317e6e42346973fbdc9",
+      "english": "Inspection and palpation of the fingers and toes",
+      "korean": "손가락과 발가락 시진 및 촉진",
+      "before": "손가락과 발가락을 살펴보고 눌러보세요",
+      "after": "손발가락 시진합니다. 손발가락 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding11d210ca00626bc1ee98e382",
+          "name": "Osler nodes"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod5e6b89954c1c8ddf9a140a2d",
+      "english": "Visual inspection of areola",
+      "korean": "유륜 시진",
+      "before": "유륜을 살펴봐 주세요",
+      "after": "유륜 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding0d054f955df69cd25530036c",
+          "name": "Areola finding"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod61fb24825d0350f30a4d67fe",
+      "english": "Oral mucosal inspection",
+      "korean": "구강 점막 시진",
+      "before": "입안을 살펴보게 입을 벌려주세요.",
+      "after": "입을 벌린 상태에서 구강 점막 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding3040eb5f3467dae3e4bd898f",
+          "name": "Koplik spots"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod626e8f57199dc0cfa8fc54aa",
+      "english": "Visual skin inspection",
+      "korean": "피부 시진",
+      "before": "얼굴 피부를 살펴보세요.",
+      "after": "얼굴 피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding0ef7164c359d9a725e888a70",
+          "name": "Closed follicle comedo"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod63b4133359242b45268605a4",
+      "english": "Palpation",
+      "korean": "촉진",
+      "before": "등을 눌러 압통을 확인하세요",
+      "after": "등 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding4eae36aa24fde3e9074e32c3",
+          "name": "Back tenderness"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod69fa5a7e0cf5dc3c32887049",
+      "english": "Palpation over the maxillary sinuses",
+      "korean": "상악동 촉진",
+      "before": "상악동을 눌러 압통을 확인하세요",
+      "after": "상악동 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding2a1d031b83033446e1696444",
+          "name": "Tenderness over maxillary sinus"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod6d14609dc416a039f8946f10",
+      "english": "Visual inspection of head skin",
+      "korean": "머리 피부 시진",
+      "before": "두피 모발의 흰색 변화를 살펴보세요.",
+      "after": "두피와 모발 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingac0d54634265c6abd57c56bf",
+          "name": "Premature hair graying"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod6f637ba3ab0607538047a80c",
+      "english": "Inspection of hip and leg rotation",
+      "korean": "고관절 및 다리 회전 시진",
+      "before": "누운 상태에서 다리의 바깥쪽 회전을 살펴보세요",
+      "after": "누운 자세에서 고관절과 다리 외회전 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding176889f00faca01f627f21b9",
+          "name": "Hip deformity with outwardly rotated leg"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod71c4bc5af5c512a426189d92",
+      "english": "Inspection and palpation of the joint",
+      "korean": "관절 시진 및 촉진",
+      "before": "관절을 살펴보며 만져 확인할게요.",
+      "after": "관절 시진합니다. 관절 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding297647f95dd5376af7a7121b",
+          "name": "Joint swelling on examination"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod71d48926824b27d61a6d83f3",
+      "english": "Palpation",
+      "korean": "촉진",
+      "before": "관절을 눌러 압통을 확인하세요",
+      "after": "관절 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingbcbe3b24ce71ffc0f11ceb55",
+          "name": "Joint tenderness"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod75530febed81b99dc1609e59",
+      "english": "Visual inspection of skin",
+      "korean": "피부 시진",
+      "before": "피부를 시진해 주세요",
+      "after": "피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding48250f31f6b16eedfae0a7ee",
+          "name": "Petechiae"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod77a698bbfc62a9e2504f6875",
+      "english": "Inspection of breast skin",
+      "korean": "유방 피부 시진",
+      "before": "유방 피부를 보여 주세요.",
+      "after": "유방 피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingaca17c4ae4d409262492ce66",
+          "name": "Peau d'orange appearance of breast skin"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod7a8d47fe5a72a301c0510490",
+      "english": "Palpation of cervical lymph nodes",
+      "korean": "경부 림프절 촉진",
+      "before": "목 림프절을 촉진하세요",
+      "after": "경부 림프절 촉진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod7f4febb9dc8655d086444223",
+      "english": "Visual inspection of the conjunctiva",
+      "korean": "결막 시진",
+      "before": "눈 안쪽을 살펴보도록 위를 봐주세요.",
+      "after": "위를 보게 하고 결막 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding7d10560e996a5fbec2842d6a",
+          "name": "Bitot spots"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod84a3add2275b79d270b8071b",
+      "english": "Inspection of knee joint",
+      "korean": "무릎 관절 시진",
+      "before": "무릎 모양을 보게 무릎을 보여 주세요.",
+      "after": "무릎 관절 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding83e227048a6212b6e6607778",
+          "name": "Deformity of knee joint"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod8576560739eb9cce56200def",
+      "english": "Abdominal auscultation",
+      "korean": "복부 청진",
+      "before": "배를 청진해 주세요",
+      "after": "복부 청진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindinge19f47fb4c9fc2b0226b7b0c",
+          "name": "Abdominal bruit"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod8acb53e00263e4a3248dbf5b",
+      "english": "Abdominal auscultation",
+      "korean": "복부 청진",
+      "before": "장음이 활발한지 청진기로 배를 들어볼게요",
+      "after": "복부 청진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingec657823eef9b971b6d5d861",
+          "name": "Hyperactive bowel sounds"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod8b6390af15433e55a8a00645",
+      "english": "Inspection of the oral cavity",
+      "korean": "구강 시진",
+      "before": "치아 수복물을 눈으로 살펴보세요",
+      "after": "치아 수복물 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding91d3bf691672a1c4e65af602",
+          "name": "Defective dental restoration"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod8e1f1cd9944bcb793bf07513",
+      "english": "Visual inspection of skin",
+      "korean": "피부 시진",
+      "before": "실핏줄이 거미 모양인 피부를 보여 주세요.",
+      "after": "피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingf19f27ebb29f28ab5b699f2d",
+          "name": "Spider angioma"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod8ee9dca6283bfdb0e43b3bea",
+      "english": "Inspection and palpation of the ear",
+      "korean": "귀 시진 및 촉진",
+      "before": "귀를 보여 주시고 주변을 만져도 될까요?",
+      "after": "귀 시진합니다. 귀 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding05fe1eb79b824bf1a7502fe5",
+          "name": "Ear swelling"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod90806302133e636747a4d072",
+      "english": "Chest percussion",
+      "korean": "흉부 타진",
+      "before": "가슴을 두드려 볼 테니 편히 앉아주세요.",
+      "after": "앉은 자세에서 흉부 타진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding28bc8e59d857602b03bf4a15",
+          "name": "Dullness to percussion of chest"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding358ac319abad87d46fc1bd47",
+          "name": "Hyperresonance to percussion of chest"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod925e6fc8f1ddc0d42a4a530d",
+      "english": "Breast palpation",
+      "korean": "유방 촉진",
+      "before": "유방을 손으로 만져 확인해도 될까요?",
+      "after": "유방 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding753f4862d2318e272a628515",
+          "name": "Palpable breast mass"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod928bc1688db0f9ca11bacb28",
+      "english": "Breast inspection",
+      "korean": "유방 시진",
+      "before": "유방을 살펴보도록 잠시 보여주세요.",
+      "after": "유방 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding00d9643972677bfe4a4eaca3",
+          "name": "Nipple retraction"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod931414fce643575f3e43ffb1",
+      "english": "Visual inspection of skin",
+      "korean": "피부 시진",
+      "before": "코의 피부색을 살펴보도록 얼굴을 들어주세요.",
+      "after": "코 피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding7005b5f3cacf614c38aed2ef",
+          "name": "Black discoloration of the nose"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod99362d83494243664c5d1dc3",
+      "english": "Abdominal palpation",
+      "korean": "복부 촉진",
+      "before": "복부를 부드럽게 촉진하세요",
+      "after": "복부 부드럽게 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding1bcebcd328acddf07a65ffb8",
+          "name": "Abdominal guarding"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding2e6a8361d105160f5a1321a8",
+          "name": "Abdominal tenderness"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding387225d5104918953293c4ba",
+          "name": "Pulsatile abdominal mass"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding87055062116276219839ec5f",
+          "name": "Hepatomegaly"
+        },
+        {
+          "id": "urn:ontoward:ExamFindingf67c7a38fab5211ffe6df150",
+          "name": "Abdominal rigidity"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod9a3f62f61296c10837053351",
+      "english": "Costovertebral angle percussion",
+      "korean": "늑골척추각 타진",
+      "before": "등의 늑골척추각을 두드려 보세요.",
+      "after": "늑골척추각 타진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding5736a6700dde8ff573bd98cc",
+          "name": "Costovertebral angle tenderness"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod9a73a1355f341a4fb4d265d6",
+      "english": "Inspection",
+      "korean": "시진",
+      "before": "손바닥을 살펴보세요",
+      "after": "손바닥 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding000d628b11461d08cd6ea907",
+          "name": "Palmar erythema"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod9c7987f70af0246057b64a18",
+      "english": "Nail inspection",
+      "korean": "손발톱 시진",
+      "before": "손발톱을 살펴보세요",
+      "after": "손발톱 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:Symptom7a446e23b567dbf5fe727171",
+          "name": "Ridged nails"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod9c84e0a93432cb5b2dcd7eda",
+      "english": "Inspection of jugular venous pressure",
+      "korean": "경정맥압 시진",
+      "before": "목의 정맥을 살펴보게 상체를 비스듬히 눕혀주세요.",
+      "after": "상체를 비스듬히 눕혀 경정맥 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding59da3fb9593a60f375f9bd93",
+          "name": "Jugular venous distension"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod9d8cb2f2a01bdaf369dd5c18",
+      "english": "Chest auscultation",
+      "korean": "흉부 청진",
+      "before": "가슴을 청진해 천명을 확인합니다",
+      "after": "흉부 청진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding9777b96f5228f7236049375e",
+          "name": "Wheeze"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod9e0e0dbfe1251fa1956e77fa",
+      "english": "Inspection and palpation for edema",
+      "korean": "부종 확인을 위한 시진 및 촉진",
+      "before": "부기를 살펴보도록 해당 부위를 보여 주세요.",
+      "after": "부종 부위 시진합니다. 부종 부위 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindinga618bba7f9917b2dce8ae7e5",
+          "name": "Edema"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethod9ea83f19a643379f89c274de",
+      "english": "Inspection of the hands",
+      "korean": "손 시진",
+      "before": "손을 눈으로 살펴보세요",
+      "after": "손 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding5fafd569726ddbc920354842",
+          "name": "Large hand"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethoda56d1f1bf0cd9b2007b34e0a",
+      "english": "Visual inspection of skin",
+      "korean": "피부 시진",
+      "before": "피부를 살펴보세요",
+      "after": "피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingc8af6a27304ada2963906d6a",
+          "name": "Hyperlinearity of skin"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethoda85a60bcebfe9bd828e0f52f",
+      "english": "Visual inspection of skin",
+      "korean": "피부 시진",
+      "before": "목 주위의 띠 모양 피부염을 살펴보겠습니다.",
+      "after": "목 주위 피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding5c8d03ab347d1203a4c49a0c",
+          "name": "Casal's necklace"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethoda9e16d0f95bf18a7da2de92f",
+      "english": "Oropharyngeal inspection",
+      "korean": "구인두 시진",
+      "before": "편도를 눈으로 살펴보세요",
+      "after": "편도 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding3e44d53d1f0ce6af28f77674",
+          "name": "Finding of appearance of tonsil"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodaa288dce2ababb1c375ea118",
+      "english": "Oropharyngeal inspection",
+      "korean": "구인두 시진",
+      "before": "입을 벌려 편도를 살펴봅니다",
+      "after": "입을 벌린 상태에서 편도 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding54c9d24e5b8525b77cc439df",
+          "name": "Abnormal tonsil appearance"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodaa29f380278c40b5db17b98b",
+      "english": "Inspection of nose",
+      "korean": "코 시진",
+      "before": "코 안을 살펴보세요",
+      "after": "코 안 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding2658254467d5fc579316d253",
+          "name": "Nasal deviation toward the left"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodad395e2d548dc3a5dc26463c",
+      "english": "Oropharyngeal inspection",
+      "korean": "구인두 시진",
+      "before": "편도 삼출물을 확인해 주세요",
+      "after": "편도 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindinga2e7b1339babcbba6aa98cc5",
+          "name": "Tonsillar exudate"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodadc37c65920ed6b01d31fee7",
+      "english": "Visual inspection of skin",
+      "korean": "피부 시진",
+      "before": "피부를 살펴 고름 물집을 확인하세요",
+      "after": "피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding87b0fd0c7961189a90159243",
+          "name": "Pus-filled skin blister"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodaf57916f92877598fe7765eb",
+      "english": "Scleral inspection",
+      "korean": "공막 시진",
+      "before": "공막을 살펴보세요",
+      "after": "공막 시진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodafbedc321ee80d4626178750",
+      "english": "Inspection and palpation of tendons",
+      "korean": "힘줄 시진 및 촉진",
+      "before": "힘줄을 살펴보고 만져 보세요.",
+      "after": "힘줄 시진합니다. 힘줄 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding18bda8e50820f28af63b9564",
+          "name": "Tendon xanthoma"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodb007bc924446989896ef9677",
+      "english": "Peripheral pulse palpation",
+      "korean": "말초맥박 촉진",
+      "before": "맥박을 짚도록 손목을 내밀어 주세요.",
+      "after": "손목 맥박 촉진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodb04d45403cb089cafa5671b2",
+      "english": "Inspection for closed comedones",
+      "korean": "폐쇄면포 시진",
+      "before": "피부의 흰 좁쌀을 살펴보게 보여 주세요.",
+      "after": "피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingdcf19af3d27650df4bed9795",
+          "name": "Closed comedone"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodb5bd90dfeb31eca223b8d3cb",
+      "english": "Inspection of the oral cavity",
+      "korean": "구강 시진",
+      "before": "입을 벌려 치아 배열을 살펴보세요.",
+      "after": "입을 벌린 상태에서 치아 배열 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding7edbfe7f7a72d8f7bb4b6242",
+          "name": "Crowded or overlapping teeth"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodb5fa52c8e6f7c1a55c6b089a",
+      "english": "Palpation of spleen",
+      "korean": "비장 촉진",
+      "before": "비장을 촉진하세요",
+      "after": "비장 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding30c71f111fbb3f4453c38fe8",
+          "name": "Splenomegaly"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodb6199d88a446e928d04223b2",
+      "english": "Bimanual uterine palpation",
+      "korean": "양손 자궁 촉진",
+      "before": "자궁을 눌러 압통을 확인하세요",
+      "after": "양손으로 자궁 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding8e4e82ddc2c1fe9a4991fc60",
+          "name": "Uterine tenderness"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodb71f175fae9d4df1b683a9ca",
+      "english": "Palpation of the swelling to assess the slip sign",
+      "korean": "슬립 징후 평가를 위한 종창 촉진",
+      "before": "종창을 눌러 슬립 징후를 확인하세요",
+      "after": "슬립 징후 확인을 위해 종창 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding70ecf58e6d8cad01a92fb523",
+          "name": "Localized superficial swelling of skin with positive slip sign"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodbc24650b12554bd44f12bde8",
+      "english": "Edema pitting palpation",
+      "korean": "부종 함요 촉진",
+      "before": "부은 곳을 잠시 눌러보겠습니다.",
+      "after": "함요를 확인하며 부종 부위 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding2648aabd20ad57f430515a3a",
+          "name": "Pitting edema"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodbc79fc9a04353ef63c22627f",
+      "english": "Hand inspection and movement examination",
+      "korean": "손 관찰 및 움직임 검사",
+      "before": "손가락을 펴고 굽혀 보세요",
+      "after": "손가락을 펴고 굽히며 손 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingeb12adf792ae40005b0046fd",
+          "name": "Partial claw hand"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodbcf9d6b4790cf912cacdb638",
+      "english": "Inspection of oral mucosa",
+      "korean": "구강 점막 시진",
+      "before": "구강 점막을 살펴보세요",
+      "after": "구강 점막 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding3946a7b10964ccda230a3ad0",
+          "name": "Dry oral mucosa"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodbeb76a48feb102e0c18fab6e",
+      "english": "Inspection of tonsils",
+      "korean": "편도 시진",
+      "before": "편도를 시진해 주세요",
+      "after": "편도 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingfd6aea8b4c54b073044e74c0",
+          "name": "Tonsil appearance finding"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodc0e9db80f27572da369be511",
+      "english": "Inspection of the eyes",
+      "korean": "눈 시진",
+      "before": "눈을 살펴보세요",
+      "after": "눈 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding096231b3b5715b6b897148b0",
+          "name": "Exophthalmos"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodc249f22a9be21fb04e658970",
+      "english": "Nasal inspection",
+      "korean": "코 시진",
+      "before": "코를 눈으로 살펴볼게요.",
+      "after": "코 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding17025bd8c0107bc7554e47c2",
+          "name": "Finding of nasal deformity"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding179b614273c5cb1229cb440d",
+          "name": "Large nose"
+        },
+        {
+          "id": "urn:ontoward:Symptom6f4084d782840e49bf2fcdd0",
+          "name": "Nasal deviation"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodc3331412586ecc802327eecc",
+      "english": "Chest auscultation",
+      "korean": "흉부 청진",
+      "before": "가슴을 청진하세요",
+      "after": "흉부 청진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingcefa9c7515a2d92c1ed761ac",
+          "name": "Crackles"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodc4d90c17364418f730e01635",
+      "english": "Joint palpation and movement",
+      "korean": "관절 촉진 및 움직임 검사",
+      "before": "관절에 손을 댄 채 움직여 볼게요.",
+      "after": "관절을 움직이며 관절 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingee32fce7fa3fe2ed33fad94b",
+          "name": "Joint crepitus"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodc70af9db39567dc28676e6ac",
+      "english": "Visual inspection of the ears",
+      "korean": "귀 시진",
+      "before": "귀의 크기를 살펴보세요.",
+      "after": "귀 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding2ee0d14d1a4ed795f4ec8a6a",
+          "name": "Macrotia"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodc84dc28760abc3b5c8b6cc21",
+      "english": "Palpation",
+      "korean": "촉진",
+      "before": "발목을 눌러 압통을 확인하세요",
+      "after": "발목 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindinga9592a314e371f33ba113cd2",
+          "name": "Ankle tenderness"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodc8d6ae691d2c815f890d60ef",
+      "english": "Inspection of fingers",
+      "korean": "손가락 시진",
+      "before": "손가락을 살펴보도록 손을 펴 주세요.",
+      "after": "손을 편 상태에서 손가락 시진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodca42e5f41f5c21f114112496",
+      "english": "Neck inspection",
+      "korean": "목 시진",
+      "before": "목을 보여 주세요.",
+      "after": "목 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingd32689114984f9b63bd937f7",
+          "name": "Congenital webbing of neck"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodd0de6604e176851342f17049",
+      "english": "Abdominal inspection",
+      "korean": "복부 시진",
+      "before": "복부를 시진해 주세요",
+      "after": "복부 시진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodd142e8b3a749eded4c50ef3d",
+      "english": "Cardiac auscultation",
+      "korean": "심장 청진",
+      "before": "가슴에서 심장 소리를 들어보세요",
+      "after": "심장 청진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding9107eaa39cc55beb78df685d",
+          "name": "Pericardial friction rub"
+        },
+        {
+          "id": "urn:ontoward:ExamFinding94d00108da3ed9e1217466a4",
+          "name": "Heart murmur"
+        },
+        {
+          "id": "urn:ontoward:ExamFindingf6acefbef528df784c20597c",
+          "name": "Third heart sound"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodd1969f99206009fb9b3618cd",
+      "english": "Joint inspection and palpation",
+      "korean": "관절 시진 및 촉진",
+      "before": "관절을 만져 볼 테니 힘을 빼 주세요.",
+      "after": "관절 시진합니다. 관절 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindinga21dfe18e2a0a6cabc5ded3b",
+          "name": "Joint warmth"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodd2472e75fcd530b8c72fb3a0",
+      "english": "Chest auscultation",
+      "korean": "흉부 청진",
+      "before": "흉부를 청진해 주세요",
+      "after": "흉부 청진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding41657e21eb473da96a813b4b",
+          "name": "Decreased breath sounds"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodd64d2463270f3444441507ee",
+      "english": "Inspection of palm",
+      "korean": "손바닥 시진",
+      "before": "손바닥을 살펴봐 주세요",
+      "after": "손바닥 시진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodd68d8b74ed5033df7cec3a68",
+      "english": "Scapular winging inspection",
+      "korean": "견갑골 날개 변형 시진",
+      "before": "날개뼈를 살펴보도록 벽을 밀어 주세요.",
+      "after": "벽을 미는 자세에서 견갑골 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding478cca474f571910ac06b09f",
+          "name": "Winged scapula"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodd8339197232d5bea86ddf194",
+      "english": "Inspection of the sole",
+      "korean": "발바닥 시진",
+      "before": "발바닥을 볼 수 있게 보여 주세요.",
+      "after": "발바닥 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding5e98585f3f6f5c4101cb6a03",
+          "name": "Erythema of sole of foot"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodd93cf0be0491f18a43f8192f",
+      "english": "Joint examination by inspection and palpation",
+      "korean": "관절 시진 및 촉진",
+      "before": "관절을 보고 만져보세요",
+      "after": "관절 시진합니다. 관절 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingc3fe902e0bdf6b45f3a3b6d1",
+          "name": "Joint effusion"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodd94c6ba79b459bda85f9d2d0",
+      "english": "Pupil inspection",
+      "korean": "동공 시진",
+      "before": "동공을 살펴보세요.",
+      "after": "동공 시진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodd9ee85bc8803e176fc0e29dc",
+      "english": "Lymph node palpation",
+      "korean": "림프절 촉진",
+      "before": "림프절을 촉진하세요",
+      "after": "림프절 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding916528ee857f1a34a674e219",
+          "name": "Lymphadenopathy"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodda581552397a6682d269acce",
+      "english": "Inspection of the oral cavity",
+      "korean": "구강 시진",
+      "before": "혀를 입 밖으로 내밀어 보세요.",
+      "after": "입 밖으로 내민 혀 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding0b52c7bfbc30845a2e722340",
+          "name": "Beefy red tongue"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodda5889c0b3a37e2f4f161492",
+      "english": "Joint palpation",
+      "korean": "관절 촉진",
+      "before": "관절을 눌러 확인하세요",
+      "after": "관절 촉진합니다.",
+      "findings": []
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethode6d7e61c5513509467217647",
+      "english": "External nose inspection",
+      "korean": "외비 시진",
+      "before": "코 모양을 눈으로 확인하세요",
+      "after": "외비 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding6f4084d782840e49bf2fcdd0",
+          "name": "Nasal deviation"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethode8be30f84948a8350fc504f1",
+      "english": "Inspection of oral cavity and tongue",
+      "korean": "구강 및 혀 시진",
+      "before": "입안과 혀를 볼 수 있게 입을 벌려주세요.",
+      "after": "입을 벌린 상태에서 구강 및 혀 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding45f9ebc14c1181092f247e5e",
+          "name": "Lesion of tongue"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodea0076139d179019ded31265",
+      "english": "Visual inspection of skin",
+      "korean": "피부 시진",
+      "before": "멍이 든 부위의 피부를 보여 주세요.",
+      "after": "멍든 부위 피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding0f873fdd94efe9d4dc6c9ae2",
+          "name": "Ecchymosis"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodee0b2f7c95fdeab880860178",
+      "english": "Inspection of fingers and nails",
+      "korean": "손가락 및 손톱 시진",
+      "before": "손끝과 손톱 모양을 살펴보겠습니다.",
+      "after": "손가락 및 손톱 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingef23f7687a7c907fc8e6b501",
+          "name": "Finger clubbing"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodefaa92e0a979ce490cb2fcef",
+      "english": "Palpation of healed fracture site",
+      "korean": "골유합 골절 부위 촉진",
+      "before": "과거 골절 부위를 눌러 압통을 확인하세요",
+      "after": "과거 골절 부위 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding6b56a73c6f4ed8f5ef0e5753",
+          "name": "Painful old healed fracture of bone"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodf136ebea13790327ea44b546",
+      "english": "Abdominal percussion for shifting dullness",
+      "korean": "이동탁음 확인을 위한 복부 타진",
+      "before": "자세를 바꾸며 배를 두드려 확인할게요.",
+      "after": "자세를 바꾸며 복부 타진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding89c2c6494a612f5c88f1c0e8",
+          "name": "Shifting dullness"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodf39e3fecf6b68c7eacbfa399",
+      "english": "Visual inspection of skin",
+      "korean": "피부 시진",
+      "before": "피부를 눈으로 살펴보세요",
+      "after": "피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingb8f42f54ab2e35a6279bad19",
+          "name": "Oily skin"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodf435f3061356ff927114d87d",
+      "english": "Inspection for spider nevi",
+      "korean": "거미혈관종 시진",
+      "before": "피부의 붉은 혈관 무늬를 살펴보겠습니다.",
+      "after": "피부 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding1e6580bf9fc28658f38f7be2",
+          "name": "Spider nevus"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodf5cefdf891af14b445b4efe2",
+      "english": "Visual inspection of the jaw",
+      "korean": "턱 시진",
+      "before": "턱 모양을 살펴보도록 정면을 봐 주세요.",
+      "after": "정면을 보는 자세에서 턱 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding07463607c06b4b662e6e7d55",
+          "name": "Macrognathism"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodfbd4066bca02a47c8eb338c6",
+      "english": "Visual inspection of the breast",
+      "korean": "유방 시진",
+      "before": "유방의 겉모양을 살펴볼게요",
+      "after": "유방 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding7833ebbad3a0e91c25ff7c95",
+          "name": "Breast atrophy"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodfc36f165d116b7e4cefafae8",
+      "english": "Inspection of the sclera",
+      "korean": "공막 시진",
+      "before": "공막을 관찰하세요.",
+      "after": "공막 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding502ebd48ef567e3c9713d422",
+          "name": "Scleral icterus"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodfcf76f479ae563b45005390b",
+      "english": "Palpation of the paranasal sinuses",
+      "korean": "부비동 촉진",
+      "before": "부비동 부위를 눌러보세요",
+      "after": "부비동 촉진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFindingf04dafe22d2620b63e492603",
+          "name": "Sinus tenderness"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodfcfd37feaf259daf0b57961b",
+      "english": "Inspection of the forehead",
+      "korean": "이마 시진",
+      "before": "이마를 눈으로 살펴보세요",
+      "after": "이마 시진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding7f03df057fa7f40b34aa5acb",
+          "name": "Frontal bossing"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodfe4ed7cfc1baf252ad46ae1c",
+      "english": "Respiratory auscultation",
+      "korean": "호흡음 청진",
+      "before": "청진기로 숨소리를 듣겠습니다.",
+      "after": "흉부 청진합니다.",
+      "findings": [
+        {
+          "id": "urn:ontoward:ExamFinding302777e5f1e1db84eeb72ba6",
+          "name": "Stridor"
+        }
+      ]
+    },
+    {
+      "method_id": "urn:ontoward:ExamMethodfec3040165cddf4337ac7699",
+      "english": "Auscultation of abdominal vessels",
+      "korean": "복부 혈관 청진",
+      "before": "숨을 편하게 쉬어 주세요",
+      "after": "복부 혈관 청진합니다.",
+      "findings": []
+    }
+  ],
+  "unchanged_without_text": [
+    "urn:ontoward:ExamMethod002737499489b115dca29eaa",
+    "urn:ontoward:ExamMethod0b49e169a1ba11db00756602",
+    "urn:ontoward:ExamMethod16a5ac54f0015e3ae95b65f5",
+    "urn:ontoward:ExamMethod17a814d3cea76f6a20bc3492",
+    "urn:ontoward:ExamMethod18faa39059989d3f93af99c5",
+    "urn:ontoward:ExamMethod2337264abbf67b7b4b8eaccf",
+    "urn:ontoward:ExamMethod24b482accba31a62155edccc",
+    "urn:ontoward:ExamMethod36fc80182ca51c5475612e2b",
+    "urn:ontoward:ExamMethod3ead5e0f71583fe3fd61f54c",
+    "urn:ontoward:ExamMethod47c36fba5e92721202797b2e",
+    "urn:ontoward:ExamMethod4ffb688a9dfaca4611d0a305",
+    "urn:ontoward:ExamMethod558c3e5b1ceb779c869fa44f",
+    "urn:ontoward:ExamMethod623d8c8a8fe62014bf4b7610",
+    "urn:ontoward:ExamMethod63f242486806bea1d3a7639a",
+    "urn:ontoward:ExamMethod65b7c934958f20546e47a261",
+    "urn:ontoward:ExamMethod703406b372c4f3b42dcf06b0",
+    "urn:ontoward:ExamMethod712ad4bdb0b19153248bc398",
+    "urn:ontoward:ExamMethod73485acd96cb8451e591dad8",
+    "urn:ontoward:ExamMethod8857b87c74e31154e68dc2d7",
+    "urn:ontoward:ExamMethod88ab2b2bc75634651e5d7b79",
+    "urn:ontoward:ExamMethod8c4dae9e270fc544293bdd54",
+    "urn:ontoward:ExamMethod8f53ca0ce0a56ef6dbfbad54",
+    "urn:ontoward:ExamMethod93763731921f81926d998d6c",
+    "urn:ontoward:ExamMethodbb7b9a30f1893c1e229ffda0",
+    "urn:ontoward:ExamMethodbf00427f574d6c75e4e8c083",
+    "urn:ontoward:ExamMethodca9cbbceeafd57ecd489c4f3",
+    "urn:ontoward:ExamMethodd5309e8196bfc5a2109ff92e",
+    "urn:ontoward:ExamMethodd731df6aef927d6f9f14f515",
+    "urn:ontoward:ExamMethodddf72aadf30c7b58fe49f01d",
+    "urn:ontoward:ExamMethodee098b7b477eb1387510025e",
+    "urn:ontoward:ExamMethodef838e0b4f5e1488e2bef1c2",
+    "urn:ontoward:ExamMethodef929402eb9834d149da82a3",
+    "urn:ontoward:ExamMethodf04531efc522f3455c8352b9",
+    "urn:ontoward:ExamMethodfb7f779f3852ac72972f2b92",
+    "urn:ontoward:ExamMethodfc8aa411bcd6f5c87cd49d74",
+    "urn:ontoward:ExamMethodfd88674fc972c74b40b1b706",
+    "urn:ontoward:ExamMethodfe1907d6c5807781b00e510a"
+  ],
+  "unresolved_anatomy": [
+    "urn:ontoward:ExamMethod0edb03a78c7ee83f6d534b7a",
+    "urn:ontoward:ExamMethod3083398e5701d5dffbe307f8"
+  ],
+  "model_calls": 0
+}

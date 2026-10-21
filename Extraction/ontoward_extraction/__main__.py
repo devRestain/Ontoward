@@ -68,7 +68,8 @@ def main(argv=None):
     parser.add_argument('--interval',type=float,default=3,help='Status refresh interval in seconds')
     args=parser.parse_args(argv)
     if args.command=='correct-bundle':
-        if not args.manifest or not args.corrections or args.resume or args.retry_unknown or args.install or args.provider:
+        if (not args.manifest or not args.corrections or args.resume or args.retry_unknown or args.install
+                or args.provider or args.run_id or args.preserve_build):
             parser.error('correct-bundle requires --manifest and --corrections without model resume provider or installation flags')
         from .maintenance import correct_bundle
         print(canonical(correct_bundle(args.manifest, args.corrections, args.output)));return 0

@@ -1,15 +1,17 @@
 /state version=1
 /project id=ontoward-submission
-/status value=complete
-/checkpoint revision=ec386147b58299418fb855b47c529c9503315ab1 dirty=true updated=2026-10-21T15:06:36+09:00
-/goal phase=current id=APP.D54 state=complete action="Unify model input references scoped recall lexical retrieval and stable document selection without changing the installed bundle"
+/status value=active
+/checkpoint revision=01f6c96d8442c60220517b1eb59d65a201d89e2d dirty=true updated=2026-10-21T18:26:21+09:00
+/goal phase=current id=APP.D56 state=complete action="Load normalized EXAM text and verify original prepare and all physical question paths"
+/goal phase=history id=APP.D55 state=complete action="Activate corrected knowledge with strict endpoint loading and verify original prepare and D54 semantics"
+/goal phase=history id=APP.D54 state=complete action="Unify model input references scoped recall lexical retrieval and stable document selection without changing the installed bundle"
 /goal phase=history id=APP.D53 state=complete action="Provide five Education reference documents and start unresolved intake without greeting or empathy actions"
 /goal phase=history id=APP.D52 state=complete action="Share identical clinical definitions and terminate context rejection without redesigning consultation"
 /goal phase=history id=APP.D51 state=complete action="Apply validated D50.1 review repairs through bounded input preservation and independent offline acceptance"
 /goal phase=history id=APP.D50 state=complete action="Preserve input and simplify model calls graph work Education and sequential execution through offline acceptance"
 /goal phase=history id=APP.D48 state=complete action="Assemble task-specific prompts in Python and verify the existing workflow through completed submission"
 /goal phase=history id=APP.WORKFLOW_REVIEW19 state=complete action="Centralize Context handoff and Education delivery scheduling without changing D49 clinical behavior"
-/goal phase=next id=APP.BUILD49 state=planned action="Verify representative consultations and diagnosis-notice readiness against installed build 87e8b4c54b0689453cea91b3bb316290"
+/goal phase=next id=APP.BUILD49 state=planned action="Verify actual-model consultation and diagnosis-notice quality against normalized build 1e8539d9c0910b37517f6475266f6df1 only after separate authorization"
 /goal phase=history id=APP.D49 state=complete action="Replace numeric knowledge dependencies with qualitative scoped graph effects"
 /goal phase=history id=APP.D47 state=complete action="Implement and verify session-owned tasks one DoctorBrain and unified patient facts"
 /goal phase=history id=APP.STATE19 state=complete action="Reconcile application state with current D46 source and the accepted offline evidence"
@@ -397,4 +399,16 @@
 /evidence id=APP.D54.E2 class=runtime result=pass source=../data/provenance/algorithm-d50-5-2026-10-21.json observed="Pass installed entrypoint prepare three installed-bundle protocol consultations 204 archive tests with one real-vocabulary skip three independent synthetic consultations and original SDK completed with 42 requests and twenty actions"
 /evidence id=APP.D54.E3 class=artifact result=pass source=../data/provenance/algorithm-d50-5-2026-10-21.json observed="Pin d50.5 runtime hashes and the 89-file synthetic archive while preserving installed manifest SDK entrypoint and all five knowledge asset hashes"
 /evidence id=APP.D54.E4 class=external_service result=not_run source=../data/provenance/algorithm-d50-5-2026-10-21.json observed="Leave additional API LLM NOVA calls extraction resume actual model quality clinical validity official evaluation production ZIP commits push publication and deployment unrun"
-/handoff state=ready action="Review d50.5 and retain planned APP.BUILD49 for separately scoped representative model and diagnosis-notice verification"
+/accept id=APP.D55.A1 state=pass action="Load the corrected bundle strictly and retain the unchanged original prepare entrypoint" evidence=APP.D55.E1
+/accept id=APP.D55.A2 state=pass action="Verify current consultations references and independent archive behavior" evidence=APP.D55.E2
+/evidence id=APP.D55.E1 class=runtime result=pass source=../data/provenance/algorithm-d50-6-2026-10-21.json observed="Activate build 0fd42155c3171c9c9dcf66cb7f733245 after staging strict loader and original prepare; confirm zero invalid vocabulary endpoint edges and 945 Diseases with zero coverage gaps"
+/evidence id=APP.D55.E2 class=semantic result=pass source=../data/provenance/algorithm-d50-6-2026-10-21.json observed="Pass three corrected-bundle protocol consultations 39 clinical input reference checks and two frozen diagnosis projections; complete original SDK through the independent synthetic ZIP after 42 HTTP requests twenty actions and blocked LangGraph import"
+/evidence id=APP.D55.E3 class=artifact result=pass source=../data/provenance/algorithm-d50-6-2026-10-21.json observed="Pin d50.6 code and archive; pass 204 source tests and 203 archive tests with one actual-vocabulary skip while preserving SDK requirements prompts and D49-D54 contracts"
+/evidence id=APP.D55.E4 class=external_service result=not_run source=../data/provenance/algorithm-d50-6-2026-10-21.json observed="Leave actual models clinical validation provider token measurement official evaluation production artifacts remote writes and deployment unrun"
+/accept id=APP.D56.A1 state=pass action="Normalize only reviewed existing EXAM text and preserve registered graph contracts" evidence=APP.D56.E1
+/accept id=APP.D56.A2 state=pass action="Verify local activation original entrypoint question paths and offline regression" evidence=APP.D56.E2,APP.D56.E3
+/evidence id=APP.D56.E1 class=semantic result=pass source=../data/provenance/exam-text-normalization-2026-10-21.json observed="Change exactly 119 ExamMethod text triples and preserve every other vocabulary triple schema clinical questions roles and guideline entry; retain 37 textless methods and two unspecified-anatomy methods"
+/evidence id=APP.D56.E2 class=runtime result=pass source=../data/provenance/exam-text-normalization-2026-10-21.json observed="Pass original run.py prepare 945-Disease coverage with zero gaps all 185 physical question paths 204 workflow tests and three actual-bundle protocol consultations without model calls"
+/evidence id=APP.D56.E3 class=artifact result=pass source=../data/provenance/exam-text-normalization-2026-10-21.json observed="Activate immutable build 1e8539d9c0910b37517f6475266f6df1 and preserve both parent builds and original C03 evidence; verify normalized text at the two saved rejected question paths"
+/evidence id=APP.D56.E4 class=external_service result=not_run source=../data/provenance/exam-text-normalization-2026-10-21.json observed="Leave fresh NOVA acceptance actual-model quality clinical validation official evaluation production ZIP and deployment unrun"
+/handoff state=ready action="Use normalized EXAM request text with unchanged runtime Python and separate actual-model acceptance"

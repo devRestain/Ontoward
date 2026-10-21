@@ -2,7 +2,7 @@
 
 ## Ownership and State
 
-- Apply D54 scoped recall and request projections before D53 direct Initiation and five-source Education; preserve D52 context rejection, D51 recovery, and D49-D50 qualitative knowledge and sequential ownership.
+- Apply D55 strict corrected-bundle loading and D54 scoped recall and request projections before D53 direct Initiation and five-source Education; preserve D52 context rejection, D51 recovery, and D49-D50 qualitative knowledge and sequential ownership.
 - Keep run.py as the unchanged SDK callback entrypoint and Consultation as the sole five-session coordinator.
 - Assign input interpretation and acceptance to DoctorEar clinical ranking and questions to the five session objects English plans and Education delivery scheduling to EducationSession all model execution to one injected DoctorBrain and patient expression and SAY/EXAM execution to DoctorMouth.
 - Pass only a current successful unfrozen CC Assessment into ContextFactor through Consultation without passing another session object.
@@ -76,8 +76,9 @@
 ## Assets and Acceptance
 
 - Preserve the unchanged SDK and entrypoint, pinned Pydantic and RDFLib requirements, Python-selected task routes, and historical custody; load only the v5-enum-1 relative-path/hash-pinned six-file contract without old-format conversion.
-- Pin the algorithm as d50.5 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
-- Filter invalid attribute/value endpoints and block failed attribute lookup from becoming a presence question; preserve current bundle hashes and defer synonym correction and strict endpoint gates to task B.
+- Pin the algorithm as d50.6 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
+- Reject invalid hasAttribute ranges and canHaveValue domains or ranges during load; retain typed getters and block failed attribute lookup from becoming a presence question. Keep D55 strict loading and preserve its original parent directory byte-for-byte.
+- Load the D56 text-normalized descendant of the D55 bundle. Keep ExamMethod identities and question selection unchanged and preserve required actions and positioning in normalized Korean EXAM request text.
 - Keep maintained behavior tests in Dev/tests/workflow observation and comparison in Test and disposable evidence in Tmp.
 - Verify source and independent read-only archive consultations in project containers with network disabled and original SDK HTTP on the internal project network.
 - Record runtime and artifact evidence separately from actual model quality clinical accuracy real NOVA official evaluation commits and deployment.

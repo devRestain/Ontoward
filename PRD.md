@@ -2,7 +2,7 @@
 
 ## 목적과 실행 경계
 
-Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D54](DECISION_STATE.md#D54)의 d50.5로 scoped 후보 유입·호출 내 참조·어휘 통합·문서 projection과 직접 연결 문서 우선 순서를 적용한다. D53의 직접 Initiation·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 기존 DB의 활성 사용은 철회했으며 실제 새 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
+Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D55](DECISION_STATE.md#D55)의 d50.6으로 정정된 v5 번들을 strict하게 로드한다. [D54](DECISION_STATE.md#D54)의 scoped 후보 유입·호출 내 참조·어휘 통합·문서 projection과 직접 연결 문서 우선 순서를 유지한다. D53의 직접 Initiation·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 기존 DB의 활성 사용은 철회했으며 실제 새 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
 
 진료 중에는 ZIP 내부의 읽기 전용 RDFLib Graph를 사용한다. 원본 RF2·BODHI·DDXPlus·준비 SQLite는 개발 자산이다. 등록되지 않은 질환·관계·질문을 런타임에서 만들지 않는다. 제공 가이드라인 원문은 진단을 고정한 뒤 지정 마운트에서만 읽는다. 실제 모델 품질과 공식 평가는 로컬 실행 증거와 구분한다.
 
@@ -82,7 +82,11 @@ Education은 frozen primary Disease 하나만 조회한다. guideline selections
 
 모델용 문서는 document_id·relation·evidence_use·text와 의미 있는 scope만 명시적으로 투영한다. 알려진 관리용 scope 상수만 제외하며 path·sha256·미래 내부 필드를 전송하지 않는다. 내부 검증 객체와 원문 UTF-8 인용 offset은 보존하고 본문 strip·헤더 삭제·절단은 하지 않는다. 교육 생성·교육 표현·진단 안내 fallback은 한 번의 current_facts에서 만든 같은 f_ 참조로 patient와 fixed_diagnosis를 함께 투영한다. 없는 근거 참조는 오류로 드러내고 도메인 ID나 정상 안내 템플릿을 바꾸지 않는다. 프롬프트는 문서를 참고 자료로 명시하여 원래 요청·환자 사실·불확실성·안전·출력 계약을 우선한다. 문서 수 제한은 실제 NOVA 입력 수용이나 임상 품질의 증거가 아니다.
 
-현재 번들의 잘못된 hasAttribute·canHaveValue 연결은 getter에서 타입으로 거르고 잘못된 속성을 존재 질문으로 바꾸지 않는다. 전수 위반은 오프라인 목록에 남긴다. 작업 A는 설치 번들의 bytes·hash를 유지하며 strict production endpoint gate를 먼저 켜지 않는다. 동의어 관계 분산·원본 링크 정정·새 immutable bundle과 strict gate의 동시 활성화는 별도 작업 B다.
+[D55](DECISION_STATE.md#D55)의 d50.6은 검증된 현재 v5 runtime 번들에 대한 제한된 오프라인 정정을 허용한다. parent manifest와 다섯 자산을 해시로 고정하고 명시된 invalid edge와 검토된 같은 역할의 Target만 새 immutable build에 변환한다. effect·조건·applicability·scope·질문 의미·값의 owner·진찰 action·지침 membership을 canonical projection으로 보존하며 불명확한 동의어와 충돌 병합은 제외한다. 폐기한 추출 DB나 job을 재개하지 않고 일반 신규 추출의 네 원자료 시작 규칙은 유지한다.
+
+[D56](DECISION_STATE.md#D56)은 현재 번들에 저장된 시진·청진·촉진·타진의 `ExamMethod.examRequestText`를 `${부위} ${진찰법}합니다.` 형태로 정규화한다. 복합 진찰은 필요한 동작을 각각 명시하며 특수 수기·움직임·자세는 보존한다. ID·label·detectedBy·임상 관계·질문 계약을 바꾸거나 기존에 없는 실행 문구·해부학적 부위를 만들지 않는다. 원본 parent를 유지한 새 해시 번들만 활성화하고 실제 NOVA의 문구 수용 여부는 별도로 검증한다.
+
+정식 loader는 hasAttribute range와 canHaveValue domain/range를 전수 검사한다. 정정 번들이 strict 검사·정식 loader·원래 prepare·회귀를 staging에서 통과한 뒤 manifest와 unconditional gate를 함께 로컬 활성화한다. installer는 지정한 parent build를 자동 정리하지 않고 원형 보존한다. getter 타입 방어와 잘못된 속성을 존재 질문으로 바꾸지 않는 계약도 유지한다. 검증 실패 번들은 활성화하지 않는다.
 
 Education 전달 준비에 재진입해도 이미 큐에 있거나 전달·미전달 결과가 기록된 계획 그룹은 다시 표현하지 않는다. 준비 실패의 제한된 복구는 해당 표현 호출 안에서만 수행하며, 재진입으로 실패 그룹을 자동 재시도하거나 결과를 중복 기록하지 않는다. 실제 행동 완료·취소는 공통 QuestionLifecycle을 사용한다.
 

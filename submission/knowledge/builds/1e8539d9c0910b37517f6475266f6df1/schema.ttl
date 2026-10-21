@@ -1,0 +1,175 @@
+@prefix ow: <urn:ontoward:> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ow:OntologySchema ow:schemaVersion "5.0" .
+
+ow:Disease a rdfs:Class ;
+    rdfs:label "Disease"@en ;
+    rdfs:comment "A reviewed current diagnostic candidate."@en .
+
+ow:Symptom a rdfs:Class ;
+    rdfs:label "Symptom"@en ;
+    rdfs:comment "A patient-reportable complaint with a verified concept mapping."@en .
+
+ow:ExamFinding a rdfs:Class ;
+    rdfs:label "ExamFinding"@en ;
+    rdfs:comment "A physical examination finding with a reviewed detection method."@en .
+
+ow:FindingAttribute a rdfs:Class ;
+    rdfs:label "FindingAttribute"@en ;
+    rdfs:comment "A target-specific comparison dimension, including distinct time bases."@en .
+
+ow:AttributeValue a rdfs:Class ;
+    rdfs:label "AttributeValue"@en ;
+    rdfs:comment "A categorical concept with an admitted attribute binding."@en .
+
+ow:ClinicalPattern a rdfs:Class ;
+    rdfs:label "ClinicalPattern"@en ;
+    rdfs:comment "A disease-independent single-target variant; all feature conditions define the variant, while target-only retrieval permits partial recall."@en .
+
+ow:ClinicalFeature a rdfs:Class ;
+    rdfs:label "ClinicalFeature"@en ;
+    rdfs:comment "A pattern-local presence or typed attribute condition inheriting the pattern target."@en .
+
+ow:ExpectedValue a rdfs:Class ;
+    rdfs:label "ExpectedValue"@en ;
+    rdfs:comment "A validated concept, concept_set, quantity or interval encoded in valueJSON."@en .
+
+ow:DiseasePatternAssociation a rdfs:Class ;
+    rdfs:label "DiseasePatternAssociation"@en ;
+    rdfs:comment "A scoped disease-pattern association with one qualitative diagnostic effect."@en .
+
+ow:ValueMatch a rdfs:Class ;
+    rdfs:label "ValueMatch"@en ;
+    rdfs:comment "A directed concept comparison path preserving is_a, regional_part or approved_region semantics."@en .
+
+ow:ContextFactor a rdfs:Class ;
+    rdfs:label "ContextFactor"@en ;
+    rdfs:comment "A history, exposure or demographic concept with explicit subject and time in case state."@en .
+
+ow:BodySystem a rdfs:Class ;
+    rdfs:label "BodySystem"@en ;
+    rdfs:comment "A nonexclusive interview group without a disease candidate filter."@en .
+
+ow:ExamMethod a rdfs:Class ;
+    rdfs:label "ExamMethod"@en ;
+    rdfs:comment "A reviewed concrete examination maneuver and public SDK request text."@en .
+
+ow:Test a rdfs:Class ;
+    rdfs:label "Test"@en ;
+    rdfs:comment "A SOAP P.tests planning concept, excluded from current diagnostic actions."@en .
+
+ow:hasAssociation a rdf:Property ;
+    rdfs:domain ow:Disease ;
+    rdfs:range ow:DiseasePatternAssociation ;
+    rdfs:comment "Each association has exactly one disease; patterns can be shared."@en .
+
+ow:pattern a rdf:Property ;
+    rdfs:domain ow:DiseasePatternAssociation ;
+    rdfs:range ow:ClinicalPattern ;
+    rdfs:comment "Exactly one referenced shared pattern."@en .
+
+ow:targets a rdf:Property ;
+    rdfs:domain ow:ClinicalPattern ;
+    rdfs:comment "Exactly one Symptom, ExamFinding or ContextFactor, validated without RDFS intersection semantics."@en .
+
+ow:hasFeature a rdf:Property ;
+    rdfs:domain ow:ClinicalPattern ;
+    rdfs:range ow:ClinicalFeature ;
+    rdfs:comment "Nonempty pattern-local conditions; each feature has exactly one pattern owner."@en .
+
+ow:onAttribute a rdf:Property ;
+    rdfs:domain ow:ClinicalFeature ;
+    rdfs:range ow:FindingAttribute ;
+    rdfs:comment "An attribute admitted for the owning pattern target."@en .
+
+ow:expected a rdf:Property ;
+    rdfs:domain ow:ClinicalFeature ;
+    rdfs:range ow:ExpectedValue ;
+    rdfs:comment "Exactly one typed expectation with onAttribute, or neither for status-only conditions."@en .
+
+ow:refinesPattern a rdf:Property ;
+    rdfs:domain ow:ClinicalPattern ;
+    rdfs:range ow:ClinicalPattern ;
+    rdfs:comment "Strict condition-preserving refinement; replaces ancestor support after matching."@en .
+
+ow:hasAttribute a rdf:Property ;
+    rdfs:range ow:FindingAttribute ;
+    rdfs:comment "An applicable dimension on a symptom or examination finding."@en .
+
+ow:canHaveValue a rdf:Property ;
+    rdfs:domain ow:FindingAttribute ;
+    rdfs:range ow:AttributeValue ;
+    rdfs:comment "Admitted categorical values; numeric conditions do not need a categorical value."@en .
+
+ow:observedConcept a rdf:Property ;
+    rdfs:domain ow:ValueMatch ;
+    rdfs:range ow:AttributeValue ;
+    rdfs:comment "The more specific confirmed value used for comparison."@en .
+
+ow:expectedConcept a rdf:Property ;
+    rdfs:domain ow:ValueMatch ;
+    rdfs:range ow:AttributeValue ;
+    rdfs:comment "The expectation satisfied by the evidenced comparison path."@en .
+
+
+ow:inSystem a rdf:Property ;
+    rdfs:domain ow:Symptom ;
+    rdfs:range ow:BodySystem ;
+    rdfs:comment "Interview discovery without restricting disease recall."@en .
+
+ow:detectedBy a rdf:Property ;
+    rdfs:domain ow:ExamFinding ;
+    rdfs:range ow:ExamMethod ;
+    rdfs:comment "An actionable finding requires a reviewed method."@en .
+
+ow:evaluatedBy a rdf:Property ;
+    rdfs:domain ow:Disease ;
+    rdfs:range ow:Test ;
+    rdfs:comment "SOAP P.tests planning only."@en .
+
+ow:schemaVersion a rdf:Property ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The runtime schema contract version."@en .
+
+ow:valueJSON a rdf:Property ;
+    rdfs:domain ow:ExpectedValue ;
+    rdfs:range rdf:JSON ;
+    rdfs:comment "The strict ExpectedValue tagged value; raw source text remains in preparation records."@en .
+
+ow:expectedStatus a rdf:Property ;
+    rdfs:domain ow:ClinicalFeature ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Optional present or absent expectation, scoped to the target and qualifiers."@en .
+
+
+
+
+
+
+ow:applicability a rdf:Property ;
+    rdfs:domain ow:DiseasePatternAssociation ;
+    rdfs:range rdf:JSON ;
+    rdfs:comment "Context conditions with subject, time_context and status; unknown does not activate support."@en .
+
+
+ow:relationKind a rdf:Property ;
+    rdfs:domain ow:ValueMatch ;
+    rdfs:range xsd:string ;
+    rdfs:comment "is_a, regional_part or approved_region; these relations remain distinct."@en .
+
+ow:contextType a rdf:Property ;
+    rdfs:domain ow:ContextFactor ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The existing ten history, exposure and demographic categories."@en .
+
+
+ow:examRequestText a rdf:Property ;
+    rdfs:domain ow:ExamMethod ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A reviewed one-maneuver request with NFC length 1-30 code points."@en .
+
+ow:targetScope a rdf:Property ; rdfs:domain ow:DiseasePatternAssociation ; rdfs:range rdf:JSON .
+ow:diagnosticEffect a rdf:Property ; rdfs:domain ow:DiseasePatternAssociation ; rdfs:range xsd:string .

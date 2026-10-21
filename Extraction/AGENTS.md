@@ -1,5 +1,7 @@
 # Extraction Contract
 
+- Permit D55 correct-bundle maintenance from a manifest and five hash-pinned current v5 runtime assets without opening a work DB or creating a provider. Require an exact invalid-edge plan and explicit same-role semantic review. Preserve registered IDs outside approved Target merges and compare complete projected vocabulary clinical questions roles and guideline membership before installation. Reject conflicting effects or action contracts and retain the parent with --preserve-build. Keep fresh extraction on the four-source contract.
+
 - Honor explicit user disposal after verified installation by removing enumerated obsolete checkpoint output log and scratch files. Keep current extractor code configs prompts tests and installed knowledge; retain compact final audit and deletion receipts without a replacement checkpoint archive. Treat disposed run IDs as historical and unavailable for resume or recovery.
 
 - Permit explicitly requested manual readiness repair only after every model job and request is settled. Preserve the failed source DB byte-for-byte and all copied job request response usage raw-index and attempt rows; record exact typed amendments and unsupported runtime exclusions in SQLite and pin the derived manual input in a new fingerprint. Use the unchanged production loader and coverage checks before explicit local installation; never turn a laboratory Test into physical EXAM or guess an opaque missing value.

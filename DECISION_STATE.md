@@ -658,6 +658,24 @@
 - **데이터 경계:** getter는 잘못된 attribute/value 타입을 반환하지 않고 속성 조회 실패를 존재 질문으로 바꾸지 않습니다. 현재 위반 목록은 오프라인 감사에 기록하며 현재 설치 bytes/hash는 그대로 둡니다. Weight loss 계열·Dyspnea/Breathlessness의 동의어 관계 분산, 링크 정정, compiler endpoint 개선과 새 bundle/strict loader 동시 활성화는 작업 B에 남깁니다. 폐기된 checkpoint를 복구하거나 resume하지 않습니다.
 - **수용:** 프로젝트 pinned 컨테이너에서 의미 회귀·현재 bundle loader/prepare·입력 문자/UTF-8 크기·참조 무결성·독립 합성 ZIP/원래 SDK·관측 일치를 검증합니다. 결과는 ROOT.D54·APP.D54·DATA.D54와 d50.5 provenance가 소유합니다. 새 API/LLM/NOVA 호출·모델 품질·임상·공식 평가·정식 제출물·push·배포는 미실행입니다.
 
+<a id="D55"></a>
+## D55. 현재 v5 번들의 제한된 오프라인 정정과 strict loader 동시 활성화 (2026-10-21)
+
+- **선택과 경계:** 사용자가 인계 문서 12절의 작업 B를 별도로 선택했습니다. 현재 해시 검증된 `87e8b4c54b0689453cea91b3bb316290`의 runtime 의미를 입력으로 삼는 유지보수 예외이며, 일반 추출의 네 원자료 시작 규칙을 대체하지 않습니다. 폐기 DB·응답·neutral judgment·source history를 복원하거나 job을 resume하지 않습니다. 감사 기준 ec386147 이후 현재 HEAD `01f6c96`의 D54 구현과 작업 중 변경을 보존합니다. 알고리즘은 **d50.6**입니다.
+- **실제 정정:** 명시된 hasAttribute range 9개와 canHaveValue domain 423개·range 146개 위반에 해당하는 중복 없는 432개 잘못된 edge만 제외합니다. 등록 개념을 다른 역할로 cast하거나 추정한 대체 링크를 넣지 않습니다. supplied active RF2의 같은 개념과 현재 질문·역할을 검토한 Weight decreased→Weight loss, Breathlessness→Dyspnea만 기존 canonical ID로 통합합니다. Decreased body weight와 별도의 subtype은 독립 상태로 둡니다. 별칭 overlap만으로 병합하지 않습니다.
+- **의미 보존:** 기존 typed Relation과 Pattern·Feature·Association ID 규칙을 사용하며, effect·전체 조건·applicability·scope를 canonical mapping 기준으로 전수 비교합니다. 서로 다른 effect나 비문구 질문 계약의 충돌은 해당 병합을 통째로 제외합니다. 속성·단위·owner별 AttributeValue·ExpectedValue·ValueMatch·family/member·episode/acquisition의 기존 표현과 physical EXAM을 보존합니다. 이름이 같은 별도 ExamMethod도 등록 ID와 action을 유지합니다. 질문 문구는 canonical의 검증된 문구를 유지하고 모든 관련 key·attribute·inSystem 참조를 함께 변환합니다. Disease·지침 membership/원문은 바꾸지 않고 guideline build_id만 새 build와 맞춥니다.
+- **compiler와 검사:** fresh compiler는 종류에 맞는 attributes/values만 출력하며, maintenance는 등록 ID를 다시 이름 정규화하지 않습니다. 전수 strict gate는 실제 schema가 정의한 hasAttribute range FindingAttribute와 canHaveValue domain FindingAttribute/range AttributeValue를 검사합니다. 임의의 hasAttribute domain 제약을 추가하거나 다른 기존 metadata를 함께 청소하지 않습니다. 기존 그래프·질문·1–30 NFC 한국어·coverage·인용 검증도 유지합니다.
+- **설치 순서:** 별도 staging에서 전수 검사·정식 loader·원래 prepare·의미 회귀를 통과한 새 immutable build `0fd42155c3171c9c9dcf66cb7f733245`를 준비했습니다. 기존 installer의 hash 재검증과 원자 manifest 교체 뒤 같은 로컬 전환에서 unconditional loader gate를 적용합니다. `preserve_build_ids`로 원본 parent 여섯 파일을 정리 대상에서 명시적으로 제외하며 invalid candidate나 build ID collision을 활성화하지 않습니다. 정정된 runtime만 로컬 활성화했고 공식 제출·배포·push는 하지 않습니다.
+- **증빙:** `v5-maintenance-plan-2026-10-21.json`은 원본 manifest/자산 해시·실제 제거 edge·두 승인 묶음·보류 사유·로컬 원자료 검토를, `v5-maintenance-correction-2026-10-21.json`은 정확한 RDF/ID 변환과 전후 의미 동등성을, `algorithm-d50-6-2026-10-21.json`은 수행 검사·활성화·입력/참조 지표를 소유합니다. 새 API/LLM/NOVA 호출·임상 타당성·실제 모델 품질·공식 평가는 미실행입니다. D49~D54의 부분 후보·scope·repair 상한·공유 관계·단일 주진단·최대 다섯 전체 문서·실패 비보충 계약은 유지합니다.
+
+<a id="D56"></a>
+## D56. 기본 신체진찰의 한국어 실행 문구 정규화 (2026-10-21)
+
+- **요청과 범위:** 사용자가 현재 DB의 시진·청진·촉진·타진 표현을 `${부위} ${진찰법}합니다.`로 통일하도록 요청했습니다. 첨부 C03의 `EXAM_NOT_SPECIFIC` 두 건은 관찰 증거로만 사용합니다. D55 strict 번들을 parent로 삼아 현재 저장된 `ExamMethod.examRequestText`만 오프라인으로 정정하며 알고리즘 d50.6과 모델 설정은 유지합니다.
+- **표현 정책:** `목을 보여 주세요.`는 `목 시진합니다.`, `피부를 눈으로 살펴보세요.`는 `피부 시진합니다.`로 바꿉니다. 단일 진찰은 부위와 진찰법을 직접 명시합니다. 시진·촉진 복합은 두 동작을 각각 선언하며 로브싱·슬립·이동탁음, 관절 움직임과 필요한 자세는 문구에 보존합니다. 실행 문구가 없는 메서드는 채우지 않고 부위 미지정 공용 메서드에 임의의 해부학적 부위를 부여하지 않습니다.
+- **보존과 활성화:** 새 immutable build에서 명시된 텍스트 triple만 바꾸고 ExamMethod ID·label·detectedBy·clinical RDF·schema·questions와 attribute_roles·지침 membership을 유지합니다. 지침 index의 build_id와 manifest 해시는 새 식별자에 맞춥니다. 모든 기존 build와 C03 원본을 보존하고 정식 loader·원래 prepare·전수 EXAM 질문 경로를 검증한 뒤 manifest를 원자 교체합니다.
+- **증거 경계:** 정규화 계획과 전후 감사는 `data/provenance/exam-text-normalization-plan-2026-10-21.json`과 `data/provenance/exam-text-normalization-2026-10-21.json`이 소유합니다. 로컬 문구·경로 검증을 실제 NOVA 오류 해소나 임상 타당성으로 해석하지 않으며 새 모델 호출·공식 평가·제출·배포를 실행하지 않습니다.
+
 ## 결정 기록 방법
 
 - 사용자가 고른 선택지를 해당 항목에 기록하고 상태를 `결정 완료`로 바꿉니다.

@@ -1,6 +1,8 @@
 # Ontoward 진료 워크플로우 백서
 
-현재 구현은 **D54·d50.5**이며 D53 직접 문진·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D49 무점수 지식, D48 프롬프트 모듈과 D47 객체·사실 소유권을 유지한다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D54 결정](../DECISION_STATE.md#D54), [D54 검증](../data/provenance/algorithm-d50-5-2026-10-21.json), [PRD](../PRD.md), [상태 정의](workflow/state/models.py)를 기준으로 읽으며 [D53 당시 증빙](../data/provenance/algorithm-d50-4-2026-10-21.json)은 보존한다. 기존 DB의 활성 사용은 철회했고 D45 공식 턴 예산을 유지한다. 새 실제 번들 `87e8b4c54b0689453cea91b3bb316290`의 bytes/hash를 유지하며 변경 없는 run.py의 prepare를 검증했다. 실제 모델 상담·임상·공식 평가와 정식 ZIP은 별도다. 합성 번들은 계속 Tmp/에서만 사용한다.
+현재 구현은 **D55·d50.6**이며 D53 직접 문진·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D49 무점수 지식, D48 프롬프트 모듈과 D47 객체·사실 소유권을 유지한다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D55 결정](../DECISION_STATE.md#D55), [D55 검증](../data/provenance/algorithm-d50-6-2026-10-21.json), [PRD](../PRD.md), [상태 정의](workflow/state/models.py)를 기준으로 읽으며 [D53 당시 증빙](../data/provenance/algorithm-d50-4-2026-10-21.json)은 보존한다. 기존 DB의 활성 사용은 철회했고 D45 공식 턴 예산을 유지한다. 원본 `87e8b4c54b0689453cea91b3bb316290`를 보존하고 D55 정정 parent `0fd42155c3171c9c9dcf66cb7f733245`도 보존하고 D56 문구 정규화 build `1e8539d9c0910b37517f6475266f6df1`를 로컬 활성화했다. 변경 없는 run.py의 prepare와 protocol double 상담을 검증했다. 실제 모델 상담·임상·공식 평가와 정식 ZIP은 별도다. 합성 번들은 계속 Tmp/에서만 사용한다.
+
+D56은 현재 저장된 시진·청진·촉진·타진 실행 문구 119개를 정규화한다. `목을 보여 주세요.`는 `목 시진합니다.`, `피부를 눈으로 살펴보세요.`는 `피부 시진합니다.`로 바뀌었다. 복합 동작·특수 수기·필요한 자세와 ID·임상 관계·질문 계약은 보존했다. 문구가 없던 메서드 37개는 그대로 두며 부위 미지정 공용 메서드 2개에는 임의 부위를 넣지 않는다. [D56 결정](../DECISION_STATE.md#D56)·[전체 전후 명세](../data/provenance/exam-text-normalization-plan-2026-10-21.json)·[현재 검증](../data/provenance/exam-text-normalization-2026-10-21.json)을 따른다. 실제 NOVA의 새 문구 수용 여부는 재검증하지 않았다.
 
 처음 읽을 때는 [아틀라스의 진료 순서](../Test/atlas.html#consultation)를 먼저 보고 아래 백서를 따라오면 편합니다. 같은 문서에서 [환자 사실 스키마](../Test/atlas.html#facts), [실행 RDF](../Test/atlas.html#rdf), [추출 SQLite](../Test/atlas.html#sqlite)도 비교할 수 있습니다. 아틀라스는 현재 소스의 정적 설명이고 실행 결과는 [제출 상태](PROJECT_STATE.md)가 관리합니다.
 
@@ -159,7 +161,7 @@ ExpectedValue는 concept·concept_set·quantity·interval과 any_of/all_of·연�
 
 manifest에는 schema_version·knowledge_contract·build_id와 schema·vocabulary·clinical·questions·guidelines 다섯 asset의 상대 경로·SHA-256만 둔다. 번들은 manifest 포함 여섯 파일이다. 각 경로는 manifest 디렉터리를 기준으로 검증하며 경계 이탈·hash 불일치·이전 형식을 거절한다. 실제 설치 전 현재 실행 인스턴스 수는 제공하지 않는다. 스키마와 loader는 각각 [schema.ttl](knowledge/schema.ttl)·[graph.py](knowledge/graph.py), 상세 계약은 [지식 안내](knowledge/README.md)에서 확인한다.
 
-D54의 getter 방어는 잘못된 hasAttribute/canHaveValue 타입을 임상 후보로 내보내지 않고 속성 조회 실패를 존재 질문으로 바꾸지 않는다. [432개 위반 edge](../data/provenance/runtime-link-audit-2026-10-21.json)는 원형대로 남아 있으며 bundle bytes/hash도 같다. 동의어 관계 분산·원본 링크 정정·새 immutable bundle과 strict loader의 동시 활성화는 작업 B에서 별도로 다룬다.
+D54의 getter 방어는 잘못된 hasAttribute/canHaveValue 타입을 임상 후보로 내보내지 않고 속성 조회 실패를 존재 질문으로 바꾸지 않는다. D55는 [당시 432개 위반 edge](../data/provenance/runtime-link-audit-2026-10-21.json)를 명시적으로 제외한 새 immutable build `0fd42155c3171c9c9dcf66cb7f733245`와 strict loader를 로컬 활성화했다. hasAttribute range 9개와 canHaveValue domain 423개·range 146개 위반은 전수 검사에서 모두 0개다. parent `87e8b4c54b0689453cea91b3bb316290`는 원형으로 보존하고 폐기된 checkpoint는 재개하지 않았다. Weight decreased→Weight loss, Breathlessness→Dyspnea는 검토된 같은 역할·의미에 한해 통합했으며 Decreased body weight는 근거 부족으로 별도 상태다. 전체 관계·조건·effect·scope·질문 계약·값 owner·physical EXAM·지침 membership 보존은 [정정 증빙](../data/provenance/v5-maintenance-correction-2026-10-21.json), 수행 검사는 [d50.6 증빙](../data/provenance/algorithm-d50-6-2026-10-21.json)을 따른다.
 
 <a id="extraction-pipeline"></a>
 ## 14. 원자료에서 새 실행 번들까지

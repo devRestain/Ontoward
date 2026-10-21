@@ -1,0 +1,200 @@
+{
+  "version": "v5-exam-text-1",
+  "parent": {
+    "build_id": "0fd42155c3171c9c9dcf66cb7f733245",
+    "manifest_sha256": "d0ff44bb5de4989eb97bd4262d4dc38b620137699b239ddff118b7d01211bfc8",
+    "assets": {
+      "schema": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "vocabulary": "3c5975cc90c0730067f4ad8359f63f5b0a9b9dc20c22cd9506f4a5a8b468f9b1",
+      "clinical": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06",
+      "questions": "c65c7083543867189c458e1fc7e13c32b7cb2266cef14510ef30d138ea1d4afd",
+      "guidelines": "de6a92abd3333dd2b4620aabfabf37a46342f115f00a04276afdf9e1d6756089"
+    }
+  },
+  "build_id": "1e8539d9c0910b37517f6475266f6df1",
+  "plan_sha256": "6aa7f3234f8a5ff635927289301e2076203ce986bc45dc9fbf5ce651f5825a1f",
+  "staged_manifest": "Tmp/exam-text-normalization-2026-10-21/staged/1e8539d9c0910b37517f6475266f6df1/manifest.json",
+  "installed": true,
+  "checks": {
+    "coverage": {
+      "status": "pass",
+      "diseases": 945,
+      "gaps": []
+    },
+    "exact_text_triple_changes": 119,
+    "other_vocabulary_triples_preserved": true,
+    "schema_clinical_questions_bytes_preserved": true,
+    "guideline_entries_preserved": true,
+    "original_entrypoint_prepare": "pass",
+    "exam_method_count": 253,
+    "finding_question_checks": 185,
+    "changed_finding_questions": 129,
+    "max_normalized_codepoints": 26,
+    "modality_counts": {
+      "시진": 77,
+      "청진": 12,
+      "촉진": 35,
+      "타진": 4
+    },
+    "saved_c03_replay": [
+      {
+        "target_id": "urn:ontoward:ExamFindingd32689114984f9b63bd937f7",
+        "text": "목 시진합니다.",
+        "before": "목을 보여 주세요.",
+        "saved_turn": 9,
+        "registration_seq": 2384
+      },
+      {
+        "target_id": "urn:ontoward:ExamFindingc20ad9d047e95eb7e5970397",
+        "text": "피부 시진합니다.",
+        "before": "피부를 눈으로 살펴보세요.",
+        "saved_turn": 15,
+        "registration_seq": 4186
+      }
+    ]
+  },
+  "unchanged_without_request_text": 37,
+  "unresolved_anatomy": [
+    "urn:ontoward:ExamMethod0edb03a78c7ee83f6d534b7a",
+    "urn:ontoward:ExamMethod3083398e5701d5dffbe307f8"
+  ],
+  "protected_files": 170,
+  "protected_inventory": "Tmp/exam-text-normalization-2026-10-21/protected.before.json",
+  "original_c03_evidence_preserved": true,
+  "model_calls": 0,
+  "actual_nova_retest": "not_run",
+  "clinical_validation": "not_run",
+  "official_evaluation": "not_run",
+  "production_zip": "not_run",
+  "installation": {
+    "status": "installed",
+    "build_id": "1e8539d9c0910b37517f6475266f6df1",
+    "manifest": "/workspace/submission/knowledge/manifest.json"
+  },
+  "installed_checks": {
+    "coverage": {
+      "status": "pass",
+      "diseases": 945,
+      "gaps": []
+    },
+    "exact_text_triple_changes": 119,
+    "other_vocabulary_triples_preserved": true,
+    "schema_clinical_questions_bytes_preserved": true,
+    "guideline_entries_preserved": true,
+    "original_entrypoint_prepare": "pass",
+    "exam_method_count": 253,
+    "finding_question_checks": 185,
+    "changed_finding_questions": 129,
+    "max_normalized_codepoints": 26,
+    "modality_counts": {
+      "시진": 77,
+      "청진": 12,
+      "촉진": 35,
+      "타진": 4
+    },
+    "saved_c03_replay": [
+      {
+        "target_id": "urn:ontoward:ExamFindingd32689114984f9b63bd937f7",
+        "text": "목 시진합니다.",
+        "before": "목을 보여 주세요.",
+        "saved_turn": 9,
+        "registration_seq": 2384
+      },
+      {
+        "target_id": "urn:ontoward:ExamFindingc20ad9d047e95eb7e5970397",
+        "text": "피부 시진합니다.",
+        "before": "피부를 눈으로 살펴보세요.",
+        "saved_turn": 15,
+        "registration_seq": 4186
+      }
+    ]
+  },
+  "active_manifest_sha256": "b77d891aa581d40c9f4131a0b3d10a140d94151544ec2944e779621f63bc932c",
+  "preserved_builds": [
+    "0fd42155c3171c9c9dcf66cb7f733245",
+    "87e8b4c54b0689453cea91b3bb316290"
+  ],
+  "protected_files_preserved": true,
+  "installed_at": "2026-10-21T09:19:05.139971+00:00",
+  "installed_manifest": {
+    "build_id": "1e8539d9c0910b37517f6475266f6df1",
+    "clinical": {
+      "path": "builds/1e8539d9c0910b37517f6475266f6df1/clinical.ttl",
+      "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+    },
+    "guidelines": {
+      "path": "builds/1e8539d9c0910b37517f6475266f6df1/guideline-index.json",
+      "sha256": "b68947f67f8cbfa6762692532e6ba820eed14e56c5d45a4a0fcd1312918c911d"
+    },
+    "knowledge_contract": "v5-enum-1",
+    "questions": {
+      "path": "builds/1e8539d9c0910b37517f6475266f6df1/questions.ko.json",
+      "sha256": "c65c7083543867189c458e1fc7e13c32b7cb2266cef14510ef30d138ea1d4afd"
+    },
+    "schema": {
+      "path": "builds/1e8539d9c0910b37517f6475266f6df1/schema.ttl",
+      "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+    },
+    "schema_version": "5.0",
+    "vocabulary": {
+      "path": "builds/1e8539d9c0910b37517f6475266f6df1/vocabulary.ttl",
+      "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+    }
+  },
+  "workflow_tests": {
+    "status": "pass",
+    "tests": 204,
+    "log": "Tmp/exam-text-normalization-2026-10-21/workflow-installed.log",
+    "sha256": "8a8f9b4df5a713bcfd466885a2f874f9f2b25461898db9dd8f748a42246c4d54"
+  },
+  "protocol_consultations": {
+    "status": "pass",
+    "cases": [
+      {
+        "education": false,
+        "context": "unknown",
+        "termination": "submitted",
+        "nodes": 165
+      },
+      {
+        "education": true,
+        "context": "present",
+        "termination": "submitted",
+        "nodes": 205
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "termination": "submitted",
+        "nodes": 205
+      }
+    ],
+    "actual_models": "not_run",
+    "source": "Tmp/exam-text-normalization-2026-10-21/consultations/verification.json",
+    "sha256": "abd78c3e958445cae886d36053dbfa72203e42bea8917cc1fd8fc0f16c56dfb0"
+  },
+  "current_runtime_python_changed": false,
+  "final_protected_files_checked": 170,
+  "intentional_document_updates": [
+    "submission/AGENTS.md",
+    "submission/PROJECT_STATE.md",
+    "submission/README.md",
+    "submission/knowledge/README.md"
+  ],
+  "protected_non_document_hashes_preserved": true,
+  "completed_at": "2026-10-21T18:26:21+09:00",
+  "documentation": [
+    "AGENTS.md",
+    "submission/AGENTS.md",
+    "data/AGENTS.md",
+    "data/ontology/AGENTS.md",
+    "PRD.md",
+    "DECISION_STATE.md",
+    "PROJECT_STATE.md",
+    "submission/PROJECT_STATE.md",
+    "data/PROJECT_STATE.md",
+    "README.md",
+    "submission/README.md",
+    "submission/knowledge/README.md"
+  ]
+}

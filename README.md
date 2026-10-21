@@ -1,8 +1,10 @@
 # Ontoward
 
-Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D54·d50.5**이며 D53의 직접 문진·다섯 전체 문서·실패 비보충, D52 컨텍스트 종료, D51 입력 복구, D49 무점수 지식, D47 세션 소유권·통합 사실·평가 고정과 D48 프롬프트 모듈을 유지한다. Python이 등록 그래프의 관계·조건·질문을 준비하고, 공통 DoctorBrain을 호출한 세션이 질환 순위와 선택 질문을 수용한다.
+Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D55·d50.6**이며 D53의 직접 문진·다섯 전체 문서·실패 비보충, D52 컨텍스트 종료, D51 입력 복구, D49 무점수 지식, D47 세션 소유권·통합 사실·평가 고정과 D48 프롬프트 모듈을 유지한다. Python이 등록 그래프의 관계·조건·질문을 준비하고, 공통 DoctorBrain을 호출한 세션이 질환 순위와 선택 질문을 수용한다.
 
-**기존 실행 DB를 철회한 뒤 새 실제 지식 번들을 로컬 설치했다.** 설치 manifest의 경로·해시·loader·coverage와 변경 없는 `run.py`의 `prepare()`를 검증했다. [설치 증빙](data/provenance/extraction-installed-2026-10-21.json)을 기준으로 읽으며, 실제 번들 대표 상담·임상·공식 평가와 정식 ZIP은 별도다. 원자료·source-custody·수용 ZIP·작은 증빙은 유지하고, 완료된 추출 체크포인트·로그·중복 출력·추출 임시 기록과 철회 생성물 압축본은 사용자 요청으로 정리했다. [삭제 영수증](data/provenance/extraction-storage-cleanup-2026-10-21.json)과 [철회 영수증](data/extraction/retired-d42-2026-10-19/withdrawal.json)이 이력을 관리한다.
+D56은 현재 저장된 시진·청진·촉진·타진 실행 문구 119개를 정규화한다. `목을 보여 주세요.`는 `목 시진합니다.`, `피부를 눈으로 살펴보세요.`는 `피부 시진합니다.`로 바뀌었다. 복합 동작·특수 수기·필요한 자세와 ID·임상 관계·질문 계약은 보존했다. 문구가 없던 메서드 37개는 그대로 두며 부위 미지정 공용 메서드 2개에는 임의 부위를 넣지 않는다. [D56 결정](DECISION_STATE.md#D56)·[전체 전후 명세](data/provenance/exam-text-normalization-plan-2026-10-21.json)·[현재 검증](data/provenance/exam-text-normalization-2026-10-21.json)을 따른다. 실제 NOVA의 새 문구 수용 여부는 재검증하지 않았다.
+
+**현재 로컬 번들은 D56의 문구 정규화 build `1e8539d9c0910b37517f6475266f6df1`이다.** D55 parent `0fd42155c3171c9c9dcf66cb7f733245`도 그대로 보존한다. 원래 `87e8b4c54b0689453cea91b3bb316290` 여섯 파일을 그대로 보존하고 432개 잘못된 타입 링크를 제외했으며 검토된 Weight decreased→Weight loss, Breathlessness→Dyspnea만 통합했다. strict loader·질문 coverage·변경 없는 `run.py`의 `prepare()`와 protocol double 상담을 검증했다. [D55 결정](DECISION_STATE.md#D55)·[정정 명세](data/provenance/v5-maintenance-plan-2026-10-21.json)·[정정 증빙](data/provenance/v5-maintenance-correction-2026-10-21.json)·[검증](data/provenance/algorithm-d50-6-2026-10-21.json)을 기준으로 읽는다. 실제 모델 품질·임상·공식 평가와 정식 ZIP은 별도다. 이전 설치와 [삭제 영수증](data/provenance/extraction-storage-cleanup-2026-10-21.json)·[철회 영수증](data/extraction/retired-d42-2026-10-19/withdrawal.json)은 과거 기록으로 유지하며 폐기된 checkpoint를 재개하지 않는다.
 
 **처음에는 [워크플로우·데이터베이스 아틀라스](Test/atlas.html)를 열어 보세요.** 서버 없이 HTML 파일을 직접 열면 진료 순서, 지식 생성, 객체별 기능, 환자 정보와 RDF·SQLite·JSON 스키마를 한 문서에서 읽을 수 있습니다. 색상별 도식 다음에 표와 친절한 설명을 배치했습니다. 2026-10-20의 소스 스냅샷이며 실시간 진행 화면은 아닙니다.
 
@@ -58,7 +60,7 @@ Consultation이 검증한 CC 평가 자료만 ContextFactor에 전달한다. Edu
 
 [D53](DECISION_STATE.md#D53)은 인사·공감 SAY를 삭제하여 초기 입력 수용 후 Initiation의 첫 미확인 질문부터 시작한다. 최대 다섯 전체 문서와 실패 비보충·참고 자료 경계·해시/인용·영어 P/한국어 독립 수용은 유지한다. 당시 인덱스 순서 검증은 [D53 증빙](data/provenance/algorithm-d50-4-2026-10-21.json)에 보존한다.
 
-[D54](DECISION_STATE.md#D54)는 단일 고정 주진단의 문서 중 exact이면서 care_navigation인 항목을 먼저 안정 분할한 뒤 다섯 개를 고정한다. 모순된 Pattern/applicability 경로의 후보 유입을 막고 unknown 부분 후보와 유효한 prior 반대 경로는 유지한다. 교육·안내의 fact ID, 질문의 observation/episode scope, 초기 원문 중복과 mapping 해석 의미, 영어/한국어 어휘 후보를 함께 정리했다. 문서의 내부 path/hash는 모델에 보내지 않고 전체 원문과 UTF-8 인용은 보존한다. [D54 검증](data/provenance/algorithm-d50-5-2026-10-21.json)과 [현재 연결 위반 목록](data/provenance/runtime-link-audit-2026-10-21.json)이 오프라인 근거를 소유한다. 현재 번들 bytes/hash는 같으며 동의어·DB 연결 정정과 새 strict gate는 작업 B에 남아 있다.
+[D54](DECISION_STATE.md#D54)는 단일 고정 주진단의 문서 중 exact이면서 care_navigation인 항목을 먼저 안정 분할한 뒤 다섯 개를 고정한다. 모순된 Pattern/applicability 경로의 후보 유입을 막고 unknown 부분 후보와 유효한 prior 반대 경로는 유지한다. 교육·안내의 fact ID, 질문의 observation/episode scope, 초기 원문 중복과 mapping 해석 의미, 영어/한국어 어휘 후보를 함께 정리했다. 문서의 내부 path/hash는 모델에 보내지 않고 전체 원문과 UTF-8 인용은 보존한다. [D54 검증](data/provenance/algorithm-d50-5-2026-10-21.json)과 [당시 연결 위반 목록](data/provenance/runtime-link-audit-2026-10-21.json)은 당시 bytes/hash를 고정한 역사적 근거다. 이후 D55는 정정 번들과 strict gate를 함께 활성화했으며 Decreased body weight는 동등성 근거 부족으로 별도 개념을 유지한다.
 
 [D52 증빙](data/provenance/algorithm-d50-3-2026-10-21.json)은 소스·독립 ZIP 회귀 각각 180개, 저장된 두 순위 요청의 임상 입력 동등성, 관측 16시나리오와 독립 합성 상담 3개·원본 SDK completed를 기록한다. 실제 NOVA 재실행과 공식 수용 증거는 포함하지 않는다.
 

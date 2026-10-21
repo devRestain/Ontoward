@@ -78,6 +78,7 @@ class ClinicalKnowledge:
             {key: QuestionTemplate.model_validate(value) for key, value in assets["questions"].items()},
             {key: AttributeRole.model_validate(value) for key, value in assets["attribute_roles"].items()})
         knowledge.validate_graph()
+        knowledge.validate_vocabulary_endpoints()
         knowledge.validate_question_assets()
         knowledge.prepare_terms()
         knowledge.guidelines = GuidelineLibrary.load(read(manifest.guidelines, ".json"), manifest.build_id,

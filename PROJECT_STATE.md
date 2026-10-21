@@ -1,8 +1,10 @@
 /state version=1
 /project id=ontoward
-/status value=complete
-/checkpoint revision=ec386147b58299418fb855b47c529c9503315ab1 dirty=true updated=2026-10-21T15:06:36+09:00
-/goal phase=current id=ROOT.D54 state=complete action="Complete task A runtime input and retrieval repair through offline semantic and artifact acceptance"
+/status value=active
+/checkpoint revision=01f6c96d8442c60220517b1eb59d65a201d89e2d dirty=true updated=2026-10-21T18:26:21+09:00
+/goal phase=current id=ROOT.D56 state=complete action="Normalize existing four-modality EXAM request text and verify immutable local activation"
+/goal phase=history id=ROOT.D55 state=complete action="Correct the current v5 bundle offline and activate only verified strict knowledge while preserving the parent"
+/goal phase=history id=ROOT.D54 state=complete action="Complete task A runtime input and retrieval repair through offline semantic and artifact acceptance"
 /goal phase=history id=ROOT.C01_DD_CONTEXT_DIAG state=complete action="Diagnose the saved d50.4 C01 DD context rejection without changing runtime or making model calls"
 /goal phase=history id=ROOT.D53 state=complete action="Bound Education to five reference documents and remove greeting and empathy through offline acceptance"
 /goal phase=history id=ROOT.C01_EDUCATION_DIAG state=complete action="Diagnose the saved C01 Education rejection and identify the bounded design change required before repair"
@@ -661,4 +663,17 @@
 /evidence id=ROOT.D54.E2 class=runtime result=pass source=data/provenance/algorithm-d50-5-2026-10-21.json observed="Pass 204 workflow tests 106 extraction tests 54 evaluator checks and sixteen observer scenarios with 1438 snapshots; bind installed and independent SDK evidence through APP.D54"
 /evidence id=ROOT.D54.E3 class=artifact result=pass source=data/provenance/algorithm-d50-5-2026-10-21.json observed="Reference DATA.D54 for unchanged installed knowledge protected originals the 89-file synthetic archive and the exact deferred task B edge list"
 /evidence id=ROOT.D54.E4 class=external_service result=not_run source=data/provenance/algorithm-d50-5-2026-10-21.json observed="Leave additional API LLM NOVA calls extraction resume actual model quality clinical validity official evaluation production ZIP commits push publication and deployment unrun"
-/handoff state=ready action="Review D54 acceptance and scoped child states; preserve task B data corrections and actual model verification as separate unrun work"
+/accept id=ROOT.D55.A1 state=pass action="Implement the bounded reviewed correction route and reconcile D55 contracts" evidence=ROOT.D55.E1
+/accept id=ROOT.D55.A2 state=pass action="Verify canonical semantics and strict local activation through scoped child evidence" evidence=ROOT.D55.E1,ROOT.D55.E2
+/accept id=ROOT.D55.A3 state=pass action="Preserve immutable parent and prohibit model resume and remote effects" evidence=ROOT.D55.E3
+/evidence id=ROOT.D55.E1 class=semantic result=pass source=data/provenance/algorithm-d50-6-2026-10-21.json observed="Bind APP.D55 and DATA.D55 under the explicit limited current-v5 maintenance exception while preserving D49-D54 behavior"
+/evidence id=ROOT.D55.E2 class=runtime result=pass source=data/provenance/algorithm-d50-6-2026-10-21.json observed="Pass 118 extraction tests including twelve maintenance regressions 204 workflow tests fifty-four evaluator checks and sixteen observer scenarios with 1438 snapshots in pinned network-disabled project containers"
+/evidence id=ROOT.D55.E3 class=artifact result=pass source=data/provenance/algorithm-d50-6-2026-10-21.json observed="Reference DATA.D55 for exact parent and corrected-build custody and the independent synthetic archive original-SDK receipt"
+/evidence id=ROOT.D55.E4 class=external_service result=not_run source=data/provenance/algorithm-d50-6-2026-10-21.json observed="Record zero additional API LLM NOVA calls disposed-job resume commits push official submission deployment or real-model and clinical validation"
+/accept id=ROOT.D56.A1 state=pass action="Normalize only reviewed existing EXAM text and preserve registered graph contracts" evidence=ROOT.D56.E1
+/accept id=ROOT.D56.A2 state=pass action="Verify local activation original entrypoint question paths and offline regression" evidence=ROOT.D56.E2,ROOT.D56.E3
+/evidence id=ROOT.D56.E1 class=semantic result=pass source=data/provenance/exam-text-normalization-2026-10-21.json observed="Change exactly 119 ExamMethod text triples and preserve every other vocabulary triple schema clinical questions roles and guideline entry; retain 37 textless methods and two unspecified-anatomy methods"
+/evidence id=ROOT.D56.E2 class=runtime result=pass source=data/provenance/exam-text-normalization-2026-10-21.json observed="Pass original run.py prepare 945-Disease coverage with zero gaps all 185 physical question paths 204 workflow tests and three actual-bundle protocol consultations without model calls"
+/evidence id=ROOT.D56.E3 class=artifact result=pass source=data/provenance/exam-text-normalization-2026-10-21.json observed="Activate immutable build 1e8539d9c0910b37517f6475266f6df1 and preserve both parent builds and original C03 evidence; verify normalized text at the two saved rejected question paths"
+/evidence id=ROOT.D56.E4 class=external_service result=not_run source=data/provenance/exam-text-normalization-2026-10-21.json observed="Leave fresh NOVA acceptance actual-model quality clinical validation official evaluation production ZIP and deployment unrun"
+/handoff state=ready action="Use the normalized local bundle and retain actual NOVA acceptance as unrun"

@@ -1,8 +1,10 @@
 /state version=1
 /project id=ontoward-data
-/status value=complete
-/checkpoint revision=ec386147b58299418fb855b47c529c9503315ab1 dirty=true updated=2026-10-21T15:06:36+09:00
-/goal phase=current id=DATA.D54 state=complete action="Pin task A source payload and artifact evidence while preserving current bundle and unresolved typed edge custody"
+/status value=active
+/checkpoint revision=01f6c96d8442c60220517b1eb59d65a201d89e2d dirty=true updated=2026-10-21T18:26:21+09:00
+/goal phase=current id=DATA.D56 state=complete action="Pin exact EXAM text amendments and preserve parent bundles and original C03 evidence"
+/goal phase=history id=DATA.D55 state=complete action="Preserve the parent bundle and record exact reviewed corrections and canonical meaning conservation"
+/goal phase=history id=DATA.D54 state=complete action="Pin task A source payload and artifact evidence while preserving current bundle and unresolved typed edge custody"
 /goal phase=history id=DATA.D53 state=complete action="Pin D53 runtime and synthetic acceptance while preserving installed knowledge and original C01 evidence"
 /goal phase=history id=DATA.D52 state=complete action="Pin D52 repair evidence while preserving installed knowledge and saved C10 custody"
 /goal phase=history id=DATA.D48 state=complete action="Bind D48 source artifact prompt and preserved run evidence without changing clinical assets"
@@ -368,4 +370,16 @@
 /evidence id=DATA.D54.E2 class=runtime result=pass source=provenance/algorithm-d50-5-2026-10-21.json observed="Bind installed entrypoint prepare pinned dependency versions source and archive checks and baseline/current local serialization measurements without provider token or context-capacity claims"
 /evidence id=DATA.D54.E3 class=artifact result=pass source=provenance/algorithm-d50-5-2026-10-21.json observed="Preserve 94 protected hashes including forty original saved-run files and current build 87e8b4c54b0689453cea91b3bb316290; retain compact extraction custody and pin the final synthetic ZIP"
 /evidence id=DATA.D54.E4 class=external_service result=not_run source=provenance/algorithm-d50-5-2026-10-21.json observed="Leave additional API LLM NOVA calls extraction resume actual model quality clinical validity official evaluation production ZIP commits push publication and deployment unrun"
-/handoff state=ready action="Use D54 provenance and the exact offline endpoint list for review; preserve parent bundle and defer task B without resuming disposed checkpoints"
+/accept id=DATA.D55.A1 state=pass action="Preserve all six parent files and pin exact new manifest and asset hashes" evidence=DATA.D55.E1
+/accept id=DATA.D55.A2 state=pass action="Record exact removed edges canonical IDs complete graph conservation and deferred review" evidence=DATA.D55.E2
+/evidence id=DATA.D55.E1 class=artifact result=pass source=provenance/algorithm-d50-6-2026-10-21.json observed="Retain parent 87e8b4c54b0689453cea91b3bb316290 and activate immutable child 0fd42155c3171c9c9dcf66cb7f733245 with root manifest hash d0ff44bb5de4989eb97bd4262d4dc38b620137699b239ddff118b7d01211bfc8 without installer parent cleanup"
+/evidence id=DATA.D55.E2 class=semantic result=pass source=provenance/v5-maintenance-correction-2026-10-21.json observed="Exclude exactly 432 invalid links and merge two reviewed Target nodes; preserve canonical meanings for all 3188 relations 185 physical ExamFinding contracts 253 ExamMethod identities six ValueMatch paths all role-owned values and guideline membership; keep Decreased body weight independent"
+/evidence id=DATA.D55.E3 class=artifact result=pass source=provenance/v5-maintenance-plan-2026-10-21.json observed="Pin parent manifest and five assets explicit subject predicate object exclusions same-active-RF2 semantic review and deferred reasons without restoring disposed extraction history"
+/evidence id=DATA.D55.E4 class=external_service result=not_run source=provenance/algorithm-d50-6-2026-10-21.json observed="Record zero model calls job resume remote writes or official submission; leave clinical validity and actual-model quality unrun"
+/accept id=DATA.D56.A1 state=pass action="Normalize only reviewed existing EXAM text and preserve registered graph contracts" evidence=DATA.D56.E1
+/accept id=DATA.D56.A2 state=pass action="Verify local activation original entrypoint question paths and offline regression" evidence=DATA.D56.E2,DATA.D56.E3
+/evidence id=DATA.D56.E1 class=semantic result=pass source=provenance/exam-text-normalization-2026-10-21.json observed="Change exactly 119 ExamMethod text triples and preserve every other vocabulary triple schema clinical questions roles and guideline entry; retain 37 textless methods and two unspecified-anatomy methods"
+/evidence id=DATA.D56.E2 class=runtime result=pass source=provenance/exam-text-normalization-2026-10-21.json observed="Pass original run.py prepare 945-Disease coverage with zero gaps all 185 physical question paths 204 workflow tests and three actual-bundle protocol consultations without model calls"
+/evidence id=DATA.D56.E3 class=artifact result=pass source=provenance/exam-text-normalization-2026-10-21.json observed="Activate immutable build 1e8539d9c0910b37517f6475266f6df1 and preserve both parent builds and original C03 evidence; verify normalized text at the two saved rejected question paths"
+/evidence id=DATA.D56.E4 class=external_service result=not_run source=provenance/exam-text-normalization-2026-10-21.json observed="Leave fresh NOVA acceptance actual-model quality clinical validation official evaluation production ZIP and deployment unrun"
+/handoff state=ready action="Retain normalized build parent custody exact amendments and original C03 evidence"

@@ -1,0 +1,2546 @@
+{
+  "version": "d55-offline-acceptance-1",
+  "algorithm": "d50.6",
+  "audit_revision": "ec386147b58299418fb855b47c529c9503315ab1",
+  "live_head": "01f6c96d8442c60220517b1eb59d65a201d89e2d",
+  "agent_commits": 0,
+  "parent_build": "87e8b4c54b0689453cea91b3bb316290",
+  "build_id": "0fd42155c3171c9c9dcf66cb7f733245",
+  "parent_root_manifest_sha256": "a4c10f3a897485c1d4eb57ad8dc35e9d60dcb59e4d14a5d8ae5ef54f2ebbb2eb",
+  "parent_root_manifest_utf8": "{\"build_id\":\"87e8b4c54b0689453cea91b3bb316290\",\"clinical\":{\"path\":\"builds/87e8b4c54b0689453cea91b3bb316290/clinical.ttl\",\"sha256\":\"69d37b3c92faf3312378b24d8bf984112cbf538dd456a62c023d780f860a2d9e\"},\"guidelines\":{\"path\":\"builds/87e8b4c54b0689453cea91b3bb316290/guideline-index.json\",\"sha256\":\"8f0e9b1e937aecc4df73d955924505730fcd0aecf8e8ce57e3fbd5edc41d0c85\"},\"knowledge_contract\":\"v5-enum-1\",\"questions\":{\"path\":\"builds/87e8b4c54b0689453cea91b3bb316290/questions.ko.json\",\"sha256\":\"66f0426172d1a6c761a3f553314e9f7ebecd1784b1fb7f786beaf7091e5f0561\"},\"schema\":{\"path\":\"builds/87e8b4c54b0689453cea91b3bb316290/schema.ttl\",\"sha256\":\"c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df\"},\"schema_version\":\"5.0\",\"vocabulary\":{\"path\":\"builds/87e8b4c54b0689453cea91b3bb316290/vocabulary.ttl\",\"sha256\":\"23ae78abea1dc55c1d48545feba0fbe54d0516a1f2c5335bc4fc30beed5f1af8\"}}",
+  "manifest_sha256": "d0ff44bb5de4989eb97bd4262d4dc38b620137699b239ddff118b7d01211bfc8",
+  "installed_manifest": {
+    "build_id": "0fd42155c3171c9c9dcf66cb7f733245",
+    "clinical": {
+      "path": "builds/0fd42155c3171c9c9dcf66cb7f733245/clinical.ttl",
+      "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+    },
+    "guidelines": {
+      "path": "builds/0fd42155c3171c9c9dcf66cb7f733245/guideline-index.json",
+      "sha256": "de6a92abd3333dd2b4620aabfabf37a46342f115f00a04276afdf9e1d6756089"
+    },
+    "knowledge_contract": "v5-enum-1",
+    "questions": {
+      "path": "builds/0fd42155c3171c9c9dcf66cb7f733245/questions.ko.json",
+      "sha256": "c65c7083543867189c458e1fc7e13c32b7cb2266cef14510ef30d138ea1d4afd"
+    },
+    "schema": {
+      "path": "builds/0fd42155c3171c9c9dcf66cb7f733245/schema.ttl",
+      "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+    },
+    "schema_version": "5.0",
+    "vocabulary": {
+      "path": "builds/0fd42155c3171c9c9dcf66cb7f733245/vocabulary.ttl",
+      "sha256": "3c5975cc90c0730067f4ad8359f63f5b0a9b9dc20c22cd9506f4a5a8b468f9b1"
+    }
+  },
+  "activation": {
+    "status": "installed",
+    "build_id": "0fd42155c3171c9c9dcf66cb7f733245",
+    "manifest": "/workspace/submission/knowledge/manifest.json",
+    "parent_build": "87e8b4c54b0689453cea91b3bb316290",
+    "parent_files_sha256": {
+      "clinical.ttl": "69d37b3c92faf3312378b24d8bf984112cbf538dd456a62c023d780f860a2d9e",
+      "questions.ko.json": "66f0426172d1a6c761a3f553314e9f7ebecd1784b1fb7f786beaf7091e5f0561",
+      "schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "guideline-index.json": "8f0e9b1e937aecc4df73d955924505730fcd0aecf8e8ce57e3fbd5edc41d0c85",
+      "manifest.json": "7058fd9121aa82fd120cdd802374137ce69b054153e6d70e3d52864ac764e549",
+      "vocabulary.ttl": "23ae78abea1dc55c1d48545feba0fbe54d0516a1f2c5335bc4fc30beed5f1af8"
+    },
+    "strict_loader": true,
+    "original_prepare": "pass",
+    "new_manifest_sha256": "d0ff44bb5de4989eb97bd4262d4dc38b620137699b239ddff118b7d01211bfc8",
+    "model_calls": 0,
+    "disposed_job_resume": false
+  },
+  "correction_plan_sha256": "66b5fdf74de6b4d8f94c09328e0c53cba6890c2d5276cc1bc3564a6bde5b10d3",
+  "correction_receipt_sha256": "c784850c41cf9b5e5f4b5f6fd2098d8248ecbdf4b8925fa8cb4e990f018a80f2",
+  "strict_loader": true,
+  "original_prepare": "pass",
+  "obsolete_target_references": {
+    "schema:urn:ontoward:Symptom3ccaec71bdd462080a384f59": 0,
+    "schema:urn:ontoward:Symptom6f347f02846dc62631f5d245": 0,
+    "vocabulary:urn:ontoward:Symptom3ccaec71bdd462080a384f59": 0,
+    "vocabulary:urn:ontoward:Symptom6f347f02846dc62631f5d245": 0,
+    "clinical:urn:ontoward:Symptom3ccaec71bdd462080a384f59": 0,
+    "clinical:urn:ontoward:Symptom6f347f02846dc62631f5d245": 0,
+    "questions:urn:ontoward:Symptom3ccaec71bdd462080a384f59": 0,
+    "questions:urn:ontoward:Symptom6f347f02846dc62631f5d245": 0,
+    "guidelines:urn:ontoward:Symptom3ccaec71bdd462080a384f59": 0,
+    "guidelines:urn:ontoward:Symptom6f347f02846dc62631f5d245": 0
+  },
+  "invalid_parent_strict_rejection": {
+    "count": 432,
+    "examples": [
+      [
+        "urn:ontoward:ContextFactor154a2343223b77184036017f",
+        "urn:ontoward:canHaveValue",
+        "urn:ontoward:AttributeValue2052c752848cdb53144674e6"
+      ],
+      [
+        "urn:ontoward:ContextFactor154a2343223b77184036017f",
+        "urn:ontoward:canHaveValue",
+        "urn:ontoward:AttributeValuedaceae585de4a5153c28eed3"
+      ],
+      [
+        "urn:ontoward:ContextFactor2b92dc51b6eb9d44268b62a3",
+        "urn:ontoward:hasAttribute",
+        "urn:ontoward:Disease1d0cc2ccb7b702ead361748c"
+      ],
+      [
+        "urn:ontoward:ContextFactor87c38c26dc6febbdae0dcd40",
+        "urn:ontoward:canHaveValue",
+        "urn:ontoward:AttributeValue000afbeb72508e82f8204131"
+      ],
+      [
+        "urn:ontoward:ContextFactor87c38c26dc6febbdae0dcd40",
+        "urn:ontoward:canHaveValue",
+        "urn:ontoward:AttributeValue1e59bee72404b3b4087cb5be"
+      ]
+    ]
+  },
+  "coverage": {
+    "status": "pass",
+    "diseases": 945,
+    "gaps": []
+  },
+  "checks": [
+    {
+      "source": "Tmp/d55-2026-10-21/final-workflow.log",
+      "ran": 204,
+      "passed": 204,
+      "skipped": 0,
+      "status": "pass"
+    },
+    {
+      "source": "Tmp/d55-2026-10-21/final-extraction.log",
+      "ran": 118,
+      "passed": 118,
+      "skipped": 0,
+      "status": "pass"
+    },
+    {
+      "source": "Tmp/d55-2026-10-21/archive-workflow.log",
+      "ran": 204,
+      "passed": 203,
+      "skipped": 1,
+      "status": "pass"
+    },
+    {
+      "source": "Tmp/d55-2026-10-21/evaluator.log",
+      "ran": 54,
+      "passed": 54,
+      "skipped": 0,
+      "status": "pass"
+    }
+  ],
+  "observer": {
+    "status": "pass",
+    "scenarios": [
+      {
+        "name": "normal",
+        "termination": "submitted",
+        "nodes": 111
+      },
+      {
+        "name": "negative_context",
+        "termination": "submitted",
+        "nodes": 111
+      },
+      {
+        "name": "unknown_context",
+        "termination": "submitted",
+        "nodes": 111
+      },
+      {
+        "name": "fixed_unknown",
+        "termination": "submitted",
+        "nodes": 111
+      },
+      {
+        "name": "education",
+        "termination": "submitted",
+        "nodes": 151
+      },
+      {
+        "name": "education_repair",
+        "termination": "submitted",
+        "nodes": 151
+      },
+      {
+        "name": "transient_model",
+        "termination": "submitted",
+        "nodes": 111
+      },
+      {
+        "name": "model_limit",
+        "termination": "failed",
+        "nodes": 3
+      },
+      {
+        "name": "malformed_context",
+        "termination": "failed",
+        "nodes": 16
+      },
+      {
+        "name": "expired",
+        "termination": "expired",
+        "nodes": 2
+      },
+      {
+        "name": "closed",
+        "termination": "closed",
+        "nodes": 2
+      },
+      {
+        "name": "soap_repair",
+        "termination": "submitted",
+        "nodes": 114
+      },
+      {
+        "name": "unconfirmed",
+        "termination": "unknown",
+        "nodes": 111
+      },
+      {
+        "name": "refusal",
+        "termination": "submitted",
+        "nodes": 111
+      },
+      {
+        "name": "action_format",
+        "termination": "submitted",
+        "nodes": 111
+      },
+      {
+        "name": "recording_failure",
+        "termination": "submitted",
+        "nodes": 111
+      }
+    ],
+    "node_updates": 1438,
+    "recording_failure": "nonfatal_no_replay",
+    "network": "none",
+    "actual_models": "not_run"
+  },
+  "independent_original_sdk": {
+    "status": "pass",
+    "entrypoint": "run.py",
+    "transport": "original_sdk_http_loopback",
+    "receipt": "completed",
+    "requests": 42,
+    "actions": 20,
+    "diagnosis": "Disease alpha",
+    "network": "none",
+    "development_credentials": false,
+    "actual_models": "not_run",
+    "clinical_accuracy": "not_run",
+    "langgraph_import": "blocked",
+    "trace_status": "complete",
+    "inspection_status": "pass"
+  },
+  "archive": {
+    "sha256": "fb143014a1a16fc5d4b539bd729f01313ae13f944c0033d0ba02652d8213ea48",
+    "file_count": 89,
+    "compressed_bytes": 104244,
+    "runtime_members_match_current_source": 83,
+    "fixture_only": true
+  },
+  "measurements": {
+    "status": "pass",
+    "build": "0fd42155c3171c9c9dcf66cb7f733245",
+    "manifest_sha256": "d0ff44bb5de4989eb97bd4262d4dc38b620137699b239ddff118b7d01211bfc8",
+    "types": {
+      "Test": 69,
+      "ContextFactor": 369,
+      "ExamMethod": 253,
+      "DiseasePatternAssociation": 3188,
+      "ExpectedValue": 33,
+      "FindingAttribute": 661,
+      "ClinicalPattern": 1026,
+      "ExamFinding": 185,
+      "Symptom": 1587,
+      "BodySystem": 211,
+      "ClinicalFeature": 1030,
+      "Disease": 945,
+      "AttributeValue": 2059,
+      "ValueMatch": 6
+    },
+    "violations": {
+      "violation_counts": {},
+      "invalid_edges": 0,
+      "violations": []
+    },
+    "merges": [
+      {
+        "terms": [
+          {
+            "term": "Weight loss",
+            "canonical": "urn:ontoward:Symptom366ac5a51ea09abe0114a080",
+            "resolved": [
+              "urn:ontoward:Symptom366ac5a51ea09abe0114a080",
+              "urn:ontoward:Symptom9ea9091d59108a126423efdd"
+            ],
+            "resolved_labels": {
+              "urn:ontoward:Symptom366ac5a51ea09abe0114a080": "Weight loss",
+              "urn:ontoward:Symptom9ea9091d59108a126423efdd": "Decreased body weight"
+            }
+          },
+          {
+            "term": "Weight decreased",
+            "canonical": "urn:ontoward:Symptom366ac5a51ea09abe0114a080",
+            "resolved": [
+              "urn:ontoward:Symptom366ac5a51ea09abe0114a080",
+              "urn:ontoward:Symptom9ea9091d59108a126423efdd"
+            ],
+            "resolved_labels": {
+              "urn:ontoward:Symptom366ac5a51ea09abe0114a080": "Weight loss",
+              "urn:ontoward:Symptom9ea9091d59108a126423efdd": "Decreased body weight"
+            }
+          }
+        ],
+        "relation_count": 42,
+        "diseases": 41,
+        "disease_membership_equal": true
+      },
+      {
+        "terms": [
+          {
+            "term": "Dyspnea",
+            "canonical": "urn:ontoward:Symptomb7fd4e275a37b3cde6936942",
+            "resolved": [
+              "urn:ontoward:Symptom895740ca649251eefe27af87",
+              "urn:ontoward:Symptomb12361a0c596fc61b4995228",
+              "urn:ontoward:Symptomb7fd4e275a37b3cde6936942"
+            ],
+            "resolved_labels": {
+              "urn:ontoward:Symptom895740ca649251eefe27af87": "Difficulty breathing",
+              "urn:ontoward:Symptomb12361a0c596fc61b4995228": "Breathlessness with gradual onset",
+              "urn:ontoward:Symptomb7fd4e275a37b3cde6936942": "Dyspnea"
+            }
+          },
+          {
+            "term": "Breathlessness",
+            "canonical": "urn:ontoward:Symptomb7fd4e275a37b3cde6936942",
+            "resolved": [
+              "urn:ontoward:Symptom895740ca649251eefe27af87",
+              "urn:ontoward:Symptomb12361a0c596fc61b4995228",
+              "urn:ontoward:Symptomb7fd4e275a37b3cde6936942"
+            ],
+            "resolved_labels": {
+              "urn:ontoward:Symptom895740ca649251eefe27af87": "Difficulty breathing",
+              "urn:ontoward:Symptomb12361a0c596fc61b4995228": "Breathlessness with gradual onset",
+              "urn:ontoward:Symptomb7fd4e275a37b3cde6936942": "Dyspnea"
+            }
+          }
+        ],
+        "relation_count": 56,
+        "diseases": 48,
+        "disease_membership_equal": true
+      }
+    ],
+    "consultations": [
+      {
+        "education": false,
+        "context": "unknown",
+        "receipt": "completed",
+        "updates": 165,
+        "requests": 41,
+        "actions": 23,
+        "clinical_inputs_checked": 13
+      },
+      {
+        "education": true,
+        "context": "present",
+        "receipt": "completed",
+        "updates": 205,
+        "requests": 44,
+        "actions": 29,
+        "clinical_inputs_checked": 13,
+        "fixed_diagnosis_inputs_checked": 1
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "receipt": "completed",
+        "updates": 205,
+        "requests": 42,
+        "actions": 29,
+        "clinical_inputs_checked": 13,
+        "fixed_diagnosis_inputs_checked": 1
+      }
+    ],
+    "inputs": [
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 0,
+        "task": "input_context",
+        "payload_characters": 208,
+        "payload_utf8_bytes": 208,
+        "message_characters": 5569,
+        "message_utf8_bytes": 5569
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 1,
+        "task": "input_context",
+        "payload_characters": 849,
+        "payload_utf8_bytes": 889,
+        "message_characters": 6136,
+        "message_utf8_bytes": 6176
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 2,
+        "task": "input_context",
+        "payload_characters": 1283,
+        "payload_utf8_bytes": 1367,
+        "message_characters": 6570,
+        "message_utf8_bytes": 6654
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 3,
+        "task": "input_context",
+        "payload_characters": 1706,
+        "payload_utf8_bytes": 1844,
+        "message_characters": 6993,
+        "message_utf8_bytes": 7131
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 4,
+        "task": "input_context",
+        "payload_characters": 2105,
+        "payload_utf8_bytes": 2291,
+        "message_characters": 7392,
+        "message_utf8_bytes": 7578
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 5,
+        "task": "clinical_rank",
+        "payload_characters": 3192,
+        "payload_utf8_bytes": 3192,
+        "message_characters": 6208,
+        "message_utf8_bytes": 6208,
+        "counts": {
+          "facts": 5,
+          "scopes": 5,
+          "candidates": 1,
+          "evidence": 5,
+          "relations": 5,
+          "questions": 0
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 6,
+        "task": "input_context",
+        "payload_characters": 4488,
+        "payload_utf8_bytes": 4708,
+        "message_characters": 9775,
+        "message_utf8_bytes": 9995
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 7,
+        "task": "input_mapping",
+        "payload_characters": 784,
+        "payload_utf8_bytes": 804,
+        "message_characters": 2772,
+        "message_utf8_bytes": 2792
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 8,
+        "task": "input_mapping",
+        "payload_characters": 1625,
+        "payload_utf8_bytes": 1645,
+        "message_characters": 4039,
+        "message_utf8_bytes": 4059
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 9,
+        "task": "input_context",
+        "payload_characters": 3314,
+        "payload_utf8_bytes": 3576,
+        "message_characters": 8601,
+        "message_utf8_bytes": 8863
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 10,
+        "task": "input_context",
+        "payload_characters": 3279,
+        "payload_utf8_bytes": 3585,
+        "message_characters": 8566,
+        "message_utf8_bytes": 8872
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 11,
+        "task": "clinical_rank",
+        "payload_characters": 3561,
+        "payload_utf8_bytes": 3561,
+        "message_characters": 6579,
+        "message_utf8_bytes": 6579,
+        "counts": {
+          "facts": 7,
+          "scopes": 5,
+          "candidates": 1,
+          "evidence": 5,
+          "relations": 5,
+          "questions": 0
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 12,
+        "task": "input_context",
+        "payload_characters": 3435,
+        "payload_utf8_bytes": 3787,
+        "message_characters": 8722,
+        "message_utf8_bytes": 9074
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 13,
+        "task": "input_context",
+        "payload_characters": 3650,
+        "payload_utf8_bytes": 4000,
+        "message_characters": 8937,
+        "message_utf8_bytes": 9287
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 14,
+        "task": "input_context",
+        "payload_characters": 3953,
+        "payload_utf8_bytes": 4343,
+        "message_characters": 9240,
+        "message_utf8_bytes": 9630
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 15,
+        "task": "input_context",
+        "payload_characters": 4300,
+        "payload_utf8_bytes": 4742,
+        "message_characters": 9587,
+        "message_utf8_bytes": 10029
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 16,
+        "task": "input_context",
+        "payload_characters": 4576,
+        "payload_utf8_bytes": 5062,
+        "message_characters": 9863,
+        "message_utf8_bytes": 10349
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 17,
+        "task": "input_context",
+        "payload_characters": 4988,
+        "payload_utf8_bytes": 5522,
+        "message_characters": 10275,
+        "message_utf8_bytes": 10809
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 18,
+        "task": "clinical_decision",
+        "payload_characters": 4925,
+        "payload_utf8_bytes": 4925,
+        "message_characters": 8450,
+        "message_utf8_bytes": 8450,
+        "counts": {
+          "facts": 13,
+          "scopes": 5,
+          "candidates": 1,
+          "evidence": 5,
+          "relations": 5,
+          "questions": 3
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 19,
+        "task": "input_context",
+        "payload_characters": 5317,
+        "payload_utf8_bytes": 5893,
+        "message_characters": 10604,
+        "message_utf8_bytes": 11180
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 20,
+        "task": "input_mapping",
+        "payload_characters": 374,
+        "payload_utf8_bytes": 394,
+        "message_characters": 2362,
+        "message_utf8_bytes": 2382
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 21,
+        "task": "input_mapping",
+        "payload_characters": 432,
+        "payload_utf8_bytes": 452,
+        "message_characters": 2846,
+        "message_utf8_bytes": 2866
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 22,
+        "task": "clinical_decision",
+        "payload_characters": 4887,
+        "payload_utf8_bytes": 4887,
+        "message_characters": 8412,
+        "message_utf8_bytes": 8412,
+        "counts": {
+          "facts": 14,
+          "scopes": 5,
+          "candidates": 1,
+          "evidence": 5,
+          "relations": 5,
+          "questions": 2
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 23,
+        "task": "input_context",
+        "payload_characters": 5628,
+        "payload_utf8_bytes": 6206,
+        "message_characters": 10915,
+        "message_utf8_bytes": 11493
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 24,
+        "task": "clinical_decision",
+        "payload_characters": 6812,
+        "payload_utf8_bytes": 6812,
+        "message_characters": 10337,
+        "message_utf8_bytes": 10337,
+        "counts": {
+          "facts": 15,
+          "scopes": 8,
+          "candidates": 2,
+          "evidence": 8,
+          "relations": 8,
+          "questions": 4
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 25,
+        "task": "input_context",
+        "payload_characters": 5944,
+        "payload_utf8_bytes": 6524,
+        "message_characters": 11231,
+        "message_utf8_bytes": 11811
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 26,
+        "task": "clinical_decision",
+        "payload_characters": 21700,
+        "payload_utf8_bytes": 21700,
+        "message_characters": 25225,
+        "message_utf8_bytes": 25225,
+        "counts": {
+          "facts": 16,
+          "scopes": 23,
+          "candidates": 13,
+          "evidence": 35,
+          "relations": 31,
+          "questions": 16
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 27,
+        "task": "input_context",
+        "payload_characters": 6218,
+        "payload_utf8_bytes": 6794,
+        "message_characters": 11217,
+        "message_utf8_bytes": 11793
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 28,
+        "task": "clinical_decision",
+        "payload_characters": 24924,
+        "payload_utf8_bytes": 24924,
+        "message_characters": 28449,
+        "message_utf8_bytes": 28449,
+        "counts": {
+          "facts": 17,
+          "scopes": 26,
+          "candidates": 15,
+          "evidence": 41,
+          "relations": 36,
+          "questions": 18
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 29,
+        "task": "input_context",
+        "payload_characters": 6586,
+        "payload_utf8_bytes": 7164,
+        "message_characters": 11585,
+        "message_utf8_bytes": 12163
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 30,
+        "task": "clinical_decision",
+        "payload_characters": 24787,
+        "payload_utf8_bytes": 24787,
+        "message_characters": 28312,
+        "message_utf8_bytes": 28312,
+        "counts": {
+          "facts": 18,
+          "scopes": 26,
+          "candidates": 15,
+          "evidence": 41,
+          "relations": 36,
+          "questions": 17
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 31,
+        "task": "input_context",
+        "payload_characters": 6947,
+        "payload_utf8_bytes": 7525,
+        "message_characters": 12234,
+        "message_utf8_bytes": 12812
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 32,
+        "task": "clinical_decision",
+        "payload_characters": 110314,
+        "payload_utf8_bytes": 110314,
+        "message_characters": 113839,
+        "message_utf8_bytes": 113839,
+        "counts": {
+          "facts": 19,
+          "scopes": 116,
+          "candidates": 80,
+          "evidence": 181,
+          "relations": 163,
+          "questions": 105
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 33,
+        "task": "input_context",
+        "payload_characters": 7198,
+        "payload_utf8_bytes": 7770,
+        "message_characters": 12197,
+        "message_utf8_bytes": 12769
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 34,
+        "task": "clinical_decision",
+        "payload_characters": 112709,
+        "payload_utf8_bytes": 112709,
+        "message_characters": 116234,
+        "message_utf8_bytes": 116234,
+        "counts": {
+          "facts": 20,
+          "scopes": 119,
+          "candidates": 82,
+          "evidence": 185,
+          "relations": 167,
+          "questions": 107
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 35,
+        "task": "input_context",
+        "payload_characters": 7530,
+        "payload_utf8_bytes": 8104,
+        "message_characters": 12529,
+        "message_utf8_bytes": 13103
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 36,
+        "task": "clinical_decision",
+        "payload_characters": 120570,
+        "payload_utf8_bytes": 120570,
+        "message_characters": 124095,
+        "message_utf8_bytes": 124095,
+        "counts": {
+          "facts": 21,
+          "scopes": 130,
+          "candidates": 86,
+          "evidence": 197,
+          "relations": 178,
+          "questions": 116
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 37,
+        "task": "input_context",
+        "payload_characters": 7851,
+        "payload_utf8_bytes": 8431,
+        "message_characters": 12850,
+        "message_utf8_bytes": 13430
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 38,
+        "task": "clinical_decision",
+        "payload_characters": 122779,
+        "payload_utf8_bytes": 122779,
+        "message_characters": 126304,
+        "message_utf8_bytes": 126304,
+        "counts": {
+          "facts": 22,
+          "scopes": 132,
+          "candidates": 88,
+          "evidence": 201,
+          "relations": 182,
+          "questions": 117
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 39,
+        "task": "input_context",
+        "payload_characters": 8167,
+        "payload_utf8_bytes": 8747,
+        "message_characters": 13166,
+        "message_utf8_bytes": 13746
+      },
+      {
+        "education": false,
+        "context": "unknown",
+        "index": 40,
+        "task": "clinical_decision",
+        "payload_characters": 98796,
+        "payload_utf8_bytes": 98796,
+        "message_characters": 102321,
+        "message_utf8_bytes": 102321,
+        "counts": {
+          "facts": 23,
+          "scopes": 132,
+          "candidates": 88,
+          "evidence": 201,
+          "relations": 182,
+          "questions": 0
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 0,
+        "task": "input_context",
+        "payload_characters": 208,
+        "payload_utf8_bytes": 208,
+        "message_characters": 5569,
+        "message_utf8_bytes": 5569
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 1,
+        "task": "input_context",
+        "payload_characters": 849,
+        "payload_utf8_bytes": 889,
+        "message_characters": 6136,
+        "message_utf8_bytes": 6176
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 2,
+        "task": "input_context",
+        "payload_characters": 1283,
+        "payload_utf8_bytes": 1367,
+        "message_characters": 6570,
+        "message_utf8_bytes": 6654
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 3,
+        "task": "input_context",
+        "payload_characters": 1706,
+        "payload_utf8_bytes": 1844,
+        "message_characters": 6993,
+        "message_utf8_bytes": 7131
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 4,
+        "task": "input_context",
+        "payload_characters": 2105,
+        "payload_utf8_bytes": 2291,
+        "message_characters": 7392,
+        "message_utf8_bytes": 7578
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 5,
+        "task": "clinical_rank",
+        "payload_characters": 3192,
+        "payload_utf8_bytes": 3192,
+        "message_characters": 6208,
+        "message_utf8_bytes": 6208,
+        "counts": {
+          "facts": 5,
+          "scopes": 5,
+          "candidates": 1,
+          "evidence": 5,
+          "relations": 5,
+          "questions": 0
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 6,
+        "task": "input_context",
+        "payload_characters": 4488,
+        "payload_utf8_bytes": 4708,
+        "message_characters": 9775,
+        "message_utf8_bytes": 9995
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 7,
+        "task": "input_mapping",
+        "payload_characters": 784,
+        "payload_utf8_bytes": 804,
+        "message_characters": 2772,
+        "message_utf8_bytes": 2792
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 8,
+        "task": "input_mapping",
+        "payload_characters": 1625,
+        "payload_utf8_bytes": 1645,
+        "message_characters": 4039,
+        "message_utf8_bytes": 4059
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 9,
+        "task": "input_context",
+        "payload_characters": 3314,
+        "payload_utf8_bytes": 3576,
+        "message_characters": 8601,
+        "message_utf8_bytes": 8863
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 10,
+        "task": "input_context",
+        "payload_characters": 3279,
+        "payload_utf8_bytes": 3585,
+        "message_characters": 8566,
+        "message_utf8_bytes": 8872
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 11,
+        "task": "clinical_rank",
+        "payload_characters": 3561,
+        "payload_utf8_bytes": 3561,
+        "message_characters": 6579,
+        "message_utf8_bytes": 6579,
+        "counts": {
+          "facts": 7,
+          "scopes": 5,
+          "candidates": 1,
+          "evidence": 5,
+          "relations": 5,
+          "questions": 0
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 12,
+        "task": "input_context",
+        "payload_characters": 3435,
+        "payload_utf8_bytes": 3787,
+        "message_characters": 8722,
+        "message_utf8_bytes": 9074
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 13,
+        "task": "input_context",
+        "payload_characters": 3650,
+        "payload_utf8_bytes": 4000,
+        "message_characters": 8937,
+        "message_utf8_bytes": 9287
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 14,
+        "task": "input_context",
+        "payload_characters": 3953,
+        "payload_utf8_bytes": 4343,
+        "message_characters": 9240,
+        "message_utf8_bytes": 9630
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 15,
+        "task": "input_context",
+        "payload_characters": 4300,
+        "payload_utf8_bytes": 4742,
+        "message_characters": 9587,
+        "message_utf8_bytes": 10029
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 16,
+        "task": "input_context",
+        "payload_characters": 4576,
+        "payload_utf8_bytes": 5062,
+        "message_characters": 9863,
+        "message_utf8_bytes": 10349
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 17,
+        "task": "input_context",
+        "payload_characters": 4988,
+        "payload_utf8_bytes": 5522,
+        "message_characters": 10275,
+        "message_utf8_bytes": 10809
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 18,
+        "task": "clinical_decision",
+        "payload_characters": 15003,
+        "payload_utf8_bytes": 15003,
+        "message_characters": 18528,
+        "message_utf8_bytes": 18528,
+        "counts": {
+          "facts": 13,
+          "scopes": 18,
+          "candidates": 5,
+          "evidence": 25,
+          "relations": 21,
+          "questions": 14
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 19,
+        "task": "input_context",
+        "payload_characters": 5426,
+        "payload_utf8_bytes": 6002,
+        "message_characters": 10713,
+        "message_utf8_bytes": 11289
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 20,
+        "task": "input_mapping",
+        "payload_characters": 374,
+        "payload_utf8_bytes": 394,
+        "message_characters": 2362,
+        "message_utf8_bytes": 2382
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 21,
+        "task": "input_mapping",
+        "payload_characters": 432,
+        "payload_utf8_bytes": 452,
+        "message_characters": 2846,
+        "message_utf8_bytes": 2866
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 22,
+        "task": "clinical_decision",
+        "payload_characters": 14906,
+        "payload_utf8_bytes": 14906,
+        "message_characters": 18431,
+        "message_utf8_bytes": 18431,
+        "counts": {
+          "facts": 14,
+          "scopes": 18,
+          "candidates": 5,
+          "evidence": 25,
+          "relations": 21,
+          "questions": 13
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 23,
+        "task": "input_context",
+        "payload_characters": 5737,
+        "payload_utf8_bytes": 6315,
+        "message_characters": 11024,
+        "message_utf8_bytes": 11602
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 24,
+        "task": "clinical_decision",
+        "payload_characters": 16307,
+        "payload_utf8_bytes": 16307,
+        "message_characters": 19832,
+        "message_utf8_bytes": 19832,
+        "counts": {
+          "facts": 15,
+          "scopes": 20,
+          "candidates": 6,
+          "evidence": 27,
+          "relations": 23,
+          "questions": 14
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 25,
+        "task": "input_context",
+        "payload_characters": 6053,
+        "payload_utf8_bytes": 6633,
+        "message_characters": 11340,
+        "message_utf8_bytes": 11920
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 26,
+        "task": "clinical_decision",
+        "payload_characters": 28035,
+        "payload_utf8_bytes": 28035,
+        "message_characters": 31560,
+        "message_utf8_bytes": 31560,
+        "counts": {
+          "facts": 16,
+          "scopes": 30,
+          "candidates": 15,
+          "evidence": 49,
+          "relations": 41,
+          "questions": 22
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 27,
+        "task": "input_context",
+        "payload_characters": 6327,
+        "payload_utf8_bytes": 6903,
+        "message_characters": 11326,
+        "message_utf8_bytes": 11902
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 28,
+        "task": "clinical_decision",
+        "payload_characters": 31259,
+        "payload_utf8_bytes": 31259,
+        "message_characters": 34784,
+        "message_utf8_bytes": 34784,
+        "counts": {
+          "facts": 17,
+          "scopes": 33,
+          "candidates": 17,
+          "evidence": 55,
+          "relations": 46,
+          "questions": 24
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 29,
+        "task": "input_context",
+        "payload_characters": 6695,
+        "payload_utf8_bytes": 7273,
+        "message_characters": 11694,
+        "message_utf8_bytes": 12272
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 30,
+        "task": "clinical_decision",
+        "payload_characters": 31122,
+        "payload_utf8_bytes": 31122,
+        "message_characters": 34647,
+        "message_utf8_bytes": 34647,
+        "counts": {
+          "facts": 18,
+          "scopes": 33,
+          "candidates": 17,
+          "evidence": 55,
+          "relations": 46,
+          "questions": 23
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 31,
+        "task": "input_context",
+        "payload_characters": 7060,
+        "payload_utf8_bytes": 7650,
+        "message_characters": 12347,
+        "message_utf8_bytes": 12937
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 32,
+        "task": "input_mapping",
+        "payload_characters": 370,
+        "payload_utf8_bytes": 390,
+        "message_characters": 2358,
+        "message_utf8_bytes": 2378
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 33,
+        "task": "input_mapping",
+        "payload_characters": 428,
+        "payload_utf8_bytes": 448,
+        "message_characters": 2842,
+        "message_utf8_bytes": 2862
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 34,
+        "task": "clinical_decision",
+        "payload_characters": 31084,
+        "payload_utf8_bytes": 31084,
+        "message_characters": 34609,
+        "message_utf8_bytes": 34609,
+        "counts": {
+          "facts": 19,
+          "scopes": 33,
+          "candidates": 17,
+          "evidence": 55,
+          "relations": 46,
+          "questions": 22
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 35,
+        "task": "input_context",
+        "payload_characters": 7364,
+        "payload_utf8_bytes": 7946,
+        "message_characters": 12651,
+        "message_utf8_bytes": 13233
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 36,
+        "task": "clinical_decision",
+        "payload_characters": 114336,
+        "payload_utf8_bytes": 114336,
+        "message_characters": 117861,
+        "message_utf8_bytes": 117861,
+        "counts": {
+          "facts": 20,
+          "scopes": 120,
+          "candidates": 81,
+          "evidence": 191,
+          "relations": 169,
+          "questions": 107
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 37,
+        "task": "input_context",
+        "payload_characters": 7612,
+        "payload_utf8_bytes": 8184,
+        "message_characters": 12611,
+        "message_utf8_bytes": 13183
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 38,
+        "task": "clinical_decision",
+        "payload_characters": 116729,
+        "payload_utf8_bytes": 116729,
+        "message_characters": 120254,
+        "message_utf8_bytes": 120254,
+        "counts": {
+          "facts": 21,
+          "scopes": 123,
+          "candidates": 83,
+          "evidence": 195,
+          "relations": 173,
+          "questions": 109
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 39,
+        "task": "input_context",
+        "payload_characters": 7947,
+        "payload_utf8_bytes": 8525,
+        "message_characters": 12946,
+        "message_utf8_bytes": 13524
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 40,
+        "task": "clinical_decision",
+        "payload_characters": 124599,
+        "payload_utf8_bytes": 124599,
+        "message_characters": 128124,
+        "message_utf8_bytes": 128124,
+        "counts": {
+          "facts": 22,
+          "scopes": 134,
+          "candidates": 87,
+          "evidence": 207,
+          "relations": 184,
+          "questions": 118
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 41,
+        "task": "input_context",
+        "payload_characters": 8270,
+        "payload_utf8_bytes": 8856,
+        "message_characters": 13269,
+        "message_utf8_bytes": 13855
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 42,
+        "task": "clinical_decision",
+        "payload_characters": 102229,
+        "payload_utf8_bytes": 102229,
+        "message_characters": 105754,
+        "message_utf8_bytes": 105754,
+        "counts": {
+          "facts": 23,
+          "scopes": 136,
+          "candidates": 89,
+          "evidence": 211,
+          "relations": 188,
+          "questions": 0
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "present",
+        "index": 43,
+        "task": "education",
+        "payload_characters": 6354,
+        "payload_utf8_bytes": 6354,
+        "message_characters": 9828,
+        "message_utf8_bytes": 9828,
+        "reference_integrity": {
+          "dangling_fixed_evidence": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 0,
+        "task": "input_context",
+        "payload_characters": 208,
+        "payload_utf8_bytes": 208,
+        "message_characters": 5569,
+        "message_utf8_bytes": 5569
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 1,
+        "task": "input_context",
+        "payload_characters": 849,
+        "payload_utf8_bytes": 889,
+        "message_characters": 6136,
+        "message_utf8_bytes": 6176
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 2,
+        "task": "input_context",
+        "payload_characters": 1283,
+        "payload_utf8_bytes": 1367,
+        "message_characters": 6570,
+        "message_utf8_bytes": 6654
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 3,
+        "task": "input_context",
+        "payload_characters": 1706,
+        "payload_utf8_bytes": 1844,
+        "message_characters": 6993,
+        "message_utf8_bytes": 7131
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 4,
+        "task": "input_context",
+        "payload_characters": 2105,
+        "payload_utf8_bytes": 2291,
+        "message_characters": 7392,
+        "message_utf8_bytes": 7578
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 5,
+        "task": "clinical_rank",
+        "payload_characters": 3192,
+        "payload_utf8_bytes": 3192,
+        "message_characters": 6208,
+        "message_utf8_bytes": 6208,
+        "counts": {
+          "facts": 5,
+          "scopes": 5,
+          "candidates": 1,
+          "evidence": 5,
+          "relations": 5,
+          "questions": 0
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 6,
+        "task": "input_context",
+        "payload_characters": 4488,
+        "payload_utf8_bytes": 4708,
+        "message_characters": 9775,
+        "message_utf8_bytes": 9995
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 7,
+        "task": "input_mapping",
+        "payload_characters": 784,
+        "payload_utf8_bytes": 804,
+        "message_characters": 2772,
+        "message_utf8_bytes": 2792
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 8,
+        "task": "input_mapping",
+        "payload_characters": 1625,
+        "payload_utf8_bytes": 1645,
+        "message_characters": 4039,
+        "message_utf8_bytes": 4059
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 9,
+        "task": "input_context",
+        "payload_characters": 3314,
+        "payload_utf8_bytes": 3576,
+        "message_characters": 8601,
+        "message_utf8_bytes": 8863
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 10,
+        "task": "input_context",
+        "payload_characters": 3279,
+        "payload_utf8_bytes": 3585,
+        "message_characters": 8566,
+        "message_utf8_bytes": 8872
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 11,
+        "task": "clinical_rank",
+        "payload_characters": 3561,
+        "payload_utf8_bytes": 3561,
+        "message_characters": 6579,
+        "message_utf8_bytes": 6579,
+        "counts": {
+          "facts": 7,
+          "scopes": 5,
+          "candidates": 1,
+          "evidence": 5,
+          "relations": 5,
+          "questions": 0
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 12,
+        "task": "input_context",
+        "payload_characters": 3435,
+        "payload_utf8_bytes": 3787,
+        "message_characters": 8722,
+        "message_utf8_bytes": 9074
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 13,
+        "task": "input_context",
+        "payload_characters": 3650,
+        "payload_utf8_bytes": 4000,
+        "message_characters": 8937,
+        "message_utf8_bytes": 9287
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 14,
+        "task": "input_context",
+        "payload_characters": 3953,
+        "payload_utf8_bytes": 4343,
+        "message_characters": 9240,
+        "message_utf8_bytes": 9630
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 15,
+        "task": "input_context",
+        "payload_characters": 4300,
+        "payload_utf8_bytes": 4742,
+        "message_characters": 9587,
+        "message_utf8_bytes": 10029
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 16,
+        "task": "input_context",
+        "payload_characters": 4576,
+        "payload_utf8_bytes": 5062,
+        "message_characters": 9863,
+        "message_utf8_bytes": 10349
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 17,
+        "task": "input_context",
+        "payload_characters": 4988,
+        "payload_utf8_bytes": 5522,
+        "message_characters": 10275,
+        "message_utf8_bytes": 10809
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 18,
+        "task": "clinical_decision",
+        "payload_characters": 4633,
+        "payload_utf8_bytes": 4633,
+        "message_characters": 8158,
+        "message_utf8_bytes": 8158,
+        "counts": {
+          "facts": 13,
+          "scopes": 6,
+          "candidates": 1,
+          "evidence": 4,
+          "relations": 4,
+          "questions": 3
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 19,
+        "task": "input_context",
+        "payload_characters": 5425,
+        "payload_utf8_bytes": 6001,
+        "message_characters": 10712,
+        "message_utf8_bytes": 11288
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 20,
+        "task": "input_mapping",
+        "payload_characters": 374,
+        "payload_utf8_bytes": 394,
+        "message_characters": 2362,
+        "message_utf8_bytes": 2382
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 21,
+        "task": "input_mapping",
+        "payload_characters": 432,
+        "payload_utf8_bytes": 452,
+        "message_characters": 2846,
+        "message_utf8_bytes": 2866
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 22,
+        "task": "clinical_decision",
+        "payload_characters": 4595,
+        "payload_utf8_bytes": 4595,
+        "message_characters": 8120,
+        "message_utf8_bytes": 8120,
+        "counts": {
+          "facts": 14,
+          "scopes": 6,
+          "candidates": 1,
+          "evidence": 4,
+          "relations": 4,
+          "questions": 2
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 23,
+        "task": "input_context",
+        "payload_characters": 5736,
+        "payload_utf8_bytes": 6314,
+        "message_characters": 11023,
+        "message_utf8_bytes": 11601
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 24,
+        "task": "clinical_decision",
+        "payload_characters": 6520,
+        "payload_utf8_bytes": 6520,
+        "message_characters": 10045,
+        "message_utf8_bytes": 10045,
+        "counts": {
+          "facts": 15,
+          "scopes": 9,
+          "candidates": 2,
+          "evidence": 7,
+          "relations": 7,
+          "questions": 4
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 25,
+        "task": "input_context",
+        "payload_characters": 6052,
+        "payload_utf8_bytes": 6632,
+        "message_characters": 11339,
+        "message_utf8_bytes": 11919
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 26,
+        "task": "clinical_decision",
+        "payload_characters": 21014,
+        "payload_utf8_bytes": 21014,
+        "message_characters": 24539,
+        "message_utf8_bytes": 24539,
+        "counts": {
+          "facts": 16,
+          "scopes": 24,
+          "candidates": 13,
+          "evidence": 33,
+          "relations": 29,
+          "questions": 16
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 27,
+        "task": "input_context",
+        "payload_characters": 6326,
+        "payload_utf8_bytes": 6902,
+        "message_characters": 11325,
+        "message_utf8_bytes": 11901
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 28,
+        "task": "clinical_decision",
+        "payload_characters": 24236,
+        "payload_utf8_bytes": 24236,
+        "message_characters": 27761,
+        "message_utf8_bytes": 27761,
+        "counts": {
+          "facts": 17,
+          "scopes": 27,
+          "candidates": 15,
+          "evidence": 39,
+          "relations": 34,
+          "questions": 18
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 29,
+        "task": "input_context",
+        "payload_characters": 6694,
+        "payload_utf8_bytes": 7272,
+        "message_characters": 11693,
+        "message_utf8_bytes": 12271
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 30,
+        "task": "clinical_decision",
+        "payload_characters": 24098,
+        "payload_utf8_bytes": 24098,
+        "message_characters": 27623,
+        "message_utf8_bytes": 27623,
+        "counts": {
+          "facts": 18,
+          "scopes": 27,
+          "candidates": 15,
+          "evidence": 39,
+          "relations": 34,
+          "questions": 17
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 31,
+        "task": "input_context",
+        "payload_characters": 7055,
+        "payload_utf8_bytes": 7633,
+        "message_characters": 12342,
+        "message_utf8_bytes": 12920
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 32,
+        "task": "clinical_decision",
+        "payload_characters": 109614,
+        "payload_utf8_bytes": 109614,
+        "message_characters": 113139,
+        "message_utf8_bytes": 113139,
+        "counts": {
+          "facts": 19,
+          "scopes": 117,
+          "candidates": 80,
+          "evidence": 179,
+          "relations": 161,
+          "questions": 105
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 33,
+        "task": "input_context",
+        "payload_characters": 7306,
+        "payload_utf8_bytes": 7878,
+        "message_characters": 12305,
+        "message_utf8_bytes": 12877
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 34,
+        "task": "clinical_decision",
+        "payload_characters": 112008,
+        "payload_utf8_bytes": 112008,
+        "message_characters": 115533,
+        "message_utf8_bytes": 115533,
+        "counts": {
+          "facts": 20,
+          "scopes": 120,
+          "candidates": 82,
+          "evidence": 183,
+          "relations": 165,
+          "questions": 107
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 35,
+        "task": "input_context",
+        "payload_characters": 7638,
+        "payload_utf8_bytes": 8212,
+        "message_characters": 12637,
+        "message_utf8_bytes": 13211
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 36,
+        "task": "clinical_decision",
+        "payload_characters": 119869,
+        "payload_utf8_bytes": 119869,
+        "message_characters": 123394,
+        "message_utf8_bytes": 123394,
+        "counts": {
+          "facts": 21,
+          "scopes": 131,
+          "candidates": 86,
+          "evidence": 195,
+          "relations": 176,
+          "questions": 116
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 37,
+        "task": "input_context",
+        "payload_characters": 7959,
+        "payload_utf8_bytes": 8539,
+        "message_characters": 12958,
+        "message_utf8_bytes": 13538
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 38,
+        "task": "clinical_decision",
+        "payload_characters": 122079,
+        "payload_utf8_bytes": 122079,
+        "message_characters": 125604,
+        "message_utf8_bytes": 125604,
+        "counts": {
+          "facts": 22,
+          "scopes": 133,
+          "candidates": 88,
+          "evidence": 199,
+          "relations": 180,
+          "questions": 117
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 39,
+        "task": "input_context",
+        "payload_characters": 8275,
+        "payload_utf8_bytes": 8855,
+        "message_characters": 13274,
+        "message_utf8_bytes": 13854
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 40,
+        "task": "clinical_decision",
+        "payload_characters": 98097,
+        "payload_utf8_bytes": 98097,
+        "message_characters": 101622,
+        "message_utf8_bytes": 101622,
+        "counts": {
+          "facts": 23,
+          "scopes": 133,
+          "candidates": 88,
+          "evidence": 199,
+          "relations": 180,
+          "questions": 0
+        },
+        "reference_integrity": {
+          "dangling_fact": 0,
+          "dangling_scope": 0,
+          "dangling_relation": 0,
+          "dangling_feature": 0,
+          "dangling_condition": 0
+        }
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "index": 41,
+        "task": "education",
+        "payload_characters": 6355,
+        "payload_utf8_bytes": 6355,
+        "message_characters": 9829,
+        "message_utf8_bytes": 9829,
+        "reference_integrity": {
+          "dangling_fixed_evidence": 0
+        }
+      }
+    ],
+    "actual_models": "not_run",
+    "provider_tokens": "not_measured",
+    "physical_exam_contracts_equal": 185,
+    "registered_exam_methods_preserved": 253,
+    "input_serialization": "Exact user JSON and summed system plus user content; exclude HTTP envelope and provider tokens"
+  },
+  "upstream_source_sha256": {
+    "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_Description_Snapshot-en_INT_20260501.txt": "0d69e3b69b3ed52168fa726a4b9b2f7b949561b09bc7775dfb2ef65eadb80109",
+    "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_Description_Snapshot-en_KR1000267_20260615.txt": "5ee4b7e98b6c2acd131712a11afb34fd975036e14abcd085da5c3f3e1e4de22f",
+    "assets/snomed/SnomedCT_ManagedServiceKR_PRODUCTION_KR1000267_20260615T120000Z/Snapshot/Terminology/sct2_Description_Snapshot-ko_KR1000267_20260615.txt": "8e8ea34f05ed36525b9944bc736c78aa180c03e0a45bb8bf76768b0abe481d97",
+    "assets/snomed/SnomedCT_InternationalRF2_PRODUCTION_20260501T120000Z/Snapshot/Terminology/sct2_Concept_Snapshot_INT_20260501.txt": "3437888cffdf15c043f5543c25009e5ae97d6dd94bfa0c0fc9d9f27ef3b43b90"
+  },
+  "source_history_boundary": "Reconstruct runtime meanings only; do not restore disposed extraction responses neutral judgments or source history",
+  "preserved_task_a_runtime_members": 81,
+  "authorized_task_a_runtime_changes": [
+    "knowledge/graph.py",
+    "knowledge/manifest.json",
+    "settings.py"
+  ],
+  "protected_sha256": {
+    "submission/run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+    "submission/requirements.txt": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01",
+    "submission/nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/questions.ko.json": "66f0426172d1a6c761a3f553314e9f7ebecd1784b1fb7f786beaf7091e5f0561",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/guideline-index.json": "8f0e9b1e937aecc4df73d955924505730fcd0aecf8e8ce57e3fbd5edc41d0c85",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/manifest.json": "7058fd9121aa82fd120cdd802374137ce69b054153e6d70e3d52864ac764e549",
+    "Extraction/requirements.txt": "81796ac0f9dfb486bc57301821e97bebb2a1028921da12e0b5df2819dc8127a4",
+    "Extraction/config.json": "7ad2974511e475f65c0dc0bf3a2684b4a617a1021e742277ff638f0777fdf980",
+    "Extraction/config.sol.json": "e8ddb440b1ce3494f5115ff57d83e4a6dabd97d5f9493368fcdd661a12535769",
+    "Extraction/config.api-luna.json": "9e7bf6f5f834f227c25f9b96ceca40b07c62054a97c7d36d4c75be4b9a99e778",
+    "Extraction/compose.yaml": "6921926ce432a0ec59af476c1f713cd04315a420aaf2e0ee6aec6d435dfe911b",
+    "Extraction/DATA_USE.md": "b459df06c2faba2c8516becee985c4661e8b179f5f89e0466b8b4c42851def7d",
+    "Extraction/tests/test_draft_packet.py": "5fb110ec46228d1edb90b6688a0cba6b4163ef2ee668e8f1060265d40a9607dc",
+    "Extraction/tests/test_job_packets.py": "26b9ea7bb0efdf4c119973662cec5d9eaa0287d5af726bcc7132cf6678afa510",
+    "Extraction/tests/support.py": "001bc0ccd43757e9c21d80f6760a609e1b721f3bbb74a7852ef78a06a0bf64ca",
+    "Extraction/tests/test_role_identity.py": "2ab3c1d57372c316a72300c53b5b5af9ea47d56c6b07c2d81fc23098e2ead07e",
+    "Extraction/tests/test_providers.py": "cf47dbfa43336a139497444c69ccc8e39dfeaa1949257df99219de591913a3fb",
+    "Extraction/tests/test_draft_endpoints.py": "ecdb5e2eeb3f941fc3bdb923863159776867f189cdf0989bde9928da01fb722d",
+    "Extraction/tests/test_extraction.py": "c541445bf84d36b3e6e7edea16e9905a4cf8cd141e50854ae29578fbdab597e3",
+    "Extraction/tests/test_normalize_recovery.py": "85dab9b8fc09cf7af7db10a7746044011d80ebad5cd0f0d27da345756baac52d",
+    "Extraction/tests/test_provider_retry.py": "ea978fe30e356ac2eeab966a155002ce45d944b7eef655b23d3f451f5ada4008",
+    "Extraction/tests/test_provider_switch.py": "608c5e5ad7ba2574f84959e054b2f7a023c986451faf0d36ccc4eda80b826209",
+    "Extraction/tests/image_acceptance.py": "e0c0927ea1431d1818c8130cd853296303b24c35e7447e8acdd33b8d29860374",
+    "Extraction/tests/test_question_output.py": "d185999911a6623aaf25afbfb473c2ab097810d5e897ecec1924318eb66e2cdf",
+    "Extraction/tests/test_patch_packets.py": "559e15688f88d7999fa0501ed7cdef00c17dbc59dc2c60ff19252484c6bfd347",
+    "Extraction/tests/test_korean_phase.py": "f713f4c90d464dcc4c087ce259c699dbbd13f6f395841e54140d580b906e5505",
+    "Extraction/tests/test_index_progress.py": "027d362bf0526ce4c5dd2444075f21660eecae38188a0aabf7729951d61cedfd",
+    "Extraction/tests/test_batch.py": "f8ffc1009951fce07b9c466009f53d85e80bfe22f066815d497be16bbdefaecc",
+    "Extraction/tests/test_empty_source.py": "b70449847f00af20ef7ea397431e6fb2dc90a499556e7b3f0bd9d9c9a90b3998",
+    "Extraction/prompts/questions.txt": "fceb67257990042feaf5b2b2335844e50bc8ac2d880a9b8368d23946de7b0c82",
+    "Extraction/prompts/final.txt": "70e7c3422285b3e4537c18e5c1502031532abfae8d398ab45366828ac6ed9d56",
+    "Extraction/prompts/draft.txt": "29f0cec94addc05682075a59fa2b529e9455efd7b8e9f0ac3924c43fbf077274",
+    "Extraction/prompts/patch.txt": "afc402f9f60cdb135f2c002b83a1b123257a08d4504ff86f1e4a0b8cf56ca0bb",
+    "Extraction/prompts/normalize.txt": "a1bf53ebf5f310a94e3c8715be5700db6d2b4c64313b469456692e0de11f4b0f",
+    "Extraction/ontoward_extraction/build.py": "7cf89ee73466288410bcc312e3f0a93b8777c7b4cadf9e6248a6adedcb30a27d",
+    "Extraction/ontoward_extraction/recovery.py": "1bf1a832254be8296399ac3f333a6333da04c05a35f5cb790153b3e70d0c82b3",
+    "Extraction/ontoward_extraction/models.py": "f4410f71d2ca4b3d074b32059060d21af073c61c2676e2c732c2097b4335afc6",
+    "Extraction/ontoward_extraction/normalize.py": "158f1a1ad9167f614a99e8addbfb4e765c0e59ddc091d2f397bdec0f823f23bf",
+    "Extraction/ontoward_extraction/__init__.py": "b0fa6a1d5eb69c16800185180e7ac1c42cd4df30ef34af3162cbfc8f9cadc597",
+    "Extraction/ontoward_extraction/llm.py": "57df4f093389a6ba4edf352a1a0bdc51c0394d4d5e02baaeefca4a3cc2ad1194",
+    "Extraction/ontoward_extraction/jobs.py": "b4a7e644348af381a7935e6e1e958273f54710c86c71f1df1c3035fd49a34063",
+    "Extraction/ontoward_extraction/inputs.py": "c8f0aee3bb11913c7f9221ea6f64226839407d2c74c05cb84b3330e4f2aa95cb",
+    "Extraction/ontoward_extraction/progress.py": "9950cfda223fdf6aa7dcd7d3f0d36cf121035243cb1320c4775dee1970bb8962",
+    "Extraction/ontoward_extraction/guidelines.py": "bcf7b88be2d84f5a0c6394c449b613c87480928091e26b30105e98c42f11288c",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/started": "b4fa2d2d30a92ab002fd275a0df5f7f15eb215ee6446acaacd1042389e09ead0",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/result.json": "c5947395bc6c79c40edb8ba591f21f83229c8652572756f61d4a02d8329b1e1a",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/runner.log": "61d4388ec5481fee77bcd62280bf560488156f10babe2fda727a7bb94dff2b56",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/ended": "a755125218537168688c26284fef2ffdad48edb0428afac841f67973d25b52b5",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/status": "6da5b18878e110928643ebcc38dbb7552cf3a296eea56493e23edc2b93eecff8",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run-id": "dc1eaf099ba3ea0e049b3a038553a650125c045caded9719edba5d6439f99d79",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run.args": "b7f9d7f33c715e8d06a04268280abd613807f55cf701d8bf33391b992bf46089",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/report.html": "c0c47ed3ef7da2b973833ae7a3f4cc62d3ed8832e7eb504ae296b31f7528424e",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/inspection.json": "5e6d5e93c6d94b5dccfdf14e3f89ddc22c980c6faa78689867120bc3c2b2f0a4",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run.json": "b600406816a5e397245a82a5617243ee016c7e3c6b50daf8042329e23e279305",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/exit-code": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/stderr.log": "f63430938da76a2dbf066f90f1fca5629a42df6b0dfea577d82b27f051b5cc95",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/trace.jsonl": "b7c37480b3fef19c553f8a12d41a96471454b8b00bafb9763ac2018ec5277473",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/process.json": "2eb82ee29d86c527b4863d06bb0a044992b8d5f42f56e7ecebf541804284f682",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/summary.json": "f27de7dc8b77b625b96577489ec5c8ceb329522a12e0c1c3e06902054acd0e1a",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/model-calls.jsonl": "978258208a2300303d886a0b76cb0d6075766f40b833c54effe8d4e99a0eee37",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/transcript.json": "48049cf13879981debf6af70760d4c667e883150a7a49dcf8d1f3525013676f3",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/requests.json": "b53184c53da5c2a273ef96d27133016eb06fc4cb13065762209fbff0d5d25433",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/nova-requests.jsonl": "a3af1cc811494be9f75be1c82afd44c6a8a0124844fc834f6b07e62c58772718",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/vocabulary.ttl": "23ae78abea1dc55c1d48545feba0fbe54d0516a1f2c5335bc4fc30beed5f1af8",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/clinical.ttl": "69d37b3c92faf3312378b24d8bf984112cbf538dd456a62c023d780f860a2d9e",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/started": "5c76272c196abd033196a8d3338d28eb7f5b5fddb7b540bd30e3940d5b840aa1",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/result.json": "2cffd333d5818373083eb64f136cfb8228a50f1245f08adee0664b59057c717a",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/runner.log": "3208d281f889592b2351ad5e40004d83b9dfe4a5f73f005c0fe68ef969c8a443",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/ended": "394fc4e566a574b063100132e5aa8f04329ff316c05a3388499f4578948cf64d",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/status": "6da5b18878e110928643ebcc38dbb7552cf3a296eea56493e23edc2b93eecff8",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run-id": "910bd88e9189ac1f5fd5304d952d639158ff01ff30772e376294d001dfb04cdc",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run.args": "b7f9d7f33c715e8d06a04268280abd613807f55cf701d8bf33391b992bf46089",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/report.html": "be944d7f9208961ae250fce4476b201d84d30a27e8ae8684b7083b6cf4b47aee",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/inspection.json": "57b55890806c08c6575e6712be755825803f4d62a9d5e68bf2dd94c3807c8b36",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run.json": "4e86516d70079b848812802064483ec7db24ec66725f5d3cef06d5457092dd56",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/exit-code": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/stderr.log": "ca3782e115e959bb14594a659a91eccdadb2851b743854710d159ed50733f9f8",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/trace.jsonl": "4fc6fb5879036b1af1ab1e59175d0768fa8ad2daafecf8d2444f7ba5cb953800",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/process.json": "850c5d290b691140eecec7be3cd31b95e01913e6bad178213a0e3625c7855a45",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/summary.json": "75a36d87198d06c84e93a5acdfac6d5d893a89323a6605350e39a32685fad87d",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/model-calls.jsonl": "1dd47e2dc7237f80db4dfd1014226b73414b16e89319ea813febf5f49d1a720c",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/transcript.json": "b11ee9c959ccfc8b7a57bf5ffc48a64bcd64874e3c5625d0a814320436a5de08",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/requests.json": "e967752f9d59bf40857ea466f19afeb187dfa4b1eb1b6efded077b2298f33107",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/nova-requests.jsonl": "69bebf5965d2f2a755ceaae74f890bb05873b8d982739d436230835031cf9da2"
+  },
+  "authorized_old_protected_changes": [
+    "Extraction/AGENTS.md",
+    "Extraction/README.md",
+    "Extraction/ontoward_extraction/__main__.py",
+    "Extraction/ontoward_extraction/compile.py",
+    "Extraction/ontoward_extraction/install.py",
+    "Extraction/ontoward_extraction/verify.py",
+    "submission/knowledge/manifest.json"
+  ],
+  "runtime_source_sha256": {
+    "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+    "requirements.txt": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01",
+    "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    ".env": "9c2e46b5b22e0f0c47f026cb0cc5a047b10b8cabc7e44e625640513cf6cf6595",
+    "settings.py": "94cd247a14a76c1432e648a6c5b8d5eb771621f2c817c6012707548a0fbb94b8",
+    "config/texts.ko.json": "5e9ea2af6114a2da71133e825f2c851c717a227ce8e789e09d565ab91348cad1",
+    "config/prompts.json": "5f9dcbb4b228403c84bc9be4690dca831bbda768830e171848f9b0d324715e6f",
+    "knowledge/graph.py": "b642350b47e21667d7fbc3c1e476adaf6ad4aa2d01d5768ce3907e421839fa74",
+    "knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "knowledge/conditions.py": "8a24ac94772538ddba59c6bb962efab68fc4bb24181de2a11060d2406819ee2a",
+    "knowledge/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "knowledge/manifest.json": "d0ff44bb5de4989eb97bd4262d4dc38b620137699b239ddff118b7d01211bfc8",
+    "knowledge/guidelines.py": "f2855176cb175967df15deaee6bdcdeeacf7d07491ebb33c4bdf5c84e8d097ba",
+    "workflow/model_context.py": "33f0bd75bc58664a344ebd0ea1ed7285c8044d7ca90d724c780798e036610092",
+    "workflow/consultation.py": "31dd3180473c16c3d929375c6cde285c8485ea5ba27467ad590886d3b7315629",
+    "workflow/doctor_mouth.py": "475ae7bf651f74252f406245574515d6069459b15473b45796bbe6ceee67612d",
+    "workflow/doctor_ear.py": "ac68808070631a892f35560a3539bf9d0de797c00d5935938b3da01c344195c2",
+    "workflow/input_types.py": "f7c487dd587e9b0725085c3fc71a5cbd7f1644e1b27359881f1f847fa8faa930",
+    "workflow/text_config.py": "81007fcf36b5668b97d495ed1cd0249213771968ff645c07ab021c9f98fe77b5",
+    "workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workflow/education.py": "c896389142875b7a7560fcd3c31e5bdcf6c59dee72683cad29d6e02443d2ae9c",
+    "workflow/submission_writer.py": "8b7e4953ea3e8c2aac6548b8450f99de5080c9fa8ce4b4003fec7280886e6af0",
+    "workflow/runtime.py": "2be3ee090254b472cd926dc3254fca07ac38d63d552e8037b3ee8ac22f3358ed",
+    "workflow/output_types.py": "af24b35d0a1195889f1e1b256b6eb2d24f422ee46e7f89794cf979953eaf184a",
+    "workflow/doctor_brain.py": "6ec2d9c23d18215521f6275a2182ef4ef0c373a32030a3a29ae3dc24ae141c6d",
+    "config/prompts/clinical_action_output.txt": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769",
+    "config/prompts/session_differential_diagnosis.txt": "25286d10199c3a2aaced6785dcbb8e918b2cc36be873177d8ac0d9b01f1d86e5",
+    "config/prompts/session_initiation.txt": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d",
+    "config/prompts/mouth_plan.txt": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538",
+    "config/prompts/plan_common.txt": "7c73629f7b146932e95de00854b62759ea39b564726ee0b0fe7d4ba117c752bc",
+    "config/prompts/plan_repair.txt": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3",
+    "config/prompts/session_context_factor.txt": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9",
+    "config/prompts/input_reply.txt": "9619bf9e29c185ae9045bea7b19c631dc4f6fc0fbf2b28a1c75fcca5e447cefb",
+    "config/prompts/mouth_disease_notice.txt": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4",
+    "config/prompts/clinical_rank_output.txt": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0",
+    "config/prompts/input_repair.txt": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3",
+    "config/prompts/clinical_ranking.txt": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29",
+    "config/prompts/clinical_action.txt": "98cbc6547ecb7d84e91589557ab5e44d8e489dfaaa8a9048d55029445f6dddc8",
+    "config/prompts/input_common.txt": "4e7105059e96f251de19496c957791eafd1001afbff1f5c28aaa61b45e51bb97",
+    "config/prompts/input_chief_repair.txt": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d",
+    "config/prompts/plan_output.txt": "9c6373c4758e052243124b37faea78633fe2d230787cc9bf2a688158383010ce",
+    "config/prompts/session_chief_complaint.txt": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54",
+    "config/prompts/mapping_common.txt": "2bc48cedc9021323beeb52248e6cace47ad81e9ee211dd5def9672eaa8b0b1b6",
+    "config/prompts/input_fields.txt": "e10ffed09056a14244d6c09e2cc9e0036ff2b8cfd7cfd2b83e42144e97d68dc7",
+    "config/prompts/mapping_select.txt": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36",
+    "config/prompts/clinical_common.txt": "7d61c8f427274324ea015a42e10ba981e8171463e3d582aded574d6ce1a641e2",
+    "config/prompts/plan_complete.txt": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4",
+    "config/prompts/clinical_repair.txt": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2",
+    "config/prompts/input_rows_repair.txt": "f2f472dc9c9cbd5d2d3de9361c0dec68c5705cd45b016aca3e558ecef52b7366",
+    "config/prompts/input_exam.txt": "9272db7d9b9a47381b7459ccca79143a3603b029519255057e03a917b509452b",
+    "config/prompts/mouth_output.txt": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739",
+    "config/prompts/input_initial.txt": "6b9cf8fa8f2b5da80014756067b049bd79027a8437787f2b949f801b10bc521a",
+    "config/prompts/mapping_repair.txt": "9e248b59b4374651e34ca3be4f1b5b33a9efe8b1c5ecf0ad373443d42b1bc1d6",
+    "config/prompts/mouth_common.txt": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19",
+    "config/prompts/clinical_decision_output.txt": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25",
+    "config/prompts/mouth_symptom_notice.txt": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493",
+    "config/prompts/data.txt": "be9dc59c6a2496ac9b392f9f0a246abeaf91be73cb2ae602d8ca0aa890de9f65",
+    "config/prompts/mouth_response_repair.txt": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31",
+    "config/prompts/mouth_text_repair.txt": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5",
+    "knowledge/builds/87e8b4c54b0689453cea91b3bb316290/clinical.ttl": "69d37b3c92faf3312378b24d8bf984112cbf538dd456a62c023d780f860a2d9e",
+    "knowledge/builds/87e8b4c54b0689453cea91b3bb316290/questions.ko.json": "66f0426172d1a6c761a3f553314e9f7ebecd1784b1fb7f786beaf7091e5f0561",
+    "knowledge/builds/87e8b4c54b0689453cea91b3bb316290/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "knowledge/builds/87e8b4c54b0689453cea91b3bb316290/guideline-index.json": "8f0e9b1e937aecc4df73d955924505730fcd0aecf8e8ce57e3fbd5edc41d0c85",
+    "knowledge/builds/87e8b4c54b0689453cea91b3bb316290/manifest.json": "7058fd9121aa82fd120cdd802374137ce69b054153e6d70e3d52864ac764e549",
+    "knowledge/builds/87e8b4c54b0689453cea91b3bb316290/vocabulary.ttl": "23ae78abea1dc55c1d48545feba0fbe54d0516a1f2c5335bc4fc30beed5f1af8",
+    "knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/clinical.ttl": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06",
+    "knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/questions.ko.json": "c65c7083543867189c458e1fc7e13c32b7cb2266cef14510ef30d138ea1d4afd",
+    "knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/guideline-index.json": "de6a92abd3333dd2b4620aabfabf37a46342f115f00a04276afdf9e1d6756089",
+    "knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/manifest.json": "58e77c35bd47dbc4e96fb527b06a7b3c32bd4ec31da2158962cf1939c41543ab",
+    "knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/vocabulary.ttl": "3c5975cc90c0730067f4ad8359f63f5b0a9b9dc20c22cd9506f4a5a8b468f9b1",
+    "workflow/io/nova_session.py": "1e30df7153cb92e8deb58b99e39a8a669f873ffabe0482215aecb14e35dd686c",
+    "workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+    "workflow/state/models.py": "2f8ba98adf8ea65899965a22e2b4f65ac30d7cda85bd49875b8057d70209e2fb",
+    "workflow/state/questions.py": "1ef702194bf0137e22b3d831204abba2423404d8df7badd0f69f1622784dd25d",
+    "workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workflow/state/interactions.py": "386f54838b85506da0a477ace5269d76458b6dc58a473a928e4e6a0dddfbe5d0",
+    "workflow/state/evidence.py": "6a121ea121d85e46b8de82db8e9e08515176ad27be99e10fd86a8477bde14029",
+    "workflow/state/usage.py": "2a54856accb8fa9cfb62557d60b33f42c7dc0e8bd168b4995976321809c9cefb",
+    "workflow/sessions/differential_diagnosis.py": "c98ca038a777560832feb60d53d52e636006cf65f6eda4d95e5cef36d022275a",
+    "workflow/sessions/chief_complaint.py": "d99294957a0e74a800d49072ede3050a30bc8f5bbd823253925787bda0cfbd7a",
+    "workflow/sessions/initiation.py": "b9acc707231e29f3f9c445c537809b0985f3df975be989c9ff94b838a53f6bf3",
+    "workflow/sessions/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workflow/sessions/education.py": "486c826acc7b269fd5551d9d2ed45d2a371b81051035b4e4eb1324aece50a506",
+    "workflow/sessions/context_factor.py": "a66d47c0a4628498ebcdbf15723950460fd97715dfc7d67879fa8987dd8cbf75",
+    "workflow/rules/assessment.py": "ebb0a40ecadf6e22b87cd1c2be63205753d65fa970dd2f3032d5d939b0b194ad",
+    "workflow/rules/limits.py": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a",
+    "workflow/rules/budget.py": "b470e90c4709fea6af924928b9082f69aa316bd2dc4d9f9b5c1f1f841c387806",
+    "workflow/rules/submission.py": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267",
+    "workflow/rules/questions.py": "0dab7769c5eb3dba1ae6a0af3009c34b82c9750f51beb95ab1b9c51819f68f10",
+    "workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workflow/rules/decision.py": "8245534323bc480406c4b909e8452aa9789c77899d358b1c17fad2aedfa40bcb",
+    "workflow/rules/action.py": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb",
+    "workflow/rules/input.py": "23bc29c0586e8fa6e08c4013da44d480e9e1b83567e809ff96e4fdf88e682d9a",
+    "workflow/rules/collection.py": "ff2d5d755e9c2393a4a7bf2df7624d5e68dcde5188e319f668c9e3529f045048",
+    "workflow/rules/normalization.py": "a0d50523eb1dabd0217c48d9c5a59d0c0a948214e6f5305fe87d04cb15a1814a"
+  },
+  "changed_files": [
+    "AGENTS.md",
+    "DECISION_STATE.md",
+    "Dev/tests/workflow/audit_links.py",
+    "Extraction/AGENTS.md",
+    "Extraction/README.md",
+    "Extraction/ontoward_extraction/__main__.py",
+    "Extraction/ontoward_extraction/compile.py",
+    "Extraction/ontoward_extraction/maintenance.py",
+    "Extraction/tests/test_maintenance.py",
+    "PRD.md",
+    "PROJECT_STATE.md",
+    "README.md",
+    "data/AGENTS.md",
+    "data/PROJECT_STATE.md",
+    "data/ontology/AGENTS.md",
+    "data/provenance/algorithm-d50-6-2026-10-21.json",
+    "data/provenance/v5-maintenance-correction-2026-10-21.json",
+    "data/provenance/v5-maintenance-plan-2026-10-21.json",
+    "submission/AGENTS.md",
+    "submission/PROJECT_STATE.md",
+    "submission/README.md",
+    "submission/knowledge/README.md",
+    "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/clinical.ttl",
+    "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/guideline-index.json",
+    "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/manifest.json",
+    "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/questions.ko.json",
+    "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/schema.ttl",
+    "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/vocabulary.ttl",
+    "submission/knowledge/graph.py",
+    "submission/knowledge/manifest.json",
+    "submission/settings.py"
+  ],
+  "state_checks": [
+    {
+      "path": "PROJECT_STATE.md",
+      "current_goal_complete": true,
+      "d55_acceptance_references_resolve": true
+    },
+    {
+      "path": "submission/PROJECT_STATE.md",
+      "current_goal_complete": true,
+      "d55_acceptance_references_resolve": true
+    },
+    {
+      "path": "data/PROJECT_STATE.md",
+      "current_goal_complete": true,
+      "d55_acceptance_references_resolve": true
+    }
+  ],
+  "shared_state_validator": {
+    "status": "preexisting_format_incompatibility",
+    "current_error": "Unquoted comma-separated evidence references at root line 69, submission line 66, data line 50",
+    "head_reproduction": "The same root scalar error occurs in committed HEAD at line 68",
+    "note": "Preserve historical dotted goal IDs and multi-evidence syntax; verify D55 current goals and acceptance references directly"
+  },
+  "dependencies": {
+    "python": "Python 3.12.15",
+    "pydantic": "2.14.0",
+    "rdflib": "7.6.0"
+  },
+  "images": [
+    "sha256:0999f2b28fd11f6783b849e94ff0c59b3c791a8afb49034b6e57fee225395da7 [\"ontoward-dev:latest\"]",
+    "sha256:ee826303904ef857f281f3236b0b899f38b8357b6222724c6841667f199fd0b4 [\"ontoward-test:local\"]",
+    "sha256:716fd9fe776e068c5540f63ceb2e277da20b21eb7a0fe1c4c8e37a6d6e4e348f [\"ontoward-package:local\"]"
+  ],
+  "model_calls": 0,
+  "disposed_job_resume": false,
+  "actual_model_quality": "not_run",
+  "clinical_validity": "not_run",
+  "provider_tokens": "not_measured",
+  "official_submission": "not_run",
+  "deployment": "not_run",
+  "push": "not_run",
+  "unmerged": [
+    {
+      "ids": [
+        "urn:ontoward:Symptom9ea9091d59108a126423efdd"
+      ],
+      "name": "Decreased body weight",
+      "proposed_canonical": "urn:ontoward:Symptom366ac5a51ea09abe0114a080",
+      "reason": "Retain this independent node and its Hypopituitarism relation: the runtime label and overlapping aliases do not establish a unique reviewed source concept; find no exact active RF2 description or exact BODHI symptom row for this name and do not infer equivalence from wording alone"
+    },
+    {
+      "id": "urn:ontoward:Symptom895740ca649251eefe27af87",
+      "name": "Difficulty breathing",
+      "reason": "Alias overlap only; outside the five explicitly reviewed nodes and no approved same-meaning merge"
+    },
+    {
+      "id": "urn:ontoward:Symptomb12361a0c596fc61b4995228",
+      "name": "Breathlessness with gradual onset",
+      "reason": "Preserve the onset-qualified subtype; shared aliases do not remove its qualification"
+    }
+  ]
+}

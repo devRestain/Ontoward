@@ -1,5 +1,9 @@
 # 새 지식 DB 추출
 
+현재 D55의 제한된 오프라인 유지보수 정정은 새 build `0fd42155c3171c9c9dcf66cb7f733245`와 strict loader를 함께 로컬 활성화한 상태입니다. 원본 `87e8b4c54b0689453cea91b3bb316290` 여섯 파일은 그대로 보존합니다. [정정 명세](../data/provenance/v5-maintenance-plan-2026-10-21.json)가 실제 ID/edge와 승인 근거를, [변환 기록](../data/provenance/v5-maintenance-correction-2026-10-21.json)이 전체 RDF 차이와 의미 보존을, [검증 기록](../data/provenance/algorithm-d50-6-2026-10-21.json)이 활성화 결과를 관리합니다. 이 경로는 현재 해시 고정된 runtime 자산에서 의미를 복원하는 예외이며 폐기한 work DB·원래 요청/응답·neutral 판단·source history를 복구하지 않습니다. 일반 신규 생성은 계속 아래의 네 원자료 시작 규칙을 따릅니다.
+
+유지보수 CLI는 `python -m ontoward_extraction correct-bundle --manifest PARENT_MANIFEST --corrections REVIEWED_PLAN --output FRESH_DIRECTORY`입니다. 프로젝트 dev 컨테이너에서 `PYTHONPATH=/workspace/submission:/workspace/Extraction`, network none으로 실행하며 provider·resume·run-id·install 플래그를 받지 않습니다. 검토 명세가 전수 invalid edge와 정확히 일치해야 하며 이름 기반 재정규화 없이 등록 ID, 별도 ExamMethod와 owner별 값을 보존합니다. effect나 비문구 질문 계약이 충돌한 병합은 보류하고 독립적인 타입 정정은 완료합니다. 출력 디렉터리가 이미 있으면 덮어쓰지 않습니다. 새 후보는 원래 loader·strict 검사·coverage·prepare와 전후 canonical graph 비교를 모두 통과해야 합니다. 설치는 기존 installer를 사용하고 `--preserve-build PARENT_BUILD_ID`로 부모를 정리 대상에서 제외합니다. strict gate를 invalid parent에 먼저 적용하지 않습니다.
+
 현재 실제 추출·컴파일·로컬 설치는 완료했습니다. 사용자 요청으로 모든 이전 work 체크포인트, 중복 staging, 콘솔 로그와 추출 전용 임시 기록을 삭제했습니다. 현재 생성기·설정·프롬프트·테스트와 설치된 `submission/knowledge/`는 유지합니다. [삭제 영수증](../data/provenance/extraction-storage-cleanup-2026-10-21.json)과 [최종 감사 기록](../data/provenance/extraction-final-audit-2026-10-21.json)을 따르세요.
 
 이 문서의 status·pause·resume·recover·logs 예시는 체크포인트가 존재하는 별도 작업을 위한 일반 안내입니다. 삭제된 과거 실행은 재개하거나 복구할 수 없습니다. 현재 설치 번들은 작업 DB 없이 `docker compose run --rm --no-deps -T verify verify`로 확인합니다. `status`가 `not_started`를 보여도 설치 번들이 미완료라는 뜻은 아닙니다.

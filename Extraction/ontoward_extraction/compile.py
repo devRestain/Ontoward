@@ -40,7 +40,7 @@ def compile_bundle(directory, build_id, raw_concepts, raw_relations, value_paths
         vocabulary.add((subject,RDFS.label,Literal(node.korean,lang='ko')))
         for alias in node.aliases:
             vocabulary.add((subject,SKOS.altLabel,Literal(alias)))
-        for predicate,ids in ((OW.hasAttribute,node.attributes if node.kind in {'Symptom','ExamFinding'} else []),
+        for predicate,ids in ((OW.hasAttribute,node.attributes if preserve_ids or node.kind in {'Symptom','ExamFinding'} else []),
                 (OW.canHaveValue,node.values if node.kind=='FindingAttribute' else []),
                 (OW.inSystem,node.systems if node.kind in {'Symptom','ExamFinding'} else [])):
             for ident in ids: vocabulary.add((subject,predicate,URIRef(ident)))

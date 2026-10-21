@@ -1,4 +1,4 @@
-"""Report vocabulary endpoint violations offline without changing prepare gates."""
+"""Report vocabulary endpoint violations offline without modifying the bundle."""
 import argparse
 from collections import Counter
 import json
@@ -27,8 +27,7 @@ def audit(knowledge):
                     subject_types=sorted(str(kind) for kind in knowledge._graph.objects(subject, RDF.type)),
                     object_types=sorted(str(kind) for kind in knowledge._graph.objects(target, RDF.type)),
                     violations=violations))
-    return dict(violation_counts=dict(counts), invalid_edges=len(rows), violations=rows,
-        production_strict_gate=False, bundle_correction='deferred_to_task_B')
+    return dict(violation_counts=dict(counts), invalid_edges=len(rows), violations=rows)
 
 
 if __name__ == '__main__':
