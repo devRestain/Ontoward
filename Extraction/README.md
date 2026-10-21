@@ -1,6 +1,16 @@
 # 새 지식 DB 추출
 
-D49의 독립 실행기는 네 원자료에서 새 `v5-enum-1` 번들을 만듭니다. 이미지는 **ontoward-extraction:local**, 진입점은 `python -m ontoward_extraction`입니다. 이미지·합성 파이프라인과 실제 RF2/CSV의 읽기 전용 파싱을 검증했습니다. 별도로 승인된 실제 NOVA 생성은 진행 중이며 [루트 상태](../PROJECT_STATE.md)·[데이터 상태](../data/PROJECT_STATE.md)를 따릅니다. 실제 번들이 설치되기 전 `prepare()`와 정식 패키징은 `knowledge_bundle_not_installed`로 실패합니다.
+현재 실제 추출·컴파일·로컬 설치는 완료했습니다. 사용자 요청으로 모든 이전 work 체크포인트, 중복 staging, 콘솔 로그와 추출 전용 임시 기록을 삭제했습니다. 현재 생성기·설정·프롬프트·테스트와 설치된 `submission/knowledge/`는 유지합니다. [삭제 영수증](../data/provenance/extraction-storage-cleanup-2026-10-21.json)과 [최종 감사 기록](../data/provenance/extraction-final-audit-2026-10-21.json)을 따르세요.
+
+이 문서의 status·pause·resume·recover·logs 예시는 체크포인트가 존재하는 별도 작업을 위한 일반 안내입니다. 삭제된 과거 실행은 재개하거나 복구할 수 없습니다. 현재 설치 번들은 작업 DB 없이 `docker compose run --rm --no-deps -T verify verify`로 확인합니다. `status`가 `not_started`를 보여도 설치 번들이 미완료라는 뜻은 아닙니다.
+
+모든 모델 작업이 끝난 뒤 `incomplete_generation_contract`가 나면 저장 결과와 현재 이미지의 정규화·컴파일 코드를 먼저 대조합니다. 같은 입력 ID가 Symptom과 AttributeValue에 함께 쓰였을 때 두 역할을 분리하고 원래 질문을 유지해야 합니다. 단순한 동일 이미지 재시작이나 같은 질문의 추가 생성으로 이 충돌을 덮지 않습니다.
+
+사용자가 현재 세션의 수동 처리를 명시적으로 선택한 경우에는 실패 DB와 원래 작업·요청·응답·사용량·시도 횟수를 그대로 보존한 새 fingerprint에서 문제 필드만 교정할 수 있습니다. 교정 전후·실행 불가 연결의 제외 사유·수동 입력 해시는 SQLite에 따로 남기고, 파생 입력만 컴파일합니다. Test를 신체 EXAM으로 바꾸거나 의미가 없는 ID를 임의 선택하지 않습니다. 전체 loader·coverage 검증을 통과한 뒤 요청된 설치를 진행하며, 실제 적용 결과는 [루트 상태](../PROJECT_STATE.md)와 [데이터 상태](../data/PROJECT_STATE.md)가 관리합니다.
+
+`patch`에서 `string_above_max_length`가 발생한 첫 거절 체크포인트는 `bash Extraction/extraction.sh recover-patch --run-id 기존_ID`로 모델 호출 없이 새 실행 ID에 복구합니다. 수정된 이미지는 어휘·완료 관계를 배치에서 한 번만 전달하고, 각 JSON 메시지를 50,000자 이하로 나누며 40개 배치를 유지합니다. 임상 조건·질문·진찰·단위·scope는 보존하고 검색 별칭은 원래 SQLite에 남깁니다. 복구는 이전 단계가 모두 완료되고 요청이 확정된 해당 실패만 허용하며, 원본 DB·결과·시도 횟수·사용량을 보존합니다. 새 ID를 확인한 뒤 API Luna 설정으로 명시적으로 재개합니다.
+
+D49의 독립 실행기는 네 원자료에서 새 `v5-enum-1` 번들을 만듭니다. 이미지는 **ontoward-extraction:local**, 진입점은 `python -m ontoward_extraction`입니다. 이미지·합성 파이프라인과 실제 RF2/CSV의 읽기 전용 파싱을 검증했습니다. 별도로 승인된 실제 생성의 공급자·실행 ID·진행 상태는 [루트 상태](../PROJECT_STATE.md)·[데이터 상태](../data/PROJECT_STATE.md)를 따릅니다. 실제 번들이 설치되기 전 `prepare()`와 정식 패키징은 `knowledge_bundle_not_installed`로 실패합니다.
 
 ## 전체 생성 순서와 DB를 먼저 이해하기
 
@@ -47,6 +57,78 @@ docker compose run --rm -T verify verify --run-id RUN_ID
 `status`와 `pause`는 키나 client를 만들지 않는다. 실행이 없으면 `not_started`를 반환한다. `verify`는 네트워크 없이 읽기 전용으로 번들·해시·실행 계약·기본 커버리지를 확인한다. 전체 모델 의미와 임상적 정확성을 검증하는 명령은 아니다.
 
 ## 실행·진행 확인·로그
+
+질문 생성은 모델이 `id`, `question`, `exam_text`, `attribute_role`, `exam_method`만 반환하는 작은 패치를 사용한다. 이름·별칭·속성·허용 값·system은 Python이 기존 입력에서 그대로 복원하므로 큰 연결 개념을 응답에서 반복하지 않는다. 비어 있는 진찰 방법을 채우는 경우만 새 ExamMethod 한 개를 허용한다. 기본 설정은 Luna medium·배치 10개·출력 상한 8000이며, 명시적으로 선택한 Sol 설정은 아래 계약을 따른다. 현재 실행 모델과 ID는 루트·데이터 운영 상태에서 확인한다.
+
+질문 요청에서도 검색용 별칭과 연결 참조의 중첩 attributes·values·systems를 반복하지 않는다. 질문 대상의 임상 필드·허용 값과 각 참조의 ID·역할·영문/한국어 표제·context·질문 단위·진찰 방법은 유지한다. 완전한 등록 입력은 작업 DB에 보존하고 출력 패치 검증과 결과 복원에는 그 원본을 사용한다. 이 변경은 질문 단계의 전송 자료에만 적용한다.
+
+Luna의 잘린 질문 응답을 이 계약으로 옮길 때는 `bash Extraction/extraction.sh recover-questions --run-id OLD_RUN_ID`를 사용한다. 완료된 정규화·질문과 모든 요청·사용량·시도 횟수를 보존한 새 fingerprint를 만들며, 복구 명령은 모델을 호출하지 않는다.
+
+### 명시적으로 선택하는 Sol 전환
+
+`config.sol.json`과 `switch-sol`은 사용자가 명시적으로 선택할 때만 활성화한다. questions 단계의 실행이 안전하게 paused가 되었거나 `CONTEXT_LIMIT_EXCEEDED` 등 허용된 확정 오류로 실패했고, 모든 요청의 결과가 확정됐을 때 다음 명령을 사용한다. 불명 요청과 관련 없는 오류는 거절한다. Sol profile은 초안·최종 모두 `gpt-6.1-sol` medium, 배치 **40개**, 출력 상한 **32000**, NOVA 모델 합산 **하루 100회**다. 완료 결과를 재생성하지 않고 별도 fingerprint에서 남은 작업을 처리한다. 복구 이력은 SQLite에 저장하고 중복 `recovery.json`을 만들지 않는다.
+
+`CONTEXT_LIMIT_EXCEEDED`는 NOVA가 해당 요청을 컨텍스트 제한으로 거절했다는 뜻이다. 추출 요청은 매번 그 배치의 자료만 보내며 이전 대화를 누적하지 않는다. 서버가 실제 토큰 수를 반환하지 않으면 입력 바이트 수만으로 정확한 초과 기준을 단정하지 않는다. 일일 호출 한도와 구별하며, 전환 시 원자료·등록 개념·질문의 임상 의미와 완료 결과를 보존한다. Sol의 100회 한도는 성공한 팀 호출을 KST 자정까지 합산하므로 다른 팀 실행의 사용분도 영향을 줄 수 있다. [NOVA 개발 가이드](https://nova.snubhai.org/docs/)
+
+Sol의 40개 요청에서 `INVALID_REQUEST_BODY`가 확정됐고 질문 입력 생성 코드만 제한적으로 수정했다면 같은 `switch-sol` 명령으로 Sol 설정을 유지한 복구가 가능하다. 실패 요청·시도 횟수를 포함한 새 fingerprint를 만들며 완료 결과를 다시 호출하지 않는다. 서버가 세부 검증 사유를 제공하지 않으면 오류 코드만으로 정확한 입력 상한을 추정하지 않는다.
+
+```sh
+bash Extraction/extraction.sh pause --run-id OLD_RUN_ID
+# paused 또는 허용된 확정 실패이고 실행 중 worker가 없는지 확인한다.
+bash Extraction/extraction.sh switch-sol --run-id OLD_RUN_ID
+# 출력된 새 ID로 재개하며 Sol 설정 경로도 지정한다.
+bash Extraction/extraction.sh resume --provider nova_dev \
+  --config /app/config.sol.json --run-id NEW_RUN_ID --install
+```
+
+### 기본 실행과 조회
+
+`draft_packet_item_too_large:jobs`는 API 전송 전에 한 작업의 JSON이 내부 메시지 상한 5만 자를 넘었다는 뜻이다. 큰 `source_material` 목록은 작업 ID로 연결한 여러 JSON 메시지에 나누고, 작업 헤더의 참조와 전체 레코드 수를 함께 전달한다. 같은 요청 안에서 원래 순서대로 합치며 원자료·중복·수치·단위·40개 배치를 유지한다. 메시지를 나누어도 모델 호출 횟수는 늘지 않는다.
+
+이 오류로 실패한 기존 체크포인트는 다음 명령으로 준비한다. `recover-packets`는 다음 배치에서 기존 오류를 재현하고 수정된 패킷을 로컬 검증한 뒤, 완료 결과·인덱스·요청·응답·사용량·시도 횟수를 보존한 별도 fingerprint를 만든다. 네트워크와 키 없이 실행하며 실제 생성을 시작하지 않는다. 출력된 새 ID로 재개한다.
+
+```sh
+bash Extraction/extraction.sh recover-packets --run-id OLD_RUN_ID
+# 준비가 끝난 뒤 실제 생성을 시작할 때 실행한다.
+bash Extraction/extraction.sh resume --provider openai_api \
+  --config /app/config.api-luna.json --run-id NEW_RUN_ID --install
+```
+
+`invalid_relation_endpoint`는 응답의 질환 또는 Target이 허용된 종류가 아니라는 뜻이다. 예를 들어 Disease 자체나 AttributeValue인 `With aura`를 Target으로 쓸 수 없다. draft 요청은 배치 job ID·질환 ID·허용 Target 참조와 presence/속성 expectation 쌍을 native JSON Schema로 제한한다. 개념 expectation의 불필요한 수치·구간 필드는 막고 quantity·interval의 실제 값·단위·비교·경계는 보존한다. Python도 실제 종류·질환 귀속·등록 속성/값을 다시 검증한다. ContextFactor는 Target과 applicability 양쪽에 사용할 수 있으며 applicability에는 ContextFactor만 허용한다. 필요한 새 개념은 `new:<Kind>:<slug>`와 완전한 정의를 제안하며 등록 개념을 덮어쓰지 않는다.
+
+기존 API Luna 실행에서 이 오류가 발생했다면 먼저 `pause`로 진행 중 응답과 정상 결과를 저장한 후 아래 명령을 사용한다. `recover-endpoints`는 완료 초안·원본 DB·모든 입력·요청·응답·사용량·시도 횟수를 보존한 새 fingerprint를 만든다. 복구 자체는 모델을 호출하지 않으며 불명 결과와 미완료 작업의 시도 상한을 우회하지 않는다. 새 ID로 재개하며 Luna medium·40개 배치를 유지한다.
+
+```sh
+bash Extraction/extraction.sh recover-endpoints --run-id OLD_RUN_ID
+bash Extraction/extraction.sh resume --provider openai_api \
+  --config /app/config.api-luna.json --run-id NEW_RUN_ID --install
+```
+
+NOVA가 공통 어휘 전체를 압축한 draft 요청도 `INVALID_REQUEST_BODY`로 거절했다면, 사용자가 선택한 OpenAI API 또는 Codex 구독 경로로 명시적으로 전환할 수 있다. `switch-provider`는 네트워크와 인증 키 없이 원본을 보존한 별도 fingerprint를 만든다. 완료된 정규화·질문, 원자료 인덱스, 작업 입력·시도 횟수, 모든 과거 요청·응답·공급자·사용량을 그대로 보존하며, 실행 중이던 미완료 draft만 pending으로 되돌린다. 새 요청은 선택한 공급자만 사용한다. 불명 결과, 완료된 draft, 지정 profile 이외의 모델·프롬프트·임상 계약 변경은 거절한다. 사용자가 선택한 API profile `config.api-luna.json`은 초안·최종 모두 **gpt-6-luna medium**, 배치 **40개**, 출력 상한 **32000**이다. API에는 NOVA 일일 쿼터를 적용하지 않는다.
+
+OpenAI API를 선택했다면 프로젝트 루트 `.env`에 `OPENAI_API_KEY`를 직접 설정한다. 키를 채팅·로그·체크포인트에 넣지 않는다. 다음 명령의 첫 단계는 모델을 호출하지 않으며, 재개 단계부터 실제 API 사용량이 발생한다.
+
+```sh
+bash Extraction/extraction.sh switch-provider --provider openai_api \
+  --run-id eaa7abf36326fdb8fcefc1f52f8f444d
+# 위 명령이 출력한 새 run_id를 사용한다.
+bash Extraction/extraction.sh resume --provider openai_api \
+  --config /app/config.api-luna.json --run-id NEW_RUN_ID --install
+```
+
+Codex를 명시적으로 선택하는 경우 `docker compose run --rm codex-login`으로 전용 volume에서 사용자가 로그인하고, 위 두 명령의 provider를 `codex_subscription`, config를 `/app/config.sol.json`으로 지정한다. 기존 호스트 인증을 복사하지 않는다. Codex 경로의 출력 토큰 상한은 강제되지 않으며 유한한 배치와 600초 프로세스 제한을 사용한다. 동일 target이 이미 만들어졌으면 전환을 반복하지 않고 해당 ID로 재개한다.
+
+초안 관계 생성은 40개 질환의 공통 어휘를 요청 안에서 한 번만 전달한다. 표의 열 이름과 짧은 개념 ID를 사용하고, Python이 모델 응답의 ID를 등록 ID로 복원한 뒤 임상 검증을 적용한다. 전체 임상 개념·속성/값 연결·단위·원자료는 유지하며, JSON 메시지를 5만 자 이하의 완전한 조각으로 나누어 **하나의 모델 호출**에 넣는다. 메시지 분할은 배치 축소나 추가 모델 호출이 아니다. 다음 작업 입력도 설정된 배치만 읽으므로 모든 미완료 질환의 큰 입력을 동시에 메모리에 올리지 않는다.
+
+구버전이 같은 전체 어휘를 질환마다 반복하여 100 MB를 넘는 첫 draft 요청에서 실패했다면 `recover-draft`를 사용한다. 완료된 정규화·질문과 모든 요청·사용량·시도 횟수·입력 핀을 보존한 별도 fingerprint를 만들며, 복구 자체는 네트워크·키·모델 호출 없이 실행한다. 수용된 draft, 불명 요청, 달라진 모델/설정/임상 계약은 거절한다. HTTP 413 HTML은 원본 SDK에서 `INVALID_API_RESPONSE`로 보일 수 있으므로 추출 로그에 HTTP 상태도 남긴다.
+
+```sh
+bash Extraction/extraction.sh recover-draft --run-id OLD_RUN_ID
+bash Extraction/extraction.sh resume --provider nova_dev \
+  --config /app/config.sol.json --run-id NEW_RUN_ID --install
+```
+
+이전 복구 실행은 전체 원자료 인덱스가 포함된 SQLite를 각각 보관하므로 실행 수에 비례해 저장 공간이 증가한다. 정리한 비활성 체크포인트는 해당 run 디렉터리의 `jobs.sqlite3.gz`로 무손실 보관하고 `archive.json`과 `data/provenance/extraction-checkpoint-archives-2026-10-20.json`에 원본 SHA-256·크기·상태를 남긴다. 전체 압축 해제 결과의 해시와 바이트 수를 확인한 뒤에만 중복 비압축본을 제거한다. 현재 실행 DB는 압축하지 않는다. 과거 체크포인트를 조회하거나 복구하려면 압축본을 원래 `jobs.sqlite3` 경로에 복원하고 기록된 해시를 확인해야 한다.
 
 요청 배치는 `config.json`의 `batch_size`인 **10개로 고정**한다. 출력 누락·형식 오류·출력 중단·과거 재시도 때문에 자동으로 5→2→1개로 줄이지 않는다. 유효한 결과는 보존하고 미완료 작업만 다음 10개 배치에 넣으며, 단계 말미에 남은 작업만 더 작은 배치가 된다. 작업별 출력 검증 6회 상한과 일일 쿼터는 유지한다. `running=10`은 병렬 요청 10회가 아니라 **요청 한 건에 들어간 작업 10개**를 뜻한다.
 

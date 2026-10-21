@@ -2,17 +2,17 @@
 
 ## Ownership and State
 
-- Apply D50 input, cadence, joint Education, and sequential execution before historical runtime choices; preserve D49 qualitative knowledge, D48 prompt modules, D47 clinical ownership/facts, D40 collection, and D45 turns.
+- Apply D53 top-five Education sources and direct Initiation without social SAY actions before D52 relation sharing and terminal context rejection; preserve D51 input recovery, D50 cadence and sequential execution, D49 qualitative knowledge, D48 prompts, D47 facts, D40 collection, and D45 turns.
 - Keep run.py as the unchanged SDK callback entrypoint and Consultation as the sole five-session coordinator.
 - Assign input interpretation and acceptance to DoctorEar clinical ranking and questions to the five session objects English plans and Education delivery scheduling to EducationSession all model execution to one injected DoctorBrain and patient expression and SAY/EXAM execution to DoctorMouth.
 - Pass only a current successful unfrozen CC Assessment into ContextFactor through Consultation without passing another session object.
 - Keep EducationSession responsible for announcement and plan group ordering turn allocation queue registration undelivered preparation receipts and preparation status; keep Mouth Education rendering result-only and use QuestionLifecycle for shared completion and cancellation.
 - Reuse queued or receipted Education plan groups on reentry without rendering them again or retrying failed groups.
 - Keep SubmissionWriter responsible for deterministic SOAP validation DIAGNOSE and completed confirmation without model or reasoner access.
-- Prepare patient-free graph indexes terms question assets and text configuration once.
+- Prepare patient-free graph indexes terms question assets and text configuration once. Validate supplied role clarification as NFC Korean with 1-30 codepoints.
 - Keep exactly case interview session and optional turn in WorkflowState. Run Consultation on accepted typed state without LangGraph or whole-state node copies and validate external data before acceptance.
 - Keep one facts dictionary of CaseFact with optional GraphBinding chief reference one Assessment English plan and clinical revision in CaseState.
-- Keep queued current-session questions compact Answers collection interruptions and pending empathy in InterviewState.
+- Keep queued current-session questions compact Answers and collection interruptions in InterviewState.
 - Keep server constraints once-only usage termination and the completed receipt in SessionContext.
 - Keep only the current input action or submission in TurnContext and clear it after acceptance or completion.
 - Keep one actual dialogue in DoctorEar for reference interpretation and clear it at consultation release.
@@ -23,8 +23,9 @@
 
 - Accept initial input before the first SAY and every collection reply through DoctorEar; bypass generation only for configured exact unknown/acknowledgement SAY replies and canonical affirmative single-target presence questions.
 - Bind exact admitted English terms in Python and normalize only unresolved statements with supplied compatible candidates.
-- Preserve independent valid rows bounded recovery forced bindings numeric units scope corrections and acquisition guards.
-- Repair only requested statement or demographic rows and preserve omitted valid areas and empathy. Normalize typed ages without changing units bounds or approximation; include unmapped non-English note content in bounded repair.
+- Preserve independent valid rows bounded recovery meaning-preserving bindings numeric units scope corrections and acquisition guards.
+- Limit Ear to context plus one shared row/chief repair and mapping plus one shared format/reference/meaning repair. Reject arbitrary first-candidate completion and retain normalized unbound facts.
+- Repair only requested statement or demographic rows and preserve omitted valid areas; normalize typed ages without changing units bounds or approximation and include unmapped non-English note content in bounded repair.
 - Preserve subject family member reporter time observation episode polarity and actual source segment at acceptance.
 - Accept objective initial observations only from verified vital_signs quotations and preserve opening reports as subjective information.
 - Store age sex historian medications reported numbers and qualified information in the same fact store; include them in clinical and planning inputs and record demographics at the start of HPI without invented graph rules.
@@ -48,13 +49,15 @@
 - Reject answered unknown blocked incorrectly scoped unprepared or unaffordable optional questions without hypothetical utility gates.
 - Use high effort for clinical decisions and English planning and medium effort for Ear and Mouth on the existing designated model.
 - Generate English P with corresponding Korean utterances in one high-effort request. Validate both independently, preserve accepted English and source quotes, and repair only invalid Korean groups with the existing medium-effort response and text repair limits.
-- Use validated Korean empathy templates without a generation call and preserve actual action accounting.
+- Read only the first five installed guideline selections in index order without promoting later sources after failure; retain full verified text and treat source contents as reference data under the plan task and patient facts.
+- Start with unresolved Initiation intake or necessary chief clarification after initial input acceptance; exclude greeting and empathy implementation and account every SAY or EXAM in its session actions.
 - Select explicit task keys and normalized values without whole-state dumps large schemas or full graph profiles; keep clinical output at 4096 tokens and one recovery at 8000 tokens. Do not measure cap or trim prompts by bytes.
 - Load task recipes from ONTOWARD_PROMPTS inside config and select initial reply EXAM mapping ranking action plan expression and repair routes in the owning Python caller.
 - Keep each request's output contract and situation instructions specific to the active task; preserve clinical conditions as patient data and bounded repair decisions in Python.
 - Preserve official server turns separate from model tokens calls internal nodes and DIAGNOSE while protecting response final clinical decision Education and submission resources.
 - Reuse confirmed response budgets without routine GETs; synchronize uncertain actions and server model-limit failures and retain pre-submission refresh. Keep clinical question computation in sessions and pass integer requirements into BudgetPolicy with one shared cost table and the existing reservation floor.
 - Serialize model data as one JSON object and share full relation definitions with shallow evidence and question references. Aggregate questions by complete scope before executability checks and reuse only operation-local graph work.
+- Share identical clinical relation definitions across disease associations only when target effect ordered full Pattern rule scope and applicability match. Preserve every disease candidate scoped fact match and Python graph reference. Terminate on CONTEXT_LIMIT_EXCEEDED without output-token escalation or another collection action.
 - Preserve same-identity transient replay shared limits session caps and explicit unknown transport termination.
 - Validate every patient utterance independently as NFC Korean with 1-30 codepoints without truncation.
 - Deliver the frozen diagnosis before planning and preserve English P and undelivered receipts after rendering failure.
@@ -66,8 +69,8 @@
 
 ## Assets and Acceptance
 
-- Preserve the unchanged SDK and entrypoint, pinned Pydantic and RDFLib requirements, Python-selected task routes, and historical custody. Remove LangGraph and the unused empathy generation route. Load only the v5-enum-1 relative-path/hash-pinned six-file contract without old-format conversion.
-- Pin the algorithm as d50.1 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
+- Preserve the unchanged SDK and entrypoint, pinned Pydantic and RDFLib requirements, Python-selected task routes, and historical custody; load only the v5-enum-1 relative-path/hash-pinned six-file contract without old-format conversion.
+- Pin the algorithm as d50.4 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
 - Keep maintained behavior tests in Dev/tests/workflow observation and comparison in Test and disposable evidence in Tmp.
 - Verify source and independent read-only archive consultations in project containers with network disabled and original SDK HTTP on the internal project network.
 - Record runtime and artifact evidence separately from actual model quality clinical accuracy real NOVA official evaluation commits and deployment.

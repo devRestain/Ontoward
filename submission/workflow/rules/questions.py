@@ -1,14 +1,15 @@
 import hashlib
 
+from ..state import usage
 from .collection import INTAKE, HISTORY, answered, slot_resolved
 from .limits import LIMITS
 from ..state.models import Question
 
 
 class QuestionTools:
-    def __init__(self, knowledge, config, questions, interactions, budget, usage):
+    def __init__(self, knowledge, config, questions, interactions, budget):
         self.knowledge, self.config, self.questions = knowledge, config, questions
-        self.interactions, self.budget, self.usage = interactions, budget, usage
+        self.interactions, self.budget = interactions, budget
 
     def has_resolved_evidence(self, state, target, attribute=None, observation=None, episode=None,
                               subject='patient', time_context=None, subject_member=None):
@@ -82,7 +83,7 @@ class QuestionTools:
             return True
         if not self.budget.can_clarify(state):
             return False
-        self.usage.record_clarification(state)
+        usage.record_clarification(state)
         values = original.model_dump() if original and original.kind == 'SAY' else {}
         attribute = self.knowledge.term_id(original.attribute, 'FindingAttribute') if original and original.attribute else None
         text = self.knowledge.clarification(attribute, self.config.texts.clarification_question)

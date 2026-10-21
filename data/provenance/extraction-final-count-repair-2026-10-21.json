@@ -1,0 +1,409 @@
+{
+  "contract": "explicit-manual-final-mapping-1",
+  "run_id": "804487b16283fb80052be0925a785a39",
+  "job_id": "cb82a0a1e36db4c3434c6f3dcbf52256dd5630a2e2a00118b81056609dfb5d4f",
+  "authorization": "User explicitly requested direct inspection and mapping of the failed job and continuation of remaining automation.",
+  "source_request_id": "f2dc3e0f-b370-4dd7-924e-ffccef67aa03",
+  "before_job": {
+    "job_id": "cb82a0a1e36db4c3434c6f3dcbf52256dd5630a2e2a00118b81056609dfb5d4f",
+    "phase": "final",
+    "status": "failed",
+    "result": null,
+    "attempt_count": 6,
+    "next_retry_at": null,
+    "error": "output_validation_failed:[{\"message\":\"Value error, Quantity uses its operator rather than interval boundaries\",\"path\":\"relations.0.features.0.expected\",\"type\":\"value_error\"}]"
+  },
+  "input_sha256": "83fc4200d1656906a56eae9f16dd8e0ae0e7684d79c9d00553068565f0d0d32a",
+  "before_meta": {
+    "state": "failed",
+    "error": "output_contract_failed:final",
+    "pause_requested": false,
+    "updated_at": 1792510665.8852754
+  },
+  "source_result": {
+    "concepts": [],
+    "job_id": "cb82a0a1e36db4c3434c6f3dcbf52256dd5630a2e2a00118b81056609dfb5d4f",
+    "relations": [
+      {
+        "applicability": [],
+        "disease_id": "urn:ontoward:Diseased2351e5c6b789a108fc15141",
+        "effect": "support",
+        "features": [
+          {
+            "attribute": "urn:ontoward:FindingAttribute5954ab6e84c449948aeb7c89",
+            "expected": {
+              "approximate": false,
+              "concept": null,
+              "concepts": [],
+              "kind": "quantity",
+              "lower": null,
+              "lower_inclusive": false,
+              "match": "exact",
+              "operator": "gt",
+              "selection": "any_of",
+              "unit": "count",
+              "upper": null,
+              "upper_inclusive": false,
+              "upper_unit": null,
+              "value": 7
+            },
+            "status": "present"
+          }
+        ],
+        "target_id": "urn:ontoward:Symptomb6810261104fd0e76eaddee7",
+        "target_scope": {
+          "subject": "patient",
+          "subject_member": null,
+          "time_context": "current"
+        }
+      }
+    ],
+    "value_matches": []
+  },
+  "accepted_result": {
+    "job_id": "cb82a0a1e36db4c3434c6f3dcbf52256dd5630a2e2a00118b81056609dfb5d4f",
+    "concepts": [
+      {
+        "id": "urn:ontoward:Symptomb6810261104fd0e76eaddee7",
+        "kind": "Symptom",
+        "name": "Multiple skin tags",
+        "korean": "다발성 피부꼬리",
+        "aliases": [
+          "Multiple skin tags (disorder)",
+          "Skin tags",
+          "다발성 연성 섬유종",
+          "쥐젖",
+          "피부꼬리"
+        ],
+        "attributes": [
+          "urn:ontoward:FindingAttribute13e95a429a8eabafa6408930",
+          "urn:ontoward:FindingAttribute5954ab6e84c449948aeb7c89"
+        ],
+        "values": [],
+        "systems": [
+          "urn:ontoward:BodySystemafcbb012b4bf3d58dc666f9d"
+        ],
+        "context_type": null,
+        "exam_method": null,
+        "exam_text": null,
+        "question": {
+          "text": "현재 피부꼬리가 여러 개 있나요?",
+          "answer_type": "presence",
+          "affirmative": true,
+          "interviewable": true,
+          "reason": null,
+          "units": [],
+          "time_context": "current"
+        },
+        "attribute_role": null
+      }
+    ],
+    "relations": [
+      {
+        "disease_id": "urn:ontoward:Diseased2351e5c6b789a108fc15141",
+        "target_id": "urn:ontoward:Symptomb6810261104fd0e76eaddee7",
+        "target_scope": {
+          "subject": "patient",
+          "subject_member": null,
+          "time_context": "current"
+        },
+        "applicability": [],
+        "features": [
+          {
+            "status": "present",
+            "attribute": "urn:ontoward:FindingAttribute5954ab6e84c449948aeb7c89",
+            "expected": {
+              "kind": "quantity",
+              "concept": null,
+              "concepts": [],
+              "selection": "any_of",
+              "match": "exact",
+              "value": 7.0,
+              "operator": "gt",
+              "lower": null,
+              "upper": null,
+              "lower_inclusive": true,
+              "upper_inclusive": true,
+              "unit": "개",
+              "upper_unit": null,
+              "approximate": false
+            }
+          }
+        ],
+        "effect": "support"
+      }
+    ],
+    "value_matches": []
+  },
+  "changes": [
+    {
+      "path": "relations.0.features.0.expected.lower_inclusive",
+      "before": false,
+      "after": true
+    },
+    {
+      "path": "relations.0.features.0.expected.upper_inclusive",
+      "before": false,
+      "after": true
+    },
+    {
+      "path": "relations.0.features.0.expected.unit",
+      "before": "count",
+      "after": "개"
+    },
+    {
+      "path": "concepts",
+      "before": [],
+      "after": [
+        {
+          "aliases": [
+            "Multiple skin tags (disorder)",
+            "Skin tags",
+            "다발성 연성 섬유종",
+            "쥐젖",
+            "피부꼬리"
+          ],
+          "attribute_role": null,
+          "attributes": [
+            "urn:ontoward:FindingAttribute13e95a429a8eabafa6408930",
+            "urn:ontoward:FindingAttribute5954ab6e84c449948aeb7c89"
+          ],
+          "context_type": null,
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:Symptomb6810261104fd0e76eaddee7",
+          "kind": "Symptom",
+          "korean": "다발성 피부꼬리",
+          "name": "Multiple skin tags",
+          "question": {
+            "affirmative": true,
+            "answer_type": "presence",
+            "interviewable": true,
+            "reason": null,
+            "text": "현재 피부꼬리가 여러 개 있나요?",
+            "time_context": "current",
+            "units": []
+          },
+          "systems": [
+            "urn:ontoward:BodySystemafcbb012b4bf3d58dc666f9d"
+          ],
+          "values": []
+        }
+      ]
+    }
+  ],
+  "mapping": "Preserve skin-tag count >7. Use registered count attribute and its unit 개, bind it to the unchanged symptom target, retain registered numeric question and separate presence question.",
+  "original_result_sha256": "5d8abeac0de46f99b076fe12b3469ae2122e6234a624b58b53af4e0bebb6cf4d",
+  "accepted_result_sha256": "6e1419e5d7854c2d7f340021dbce20b3cb1454c13531f43eef6911a794bbc635",
+  "validation": {
+    "original_rejected": true,
+    "missing_binding_reproduced": true,
+    "corrected_strictly_accepted": true,
+    "numeric_boundaries": {
+      "6": "contradicted",
+      "7": "contradicted",
+      "8": "matched",
+      "9": "matched"
+    },
+    "presence_question_preserved": true,
+    "clinical_effect_and_scope_preserved": true,
+    "protected_rows_unchanged": true,
+    "sqlite_quick_check": "ok",
+    "exclusive_worker_lock": true,
+    "atomic_commit": true
+  },
+  "model_calls_started": 0,
+  "counters_reset": 0,
+  "created_at": 1792512489.7652829,
+  "protected_before": {
+    "jobs": {
+      "rows": 13995,
+      "sha256": "ce003918ffb635e14b7d9b27064395839b754612c431b7aed3cf350d43452c59"
+    },
+    "requests": {
+      "rows": 1647,
+      "sha256": "3e346885012134b6820f6d87b763148bf4813e26fecc08226280caf35f238996"
+    },
+    "usage": {
+      "rows": 5,
+      "sha256": "ce90f3bce03c8b5309ab0caccfc47517708f53e16ed094f3cf44b5de1e6e4664"
+    },
+    "meta": {
+      "rows": 225,
+      "sha256": "814c4b668670e71073d97e51ec84885432eb42f161df8322c88144bcd7c13e48"
+    }
+  },
+  "after_status": {
+    "run_id": "804487b16283fb80052be0925a785a39",
+    "state": "paused",
+    "phase": "final",
+    "provider": "openai_api",
+    "pause_requested": true,
+    "updated_at": 1792512516.4728665,
+    "index": {
+      "files_completed": 108,
+      "files_total": 108,
+      "rows_committed": 12587695,
+      "current_file": null
+    },
+    "jobs_by_phase": {
+      "draft": {
+        "done": 945
+      },
+      "final": {
+        "done": 3124,
+        "pending": 541
+      },
+      "normalize": {
+        "done": 6429
+      },
+      "questions": {
+        "done": 2957
+      }
+    },
+    "jobs": {
+      "done": 13455,
+      "pending": 541
+    },
+    "requests": {
+      "accepted": 1626,
+      "failed": 21
+    },
+    "job_errors": [],
+    "recovery": {
+      "completed_by_phase": {
+        "draft": 155,
+        "normalize": 6429,
+        "questions": 2957
+      },
+      "contract": "draft-job-packet-recovery-1",
+      "counters_reset": 0,
+      "jobs_pending": 790,
+      "local_error": "draft_packet_item_too_large:jobs",
+      "model_calls_started": 0,
+      "oversized_jobs": [
+        {
+          "characters": 50671,
+          "job_id": "3323444a4f9c9d391dba3f1840f1e8fe04c1a76573667e7f3d9aaca2899d33ce"
+        }
+      ],
+      "phase": "draft",
+      "reason": "split_oversized_job_source_records_within_one_request",
+      "requests_preserved": 1542,
+      "run_id": "804487b16283fb80052be0925a785a39",
+      "source_identity": "a8ef6109e515546c23e066cbfd8334625a16a66ed4103e53e5750418c0943ce3",
+      "source_models": {
+        "draft": "gpt-6-luna",
+        "final": "gpt-6-luna"
+      },
+      "source_provider": "openai_api",
+      "source_run_id": "a8ef6109e515546c23e066cbfd833462",
+      "target_identity": "804487b16283fb80052be0925a785a391c87d112a95b336f16c78d9d762d5f59",
+      "target_models": {
+        "draft": "gpt-6-luna",
+        "final": "gpt-6-luna"
+      },
+      "target_provider": "openai_api",
+      "usage_preserved": [
+        {
+          "calls": 548,
+          "day": "2026-10-19",
+          "input_tokens": 2534916,
+          "model": "openai/gpt-6-luna",
+          "output_tokens": 1046486
+        },
+        {
+          "calls": 5,
+          "day": "2026-10-20",
+          "input_tokens": 1373032,
+          "model": "gpt-6-luna",
+          "output_tokens": 72583
+        },
+        {
+          "calls": 943,
+          "day": "2026-10-20",
+          "input_tokens": 9638519,
+          "model": "openai/gpt-6-luna",
+          "output_tokens": 3143208
+        },
+        {
+          "calls": 25,
+          "day": "2026-10-20",
+          "input_tokens": 477622,
+          "model": "openai/gpt-6.1-sol",
+          "output_tokens": 146514
+        }
+      ]
+    },
+    "usage": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 548,
+        "input_tokens": 2534916,
+        "output_tokens": 1046486
+      },
+      {
+        "day": "2026-10-20",
+        "model": "gpt-6-luna",
+        "calls": 80,
+        "input_tokens": 12951464,
+        "output_tokens": 773776
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6-luna",
+        "calls": 943,
+        "input_tokens": 9638519,
+        "output_tokens": 3143208
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6.1-sol",
+        "calls": 25,
+        "input_tokens": 477622,
+        "output_tokens": 146514
+      },
+      {
+        "day": "2026-10-21",
+        "model": "gpt-6-luna",
+        "calls": 30,
+        "input_tokens": 2576258,
+        "output_tokens": 234809
+      }
+    ],
+    "error": null
+  },
+  "resume": {
+    "background": {
+      "container": "ontoward-extraction-final-20261020T160934Z",
+      "log": "20261020T160934Z-final-count-resume.log",
+      "run_id": "804487b16283fb80052be0925a785a39",
+      "install": true
+    },
+    "state": "running",
+    "phase": "final",
+    "jobs": {
+      "draft": {
+        "done": 945
+      },
+      "final": {
+        "done": 3163,
+        "pending": 462,
+        "running": 40
+      },
+      "normalize": {
+        "done": 6429
+      },
+      "questions": {
+        "done": 2957
+      }
+    },
+    "new_model_calls": 1,
+    "fresh_results_accepted": 39,
+    "manual_job_preserved": true,
+    "model": "gpt-6-luna",
+    "effort": "medium",
+    "batch_size": 40
+  }
+}

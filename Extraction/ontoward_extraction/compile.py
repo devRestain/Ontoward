@@ -15,6 +15,14 @@ def compile_bundle(directory, build_id, raw_concepts, raw_relations, value_paths
     vocabulary,clinical=Graph(),Graph()
     questions,roles={},{}
     by_id={node['id']:node for node in nodes}
+    for node in list(nodes):
+        if node['kind']!='ExamFinding':continue
+        method=by_id.get(node['exam_method'])
+        if method and method['kind']=='ExamMethod' and not method['exam_text'] and node['exam_text']:
+            # Keep the supplied finding-specific action rather than assigning one finding's text to a shared method.
+            ident=identifier('ExamMethod',[method['id'],node['id'],node['exam_text']])
+            executable=dict(method,id=ident,exam_text=node['exam_text'])
+            nodes.append(executable);by_id[ident]=executable;node['exam_method']=ident
     for raw in nodes:
         node=Concept.model_validate(raw);subject=URIRef(node.id)
         vocabulary.add((subject,RDF.type,OW[node.kind]))
@@ -22,7 +30,8 @@ def compile_bundle(directory, build_id, raw_concepts, raw_relations, value_paths
         vocabulary.add((subject,RDFS.label,Literal(node.korean,lang='ko')))
         for alias in node.aliases:
             vocabulary.add((subject,SKOS.altLabel,Literal(alias)))
-        for predicate,ids in ((OW.hasAttribute,node.attributes),(OW.canHaveValue,node.values),(OW.inSystem,node.systems)):
+        for predicate,ids in ((OW.hasAttribute,node.attributes),(OW.canHaveValue,node.values),
+                (OW.inSystem,node.systems if node.kind in {'Symptom','ExamFinding'} else [])):
             for ident in ids: vocabulary.add((subject,predicate,URIRef(ident)))
         if node.context_type: vocabulary.add((subject,OW.contextType,Literal(node.context_type)))
         if node.exam_method: vocabulary.add((subject,OW.detectedBy,URIRef(node.exam_method)))
@@ -30,6 +39,8 @@ def compile_bundle(directory, build_id, raw_concepts, raw_relations, value_paths
         if node.question: questions[node.id]=node.question.model_dump()
         elif node.kind=='ExamFinding' and node.exam_method in by_id:
             from knowledge.conditions import QuestionTemplate
+            if not by_id[node.exam_method]['exam_text']:
+                raise ValueError('missing_executable_exam_text:'+canonical(dict(finding=node.model_dump(),method=by_id[node.exam_method])))
             questions[node.id]=QuestionTemplate(text=by_id[node.exam_method]['exam_text'],time_context='current').model_dump()
         if node.attribute_role: roles[node.id]=node.attribute_role.model_dump()
     seen={}

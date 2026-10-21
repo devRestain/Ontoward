@@ -1,0 +1,64 @@
+{
+  "contract": "lossless-checkpoint-archive-1",
+  "active_run_excluded": "6042b1d5239f52f82324d1d8f2bc05c9",
+  "archives": {
+    "42ff7f33bc2fcec39a379623a1ac5550": {
+      "run_id": "42ff7f33bc2fcec39a379623a1ac5550",
+      "created_at": 1792471138.706985,
+      "source_path": "data/extraction/v5-enum/work/42ff7f33bc2fcec39a379623a1ac5550/jobs.sqlite3",
+      "archive_path": "data/extraction/v5-enum/work/42ff7f33bc2fcec39a379623a1ac5550/jobs.sqlite3.gz",
+      "original_bytes": 4574896128,
+      "original_sha256": "becf1913f42b4936a833fe6fd27caec06e57967e855cc40d6e4d6538814b7284",
+      "archive_bytes": 861806954,
+      "archive_sha256": "bb55d9d1449cd57ebc926209dbcb45647b51e5231bb858514f81db1b8926a725",
+      "round_trip_sha256": "becf1913f42b4936a833fe6fd27caec06e57967e855cc40d6e4d6538814b7284",
+      "state": "failed",
+      "phase": "normalize",
+      "error": "persistent_provider_failure:PROVIDER_RESPONSE_INVALID",
+      "jobs": [
+        {
+          "phase": "normalize",
+          "status": "done",
+          "count": 250
+        },
+        {
+          "phase": "normalize",
+          "status": "pending",
+          "count": 6169
+        },
+        {
+          "phase": "normalize",
+          "status": "running",
+          "count": 10
+        }
+      ],
+      "requests": 35,
+      "verification": "full_gzip_decompression_matches_original_bytes_and_sha256",
+      "uncompressed_copy_removed": true
+    },
+    "49d20167b4e932a55247cb367e378a1f": {
+      "run_id": "49d20167b4e932a55247cb367e378a1f",
+      "created_at": 1792471168.4336824,
+      "source_path": "data/extraction/v5-enum/work/49d20167b4e932a55247cb367e378a1f/jobs.sqlite3",
+      "archive_path": "data/extraction/v5-enum/work/49d20167b4e932a55247cb367e378a1f/jobs.sqlite3.gz",
+      "original_bytes": 4572262400,
+      "original_sha256": "6589c5b6b815e2fe563607d543c71b89fa6b3004a73e7311c13c1701bf2b49d3",
+      "archive_bytes": 861338900,
+      "archive_sha256": "16b43dc228fd68b8c1b048ea691a5364eb8e4b448f155cc7d5833562d87234b0",
+      "round_trip_sha256": "6589c5b6b815e2fe563607d543c71b89fa6b3004a73e7311c13c1701bf2b49d3",
+      "state": "failed",
+      "phase": "normalize",
+      "error": "output_contract_failed:normalize",
+      "jobs": [
+        {
+          "phase": "normalize",
+          "status": "failed",
+          "count": 6429
+        }
+      ],
+      "requests": 6,
+      "verification": "full_gzip_decompression_matches_original_bytes_and_sha256",
+      "uncompressed_copy_removed": true
+    }
+  }
+}

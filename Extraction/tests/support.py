@@ -56,7 +56,20 @@ class ScriptedProvider:
         return dict(request_id=request_id,messages=messages,model='openai/gpt-6.1-sol' if final else 'openai/gpt-6-luna')
 
     def send(self,payload):
-        packet=json.loads(payload['messages'][-1]['content']);phase=packet['phase'];results=[]
+        parts=[json.loads(message['content']) for message in payload['messages'] if message['role']=='user']
+        packet=parts[-1];phase=packet['phase'];results=[]
+        if phase=='draft' and packet.get('wire_contract')=='draft-shared-1':
+            definitions=[dict(zip(part['vocabulary_columns'],row)) for part in parts for row in part.get('vocabulary',[])]
+            vocabulary={node['id']:node for node in definitions}
+            packet=dict(packet,jobs=[job for part in parts for job in part.get('jobs',[])])
+            for job in packet['jobs']:
+                if 'source_material_ref' in job['input']:
+                    reference=job['input']['source_material_ref']
+                    material=[row for part in parts if part.get('source_material_for')==reference for row in part['source_material']]
+                    if len(material)!=job['input']['source_material_count']:raise ValueError('source_material_part_count_mismatch')
+                    job['input']['source_material']=material
+                job['input']=dict(job['input'],disease=vocabulary[job['input']['disease']],
+                    available_targets=[node for node in vocabulary.values() if node['kind'] in {'Symptom','ExamFinding','ContextFactor'}])
         for job in packet['jobs']:
             self.calls.append(job['job_id'])
             data=job['input'];result=dict(job_id=job['job_id'],concepts=[],relations=[],value_matches=[])
@@ -64,7 +77,9 @@ class ScriptedProvider:
             elif phase=='questions':
                 node=data['concept']
                 template=next(item for item in nodes() if (item['name'],item['kind'])==(node['name'],node['kind']))
-                result['concepts']=[dict(node,question=template['question'],exam_text=template['exam_text'],attribute_role=template['attribute_role'])]
+                result['concepts']=[dict(id=node['id'],question=template['question'],exam_text=template['exam_text'],
+                    attribute_role=template['attribute_role'],exam_method=node['exam_method'])]
+                result['new_concepts']=[]
             elif phase=='draft':
                 target=next(node for node in data['available_targets'] if node['kind']=='Symptom')
                 result['relations']=[relation(disease_id=data['disease']['id'],target_id=target['id'])]

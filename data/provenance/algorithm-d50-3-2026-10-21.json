@@ -1,0 +1,305 @@
+{
+  "algorithm": "d50.3",
+  "decision": "D52",
+  "recorded_at": "2026-10-21T03:19:10+09:00",
+  "source_run": "Tmp/test-evaluator/C10-20261020T180219Z-d1dcede8d5",
+  "failure": {
+    "first_request_id": "758f9d0f-762a-4369-8934-71c0aeb62cf1",
+    "stage": "ChiefComplaint",
+    "task": "clinical_rank",
+    "error": "CONTEXT_LIMIT_EXCEEDED",
+    "observed_cause": "Identical relation definitions were repeated under disease-specific association IDs; oversized input was rejected at the request context boundary.",
+    "recovery_defect": "The original 4096-token request was resent with 8000 output tokens; the Test bridge then returned its stored global error to a later small patient request.",
+    "exact_provider_context_window": "unknown",
+    "original_run_status": "fail",
+    "original_turns": 6
+  },
+  "changes": {
+    "relation_sharing": "Share only identical target effect ordered full_pattern rule_scope and applicability definitions; retain all candidates and per-observation evidence.",
+    "rejection": "Terminate on the first context rejection with the original code; do not enlarge output allowance or continue collection.",
+    "workflow_structure": "unchanged",
+    "models_and_effort": "unchanged"
+  },
+  "checks": [
+    {
+      "id": "baseline",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "tests": 176,
+      "source": "Tmp/c10-context-repair-2026-10-21/baseline-workflow.log"
+    },
+    {
+      "id": "maintained",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "tests": 180,
+      "source": "Tmp/c10-context-repair-2026-10-21/workflow.log",
+      "network": "none"
+    },
+    {
+      "id": "saved_input_equivalence",
+      "evidence_class": "semantic",
+      "status": "pass",
+      "source": "Tmp/c10-context-repair-2026-10-21/replay.json",
+      "cases": [
+        {
+          "stage": "Initiation",
+          "request_id": "144e6f15-c06e-418b-8013-3b7a8bccc54a",
+          "candidates": 41,
+          "facts": 23,
+          "old_relations": 166,
+          "new_relations": 82,
+          "old_evidence": 168,
+          "new_evidence": 84,
+          "old_message_characters": 75065,
+          "new_message_characters": 44745,
+          "clinical_input_equivalent": true,
+          "python_evidence_unchanged": true,
+          "question_checks": [
+            {
+              "mode": "decision",
+              "questions": 58,
+              "equivalent": true
+            },
+            {
+              "mode": "action",
+              "questions": 0,
+              "equivalent": true
+            }
+          ]
+        },
+        {
+          "stage": "ChiefComplaint",
+          "request_id": "758f9d0f-762a-4369-8934-71c0aeb62cf1",
+          "candidates": 54,
+          "facts": 28,
+          "old_relations": 221,
+          "new_relations": 107,
+          "old_evidence": 223,
+          "new_evidence": 109,
+          "old_message_characters": 98549,
+          "new_message_characters": 57294,
+          "clinical_input_equivalent": true,
+          "python_evidence_unchanged": true,
+          "question_checks": [
+            {
+              "mode": "decision",
+              "questions": 75,
+              "equivalent": true
+            },
+            {
+              "mode": "action",
+              "questions": 57,
+              "equivalent": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "observer_parity",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "source": "Tmp/c10-context-repair-2026-10-21/observer/verification.json",
+      "scenarios": 16,
+      "operation_snapshots": 1516
+    },
+    {
+      "id": "independent_archive",
+      "evidence_class": "artifact",
+      "status": "pass",
+      "tests": 180,
+      "source": "Tmp/c10-context-repair-2026-10-21/archive-workflow.log",
+      "archive_sha256": "3a6d60fc79b82789fe0f6e6253dedfb180d24b3fa7e9b2f27adbd1214cfe25a4",
+      "files": 90,
+      "synthetic": true,
+      "read_only": true,
+      "network": "none"
+    },
+    {
+      "id": "archive_consultations",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "source": "Tmp/c10-context-repair-2026-10-21/isolated-http/representative-cases/verification.json",
+      "cases": [
+        {
+          "education": false,
+          "context": "unknown",
+          "termination": "submitted",
+          "nodes": 117
+        },
+        {
+          "education": true,
+          "context": "present",
+          "termination": "submitted",
+          "nodes": 157
+        },
+        {
+          "education": true,
+          "context": "absent",
+          "termination": "submitted",
+          "nodes": 157
+        }
+      ],
+      "protocol_doubles": true
+    },
+    {
+      "id": "original_sdk",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "source": "Tmp/c10-context-repair-2026-10-21/isolated-http/sdk-http.json",
+      "result": {
+        "status": "pass",
+        "entrypoint": "run.py",
+        "transport": "original_sdk_http_loopback",
+        "receipt": "completed",
+        "requests": 44,
+        "actions": 21,
+        "diagnosis": "Disease alpha",
+        "network": "none",
+        "development_credentials": false,
+        "actual_models": "not_run",
+        "clinical_accuracy": "not_run",
+        "langgraph_import": "blocked",
+        "trace_status": "complete",
+        "inspection_status": "pass"
+      }
+    },
+    {
+      "id": "diff_check",
+      "evidence_class": "static",
+      "status": "pass",
+      "command": "git diff --check"
+    }
+  ],
+  "source_sha256": {
+    "submission/settings.py": "280e459ad981a07689bbf9dfe59adbbd6025826d0cc48bbbeccd8de659bf1e63",
+    "submission/workflow/doctor_brain.py": "6ec2d9c23d18215521f6275a2182ef4ef0c373a32030a3a29ae3dc24ae141c6d",
+    "submission/workflow/rules/decision.py": "2a3515d5d6f179fa4f591fe79a290eb55ff211b0979d69f976a7ac249fda555b",
+    "submission/workflow/sessions/differential_diagnosis.py": "c98ca038a777560832feb60d53d52e636006cf65f6eda4d95e5cef36d022275a",
+    "Dev/tests/workflow/test_context_limits.py": "de7a321b2d3babbfa8386e834715a151415760e52fbdfd47df98bb262293e7f7"
+  },
+  "preservation": {
+    "source_custody": {
+      "preserved": [
+        ".env",
+        "config/prompts.json",
+        "config/prompts/clinical_action.txt",
+        "config/prompts/clinical_action_output.txt",
+        "config/prompts/clinical_common.txt",
+        "config/prompts/clinical_decision_output.txt",
+        "config/prompts/clinical_rank_output.txt",
+        "config/prompts/clinical_ranking.txt",
+        "config/prompts/clinical_repair.txt",
+        "config/prompts/data.txt",
+        "config/prompts/input_chief_repair.txt",
+        "config/prompts/input_common.txt",
+        "config/prompts/input_empathy.txt",
+        "config/prompts/input_exam.txt",
+        "config/prompts/input_fields.txt",
+        "config/prompts/input_initial.txt",
+        "config/prompts/input_repair.txt",
+        "config/prompts/input_reply.txt",
+        "config/prompts/input_rows_repair.txt",
+        "config/prompts/mapping_common.txt",
+        "config/prompts/mapping_repair.txt",
+        "config/prompts/mapping_select.txt",
+        "config/prompts/mouth_common.txt",
+        "config/prompts/mouth_disease_notice.txt",
+        "config/prompts/mouth_output.txt",
+        "config/prompts/mouth_plan.txt",
+        "config/prompts/mouth_response_repair.txt",
+        "config/prompts/mouth_symptom_notice.txt",
+        "config/prompts/mouth_text_repair.txt",
+        "config/prompts/plan_common.txt",
+        "config/prompts/plan_complete.txt",
+        "config/prompts/plan_output.txt",
+        "config/prompts/plan_repair.txt",
+        "config/prompts/session_chief_complaint.txt",
+        "config/prompts/session_context_factor.txt",
+        "config/prompts/session_differential_diagnosis.txt",
+        "config/prompts/session_initiation.txt",
+        "knowledge/manifest.json",
+        "requirements.txt",
+        "workflow/__init__.py",
+        "workflow/consultation.py",
+        "workflow/doctor_ear.py",
+        "workflow/doctor_mouth.py",
+        "workflow/education.py",
+        "workflow/input_types.py",
+        "workflow/io/__init__.py",
+        "workflow/io/nova_session.py",
+        "workflow/io/request_executor.py",
+        "workflow/model_context.py",
+        "workflow/output_types.py",
+        "workflow/rules/__init__.py",
+        "workflow/rules/action.py",
+        "workflow/rules/assessment.py",
+        "workflow/rules/budget.py",
+        "workflow/rules/collection.py",
+        "workflow/rules/input.py",
+        "workflow/rules/limits.py",
+        "workflow/rules/normalization.py",
+        "workflow/rules/questions.py",
+        "workflow/rules/submission.py",
+        "workflow/runtime.py",
+        "workflow/sessions/__init__.py",
+        "workflow/sessions/chief_complaint.py",
+        "workflow/sessions/context_factor.py",
+        "workflow/sessions/education.py",
+        "workflow/sessions/initiation.py",
+        "workflow/state/__init__.py",
+        "workflow/state/evidence.py",
+        "workflow/state/interactions.py",
+        "workflow/state/models.py",
+        "workflow/state/questions.py",
+        "workflow/state/usage.py",
+        "workflow/submission_writer.py",
+        "workflow/text_config.py"
+      ],
+      "changed": [
+        "settings.py",
+        "workflow/doctor_brain.py",
+        "workflow/rules/decision.py",
+        "workflow/sessions/differential_diagnosis.py"
+      ]
+    },
+    "saved_trace_sha256": "992345b0675083d607034cb71a90a1e9573b6f8ab5107c4fb0aa03502540b247",
+    "installed_build": "87e8b4c54b0689453cea91b3bb316290",
+    "manifest_sha256": "a4c10f3a897485c1d4eb57ad8dc35e9d60dcb59e4d14a5d8ae5ef54f2ebbb2eb",
+    "assets": {
+      "schema": {
+        "path": "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/schema.ttl",
+        "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+      },
+      "vocabulary": {
+        "path": "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/vocabulary.ttl",
+        "sha256": "23ae78abea1dc55c1d48545feba0fbe54d0516a1f2c5335bc4fc30beed5f1af8"
+      },
+      "clinical": {
+        "path": "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/clinical.ttl",
+        "sha256": "69d37b3c92faf3312378b24d8bf984112cbf538dd456a62c023d780f860a2d9e"
+      },
+      "questions": {
+        "path": "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/questions.ko.json",
+        "sha256": "66f0426172d1a6c761a3f553314e9f7ebecd1784b1fb7f786beaf7091e5f0561"
+      },
+      "guidelines": {
+        "path": "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/guideline-index.json",
+        "sha256": "8f0e9b1e937aecc4df73d955924505730fcd0aecf8e8ce57e3fbd5edc41d0c85"
+      }
+    },
+    "entrypoint_sha256": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+    "sdk_sha256": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d"
+  },
+  "boundaries": {
+    "fresh_nova_context_acceptance": "not_run",
+    "fresh_c10_completion": "not_run",
+    "actual_model_quality": "not_run",
+    "clinical_validity": "not_evaluated",
+    "official_evaluation": "not_run",
+    "production_zip": "not_created",
+    "publication": "not_run",
+    "deployment": "not_run"
+  }
+}

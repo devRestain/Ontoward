@@ -1,3 +1,4 @@
+from ..state import usage
 from ..rules.decision import ActionReply, accept_ranking, clinical_messages, prepare_decision, latest_response
 from ..rules.limits import LIMITS
 from ..rules.normalization import strict_json
@@ -32,7 +33,7 @@ class DifferentialDiagnosisSession:
             if not spec or not self.tools._allowed_now(state, spec) or not self.tools.budget.can_start_action(state):
                 raise ValueError('question_not_executable')
             if spec['purpose'] == 'clarification':
-                self.tools.usage.record_clarification(state)
+                usage.record_clarification(state)
             self.tools._register(state, spec, 0, 1)
         else:
             state.interview.collection['DifferentialDiagnosis:completion'] = 'finish_collection'
@@ -61,7 +62,7 @@ class DifferentialDiagnosisSession:
             except (ValueError, TypeError) as failure:
                 ranking_accepted |= state.case.assessment is not before
                 self.error = response.error or str(failure)
-                if response.error and response.error not in {'OUTPUT_TRUNCATED', 'PROVIDER_RESPONSE_INVALID', 'CONTEXT_LIMIT_EXCEEDED'}:
+                if response.error and response.error not in {'OUTPUT_TRUNCATED', 'PROVIDER_RESPONSE_INVALID'}:
                     break
                 if ranking_accepted and not closing:
                     work = self.prepare_decision(state, mode='action', candidates=work.candidates)

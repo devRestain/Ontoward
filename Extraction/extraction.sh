@@ -13,6 +13,13 @@ case "$command" in
   recover-provider) docker compose run --rm --no-deps -T recovery recover-normalize-provider "$@" ;;
   recover-batch) docker compose run --rm --no-deps -T recovery recover-normalize-batch "$@" ;;
   recover-empty) docker compose run --rm --no-deps -T recovery recover-normalize-empty "$@" ;;
+  switch-sol) docker compose run --rm --no-deps -T recovery recover-questions-sol --config /app/config.sol.json "$@" ;;
+  recover-questions) docker compose run --rm --no-deps -T recovery recover-questions "$@" ;;
+  recover-draft) docker compose run --rm --no-deps -T recovery recover-draft --config /app/config.sol.json "$@" ;;
+  switch-provider) docker compose run --rm --no-deps -T recovery recover-draft-provider --config /app/config.api-luna.json "$@" ;;
+  recover-endpoints) docker compose run --rm --no-deps -T recovery recover-draft-endpoints --config /app/config.api-luna.json "$@" ;;
+  recover-packets) docker compose run --rm --no-deps -T recovery recover-draft-packets --config /app/config.api-luna.json "$@" ;;
+  recover-patch) docker compose run --rm --no-deps -T recovery recover-patch --config /app/config.api-luna.json "$@" ;;
   run|resume)
     log_dir="$ROOT/data/extraction/v5-enum/logs"
     mkdir -p "$log_dir"
@@ -36,5 +43,5 @@ case "$command" in
     fi
     tail -n 80 -F "$log"
     ;;
-  *) printf 'Usage: %s [status|watch|pause|recover|recover-text|recover-provider|recover-batch|recover-empty|run|resume|logs] [arguments]\n' "$0" >&2; exit 2 ;;
+  *) printf 'Usage: %s [status|watch|pause|recover|recover-text|recover-provider|recover-batch|recover-empty|recover-questions|recover-draft|recover-endpoints|recover-packets|recover-patch|switch-provider|switch-sol|run|resume|logs] [arguments]\n' "$0" >&2; exit 2 ;;
 esac

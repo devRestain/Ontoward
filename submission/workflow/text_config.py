@@ -7,7 +7,6 @@ from .rules.action import content_error
 
 class Texts(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    greeting: str
     diagnosis_announcement: str
     diagnosis_announcement_short: str
     symptom_announcement: str
@@ -18,10 +17,7 @@ class Texts(BaseModel):
     primary_chief_question: str
     open_question: str
     clarification_question: str
-    clarification_questions: dict[str, str]
     symptom_assessment: str
-    empathy_fallback: str
-    empathy_templates: dict[str, str]
     unknown_replies: list[str]
     education_acknowledgements: list[str]
     present_replies: list[str]
@@ -38,19 +34,12 @@ class Texts(BaseModel):
     measurement_format: str
     interval_format: str
     range_format: str
-    onset_format: str
     nrs_format: str
     category_format: str
-    assessment_format: str
-    differential_format: str
     exam_turn_format: str
     initial_exam_format: str
-    label_separator: str
-    test_separator: str
     record_separator: str
     record_labels: dict[str, str]
-    term_abbreviations: dict[str, str]
-    history_prefixes: list[str]
     soap_labels: dict[str, str]
 
 
@@ -77,8 +66,7 @@ class TextConfig(BaseModel):
             raise ValueError("Missing clinical context or numeric labels")
         if not texts.qualified_scope_label.strip() or not texts.approximate_label.strip():
             raise ValueError("Missing qualification labels")
-        if (not {"cc", "hpi", "pain", "exam", "vitals", "tests", "treatment", "disposition", "follow_up",
-                 "education", "unknown", "unmapped", "patient_report"} <= texts.soap_labels.keys()
+        if (not {"cc", "hpi", "exam", "tests", "treatment", "disposition", "follow_up", "education"} <= texts.soap_labels.keys()
                 or any(not label.strip() for labels in (texts.soap_labels, texts.record_labels)
                        for label in labels.values())):
             raise ValueError("Missing SOAP category labels")
@@ -93,9 +81,8 @@ class TextConfig(BaseModel):
                                "symptom_announcement": {"diagnosis"},
                                "symptom_announcement_short": {"diagnosis"},
                                "initial_exam_format": {"text"},
-                               "differential_format": {"diagnosis", "evidence"},
-                               "assessment_format": {"diagnosis", "evidence"}, "category_format": {"category", "content"},
-                               "range_format": {"lower", "upper", "unit"}, "onset_format": {"duration"}, "nrs_format": {"value"},
+                               "category_format": {"category", "content"},
+                               "range_format": {"lower", "upper", "unit"}, "nrs_format": {"value"},
                                "episode_format": {"number"},
                                "measurement_format": {"operator", "value", "unit"},
                                "interval_format": {"lower_bound", "lower", "upper", "upper_bound"}}.items():
@@ -105,17 +92,12 @@ class TextConfig(BaseModel):
                 raise ValueError(f"Invalid text placeholders: {name}")
             if any(spec or conversion for _, _, spec, conversion in parts):
                 raise ValueError(f"Text placeholders do not support format conversions: {name}")
-        for name in ('primary_chief_question', 'greeting', 'open_question', 'clarification_question', 'empathy_fallback', 'symptom_cause_unknown'):
+        for name in ('primary_chief_question', 'open_question', 'clarification_question', 'symptom_cause_unknown'):
             if content_error(getattr(texts, name)):
                 raise ValueError(f"Invalid prepared utterance: {name}")
-        if set(texts.empathy_templates) != {'fear', 'anxiety', 'pain', 'frustration', 'sadness', 'other'} or any(
-                content_error(text) or any(c in text for c in '?？\r\n') or not any('가' <= c <= '힣' for c in text)
-                for text in texts.empathy_templates.values()):
-            raise ValueError('Invalid prepared empathy templates')
         from .rules.collection import INTAKE, HISTORY
         if set(texts.intake_questions) != set(INTAKE) or set(texts.history_questions) != set(HISTORY):
             raise ValueError("Missing common collection questions")
-        if any(content_error(text) for text in [*texts.clarification_questions.values(),
-                *texts.intake_questions.values(), *texts.history_questions.values()]):
+        if any(content_error(text) for text in [*texts.intake_questions.values(), *texts.history_questions.values()]):
             raise ValueError("Invalid prepared clarification")
         return cls(prompts=prompts, texts=texts, education_enabled=education_enabled())

@@ -115,7 +115,7 @@ class LifecycleTests(unittest.TestCase):
             if interview['current'] != 'Education':
                 self.assertFalse(any(q['purpose']=='education' for q in interview['queue']))
         for scope,usage in s.session.usage.items():
-            self.assertLessEqual(usage.actions-usage.empathy_actions,SESSION_INTERVIEW_LIMITS[scope][1])
+            self.assertLessEqual(usage.actions,SESSION_INTERVIEW_LIMITS[scope][1])
 
     def test_expiry_and_last_response_processing(self):
         client = f.FakeSDK()

@@ -1,18 +1,18 @@
 import json
 import unicodedata
 from nova_sdk import NovaError
+from .state import usage
 from .model_context import messages
 from .rules.action import ActionResponse, REFUSAL_ERRORS, RESPONSE_FORMAT_ERRORS, content_error, failure_outcome
 from .rules.limits import LIMITS
-from .state.models import Question
 from .state.evidence import patient_payload
 from .output_types import RenderedGroup
 from .doctor_brain import ModelResult
 
 class DoctorMouth:
 
-    def __init__(self, executor, nova_session, usage, questions, interactions, model, config, budget):
-        self.executor, self.nova_session, self.usage = (executor, nova_session, usage)
+    def __init__(self, executor, nova_session, questions, interactions, model, config, budget):
+        self.executor, self.nova_session = (executor, nova_session)
         self.questions, self.interactions, self.model = (questions, interactions, model)
         self.config, self.budget = (config, budget)
 
@@ -100,12 +100,6 @@ class DoctorMouth:
         base = {'task': 'education_doctor', 'fixed_diagnosis': state.case.fixed_diagnosis(), 'patient': patient_payload(state.case), 'turn_budget': capacity}
         return self._render(state, client, base, sentences, budgets, initial=initial)
 
-    def prepare_empathy(self, state, client, event):
-        text = self.config.texts.empathy_templates.get(event.emotion, self.config.texts.empathy_fallback)
-        q = Question(item_id=f'empathy:{event.source_ref}', purpose='empathy', text=text, order=-100, priority=LIMITS.clarification_priority, empathy_key=event.key)
-        self.questions.register(state, q)
-        self.interactions.select_question(state, q)
-
     def validate_action(self, state):
         q = state.question()
         if q is None or state.session.termination:
@@ -124,7 +118,7 @@ class DoctorMouth:
         if self.budget.seconds_left(state.session) <= 0:
             state.stop('expired', 'session_expired')
             return
-        if not self.budget.can_start_action(state, purpose=q.purpose):
+        if not self.budget.can_start_action(state):
             if not self.budget.collection_available(state):
                 state.session.finalizing = True
                 state.turn = None
@@ -143,7 +137,7 @@ class DoctorMouth:
             text = response.content if q.kind == 'SAY' else response.result
             if response.status != 'OK' or text is None:
                 raise ValueError('Invalid action result')
-            self.usage.record_actions(state, state.session.turns_remaining, response.turns_remaining, purpose=q.purpose)
+            usage.record_actions(state, state.session.turns_remaining, response.turns_remaining)
             turn.response, turn.stage = (raw, 'received')
         except NovaError as error:
             raw = {'error': error.code}
@@ -153,7 +147,7 @@ class DoctorMouth:
         if error_code:
             if attempts:
                 try:
-                    self.nova_session.refresh_snapshot(state, client, action_purpose=q.purpose)
+                    self.nova_session.refresh_snapshot(state, client, account_action=True)
                 except NovaError as error:
                     state.stop(failure_outcome(error), error.code)
                 except (TypeError, ValueError):

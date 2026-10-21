@@ -4,7 +4,7 @@
 OWNER_FIELDS = {
     'InitiationSession': ('closed', 'error'),
     'ChiefComplaintSession': ('closed', 'error'),
-    'ContextFactorSession': ('closed', 'error', 'candidate_ids'),
+    'ContextFactorSession': ('candidate_ids', 'rules'),
     'DifferentialDiagnosisSession': ('last_input', 'error'),
     'EducationSession': ('generated_utterances',),
     'BudgetPolicy': ('required_counts',),

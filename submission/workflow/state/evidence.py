@@ -22,7 +22,6 @@ class EvidenceRecord:
     episode_id: str | None = None
     time_context: str = 'current'
     polarity_scope: str = 'general'
-    evidence_use: str = 'reasoning'
 
 @dataclass(frozen=True)
 class EvidenceIndex:

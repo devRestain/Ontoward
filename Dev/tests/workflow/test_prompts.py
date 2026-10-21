@@ -93,7 +93,7 @@ class PromptTests(unittest.TestCase):
             return {'statements': [f.statement('Complaint', assertion='unknown', primary_concern=True)]}
         client = PromptSDK(chat_handler=reply)
         _, state = accept_input(client, 'Complaint')
-        self.assertEqual([p['phase'] for p, _ in client.exchanges], ['context', 'initial_chief_repair'])
+        self.assertEqual([p['phase'] for p, _ in client.exchanges], ['context', 'context_repair'])
         self.assertNotIn('Review the indicated initial presenting-complaint statements', client.exchanges[0][1])
         self.assertIn('Retain genuinely unknown existence', client.exchanges[1][1])
         self.assertIsNone(state.case.chief(confirmed=True))
@@ -112,21 +112,21 @@ class PromptTests(unittest.TestCase):
         self.assertNotIn('Emit empathy only', prompt)
         self.assertEqual(next(iter(state.case.facts.values())).acquisition, 'EXAM')
 
-    def test_mapping_repair_retains_selected_policy_and_forced_stage_is_separate(self):
+    def test_mapping_repair_combines_format_and_semantic_review_without_forcing(self):
         def reply(payload):
             if payload['task'] == 'input_context':
-                return {'statements': [f.statement('Complaint', target_terms=['unresolved concern'])]}
+                return {'statements': [f.statement('Complaint', target_terms=['unresolved concern'],
+                    note_value='Unresolved complaint')]}
             return 'broken JSON' if payload['phase'] == 'mapping' else [{}]
         client = PromptSDK(chat_handler=reply)
         _, state = accept_input(client, 'Complaint')
         calls = [(p, text) for p, text in client.exchanges if p['task'] == 'input_mapping']
-        self.assertEqual([p['phase'] for p, _ in calls], ['mapping', 'format_repair', 'forced'])
-        self.assertNotIn('Repair only syntax', calls[0][1])
-        self.assertIn('Repair only syntax', calls[1][1])
-        self.assertNotIn('Choose the closest type-compatible', calls[1][1])
-        self.assertIn('Choose the closest type-compatible', calls[2][1])
-        self.assertNotIn('Return {} for an unresolved statement', calls[2][1])
-        self.assertEqual(next(iter(state.case.facts.values())).binding, 'forced')
+        self.assertEqual([p['phase'] for p, _ in calls], ['mapping', 'mapping_repair'])
+        self.assertNotIn('Correct syntax, schema, references', calls[0][1])
+        self.assertIn('Correct syntax, schema, references', calls[1][1])
+        self.assertIn('Return {} when no candidate preserves its meaning', calls[1][1])
+        self.assertFalse(f.graph_facts(state.case))
+        self.assertEqual(next(iter(state.case.facts.values())).value, 'Unresolved complaint')
 
     def test_action_repair_keeps_accepted_ranking_and_omits_ranking_instructions(self):
         def reply(payload):

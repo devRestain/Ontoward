@@ -40,10 +40,8 @@ class QuestionLifecycle:
             scope=state.interview.current, purpose=question.purpose, key=question.semantic_key(),
             outcome=outcome, fact_ids=tuple(fact_ids), category=question.category, turn=turn,
             coverage=question.coverage, plan_sentence_id=question.plan_sentence_id,
-            reason=reason, empathy_key=question.empathy_key))
+            reason=reason))
         state.interview.queue = [q for q in state.interview.queue if q.item_id != question.item_id]
-        if question.purpose == 'empathy':
-            state.interview.empathy = None
 
     def reject_action(self, state, question, reason):
         self.complete(state, question, state.turn.request_id, outcome='undelivered', reason=reason)

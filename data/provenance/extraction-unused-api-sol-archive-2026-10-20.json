@@ -1,0 +1,40 @@
+{
+  "contract": "lossless-checkpoint-archive-1",
+  "active_run_excluded": "eaa7abf36326fdb8fcefc1f52f8f444d",
+  "archives": {
+    "0943eb9abee8c4511d7298d9be3dfdd7": {
+      "run_id": "0943eb9abee8c4511d7298d9be3dfdd7",
+      "created_at": 1792476990.177957,
+      "source_path": "data/extraction/v5-enum/work/0943eb9abee8c4511d7298d9be3dfdd7/jobs.sqlite3",
+      "archive_path": "data/extraction/v5-enum/work/0943eb9abee8c4511d7298d9be3dfdd7/jobs.sqlite3.gz",
+      "original_bytes": 7484723200,
+      "original_sha256": "f5cb869a2229c5b94852c4017f1e7937d632a3090f3505da542e54035676b6c3",
+      "archive_bytes": 1461326585,
+      "archive_sha256": "2f7537fbeac70b3ed7827684ce74566211bb89662e159b42129a3c6c22005a42",
+      "round_trip_sha256": "f5cb869a2229c5b94852c4017f1e7937d632a3090f3505da542e54035676b6c3",
+      "state": "ready",
+      "phase": "draft",
+      "error": null,
+      "jobs": [
+        {
+          "phase": "draft",
+          "status": "pending",
+          "count": 945
+        },
+        {
+          "phase": "normalize",
+          "status": "done",
+          "count": 6429
+        },
+        {
+          "phase": "questions",
+          "status": "done",
+          "count": 2957
+        }
+      ],
+      "requests": 1537,
+      "verification": "full_gzip_decompression_matches_original_bytes_and_sha256",
+      "uncompressed_copy_removed": true
+    }
+  }
+}

@@ -183,28 +183,6 @@ def validate_mapping(mapping, statement, contracts):
     return decoded
 
 
-def force_mapping(statement, contracts):
-    if statement_outcome(statement):
-        return {}
-    sign = "(+)" if statement.assertion == "present" else "(-)"
-    for target in contracts:
-        if not target["attributes"]:
-            return {target["id"]: sign}
-        for attribute in target["attributes"]:
-            if statement.measurement:
-                measured = measurement_value(statement.measurement)
-                result = {target["id"]: {attribute["id"]: measured}}
-                try:
-                    validate_mapping(result, statement, [target])
-                    return result
-                except ValueError:
-                    continue
-            if attribute["values"]:
-                selected = attribute["values"][0]["id"]
-                return {target["id"]: {attribute["id"]: selected if sign == "(+)" else {selected: sign}}}
-    return {}
-
-
 def exact_mapping(knowledge, statement, contracts, question):
     if statement_outcome(statement) or not contracts:
         return None

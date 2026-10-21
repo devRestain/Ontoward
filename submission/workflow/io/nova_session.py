@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from ..state import usage
 from ..rules.limits import LIMITS
 from ..state.models import SessionContext, TurnContext, WorkflowState
 
@@ -35,10 +36,9 @@ class SessionInput(BaseModel):
 
 
 class NovaSessionClient:
-    def __init__(self, executor, budget, usage, interactions):
+    def __init__(self, executor, budget, interactions):
         self.executor = executor
         self.budget = budget
-        self.usage = usage
         self.interactions = interactions
 
     def initialize_case(self, client) -> WorkflowState:
@@ -55,7 +55,7 @@ class NovaSessionClient:
 
     def apply_snapshot(self, state: WorkflowState, value: SessionInput) -> None:
         session = state.session
-        self.usage.apply_server_budget(state, value)
+        usage.apply_server_budget(state, value)
         session.budget_sync_required = False
         session.deadline = value.deadline
         session.allowed_actions = value.allowed_actions
@@ -66,9 +66,9 @@ class NovaSessionClient:
         elif value.status not in {"active", "ready", "in_progress"}:
             state.stop("failed", "invalid_session_status")
 
-    def refresh_snapshot(self, state: WorkflowState, client, *, final=False, action_purpose=None) -> None:
+    def refresh_snapshot(self, state: WorkflowState, client, *, final=False, account_action=False) -> None:
         previous = state.session.turns_remaining
         raw = self.executor.execute(state, client, client.session, {}, [], final=final)
         self.apply_snapshot(state, SessionInput.model_validate(raw))
-        if action_purpose is not None:
-            self.usage.record_actions(state, previous, state.session.turns_remaining, purpose=action_purpose)
+        if account_action:
+            usage.record_actions(state, previous, state.session.turns_remaining)

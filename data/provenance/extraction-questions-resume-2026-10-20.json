@@ -1,0 +1,200 @@
+{
+  "contract": "d49-questions-provider-resume-1",
+  "observed_at": "2026-10-20T11:38:50+09:00",
+  "revision": "9c375d1075b56901ea7807143ffe83481280287f",
+  "cause": "Five consecutive confirmed PROVIDER_RESPONSE_INVALID failures under distinct request IDs; no usable response saved",
+  "run_id": "c9bb43be69ba8d0c16cedec569895fea",
+  "image": "sha256:bcddb6e151d8e9729c122882f0c2acf8ee059017e44fe433820c357b52e35099",
+  "build_fingerprint_unchanged": true,
+  "code_changes": false,
+  "model_or_provider_changes": false,
+  "verification": {
+    "observed_at": "2026-10-20T02:38:26.457525+00:00",
+    "run_id": "c9bb43be69ba8d0c16cedec569895fea",
+    "state": "failed",
+    "phase": "questions",
+    "error": "persistent_provider_failure:PROVIDER_RESPONSE_INVALID",
+    "resume_result": "provider_blocked",
+    "jobs_by_phase": {
+      "normalize": {
+        "done": 6429
+      },
+      "questions": {
+        "done": 150,
+        "pending": 2797,
+        "running": 10
+      }
+    },
+    "requests": {
+      "accepted": 1302,
+      "failed": 15
+    },
+    "usage": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 548,
+        "input_tokens": 2534916,
+        "output_tokens": 1046486
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6-luna",
+        "calls": 754,
+        "input_tokens": 6388913,
+        "output_tokens": 2646085
+      }
+    ],
+    "fresh_requests": [
+      {
+        "id": "bb46d5ff-9192-4480-8658-83c0a2047dd6",
+        "state": "failed",
+        "jobs": 10,
+        "finish": null,
+        "same_failed_payload": true
+      },
+      {
+        "id": "2c6ab862-2b35-4d39-8eca-c9d1b1355f32",
+        "state": "failed",
+        "jobs": 10,
+        "finish": null,
+        "same_failed_payload": true
+      },
+      {
+        "id": "b17f6bc4-8e06-46f7-b959-6612d9869472",
+        "state": "failed",
+        "jobs": 10,
+        "finish": null,
+        "same_failed_payload": true
+      },
+      {
+        "id": "313417eb-a283-4567-9289-7bbda090dbe9",
+        "state": "failed",
+        "jobs": 10,
+        "finish": null,
+        "same_failed_payload": true
+      },
+      {
+        "id": "2ecf7949-6c1f-4705-a4a4-c7762ccec70a",
+        "state": "failed",
+        "jobs": 10,
+        "finish": null,
+        "same_failed_payload": true
+      }
+    ],
+    "completed_results_unchanged": 6579,
+    "historical_requests_unchanged": 1312,
+    "recovered_jobs": [
+      {
+        "job_id": "0db3cf1dfba4b26c37c03ea341ea8f6b07aefe09dd96a4bdb5483e93fc640454",
+        "status": "running",
+        "attempt_count": 2,
+        "error": null
+      },
+      {
+        "job_id": "0de1203d61db1efd38568f95ba33d51621af206b47993d671484c8d65d8d88a5",
+        "status": "running",
+        "attempt_count": 2,
+        "error": null
+      },
+      {
+        "job_id": "0df58d8afce0a57ca3780a72b61932d33fd80816ba119b158005f33f66dc2862",
+        "status": "running",
+        "attempt_count": 2,
+        "error": null
+      },
+      {
+        "job_id": "0df856d8a867a726330bd75794b7e445cfe30867c5a17a0e3c5ea19697145e16",
+        "status": "running",
+        "attempt_count": 2,
+        "error": null
+      },
+      {
+        "job_id": "0e70eaa20b681df02b05dedadff9f3c3b71d3ddb000780303a24663c26eb4a47",
+        "status": "running",
+        "attempt_count": 2,
+        "error": null
+      },
+      {
+        "job_id": "0e8bdb3ffa080b2fb5f890849d2149bd479ee3f1495124f4e7fc84712fafbd99",
+        "status": "running",
+        "attempt_count": 2,
+        "error": null
+      },
+      {
+        "job_id": "0e96765a10e03cafe38c82cff40d5e81025263e2eddb6fce106962cf42da3023",
+        "status": "running",
+        "attempt_count": 2,
+        "error": null
+      },
+      {
+        "job_id": "0ea18ad07110c47eb83fd78eb35f3e0d2ff8c340b3ba1eb0e561e2c529ce0f5f",
+        "status": "running",
+        "attempt_count": 2,
+        "error": null
+      },
+      {
+        "job_id": "0eabf52652fe32eaccc911dc6256685acc5f20832a3e51c1d0f248ca88f7fb98",
+        "status": "running",
+        "attempt_count": 2,
+        "error": null
+      },
+      {
+        "job_id": "0eb42dec720b7abd32dc750b5a6b44e63fd2b271331f9ea8470e188f03a80329",
+        "status": "running",
+        "attempt_count": 2,
+        "error": null
+      }
+    ],
+    "provider_failures": [
+      {
+        "attempt": 1,
+        "error": "PROVIDER_RESPONSE_INVALID",
+        "event": "provider_response_failed",
+        "http_status": 503,
+        "request_id": "bb46d5ff-9192-4480-8658-83c0a2047dd6"
+      },
+      {
+        "attempt": 2,
+        "error": "PROVIDER_RESPONSE_INVALID",
+        "event": "provider_response_failed",
+        "http_status": 503,
+        "request_id": "2c6ab862-2b35-4d39-8eca-c9d1b1355f32"
+      },
+      {
+        "attempt": 3,
+        "error": "PROVIDER_RESPONSE_INVALID",
+        "event": "provider_response_failed",
+        "http_status": 503,
+        "request_id": "b17f6bc4-8e06-46f7-b959-6612d9869472"
+      },
+      {
+        "attempt": 4,
+        "error": "PROVIDER_RESPONSE_INVALID",
+        "event": "provider_response_failed",
+        "http_status": 503,
+        "request_id": "313417eb-a283-4567-9289-7bbda090dbe9"
+      },
+      {
+        "attempt": 5,
+        "error": "PROVIDER_RESPONSE_INVALID",
+        "event": "provider_response_failed",
+        "http_status": 503,
+        "request_id": "2ecf7949-6c1f-4705-a4a4-c7762ccec70a"
+      }
+    ],
+    "image_unchanged": true,
+    "code_changes": false,
+    "installed": false
+  },
+  "provider_tests": 7,
+  "clinical_quality": "not_run",
+  "official_evaluation": "not_run",
+  "files": {
+    "inspection.json": "ef49b41cf9a58c8e7700b03b3a16e85fcb0501f8f3067312e63fb43da419d188",
+    "before.json": "0859cde6ad44f124c635ddbdd2f6015c1aa4cfee5aa9b10dc4a8f2836ef929e6",
+    "verification.json": "9064aa2839c5dd2347616937f1d85cdb869e29b9378542beeb4d1760abd231e9",
+    "container-ownership.json": "95942510934c324d2c0a8b287d5c93727c33a1431be6f2721b9b803d06e8fcbb",
+    "provider-tests.log": "ec9b4d42c2a7decb195cacf6bfa29c0be601d2cd09498aff8db378022f55847a"
+  }
+}

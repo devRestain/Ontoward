@@ -31,7 +31,7 @@ def note_fact(statement, source, index, turn, question=None):
         acquisition=acquisition, polarity_scope=statement.polarity_scope)
 
 
-def make_fact(case, knowledge, statement, decoded, *, source, index, offset, turn, question, forced=False):
+def make_fact(case, knowledge, statement, decoded, *, source, index, offset, turn, question, broader=False):
     target, attribute, values, measurement, status = decoded
     target_id = next((ident for kind in ('Symptom', 'ContextFactor', 'ExamFinding')
                       if (ident := knowledge.term_id(target, kind))), None)
@@ -72,7 +72,7 @@ def make_fact(case, knowledge, statement, decoded, *, source, index, offset, tur
     acquisition = question.kind if question else 'initial'
     ident = previous.id if previous else f'{source}:fact:{index}:{offset}'
     fact = CaseFact(id=ident, graph_binding=GraphBinding(target=target, attribute=attribute, values=tuple(values),
-        kind=kind, method='forced' if forced else 'exact'), measurement=measurement or statement.measurement,
+        kind=kind, method='broader' if broader else 'exact'), measurement=measurement or statement.measurement,
         value=statement.note_value or '', status=status, subject=statement.subject, subject_member=statement.subject_member,
         reported_by=statement.reported_by, time_context=statement.time_context,
         observation_id=observation, episode_id=episode, category=category,

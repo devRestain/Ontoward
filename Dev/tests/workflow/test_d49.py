@@ -77,7 +77,8 @@ class D49Tests(unittest.TestCase):
     def test_any_context_rule_resolves_with_current_fact_without_reasking(self):
         k=f.knowledge();c=f.consultation(prepared=f.resources(k));s=f.chief(f.state('ContextFactor'))
         s.case.apply([f.fact('context',kind='context',target='Test history',time_context='current',category='medical_history')])
-        session=c.sessions['ContextFactor'];session.candidate_ids=(str(f.OW.Alpha),)
+        c.sessions['ChiefComplaint'].close(s,c.client)
+        session=c.sessions['ContextFactor'];session.enter(s,s.case.assessment)
         session.prepare_context(s)
         self.assertFalse(s.interview.queue)
 

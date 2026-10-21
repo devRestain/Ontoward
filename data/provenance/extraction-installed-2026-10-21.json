@@ -1,0 +1,60 @@
+{
+  "run_id": "87e8b4c54b0689453cea91b3bb316290",
+  "current_entrypoint_prepare": "pass",
+  "installed_hashes": "pass",
+  "coverage": {
+    "status": "pass",
+    "diseases": 945,
+    "gaps": []
+  },
+  "all_physical_exam_endpoints_typed": "pass",
+  "weight_questions": "pass",
+  "maternal_scope": "pass",
+  "retained_relation_scope_features_effects": "pass",
+  "counts": {
+    "Disease": 945,
+    "Symptom": 1589,
+    "ExamFinding": 185,
+    "ContextFactor": 369,
+    "FindingAttribute": 661,
+    "AttributeValue": 2059,
+    "ExamMethod": 253,
+    "DiseasePatternAssociation": 3188
+  },
+  "manifest_sha256": "a4c10f3a897485c1d4eb57ad8dc35e9d60dcb59e4d14a5d8ae5ef54f2ebbb2eb",
+  "manifest": {
+    "build_id": "87e8b4c54b0689453cea91b3bb316290",
+    "clinical": {
+      "path": "builds/87e8b4c54b0689453cea91b3bb316290/clinical.ttl",
+      "sha256": "69d37b3c92faf3312378b24d8bf984112cbf538dd456a62c023d780f860a2d9e"
+    },
+    "guidelines": {
+      "path": "builds/87e8b4c54b0689453cea91b3bb316290/guideline-index.json",
+      "sha256": "8f0e9b1e937aecc4df73d955924505730fcd0aecf8e8ce57e3fbd5edc41d0c85"
+    },
+    "knowledge_contract": "v5-enum-1",
+    "questions": {
+      "path": "builds/87e8b4c54b0689453cea91b3bb316290/questions.ko.json",
+      "sha256": "66f0426172d1a6c761a3f553314e9f7ebecd1784b1fb7f786beaf7091e5f0561"
+    },
+    "schema": {
+      "path": "builds/87e8b4c54b0689453cea91b3bb316290/schema.ttl",
+      "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+    },
+    "schema_version": "5.0",
+    "vocabulary": {
+      "path": "builds/87e8b4c54b0689453cea91b3bb316290/vocabulary.ttl",
+      "sha256": "23ae78abea1dc55c1d48545feba0fbe54d0516a1f2c5335bc4fc30beed5f1af8"
+    }
+  },
+  "new_model_calls": 0,
+  "manual_amendments": 741,
+  "not_run": [
+    "representative actual-bundle consultations",
+    "clinical validity",
+    "official evaluation",
+    "production ZIP",
+    "publication",
+    "deployment"
+  ]
+}

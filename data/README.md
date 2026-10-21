@@ -2,14 +2,14 @@
 
 data/는 원천 식별·해시·지속 준비 결과·체크포인트·artifact 증빙을 소유한다. 원본은 assets/에 그대로 보존하며 실제 환자 facts는 submission/이 소유한다.
 
-D49에서 기존 임상 DB의 **활성 사용을 철회**했다. 과거 원자료·source-custody SQLite·준비 결과·수용 ZIP·기존 증거는 보존한다. 제출 경로의 옛 생성 RDF·질문·정책과 점수 전용 생성기는 [보관 디렉터리](extraction/retired-d42-2026-10-19/)에 원본 bytes와 해시를 남겼다. [withdrawal.json](extraction/retired-d42-2026-10-19/withdrawal.json)은 파일·archive 신원을 기록한다. 과거 D20–D48 수용은 역사적 증거이며 새 빌드의 입력·승인·기본 policy가 아니다.
+D49에서 기존 임상 DB의 **활성 사용을 철회**했다. 과거 원자료·source-custody SQLite·준비 결과·수용 ZIP과 작은 과거 증빙은 보존한다. 추출 전용 원본 로그·체크포인트는 사용자 요청으로 삭제했다. 제출 경로의 옛 생성 RDF·질문·정책과 점수 전용 생성기는 철회한 뒤 보관했으며, 새 실제 번들의 설치 완료 후 사용자 요청으로 해당 압축본을 삭제했다. [withdrawal.json](extraction/retired-d42-2026-10-19/withdrawal.json)은 파일·archive 신원을 기록한다. 과거 D20–D48 수용은 역사적 증거이며 새 빌드의 입력·승인·기본 policy가 아니다.
 
 | 경로 | 역할 |
 |---|---|
 | [ontology/](ontology/README.md) | 작성된 v5.0 / v5-enum-1 구조 계약 |
-| extraction/v5-enum/work/RUN_ID/ | 입력·설정 fingerprint, SQLite job/요청/응답/사용량, worker lock |
-| extraction/v5-enum/output/RUN_ID/ | 여섯 파일의 새 staging 번들 |
-| extraction/retired-d42-2026-10-19/ | 철회 runtime·builder 보관본과 검증 해시 |
+| extraction/v5-enum/work/ | 완료 후 보관 해제로 현재 비어 있음; 과거 체크포인트 재개 불가 |
+| extraction/v5-enum/output/ | 설치본과 중복된 staging 정리 후 현재 비어 있음 |
+| extraction/retired-d42-2026-10-19/ | 압축본 삭제 후 철회 영수증만 보존 |
 | preparation/·catalog/ | 보존된 과거 원천 custody·준비·수용 결과 |
 | provenance/ | 수행한 검증·소스·이미지·임시 artifact 신원 |
 
@@ -17,7 +17,7 @@ D49에서 기존 임상 DB의 **활성 사용을 철회**했다. 과거 원자�
 
 실행 RDF와 임상 입력에는 점수·가중치·관계 출처·confidence·reviewer를 넣지 않는다. 실제 환자 취득 source/turn과 Education 문서 경로/hash/인용은 각 실행 책임에서 보존한다. 라이선스·원자료 역할은 [DATA_USE.md](../Extraction/DATA_USE.md)에 분리한다.
 
-D49의 초기 구현 수용은 [증빙](provenance/algorithm-d49-2026-10-19.json), D50의 진료 수용은 [D50 provenance](provenance/algorithm-d50-2026-10-20.json)에 보존합니다. 이후 별도로 승인된 실제 NOVA 빌드 `10282b2e382f085d756e9f6645dc05fe`는 진행 중입니다. 2026-10-20 01:33 KST 읽기 전용 조회에서는 normalize 단계였고 실제 활성 manifest는 없었습니다. 최신 작업·요청 상태는 [데이터 상태](PROJECT_STATE.md)와 체크포인트를 따릅니다. 이전 수용의 not_run은 해당 과거 작업 범위에만 적용합니다.
+D49 초기 구현과 D50 수용은 기존 provenance에 과거 증빙으로 보존합니다. 실제 빌드 `87e8b4c54b0689453cea91b3bb316290`는 추출·컴파일·검증·로컬 설치를 완료했습니다. 완료 후 여섯 작업 DB와 로그·중복 출력·추출 임시 기록을 삭제했고, [최종 감사 기록](provenance/extraction-final-audit-2026-10-21.json)에 설정·사용량 요약·수동 교정 내역을, [삭제 영수증](provenance/extraction-storage-cleanup-2026-10-21.json)에 정확한 삭제 경로·용량과 설치본 보존 검증을 남겼습니다. 원래 요청 본문·응답·재시도 이력과 체크포인트는 더 이상 보관하지 않습니다.
 
 ## 저장 구조를 읽는 순서
 
@@ -29,4 +29,4 @@ D49의 초기 구현 수용은 [증빙](provenance/algorithm-d49-2026-10-19.json
 | 환자 상태 | [CaseFact·Assessment 스키마](../Test/atlas.html#facts) | data/ DB에 저장하는 지식이 아니라 증례 메모리입니다. |
 | 과거 custody와 결과 | preparation/·catalog/·retired-d42/·provenance/ | 보존된 이력입니다. 새 추출 입력이나 runtime fallback으로 사용하지 않습니다. |
 
-실제 생성 완료, 검증된 번들 설치, 그 번들로 대표 상담 수용이 남아 있습니다. 이번 문서 작업은 체크포인트를 읽기 전용으로 확인했으며 worker·요청·수용 결과·이전 영수증을 변경하지 않았습니다. 합성 번들과 ZIP은 계속 Tmp/에만 둡니다.
+설치 지식의 manifest·다섯 자산 해시·prepare·coverage는 체크포인트 삭제 전후 모두 통과했습니다. 해당 실제 번들로 대표 상담을 검증하는 작업은 별도로 남아 있으며, 임상적 타당성과 공식 평가를 완료했다고 주장하지 않습니다. 합성 번들과 ZIP은 계속 Tmp/에서만 사용합니다.

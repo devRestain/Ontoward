@@ -1,0 +1,356 @@
+{
+  "contract": "draft-job-packet-repair-1",
+  "created_at": "2026-10-20T20:25:17+09:00",
+  "source_run_id": "a8ef6109e515546c23e066cbfd833462",
+  "current_run_id": "804487b16283fb80052be0925a785a39",
+  "diagnosis": {
+    "status": {
+      "run_id": "a8ef6109e515546c23e066cbfd833462",
+      "state": "failed",
+      "phase": "draft",
+      "provider": "openai_api",
+      "pause_requested": false,
+      "updated_at": 1792494752.8090546,
+      "index": {
+        "files_completed": 108,
+        "files_total": 108,
+        "rows_committed": 12587695,
+        "current_file": null
+      },
+      "jobs_by_phase": {
+        "draft": {
+          "done": 155,
+          "pending": 785,
+          "retry": 5
+        },
+        "normalize": {
+          "done": 6429
+        },
+        "questions": {
+          "done": 2957
+        }
+      },
+      "jobs": {
+        "done": 9541,
+        "pending": 785,
+        "retry": 5
+      },
+      "requests": {
+        "accepted": 1521,
+        "failed": 21
+      },
+      "job_errors": [
+        {
+          "job_id": "21fe1c56f673d9861aefb874e51f82a0fd5859629da5ac1ee822828ea332f009",
+          "phase": "draft",
+          "attempt_count": 1,
+          "error": "output_validation_failed:[{\"message\":\"Value error, Concept expectation contains irrelevant range conditions\",\"path\":\"relations.0.features.0.expected\",\"type\":\"value_error\"},{\"message\":\"Value error, Concept expectation contains irrelevant range conditions\",\"path\":\"relations.2.features.0.expected\",\"type\":\"value_error\"}]"
+        },
+        {
+          "job_id": "2292696f2bf7f71356304a77b32065b6a6ebe091dc2a21d07d26e947ddcb4b07",
+          "phase": "draft",
+          "attempt_count": 1,
+          "error": "output_validation_failed:[{\"message\":\"Value error, Concept expectation contains irrelevant range conditions\",\"path\":\"relations.2.features.0.expected\",\"type\":\"value_error\"}]"
+        },
+        {
+          "job_id": "254587039fc2f5c12a60c7c529f4454cf2deebdaf69f5acf4169f70aa8a0f942",
+          "phase": "draft",
+          "attempt_count": 1,
+          "error": "output_validation_failed:[{\"message\":\"Value error, Concept expectation contains irrelevant range conditions\",\"path\":\"relations.0.features.0.expected\",\"type\":\"value_error\"}]"
+        }
+      ],
+      "recovery": {
+        "completed_by_phase": {
+          "draft": 155,
+          "normalize": 6429,
+          "questions": 2957
+        },
+        "contract": "draft-endpoint-recovery-1",
+        "counters_reset": 0,
+        "failed_request_id": "c001e993-5692-4ff8-8277-7562ec2ae099",
+        "jobs_pending": 790,
+        "model_calls_started": 0,
+        "phase": "draft",
+        "reason": "typed_draft_reference_constraints_preserve_accepted_results",
+        "requests_preserved": 1542,
+        "run_id": "a8ef6109e515546c23e066cbfd833462",
+        "source_identity": "2b2b855961292121c0251e6a166b70d49b8891df1ebff9e5e598669fbeb60cc3",
+        "source_models": {
+          "draft": "gpt-6-luna",
+          "final": "gpt-6-luna"
+        },
+        "source_provider": "openai_api",
+        "source_run_id": "2b2b855961292121c0251e6a166b70d4",
+        "target_identity": "a8ef6109e515546c23e066cbfd8334625a16a66ed4103e53e5750418c0943ce3",
+        "target_models": {
+          "draft": "gpt-6-luna",
+          "final": "gpt-6-luna"
+        },
+        "target_provider": "openai_api",
+        "usage_preserved": [
+          {
+            "calls": 548,
+            "day": "2026-10-19",
+            "input_tokens": 2534916,
+            "model": "openai/gpt-6-luna",
+            "output_tokens": 1046486
+          },
+          {
+            "calls": 5,
+            "day": "2026-10-20",
+            "input_tokens": 1373032,
+            "model": "gpt-6-luna",
+            "output_tokens": 72583
+          },
+          {
+            "calls": 943,
+            "day": "2026-10-20",
+            "input_tokens": 9638519,
+            "model": "openai/gpt-6-luna",
+            "output_tokens": 3143208
+          },
+          {
+            "calls": 25,
+            "day": "2026-10-20",
+            "input_tokens": 477622,
+            "model": "openai/gpt-6.1-sol",
+            "output_tokens": 146514
+          }
+        ]
+      },
+      "usage": [
+        {
+          "day": "2026-10-19",
+          "model": "openai/gpt-6-luna",
+          "calls": 548,
+          "input_tokens": 2534916,
+          "output_tokens": 1046486
+        },
+        {
+          "day": "2026-10-20",
+          "model": "gpt-6-luna",
+          "calls": 5,
+          "input_tokens": 1373032,
+          "output_tokens": 72583
+        },
+        {
+          "day": "2026-10-20",
+          "model": "openai/gpt-6-luna",
+          "calls": 943,
+          "input_tokens": 9638519,
+          "output_tokens": 3143208
+        },
+        {
+          "day": "2026-10-20",
+          "model": "openai/gpt-6.1-sol",
+          "calls": 25,
+          "input_tokens": 477622,
+          "output_tokens": 146514
+        }
+      ],
+      "error": "draft_packet_item_too_large:jobs"
+    },
+    "failure_reproduced": "draft_packet_item_too_large:jobs",
+    "first_batch_jobs": 40,
+    "oversized": [
+      {
+        "job_id": "3323444a4f9c9d391dba3f1840f1e8fe04c1a76573667e7f3d9aaca2899d33ce",
+        "disease": "Pneumonia",
+        "packet_characters": 50671,
+        "source_records": 74,
+        "source_characters": 50332,
+        "largest_source_record": 9958,
+        "validation_error_characters": 0
+      }
+    ],
+    "largest_job": {
+      "job_id": "3323444a4f9c9d391dba3f1840f1e8fe04c1a76573667e7f3d9aaca2899d33ce",
+      "disease": "Pneumonia",
+      "packet_characters": 50671,
+      "source_records": 74,
+      "source_characters": 50332,
+      "largest_source_record": 9958,
+      "validation_error_characters": 0
+    },
+    "request_count": 1542,
+    "requests_by_provider": [
+      {
+        "provider": "nova_dev",
+        "state": "accepted",
+        "count": 1516
+      },
+      {
+        "provider": "nova_dev",
+        "state": "failed",
+        "count": 21
+      },
+      {
+        "provider": "openai_api",
+        "state": "accepted",
+        "count": 5
+      }
+    ],
+    "no_unsettled_requests": true
+  },
+  "verification": {
+    "receipt": {
+      "completed_by_phase": {
+        "draft": 155,
+        "normalize": 6429,
+        "questions": 2957
+      },
+      "contract": "draft-job-packet-recovery-1",
+      "counters_reset": 0,
+      "event": "draft_recovered",
+      "jobs_pending": 790,
+      "local_error": "draft_packet_item_too_large:jobs",
+      "model_calls_started": 0,
+      "oversized_jobs": [
+        {
+          "characters": 50671,
+          "job_id": "3323444a4f9c9d391dba3f1840f1e8fe04c1a76573667e7f3d9aaca2899d33ce"
+        }
+      ],
+      "phase": "draft",
+      "reason": "split_oversized_job_source_records_within_one_request",
+      "requests_preserved": 1542,
+      "run_id": "804487b16283fb80052be0925a785a39",
+      "source_identity": "a8ef6109e515546c23e066cbfd8334625a16a66ed4103e53e5750418c0943ce3",
+      "source_models": {
+        "draft": "gpt-6-luna",
+        "final": "gpt-6-luna"
+      },
+      "source_provider": "openai_api",
+      "source_run_id": "a8ef6109e515546c23e066cbfd833462",
+      "state": "ready",
+      "target_identity": "804487b16283fb80052be0925a785a391c87d112a95b336f16c78d9d762d5f59",
+      "target_models": {
+        "draft": "gpt-6-luna",
+        "final": "gpt-6-luna"
+      },
+      "target_provider": "openai_api",
+      "usage_preserved": [
+        {
+          "calls": 548,
+          "day": "2026-10-19",
+          "input_tokens": 2534916,
+          "model": "openai/gpt-6-luna",
+          "output_tokens": 1046486
+        },
+        {
+          "calls": 5,
+          "day": "2026-10-20",
+          "input_tokens": 1373032,
+          "model": "gpt-6-luna",
+          "output_tokens": 72583
+        },
+        {
+          "calls": 943,
+          "day": "2026-10-20",
+          "input_tokens": 9638519,
+          "model": "openai/gpt-6-luna",
+          "output_tokens": 3143208
+        },
+        {
+          "calls": 25,
+          "day": "2026-10-20",
+          "input_tokens": 477622,
+          "model": "openai/gpt-6.1-sol",
+          "output_tokens": 146514
+        }
+      ]
+    },
+    "source_sha256": "04b1cdcd7037116ec36a5c42f7a942fd30e31332c90c074286b169af27efdbda",
+    "source_bytes_unchanged": true,
+    "all_job_inputs_results_counters_preserved": true,
+    "requests_usage_original_providers_preserved": true,
+    "raw_cursors_and_clinical_pins_preserved": true,
+    "sqlite_quick_check": "ok",
+    "counts": [
+      {
+        "phase": "draft",
+        "status": "done",
+        "count": 155
+      },
+      {
+        "phase": "draft",
+        "status": "pending",
+        "count": 785
+      },
+      {
+        "phase": "draft",
+        "status": "retry",
+        "count": 5
+      },
+      {
+        "phase": "normalize",
+        "status": "done",
+        "count": 6429
+      },
+      {
+        "phase": "questions",
+        "status": "done",
+        "count": 2957
+      }
+    ],
+    "recovery_model_calls": 0,
+    "real_generation_started": false
+  },
+  "image": "sha256:9b54ff6b2bfa33e02d51e78389fe44526119bd970775124b0bb47d982293bc6b",
+  "tests": {
+    "development": 98,
+    "offline_image": 98
+  },
+  "preflight": {
+    "jobs": 790,
+    "batches": 20,
+    "split_jobs": 2,
+    "source_records": 10647,
+    "maximum_message_characters": 49995,
+    "all_sources_exact": true,
+    "all_batches_fixed": true,
+    "tail_jobs": 30,
+    "model_calls": 0
+  },
+  "source_record_scan": {
+    "jobs": 790,
+    "largest_source_record": {
+      "job_id": "3323444a4f9c9d391dba3f1840f1e8fe04c1a76573667e7f3d9aaca2899d33ce",
+      "characters": 9958,
+      "disease": "Pneumonia"
+    },
+    "records_over_49000": []
+  },
+  "config": {
+    "provider": "openai_api",
+    "models": {
+      "draft": "gpt-6-luna",
+      "final": "gpt-6-luna"
+    },
+    "effort": "medium",
+    "batch_size": 40,
+    "max_output_tokens": 32000
+  },
+  "status": "ready",
+  "model_calls_started": 0,
+  "real_generation": "not_run_preparation_only",
+  "real_installation": "not_run",
+  "model_quality": "not_run",
+  "clinical_validation": "not_run",
+  "official_evaluation": "not_run",
+  "files": {
+    "Extraction/ontoward_extraction/build.py": "63e8322edfc458b0dab81606dd12fee506d211578a346e334e2c14016179ca81",
+    "Extraction/ontoward_extraction/recovery.py": "fc23ccee9affbd765d4235556cd24acf5174787e1b4ec0a2efd4287636c3a50b",
+    "Extraction/ontoward_extraction/__main__.py": "14b8bae2fb2decb450ce541028ff546516d728bfe7096798e059719e15407d48",
+    "Extraction/prompts/draft.txt": "29f0cec94addc05682075a59fa2b529e9455efd7b8e9f0ac3924c43fbf077274",
+    "Extraction/tests/test_job_packets.py": "26b9ea7bb0efdf4c119973662cec5d9eaa0287d5af726bcc7132cf6678afa510",
+    "Extraction/tests/support.py": "001bc0ccd43757e9c21d80f6760a609e1b721f3bbb74a7852ef78a06a0bf64ca",
+    "Extraction/extraction.sh": "33ee3d0a8a384133027eacd2a5b67ac0ac963f9b9bc73a5f72768850afd2d7fe",
+    "Tmp/extraction-job-packet-2026-10-20/tests.log": "4f440cb13e705e9cd02915d7ab4285840a179e55cb27b4fb835436fca3f6314f",
+    "Tmp/extraction-job-packet-2026-10-20/image-tests.log": "020bffea4444e313dfcee173d26f23934d8ce7789007523d1015a5e424fd45e4",
+    "Tmp/extraction-job-packet-2026-10-20/preflight.json": "837c093e8932a231bb662a17abad9f1b1d3692c6488251e4bcf247df0250187f",
+    "Tmp/extraction-job-packet-2026-10-20/verification.json": "61c6362ce36b16ce4d91be23fb94e089e4ed26a09183e481b724acbd7e6c018b",
+    "Tmp/extraction-job-packet-2026-10-20/inspection.json": "d6b58cac36ddf6206aaa97fef401034170b1d863def832a9506550841ab69498",
+    "Tmp/extraction-job-packet-2026-10-20/source-record-scan.json": "eeddcd23a7b1b79d959fc3117b1d1dc7a95707e86e1c34b96ba4a3d0c39ab7e3"
+  }
+}

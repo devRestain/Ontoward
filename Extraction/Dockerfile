@@ -15,6 +15,8 @@ COPY submission /runtime
 COPY Extraction/ontoward_extraction /app/ontoward_extraction
 COPY Extraction/prompts /app/prompts
 COPY Extraction/config.json /app/config.json
+COPY Extraction/config.sol.json /app/config.sol.json
+COPY Extraction/config.api-luna.json /app/config.api-luna.json
 RUN mkdir -p /codex-state && chmod 700 /codex-state
 WORKDIR /app
 ENTRYPOINT ["python", "-m", "ontoward_extraction"]

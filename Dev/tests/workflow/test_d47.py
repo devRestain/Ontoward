@@ -12,11 +12,6 @@ class SessionTaskTests(unittest.TestCase):
         c, state = f.consultation(), f.state()
         owner = c.sessions['Initiation']
         owner.prepare(state)
-        self.assertEqual([q.purpose for q in state.interview.queue], ['greeting'])
-        greeting = state.interview.queue.pop()
-        state.interview.answers.append(Answer(question_id=greeting.item_id, source_ref='greeting',
-            scope='Initiation', purpose='greeting', outcome='nonclinical'))
-        owner.prepare(state)
         self.assertEqual([q.purpose for q in state.interview.queue], ['clarification'])
         self.assertFalse(c.client.requests)
         state.interview.queue.clear()
@@ -34,7 +29,7 @@ class SessionTaskTests(unittest.TestCase):
         self.assertIsNone(next(raw['case']['assessment'] for name, raw in updates if name == 'process_initial_input'))
         for stage in ('Initiation', 'ChiefComplaint'):
             self.assertEqual(sum(row['stage'] == stage for row in clinical), 1)
-        dd_answers = [a for a in state.interview.answers if a.scope == 'DifferentialDiagnosis' and a.purpose != 'empathy']
+        dd_answers = [a for a in state.interview.answers if a.scope == 'DifferentialDiagnosis']
         self.assertFalse(any(row['stage'] == 'ContextFactor' for row in clinical))
         self.assertEqual(sum(row['task'] == 'clinical_decision' for row in clinical), len(dd_answers) + 1)
         self.assertEqual(sum(row['task'] == 'clinical_action' for row in clinical), 0)

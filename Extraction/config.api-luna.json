@@ -1,0 +1,11 @@
+{
+  "provider": "openai_api",
+  "models": {"draft": "gpt-6-luna", "final": "gpt-6-luna"},
+  "effort": "medium",
+  "max_tokens": {"draft": 32000, "final": 32000},
+  "timeout_seconds": 600,
+  "batch_size": 40,
+  "index_chunk_size": 1000,
+  "nova_daily_calls": {"draft": 100, "final": 100},
+  "inputs": {}
+}

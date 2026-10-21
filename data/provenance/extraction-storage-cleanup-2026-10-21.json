@@ -1,0 +1,3511 @@
+{
+  "contract": "extraction-record-disposal-1",
+  "run_id": "87e8b4c54b0689453cea91b3bb316290",
+  "authorization": "Delete unnecessary legacy extraction records and all previous checkpoints after confirmed completion",
+  "targets": [
+    "data/extraction/v5-enum/work/.DS_Store",
+    "data/extraction/v5-enum/work/.recovery-staging",
+    "data/extraction/v5-enum/work/2b2b855961292121c0251e6a166b70d4",
+    "data/extraction/v5-enum/work/7f75a78e8fde3288aba07b6ab238ca31",
+    "data/extraction/v5-enum/work/804487b16283fb80052be0925a785a39",
+    "data/extraction/v5-enum/work/87e8b4c54b0689453cea91b3bb316290",
+    "data/extraction/v5-enum/work/921be40beebc21349916de340d320eff",
+    "data/extraction/v5-enum/work/a8ef6109e515546c23e066cbfd833462",
+    "data/extraction/v5-enum/output/87e8b4c54b0689453cea91b3bb316290",
+    "data/extraction/v5-enum/logs/20261019T094047Z-5895.log",
+    "data/extraction/v5-enum/logs/20261019T102058Z-10024.log",
+    "data/extraction/v5-enum/logs/20261019T104123Z-10768.log",
+    "data/extraction/v5-enum/logs/20261019T115731Z-11808.log",
+    "data/extraction/v5-enum/logs/20261019T115755Z-11837.log",
+    "data/extraction/v5-enum/logs/20261019T155453Z-18312.log",
+    "data/extraction/v5-enum/logs/20261019T171102Z-25989.log",
+    "data/extraction/v5-enum/logs/20261020T023209Z-32497.log",
+    "data/extraction/v5-enum/logs/20261020T030316Z-33377.log",
+    "data/extraction/v5-enum/logs/20261020T042946Z-35087.log",
+    "data/extraction/v5-enum/logs/20261020T043921Z-37842.log",
+    "data/extraction/v5-enum/logs/20261020T044735Z-39161.log",
+    "data/extraction/v5-enum/logs/20261020T054431Z-40980.log",
+    "data/extraction/v5-enum/logs/20261020T081002Z-46718.log",
+    "data/extraction/v5-enum/logs/20261020T082509Z-47468.log",
+    "data/extraction/v5-enum/logs/20261020T111205Z-80758.log",
+    "data/extraction/v5-enum/logs/20261020T113237Z-95523.log",
+    "data/extraction/v5-enum/logs/20261020T123017Z-40237.log",
+    "data/extraction/v5-enum/logs/20261020T150604Z-84293.log",
+    "data/extraction/v5-enum/logs/20261020T160934Z-final-count-resume.log",
+    "data/extraction/v5-enum/logs/20261020T164632Z-patch-resume.log",
+    "data/extraction/v5-enum/logs/latest.log",
+    "Tmp/extraction-batch-repair-2026-10-20",
+    "Tmp/extraction-draft-repair-2026-10-20",
+    "Tmp/extraction-empty-concept-repair-2026-10-20",
+    "Tmp/extraction-endpoint-repair-2026-10-20",
+    "Tmp/extraction-final-install-2026-10-20",
+    "Tmp/extraction-final-value-2026-10-21",
+    "Tmp/extraction-index-recovery-2026-10-19",
+    "Tmp/extraction-job-packet-2026-10-20",
+    "Tmp/extraction-korean-repair-2026-10-19",
+    "Tmp/extraction-manual-values-2026-10-20",
+    "Tmp/extraction-normalize-recovery-2026-10-19",
+    "Tmp/extraction-patch-packet-2026-10-21",
+    "Tmp/extraction-provider-repair-2026-10-19",
+    "Tmp/extraction-questions-resume-2026-10-20",
+    "Tmp/extraction-readiness-2026-10-21",
+    "Tmp/extraction-sol-context-2026-10-20",
+    "Tmp/extraction-sol-switch-2026-10-20",
+    "data/extraction/retired-d42-2026-10-19/historical-knowledge-and-generator.tar.gz",
+    "data/extraction/retired-d42-2026-10-19/historical-extra-tools.tar.gz",
+    "Extraction/.DS_Store"
+  ],
+  "files": [
+    {
+      "path": "data/extraction/v5-enum/work/.DS_Store",
+      "bytes": 6148,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/2b2b855961292121c0251e6a166b70d4/jobs.sqlite3",
+      "bytes": 7484723200,
+      "allocated_bytes": 7499583488,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/2b2b855961292121c0251e6a166b70d4/.worker.lock",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/7f75a78e8fde3288aba07b6ab238ca31/jobs.sqlite3",
+      "bytes": 7484723200,
+      "allocated_bytes": 7484723200,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/7f75a78e8fde3288aba07b6ab238ca31/.worker.lock",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/804487b16283fb80052be0925a785a39/jobs.sqlite3",
+      "bytes": 8124276736,
+      "allocated_bytes": 8137850880,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/804487b16283fb80052be0925a785a39/.worker.lock",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/804487b16283fb80052be0925a785a39/jobs.sqlite3-wal",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/804487b16283fb80052be0925a785a39/jobs.sqlite3-shm",
+      "bytes": 32768,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/87e8b4c54b0689453cea91b3bb316290/jobs.sqlite3",
+      "bytes": 8124276736,
+      "allocated_bytes": 8138719232,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/87e8b4c54b0689453cea91b3bb316290/.worker.lock",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/87e8b4c54b0689453cea91b3bb316290/jobs.sqlite3-wal",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/87e8b4c54b0689453cea91b3bb316290/jobs.sqlite3-shm",
+      "bytes": 32768,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/87e8b4c54b0689453cea91b3bb316290/manual-input.json",
+      "bytes": 6439039,
+      "allocated_bytes": 6443008,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/921be40beebc21349916de340d320eff/jobs.sqlite3",
+      "bytes": 8124276736,
+      "allocated_bytes": 8137895936,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/921be40beebc21349916de340d320eff/.worker.lock",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/a8ef6109e515546c23e066cbfd833462/jobs.sqlite3",
+      "bytes": 7484723200,
+      "allocated_bytes": 7500279808,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/work/a8ef6109e515546c23e066cbfd833462/.worker.lock",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/output/87e8b4c54b0689453cea91b3bb316290/clinical.ttl",
+      "bytes": 3352626,
+      "allocated_bytes": 3354624,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/output/87e8b4c54b0689453cea91b3bb316290/questions.ko.json",
+      "bytes": 713087,
+      "allocated_bytes": 716800,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/output/87e8b4c54b0689453cea91b3bb316290/schema.ttl",
+      "bytes": 6721,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/output/87e8b4c54b0689453cea91b3bb316290/guideline-index.json",
+      "bytes": 1418264,
+      "allocated_bytes": 1421312,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/output/87e8b4c54b0689453cea91b3bb316290/manifest.json",
+      "bytes": 674,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/output/87e8b4c54b0689453cea91b3bb316290/vocabulary.ttl",
+      "bytes": 6450561,
+      "allocated_bytes": 6451200,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261019T094047Z-5895.log",
+      "bytes": 64582,
+      "allocated_bytes": 65536,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261019T102058Z-10024.log",
+      "bytes": 9735,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261019T104123Z-10768.log",
+      "bytes": 7022,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261019T115731Z-11808.log",
+      "bytes": 0,
+      "allocated_bytes": 0,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261019T115755Z-11837.log",
+      "bytes": 628952,
+      "allocated_bytes": 630784,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261019T155453Z-18312.log",
+      "bytes": 20912,
+      "allocated_bytes": 24576,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261019T171102Z-25989.log",
+      "bytes": 72398,
+      "allocated_bytes": 135168,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T023209Z-32497.log",
+      "bytes": 2139,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T030316Z-33377.log",
+      "bytes": 54325,
+      "allocated_bytes": 57344,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T042946Z-35087.log",
+      "bytes": 519,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T043921Z-37842.log",
+      "bytes": 2017,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T044735Z-39161.log",
+      "bytes": 7727,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T054431Z-40980.log",
+      "bytes": 745,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T081002Z-46718.log",
+      "bytes": 4418,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T082509Z-47468.log",
+      "bytes": 6464,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T111205Z-80758.log",
+      "bytes": 499,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T113237Z-95523.log",
+      "bytes": 12479,
+      "allocated_bytes": 16384,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T123017Z-40237.log",
+      "bytes": 18046,
+      "allocated_bytes": 20480,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T150604Z-84293.log",
+      "bytes": 11092,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T160934Z-final-count-resume.log",
+      "bytes": 5903,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/20261020T164632Z-patch-resume.log",
+      "bytes": 3228,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/v5-enum/logs/latest.log",
+      "bytes": 33,
+      "allocated_bytes": 0,
+      "symlink": true
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/checkpoint-image-build.log",
+      "bytes": 532,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/user-changes-before.patch",
+      "bytes": 129479,
+      "allocated_bytes": 131072,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/resume-console.log",
+      "bytes": 21039,
+      "allocated_bytes": 24576,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/image-id.txt",
+      "bytes": 72,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/capture_resume.py",
+      "bytes": 1653,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/revision.txt",
+      "bytes": 41,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/checkpoint-image-tests.log",
+      "bytes": 25472,
+      "allocated_bytes": 28672,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/Dockerfile",
+      "bytes": 138,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/probe_checkpoint.py",
+      "bytes": 2250,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/finalize.py",
+      "bytes": 5324,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/status-live.log",
+      "bytes": 542,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/source-probe.log",
+      "bytes": 4509,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/finalization.log",
+      "bytes": 308,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/image-tests.log",
+      "bytes": 25472,
+      "allocated_bytes": 28672,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/container-ownership.json",
+      "bytes": 1766,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/source-checkpoint.json",
+      "bytes": 4408,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/tests.log",
+      "bytes": 25573,
+      "allocated_bytes": 28672,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/verification.json",
+      "bytes": 3145987,
+      "allocated_bytes": 3149824,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/recovery.log",
+      "bytes": 791,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/checkpoint-graph.py",
+      "bytes": 32361,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/resume-proof.log",
+      "bytes": 729,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/verification.log",
+      "bytes": 1139,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/verify_checkpoint.py",
+      "bytes": 2634,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/image-build.log",
+      "bytes": 5454,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-batch-repair-2026-10-20/resume-proof.json",
+      "bytes": 3175299,
+      "allocated_bytes": 3178496,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/probe_layout.py",
+      "bytes": 2019,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/provider-handoff.log",
+      "bytes": 225,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/measure.py",
+      "bytes": 1138,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/resume-console.log",
+      "bytes": 872,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/probe_single.py",
+      "bytes": 772,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/provider-source-before.json",
+      "bytes": 166,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/image-id.txt",
+      "bytes": 72,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/preflight.log",
+      "bytes": 322,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/capture_resume.py",
+      "bytes": 3734,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/provider-tests.log",
+      "bytes": 32091,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/provider-verification.log",
+      "bytes": 1884,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/source-before.json",
+      "bytes": 350,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/revision.txt",
+      "bytes": 41,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/Dockerfile",
+      "bytes": 258,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/archive_unused_sol.py",
+      "bytes": 4685,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/http-diagnostic.log",
+      "bytes": 429,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/tests-initial.log",
+      "bytes": 29623,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/layout-probe.log",
+      "bytes": 1581,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/finalize.py",
+      "bytes": 5849,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/preflight-external-refs.log",
+      "bytes": 322,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/inspect_checkpoint.py",
+      "bytes": 2028,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/archive-unused-sol.log",
+      "bytes": 518,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/record_blocked.py",
+      "bytes": 6275,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/diagnose.py",
+      "bytes": 1333,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/unused-api-sol-recovery.log",
+      "bytes": 1281,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/api-key-presence.log",
+      "bytes": 149,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/provider-image-build.log",
+      "bytes": 712,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/provider-verification.json",
+      "bytes": 2199,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/image-tests.log",
+      "bytes": 30934,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/provider-status.log",
+      "bytes": 573,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/provider-recovery.log",
+      "bytes": 1403,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/measure_source_tables.py",
+      "bytes": 1693,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/single-probe.log",
+      "bytes": 1570,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/verify_provider_checkpoint.py",
+      "bytes": 2592,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/tests.log",
+      "bytes": 31035,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/source-tables-measurement.json",
+      "bytes": 182,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/verification.json",
+      "bytes": 1017,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/recovery.log",
+      "bytes": 1224,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/record_provider_handoff.py",
+      "bytes": 4746,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/verification.log",
+      "bytes": 1118,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/provider-image-tests.log",
+      "bytes": 31990,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/inspection.json",
+      "bytes": 2110,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/preflight.json",
+      "bytes": 221,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/verify_checkpoint.py",
+      "bytes": 2480,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/image-build.log",
+      "bytes": 619,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/diagnosis-record.log",
+      "bytes": 879,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-draft-repair-2026-10-20/preflight.py",
+      "bytes": 1775,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/resume-console.log",
+      "bytes": 72525,
+      "allocated_bytes": 135168,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/image-id.txt",
+      "bytes": 72,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/capture_resume.py",
+      "bytes": 2155,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/source-before.json",
+      "bytes": 190,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/revision.txt",
+      "bytes": 41,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/Dockerfile",
+      "bytes": 138,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/finalize.py",
+      "bytes": 5277,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/finalization.log",
+      "bytes": 250,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/image-tests.log",
+      "bytes": 26714,
+      "allocated_bytes": 28672,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/tests.log",
+      "bytes": 26815,
+      "allocated_bytes": 28672,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/verification.json",
+      "bytes": 1404,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/recovery.log",
+      "bytes": 1035,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/resume-proof.log",
+      "bytes": 1329,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/verification.log",
+      "bytes": 1505,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/inspection.json",
+      "bytes": 5473,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/verify_checkpoint.py",
+      "bytes": 3461,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/image-build.log",
+      "bytes": 532,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-empty-concept-repair-2026-10-20/resume-proof.json",
+      "bytes": 1228,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/first-resume-proof.json",
+      "bytes": 7874,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/preflight.log",
+      "bytes": 648,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/capture_resume.py",
+      "bytes": 2856,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/inspect_saved.py",
+      "bytes": 2262,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/first-verification.json",
+      "bytes": 2511,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/prompt-pause.log",
+      "bytes": 1177,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/source-before.json",
+      "bytes": 166,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/Dockerfile",
+      "bytes": 195,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/first-verification.log",
+      "bytes": 2082,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/first-resume-proof.log",
+      "bytes": 6333,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/first-recovery.log",
+      "bytes": 1516,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/ready-status.log",
+      "bytes": 922,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/first-resume-console.log",
+      "bytes": 6591,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/image-tests.log",
+      "bytes": 33633,
+      "allocated_bytes": 36864,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/tests.log",
+      "bytes": 33735,
+      "allocated_bytes": 36864,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/recovery.log",
+      "bytes": 1518,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/inspection.log",
+      "bytes": 15335,
+      "allocated_bytes": 16384,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/inspection.json",
+      "bytes": 22628,
+      "allocated_bytes": 24576,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/preflight.json",
+      "bytes": 591,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/verify_checkpoint.py",
+      "bytes": 2334,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/image-build.log",
+      "bytes": 619,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/first-source-before.json",
+      "bytes": 166,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/preflight.py",
+      "bytes": 3308,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-endpoint-repair-2026-10-20/record_handoff.py",
+      "bytes": 5953,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-install-2026-10-20/verify_install.py",
+      "bytes": 2231,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/before.json",
+      "bytes": 7453,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/background.json",
+      "bytes": 166,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/repair.log",
+      "bytes": 396,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/resume_proof.py",
+      "bytes": 1983,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/validation.json",
+      "bytes": 6927,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/resume_background.sh",
+      "bytes": 1045,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/complete.py",
+      "bytes": 8275,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/verification.json",
+      "bytes": 11187,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/resume-proof.log",
+      "bytes": 380,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/inspection.log",
+      "bytes": 19100,
+      "allocated_bytes": 20480,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/inspection.json",
+      "bytes": 18989,
+      "allocated_bytes": 20480,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/resume-proof.json",
+      "bytes": 4187,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-final-value-2026-10-21/inspect_job.py",
+      "bytes": 1265,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/raw-parser-audit.json",
+      "bytes": 29082,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/raw-parser-audit.log",
+      "bytes": 18227,
+      "allocated_bytes": 20480,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/probe_rf2.py",
+      "bytes": 1878,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/old-resume-guard.log",
+      "bytes": 62,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/probe_saved_terms.py",
+      "bytes": 1241,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/checkpoint-before.json",
+      "bytes": 22320,
+      "allocated_bytes": 24576,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/preserved-checkpoint.json",
+      "bytes": 488,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/rf2-parser-probe.json",
+      "bytes": 582,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/before-status.log",
+      "bytes": 320,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/human-status.log",
+      "bytes": 612,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/image-inspect.json",
+      "bytes": 2298,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/inspect_checkpoint.py",
+      "bytes": 1601,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/audit_inputs.py",
+      "bytes": 1399,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/verify_preservation.py",
+      "bytes": 1330,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/saved-term-probe.json",
+      "bytes": 503,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/image-tests.log",
+      "bytes": 14120,
+      "allocated_bytes": 16384,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/tests.log",
+      "bytes": 14221,
+      "allocated_bytes": 16384,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/record_evidence.py",
+      "bytes": 3474,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/verification.log",
+      "bytes": 424,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/image-build.log",
+      "bytes": 2726,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-index-recovery-2026-10-19/image-tests-initial-noexec.log",
+      "bytes": 14717,
+      "allocated_bytes": 16384,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/scan_jobs.py",
+      "bytes": 981,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/preflight.log",
+      "bytes": 298,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/source-before.json",
+      "bytes": 166,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/Dockerfile",
+      "bytes": 195,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/handoff.log",
+      "bytes": 275,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/source-record-scan.log",
+      "bytes": 290,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/status.log",
+      "bytes": 1377,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/inspect_checkpoint.py",
+      "bytes": 2141,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/compose.image.yaml",
+      "bytes": 194,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/source-record-scan.json",
+      "bytes": 213,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/image-tests.log",
+      "bytes": 34754,
+      "allocated_bytes": 36864,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/tests.log",
+      "bytes": 34855,
+      "allocated_bytes": 36864,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/verification.json",
+      "bytes": 2696,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/recovery.log",
+      "bytes": 1620,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/inspection.log",
+      "bytes": 4444,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/verification.log",
+      "bytes": 2225,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/inspection.json",
+      "bytes": 5597,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/preflight.json",
+      "bytes": 217,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/verify_checkpoint.py",
+      "bytes": 2454,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/image-build.log",
+      "bytes": 843,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/first-batch.json",
+      "bytes": 168,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/preflight.py",
+      "bytes": 2472,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-job-packet-2026-10-20/record_handoff.py",
+      "bytes": 5729,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/replay_phase.py",
+      "bytes": 2856,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/status.log",
+      "bytes": 525,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/image-inspect.json",
+      "bytes": 2297,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/replay.json",
+      "bytes": 1259,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/image-tests.log",
+      "bytes": 23012,
+      "allocated_bytes": 24576,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/probe_korean.py",
+      "bytes": 2964,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/receipt.log",
+      "bytes": 384,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/receipt.py",
+      "bytes": 3698,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/tests.log",
+      "bytes": 23113,
+      "allocated_bytes": 24576,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/verification.json",
+      "bytes": 972,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/replay.log",
+      "bytes": 1360,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/recovery.log",
+      "bytes": 676,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/inspection.log",
+      "bytes": 17527,
+      "allocated_bytes": 20480,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/verification.log",
+      "bytes": 1073,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/inspection.json",
+      "bytes": 20742,
+      "allocated_bytes": 24576,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/verify_checkpoint.py",
+      "bytes": 3550,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-korean-repair-2026-10-19/image-build.log",
+      "bytes": 2726,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/before.json",
+      "bytes": 10347,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/validation.log",
+      "bytes": 1077,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/source.json",
+      "bytes": 1437,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/candidate.json",
+      "bytes": 6622,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/status.log",
+      "bytes": 571,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/finalize.py",
+      "bytes": 1574,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/details.py",
+      "bytes": 1337,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/apply.log",
+      "bytes": 1309,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/finalize.log",
+      "bytes": 801,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/inspect_jobs.py",
+      "bytes": 3011,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/validation.json",
+      "bytes": 9685,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/complete.py",
+      "bytes": 8354,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/verification.json",
+      "bytes": 13824,
+      "allocated_bytes": 16384,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/inspection.json",
+      "bytes": 1042060,
+      "allocated_bytes": 1044480,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-manual-values-2026-10-20/details.log",
+      "bytes": 11464,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/checkpoint-before.json",
+      "bytes": 1982,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/recovery-verification.json",
+      "bytes": 1124,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/checkpoint-inspection.json",
+      "bytes": 128069,
+      "allocated_bytes": 131072,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/verify_saved.py",
+      "bytes": 3070,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/image-inspect.json",
+      "bytes": 2298,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/inspect_checkpoint.py",
+      "bytes": 2511,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/recovered-status.log",
+      "bytes": 514,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/image-tests.log",
+      "bytes": 21568,
+      "allocated_bytes": 24576,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/receipt.log",
+      "bytes": 392,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/receipt.py",
+      "bytes": 4159,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/tests.log",
+      "bytes": 21669,
+      "allocated_bytes": 24576,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/recovery.log",
+      "bytes": 620,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/recovery-verification.log",
+      "bytes": 1124,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/image-build.log",
+      "bytes": 2726,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/saved-replay.log",
+      "bytes": 1982,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-normalize-recovery-2026-10-19/verify_recovery.py",
+      "bytes": 3171,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/measure.log",
+      "bytes": 496,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/measure.py",
+      "bytes": 1476,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/roles.json",
+      "bytes": 8916,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/normalize-role-proposal.py",
+      "bytes": 2957,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/source-closed.sha256",
+      "bytes": 141,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/preflight.log",
+      "bytes": 660,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/background.json",
+      "bytes": 160,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/probe_bundle.py",
+      "bytes": 1607,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/Dockerfile",
+      "bytes": 195,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/compile-readiness-proposal.py",
+      "bytes": 6962,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/test-readiness-proposal.py",
+      "bytes": 2978,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/resume_proof.py",
+      "bytes": 1288,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/inspect_checkpoint.py",
+      "bytes": 1623,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/finish.log",
+      "bytes": 2909,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/compose.image.yaml",
+      "bytes": 196,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/finish_questions.py",
+      "bytes": 5334,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/proposed-readiness-tests.log",
+      "bytes": 36830,
+      "allocated_bytes": 36864,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/image-tests.log",
+      "bytes": 36023,
+      "allocated_bytes": 36864,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/resume_background.sh",
+      "bytes": 1042,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/role-probe.log",
+      "bytes": 79137,
+      "allocated_bytes": 135168,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/close-wal.log",
+      "bytes": 490,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/tests.log",
+      "bytes": 36399,
+      "allocated_bytes": 36864,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/verification.json",
+      "bytes": 4652,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/recovery.log",
+      "bytes": 1670,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/inspect_roles.py",
+      "bytes": 1050,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/resume-proof.log",
+      "bytes": 654,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/inspection.log",
+      "bytes": 3651,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/verification.log",
+      "bytes": 776,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/source-before.sha256",
+      "bytes": 141,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/inspection.json",
+      "bytes": 115271,
+      "allocated_bytes": 118784,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/preflight.json",
+      "bytes": 371,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/verify_checkpoint.py",
+      "bytes": 2816,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/roles.log",
+      "bytes": 9345,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/close_wal.py",
+      "bytes": 734,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/resume-proof.json",
+      "bytes": 3475,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/verify_install.py",
+      "bytes": 1801,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/preflight.py",
+      "bytes": 1674,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-patch-packet-2026-10-21/build.log",
+      "bytes": 843,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/resume-console.log",
+      "bytes": 629079,
+      "allocated_bytes": 659456,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/capture_resume.py",
+      "bytes": 2456,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/checkpoint-before.json",
+      "bytes": 1796,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/probe_checkpoint.py",
+      "bytes": 1542,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/image-inspect.json",
+      "bytes": 2298,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/image-tests.log",
+      "bytes": 24356,
+      "allocated_bytes": 24576,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/receipt.log",
+      "bytes": 403,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/receipt.py",
+      "bytes": 3658,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/tests.log",
+      "bytes": 24457,
+      "allocated_bytes": 24576,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/verification.json",
+      "bytes": 913,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/recovery.log",
+      "bytes": 680,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/checkpoint-before.log",
+      "bytes": 1897,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/worker-ownership.log",
+      "bytes": 1746,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/resume-proof.log",
+      "bytes": 892,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/verification.log",
+      "bytes": 1014,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/verify_checkpoint.py",
+      "bytes": 3106,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/image-build.log",
+      "bytes": 2726,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-provider-repair-2026-10-19/resume-proof.json",
+      "bytes": 791,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/before.json",
+      "bytes": 11941,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/resume-console.log",
+      "bytes": 2266,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/image-id.txt",
+      "bytes": 72,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/provider-tests.log",
+      "bytes": 1543,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/revision.txt",
+      "bytes": 41,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/status.log",
+      "bytes": 589,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/finalize.py",
+      "bytes": 4620,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/finalization.log",
+      "bytes": 301,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/container-ownership.json",
+      "bytes": 1766,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/verification.json",
+      "bytes": 4587,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/verify_resume.py",
+      "bytes": 3468,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/verification.log",
+      "bytes": 4688,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-questions-resume-2026-10-20/inspection.json",
+      "bytes": 6315,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/terms.py",
+      "bytes": 1131,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/remaining.py",
+      "bytes": 2404,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/image-id.txt",
+      "bytes": 72,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/audit.py",
+      "bytes": 1806,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/reference-audit.json",
+      "bytes": 318443,
+      "allocated_bytes": 319488,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/derived.json",
+      "bytes": 6422009,
+      "allocated_bytes": 6422528,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/remaining.log",
+      "bytes": 58514,
+      "allocated_bytes": 61440,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/Dockerfile",
+      "bytes": 138,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/probe.log",
+      "bytes": 1459,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/ambiguous-terms.json",
+      "bytes": 765739,
+      "allocated_bytes": 765952,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/status.log",
+      "bytes": 950,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/path-details.log",
+      "bytes": 8034,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/probe-verification.json",
+      "bytes": 353,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/finalize.py",
+      "bytes": 7624,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/compose.image.yaml",
+      "bytes": 193,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/diagnose.py",
+      "bytes": 2423,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/reconcile.log",
+      "bytes": 743,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/audit.log",
+      "bytes": 257433,
+      "allocated_bytes": 258048,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/summary.py",
+      "bytes": 609,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/details.py",
+      "bytes": 1886,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/finalization.json",
+      "bytes": 3325,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/finalization.log",
+      "bytes": 1651,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/manual-probe.log",
+      "bytes": 1005,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/image-tests.log",
+      "bytes": 525,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/repaired.json",
+      "bytes": 6439039,
+      "allocated_bytes": 7471104,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/manual-receipt.json",
+      "bytes": 360711,
+      "allocated_bytes": 364544,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/tests-final.log",
+      "bytes": 18012,
+      "allocated_bytes": 20480,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/tests.log",
+      "bytes": 119758,
+      "allocated_bytes": 143360,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/path_details.py",
+      "bytes": 1089,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/installed-verification.log",
+      "bytes": 2379,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/manual_repair.py",
+      "bytes": 14792,
+      "allocated_bytes": 16384,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/installed-verification.json",
+      "bytes": 1954,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/reconcile.py",
+      "bytes": 11333,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/details.log",
+      "bytes": 26360,
+      "allocated_bytes": 28672,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/image-build.log",
+      "bytes": 756,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/diagnosis.json",
+      "bytes": 5733,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/verify_install.py",
+      "bytes": 4293,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/terms.log",
+      "bytes": 4717,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/remaining-expectations.json",
+      "bytes": 3,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/bundle-probe/clinical.ttl",
+      "bytes": 3352626,
+      "allocated_bytes": 4325376,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/bundle-probe/questions.ko.json",
+      "bytes": 713087,
+      "allocated_bytes": 720896,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/bundle-probe/schema.ttl",
+      "bytes": 6721,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/bundle-probe/guideline-index.json",
+      "bytes": 73792,
+      "allocated_bytes": 77824,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/bundle-probe/manifest.json",
+      "bytes": 664,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-readiness-2026-10-21/bundle-probe/vocabulary.ttl",
+      "bytes": 6450561,
+      "allocated_bytes": 7471104,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/image-build-input-repair.log",
+      "bytes": 532,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/disk-after.txt",
+      "bytes": 164,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/resume-console.log",
+      "bytes": 646,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/check_after_space.py",
+      "bytes": 1081,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/image-id.txt",
+      "bytes": 72,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/capture_resume.py",
+      "bytes": 3213,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/image-tests-input-repair.log",
+      "bytes": 29522,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/workspace-after.txt",
+      "bytes": 115,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/prepare_input_repair.py",
+      "bytes": 2198,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/diagnose_request.py",
+      "bytes": 1146,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/source-before.json",
+      "bytes": 350,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/revision.txt",
+      "bytes": 41,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/Dockerfile",
+      "bytes": 138,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-measurement.json",
+      "bytes": 1627,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/cleanup-verification.log",
+      "bytes": 206,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/finalize.py",
+      "bytes": 6874,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/inspect_checkpoint.py",
+      "bytes": 3028,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/archive_checkpoints.py",
+      "bytes": 4682,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/cleanup-state.log",
+      "bytes": 197,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/finalization.log",
+      "bytes": 458,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/complete_cleanup_state.py",
+      "bytes": 2575,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/image-tests.log",
+      "bytes": 29008,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/measure_inputs.py",
+      "bytes": 1420,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/container-ownership.json",
+      "bytes": 1746,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/disk-check.json",
+      "bytes": 927,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/disk-check.log",
+      "bytes": 1028,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/request-diagnostic.log",
+      "bytes": 273,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/recovery-ownership.json",
+      "bytes": 1163,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/tests-input-repair.log",
+      "bytes": 29623,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/tests.log",
+      "bytes": 29109,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/verification.json",
+      "bytes": 839,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/recovery.log",
+      "bytes": 1094,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/record_cleanup.py",
+      "bytes": 3359,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/verification.log",
+      "bytes": 940,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/image-id-input-repair.txt",
+      "bytes": 72,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/inspection.json",
+      "bytes": 9206,
+      "allocated_bytes": 12288,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/verify_checkpoint.py",
+      "bytes": 2920,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/image-build.log",
+      "bytes": 532,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/archive.log",
+      "bytes": 1899,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/resume-proof.json",
+      "bytes": 1438,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/prepare-input-repair.log",
+      "bytes": 451,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-repair/resume-console.log",
+      "bytes": 2144,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-repair/capture_resume.py",
+      "bytes": 3728,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-repair/source-before.json",
+      "bytes": 350,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-repair/container-ownership.json",
+      "bytes": 1746,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-repair/verification.json",
+      "bytes": 839,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-repair/recovery.log",
+      "bytes": 1096,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.log",
+      "bytes": 2279,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-repair/verification.log",
+      "bytes": 940,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-repair/verify_checkpoint.py",
+      "bytes": 2933,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-repair/resume-after-space-console.log",
+      "bytes": 7854,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json",
+      "bytes": 2178,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/resume-console.log",
+      "bytes": 54452,
+      "allocated_bytes": 57344,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/image-id.txt",
+      "bytes": 72,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/capture_resume.py",
+      "bytes": 2220,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/source-before.json",
+      "bytes": 350,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/revision.txt",
+      "bytes": 41,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/Dockerfile",
+      "bytes": 256,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/finalize.py",
+      "bytes": 6065,
+      "allocated_bytes": 8192,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/retry_luna_once.py",
+      "bytes": 2819,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/finalization.log",
+      "bytes": 323,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/image-tests.log",
+      "bytes": 28472,
+      "allocated_bytes": 28672,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/container-ownership.json",
+      "bytes": 1766,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/tests.log",
+      "bytes": 28573,
+      "allocated_bytes": 28672,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/verification.json",
+      "bytes": 775,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/recovery.log",
+      "bytes": 1088,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/resume-proof.log",
+      "bytes": 1548,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/verification.log",
+      "bytes": 876,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/verify_checkpoint.py",
+      "bytes": 2311,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/image-build.log",
+      "bytes": 710,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/luna-retry.log",
+      "bytes": 317,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "Tmp/extraction-sol-switch-2026-10-20/resume-proof.json",
+      "bytes": 1447,
+      "allocated_bytes": 4096,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/retired-d42-2026-10-19/historical-knowledge-and-generator.tar.gz",
+      "bytes": 3029832,
+      "allocated_bytes": 3031040,
+      "symlink": false
+    },
+    {
+      "path": "data/extraction/retired-d42-2026-10-19/historical-extra-tools.tar.gz",
+      "bytes": 30516,
+      "allocated_bytes": 32768,
+      "symlink": false
+    },
+    {
+      "path": "Extraction/.DS_Store",
+      "bytes": 10244,
+      "allocated_bytes": 12288,
+      "symlink": false
+    }
+  ],
+  "logical_bytes": 46885258127,
+  "allocated_bytes": 46961709056,
+  "final_audit": "data/provenance/extraction-final-audit-2026-10-21.json",
+  "installed_manifest_sha256": "a4c10f3a897485c1d4eb57ad8dc35e9d60dcb59e4d14a5d8ae5ef54f2ebbb2eb",
+  "work_checkpoint_count": 6,
+  "protected_scope": [
+    "Extraction current source config prompts tests",
+    "submission entire installed runtime and knowledge",
+    "assets supplied originals",
+    "data/preparation source custody and prior non-extraction artifacts",
+    "data/provenance compact historical receipts",
+    "Docker images containers and authentication volumes"
+  ],
+  "before_free_bytes": 23527522304,
+  "preserved_historical_tests": {
+    "extraction_tests": 106,
+    "rebuilt_image_tests": 2,
+    "image_id": "sha256:5dbad42886874dc5dc3a323c94e1bb79ba2568cdda735cfc95b70864b7677eca",
+    "installed_runtime": "data/provenance/extraction-installed-2026-10-21.json",
+    "evidence_sha256": {
+      "tests-final.log": "cb4874f9071c9cc65fc1652b082002b8130c4524d57261e58e63b5d2316105db",
+      "image-tests.log": "1dd14c572f2cc03be7318eec0a335a3f579e1c93ca74349d4740dc1481360c47",
+      "manual-receipt.json": "b7ecd098b018f1877018bcf0552f2976c47720d6b784fab040299eef90a272c1",
+      "finalize.py": "9e345f9f477d1f2926992b542b75071148111c3d82ba86d1be6472b8eb17a556",
+      "manual_repair.py": "a5273dde744003a9db80ab3f7d590ae3223dbd644f0eb2050f53b1f60284bc59",
+      "verify_install.py": "de2c2fa26bd0180298a701d0f43cd72a131824601454bb2c45d8546e5b7d6cb4",
+      "image-build.log": "fe506837295fce1efef2ff39b08d18b1ef92112b22fc947d81572d5778180eb5",
+      "status.log": "ebc5e8fdeff52a7a1c7a686837c98801c9fc6bb102406a06ad8c3da0d003fd90"
+    }
+  },
+  "prior_evidence": [
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.INDEX_REPAIR49.E1 class=semantic result=pass source=Tmp/extraction-index-recovery-2026-10-19/rf2-parser-probe.json observed=\"Reproduce default CSV failure after 862658 Description records while all 1704584 physical rows have nine columns and fields at most 255 characters; identify literal RF2 quotes as the cause\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.INDEX_REPAIR49.E2 class=artifact result=pass source=Tmp/extraction-index-recovery-2026-10-19/saved-term-probe.json observed=\"Find 41 altered committed terms and preserve failed run 218abbb17b1438be463b58870fab9d6b; reject its resume under the changed generator fingerprint without model execution\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.INDEX_REPAIR49.E3 class=runtime result=pass source=Tmp/extraction-index-recovery-2026-10-19/image-tests.log observed=\"Pass thirty extractor checks in the rebuilt network-disabled image including RF2 literal quotes legitimate long fields BODHI CSV malformed rows legacy read-only status watch without clients and console failure exit codes\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.INDEX_REPAIR49.E4 class=runtime result=pass source=Tmp/extraction-index-recovery-2026-10-19/raw-parser-audit.json observed=\"Parse all 95 RF2 Snapshot files and eight BODHI CSVs with 12586080 rows read-only; run human status and live watch with clean interrupt and leave real indexing and generation unrun in this repair\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.NORMALIZE_REPAIR49.E1 class=semantic result=pass source=Tmp/extraction-normalize-recovery-2026-10-19/checkpoint-before.json observed=\"Replay six saved stop responses locally and reproduce four envelope failures and two field validation failures with zero accepted results; identify the missing NOVA system-message schema\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.NORMALIZE_REPAIR49.E2 class=runtime result=pass source=Tmp/extraction-normalize-recovery-2026-10-19/image-tests.log observed=\"Pass thirty-eight extraction checks in dev and the rebuilt network-disabled image including actual adapter schema delivery settled-request recovery source preservation usage carry-forward worker locking cancellation and untried-job status\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.TEXT_REPAIR49.E1 class=semantic result=pass source=Tmp/extraction-korean-repair-2026-10-19/inspection.json observed=\"Identify long English examination and clarification text plus non-presence affirmative bindings generated during normalization; pause the proven project worker after its in-flight response with seven done and three retry jobs\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.TEXT_REPAIR49.E2 class=runtime result=pass source=Tmp/extraction-korean-repair-2026-10-19/image-tests.log observed=\"Pass forty-five extraction checks in dev and the rebuilt network-disabled image including deferred normalization text preserved clinical validation actual Korean rendered limits actionable question errors synthetic full-pipeline completion and offline accepted-row preservation\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.TEXT_REPAIR49.E3 class=semantic result=pass source=Tmp/extraction-korean-repair-2026-10-19/replay.json observed=\"Recover three rejected jobs from latest saved responses locally and preserve seven done results byte-for-byte without incrementing usage\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.PROVIDER_REPAIR49.E1 class=semantic result=pass source=Tmp/extraction-provider-repair-2026-10-19/checkpoint-before.json observed=\"Identify one saved PROVIDER_RESPONSE_INVALID request without a response after the old five-attempt same-ID retry loop; verify current official error and retry guidance at https://nova.snubhai.org/docs/\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.PROVIDER_REPAIR49.E2 class=runtime result=pass source=Tmp/extraction-provider-repair-2026-10-19/image-tests.log observed=\"Pass fifty-two extraction checks in dev and the network-disabled image including explicit versus unknown errors unchanged replacement payload bounded attempts pause before replacement correct response ownership and preserved counters\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.PROVIDER_REPAIR49.E4 class=external_service result=pass source=Tmp/extraction-provider-repair-2026-10-19/resume-proof.json observed=\"Resume the user-selected NOVA build with install enabled; accept the failed ten-job batch under fresh request d9e6172a-c82c-4ee7-ad7a-65f9af8b28b9 with identical payload except ID and advance from 250 to 260 done while the next batch runs\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.BATCH_REPAIR49.E1 class=runtime result=pass source=Tmp/extraction-batch-repair-2026-10-20/checkpoint-image-tests.log observed=\"Pass 57 extraction tests in development and the repaired offline image including fixed-size missing-row and truncated-output retries bounded attempts synthetic completion and keyless guarded recovery\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.BATCH_REPAIR49.E2 class=artifact result=pass source=Tmp/extraction-batch-repair-2026-10-20/verification.json observed=\"Preserve source dc60cdc5a593beb39cd6cd8d9a490ea2 SHA256 535c888e6444045b51374b18fb4aae9977e283aed48b53ee15a3935e50a9341f all 1787 completed jobs all job counters 815 requests usage and complete index; retain the pinned runtime reader without modifying concurrent workspace changes\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.BATCH_REPAIR49.E3 class=external_service result=pass source=Tmp/extraction-batch-repair-2026-10-20/resume-proof.json observed=\"Resume 10282b2e382f085d756e9f6645dc05fe with install enabled and verify consecutive ten-job requests with at least two accepted responses and no recalled original done jobs; retain actual generation as active and installation unrun\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.EMPTY_SOURCE49.E1 class=runtime result=pass source=Tmp/extraction-empty-concept-repair-2026-10-20/image-tests.log observed=\"Pass 63 extraction tests in development and the pinned offline image including blank Unicode-format input exclusion no extra calls nonempty concept rejection immutable source recovery and synthetic full-pipeline completion\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.EMPTY_SOURCE49.E3 class=external_service result=pass source=Tmp/extraction-empty-concept-repair-2026-10-20/resume-proof.json observed=\"Resume c9bb43be69ba8d0c16cedec569895fea with fixed ten-job requests and install enabled; verify accepted fresh output and resolution of the prior missing_result job without recalling completed or excluded jobs\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.QUESTIONS_RESUME49.E1 class=external_service result=fail source=Tmp/extraction-questions-resume-2026-10-20/verification.json observed=\"Receive five additional confirmed NOVA HTTP 503 PROVIDER_RESPONSE_INVALID failures under distinct IDs with no accepted output; stop at the existing retry ceiling and preserve all 6579 completed results and 1312 original request records\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/blocker id=ROOT.BUILD49.NOVA_PROVIDER state=resolved action=\"Confirm a valid Luna response and accept the interrupted batch under the compact question contract\" source=Tmp/extraction-sol-switch-2026-10-20/resume-proof.json"
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.QUESTION_OUTPUT49.E1 class=runtime result=pass source=Tmp/extraction-sol-switch-2026-10-20/image-tests.log observed=\"Pass 71 extraction tests in development and the pinned offline image including compact clinical-field restoration method binding Korean validation keyless Luna recovery explicit Sol switching shared Sol quota and synthetic full-pipeline completion\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.QUESTION_OUTPUT49.E2 class=artifact result=pass source=Tmp/extraction-sol-switch-2026-10-20/verification.json observed=\"Preserve source c9bb43be69ba8d0c16cedec569895fea SHA256 9128081851a5f1e7dc89ca39714065726262a21be10fdd17b47bedb1c9380f7d all job rows counters requests usage and raw cursors while forking a new question-output fingerprint without model calls or recovery JSON duplication\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.QUESTION_OUTPUT49.E3 class=external_service result=pass source=Tmp/extraction-sol-switch-2026-10-20/resume-proof.json observed=\"Accept all ten interrupted questions on Luna medium with stop and 2232 output tokens then begin the next ten-job request; retain zero live Sol calls and the user-selected Luna route\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.SOL_SWITCH49.E1 class=runtime result=pass source=Tmp/extraction-sol-context-2026-10-20/image-tests-input-repair.log observed=\"Pass 75 extraction tests in development and the pinned offline image including explicit context-error switching unknown-result rejection compact question input clinical restoration preserved rejected Sol requests shared quota and full synthetic completion\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.SOL_SWITCH49.E2 class=artifact result=pass source=Tmp/extraction-sol-context-2026-10-20/input-repair/verification.json observed=\"Preserve 6429 normalization and 1997 question results all counters registered inputs request and usage rows and raw cursors through both immutable checkpoint copies; preserve rejected Sol source SHA256 07cb47e35d1f1dd3b540a0d22936e6deebc893bd7a89a5504f0817ed24189ff2; reset no counters and make no recovery model calls\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.SOL_SWITCH49.E3 class=external_service result=pass source=Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json observed=\"Accept all forty formerly rejected questions on Sol medium with stop under a 32000-token cap; verify no completed job recalled and resume subsequent forty-job work with install enabled\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/blocker id=ROOT.BUILD49.CONTEXT_LIMIT state=resolved action=\"Explicitly select Sol medium and accept the rejected forty-job batch after compacting repeated question metadata\" source=Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json"
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.DRAFT_PACKET49.E1 class=runtime result=pass source=Tmp/extraction-draft-repair-2026-10-20/image-tests.log observed=\"Pass 82 development and image tests for shared complete scope reversible references fixed batches bounded pending reads provider envelopes source preservation and full synthetic completion\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.DRAFT_PACKET49.E2 class=artifact result=pass source=Tmp/extraction-draft-repair-2026-10-20/verification.json observed=\"Preserve original source SHA256 71d007b7d7babc38f95879bd12a0b61243a82070d1018ede680c435fb16e6be1 all 9386 completed results frozen draft inputs counters 1534 original requests usage raw cursors and clinical pins in a new fingerprint without recovery calls\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.PROVIDER_SWITCH49.E1 class=runtime result=pass source=Tmp/extraction-draft-repair-2026-10-20/provider-image-tests.log observed=\"Pass 86 tests in development and the offline extraction image including explicit provider selection Luna medium for both API phases unchanged completed results historical providers counters unknown-outcome rejection and full synthetic completion\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/blocker id=ROOT.BUILD49.API_AUTH state=resolved action=\"Observe two actual API Luna responses in the preserved checkpoint without inspecting or displaying credentials\" source=Tmp/extraction-endpoint-repair-2026-10-20/inspection.json"
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.JOB_PACKET49.E1 class=runtime result=pass source=Tmp/extraction-job-packet-2026-10-20/image-tests.log observed=\"Pass 98 development and final-image tests including lossless source parts fixed forty-job requests and tail guarded keyless packet recovery unknown and configuration rejection and synthetic completion\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.JOB_PACKET49.E3 class=semantic result=pass source=Tmp/extraction-job-packet-2026-10-20/preflight.json observed=\"Pack all 790 unfinished real jobs into nineteen forty-job batches and a thirty-job tail; reconstruct all 10647 source records exactly with two split jobs maximum message length 49995 no input mutation and zero model calls\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.MANUAL_VALUES49.E1 class=semantic result=pass source=Tmp/extraction-manual-values-2026-10-20/validation.json observed=\"Reproduce unregistered_attribute_value on the saved response and accept its nine relations after exactly three registered reference corrections; independently revalidate the already completed Restless legs syndrome result unchanged\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.FINAL_COUNT49.E1 class=semantic result=pass source=Tmp/extraction-final-value-2026-10-21/verification.json observed=\"Reproduce quantity-flag and missing-target-attribute failures; preserve count greater than seven with operator gt canonical unit 개 registered Skin tag count attribute added to the unchanged symptom and the existing presence question; verify six and seven contradicted eight and nine matched\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.FINAL_COUNT49.E3 class=external_service result=pass source=Tmp/extraction-final-value-2026-10-21/resume-proof.json observed=\"Resume the identical API Luna medium fingerprint in a detached project container with durable console output; accept 39 fresh final results start the next fixed forty-job request and preserve the manually completed job without another attempt; keep install enabled and leave the worker running\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.PATCH_PACKET49.E1 class=runtime result=pass source=Tmp/extraction-patch-packet-2026-10-21/image-tests.log observed=\"Pass 104 extraction tests in development and the rebuilt network-disabled image including complete patch-table roundtrip fixed forty-job requests tail registered-reference restoration neutral protection guarded keyless recovery and full synthetic completion\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.PATCH_PACKET49.E2 class=semantic result=pass source=Tmp/extraction-patch-packet-2026-10-21/preflight.json observed=\"Roundtrip all 57 real patch jobs in batches of 40 and 17 with 6173 clinical concept definitions and 3658 complete judgments shared once per request; reduce the rejected 168286594-character message to bounded parts with maximum 49995 and first-request total 1172462 characters without altering stored inputs\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.PATCH_PACKET49.E4 class=external_service result=pass source=Tmp/extraction-patch-packet-2026-10-21/resume-proof.json observed=\"Accept 38 patch results in the first repaired forty-job API request and start the nineteen-job remaining tail including two bounded validation retries; retain strict endpoint and completed-neutral protection and install enabled in a detached worker\""
+    },
+    {
+      "scope": "PROJECT_STATE.md",
+      "line": "/evidence id=ROOT.READINESS49.E2 class=runtime result=pass source=Tmp/extraction-readiness-2026-10-21/tests-final.log observed=\"Pass 106 extraction regressions against mounted current source and two role-preservation checks in the rebuilt image with network disabled; retain the exact source configuration models prompts runtime pins and raw input identity\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.INDEX_REPAIR49.E1 class=artifact result=pass source=../Tmp/extraction-index-recovery-2026-10-19/checkpoint-before.json observed=\"Inspect user-started NOVA run 218abbb17b1438be463b58870fab9d6b at failed index with 27 of 108 files completed 6520644 committed records a current-file cursor of 862000 and zero model jobs requests or usage\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.INDEX_REPAIR49.E2 class=artifact result=pass source=../Tmp/extraction-index-recovery-2026-10-19/preserved-checkpoint.json observed=\"Preserve the 2150051840-byte work DB with SHA256 b9a6ab893535dd6648f043ee6f40d90749c6d45461e5befe102920762c0dac6e; retain 41 altered terms as failure evidence and require a fresh corrected fingerprint\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.NORMALIZE_REPAIR49.E1 class=artifact result=pass source=../Tmp/extraction-normalize-recovery-2026-10-19/checkpoint-before.json observed=\"Inspect user-started NOVA run 49d20167b4e932a55247cb367e378a1f after all 108 files and 12587695 records were indexed; preserve six failed-format responses with 17918 input and 13279 output tokens and zero accepted results\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.NORMALIZE_REPAIR49.E2 class=artifact result=pass source=../Tmp/extraction-normalize-recovery-2026-10-19/recovery-verification.json observed=\"Match the original 4572262400-byte DB SHA256 6589c5b6b815e2fe563607d543c71b89fa6b3004a73e7311c13c1701bf2b49d3 before and after; verify recovered run cd25fa99307faf8b89b5c691df203c45 ready with 6429 pending jobs identical raw index inputs cursors requests usage and ten previously attempted job records with original counters\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.TEXT_REPAIR49.E1 class=artifact result=pass source=../Tmp/extraction-korean-repair-2026-10-19/verification.json observed=\"Preserve paused cd25fa99307faf8b89b5c691df203c45 with SHA256 97a22276b08f25967d6dd2475022ec71f14e5f7600520b32c04a20fe49215207 before and after recovery; retain all seven done result rows and counters byte-for-byte\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.PROVIDER_REPAIR49.E1 class=artifact result=pass source=../Tmp/extraction-provider-repair-2026-10-19/verification.json observed=\"Match failed 42ff7f33bc2fcec39a379623a1ac5550 SHA256 becf1913f42b4936a833fe6fd27caec06e57967e855cc40d6e4d6538814b7284 before and after; preserve 250 completed rows all job inputs results and counters 108 input cursors 34 accepted requests and usage in dc60cdc5a593beb39cd6cd8d9a490ea2\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.PROVIDER_REPAIR49.E3 class=external_service result=pass source=../Tmp/extraction-provider-repair-2026-10-19/resume-proof.json observed=\"Observe the resumed same-content new-ID batch accepted with stop and ten completed jobs; record 260 done and 35 successful calls at 2026-10-19T20:59:15+09:00 with another ten-job request running and no active runtime manifest yet\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.BATCH_REPAIR49.E1 class=runtime result=pass source=../Tmp/extraction-batch-repair-2026-10-20/checkpoint-image-tests.log observed=\"Pass 57 extraction tests in development and the repaired offline image including fixed-size missing-row and truncated-output retries bounded attempts synthetic completion and keyless guarded recovery\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.BATCH_REPAIR49.E2 class=artifact result=pass source=../Tmp/extraction-batch-repair-2026-10-20/verification.json observed=\"Preserve source dc60cdc5a593beb39cd6cd8d9a490ea2 SHA256 535c888e6444045b51374b18fb4aae9977e283aed48b53ee15a3935e50a9341f all 1787 completed jobs all job counters 815 requests usage and complete index; retain the pinned runtime reader without modifying concurrent workspace changes\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.BATCH_REPAIR49.E3 class=external_service result=pass source=../Tmp/extraction-batch-repair-2026-10-20/resume-proof.json observed=\"Resume 10282b2e382f085d756e9f6645dc05fe with install enabled and verify consecutive ten-job requests with at least two accepted responses and no recalled original done jobs; retain actual generation as active and installation unrun\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.EMPTY_SOURCE49.E1 class=runtime result=pass source=../Tmp/extraction-empty-concept-repair-2026-10-20/image-tests.log observed=\"Pass 63 extraction tests in development and the pinned offline image including blank Unicode-format input exclusion no extra calls nonempty concept rejection immutable source recovery and synthetic full-pipeline completion\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.EMPTY_SOURCE49.E2 class=artifact result=pass source=../Tmp/extraction-empty-concept-repair-2026-10-20/verification.json observed=\"Preserve source 10282b2e382f085d756e9f6645dc05fe SHA256 fe76b8777c9554acd20c6f906e283e1f001c0a57ba33cbebe62efd4ca9c28559 all 2479 completed model results all other job rows counters 886 requests usage and index cursors; record one blank BODHI exclusion with its six attempts in SQLite without a recovery.json duplicate\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.EMPTY_SOURCE49.E3 class=external_service result=pass source=../Tmp/extraction-empty-concept-repair-2026-10-20/resume-proof.json observed=\"Resume c9bb43be69ba8d0c16cedec569895fea with fixed ten-job requests and install enabled; verify accepted fresh output and resolution of the prior missing_result job without recalling completed or excluded jobs\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.QUESTIONS_RESUME49.E1 class=external_service result=fail source=../Tmp/extraction-questions-resume-2026-10-20/verification.json observed=\"Receive five additional confirmed NOVA HTTP 503 PROVIDER_RESPONSE_INVALID failures under distinct IDs with no accepted output; stop at the existing retry ceiling and preserve all 6579 completed results and 1312 original request records\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/blocker id=DATA.BUILD49.NOVA_PROVIDER state=resolved action=\"Confirm a valid Luna response and accept the interrupted batch under the compact question contract\" source=../Tmp/extraction-sol-switch-2026-10-20/resume-proof.json"
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.QUESTION_OUTPUT49.E1 class=runtime result=pass source=../Tmp/extraction-sol-switch-2026-10-20/image-tests.log observed=\"Pass 71 extraction tests in development and the pinned offline image including compact clinical-field restoration method binding Korean validation keyless Luna recovery explicit Sol switching shared Sol quota and synthetic full-pipeline completion\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.QUESTION_OUTPUT49.E2 class=artifact result=pass source=../Tmp/extraction-sol-switch-2026-10-20/verification.json observed=\"Preserve source c9bb43be69ba8d0c16cedec569895fea SHA256 9128081851a5f1e7dc89ca39714065726262a21be10fdd17b47bedb1c9380f7d all job rows counters requests usage and raw cursors while forking a new question-output fingerprint without model calls or recovery JSON duplication\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.QUESTION_OUTPUT49.E3 class=external_service result=pass source=../Tmp/extraction-sol-switch-2026-10-20/resume-proof.json observed=\"Accept all ten interrupted questions on Luna medium with stop and 2232 output tokens then begin the next ten-job request; retain zero live Sol calls and the user-selected Luna route\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.SOL_SWITCH49.E1 class=runtime result=pass source=../Tmp/extraction-sol-context-2026-10-20/image-tests-input-repair.log observed=\"Pass 75 extraction tests in development and the pinned offline image including explicit context-error switching unknown-result rejection compact question input clinical restoration preserved rejected Sol requests shared quota and full synthetic completion\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.SOL_SWITCH49.E2 class=artifact result=pass source=../Tmp/extraction-sol-context-2026-10-20/input-repair/verification.json observed=\"Preserve 6429 normalization and 1997 question results all counters registered inputs request and usage rows and raw cursors through both immutable checkpoint copies; preserve rejected Sol source SHA256 07cb47e35d1f1dd3b540a0d22936e6deebc893bd7a89a5504f0817ed24189ff2; reset no counters and make no recovery model calls\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.SOL_SWITCH49.E3 class=external_service result=pass source=../Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json observed=\"Accept all forty formerly rejected questions on Sol medium with stop under a 32000-token cap; verify no completed job recalled and resume subsequent forty-job work with install enabled\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/blocker id=DATA.BUILD49.CONTEXT_LIMIT state=resolved action=\"Explicitly select Sol medium and accept the rejected forty-job batch after compacting repeated question metadata\" source=../Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json"
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.DRAFT_PACKET49.E1 class=runtime result=pass source=../Tmp/extraction-draft-repair-2026-10-20/image-tests.log observed=\"Pass 82 development and image tests for shared complete scope reversible references fixed batches bounded pending reads provider envelopes source preservation and full synthetic completion\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.DRAFT_PACKET49.E2 class=artifact result=pass source=../Tmp/extraction-draft-repair-2026-10-20/verification.json observed=\"Preserve original source SHA256 71d007b7d7babc38f95879bd12a0b61243a82070d1018ede680c435fb16e6be1 all 9386 completed results frozen draft inputs counters 1534 original requests usage raw cursors and clinical pins in a new fingerprint without recovery calls\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.PROVIDER_SWITCH49.E1 class=runtime result=pass source=../Tmp/extraction-draft-repair-2026-10-20/provider-image-tests.log observed=\"Pass 86 tests in development and the offline extraction image including explicit provider selection Luna medium for both API phases unchanged completed results historical providers counters unknown-outcome rejection and full synthetic completion\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/blocker id=DATA.BUILD49.API_AUTH state=resolved action=\"Observe two actual API Luna responses in the preserved checkpoint without inspecting or displaying credentials\" source=../Tmp/extraction-endpoint-repair-2026-10-20/inspection.json"
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.JOB_PACKET49.E1 class=artifact result=pass source=../Tmp/extraction-job-packet-2026-10-20/verification.json observed=\"Preserve failed source SHA256 04b1cdcd7037116ec36a5c42f7a942fd30e31332c90c074286b169af27efdbda all 9541 completed results including 155 drafts all 1542 historical requests usage job inputs counters and raw cursors with identical input model schema and runtime pins; verify SQLite quick_check ok and zero recovery calls\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.MANUAL_VALUES49.E2 class=runtime result=pass source=../Tmp/extraction-manual-values-2026-10-20/verification.json observed=\"Verify 6429 normalize 2957 questions and 945 draft jobs done zero unfinished existing jobs paused state zero unsettled requests unchanged 1547 accepted and 21 failed historical request records unchanged 1547 recorded model calls and SQLite quick_check ok; leave final workset unseeded\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.FINAL_COUNT49.E2 class=runtime result=pass source=../Tmp/extraction-final-value-2026-10-21/verification.json observed=\"After local acceptance observe 3124 final jobs done and 541 pending no remaining failed jobs zero unsettled requests and zero extra model calls; verify SQLite quick_check ok before the separately authorized background resume\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.FINAL_COUNT49.E3 class=external_service result=pass source=../Tmp/extraction-final-value-2026-10-21/resume-proof.json observed=\"Observe at least 39 fresh final results accepted on the unchanged API Luna medium configuration after manual repair; preserve the corrected job with six attempts and record detached container console path status counts and actual model usage in the current repair receipt; leave compilation installation and clinical validation unfinished or unrun at handoff\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.PATCH_PACKET49.E2 class=external_service result=pass source=../Tmp/extraction-patch-packet-2026-10-21/resume-proof.json observed=\"Resume new fingerprint 921be40beebc21349916de340d320eff on API Luna medium fixed batches of forty and install enabled; accept 38 fresh patches and preserve two rejected rows for bounded retry in the nineteen-job remaining tail; keep original checkpoint and all manual metadata\""
+    },
+    {
+      "scope": "data/PROJECT_STATE.md",
+      "line": "/evidence id=DATA.READINESS49.E2 class=runtime result=pass source=../Tmp/extraction-readiness-2026-10-21/tests-final.log observed=\"Pass 106 extraction regressions against mounted current source and two role-preservation checks in the rebuilt image with network disabled; retain the exact source configuration models prompts runtime pins and raw input identity\""
+    }
+  ],
+  "completed_at": 1792519051.4550836,
+  "deletion": "complete",
+  "removed_files": 455,
+  "removed_targets": 51,
+  "after_free_bytes": 70498582528,
+  "protected_file_hashes": "unchanged",
+  "after_prepare": "pass",
+  "after_verify": {
+    "status": "pass",
+    "diseases": 945,
+    "gaps": []
+  },
+  "after_manifest_sha256": "a4c10f3a897485c1d4eb57ad8dc35e9d60dcb59e4d14a5d8ae5ef54f2ebbb2eb",
+  "retained_installed_build": "87e8b4c54b0689453cea91b3bb316290",
+  "resumable_checkpoints_remaining": 0,
+  "old_console_and_retry_history_available": false,
+  "not_run": [
+    "actual-model consultation",
+    "clinical validity",
+    "official evaluation",
+    "production ZIP",
+    "publication",
+    "deployment"
+  ],
+  "observed_free_space_increase_bytes": 46971060224,
+  "state_evidence_redirects": [
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-index-recovery-2026-10-19/rf2-parser-probe.json",
+      "record": "/evidence id=ROOT.INDEX_REPAIR49.E1 class=semantic result=pass source=Tmp/extraction-index-recovery-2026-10-19/rf2-parser-probe.json observed=\"Reproduce default CSV failure after 862658 Description records while all 1704584 physical rows have nine columns and fields at most 255 characters; identify literal RF2 quotes as the cause\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-index-recovery-2026-10-19/saved-term-probe.json",
+      "record": "/evidence id=ROOT.INDEX_REPAIR49.E2 class=artifact result=pass source=Tmp/extraction-index-recovery-2026-10-19/saved-term-probe.json observed=\"Find 41 altered committed terms and preserve failed run 218abbb17b1438be463b58870fab9d6b; reject its resume under the changed generator fingerprint without model execution\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-index-recovery-2026-10-19/image-tests.log",
+      "record": "/evidence id=ROOT.INDEX_REPAIR49.E3 class=runtime result=pass source=Tmp/extraction-index-recovery-2026-10-19/image-tests.log observed=\"Pass thirty extractor checks in the rebuilt network-disabled image including RF2 literal quotes legitimate long fields BODHI CSV malformed rows legacy read-only status watch without clients and console failure exit codes\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-index-recovery-2026-10-19/raw-parser-audit.json",
+      "record": "/evidence id=ROOT.INDEX_REPAIR49.E4 class=runtime result=pass source=Tmp/extraction-index-recovery-2026-10-19/raw-parser-audit.json observed=\"Parse all 95 RF2 Snapshot files and eight BODHI CSVs with 12586080 rows read-only; run human status and live watch with clean interrupt and leave real indexing and generation unrun in this repair\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-normalize-recovery-2026-10-19/checkpoint-before.json",
+      "record": "/evidence id=ROOT.NORMALIZE_REPAIR49.E1 class=semantic result=pass source=Tmp/extraction-normalize-recovery-2026-10-19/checkpoint-before.json observed=\"Replay six saved stop responses locally and reproduce four envelope failures and two field validation failures with zero accepted results; identify the missing NOVA system-message schema\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-normalize-recovery-2026-10-19/image-tests.log",
+      "record": "/evidence id=ROOT.NORMALIZE_REPAIR49.E2 class=runtime result=pass source=Tmp/extraction-normalize-recovery-2026-10-19/image-tests.log observed=\"Pass thirty-eight extraction checks in dev and the rebuilt network-disabled image including actual adapter schema delivery settled-request recovery source preservation usage carry-forward worker locking cancellation and untried-job status\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-korean-repair-2026-10-19/inspection.json",
+      "record": "/evidence id=ROOT.TEXT_REPAIR49.E1 class=semantic result=pass source=Tmp/extraction-korean-repair-2026-10-19/inspection.json observed=\"Identify long English examination and clarification text plus non-presence affirmative bindings generated during normalization; pause the proven project worker after its in-flight response with seven done and three retry jobs\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-korean-repair-2026-10-19/image-tests.log",
+      "record": "/evidence id=ROOT.TEXT_REPAIR49.E2 class=runtime result=pass source=Tmp/extraction-korean-repair-2026-10-19/image-tests.log observed=\"Pass forty-five extraction checks in dev and the rebuilt network-disabled image including deferred normalization text preserved clinical validation actual Korean rendered limits actionable question errors synthetic full-pipeline completion and offline accepted-row preservation\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-korean-repair-2026-10-19/replay.json",
+      "record": "/evidence id=ROOT.TEXT_REPAIR49.E3 class=semantic result=pass source=Tmp/extraction-korean-repair-2026-10-19/replay.json observed=\"Recover three rejected jobs from latest saved responses locally and preserve seven done results byte-for-byte without incrementing usage\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-provider-repair-2026-10-19/checkpoint-before.json",
+      "record": "/evidence id=ROOT.PROVIDER_REPAIR49.E1 class=semantic result=pass source=Tmp/extraction-provider-repair-2026-10-19/checkpoint-before.json observed=\"Identify one saved PROVIDER_RESPONSE_INVALID request without a response after the old five-attempt same-ID retry loop; verify current official error and retry guidance at https://nova.snubhai.org/docs/\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-provider-repair-2026-10-19/image-tests.log",
+      "record": "/evidence id=ROOT.PROVIDER_REPAIR49.E2 class=runtime result=pass source=Tmp/extraction-provider-repair-2026-10-19/image-tests.log observed=\"Pass fifty-two extraction checks in dev and the network-disabled image including explicit versus unknown errors unchanged replacement payload bounded attempts pause before replacement correct response ownership and preserved counters\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-provider-repair-2026-10-19/resume-proof.json",
+      "record": "/evidence id=ROOT.PROVIDER_REPAIR49.E4 class=external_service result=pass source=Tmp/extraction-provider-repair-2026-10-19/resume-proof.json observed=\"Resume the user-selected NOVA build with install enabled; accept the failed ten-job batch under fresh request d9e6172a-c82c-4ee7-ad7a-65f9af8b28b9 with identical payload except ID and advance from 250 to 260 done while the next batch runs\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-batch-repair-2026-10-20/checkpoint-image-tests.log",
+      "record": "/evidence id=ROOT.BATCH_REPAIR49.E1 class=runtime result=pass source=Tmp/extraction-batch-repair-2026-10-20/checkpoint-image-tests.log observed=\"Pass 57 extraction tests in development and the repaired offline image including fixed-size missing-row and truncated-output retries bounded attempts synthetic completion and keyless guarded recovery\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-batch-repair-2026-10-20/verification.json",
+      "record": "/evidence id=ROOT.BATCH_REPAIR49.E2 class=artifact result=pass source=Tmp/extraction-batch-repair-2026-10-20/verification.json observed=\"Preserve source dc60cdc5a593beb39cd6cd8d9a490ea2 SHA256 535c888e6444045b51374b18fb4aae9977e283aed48b53ee15a3935e50a9341f all 1787 completed jobs all job counters 815 requests usage and complete index; retain the pinned runtime reader without modifying concurrent workspace changes\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-batch-repair-2026-10-20/resume-proof.json",
+      "record": "/evidence id=ROOT.BATCH_REPAIR49.E3 class=external_service result=pass source=Tmp/extraction-batch-repair-2026-10-20/resume-proof.json observed=\"Resume 10282b2e382f085d756e9f6645dc05fe with install enabled and verify consecutive ten-job requests with at least two accepted responses and no recalled original done jobs; retain actual generation as active and installation unrun\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-empty-concept-repair-2026-10-20/image-tests.log",
+      "record": "/evidence id=ROOT.EMPTY_SOURCE49.E1 class=runtime result=pass source=Tmp/extraction-empty-concept-repair-2026-10-20/image-tests.log observed=\"Pass 63 extraction tests in development and the pinned offline image including blank Unicode-format input exclusion no extra calls nonempty concept rejection immutable source recovery and synthetic full-pipeline completion\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-empty-concept-repair-2026-10-20/resume-proof.json",
+      "record": "/evidence id=ROOT.EMPTY_SOURCE49.E3 class=external_service result=pass source=Tmp/extraction-empty-concept-repair-2026-10-20/resume-proof.json observed=\"Resume c9bb43be69ba8d0c16cedec569895fea with fixed ten-job requests and install enabled; verify accepted fresh output and resolution of the prior missing_result job without recalling completed or excluded jobs\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-questions-resume-2026-10-20/verification.json",
+      "record": "/evidence id=ROOT.QUESTIONS_RESUME49.E1 class=external_service result=fail source=Tmp/extraction-questions-resume-2026-10-20/verification.json observed=\"Receive five additional confirmed NOVA HTTP 503 PROVIDER_RESPONSE_INVALID failures under distinct IDs with no accepted output; stop at the existing retry ceiling and preserve all 6579 completed results and 1312 original request records\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-sol-switch-2026-10-20/resume-proof.json",
+      "record": "/blocker id=ROOT.BUILD49.NOVA_PROVIDER state=resolved action=\"Confirm a valid Luna response and accept the interrupted batch under the compact question contract\" source=Tmp/extraction-sol-switch-2026-10-20/resume-proof.json"
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-sol-switch-2026-10-20/image-tests.log",
+      "record": "/evidence id=ROOT.QUESTION_OUTPUT49.E1 class=runtime result=pass source=Tmp/extraction-sol-switch-2026-10-20/image-tests.log observed=\"Pass 71 extraction tests in development and the pinned offline image including compact clinical-field restoration method binding Korean validation keyless Luna recovery explicit Sol switching shared Sol quota and synthetic full-pipeline completion\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-sol-switch-2026-10-20/verification.json",
+      "record": "/evidence id=ROOT.QUESTION_OUTPUT49.E2 class=artifact result=pass source=Tmp/extraction-sol-switch-2026-10-20/verification.json observed=\"Preserve source c9bb43be69ba8d0c16cedec569895fea SHA256 9128081851a5f1e7dc89ca39714065726262a21be10fdd17b47bedb1c9380f7d all job rows counters requests usage and raw cursors while forking a new question-output fingerprint without model calls or recovery JSON duplication\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-sol-switch-2026-10-20/resume-proof.json",
+      "record": "/evidence id=ROOT.QUESTION_OUTPUT49.E3 class=external_service result=pass source=Tmp/extraction-sol-switch-2026-10-20/resume-proof.json observed=\"Accept all ten interrupted questions on Luna medium with stop and 2232 output tokens then begin the next ten-job request; retain zero live Sol calls and the user-selected Luna route\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-sol-context-2026-10-20/image-tests-input-repair.log",
+      "record": "/evidence id=ROOT.SOL_SWITCH49.E1 class=runtime result=pass source=Tmp/extraction-sol-context-2026-10-20/image-tests-input-repair.log observed=\"Pass 75 extraction tests in development and the pinned offline image including explicit context-error switching unknown-result rejection compact question input clinical restoration preserved rejected Sol requests shared quota and full synthetic completion\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-sol-context-2026-10-20/input-repair/verification.json",
+      "record": "/evidence id=ROOT.SOL_SWITCH49.E2 class=artifact result=pass source=Tmp/extraction-sol-context-2026-10-20/input-repair/verification.json observed=\"Preserve 6429 normalization and 1997 question results all counters registered inputs request and usage rows and raw cursors through both immutable checkpoint copies; preserve rejected Sol source SHA256 07cb47e35d1f1dd3b540a0d22936e6deebc893bd7a89a5504f0817ed24189ff2; reset no counters and make no recovery model calls\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json",
+      "record": "/evidence id=ROOT.SOL_SWITCH49.E3 class=external_service result=pass source=Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json observed=\"Accept all forty formerly rejected questions on Sol medium with stop under a 32000-token cap; verify no completed job recalled and resume subsequent forty-job work with install enabled\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json",
+      "record": "/blocker id=ROOT.BUILD49.CONTEXT_LIMIT state=resolved action=\"Explicitly select Sol medium and accept the rejected forty-job batch after compacting repeated question metadata\" source=Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json"
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-draft-repair-2026-10-20/image-tests.log",
+      "record": "/evidence id=ROOT.DRAFT_PACKET49.E1 class=runtime result=pass source=Tmp/extraction-draft-repair-2026-10-20/image-tests.log observed=\"Pass 82 development and image tests for shared complete scope reversible references fixed batches bounded pending reads provider envelopes source preservation and full synthetic completion\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-draft-repair-2026-10-20/verification.json",
+      "record": "/evidence id=ROOT.DRAFT_PACKET49.E2 class=artifact result=pass source=Tmp/extraction-draft-repair-2026-10-20/verification.json observed=\"Preserve original source SHA256 71d007b7d7babc38f95879bd12a0b61243a82070d1018ede680c435fb16e6be1 all 9386 completed results frozen draft inputs counters 1534 original requests usage raw cursors and clinical pins in a new fingerprint without recovery calls\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-draft-repair-2026-10-20/provider-image-tests.log",
+      "record": "/evidence id=ROOT.PROVIDER_SWITCH49.E1 class=runtime result=pass source=Tmp/extraction-draft-repair-2026-10-20/provider-image-tests.log observed=\"Pass 86 tests in development and the offline extraction image including explicit provider selection Luna medium for both API phases unchanged completed results historical providers counters unknown-outcome rejection and full synthetic completion\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-endpoint-repair-2026-10-20/inspection.json",
+      "record": "/blocker id=ROOT.BUILD49.API_AUTH state=resolved action=\"Observe two actual API Luna responses in the preserved checkpoint without inspecting or displaying credentials\" source=Tmp/extraction-endpoint-repair-2026-10-20/inspection.json"
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-job-packet-2026-10-20/image-tests.log",
+      "record": "/evidence id=ROOT.JOB_PACKET49.E1 class=runtime result=pass source=Tmp/extraction-job-packet-2026-10-20/image-tests.log observed=\"Pass 98 development and final-image tests including lossless source parts fixed forty-job requests and tail guarded keyless packet recovery unknown and configuration rejection and synthetic completion\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-job-packet-2026-10-20/preflight.json",
+      "record": "/evidence id=ROOT.JOB_PACKET49.E3 class=semantic result=pass source=Tmp/extraction-job-packet-2026-10-20/preflight.json observed=\"Pack all 790 unfinished real jobs into nineteen forty-job batches and a thirty-job tail; reconstruct all 10647 source records exactly with two split jobs maximum message length 49995 no input mutation and zero model calls\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-manual-values-2026-10-20/validation.json",
+      "record": "/evidence id=ROOT.MANUAL_VALUES49.E1 class=semantic result=pass source=Tmp/extraction-manual-values-2026-10-20/validation.json observed=\"Reproduce unregistered_attribute_value on the saved response and accept its nine relations after exactly three registered reference corrections; independently revalidate the already completed Restless legs syndrome result unchanged\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-final-value-2026-10-21/verification.json",
+      "record": "/evidence id=ROOT.FINAL_COUNT49.E1 class=semantic result=pass source=Tmp/extraction-final-value-2026-10-21/verification.json observed=\"Reproduce quantity-flag and missing-target-attribute failures; preserve count greater than seven with operator gt canonical unit 개 registered Skin tag count attribute added to the unchanged symptom and the existing presence question; verify six and seven contradicted eight and nine matched\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-final-value-2026-10-21/resume-proof.json",
+      "record": "/evidence id=ROOT.FINAL_COUNT49.E3 class=external_service result=pass source=Tmp/extraction-final-value-2026-10-21/resume-proof.json observed=\"Resume the identical API Luna medium fingerprint in a detached project container with durable console output; accept 39 fresh final results start the next fixed forty-job request and preserve the manually completed job without another attempt; keep install enabled and leave the worker running\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-patch-packet-2026-10-21/image-tests.log",
+      "record": "/evidence id=ROOT.PATCH_PACKET49.E1 class=runtime result=pass source=Tmp/extraction-patch-packet-2026-10-21/image-tests.log observed=\"Pass 104 extraction tests in development and the rebuilt network-disabled image including complete patch-table roundtrip fixed forty-job requests tail registered-reference restoration neutral protection guarded keyless recovery and full synthetic completion\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-patch-packet-2026-10-21/preflight.json",
+      "record": "/evidence id=ROOT.PATCH_PACKET49.E2 class=semantic result=pass source=Tmp/extraction-patch-packet-2026-10-21/preflight.json observed=\"Roundtrip all 57 real patch jobs in batches of 40 and 17 with 6173 clinical concept definitions and 3658 complete judgments shared once per request; reduce the rejected 168286594-character message to bounded parts with maximum 49995 and first-request total 1172462 characters without altering stored inputs\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-patch-packet-2026-10-21/resume-proof.json",
+      "record": "/evidence id=ROOT.PATCH_PACKET49.E4 class=external_service result=pass source=Tmp/extraction-patch-packet-2026-10-21/resume-proof.json observed=\"Accept 38 patch results in the first repaired forty-job API request and start the nineteen-job remaining tail including two bounded validation retries; retain strict endpoint and completed-neutral protection and install enabled in a detached worker\""
+    },
+    {
+      "state": "PROJECT_STATE.md",
+      "previous_source": "Tmp/extraction-readiness-2026-10-21/tests-final.log",
+      "record": "/evidence id=ROOT.READINESS49.E2 class=runtime result=pass source=Tmp/extraction-readiness-2026-10-21/tests-final.log observed=\"Pass 106 extraction regressions against mounted current source and two role-preservation checks in the rebuilt image with network disabled; retain the exact source configuration models prompts runtime pins and raw input identity\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-index-recovery-2026-10-19/checkpoint-before.json",
+      "record": "/evidence id=DATA.INDEX_REPAIR49.E1 class=artifact result=pass source=../Tmp/extraction-index-recovery-2026-10-19/checkpoint-before.json observed=\"Inspect user-started NOVA run 218abbb17b1438be463b58870fab9d6b at failed index with 27 of 108 files completed 6520644 committed records a current-file cursor of 862000 and zero model jobs requests or usage\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-index-recovery-2026-10-19/preserved-checkpoint.json",
+      "record": "/evidence id=DATA.INDEX_REPAIR49.E2 class=artifact result=pass source=../Tmp/extraction-index-recovery-2026-10-19/preserved-checkpoint.json observed=\"Preserve the 2150051840-byte work DB with SHA256 b9a6ab893535dd6648f043ee6f40d90749c6d45461e5befe102920762c0dac6e; retain 41 altered terms as failure evidence and require a fresh corrected fingerprint\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-normalize-recovery-2026-10-19/checkpoint-before.json",
+      "record": "/evidence id=DATA.NORMALIZE_REPAIR49.E1 class=artifact result=pass source=../Tmp/extraction-normalize-recovery-2026-10-19/checkpoint-before.json observed=\"Inspect user-started NOVA run 49d20167b4e932a55247cb367e378a1f after all 108 files and 12587695 records were indexed; preserve six failed-format responses with 17918 input and 13279 output tokens and zero accepted results\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-normalize-recovery-2026-10-19/recovery-verification.json",
+      "record": "/evidence id=DATA.NORMALIZE_REPAIR49.E2 class=artifact result=pass source=../Tmp/extraction-normalize-recovery-2026-10-19/recovery-verification.json observed=\"Match the original 4572262400-byte DB SHA256 6589c5b6b815e2fe563607d543c71b89fa6b3004a73e7311c13c1701bf2b49d3 before and after; verify recovered run cd25fa99307faf8b89b5c691df203c45 ready with 6429 pending jobs identical raw index inputs cursors requests usage and ten previously attempted job records with original counters\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-korean-repair-2026-10-19/verification.json",
+      "record": "/evidence id=DATA.TEXT_REPAIR49.E1 class=artifact result=pass source=../Tmp/extraction-korean-repair-2026-10-19/verification.json observed=\"Preserve paused cd25fa99307faf8b89b5c691df203c45 with SHA256 97a22276b08f25967d6dd2475022ec71f14e5f7600520b32c04a20fe49215207 before and after recovery; retain all seven done result rows and counters byte-for-byte\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-provider-repair-2026-10-19/verification.json",
+      "record": "/evidence id=DATA.PROVIDER_REPAIR49.E1 class=artifact result=pass source=../Tmp/extraction-provider-repair-2026-10-19/verification.json observed=\"Match failed 42ff7f33bc2fcec39a379623a1ac5550 SHA256 becf1913f42b4936a833fe6fd27caec06e57967e855cc40d6e4d6538814b7284 before and after; preserve 250 completed rows all job inputs results and counters 108 input cursors 34 accepted requests and usage in dc60cdc5a593beb39cd6cd8d9a490ea2\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-provider-repair-2026-10-19/resume-proof.json",
+      "record": "/evidence id=DATA.PROVIDER_REPAIR49.E3 class=external_service result=pass source=../Tmp/extraction-provider-repair-2026-10-19/resume-proof.json observed=\"Observe the resumed same-content new-ID batch accepted with stop and ten completed jobs; record 260 done and 35 successful calls at 2026-10-19T20:59:15+09:00 with another ten-job request running and no active runtime manifest yet\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-batch-repair-2026-10-20/checkpoint-image-tests.log",
+      "record": "/evidence id=DATA.BATCH_REPAIR49.E1 class=runtime result=pass source=../Tmp/extraction-batch-repair-2026-10-20/checkpoint-image-tests.log observed=\"Pass 57 extraction tests in development and the repaired offline image including fixed-size missing-row and truncated-output retries bounded attempts synthetic completion and keyless guarded recovery\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-batch-repair-2026-10-20/verification.json",
+      "record": "/evidence id=DATA.BATCH_REPAIR49.E2 class=artifact result=pass source=../Tmp/extraction-batch-repair-2026-10-20/verification.json observed=\"Preserve source dc60cdc5a593beb39cd6cd8d9a490ea2 SHA256 535c888e6444045b51374b18fb4aae9977e283aed48b53ee15a3935e50a9341f all 1787 completed jobs all job counters 815 requests usage and complete index; retain the pinned runtime reader without modifying concurrent workspace changes\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-batch-repair-2026-10-20/resume-proof.json",
+      "record": "/evidence id=DATA.BATCH_REPAIR49.E3 class=external_service result=pass source=../Tmp/extraction-batch-repair-2026-10-20/resume-proof.json observed=\"Resume 10282b2e382f085d756e9f6645dc05fe with install enabled and verify consecutive ten-job requests with at least two accepted responses and no recalled original done jobs; retain actual generation as active and installation unrun\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-empty-concept-repair-2026-10-20/image-tests.log",
+      "record": "/evidence id=DATA.EMPTY_SOURCE49.E1 class=runtime result=pass source=../Tmp/extraction-empty-concept-repair-2026-10-20/image-tests.log observed=\"Pass 63 extraction tests in development and the pinned offline image including blank Unicode-format input exclusion no extra calls nonempty concept rejection immutable source recovery and synthetic full-pipeline completion\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-empty-concept-repair-2026-10-20/verification.json",
+      "record": "/evidence id=DATA.EMPTY_SOURCE49.E2 class=artifact result=pass source=../Tmp/extraction-empty-concept-repair-2026-10-20/verification.json observed=\"Preserve source 10282b2e382f085d756e9f6645dc05fe SHA256 fe76b8777c9554acd20c6f906e283e1f001c0a57ba33cbebe62efd4ca9c28559 all 2479 completed model results all other job rows counters 886 requests usage and index cursors; record one blank BODHI exclusion with its six attempts in SQLite without a recovery.json duplicate\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-empty-concept-repair-2026-10-20/resume-proof.json",
+      "record": "/evidence id=DATA.EMPTY_SOURCE49.E3 class=external_service result=pass source=../Tmp/extraction-empty-concept-repair-2026-10-20/resume-proof.json observed=\"Resume c9bb43be69ba8d0c16cedec569895fea with fixed ten-job requests and install enabled; verify accepted fresh output and resolution of the prior missing_result job without recalling completed or excluded jobs\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-questions-resume-2026-10-20/verification.json",
+      "record": "/evidence id=DATA.QUESTIONS_RESUME49.E1 class=external_service result=fail source=../Tmp/extraction-questions-resume-2026-10-20/verification.json observed=\"Receive five additional confirmed NOVA HTTP 503 PROVIDER_RESPONSE_INVALID failures under distinct IDs with no accepted output; stop at the existing retry ceiling and preserve all 6579 completed results and 1312 original request records\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-sol-switch-2026-10-20/resume-proof.json",
+      "record": "/blocker id=DATA.BUILD49.NOVA_PROVIDER state=resolved action=\"Confirm a valid Luna response and accept the interrupted batch under the compact question contract\" source=../Tmp/extraction-sol-switch-2026-10-20/resume-proof.json"
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-sol-switch-2026-10-20/image-tests.log",
+      "record": "/evidence id=DATA.QUESTION_OUTPUT49.E1 class=runtime result=pass source=../Tmp/extraction-sol-switch-2026-10-20/image-tests.log observed=\"Pass 71 extraction tests in development and the pinned offline image including compact clinical-field restoration method binding Korean validation keyless Luna recovery explicit Sol switching shared Sol quota and synthetic full-pipeline completion\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-sol-switch-2026-10-20/verification.json",
+      "record": "/evidence id=DATA.QUESTION_OUTPUT49.E2 class=artifact result=pass source=../Tmp/extraction-sol-switch-2026-10-20/verification.json observed=\"Preserve source c9bb43be69ba8d0c16cedec569895fea SHA256 9128081851a5f1e7dc89ca39714065726262a21be10fdd17b47bedb1c9380f7d all job rows counters requests usage and raw cursors while forking a new question-output fingerprint without model calls or recovery JSON duplication\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-sol-switch-2026-10-20/resume-proof.json",
+      "record": "/evidence id=DATA.QUESTION_OUTPUT49.E3 class=external_service result=pass source=../Tmp/extraction-sol-switch-2026-10-20/resume-proof.json observed=\"Accept all ten interrupted questions on Luna medium with stop and 2232 output tokens then begin the next ten-job request; retain zero live Sol calls and the user-selected Luna route\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-sol-context-2026-10-20/image-tests-input-repair.log",
+      "record": "/evidence id=DATA.SOL_SWITCH49.E1 class=runtime result=pass source=../Tmp/extraction-sol-context-2026-10-20/image-tests-input-repair.log observed=\"Pass 75 extraction tests in development and the pinned offline image including explicit context-error switching unknown-result rejection compact question input clinical restoration preserved rejected Sol requests shared quota and full synthetic completion\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-sol-context-2026-10-20/input-repair/verification.json",
+      "record": "/evidence id=DATA.SOL_SWITCH49.E2 class=artifact result=pass source=../Tmp/extraction-sol-context-2026-10-20/input-repair/verification.json observed=\"Preserve 6429 normalization and 1997 question results all counters registered inputs request and usage rows and raw cursors through both immutable checkpoint copies; preserve rejected Sol source SHA256 07cb47e35d1f1dd3b540a0d22936e6deebc893bd7a89a5504f0817ed24189ff2; reset no counters and make no recovery model calls\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json",
+      "record": "/evidence id=DATA.SOL_SWITCH49.E3 class=external_service result=pass source=../Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json observed=\"Accept all forty formerly rejected questions on Sol medium with stop under a 32000-token cap; verify no completed job recalled and resume subsequent forty-job work with install enabled\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json",
+      "record": "/blocker id=DATA.BUILD49.CONTEXT_LIMIT state=resolved action=\"Explicitly select Sol medium and accept the rejected forty-job batch after compacting repeated question metadata\" source=../Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json"
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-draft-repair-2026-10-20/image-tests.log",
+      "record": "/evidence id=DATA.DRAFT_PACKET49.E1 class=runtime result=pass source=../Tmp/extraction-draft-repair-2026-10-20/image-tests.log observed=\"Pass 82 development and image tests for shared complete scope reversible references fixed batches bounded pending reads provider envelopes source preservation and full synthetic completion\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-draft-repair-2026-10-20/verification.json",
+      "record": "/evidence id=DATA.DRAFT_PACKET49.E2 class=artifact result=pass source=../Tmp/extraction-draft-repair-2026-10-20/verification.json observed=\"Preserve original source SHA256 71d007b7d7babc38f95879bd12a0b61243a82070d1018ede680c435fb16e6be1 all 9386 completed results frozen draft inputs counters 1534 original requests usage raw cursors and clinical pins in a new fingerprint without recovery calls\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-draft-repair-2026-10-20/provider-image-tests.log",
+      "record": "/evidence id=DATA.PROVIDER_SWITCH49.E1 class=runtime result=pass source=../Tmp/extraction-draft-repair-2026-10-20/provider-image-tests.log observed=\"Pass 86 tests in development and the offline extraction image including explicit provider selection Luna medium for both API phases unchanged completed results historical providers counters unknown-outcome rejection and full synthetic completion\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-endpoint-repair-2026-10-20/inspection.json",
+      "record": "/blocker id=DATA.BUILD49.API_AUTH state=resolved action=\"Observe two actual API Luna responses in the preserved checkpoint without inspecting or displaying credentials\" source=../Tmp/extraction-endpoint-repair-2026-10-20/inspection.json"
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-job-packet-2026-10-20/verification.json",
+      "record": "/evidence id=DATA.JOB_PACKET49.E1 class=artifact result=pass source=../Tmp/extraction-job-packet-2026-10-20/verification.json observed=\"Preserve failed source SHA256 04b1cdcd7037116ec36a5c42f7a942fd30e31332c90c074286b169af27efdbda all 9541 completed results including 155 drafts all 1542 historical requests usage job inputs counters and raw cursors with identical input model schema and runtime pins; verify SQLite quick_check ok and zero recovery calls\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-manual-values-2026-10-20/verification.json",
+      "record": "/evidence id=DATA.MANUAL_VALUES49.E2 class=runtime result=pass source=../Tmp/extraction-manual-values-2026-10-20/verification.json observed=\"Verify 6429 normalize 2957 questions and 945 draft jobs done zero unfinished existing jobs paused state zero unsettled requests unchanged 1547 accepted and 21 failed historical request records unchanged 1547 recorded model calls and SQLite quick_check ok; leave final workset unseeded\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-final-value-2026-10-21/verification.json",
+      "record": "/evidence id=DATA.FINAL_COUNT49.E2 class=runtime result=pass source=../Tmp/extraction-final-value-2026-10-21/verification.json observed=\"After local acceptance observe 3124 final jobs done and 541 pending no remaining failed jobs zero unsettled requests and zero extra model calls; verify SQLite quick_check ok before the separately authorized background resume\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-final-value-2026-10-21/resume-proof.json",
+      "record": "/evidence id=DATA.FINAL_COUNT49.E3 class=external_service result=pass source=../Tmp/extraction-final-value-2026-10-21/resume-proof.json observed=\"Observe at least 39 fresh final results accepted on the unchanged API Luna medium configuration after manual repair; preserve the corrected job with six attempts and record detached container console path status counts and actual model usage in the current repair receipt; leave compilation installation and clinical validation unfinished or unrun at handoff\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-patch-packet-2026-10-21/resume-proof.json",
+      "record": "/evidence id=DATA.PATCH_PACKET49.E2 class=external_service result=pass source=../Tmp/extraction-patch-packet-2026-10-21/resume-proof.json observed=\"Resume new fingerprint 921be40beebc21349916de340d320eff on API Luna medium fixed batches of forty and install enabled; accept 38 fresh patches and preserve two rejected rows for bounded retry in the nineteen-job remaining tail; keep original checkpoint and all manual metadata\""
+    },
+    {
+      "state": "data/PROJECT_STATE.md",
+      "previous_source": "../Tmp/extraction-readiness-2026-10-21/tests-final.log",
+      "record": "/evidence id=DATA.READINESS49.E2 class=runtime result=pass source=../Tmp/extraction-readiness-2026-10-21/tests-final.log observed=\"Pass 106 extraction regressions against mounted current source and two role-preservation checks in the rebuilt image with network disabled; retain the exact source configuration models prompts runtime pins and raw input identity\""
+    }
+  ],
+  "documentation_reconciled": [
+    "PROJECT_STATE.md",
+    "data/PROJECT_STATE.md",
+    "submission/PROJECT_STATE.md",
+    "README.md",
+    "Extraction/README.md",
+    "data/README.md",
+    "AGENTS.md",
+    "Extraction/AGENTS.md",
+    "data/AGENTS.md",
+    "PRD.md",
+    "DECISION_STATE.md"
+  ],
+  "evidence_availability": "Retain installed/final-audit/deletion provenance; raw extraction checkpoints logs scratch and retired generated archives intentionally deleted",
+  "final_checks": {
+    "source_and_installed_asset_hashes": "unchanged",
+    "checked_non_document_files": 139,
+    "installed_verify_cli": "pass",
+    "obsolete_checkpoint_and_output_and_log_directories": "empty",
+    "extraction_only_scratch": "removed_except_current_cleanup_evidence",
+    "docker_resources": "unchanged",
+    "model_calls_started": 0
+  }
+}

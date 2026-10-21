@@ -178,13 +178,13 @@ class Trace:
             'DoctorEar': {'process_input', 'record_delivery', '_context', '_read_context', '_project_context',
                           '_mapping_payload', '_map_batch', '_parse_text', '_demographic_facts', '_fixed_reply'},
             'DoctorBrain': {'complete'},
-            'DoctorMouth': {'_render', 'render_diagnosis', 'render_education', 'prepare_empathy',
+            'DoctorMouth': {'_render', 'render_diagnosis', 'render_education',
                             'validate_action', 'execute_action'},
             'QuestionTools': {'_spec', '_question', '_register', '_options', 'chief_statuses',
                               'prepare_clarification', 'select_question'},
-            'BudgetPolicy': {'evaluate', 'can_start_action', 'can_empathize', 'model_allowance'},
+            'BudgetPolicy': {'evaluate', 'can_start_action', 'model_allowance'},
             'ClinicalKnowledge': {'search_concepts', 'resolve_concept', 'get_symptom_attributes', 'concepts',
-                                  'get_target_values', 'get_exam_methods'},
+                                  'get_exam_methods'},
         }
         seen = set()
         def visit(obj, path):
@@ -205,7 +205,7 @@ class Trace:
                 methods.append(name)
             self.objects.append({'id': path, 'type': owner, 'methods': methods})
             for name in ('ear', 'brain', 'mouth', 'writer', 'nova_session', 'budget',
-                         'questions', 'interactions', 'model', 'executor', 'usage', 'tools'):
+                         'questions', 'interactions', 'model', 'executor', 'tools'):
                 child = getattr(obj, name, None)
                 if child is not None and type(child).__module__.startswith('workflow.'):
                     visit(child, f'{path}.{name}')
@@ -218,7 +218,7 @@ class Trace:
         from workflow.rules import decision
         from workflow.sessions import initiation, chief_complaint, context_factor, differential_diagnosis, education
         boundaries = ((doctor_ear, 'InputBinding', ('candidate_contracts', 'exact_mapping', 'validate_mapping',
-                      'force_mapping', 'make_fact', 'note_fact')),
+                      'make_fact', 'note_fact')),
                       (decision, 'GraphEvidence', ('graph_candidates',)),
                       (education, 'EnglishPlan', ('generate_plan',)),
                       (plan, 'EnglishPlan', ('parse_plan', 'references')),

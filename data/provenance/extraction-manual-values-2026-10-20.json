@@ -1,0 +1,480 @@
+{
+  "contract": "explicit-manual-draft-completion-1",
+  "run_id": "804487b16283fb80052be0925a785a39",
+  "authorization": "User requested stopping generation and manual completion of these two named jobs.",
+  "changed_job_id": "feffef0af7b77dcc03d05e6205916d1be31b901ddb562942f202282c481fb8cd",
+  "preserved_job_id": "f3a71deebf4fcddf87f401a67ef84b0b51010778c442052d15d84f1e8a68c4b9",
+  "source_request_id": "a5a88b24-7a8c-4644-a7f7-7bfac1239a56",
+  "latest_rejected_request_id": "f710d672-9f09-4f7b-9219-406fbc3c4587",
+  "original_result_sha256": "620a381fc5ff4eaab6efdaf3768b8bf1d210cdd56e5e1005930a4c45aed1e5fd",
+  "accepted_result_sha256": "f3b36b1c62bff0ab702042512af0541f909e3e893f5578411025145d7a931790",
+  "changes": [
+    {
+      "path": "relations.0.features.1.expected.concept",
+      "before": "urn:ontoward:AttributeValue03dbec8d89cf7b7b516df4a8",
+      "after": "urn:ontoward:AttributeValue9c74df02f96ceb7236d3fa57",
+      "reason": "Use the unique exact English and Korean label match registered under Duration; preserve >1 month."
+    },
+    {
+      "path": "relations.2.features.0.attribute",
+      "before": "urn:ontoward:FindingAttribute13e95a429a8eabafa6408930",
+      "after": "urn:ontoward:FindingAttribute615657483ae7023aa4e316cc",
+      "reason": "Body site owns the unchanged interdigital-toe value, aliases Anatomical location, and is registered on this target."
+    },
+    {
+      "path": "relations.3.features.0.attribute",
+      "before": "urn:ontoward:FindingAttribute13e95a429a8eabafa6408930",
+      "after": "urn:ontoward:FindingAttribute615657483ae7023aa4e316cc",
+      "reason": "Body site owns the unchanged interdigital-toe value, aliases Anatomical location, and is registered on this target."
+    }
+  ],
+  "accepted_result": {
+    "concepts": [
+      {
+        "aliases": [
+          "toe web infection",
+          "infection of toe web"
+        ],
+        "attribute_role": null,
+        "attributes": [
+          "urn:ontoward:FindingAttributeae7dede1aff756bbfebd1da3"
+        ],
+        "context_type": null,
+        "exam_method": null,
+        "exam_text": null,
+        "id": "new:Symptom:toe_web_infection",
+        "kind": "Symptom",
+        "korean": "발가락 사이 감염",
+        "name": "Toe web infection",
+        "question": null,
+        "systems": [
+          "urn:ontoward:BodySystemafcbb012b4bf3d58dc666f9d"
+        ],
+        "values": []
+      }
+    ],
+    "job_id": "feffef0af7b77dcc03d05e6205916d1be31b901ddb562942f202282c481fb8cd",
+    "relations": [
+      {
+        "applicability": [],
+        "disease_id": "urn:ontoward:Diseaseae6b48156ec0d64b0a81b11b",
+        "effect": "strong_support",
+        "features": [
+          {
+            "attribute": null,
+            "expected": null,
+            "status": "present"
+          },
+          {
+            "attribute": "urn:ontoward:FindingAttributeae7dede1aff756bbfebd1da3",
+            "expected": {
+              "approximate": false,
+              "concept": "urn:ontoward:AttributeValue9c74df02f96ceb7236d3fa57",
+              "concepts": [],
+              "kind": "concept",
+              "lower": null,
+              "lower_inclusive": true,
+              "match": "exact",
+              "operator": "eq",
+              "selection": "any_of",
+              "unit": null,
+              "upper": null,
+              "upper_inclusive": true,
+              "upper_unit": null,
+              "value": null
+            },
+            "status": null
+          }
+        ],
+        "target_id": "new:Symptom:toe_web_infection",
+        "target_scope": {
+          "subject": "patient",
+          "subject_member": null,
+          "time_context": "current"
+        }
+      },
+      {
+        "applicability": [],
+        "disease_id": "urn:ontoward:Diseaseae6b48156ec0d64b0a81b11b",
+        "effect": "against",
+        "features": [
+          {
+            "attribute": null,
+            "expected": null,
+            "status": "absent"
+          }
+        ],
+        "target_id": "new:Symptom:toe_web_infection",
+        "target_scope": {
+          "subject": "patient",
+          "subject_member": null,
+          "time_context": "current"
+        }
+      },
+      {
+        "applicability": [],
+        "disease_id": "urn:ontoward:Diseaseae6b48156ec0d64b0a81b11b",
+        "effect": "support",
+        "features": [
+          {
+            "attribute": "urn:ontoward:FindingAttribute615657483ae7023aa4e316cc",
+            "expected": {
+              "approximate": false,
+              "concept": "urn:ontoward:AttributeValue6aefcae9bc9142e3d649dafa",
+              "concepts": [],
+              "kind": "concept",
+              "lower": null,
+              "lower_inclusive": true,
+              "match": "exact",
+              "operator": "eq",
+              "selection": "any_of",
+              "unit": null,
+              "upper": null,
+              "upper_inclusive": true,
+              "upper_unit": null,
+              "value": null
+            },
+            "status": null
+          }
+        ],
+        "target_id": "urn:ontoward:Symptom3dc2bfab3aa0f443100b3748",
+        "target_scope": {
+          "subject": "patient",
+          "subject_member": null,
+          "time_context": "current"
+        }
+      },
+      {
+        "applicability": [],
+        "disease_id": "urn:ontoward:Diseaseae6b48156ec0d64b0a81b11b",
+        "effect": "support",
+        "features": [
+          {
+            "attribute": "urn:ontoward:FindingAttribute615657483ae7023aa4e316cc",
+            "expected": {
+              "approximate": false,
+              "concept": "urn:ontoward:AttributeValue6aefcae9bc9142e3d649dafa",
+              "concepts": [],
+              "kind": "concept",
+              "lower": null,
+              "lower_inclusive": true,
+              "match": "exact",
+              "operator": "eq",
+              "selection": "any_of",
+              "unit": null,
+              "upper": null,
+              "upper_inclusive": true,
+              "upper_unit": null,
+              "value": null
+            },
+            "status": null
+          }
+        ],
+        "target_id": "urn:ontoward:Symptoma1d5de7c2517bf3631d07f91",
+        "target_scope": {
+          "subject": "patient",
+          "subject_member": null,
+          "time_context": "current"
+        }
+      },
+      {
+        "applicability": [],
+        "disease_id": "urn:ontoward:Diseaseae6b48156ec0d64b0a81b11b",
+        "effect": "support",
+        "features": [
+          {
+            "attribute": null,
+            "expected": null,
+            "status": "present"
+          }
+        ],
+        "target_id": "urn:ontoward:Symptom1987c76cc5475776a86c4fe2",
+        "target_scope": {
+          "subject": "patient",
+          "subject_member": null,
+          "time_context": "current"
+        }
+      },
+      {
+        "applicability": [],
+        "disease_id": "urn:ontoward:Diseaseae6b48156ec0d64b0a81b11b",
+        "effect": "support",
+        "features": [
+          {
+            "attribute": null,
+            "expected": null,
+            "status": "present"
+          }
+        ],
+        "target_id": "urn:ontoward:Symptom5ea0aa3e88da3fe01fedce3b",
+        "target_scope": {
+          "subject": "patient",
+          "subject_member": null,
+          "time_context": "current"
+        }
+      },
+      {
+        "applicability": [],
+        "disease_id": "urn:ontoward:Diseaseae6b48156ec0d64b0a81b11b",
+        "effect": "support",
+        "features": [
+          {
+            "attribute": null,
+            "expected": null,
+            "status": "present"
+          }
+        ],
+        "target_id": "urn:ontoward:ContextFactor9c41eb8062cdee999b1a206f",
+        "target_scope": {
+          "subject": "patient",
+          "subject_member": null,
+          "time_context": "current"
+        }
+      },
+      {
+        "applicability": [],
+        "disease_id": "urn:ontoward:Diseaseae6b48156ec0d64b0a81b11b",
+        "effect": "support",
+        "features": [
+          {
+            "attribute": null,
+            "expected": null,
+            "status": "present"
+          }
+        ],
+        "target_id": "urn:ontoward:ContextFactorcf41fa568466ae3cad2a6041",
+        "target_scope": {
+          "subject": "patient",
+          "subject_member": null,
+          "time_context": "past"
+        }
+      },
+      {
+        "applicability": [],
+        "disease_id": "urn:ontoward:Diseaseae6b48156ec0d64b0a81b11b",
+        "effect": "support",
+        "features": [
+          {
+            "attribute": null,
+            "expected": null,
+            "status": "present"
+          }
+        ],
+        "target_id": "urn:ontoward:ContextFactor0f4977f676ccd701932ddaeb",
+        "target_scope": {
+          "subject": "patient",
+          "subject_member": null,
+          "time_context": "current"
+        }
+      }
+    ],
+    "value_matches": []
+  },
+  "before_job": {
+    "job_id": "feffef0af7b77dcc03d05e6205916d1be31b901ddb562942f202282c481fb8cd",
+    "phase": "draft",
+    "status": "failed",
+    "result": null,
+    "attempt_count": 6,
+    "next_retry_at": null,
+    "error": "unregistered_attribute_value"
+  },
+  "input_sha256": "adada4238e398503e289c1e9e2c7be74c548a2430e813f1a257c90b1e52507d5",
+  "before_meta": {
+    "state": "failed",
+    "error": "output_contract_failed:draft",
+    "pause_requested": false,
+    "updated_at": 1792498874.611363
+  },
+  "checks": {
+    "original_rejected": true,
+    "corrected_strictly_accepted": true,
+    "prior_done_strictly_accepted": true,
+    "nine_relations_preserved": true,
+    "three_reference_changes_only": true,
+    "protected_rows_unchanged": true,
+    "sqlite_quick_check": "ok",
+    "exclusive_worker_lock": true,
+    "atomic_commit": true
+  },
+  "model_calls_started": 0,
+  "attempt_counters_reset": 0,
+  "created_at": 1792499145.1745892,
+  "protected_before": {
+    "jobs": {
+      "sha256": "2d81babd7863f673c90a9066abc47584944cb192b06d20f242e7d9b075510625",
+      "rows": 10330
+    },
+    "inputs_counters": {
+      "sha256": "456001b1bd4cb5e86af809a4f4bf60384a13c9b9d277644d8c220e1f6fb84aee",
+      "rows": 10331
+    },
+    "requests": {
+      "sha256": "c11c2ddb0fda88e0672aa4da6b4e395fdf05b98e5242c3a81eba94005e63d110",
+      "rows": 1568
+    },
+    "usage": {
+      "sha256": "590449f8a06da898e080c45833e5b4b7f833caf034b67458a98af3a505602a98",
+      "rows": 4
+    },
+    "meta": {
+      "sha256": "919d1ae22ca847f67c0fddfe39c2a6ebc8b49ff005b8984909abf0ee4136c796",
+      "rows": 223
+    }
+  },
+  "after_status": {
+    "run_id": "804487b16283fb80052be0925a785a39",
+    "state": "paused",
+    "phase": "draft",
+    "provider": "openai_api",
+    "pause_requested": true,
+    "updated_at": 1792499181.6619983,
+    "index": {
+      "files_completed": 108,
+      "files_total": 108,
+      "rows_committed": 12587695,
+      "current_file": null
+    },
+    "jobs_by_phase": {
+      "draft": {
+        "done": 945
+      },
+      "normalize": {
+        "done": 6429
+      },
+      "questions": {
+        "done": 2957
+      }
+    },
+    "jobs": {
+      "done": 10331
+    },
+    "requests": {
+      "accepted": 1547,
+      "failed": 21
+    },
+    "job_errors": [],
+    "recovery": {
+      "completed_by_phase": {
+        "draft": 155,
+        "normalize": 6429,
+        "questions": 2957
+      },
+      "contract": "draft-job-packet-recovery-1",
+      "counters_reset": 0,
+      "jobs_pending": 790,
+      "local_error": "draft_packet_item_too_large:jobs",
+      "model_calls_started": 0,
+      "oversized_jobs": [
+        {
+          "characters": 50671,
+          "job_id": "3323444a4f9c9d391dba3f1840f1e8fe04c1a76573667e7f3d9aaca2899d33ce"
+        }
+      ],
+      "phase": "draft",
+      "reason": "split_oversized_job_source_records_within_one_request",
+      "requests_preserved": 1542,
+      "run_id": "804487b16283fb80052be0925a785a39",
+      "source_identity": "a8ef6109e515546c23e066cbfd8334625a16a66ed4103e53e5750418c0943ce3",
+      "source_models": {
+        "draft": "gpt-6-luna",
+        "final": "gpt-6-luna"
+      },
+      "source_provider": "openai_api",
+      "source_run_id": "a8ef6109e515546c23e066cbfd833462",
+      "target_identity": "804487b16283fb80052be0925a785a391c87d112a95b336f16c78d9d762d5f59",
+      "target_models": {
+        "draft": "gpt-6-luna",
+        "final": "gpt-6-luna"
+      },
+      "target_provider": "openai_api",
+      "usage_preserved": [
+        {
+          "calls": 548,
+          "day": "2026-10-19",
+          "input_tokens": 2534916,
+          "model": "openai/gpt-6-luna",
+          "output_tokens": 1046486
+        },
+        {
+          "calls": 5,
+          "day": "2026-10-20",
+          "input_tokens": 1373032,
+          "model": "gpt-6-luna",
+          "output_tokens": 72583
+        },
+        {
+          "calls": 943,
+          "day": "2026-10-20",
+          "input_tokens": 9638519,
+          "model": "openai/gpt-6-luna",
+          "output_tokens": 3143208
+        },
+        {
+          "calls": 25,
+          "day": "2026-10-20",
+          "input_tokens": 477622,
+          "model": "openai/gpt-6.1-sol",
+          "output_tokens": 146514
+        }
+      ]
+    },
+    "usage": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 548,
+        "input_tokens": 2534916,
+        "output_tokens": 1046486
+      },
+      {
+        "day": "2026-10-20",
+        "model": "gpt-6-luna",
+        "calls": 31,
+        "input_tokens": 8411241,
+        "output_tokens": 386714
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6-luna",
+        "calls": 943,
+        "input_tokens": 9638519,
+        "output_tokens": 3143208
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6.1-sol",
+        "calls": 25,
+        "input_tokens": 477622,
+        "output_tokens": 146514
+      }
+    ],
+    "error": null
+  },
+  "image": "sha256:9b54ff6b2bfa33e02d51e78389fe44526119bd970775124b0bb47d982293bc6b",
+  "evidence_files": {
+    "before.json": "2676cf952f77e26c9c9c4a7e627e668e71f099aa47de8eff90c8a962915b2bba",
+    "validation.log": "32902876ad6c45ee69c972f44c31a4070e8f9e1a9cb943a8ab5369c511c05f48",
+    "source.json": "00cdb3f7a4a98eaa1ba0c9dee390864fcd011ba19b52e5a164b0ed0e598df4d9",
+    "candidate.json": "febb48c0f86d3bf55676634a60a689a603ea606f22ca4fd473529487022d184a",
+    "finalize.py": "39ef4d27c536b9c3826c8ebafa5b4a3646076bcf43500a038427e0a0de247219",
+    "details.py": "76730a741203140139aeb2b2ef4093c6c1df6c2e036da25a367386e00ca056d8",
+    "apply.log": "4aa925044156536ccc2db1a6daff07f759bb4d7134a456b3b6df322455ab693c",
+    "finalize.log": "6a7129adfa7dfed7a94b8486ff288c4339e75275a01462917601a6c5932c96b2",
+    "inspect_jobs.py": "4c2a950f2ac89c89af3f83c7d9868ebf86f1fcc215f8acf5d1d2c8a00ce19869",
+    "validation.json": "ad99c734f8b73fe1a4e1920337a1a18f1855a1d89f8f78786993398aae9aca96",
+    "complete.py": "13f75b7ca3cef574d088a3d160a5d9fbace335bc7c10c1399fafd7c14621592d",
+    "verification.json": "5056d9f3854aaf72159ac21d94cfbe81fc18f60548c32b080d9c424411bb8725",
+    "inspection.json": "856ce211cbc76c1caf8dda282e6b2e5e3dd8a8a618cb39e12e44b7f1950c3262",
+    "details.log": "897d148c0b3f1e69a983fdd6abbf30bf9bb678ce1536c926f9b868bbdd0da035"
+  },
+  "next_phase": "final (not seeded or called in this slice)",
+  "not_run": [
+    "new model requests",
+    "final classification",
+    "compilation",
+    "installation",
+    "clinical validation",
+    "official evaluation"
+  ]
+}

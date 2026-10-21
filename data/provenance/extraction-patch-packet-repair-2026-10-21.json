@@ -1,0 +1,306 @@
+{
+  "recovery": {
+    "completed_by_phase": {
+      "conflict": 6,
+      "draft": 945,
+      "final": 3665,
+      "normalize": 6429,
+      "questions": 2957
+    },
+    "contract": "patch-shared-recovery-1",
+    "counters_reset": 0,
+    "event": "patch_recovered",
+    "failed_request_id": "e3c8671e-3efd-47ed-b7b5-ef19022491dd",
+    "jobs_pending": 57,
+    "maximum_message_characters": 49995,
+    "model_calls_started": 0,
+    "phase": "patch",
+    "rejected_characters": 168286594,
+    "run_id": "921be40beebc21349916de340d320eff",
+    "source_identity": "804487b16283fb80052be0925a785a391c87d112a95b336f16c78d9d762d5f59",
+    "source_run_id": "804487b16283fb80052be0925a785a39",
+    "state": "ready",
+    "target_identity": "921be40beebc21349916de340d320effc0ae273e011e71589250f170826a6197"
+  },
+  "source_sha256": "6552a48ee85293f90a600af6526d52d29238628bc7b40625b3c4b70f99ecdcaf",
+  "protected_tables": {
+    "jobs": {
+      "rows": 14059,
+      "sha256": "992e9c5a1f46a9db2e1b71732d4e340ccf20bba52dde64b242f165c703409574"
+    },
+    "requests": {
+      "rows": 1663,
+      "sha256": "e95655da1e24cb9f8be6c61c6411bd682bb7eed1f663a3de9217f1b2eee7f72b"
+    },
+    "usage": {
+      "rows": 5,
+      "sha256": "9df33fadec4a70eea7ba2f50b4f17e0686f3514aa4a32df0452fcfabf63a43f6"
+    },
+    "rf2_modules": {
+      "rows": 4,
+      "sha256": "bcf6a413d0fedf331d1c1e3ed2e00485c4011ce269f80499191ac2df9dcc94e8"
+    }
+  },
+  "raw_counts": {
+    "source_rows": 19674,
+    "rf2": 12567353
+  },
+  "metadata_unchanged": true,
+  "quick_check": "ok",
+  "source_unchanged": true,
+  "status": {
+    "run_id": "921be40beebc21349916de340d320eff",
+    "state": "ready",
+    "phase": "patch",
+    "provider": "openai_api",
+    "pause_requested": false,
+    "updated_at": 1792514595.5501094,
+    "index": {
+      "files_completed": 108,
+      "files_total": 108,
+      "rows_committed": 12587695,
+      "current_file": null
+    },
+    "jobs_by_phase": {
+      "conflict": {
+        "done": 6
+      },
+      "draft": {
+        "done": 945
+      },
+      "final": {
+        "done": 3665
+      },
+      "normalize": {
+        "done": 6429
+      },
+      "patch": {
+        "pending": 57
+      },
+      "questions": {
+        "done": 2957
+      }
+    },
+    "jobs": {
+      "done": 14002,
+      "pending": 57
+    },
+    "requests": {
+      "accepted": 1641,
+      "failed": 22
+    },
+    "job_errors": [],
+    "recovery": {
+      "completed_by_phase": {
+        "conflict": 6,
+        "draft": 945,
+        "final": 3665,
+        "normalize": 6429,
+        "questions": 2957
+      },
+      "contract": "patch-shared-recovery-1",
+      "counters_reset": 0,
+      "failed_request_id": "e3c8671e-3efd-47ed-b7b5-ef19022491dd",
+      "jobs_pending": 57,
+      "maximum_message_characters": 49995,
+      "model_calls_started": 0,
+      "phase": "patch",
+      "rejected_characters": 168286594,
+      "run_id": "921be40beebc21349916de340d320eff",
+      "source_identity": "804487b16283fb80052be0925a785a391c87d112a95b336f16c78d9d762d5f59",
+      "source_run_id": "804487b16283fb80052be0925a785a39",
+      "target_identity": "921be40beebc21349916de340d320effc0ae273e011e71589250f170826a6197"
+    },
+    "usage": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 548,
+        "input_tokens": 2534916,
+        "output_tokens": 1046486
+      },
+      {
+        "day": "2026-10-20",
+        "model": "gpt-6-luna",
+        "calls": 80,
+        "input_tokens": 12951464,
+        "output_tokens": 773776
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6-luna",
+        "calls": 943,
+        "input_tokens": 9638519,
+        "output_tokens": 3143208
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6.1-sol",
+        "calls": 25,
+        "input_tokens": 477622,
+        "output_tokens": 146514
+      },
+      {
+        "day": "2026-10-21",
+        "model": "gpt-6-luna",
+        "calls": 45,
+        "input_tokens": 4047698,
+        "output_tokens": 342341
+      }
+    ],
+    "error": null
+  },
+  "image": "sha256:2a38be3d58c9d971ff1846595751f7a699d6d73fdb946d102843331694f808a8",
+  "preflight": [
+    {
+      "jobs": 40,
+      "messages": 25,
+      "characters": 1172462,
+      "maximum": 49995,
+      "vocabulary": 6173,
+      "completed_relations": 3658,
+      "clinical_roundtrip": "pass"
+    },
+    {
+      "jobs": 17,
+      "messages": 25,
+      "characters": 1156303,
+      "maximum": 49995,
+      "vocabulary": 6173,
+      "completed_relations": 3658,
+      "clinical_roundtrip": "pass"
+    }
+  ],
+  "tests": {
+    "development": 104,
+    "image": 104
+  },
+  "model_calls_started": 0,
+  "resume": {
+    "status": {
+      "run_id": "921be40beebc21349916de340d320eff",
+      "state": "running",
+      "phase": "patch",
+      "provider": "openai_api",
+      "pause_requested": false,
+      "updated_at": 1792514838.1311893,
+      "index": {
+        "files_completed": 108,
+        "files_total": 108,
+        "rows_committed": 12587695,
+        "current_file": null
+      },
+      "jobs_by_phase": {
+        "conflict": {
+          "done": 6
+        },
+        "draft": {
+          "done": 945
+        },
+        "final": {
+          "done": 3665
+        },
+        "normalize": {
+          "done": 6429
+        },
+        "patch": {
+          "done": 38,
+          "pending": 17,
+          "retry": 2
+        },
+        "questions": {
+          "done": 2957
+        }
+      },
+      "jobs": {
+        "done": 14040,
+        "running": 19
+      },
+      "requests": {
+        "accepted": 1642,
+        "failed": 22,
+        "sent": 1
+      },
+      "job_errors": [
+        {
+          "job_id": "6599c84365aa953e44254e02e7775200295253109a0ad0a2099000a269f8c8a5",
+          "phase": "patch",
+          "attempt_count": 3,
+          "error": "invalid_relation_endpoint:{\"allowed_target_kinds\":[\"Symptom\",\"ExamFinding\",\"ContextFactor\"],\"disease_id\":\"urn:ontoward:Disease7384026de0b6f40ddc8d9775\",\"disease_kind\":\"Disease\",\"relation_index\":0,\"target_id\":\"urn:ontoward:Disease0dbcd40c728c5f670a3f6c8c\",\"target_kind\":\"Disease\"}"
+        },
+        {
+          "job_id": "7105e91cc1ecd04e3271fa098c141402b8158e19f362250476c4e3577c629316",
+          "phase": "patch",
+          "attempt_count": 3,
+          "error": "completed_relation_cannot_be_redrawn"
+        }
+      ],
+      "recovery": {
+        "completed_by_phase": {
+          "conflict": 6,
+          "draft": 945,
+          "final": 3665,
+          "normalize": 6429,
+          "questions": 2957
+        },
+        "contract": "patch-shared-recovery-1",
+        "counters_reset": 0,
+        "failed_request_id": "e3c8671e-3efd-47ed-b7b5-ef19022491dd",
+        "jobs_pending": 57,
+        "maximum_message_characters": 49995,
+        "model_calls_started": 0,
+        "phase": "patch",
+        "rejected_characters": 168286594,
+        "run_id": "921be40beebc21349916de340d320eff",
+        "source_identity": "804487b16283fb80052be0925a785a391c87d112a95b336f16c78d9d762d5f59",
+        "source_run_id": "804487b16283fb80052be0925a785a39",
+        "target_identity": "921be40beebc21349916de340d320effc0ae273e011e71589250f170826a6197"
+      },
+      "usage": [
+        {
+          "day": "2026-10-19",
+          "model": "openai/gpt-6-luna",
+          "calls": 548,
+          "input_tokens": 2534916,
+          "output_tokens": 1046486
+        },
+        {
+          "day": "2026-10-20",
+          "model": "gpt-6-luna",
+          "calls": 80,
+          "input_tokens": 12951464,
+          "output_tokens": 773776
+        },
+        {
+          "day": "2026-10-20",
+          "model": "openai/gpt-6-luna",
+          "calls": 943,
+          "input_tokens": 9638519,
+          "output_tokens": 3143208
+        },
+        {
+          "day": "2026-10-20",
+          "model": "openai/gpt-6.1-sol",
+          "calls": 25,
+          "input_tokens": 477622,
+          "output_tokens": 146514
+        },
+        {
+          "day": "2026-10-21",
+          "model": "gpt-6-luna",
+          "calls": 46,
+          "input_tokens": 4461478,
+          "output_tokens": 352761
+        }
+      ],
+      "error": null
+    },
+    "background": {
+      "container": "ontoward-extraction-patch-20261020T164632Z",
+      "log": "20261020T164632Z-patch-resume.log",
+      "run_id": "921be40beebc21349916de340d320eff",
+      "install": true
+    },
+    "new_model_calls": 1
+  }
+}

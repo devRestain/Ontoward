@@ -17,7 +17,7 @@ D50은 D48의 모듈 선택을 유지하며 [prompts.json](prompts.json)이 작�
 |---|---|---|
 | DoctorEar | input.initial / input.reply / input.exam | 초기 정보·문진 답변·실제 EXAM 응답 |
 | DoctorEar | input.repair / input.rows_repair / input.chief_repair | 전체 형식·특정 행·초기 chief 검토가 실제 필요한 요청 |
-| DoctorEar | mapping.select / mapping.forced + mapping.repair | 일반 연결·강제 연결, 해당 정책의 형식 복구 |
+| DoctorEar | mapping.select + mapping.repair | 일반 연결과 남은 행의 형식·참조·의미 통합 복구 |
 | 각 임상 세션 | clinical.rank / clinical.decision / clinical.action + session.* | Initiation·CC 종료 순위·DD 진입과 응답의 공동 판단·행동만 복구 |
 | 각 임상 세션 | clinical.repair | 현재 계약의 제한된 복구 |
 | EducationSession | plan.generate / plan.repair | 영어 P·한국어 발화 공동 생성과 정상 영어를 보존하는 부분 복구 |
@@ -29,9 +29,9 @@ manifest의 각 경로는 순서가 있는 파일 목록이다. 예를 들어 cl
 
 영어 지시는 prompt-writer 스킬에 따라 목적·자료 경계·작은 JSON 결과를 명시한다. initial·reply·EXAM과 정상·복구를 한 프롬프트의 조건문으로 나열하지 않는다. 실제 환자의 조건부 진술, 지침 적용 조건과 불확실성은 판단에 필요한 데이터로 보존한다. 출력 구조·출처·참조·중복·누락·실행 가능성·NFC 1–30자 검사는 Python의 책임이다.
 
-모델은 openai/gpt-6-luna이며 임상·영어 P와 한국어 공동 생성은 high, Ear와 Mouth의 남은 표현·복구는 medium이다. 공감은 texts.ko.json의 검증된 템플릿을 사용한다. 사실 정본·정상 4096 및 임상 복구 8000 출력 토큰·기존 복구 한도를 유지하고 호출 일정은 D50을 따른다. 입력은 필요한 dict/list를 한 번 직렬화한 JSON이며 전체 상태·큰 schema·그래프 profile을 넣지 않는다. 프롬프트 바이트 측정·제한·진단 통계·크기 기반 처리는 없다.
+모델은 openai/gpt-6-luna이며 임상·영어 P와 한국어 공동 생성은 high, Ear와 Mouth의 남은 표현·복구는 medium이다. 인사 문구와 공감 signal·입력 모듈·템플릿·상태·SAY 경로는 D53에서 삭제했다. 사실 정본·정상 4096 및 임상 복구 8000 출력 토큰·임상·교육의 기존 복구 한도를 유지하고 호출 일정은 D50·D51을 따른다. Ear는 문맥 2회·매핑 2회 이내로 초기 chief와 형식·의미 복구를 공유하며 의미 근거 없는 첫 후보 강제 매핑은 하지 않는다. 입력은 필요한 dict/list를 한 번 직렬화한 JSON이며 전체 상태·큰 schema·그래프 profile을 넣지 않는다. 프롬프트 바이트 측정·제한·진단 통계·크기 기반 처리는 없다.
 
-환자 원문은 Ear 이후 임상·계획·SOAP로 전달하지 않는다. Education은 고정 진단 안내 후 영어 계획·한국어 전달을 진행하며 응답은 transcript-only다. ONTOWARD_EDUCATION_ENABLED=false는 기존 비활성 계약을 따른다. texts.ko.json과 manifest 고정 질문 자산의 역할도 유지한다.
+환자 원문은 Ear 이후 임상·계획·SOAP로 전달하지 않는다. Education은 설치 인덱스 순서의 앞 다섯 문서 전체만 참고 자료로 제공한다. plan.generate와 plan.repair는 문서 내부 명령보다 원래 계획 요청·고정 진단·환자 사실·안전·출력 계약을 우선하며 정확한 인용 검증을 유지한다. 고정 진단 안내 후 영어 계획·한국어 전달을 진행하며 응답은 transcript-only다. ONTOWARD_EDUCATION_ENABLED=false는 기존 비활성 계약을 따른다. texts.ko.json과 manifest 고정 질문 자산의 역할도 유지한다.
 
 패키지는 manifest와 참조된 모듈만 포함한다. 문서·상태·개발 키는 제외한다. 새 Test trace에는 설정·manifest·모듈 해시와 경로 조합을 기록하고 저장된 실행은 변경하지 않는다. SDK·전송·캐시 동작과 실제 모델 품질은 프롬프트 작성 자체의 검증으로 대신하지 않는다.
 

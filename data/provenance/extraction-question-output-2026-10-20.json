@@ -1,0 +1,165 @@
+{
+  "contract": "d49-question-output-and-explicit-sol-1",
+  "created_at": "2026-10-20T12:05:16+09:00",
+  "revision": "9c375d1075b56901ea7807143ffe83481280287f",
+  "luna_retry": {
+    "finish_reason": "length",
+    "output_tokens": 8000,
+    "accepted_jobs": 0,
+    "today_calls_after": 755
+  },
+  "quota_reference": {
+    "url": "https://nova.snubhai.org/docs/",
+    "verified_date": "2026-10-20",
+    "luna_daily": 1000,
+    "sol_daily": 100,
+    "scope": "team successful calls reset at KST midnight",
+    "team_usage_visibility": "checkpoint_only"
+  },
+  "image": {
+    "tag": "ontoward-extraction:local",
+    "id": "sha256:51c59a1d4a0c373bad5954a7eca85606096dbdda729ff190da66be53ba328243",
+    "base": "sha256:bcddb6e151d8e9729c122882f0c2acf8ee059017e44fe433820c357b52e35099"
+  },
+  "active": {
+    "model": "gpt-6-luna",
+    "effort": "medium",
+    "batch_size": 10,
+    "max_tokens": 8000
+  },
+  "optional_sol": {
+    "implemented": true,
+    "activation": "explicit_only",
+    "phase": "questions",
+    "profile": "Extraction/config.sol.json",
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "batch_size": 40,
+    "max_tokens": 32000,
+    "daily_model_calls": 100,
+    "live_access": "not_run"
+  },
+  "verification": {
+    "source_id": "c9bb43be69ba8d0c16cedec569895fea",
+    "run_id": "90e00f0f08009214249d98b52f8ccb07",
+    "source_unchanged": true,
+    "source_sha256": "9128081851a5f1e7dc89ca39714065726262a21be10fdd17b47bedb1c9380f7d",
+    "jobs_requests_usage_hashes": {
+      "jobs": "1b13af0a32440e097efda29a0b5467b8bf62d893412546cffefc3a8d4e835481",
+      "requests": "9505ae2c1cb4986b73ef12524fa70bb95309a5d40f1bf85e161f25535c79b425",
+      "usage": "afba57f54f65436b9c2306610bceb68f718a5c3cb1db5d9f34f3649ece88bd51"
+    },
+    "completed": {
+      "normalize": 6429,
+      "questions": 150
+    },
+    "pending": 2807,
+    "model_calls_in_recovery": 0,
+    "counters_reset": 0,
+    "active_model": "gpt-6-luna",
+    "effort": "medium",
+    "batch_size": 10,
+    "output_limit": 8000,
+    "standalone_recovery_json": false
+  },
+  "live_resume": {
+    "observed_at": "2026-10-20T03:04:16.928249+00:00",
+    "run_id": "90e00f0f08009214249d98b52f8ccb07",
+    "state": "running",
+    "phase": "questions",
+    "jobs_by_phase": {
+      "normalize": {
+        "done": 6429
+      },
+      "questions": {
+        "done": 160,
+        "pending": 2787,
+        "running": 10
+      }
+    },
+    "requests": {
+      "accepted": 1304,
+      "failed": 15,
+      "sent": 1
+    },
+    "usage": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 548,
+        "input_tokens": 2534916,
+        "output_tokens": 1046486
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6-luna",
+        "calls": 756,
+        "input_tokens": 6408018,
+        "output_tokens": 2656317
+      }
+    ],
+    "fresh_requests": [
+      {
+        "request_id": "8391f081-e350-41e9-a0db-cff828b19bc8",
+        "state": "accepted",
+        "jobs": 10,
+        "model": "openai/gpt-6-luna",
+        "finish_reason": "stop",
+        "usage": {
+          "day": "2026-10-20",
+          "input_tokens": 10891,
+          "model": "openai/gpt-6-luna",
+          "output_tokens": 2232
+        }
+      },
+      {
+        "request_id": "4c80de98-ca2a-4ed8-a217-81fe5739a1a0",
+        "state": "sent",
+        "jobs": 10,
+        "model": "openai/gpt-6-luna",
+        "finish_reason": null,
+        "usage": null
+      }
+    ],
+    "interrupted_jobs_completed": 10,
+    "completed_jobs_never_recalled": true,
+    "active_draft": "gpt-6-luna",
+    "sol_live_calls": 0,
+    "real_manifest_installed": false
+  },
+  "tests": {
+    "development": 71,
+    "image": 71,
+    "network": "none"
+  },
+  "clinical_quality": "not_run",
+  "official_evaluation": "not_run",
+  "real_installation": "not_run",
+  "files": {
+    "Extraction/ontoward_extraction/__init__.py": "b0fa6a1d5eb69c16800185180e7ac1c42cd4df30ef34af3162cbfc8f9cadc597",
+    "Extraction/ontoward_extraction/__main__.py": "b88d22592580a4fce92495a5b7a207e9588f3c310ea1dd57b37bb44d8a6f55fa",
+    "Extraction/ontoward_extraction/build.py": "7575f53c5f7b127d73891d885744f45307e90025f4cd8bb282733e81ec844d5e",
+    "Extraction/ontoward_extraction/compile.py": "2159ad46cfcaa235facbf5b1714f17b8b45f8580161351ba32c26cd8290cedbf",
+    "Extraction/ontoward_extraction/guidelines.py": "bcf7b88be2d84f5a0c6394c449b613c87480928091e26b30105e98c42f11288c",
+    "Extraction/ontoward_extraction/inputs.py": "c8f0aee3bb11913c7f9221ea6f64226839407d2c74c05cb84b3330e4f2aa95cb",
+    "Extraction/ontoward_extraction/install.py": "e59e68ea4521724b94feb68ba72b116506262e834e183736751d8db53dbea25d",
+    "Extraction/ontoward_extraction/jobs.py": "b4a7e644348af381a7935e6e1e958273f54710c86c71f1df1c3035fd49a34063",
+    "Extraction/ontoward_extraction/llm.py": "57df4f093389a6ba4edf352a1a0bdc51c0394d4d5e02baaeefca4a3cc2ad1194",
+    "Extraction/ontoward_extraction/models.py": "f4410f71d2ca4b3d074b32059060d21af073c61c2676e2c732c2097b4335afc6",
+    "Extraction/ontoward_extraction/normalize.py": "6e20443fd48d997b065ceab2d35adacc4e01030cd2ceead4ae7dab0671c3b359",
+    "Extraction/ontoward_extraction/progress.py": "9950cfda223fdf6aa7dcd7d3f0d36cf121035243cb1320c4775dee1970bb8962",
+    "Extraction/ontoward_extraction/recovery.py": "b8556b2212e50e919a03de8f1672c85d1a5b8a9f8d1ac4ee3a497d3d6ae7fd87",
+    "Extraction/ontoward_extraction/verify.py": "b50174706e41e439ed40819b077b09f43bacc1d25e51082764acca742a9a8b6c",
+    "Extraction/prompts/questions.txt": "fceb67257990042feaf5b2b2335844e50bc8ac2d880a9b8368d23946de7b0c82",
+    "Extraction/config.sol.json": "e8ddb440b1ce3494f5115ff57d83e4a6dabd97d5f9493368fcdd661a12535769",
+    "Extraction/tests/test_question_output.py": "7a51b43508798bf7132540720163456d411b342bedf24812ef5f11565bd1750b",
+    "Extraction/tests/support.py": "470b16f16bd9e194487565ca7a0b8e2d6fb08bbe43a1a949a68137079b437c75",
+    "Tmp/extraction-sol-switch-2026-10-20/Dockerfile": "51567744490c8ad79997dab47e85ada371a19b76004ddac88df72c1a26c6f3d6",
+    "Tmp/extraction-sol-switch-2026-10-20/tests.log": "5a46020af465fc8c6834e38cdd3996f1bf7c179ec16d9d848fd1c47338ccaf56",
+    "Tmp/extraction-sol-switch-2026-10-20/image-tests.log": "9ba7603bd7e7296263626019bdfc84d38686ccacd99a1b4d289a0195777f1de8",
+    "Tmp/extraction-sol-switch-2026-10-20/verification.json": "6657f0eb240183e92029d97826797e3448fce9714a3c6e46fb4a48844e16a0c5",
+    "Tmp/extraction-sol-switch-2026-10-20/resume-proof.json": "059cb8ce9e366526c74dfa0b3654b657206584b59ba6d4c904a13cb1b09e7887",
+    "Tmp/extraction-sol-switch-2026-10-20/luna-retry.log": "5b3362219172adae7013c1b3d02fbdd7f535ba2b144f5d50934832534e81303d",
+    "Tmp/extraction-sol-switch-2026-10-20/container-ownership.json": "69cc22ced6396581f45b6e4229c8b6d06002e283a782837123af1a31aace302c"
+  }
+}

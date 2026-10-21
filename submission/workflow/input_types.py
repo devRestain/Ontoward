@@ -24,12 +24,6 @@ def age_text(measured):
     return prefix + ' and '.join(v for v in (lower, upper) if v)
 
 
-class EmpathySignal(Model):
-    quote: str = Field(min_length=1)
-    intent: Literal['new_distress', 'renewed_request', 'repeat', 'acknowledgement']
-    emotion: Literal['fear', 'anxiety', 'pain', 'frustration', 'sadness', 'other'] = 'other'
-
-
 class PatientContextFact(Model):
     key: Literal['age', 'sex', 'reporter']
     value: str = Field(min_length=1, max_length=80)
@@ -92,12 +86,10 @@ class ContextStatement(Model):
 class ContextInput(Model):
     statements: list[ContextStatement] = Field(default_factory=list)
     patient_context: list[PatientContextFact] = Field(default_factory=list, max_length=8)
-    empathy: EmpathySignal | None = None
 
 
 @dataclass
 class InputResult:
     facts: list[CaseFact] = field(default_factory=list)
     outcomes: list[str] = field(default_factory=list)
-    empathy: EmpathySignal | None = None
     preferred: str | None = None

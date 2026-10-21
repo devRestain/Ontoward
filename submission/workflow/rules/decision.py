@@ -49,7 +49,7 @@ def clinical_messages(config, work):
 
 def latest_response(state):
     answer = next((row for row in reversed(state.interview.answers)
-                   if row.scope != 'Education' and row.purpose != 'empathy' and row.source_ref
+                   if row.scope != 'Education' and row.source_ref
                    and row.outcome not in {'undelivered', 'delivered'}), None)
     return answer.source_ref if answer else 'entry'
 
@@ -132,17 +132,23 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
             payload['conditions'][ident] = value
         return condition_refs[signature]
 
-    relation_refs = {}
+    relation_refs, relation_definitions = {}, {}
     def relation(detail):
         ident = detail['association']
         if ident not in relation_refs:
-            ref = f'r_{len(relation_refs) + 1}'
-            relation_refs[ident] = ref
-            payload['relations'][ref] = dict(target=detail['target'], effect=detail['effect'],
+            row = dict(target=detail['target'], effect=detail['effect'],
                 rule_scope=detail['target_scope'],
                 full_pattern=[dict(attribute=f['attribute'], expected_status=f['expected_status'],
                                    expected=expected(f['expected'])) for f in detail['features']],
                 applicability=conditions(detail['conditions']))
+            # Disease associations can carry identical definitions. Share only their
+            # wire representation; retain disease membership and scoped fact matches.
+            signature = json.dumps(row, sort_keys=True, ensure_ascii=False)
+            if signature not in relation_definitions:
+                ref = f'r_{len(relation_definitions) + 1}'
+                relation_definitions[signature] = ref
+                payload['relations'][ref] = row
+            relation_refs[ident] = relation_definitions[signature]
         return relation_refs[ident]
 
     def describe(ref, details):
@@ -233,7 +239,7 @@ def rank_exchange(state, client, brain, config, work, accept):
             return None
         except (ValueError, TypeError) as failure:
             error = response.error or str(failure)
-            if response.error and response.error not in {'OUTPUT_TRUNCATED', 'PROVIDER_RESPONSE_INVALID', 'CONTEXT_LIMIT_EXCEEDED'}:
+            if response.error and response.error not in {'OUTPUT_TRUNCATED', 'PROVIDER_RESPONSE_INVALID'}:
                 break
             work.payload['validation_error'] = error
     state.interview.collection[f'{state.interview.current}:decision'] = error

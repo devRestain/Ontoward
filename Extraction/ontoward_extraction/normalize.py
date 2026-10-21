@@ -19,7 +19,9 @@ def concepts(rows):
             for parent in parents:
                 value_map[(node.id,parent)] = identifier(node.kind,[parent,node.name.casefold().strip()])
             if len(parents)==1:
-                mapping[node.id]=value_map[(node.id,next(iter(parents)))]
+                # A source identifier may name both a target and an attribute value.
+                # Keep the target mapping; expected values use their attribute owner.
+                mapping.setdefault(node.id,value_map[(node.id,next(iter(parents)))])
     for node in raw:
         values=node.model_dump()
         values['id']=mapping.get(node.id,node.id)

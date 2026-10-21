@@ -71,7 +71,7 @@ class GraphBinding(Model):
     target: str
     attribute: str | None = None
     values: tuple[str, ...] = ()
-    method: Literal['exact', 'broader', 'forced'] = 'exact'
+    method: Literal['exact', 'broader'] = 'exact'
 
     @model_validator(mode='after')
     def terms(self):
@@ -215,8 +215,9 @@ class CaseState(Model):
         return tuple(f for f in self.facts.values() if f.id not in suppressed)
 
     def current_facts(self):
+        facts = self.active_facts()
         groups = {}
-        for fact in self.active_facts():
+        for fact in facts:
             key = fact.key()
             if fact.kind != 'context' and not (fact.observation_id and fact.episode_id):
                 key += (fact.id,)
@@ -231,7 +232,7 @@ class CaseState(Model):
                     or len(numeric) > 1 or positive & negative):
                 conflicts.update(f.id for f in group)
         return tuple(f.model_copy(update={'status': 'uncertain'}) if f.id in conflicts else f
-                     for f in self.active_facts())
+                     for f in facts)
 
     def chief_candidates(self, *, confirmed=False):
         return [f for f in self.current_facts() if f.kind == 'symptom' and f.subject == 'patient'
@@ -269,7 +270,7 @@ class CaseState(Model):
 class Question(Model):
     item_id: str
     kind: Literal['SAY', 'EXAM'] = 'SAY'
-    purpose: Literal['chief', 'greeting', 'intake', 'history', 'hpi', 'open_inquiry', 'ros', 'clarification', 'context', 'feature', 'education', 'empathy']
+    purpose: Literal['chief', 'intake', 'history', 'hpi', 'open_inquiry', 'ros', 'clarification', 'context', 'feature', 'education']
     text: str
     order: int = 0
     priority: int = 0
@@ -287,7 +288,6 @@ class Question(Model):
     category: RecordCategory | None = None
     coverage: bool = False
     clarifies_id: str | None = None
-    empathy_key: str | None = None
 
     def semantic_key(self):
         return (self.kind, self.target or '', self.attribute or '', self.subject, self.subject_member or '', self.time_context,
@@ -307,14 +307,6 @@ class Answer(Model):
     coverage: bool = False
     plan_sentence_id: str | None = None
     reason: str | None = None
-    empathy_key: str | None = None
-
-
-class PendingEmpathy(Model):
-    source_ref: str
-    emotion: str
-    intent: str
-    key: str
 
 
 class InterviewState(Model):
@@ -323,14 +315,12 @@ class InterviewState(Model):
     queue: list[Question] = Field(default_factory=list)
     answers: list[Answer] = Field(default_factory=list)
     collection: dict[str, str] = Field(default_factory=dict)
-    empathy: PendingEmpathy | None = None
     education_status: Literal['not_started', 'complete', 'partial', 'failed', 'disabled'] = 'not_started'
     education_reason: str | None = None
 
 
 class Usage(Model):
     actions: int = 0
-    empathy_actions: int = 0
 
 
 class SessionContext(Model):

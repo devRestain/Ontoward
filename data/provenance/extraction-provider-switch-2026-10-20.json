@@ -1,0 +1,155 @@
+{
+  "contract": "draft-provider-switch-1",
+  "created_at": "2026-10-20T15:19:02+09:00",
+  "verification": {
+    "receipt": {
+      "completed_by_phase": {
+        "normalize": 6429,
+        "questions": 2957
+      },
+      "contract": "draft-provider-switch-1",
+      "counters_reset": 0,
+      "event": "draft_recovered",
+      "failed_request_id": "c45f0c0a-fcb0-42ac-a89e-6c118d261333",
+      "jobs_pending": 945,
+      "model_calls_started": 0,
+      "phase": "draft",
+      "reason": "explicit_provider_switch_after_confirmed_nova_rejection",
+      "requests_preserved": 1537,
+      "run_id": "7f75a78e8fde3288aba07b6ab238ca31",
+      "source_identity": "eaa7abf36326fdb8fcefc1f52f8f444db9a17e132607966214c2477660a9ea49",
+      "source_models": {
+        "draft": "gpt-6.1-sol",
+        "final": "gpt-6.1-sol"
+      },
+      "source_provider": "nova_dev",
+      "source_run_id": "eaa7abf36326fdb8fcefc1f52f8f444d",
+      "state": "ready",
+      "target_identity": "7f75a78e8fde3288aba07b6ab238ca31b19d8337b25ca72eb481e6e85ae8880e",
+      "target_models": {
+        "draft": "gpt-6-luna",
+        "final": "gpt-6-luna"
+      },
+      "target_provider": "openai_api",
+      "usage_preserved": [
+        {
+          "calls": 548,
+          "day": "2026-10-19",
+          "input_tokens": 2534916,
+          "model": "openai/gpt-6-luna",
+          "output_tokens": 1046486
+        },
+        {
+          "calls": 943,
+          "day": "2026-10-20",
+          "input_tokens": 9638519,
+          "model": "openai/gpt-6-luna",
+          "output_tokens": 3143208
+        },
+        {
+          "calls": 25,
+          "day": "2026-10-20",
+          "input_tokens": 477622,
+          "model": "openai/gpt-6.1-sol",
+          "output_tokens": 146514
+        }
+      ]
+    },
+    "source_sha256": "6affb4bb28259790f99df0e7a77b9f417904179c16124859fa837f72016d271c",
+    "source_bytes_unchanged": true,
+    "all_job_inputs_results_counters_preserved": true,
+    "requests_usage_original_providers_preserved": true,
+    "raw_cursors_and_clinical_pins_preserved": true,
+    "sqlite_quick_check": "ok",
+    "new_provider": "openai_api",
+    "counts": [
+      {
+        "phase": "draft",
+        "status": "pending",
+        "count": 945
+      },
+      {
+        "phase": "normalize",
+        "status": "done",
+        "count": 6429
+      },
+      {
+        "phase": "questions",
+        "status": "done",
+        "count": 2957
+      }
+    ],
+    "recovery_model_calls": 0
+  },
+  "image": "sha256:4b529cc9550f32b6d057fc62b090dba61117b0ce512519cf560b5cb29eeb7600",
+  "user_selected_provider": "openai_api",
+  "authentication": {
+    "openai_api_key_present": false,
+    "codex_subscription_logged_in": false,
+    "scope": "project extraction environment and dedicated authentication volume only",
+    "secrets_displayed": false
+  },
+  "tests": {
+    "development": 86,
+    "offline_image": 86
+  },
+  "model": "gpt-6-luna",
+  "effort": "medium",
+  "batch_size": 40,
+  "max_output_tokens": 32000,
+  "live_api_calls": "not_run_missing_authentication",
+  "live_draft_acceptance": "not_run",
+  "real_installation": "not_run",
+  "model_quality": "not_run",
+  "clinical_validation": "not_run",
+  "official_evaluation": "not_run",
+  "unused_api_sol_checkpoint_archive": {
+    "contract": "lossless-checkpoint-archive-1",
+    "active_run_excluded": "eaa7abf36326fdb8fcefc1f52f8f444d",
+    "archives": {
+      "0943eb9abee8c4511d7298d9be3dfdd7": {
+        "run_id": "0943eb9abee8c4511d7298d9be3dfdd7",
+        "created_at": 1792476990.177957,
+        "source_path": "data/extraction/v5-enum/work/0943eb9abee8c4511d7298d9be3dfdd7/jobs.sqlite3",
+        "archive_path": "data/extraction/v5-enum/work/0943eb9abee8c4511d7298d9be3dfdd7/jobs.sqlite3.gz",
+        "original_bytes": 7484723200,
+        "original_sha256": "f5cb869a2229c5b94852c4017f1e7937d632a3090f3505da542e54035676b6c3",
+        "archive_bytes": 1461326585,
+        "archive_sha256": "2f7537fbeac70b3ed7827684ce74566211bb89662e159b42129a3c6c22005a42",
+        "round_trip_sha256": "f5cb869a2229c5b94852c4017f1e7937d632a3090f3505da542e54035676b6c3",
+        "state": "ready",
+        "phase": "draft",
+        "error": null,
+        "jobs": [
+          {
+            "phase": "draft",
+            "status": "pending",
+            "count": 945
+          },
+          {
+            "phase": "normalize",
+            "status": "done",
+            "count": 6429
+          },
+          {
+            "phase": "questions",
+            "status": "done",
+            "count": 2957
+          }
+        ],
+        "requests": 1537,
+        "verification": "full_gzip_decompression_matches_original_bytes_and_sha256",
+        "uncompressed_copy_removed": true
+      }
+    }
+  },
+  "files": {
+    "Extraction/ontoward_extraction/recovery.py": "28735975ae8e319fc0bd696a434e9dd2fa701f11453a0352df5bdb03f3a97474",
+    "Extraction/ontoward_extraction/__main__.py": "081dd4d3581463e6a42469648f388b7d21a68e6354d09ed6200f20285300aab4",
+    "Extraction/tests/test_provider_switch.py": "608c5e5ad7ba2574f84959e054b2f7a023c986451faf0d36ccc4eda80b826209",
+    "Tmp/extraction-draft-repair-2026-10-20/provider-tests.log": "8c32cb3afdc5d2abf628a206d992f092e4073c11b8434bd92df011a438573045",
+    "Tmp/extraction-draft-repair-2026-10-20/provider-image-tests.log": "d15bbe7dccda062ffab62ca2226631a481196be5a1ab5dcf651fa00cae1ad46a",
+    "Tmp/extraction-draft-repair-2026-10-20/provider-verification.json": "5e40ebf6adf3a0e29401edf53c031e2acc51d4aef172d93cbafaa61b11f8ec09",
+    "Tmp/extraction-draft-repair-2026-10-20/provider-recovery.log": "26b9dbb5fe0af4450da1167bd9a27e94a1ca167b9bc419cd93ebb2956828cd05"
+  }
+}

@@ -27,10 +27,16 @@ class KoreanPhaseTests(unittest.TestCase):
         self.jobs=Jobs(self.root/'work');self.addCleanup(self.jobs.close)
 
     def accept(self,phase,concepts):
-        ident=self.jobs.add(phase,{'fixture':len(list(self.jobs.db.execute('SELECT * FROM requests')))})
+        source={'fixture':len(list(self.jobs.db.execute('SELECT * FROM requests')))}
+        if phase=='questions':source.update(concept=copy.deepcopy(concepts[0]),linked_concepts=[])
+        ident=self.jobs.add(phase,source)
         request_id='request-'+ident
         self.jobs.prepare_request(request_id,'nova_dev',{},[ident])
-        response=dict(content=canonical(dict(results=[dict(job_id=ident,concepts=concepts,relations=[],value_matches=[])])),finish_reason='stop')
+        result=dict(job_id=ident,concepts=concepts,relations=[],value_matches=[])
+        if phase=='questions':
+            result['concepts']=[{key:concepts[0][key] for key in ('id','question','exam_text','attribute_role','exam_method')}]
+            result['new_concepts']=[]
+        response=dict(content=canonical(dict(results=[result])),finish_reason='stop')
         self.jobs.request_state(request_id,'received',response)
         request=self.jobs.db.execute('SELECT * FROM requests WHERE request_id=?',(request_id,)).fetchone()
         return ident,accept_response(self.jobs,request,response)

@@ -95,8 +95,6 @@ class ScriptedModels:
             row = next((f'r{number:02d}' for number, item in enumerate(self.case['exam_results'], 1)
                         if item['exam'].split(' (')[0] in request), None)
             return completion(json.dumps({'id': row} if row else {'id': None, 'reason': 'too_broad'}))
-        if payload.get('task') == 'empathy':
-            return completion(json.dumps({'text': '많이 힘드셨겠어요. 함께 살펴볼게요.'}, ensure_ascii=False))
         if payload.get('task') == 'input_context':
             text, question = payload['input'], payload['question']
             if not text.strip():

@@ -14,7 +14,7 @@ from .build import run_pipeline
 from .verify import verify
 from .install import install
 from .progress import display
-from .recovery import recover_normalization
+from .recovery import recover_normalization, recover_questions, recover_draft, recover_patch
 
 
 def configuration(path, provider=None):
@@ -49,7 +49,7 @@ def build_identity(entries, config, assets):
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description='Build qualitative clinical knowledge with explicit provider and durable checkpoints')
-    parser.add_argument('command',choices=['run','status','pause','verify','install','recover-normalize','recover-normalize-text','recover-normalize-provider','recover-normalize-batch','recover-normalize-empty'])
+    parser.add_argument('command',choices=['run','status','pause','verify','install','recover-normalize','recover-normalize-text','recover-normalize-provider','recover-normalize-batch','recover-normalize-empty','recover-questions','recover-questions-sol','recover-draft','recover-draft-provider','recover-draft-endpoints','recover-draft-packets','recover-patch'])
     parser.add_argument('--config',default=os.environ.get('EXTRACTION_CONFIG','/app/config.json'))
     parser.add_argument('--assets',default='/assets')
     parser.add_argument('--work',default='/work')
@@ -67,8 +67,10 @@ def main(argv=None):
     args=parser.parse_args(argv)
     if args.run_id and (not args.run_id.isalnum() or len(args.run_id)>64):
         parser.error('Invalid run ID')
-    if args.command.startswith('recover-normalize') and (not args.run_id or args.resume or args.install or args.retry_unknown):
+    if args.command.startswith('recover-') and (not args.run_id or args.resume or args.install or args.retry_unknown):
         parser.error('recover-normalize requires --run-id and does not run or install model results')
+    if args.command=='recover-draft-provider' and args.provider not in {'openai_api','codex_subscription'}:
+        parser.error('recover-draft-provider requires an explicit --provider openai_api or codex_subscription')
     work=Path(args.work).resolve()
     if args.watch and args.command!='status': parser.error('--watch is available only for status')
     if not math.isfinite(args.interval) or not 0.1<=args.interval<=60: parser.error('Use an interval between 0.1 and 60 seconds')
@@ -103,6 +105,18 @@ def main(argv=None):
     try:
         entries=discover(args.assets,config.get('inputs'),boundary)
         identity=build_identity(entries,config,args.assets)
+        if args.command=='recover-patch':
+            print(canonical(recover_patch(work,args.run_id,identity,boundary)),flush=True)
+            return 0
+        if args.command in {'recover-draft','recover-draft-provider','recover-draft-endpoints','recover-draft-packets'}:
+            print(canonical(recover_draft(work,args.run_id,identity,boundary,
+                switch_provider=args.command=='recover-draft-provider',repair_endpoints=args.command=='recover-draft-endpoints',
+                repair_packets=args.command=='recover-draft-packets')),flush=True)
+            return 0
+        if args.command in {'recover-questions','recover-questions-sol'}:
+            print(canonical(recover_questions(work,args.run_id,identity,boundary,
+                switch_sol=args.command=='recover-questions-sol')),flush=True)
+            return 0
         if args.command.startswith('recover-normalize'):
             print(canonical(recover_normalization(work,args.run_id,identity,boundary,
                 repair={'recover-normalize':'schema','recover-normalize-text':'text',

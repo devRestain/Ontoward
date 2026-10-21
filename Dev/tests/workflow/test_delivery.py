@@ -1,3 +1,4 @@
+from rdflib import Literal, RDFS
 import copy
 from dataclasses import replace
 import json
@@ -8,7 +9,7 @@ import fixtures as f
 from education_fixtures import TEXT, education_response
 from workflow.education import generate_plan, _EducationWork, parse_plan, references
 from workflow.rules.limits import LIMITS
-from workflow.state.models import PendingEmpathy, Question
+from workflow.state.models import Question
 
 
 def invalid_joint_utterances(payload):
@@ -99,7 +100,7 @@ class DeliveryTests(unittest.TestCase):
         self.assertEqual(repair['generation_error'], 'PROVIDER_RESPONSE_INVALID')
         self.assertEqual(repair['validation_errors'], {})
         self.assertTrue(all(client.submissions[0]['note']['P'].values()))
-        self.assertEqual(client.actions[0]['content'], '병원 오시는 길이 불편하진 않으셨나요?')
+        self.assertEqual(client.actions[0]['content'], c.config.texts.intake_questions['onset'])
 
     def test_repeated_provider_render_failure_retains_cause_and_english_plan(self):
         requests = []
@@ -196,7 +197,11 @@ class DeliveryTests(unittest.TestCase):
 
     def test_long_diagnosis_notice_uses_the_short_complete_sentence(self):
         k = f.knowledge()
-        k.labels[str(f.OW.Alpha)] = '조금 긴 가상 질환 이름'
+        for label in list(k._graph.objects(f.OW.Alpha, RDFS.label)):
+            if label.language == 'ko':
+                k._graph.remove((f.OW.Alpha, RDFS.label, label))
+        k._graph.add((f.OW.Alpha, RDFS.label, Literal('조금 긴 가상 질환 이름', lang='ko')))
+        k._labels.clear()
         c,s = f.consultation(prepared=f.resources(k, education=True)),f.chief(f.state('Education',initialized=True))
         f.freeze(s,kind='disease',name='Disease alpha')
         self.assertTrue(c.sessions['Education'].prepare_diagnosis(s,c.client))
@@ -210,7 +215,11 @@ class DeliveryTests(unittest.TestCase):
                 self.assertEqual(payload['fixed_diagnosis']['name'], 'Disease alpha')
                 return {'items':[{'id':'diagnosis','utterances':['가상질환A가 의심됩니다.']}]}
         k = f.knowledge()
-        k.labels[str(f.OW.Alpha)] = 'Long English display name for disease alpha'
+        for label in list(k._graph.objects(f.OW.Alpha, RDFS.label)):
+            if label.language == 'ko':
+                k._graph.remove((f.OW.Alpha, RDFS.label, label))
+        k._graph.add((f.OW.Alpha, RDFS.label, Literal('Long English display name for disease alpha')))
+        k._labels.clear()
         c,s = f.consultation(f.FakeSDK(chat_handler=response),f.resources(k,education=True)),f.chief(f.state('Education',initialized=True))
         f.freeze(s,kind='disease',name='Disease alpha')
         before = s.case.model_dump()
@@ -224,7 +233,11 @@ class DeliveryTests(unittest.TestCase):
             requests.append(payload)
             raise f.NovaError('API_UNAVAILABLE')
         k = f.knowledge()
-        k.labels[str(f.OW.Alpha)] = 'Long English display name for disease alpha'
+        for label in list(k._graph.objects(f.OW.Alpha, RDFS.label)):
+            if label.language == 'ko':
+                k._graph.remove((f.OW.Alpha, RDFS.label, label))
+        k._graph.add((f.OW.Alpha, RDFS.label, Literal('Long English display name for disease alpha')))
+        k._labels.clear()
         c,s = f.consultation(f.FakeSDK(chat_handler=response),f.resources(k,education=True)),f.chief(f.state('Education'))
         f.freeze(s,kind='disease',name='Disease alpha')
         c.enter_session(s)
@@ -297,7 +310,6 @@ class DeliveryTests(unittest.TestCase):
         c.refresh_after_input(s)
         self.assertEqual(s.case.model_dump(),before)
         self.assertEqual(s.session.doctor_calls,calls)
-        self.assertIsNone(s.interview.empathy)
         self.assertIsNone(s.turn)
 
     def test_education_can_deliver_prepared_questions_without_models(self):
@@ -312,38 +324,6 @@ class DeliveryTests(unittest.TestCase):
         c.mouth.execute_action(s,c.client)
         c.ear.process_input(s,c.knowledge,c.client)
         self.assertEqual(s.interview.answers[-1].outcome,'delivered')
-
-    def test_empathy_keeps_codes_and_canonical_facts_without_patient_raw(self):
-        def response(payload):
-            return {'statements':[f.statement('Complaint')],
-                    'empathy':{'quote':'I am scared','emotion':'fear','intent':'new_distress'}}
-        s,c,client=f.interpret([],text='Complaint I am scared',responses=response)
-        self.assertEqual(s.interview.empathy.emotion,'fear')
-        self.assertNotIn('I am scared',s.model_dump_json())
-        client.chat_handler=None
-        before = len(client.requests)
-        c.mouth.prepare_empathy(s,client,s.interview.empathy)
-        self.assertEqual(len(client.requests), before)
-        self.assertEqual(s.question().text, c.config.texts.empathy_templates['fear'])
-        self.assertNotIn('I am scared', s.question().text)
-
-    def test_empathy_reserves_three_calls_and_separate_action_accounting(self):
-        c,s=f.consultation(),f.chief(f.state('ChiefComplaint',initialized=True))
-        s.session.call_limit=2
-        self.assertFalse(c.budget.can_empathize(s))
-        s.session.call_limit=c.budget.collection_calls(s)+1
-        self.assertTrue(c.budget.can_empathize(s))
-        c.mouth.usage.record_actions(s,50,49,purpose='empathy')
-        self.assertEqual(c.budget.interview_actions(s),0)
-        self.assertEqual(s.session.usage['ChiefComplaint'].actions,1)
-
-    def test_invalid_empathy_uses_prepared_fallback(self):
-        client=f.FakeSDK(chat_handler=lambda p:{'text':'x'*31} if p['task']=='empathy' else None)
-        c,s=f.consultation(client),f.chief(f.state())
-        event=PendingEmpathy(source_ref='s',emotion='unrecognized',intent='new_distress',key='k')
-        s.interview.empathy=event
-        c.mouth.prepare_empathy(s,client,event)
-        self.assertEqual(s.question().text,c.config.texts.empathy_fallback)
 
 
 if __name__=='__main__':

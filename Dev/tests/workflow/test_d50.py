@@ -9,7 +9,83 @@ from workflow.state.models import ObservedNumber, Question
 
 
 class InputPreservationTests(unittest.TestCase):
-    def test_statement_repair_preserves_demographics_siblings_and_empathy(self):
+    def test_chief_review_and_invalid_sibling_share_one_repair(self):
+        calls = []
+        def respond(payload):
+            calls.append(payload)
+            if payload['phase'] == 'context':
+                return {'statements': [f.statement('Complaint', primary_concern=True, assertion='unknown'),
+                                       f.statement('Medicine', note_value='약')],
+                        'patient_context': [{'key': 'age', 'value': '6 years', 'quote': '6 years'}]}
+            return {'statements': [f.statement('Complaint', primary_concern=True, assertion='unknown'),
+                f.statement('Medicine', target_terms=[], assertion_scope='domain',
+                    record_category='medication', note_value='Taking medicine')]}
+        s, c, _ = f.interpret([], text='6 years Complaint Medicine', responses=respond)
+        self.assertEqual([p['phase'] for p in calls], ['context', 'context_repair'])
+        self.assertEqual(calls[1]['statement_indices'], [0, 1])
+        self.assertIsNone(s.case.chief(confirmed=True))
+        self.assertTrue(any(v.value == 'Taking medicine' for v in s.case.facts.values()))
+        self.assertTrue(any(v.context_key == 'age' for v in s.case.facts.values()))
+
+    def test_mapping_repair_keeps_valid_rows_and_never_selects_first_candidate(self):
+        calls = []
+        def respond(payload):
+            calls.append(payload)
+            if payload['task'] == 'input_context':
+                return {'statements': [f.statement('First', target_terms=['test'], note_value='First complaint'),
+                    f.statement('Second', target_terms=['test'], assertion='absent',
+                        polarity_scope='qualified', note_value='No complaint while resting')]}
+            if payload['phase'] == 'mapping':
+                return [{'Test complaint': '(+)'}, 'invalid row']
+            self.assertEqual(payload['statement_indices'], [1])
+            return [{}]
+        s, c, _ = f.interpret([], text='First Second', responses=respond)
+        self.assertEqual([p['phase'] for p in calls], ['context', 'mapping', 'mapping_repair'])
+        self.assertEqual(len(f.graph_facts(s.case)), 1)
+        note = next(iter(f.unbound(s.case).values()))
+        self.assertEqual((note.value, note.status, note.polarity_scope),
+                         ('No complaint while resting', 'absent', 'qualified'))
+        self.assertFalse(any(row.status == 'absent' for row in EvidenceIndex.from_case(s.case, c.knowledge).entries))
+
+    def test_korean_hint_with_candidates_preserves_english_note_with_four_call_ceiling(self):
+        calls = []
+        def respond(payload):
+            calls.append(payload)
+            if payload['task'] == 'input_context':
+                row = f.statement('가상', target_terms=['가상'], assertion='absent')
+                if payload['phase'] == 'context_repair':
+                    row['note_value'] = 'No reported test complaint'
+                return {'statements': [row]}
+            return '{'
+        s, c, _ = f.interpret([], text='가상', responses=respond)
+        self.assertEqual([p['phase'] for p in calls], ['context', 'context_repair', 'mapping', 'mapping_repair'])
+        self.assertFalse(f.graph_facts(s.case))
+        self.assertEqual(next(iter(f.unbound(s.case).values())).value, 'No reported test complaint')
+
+    def test_exhausted_mapping_repair_keeps_notes_and_final_assessment_resources(self):
+        c, s = f.consultation(prepared=f.resources(education=True)), f.chief(f.state('DifferentialDiagnosis'))
+        # Three gateway calls are available; the fourth must leave the four final calls protected.
+        s.session.doctor_calls = s.session.call_limit - 7
+        def respond(payload):
+            if payload['task'] == 'input_context':
+                row = f.statement('New', target_terms=['test'], note_value='Additional reported complaint')
+                if payload['phase'] == 'context':
+                    row['note_value'] = '한글'
+                return {'statements': [row]}
+            return '{'
+        from workflow.state.models import TurnContext
+        client = c.client
+        client.chat_handler = respond
+        s.turn = TurnContext(kind='initial', response={'opening': 'New'})
+        c.ear.process_input(s, c.knowledge, client)
+        self.assertEqual(len(client.requests), 3)
+        self.assertEqual(c.budget.calls_left(s.session), 4)
+        self.assertTrue(any(v.value == 'Additional reported complaint' for v in f.unbound(s.case).values()))
+        c.close_collection(s)
+        self.assertTrue(s.case.assessment.frozen)
+        self.assertIsNone(s.session.termination)
+
+    def test_statement_repair_preserves_demographics_and_siblings(self):
         calls = []
         def respond(payload):
             calls.append(payload)
@@ -18,13 +94,11 @@ class InputPreservationTests(unittest.TestCase):
                                                   note_value='Taking medication')]}
             return {'statements': [f.statement('복통'), f.statement('약', note_value='약')],
                     'patient_context': [{'key': 'age', 'value': '25 years', 'quote': '25세'},
-                                        {'key': 'sex', 'value': 'male', 'quote': '남성'}],
-                    'empathy': {'quote': '복통', 'intent': 'new_distress', 'emotion': 'pain'}}
+                                        {'key': 'sex', 'value': 'male', 'quote': '남성'}]}
         s, c, _ = f.interpret([], text='25세 남성 복통 약', responses=respond)
         self.assertEqual({v.context_key for v in s.case.facts.values() if v.context_key}, {'age', 'sex'})
         self.assertTrue(any(v.target == 'Test complaint' for v in s.case.facts.values()))
         self.assertTrue(any(v.value == 'Taking medication' for v in s.case.facts.values()))
-        self.assertIsNotNone(s.interview.empathy)
         self.assertEqual(len(calls), 2)
         self.assertEqual(calls[1]['statement_indices'], [1])
 
@@ -115,7 +189,7 @@ class DeterministicReplyTests(unittest.TestCase):
 
     def test_added_clinical_content_and_noncanonical_questions_are_interpreted(self):
         for text, purpose, wording in (('모르겠어요. 그런데 열이 나요', 'feature', '별도증상이 있나요?'),
-                                      ('네', 'greeting', '병원 오시는 길이 불편하진 않으셨나요?'),
+                                      ('네', 'intake', '언제부터 불편하셨나요?'),
                                       ('아니요', 'feature', '별도증상이 없으신가요?'),
                                       ('네', 'history', '현재 복용하는 약이 있나요?')):
             q = Question(item_id='q', purpose=purpose, text=wording, target='Other symptom',
@@ -136,6 +210,59 @@ class DeterministicReplyTests(unittest.TestCase):
 
 
 class SharedWorkTests(unittest.TestCase):
+    def test_clarification_assets_reject_bad_text_before_actions(self):
+        import unicodedata
+        from knowledge.conditions import AttributeRole
+        for text in ('', '   ', 'English only', '가' * 31,
+                     unicodedata.normalize('NFD', '다시 말씀해 주세요')):
+            with self.subTest(text=text):
+                k = f.knowledge()
+                k.attribute_roles[str(f.OW.Quality)] = AttributeRole(order=1, category='quality', clarification=text)
+                with self.assertRaisesRegex(ValueError, 'Prepared clarification'):
+                    k.validate_question_assets()
+        k = f.knowledge()
+        default = f.CONFIG.texts.clarification_question
+        self.assertEqual(k.clarification(str(f.OW.Quality), default), default)
+        k.attribute_roles[str(f.OW.Quality)] = AttributeRole(order=1, category='quality', clarification='양상을 다시 알려주세요')
+        k.validate_question_assets()
+        self.assertEqual(k.clarification(str(f.OW.Quality), default), '양상을 다시 알려주세요')
+
+    def test_context_rules_reuse_does_not_reuse_unknown_or_unaffordable_questions(self):
+        c, s = f.consultation(), f.chief(f.state('ChiefComplaint'))
+        c.sessions['ChiefComplaint'].close(s, c.client)
+        s.interview.current = 'ContextFactor'
+        context = c.sessions['ContextFactor']
+        context.enter(s, s.case.assessment)
+        rules = context.rules
+        specs = context.context_specs(s)
+        self.assertTrue(specs)
+        revision = s.case.revision
+        context.context_specs = Mock(wraps=context.context_specs)
+        c.prepare_session(s)
+        self.assertEqual(context.context_specs.call_count, 1)
+        c.questions.discard_unasked(s, {q.item_id for q in s.interview.queue})
+        c.tools._register(s, next(iter(specs.values())), 0, 1)
+        question = s.interview.queue[-1]
+        c.questions.complete(s, question, 'unknown-context', outcome='unknown')
+        self.assertEqual(s.case.revision, revision)
+        self.assertFalse(context.context_specs(s))
+        s.interview.answers[-1] = s.interview.answers[-1].model_copy(update={'outcome': 'conflict'})
+        self.assertTrue(context.context_specs(s))
+        s.session.turns_remaining = 0
+        self.assertFalse(context.context_specs(s))
+        self.assertIs(context.rules, rules)
+
+    def test_fresh_facts_choose_preferred_chief_and_update_conflicts(self):
+        s = f.chief(f.state())
+        s.case.current_facts()
+        second = f.fact('second', target='Other symptom', observation_id='second', episode_id='second')
+        s.case.apply([second], preferred='second')
+        self.assertEqual(s.case.chief().id, 'second')
+        s.case.apply([f.fact('negative', status='absent')])
+        self.assertEqual({f.status for f in s.case.current_facts() if f.target == 'Test complaint'}, {'uncertain'})
+        s.case.apply([f.fact('negative', status='present')])
+        self.assertEqual({f.status for f in s.case.current_facts() if f.target == 'Test complaint'}, {'present'})
+
     def test_relation_definitions_are_shared_and_all_question_references_resolve(self):
         c, s = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
         work = c.differential.prepare_decision(s)

@@ -3,8 +3,13 @@ from datetime import datetime, timezone
 
 from .limits import LIMITS, SESSION_INTERVIEW_LIMITS, SESSION_ORDER
 
+# Protect normal input (context + mapping) and final clinical/education work.
+# The optional Ear repairs share the remaining allowance; each call still protects
+# final clinical and Education resources in model_allowance. Do not reserve four
+# input calls for every question, which would stop collection unnecessarily early.
 MODEL_WORK = {
     'input': (2, 2 * LIMITS.gateway_tokens),
+    'decision': (1, LIMITS.gateway_tokens),
     'clinical': (2, LIMITS.gateway_tokens + LIMITS.gateway_recovery_tokens),
     'education': (1, LIMITS.education_tokens),
     'education_doctor': (1, LIMITS.education_doctor_tokens),
@@ -43,7 +48,7 @@ class BudgetPolicy:
     @staticmethod
     def interview_actions(state):
         usage = state.session.usage[state.interview.current]
-        return usage.actions - usage.empathy_actions
+        return usage.actions
 
     def required_actions(self, state, scope):
         if scope == 'Education' and not self.education_enabled:
@@ -52,7 +57,7 @@ class BudgetPolicy:
             return self.required_counts[scope]
         target = LIMITS.education_turns if scope == 'Education' else SESSION_INTERVIEW_LIMITS[scope][0]
         usage = state.session.usage[scope]
-        return max(0, target - (usage.actions - usage.empathy_actions))
+        return max(0, target - usage.actions)
 
     def model_work(self, state):
         work = {name: MODEL_WORK[name] for name in ('input', 'clinical')}
@@ -65,16 +70,14 @@ class BudgetPolicy:
         rows = [work[name] for name in tasks if name in work]
         return sum(row[0] for row in rows), sum(row[1] for row in rows)
 
-    def shared_action_capacity(self, state, *, purpose=None):
+    def shared_action_capacity(self, state):
         following = SESSION_ORDER[SESSION_ORDER.index(state.interview.current) + 1:]
         protected = sum(self.required_actions(state, scope) for scope in following)
-        if purpose == 'empathy':
-            protected += self.required_actions(state, state.interview.current)
         return max(0, state.session.turns_remaining - protected)
 
-    def action_capacity(self, state, *, purpose=None):
-        shared = self.shared_action_capacity(state, purpose=purpose)
-        return shared if purpose == 'empathy' else max(0, min(shared, self.interview_limits(state)[1] - self.interview_actions(state)))
+    def action_capacity(self, state):
+        shared = self.shared_action_capacity(state)
+        return max(0, min(shared, self.interview_limits(state)[1] - self.interview_actions(state)))
 
     def collection_calls(self, state):
         work = self.model_work(state)
@@ -91,14 +94,14 @@ class BudgetPolicy:
             and self.seconds_left(session) > session.reserve_seconds + LIMITS.response_seconds
             and (education or session.output_token_limit - session.output_tokens >= self.collection_tokens(state)))
 
-    def can_start_action(self, state, *, purpose=None):
-        return self.collection_available(state) and self.action_capacity(state, purpose=purpose) > 0
+    def can_start_action(self, state):
+        return self.collection_available(state) and self.action_capacity(state) > 0
 
     def education_available(self, state):
         session = state.session
         return (self.education_enabled and 'SAY' in session.allowed_actions and session.turns_remaining > 0
             and self.seconds_left(session) > session.reserve_seconds + LIMITS.response_seconds
-            and session.usage['Education'].actions - session.usage['Education'].empathy_actions < SESSION_INTERVIEW_LIMITS['Education'][1])
+            and session.usage['Education'].actions < SESSION_INTERVIEW_LIMITS['Education'][1])
 
     def can_clarify(self, state):
         return state.session.clarifications < LIMITS.clarifications and self.can_start_action(state)
@@ -125,11 +128,6 @@ class BudgetPolicy:
         if self.calls_left(session) <= calls:
             return 0
         return max(0, min(maximum, session.output_token_limit - session.output_tokens - reserve))
-
-    def can_empathize(self, state):
-        session = state.session
-        return (not session.finalizing and state.interview.current != 'Education' and self.can_start_action(state, purpose='empathy')
-            and 'SAY' in session.allowed_actions)
 
     def evaluate(self, state):
         if state.session.termination:
@@ -159,9 +157,9 @@ class BudgetPolicy:
                     current -= len(group)
         else:
             for q in sorted(state.interview.queue, key=lambda q:(-q.priority, q.order, q.item_id)):
-                if shared > 0 and calls >= self.collection_calls(state) and (q.purpose == 'empathy' or current > 0):
+                if shared > 0 and calls >= self.collection_calls(state) and current > 0:
                     keep.add(q.item_id)
                     shared -= 1
-                    calls -= 3
-                    current -= q.purpose != 'empathy'
+                    calls -= self.reserve(MODEL_WORK, ('input', 'decision'))[0]
+                    current -= 1
         return BudgetDecision(discard=frozenset(q.item_id for q in state.interview.queue) - keep)

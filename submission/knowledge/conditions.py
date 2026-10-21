@@ -76,25 +76,6 @@ class ExpectedValue(Strict):
                         lower_inclusive=self.lower_inclusive, upper_inclusive=self.upper_inclusive)
         return json.dumps(data, sort_keys=True, separators=(",", ":"))
 
-    def normalized(self):
-        data = self.model_dump()
-        data["concepts"] = sorted(data["concepts"])
-        units = {"fixed_time": "s", "calendar_time": "month"}
-        if self.kind == "quantity":
-            group, value = number(self.value, self.unit)
-            data.update(value=value, unit=units.get(group, self.unit))
-        elif self.kind == "interval":
-            group, _ = number(1, self.unit)
-            data["unit"] = units.get(group, self.unit)
-            if self.lower is not None:
-                data["lower"] = number(self.lower, self.unit)[1]
-            if self.upper is not None:
-                upper_group, upper = number(self.upper, self.upper_unit or self.unit)
-                data.update(upper=upper, upper_unit=units.get(upper_group, self.upper_unit or self.unit))
-                if data["upper_unit"] == data["unit"]:
-                    data["upper_unit"] = None
-        return ExpectedValue.model_validate(data)
-
 
 class FeatureCondition(Strict):
     id: str

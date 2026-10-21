@@ -1,6 +1,6 @@
 # 실행 지식 계약
 
-D49의 실제 새 번들은 아직 설치하지 않았다. **manifest.json이 없는 현재 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패**한다. 합성 번들은 Tmp/에서만 로드한다. 과거 clinical/vocabulary/questions/scoring/reasoning 자산은 활성 경로에서 철회했고 [철회 영수증](../../data/extraction/retired-d42-2026-10-19/withdrawal.json)에 보존했다.
+D49의 새 실제 번들 `87e8b4c54b0689453cea91b3bb316290`를 로컬 설치했다. **manifest·다섯 asset 해시·loader·coverage와 변경 없는 run.py의 prepare를 검증**했다. [설치 증빙](../../data/provenance/extraction-installed-2026-10-21.json)을 따르며 실제 번들 대표 상담·임상·공식 평가와 정식 ZIP은 별도다. 합성 번들은 Tmp/에서만 로드한다. 과거 clinical/vocabulary/questions/scoring/reasoning 자산은 활성 경로에서 철회했고 [철회 영수증](../../data/extraction/retired-d42-2026-10-19/withdrawal.json)에 보존했다.
 
 ClinicalKnowledge.load는 `schema_version=5.0`, `knowledge_contract=v5-enum-1`, build_id와 다섯 asset의 상대 경로/SHA-256을 검증한다. 각 경로는 manifest 디렉터리를 기준으로 해석하며 절대 경로·상위 이탈·symlink 이탈·hash 불일치를 거절한다. 이전 manifest의 status·receipt·policy와 호환 변환은 없다.
 

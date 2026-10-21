@@ -129,15 +129,13 @@ class FakeSDK:
         education = education_response(payload)
         if education is not None:
             return self.completion(education)
-        if payload['task'] == 'empathy':
-            return self.completion({'text':'많이 힘드셨겠어요. 함께 살펴봐요.'})
         if payload['task'] == 'input_mapping':
             return self.completion([{} for _ in payload['statements']])
         q, text = payload['question'], payload['input']
         if q is None:
             return self.completion({'statements':[statement(text, target_terms=[self.target], primary_concern=True)]})
         purpose = q['purpose']
-        if purpose in {'greeting','open_inquiry'}:
+        if purpose == 'open_inquiry':
             return self.completion({'statements':[statement(text,role='nonclinical',assertion='unknown',target_terms=[])]})
         if purpose in {'intake','history'}:
             return self.completion({'statements':[statement(text, target_terms=[], assertion_scope='domain',

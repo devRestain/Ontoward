@@ -1,0 +1,147 @@
+{
+  "contract": "manual-readiness-finalization-1",
+  "run_id": "87e8b4c54b0689453cea91b3bb316290",
+  "source_run_id": "921be40beebc21349916de340d320eff",
+  "source_sha256_before": "ba852953ab24f1ac6e00da4f3d82244a4497fee75086fea4b4b66d3b1b2ed79b",
+  "source_sha256_after": "ba852953ab24f1ac6e00da4f3d82244a4497fee75086fea4b4b66d3b1b2ed79b",
+  "protected_tables_unchanged": true,
+  "report": {
+    "build_id": "87e8b4c54b0689453cea91b3bb316290",
+    "concepts": 6341,
+    "effects": {
+      "support": 2654,
+      "strong_support": 439,
+      "against": 78,
+      "strong_against": 17,
+      "neutral": 465
+    },
+    "questions": 2804,
+    "manifest": "/output/87e8b4c54b0689453cea91b3bb316290/manifest.json",
+    "verification": {
+      "status": "pass",
+      "diseases": 945,
+      "gaps": []
+    },
+    "installation": {
+      "status": "installed",
+      "build_id": "87e8b4c54b0689453cea91b3bb316290",
+      "manifest": "/target/manifest.json"
+    }
+  },
+  "status": {
+    "run_id": "87e8b4c54b0689453cea91b3bb316290",
+    "state": "complete",
+    "phase": "complete",
+    "provider": "openai_api",
+    "pause_requested": false,
+    "updated_at": 1792518428.2491858,
+    "index": {
+      "files_completed": 108,
+      "files_total": 108,
+      "rows_committed": 12587695,
+      "current_file": null
+    },
+    "jobs_by_phase": {
+      "conflict": {
+        "done": 6
+      },
+      "draft": {
+        "done": 945
+      },
+      "final": {
+        "done": 3665
+      },
+      "normalize": {
+        "done": 6429
+      },
+      "patch": {
+        "done": 59
+      },
+      "questions": {
+        "done": 2957
+      }
+    },
+    "jobs": {
+      "done": 14061
+    },
+    "requests": {
+      "accepted": 1644,
+      "failed": 22
+    },
+    "job_errors": [],
+    "recovery": {
+      "contract": "manual-readiness-1",
+      "model_calls_started": 0,
+      "run_id": "87e8b4c54b0689453cea91b3bb316290",
+      "source_run_id": "921be40beebc21349916de340d320eff"
+    },
+    "usage": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 548,
+        "input_tokens": 2534916,
+        "output_tokens": 1046486
+      },
+      {
+        "day": "2026-10-20",
+        "model": "gpt-6-luna",
+        "calls": 80,
+        "input_tokens": 12951464,
+        "output_tokens": 773776
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6-luna",
+        "calls": 943,
+        "input_tokens": 9638519,
+        "output_tokens": 3143208
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6.1-sol",
+        "calls": 25,
+        "input_tokens": 477622,
+        "output_tokens": 146514
+      },
+      {
+        "day": "2026-10-21",
+        "model": "gpt-6-luna",
+        "calls": 48,
+        "input_tokens": 5275467,
+        "output_tokens": 362918
+      }
+    ],
+    "error": null
+  },
+  "model_calls_started": 0,
+  "manual_amendment_fields": 741,
+  "runtime_excluded_nodes": 1,
+  "runtime_excluded_relations": 5,
+  "amendment_sha256": "d20bba14e502ee92184bc01d6c2644ec5f9eebbd3048359c2e756e00228ea8d9",
+  "manual_input_sha256": "5e24db7a6a8b67e468dc9fd02376daf163ae6353b5c5f73c91c054d14bca97fd",
+  "integrity": "ok",
+  "not_run": [
+    "clinical validity",
+    "actual-model consultation",
+    "official evaluation",
+    "publication",
+    "deployment"
+  ],
+  "verification": {
+    "extraction_tests": 106,
+    "rebuilt_image_tests": 2,
+    "image_id": "sha256:5dbad42886874dc5dc3a323c94e1bb79ba2568cdda735cfc95b70864b7677eca",
+    "installed_runtime": "data/provenance/extraction-installed-2026-10-21.json",
+    "evidence_sha256": {
+      "tests-final.log": "cb4874f9071c9cc65fc1652b082002b8130c4524d57261e58e63b5d2316105db",
+      "image-tests.log": "1dd14c572f2cc03be7318eec0a335a3f579e1c93ca74349d4740dc1481360c47",
+      "manual-receipt.json": "b7ecd098b018f1877018bcf0552f2976c47720d6b784fab040299eef90a272c1",
+      "finalize.py": "9e345f9f477d1f2926992b542b75071148111c3d82ba86d1be6472b8eb17a556",
+      "manual_repair.py": "a5273dde744003a9db80ab3f7d590ae3223dbd644f0eb2050f53b1f60284bc59",
+      "verify_install.py": "de2c2fa26bd0180298a701d0f43cd72a131824601454bb2c45d8546e5b7d6cb4",
+      "image-build.log": "fe506837295fce1efef2ff39b08d18b1ef92112b22fc947d81572d5778180eb5",
+      "status.log": "ebc5e8fdeff52a7a1c7a686837c98801c9fc6bb102406a06ad8c3da0d003fd90"
+    }
+  }
+}

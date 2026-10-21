@@ -4,13 +4,13 @@ import os
 import json
 from pathlib import Path
 
-ALGORITHM_VERSION = "d50.1"
+ALGORITHM_VERSION = "d50.4"
 ROOT = Path(__file__).resolve().parent
 SETTING = "ONTOWARD_KNOWLEDGE_MANIFEST"
 SETTINGS = {SETTING, 'ONTOWARD_PROMPTS', 'ONTOWARD_TEXTS', 'ONTOWARD_EDUCATION_ENABLED'}
 PROMPT_ROUTES = {
     'input.initial', 'input.reply', 'input.exam', 'input.repair', 'input.rows_repair', 'input.chief_repair',
-    'mapping.select', 'mapping.forced', 'mapping.repair',
+    'mapping.select', 'mapping.repair',
     'clinical.rank', 'clinical.decision', 'clinical.action', 'clinical.repair',
     'session.Initiation', 'session.ChiefComplaint', 'session.ContextFactor', 'session.DifferentialDiagnosis',
     'plan.generate', 'plan.repair', 'mouth.plan', 'mouth.announcement.disease', 'mouth.announcement.symptom',

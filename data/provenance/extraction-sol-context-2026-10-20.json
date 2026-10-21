@@ -1,0 +1,222 @@
+{
+  "contract": "d49-explicit-sol-context-resume-1",
+  "created_at": "2026-10-20T13:50:27+09:00",
+  "revision": "9c375d1075b56901ea7807143ffe83481280287f",
+  "selected": {
+    "provider": "nova_dev",
+    "draft": "gpt-6.1-sol",
+    "final": "gpt-6.1-sol",
+    "effort": "medium",
+    "batch_size": 40,
+    "max_tokens": 32000,
+    "timeout_seconds": 600,
+    "daily_model_calls": 100
+  },
+  "quota_reference": {
+    "url": "https://nova.snubhai.org/docs/",
+    "verified_date": "2026-10-20",
+    "scope": "team successful calls reset at KST midnight",
+    "team_usage_visibility": "checkpoint_only"
+  },
+  "image": {
+    "tag": "ontoward-extraction:local",
+    "id": "sha256:73795283d22ac29ec835e0d8dbaf9081e2301d88a43ddfe10dcbb12cfb2aa616",
+    "pinned_runtime_base": "sha256:51c59a1d4a0c373bad5954a7eca85606096dbdda729ff190da66be53ba328243"
+  },
+  "source_failure": {
+    "run_id": "90e00f0f08009214249d98b52f8ccb07",
+    "code": "CONTEXT_LIMIT_EXCEEDED",
+    "accumulated_chat_history": false,
+    "server_token_count": "not_provided"
+  },
+  "first_sol_attempt": {
+    "run_id": "eea034afdfc3d834a28a58fbdc16a53e",
+    "code": "INVALID_REQUEST_BODY",
+    "http_status": 400,
+    "server_validation_detail": "Invalid request body",
+    "same_id_diagnostic": "same_payload_same_400",
+    "model_results": 0
+  },
+  "question_input": {
+    "registered_inputs": "preserved_in_sqlite",
+    "target_fields": "all_except_search_aliases",
+    "linked_fields_omitted": [
+      "aliases",
+      "attributes",
+      "values",
+      "systems"
+    ],
+    "first_forty_before_bytes": 182796,
+    "first_forty_after_bytes": 42342,
+    "clinical_output_restoration": "full_original_concept"
+  },
+  "first_checkpoint": {
+    "source_id": "90e00f0f08009214249d98b52f8ccb07",
+    "run_id": "eea034afdfc3d834a28a58fbdc16a53e",
+    "source_unchanged": true,
+    "source_sha256": "7aea7447e05ed309ab824fb7c88d3b15d6bf156dfbbec370c009160c3532ea1a",
+    "preserved_hashes": {
+      "jobs_source_sha256": "87b4e367f6ec44267306357130be27e9e3fedde1809b0a1a71a83a7576e55d0d",
+      "requests_source_sha256": "8c5527063e46a01821f47671b8d12fb728b27861fb9084ae34606d25355e4587",
+      "usage_source_sha256": "49f607d66d66257780d431dab55a5a69d45b1a104b12ead34f70876ad0d49a8c"
+    },
+    "completed": {
+      "normalize": 6429,
+      "questions": 1997
+    },
+    "pending": 960,
+    "requests_preserved": 1507,
+    "model_calls_in_recovery": 0,
+    "counters_reset": 0,
+    "active_model": "gpt-6.1-sol",
+    "effort": "medium",
+    "batch_size": 40,
+    "output_limit": 32000,
+    "standalone_recovery_json": false
+  },
+  "repaired_checkpoint": {
+    "source_id": "eea034afdfc3d834a28a58fbdc16a53e",
+    "run_id": "6042b1d5239f52f82324d1d8f2bc05c9",
+    "source_unchanged": true,
+    "source_sha256": "07cb47e35d1f1dd3b540a0d22936e6deebc893bd7a89a5504f0817ed24189ff2",
+    "preserved_hashes": {
+      "jobs_source_sha256": "cd7824ee2b0251a4600276b5457692f61333331d98bd46622ec9896145dfd11a",
+      "requests_source_sha256": "cecf86fe416842d06740e2b1cb6b9a0184944cc1725e3eeac03d15f6b50c368a",
+      "usage_source_sha256": "49f607d66d66257780d431dab55a5a69d45b1a104b12ead34f70876ad0d49a8c"
+    },
+    "completed": {
+      "normalize": 6429,
+      "questions": 1997
+    },
+    "pending": 960,
+    "requests_preserved": 1508,
+    "model_calls_in_recovery": 0,
+    "counters_reset": 0,
+    "active_model": "gpt-6.1-sol",
+    "effort": "medium",
+    "batch_size": 40,
+    "output_limit": 32000,
+    "standalone_recovery_json": false
+  },
+  "live_resume": {
+    "observed_at": "2026-10-20T04:50:00.942791+00:00",
+    "run_id": "6042b1d5239f52f82324d1d8f2bc05c9",
+    "state": "running",
+    "phase": "questions",
+    "error": null,
+    "original_done_results_preserved": 8426,
+    "original_done_jobs_recalled": 0,
+    "registered_inputs_preserved": true,
+    "question_wire_projection_verified": true,
+    "source_failed_batch_done": 40,
+    "counts": [
+      {
+        "phase": "normalize",
+        "status": "done",
+        "count": 6429
+      },
+      {
+        "phase": "questions",
+        "status": "done",
+        "count": 2037
+      },
+      {
+        "phase": "questions",
+        "status": "pending",
+        "count": 880
+      },
+      {
+        "phase": "questions",
+        "status": "running",
+        "count": 40
+      }
+    ],
+    "fresh_requests": [
+      {
+        "request_id": "ad9b5007-cb60-4c8e-a626-c0dbc5729b39",
+        "state": "accepted",
+        "error": null,
+        "phase": "questions",
+        "jobs": 40,
+        "model": "openai/gpt-6.1-sol",
+        "effort": "medium",
+        "output_limit": 32000,
+        "accepted_jobs": 40,
+        "invalid_jobs": 0,
+        "finish_reason": "stop",
+        "usage": {
+          "day": "2026-10-20",
+          "input_tokens": 20075,
+          "model": "openai/gpt-6.1-sol",
+          "output_tokens": 6054
+        },
+        "done_now": 40
+      },
+      {
+        "request_id": "7380310b-c2ee-4025-9554-77b512347294",
+        "state": "sent",
+        "error": null,
+        "phase": "questions",
+        "jobs": 40,
+        "model": "openai/gpt-6.1-sol",
+        "effort": "medium",
+        "output_limit": 32000,
+        "accepted_jobs": null,
+        "invalid_jobs": null,
+        "finish_reason": null,
+        "usage": null,
+        "done_now": 0
+      }
+    ],
+    "usage": [
+      {
+        "day": "2026-10-19",
+        "model": "openai/gpt-6-luna",
+        "calls": 548,
+        "input_tokens": 2534916,
+        "output_tokens": 1046486
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6-luna",
+        "calls": 943,
+        "input_tokens": 9638519,
+        "output_tokens": 3143208
+      },
+      {
+        "day": "2026-10-20",
+        "model": "openai/gpt-6.1-sol",
+        "calls": 1,
+        "input_tokens": 20075,
+        "output_tokens": 6054
+      }
+    ],
+    "production_manifest_installed": false
+  },
+  "tests": {
+    "development": 75,
+    "image": 75,
+    "network": "none"
+  },
+  "clinical_quality": "not_run",
+  "official_evaluation": "not_run",
+  "real_installation": "not_run",
+  "generation": "active",
+  "files": {
+    "Extraction/ontoward_extraction/build.py": "96d3c2bc3aa2d031a2452c324dbfe6fa6131fd975944d9c1184e5dc48ed82b0e",
+    "Extraction/ontoward_extraction/recovery.py": "225d10cf5e3c0e9c30e906d017d8a0fa9d52610adb8347313ad11b7ad68ee688",
+    "Extraction/config.sol.json": "e8ddb440b1ce3494f5115ff57d83e4a6dabd97d5f9493368fcdd661a12535769",
+    "Extraction/tests/test_question_output.py": "d185999911a6623aaf25afbfb473c2ab097810d5e897ecec1924318eb66e2cdf",
+    "Tmp/extraction-sol-context-2026-10-20/Dockerfile": "804ce71adebef86dfe07b04d01cb06e11cf313b311efbbaf19a423156ff6bc41",
+    "Tmp/extraction-sol-context-2026-10-20/tests-input-repair.log": "592a1fb7631a0b2afaa2690b4f65af5e04c19027434ac3626d7cb0fdc22a61a2",
+    "Tmp/extraction-sol-context-2026-10-20/image-tests-input-repair.log": "dacdbefe7b91e59552bdfeb3171a7bc5eba66789fec07dee293a3ea726580958",
+    "Tmp/extraction-sol-context-2026-10-20/inspection.json": "9e9c1e86a969bda38be714b2a242d1198366d7ad9a10ba674c6701c09ab5dcec",
+    "Tmp/extraction-sol-context-2026-10-20/request-diagnostic.log": "1bb288b4ccb7afe4908410e38b9b0e936c87dc9dc8b5c6e63db042730dc4b6a7",
+    "Tmp/extraction-sol-context-2026-10-20/input-measurement.json": "5fef72acde448edcad3c2752c141d75ed702f9e9126442abcaaac80925b980c1",
+    "Tmp/extraction-sol-context-2026-10-20/verification.json": "fc68b13c106a0e6e27919276073e43755fabd4019d1208667532969e77f640a1",
+    "Tmp/extraction-sol-context-2026-10-20/resume-proof.json": "e50c66f5abe292d902029445fd65fcbc9b558fe4376c61fe357e96ca9d711115",
+    "Tmp/extraction-sol-context-2026-10-20/input-repair/verification.json": "7c91631b9cd02c6cfe20c02ee57e3b32aff8b54818715d90904966ad10ae958b",
+    "Tmp/extraction-sol-context-2026-10-20/input-repair/resume-proof.json": "45df82a40fd4b39a171bfb2ba098705afdba6c8863da9669a460630d536fc721",
+    "Tmp/extraction-sol-context-2026-10-20/input-repair/container-ownership.json": "ff893b99450807fcac442dedd946f9f9df642af7afeb73540d2bf4f06c192d0b"
+  }
+}

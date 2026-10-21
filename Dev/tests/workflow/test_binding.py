@@ -116,7 +116,7 @@ class BindingTests(unittest.TestCase):
         self.assertEqual(attr.status,'absent')
         self.assertEqual(attr.values,('head',))
 
-    def test_forced_mapping_only_unresolved_siblings_and_no_binding_repair(self):
+    def test_mapping_review_only_unresolved_siblings(self):
         calls = []
         def response(payload):
             if payload['task']=='input_context':
@@ -126,13 +126,13 @@ class BindingTests(unittest.TestCase):
                 return [{}]
             return [{'Test complaint':'(+)'}]
         s,c,_ = f.interpret([],text='Exact Ambiguous',responses=response)
-        self.assertEqual([p['phase'] for p in calls],['mapping','forced'])
+        self.assertEqual([p['phase'] for p in calls],['mapping','mapping_repair'])
         self.assertTrue(all(p['statement_indices']==[1] for p in calls))
         self.assertEqual(len(f.graph_facts(s.case)),2)
-        self.assertEqual(sum(fact.binding=='forced' for fact in s.case.facts.values()),1)
+        self.assertEqual(sum(fact.binding=='broader' for fact in s.case.facts.values()),1)
         self.assertFalse(any(not row['candidates'] for p in calls for row in p['statements']))
 
-    def test_bad_mapping_json_has_one_format_repair_then_forced_completion(self):
+    def test_bad_mapping_json_has_one_repair_then_preserves_unbound_note(self):
         calls = []
         def response(payload):
             if payload['task']=='input_context':
@@ -140,9 +140,9 @@ class BindingTests(unittest.TestCase):
             calls.append(payload['phase'])
             return '{'
         s,c,_ = f.interpret([],text='Ambiguous',responses=response)
-        self.assertEqual(calls,['mapping','format_repair','forced'])
-        self.assertEqual(len(f.graph_facts(s.case)),1)
-        self.assertEqual(next(iter(s.case.facts.values())).binding,'forced')
+        self.assertEqual(calls,['mapping','mapping_repair'])
+        self.assertFalse(f.graph_facts(s.case))
+        self.assertEqual(next(iter(f.unbound(s.case).values())).value, 'test')
 
     def test_unrepresentable_number_preserved_as_note_without_evidence(self):
         row = f.statement('Growing 3 cm each year',focus='attribute',target_terms=['growth rate'],
@@ -207,7 +207,7 @@ class BindingTests(unittest.TestCase):
         self.assertFalse(hasattr(c.ear,'patient_context'))
         self.assertNotIn('Complaint',str(f.unbound(s.case)))
 
-    def test_initial_chief_focused_recovery_is_independent(self):
+    def test_initial_chief_review_shares_the_context_repair(self):
         phases = []
         def response(payload):
             phases.append(payload['phase'])
@@ -216,7 +216,7 @@ class BindingTests(unittest.TestCase):
                 row.update(role='uncertain',assertion='uncertain')
             return {'statements':[row]}
         s,c,_ = f.interpret([],text='Complaint',responses=response)
-        self.assertEqual(phases,['context','initial_chief_repair'])
+        self.assertEqual(phases,['context','context_repair'])
         self.assertIsNotNone(s.case.chief(confirmed=True))
 
 

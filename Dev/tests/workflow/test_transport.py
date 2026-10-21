@@ -69,7 +69,7 @@ class TransportTests(unittest.TestCase):
 
     def test_action_transient_replay_and_format_error_are_not_reissued(self):
         c,s=f.consultation(),f.state()
-        q=Question(item_id='q',purpose='greeting',text='안녕하세요.')
+        q=Question(item_id='q',purpose='intake',category='onset',text='언제부터 불편하셨나요?')
         c.questions.register(s,q)
         c.interactions.select_question(s,q)
         c.mouth.validate_action(s)
@@ -113,7 +113,7 @@ class TransportTests(unittest.TestCase):
         def fail(*a,**kw):
             raise OSError('disk full')
         c,s=f.consultation(audit=fail),f.state()
-        q=Question(item_id='q',purpose='greeting',text='안녕하세요.')
+        q=Question(item_id='q',purpose='intake',category='onset',text='언제부터 불편하셨나요?')
         c.questions.register(s,q)
         c.interactions.select_question(s,q)
         c.mouth.validate_action(s)

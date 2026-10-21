@@ -1,4 +1,5 @@
 import json
+import re
 import time
 import unicodedata
 from pathlib import Path
@@ -15,6 +16,7 @@ from .verify import verify
 from .install import install
 
 PHASES = ('normalize','questions','draft','final','conflict','patch')
+QUESTION_FIELDS = ('id','question','exam_text','attribute_role','exam_method')
 
 
 def empty_bodhi_candidate(source):
@@ -59,7 +61,7 @@ def normalization_result(row):
     return value
 
 
-def phase_schema(phase):
+def phase_schema(phase, data=None):
     schema=response_schema()
     definitions=schema['$defs']
     if phase=='normalize':
@@ -71,7 +73,224 @@ def phase_schema(phase):
         for owner,field in [('Concept','exam_text'),('AttributeRole','clarification')]:
             for alternative in definitions[owner]['properties'][field]['anyOf']:
                 if alternative.get('type')=='string': alternative.update(minLength=1,maxLength=30)
+    if phase=='questions':
+        definitions['NewConcept']=json.loads(canonical(definitions['Concept']))
+        concept=definitions['Concept']
+        concept['properties']={key:concept['properties'][key] for key in QUESTION_FIELDS}
+        concept['required']=list(QUESTION_FIELDS)
+        result=definitions['Result'];result['properties']['concepts'].update(minItems=1,maxItems=1)
+        result['properties']['new_concepts']={'type':'array','items':{'$ref':'#/$defs/NewConcept'},'maxItems':1}
+        result['required'].append('new_concepts')
+    if phase=='patch' and data:
+        definitions['Result']['properties']['job_id']={'type':'string','enum':[job['job_id'] for job in data]}
+        schema['properties']['results'].update(minItems=len(data),maxItems=len(data))
+    if phase=='draft' and data:
+        catalog,handles=draft_catalog(data)
+        def references(kinds, new_kinds=()):
+            alternatives=[re.escape(handles[ident]) for ident in sorted(catalog) if catalog[ident]['kind'] in kinds]
+            if new_kinds:alternatives.append('new:(?:'+'|'.join(new_kinds)+'):[A-Za-z0-9][A-Za-z0-9_-]{0,95}')
+            return {'type':'string','pattern':'^(?:'+'|'.join(alternatives)+')$'}
+        result=definitions['Result']
+        result['properties']['job_id']={'type':'string','enum':[job['job_id'] for job in data]}
+        result['properties']['relations']['minItems']=1
+        schema['properties']['results'].update(minItems=len(data),maxItems=len(data))
+        relation=definitions['Relation']['properties']
+        relation['disease_id']={'type':'string','enum':[handles[job['input']['disease']['id']] for job in data]}
+        relation['target_id']=references({'Symptom','ExamFinding','ContextFactor'},('Symptom','ExamFinding','ContextFactor'))
+        definitions['Applicability']['properties']['concept_id']=references({'ContextFactor'},('ContextFactor',))
+        definitions['Concept']['properties']['id']={'type':'string',
+            'pattern':'^new:(?:Symptom|ExamFinding|ContextFactor|FindingAttribute|AttributeValue|ExamMethod|BodySystem):[A-Za-z0-9][A-Za-z0-9_-]{0,95}$'}
+        # Encode the existing Python presence-or-paired-expectation invariant in the request schema.
+        condition=definitions['Condition'];presence=json.loads(canonical(condition));attribute=json.loads(canonical(condition))
+        presence['properties'].update(status={'type':'string','enum':['present','absent']},attribute={'type':'null'},expected={'type':'null'})
+        attribute['properties']['attribute']=references({'FindingAttribute'},('FindingAttribute',))
+        attribute['properties']['expected']={'anyOf':[v for v in condition['properties']['expected']['anyOf'] if v.get('type')!='null']}
+        definitions['Condition']={'anyOf':[presence,attribute]}
+        expected=definitions['ExpectedValue'];variants=[]
+        for kind in ('concept','concept_set','quantity','interval'):
+            variant=json.loads(canonical(expected));fields=variant['properties'];fields['kind']={'type':'string','enum':[kind]}
+            if kind in {'concept','concept_set'}:
+                for key in ('value','lower','upper','unit','upper_unit'):fields[key]={'type':'null'}
+                fields['operator']={'type':'string','enum':['eq']}
+                for key in ('lower_inclusive','upper_inclusive'):fields[key]={'type':'boolean','enum':[True]}
+                fields['approximate']={'type':'boolean','enum':[False]}
+                if kind=='concept':
+                    fields['concept']={'type':'string','minLength':1};fields['concepts']['maxItems']=0
+                    fields['selection']={'type':'string','enum':['any_of']}
+                else:
+                    fields['concept']={'type':'null'};fields['concepts']['minItems']=1
+            else:
+                fields['concept']={'type':'null'};fields['concepts']['maxItems']=0
+                fields['match']={'type':'string','enum':['exact']};fields['selection']={'type':'string','enum':['any_of']}
+                fields['unit']={'type':'string','minLength':1}
+                if kind=='quantity':
+                    fields['value']={'type':'number'}
+                    for key in ('lower','upper','upper_unit'):fields[key]={'type':'null'}
+                    for key in ('lower_inclusive','upper_inclusive'):fields[key]={'type':'boolean','enum':[True]}
+                else:
+                    fields['value']={'type':'null'};fields['operator']={'type':'string','enum':['eq']}
+            variants.append(variant)
+        definitions['ExpectedValue']={'anyOf':variants}
     return schema
+
+
+def question_result(row, source):
+    value=dict(row);patches=value.get('concepts',[]);new=value.pop('new_concepts',[])
+    if not isinstance(patches,list) or len(patches)!=1 or not isinstance(patches[0],dict):
+        raise ValueError('require_one_question_patch')
+    patch=patches[0];node=source['concept']
+    if set(patch)!=set(QUESTION_FIELDS) or patch['id']!=node['id']:
+        raise ValueError('question_patch_fields_or_identifier_mismatch')
+    if patch['exam_method'] is not None and not isinstance(patch['exam_method'],str):
+        raise ValueError('invalid_question_exam_method')
+    if not isinstance(new,list) or len(new)>1:raise ValueError('invalid_new_question_concepts')
+    if node.get('exam_method') and patch['exam_method']!=node['exam_method']:
+        raise ValueError('question_cannot_replace_registered_exam_method')
+    references={entry['id']:entry for entry in source.get('linked_concepts',[])}
+    if new:
+        method=new[0]
+        if (not isinstance(method,dict) or not isinstance(method.get('id'),str) or node['kind']!='ExamFinding' or node.get('exam_method') or
+            method.get('kind')!='ExamMethod' or method.get('id') in references or method.get('id')==node['id'] or
+            patch['exam_method']!=method.get('id')):
+            raise ValueError('new_question_concept_requires_unbound_exam_method')
+        references[method['id']]=method
+    if patch['exam_method']!=node.get('exam_method') and (
+        node['kind']!='ExamFinding' or references.get(patch['exam_method'],{}).get('kind')!='ExamMethod'):
+        raise ValueError('unregistered_question_exam_method')
+    if value.get('relations') or value.get('value_matches'):raise ValueError('question_output_must_only_complete_actions')
+    value['concepts']=[dict(node,**patch)]+new
+    return value
+
+
+def question_input(source):
+    """Send action semantics without search aliases or nested reference adjacency."""
+    return dict(source,concept={key:value for key,value in source['concept'].items() if key!='aliases'},
+        linked_concepts=[{key:value for key,value in node.items()
+            if key not in {'aliases','attributes','values','systems'}} for node in source.get('linked_concepts',[])])
+
+
+def draft_catalog(data):
+    catalog={};scopes=None
+    for job in data:
+        source=job['input']
+        scope=tuple(tuple(sorted(node['id'] for node in source[key])) for key in ('available_targets','attributes_and_values'))
+        if scopes is not None and scope!=scopes:raise ValueError('draft_catalog_scope_mismatch')
+        scopes=scope
+        for node in [source['disease'],*source['available_targets'],*source['attributes_and_values']]:
+            if node['id'] in catalog and catalog[node['id']]!=node:raise ValueError('draft_catalog_definition_conflict')
+            catalog[node['id']]=node
+    return catalog,{ident:'k'+str(i) for i,ident in enumerate(sorted(catalog))}
+
+
+def reference_ids(value, mapping, key=None, strict=False):
+    if isinstance(value,dict):return {field:reference_ids(item,mapping,field,strict) for field,item in value.items()}
+    if isinstance(value,list):return [reference_ids(item,mapping,key,strict) for item in value]
+    if isinstance(value,str) and key in {'id','disease_id','target_id','concept_id','attribute','concept',
+        'exam_method','attributes','values','systems','concepts','input','expected'}:
+        if strict and value.startswith('k') and value[1:].isdigit() and value not in mapping:
+            raise ValueError('unknown_draft_reference:'+value)
+        return mapping.get(value,value)
+    return value
+
+
+def draft_messages(data, maximum=50000):
+    catalog,handles=draft_catalog(data)
+    columns=['id','kind','name','korean','attributes','values','systems','context_type','exam_method','units']
+    definitions=[]
+    for ident in sorted(catalog):
+        node=catalog[ident]
+        view={key:value for key,value in node.items() if key not in {'aliases','question','exam_text','attribute_role'}}
+        view['units']=(node.get('question') or {}).get('units',[])
+        view=reference_ids(view,handles)
+        definitions.append([view.get(key) for key in columns])
+    messages=[]
+    def append_parts(field, values, **metadata):
+        part=[]
+        def packet(items):return canonical(dict(phase='draft',wire_contract='draft-shared-1',**metadata,**{field:items}))
+        for item in values:
+            if len(packet([item]))>maximum:raise ValueError('draft_packet_item_too_large:'+field)
+            if part and len(packet(part+[item]))>maximum:
+                messages.append(dict(role='user',content=packet(part)));part=[]
+            part.append(item)
+        if part:messages.append(dict(role='user',content=packet(part)))
+    append_parts('vocabulary',definitions,vocabulary_columns=columns)
+    work=[]
+    for job in data:
+        source={key:value for key,value in job['input'].items() if key not in {'available_targets','attributes_and_values'}}
+        source['disease']=handles[source['disease']['id']]
+        item=dict(job,input=source)
+        if len(canonical(dict(phase='draft',wire_contract='draft-shared-1',jobs=[item])))>maximum and source.get('source_material'):
+            records=source.pop('source_material')
+            source.update(source_material_ref=job['job_id'],source_material_count=len(records))
+            append_parts('source_material',records,source_material_for=job['job_id'])
+        work.append(item)
+    append_parts('jobs',work)
+    return messages
+
+
+PATCH_COLUMNS = {
+    'vocabulary_columns':['id','kind','name','korean','attributes','values','systems','context_type','exam_method','exam_text','question','attribute_role'],
+    'question_columns':['text','answer_type','affirmative','units','time_context','interviewable','reason'],
+    'attribute_role_columns':['order','category','clarification'],
+    'relation_columns':['disease_id','target_id','target_scope','features','applicability','effect'],
+    'scope_columns':['subject','subject_member','time_context'],
+    'feature_columns':['status','attribute','expected'],
+    'expected_columns':['kind','concept','concepts','selection','match','value','lower','upper','lower_inclusive','upper_inclusive','operator','unit','upper_unit','approximate'],
+    'applicability_columns':['concept_id','status','subject','subject_member','time_context'],
+}
+
+
+def patch_catalog(data):
+    if not data: return {},{}
+    source=data[0]['input']
+    for job in data[1:]:
+        if any(job['input'][key]!=source[key] for key in ('available_concepts','completed_relations')):
+            raise ValueError('patch_catalog_scope_mismatch')
+    catalog={}
+    for node in source['available_concepts']:
+        if node['id'] in catalog: raise ValueError('patch_duplicate_concept')
+        catalog[node['id']]=node
+    return catalog,{ident:'k'+str(i) for i,ident in enumerate(sorted(catalog))}
+
+
+def patch_messages(data, maximum=50000):
+    """Share complete clinical/action definitions and completed judgments once, without rewriting jobs."""
+    catalog,handles=patch_catalog(data)
+    if not data:return []
+    columns=PATCH_COLUMNS
+    def cells(value,key):return [value.get(field) for field in columns[key]]
+    definitions=[]
+    for ident in sorted(catalog):
+        view=reference_ids(catalog[ident],handles)
+        for key in ('question','attribute_role'):
+            if view.get(key) is not None:view[key]=cells(view[key],key+'_columns')
+        definitions.append(cells(view,'vocabulary_columns'))
+    relations=[]
+    for raw in reference_ids(data[0]['input']['completed_relations'],handles):
+        view=dict(raw,target_scope=cells(raw['target_scope'],'scope_columns'),
+            applicability=[cells(item,'applicability_columns') for item in raw['applicability']])
+        view['features']=[]
+        for feature in raw['features']:
+            item=dict(feature)
+            if item['expected'] is not None:item['expected']=cells(item['expected'],'expected_columns')
+            view['features'].append(cells(item,'feature_columns'))
+        relations.append(cells(view,'relation_columns'))
+    messages=[]
+    def append_parts(field,items,**metadata):
+        def packet(rows):return canonical(dict(phase='patch',wire_contract='patch-shared-1',**metadata,**{field:rows}))
+        part=[]
+        for item in items:
+            if len(packet([item]))>maximum:raise ValueError('patch_packet_item_too_large:'+field)
+            if part and len(packet(part+[item]))>maximum:
+                messages.append(dict(role='user',content=packet(part)));part=[]
+            part.append(item)
+        if part:messages.append(dict(role='user',content=packet(part)))
+    append_parts('vocabulary',definitions,**{k:v for k,v in columns.items() if k in {'vocabulary_columns','question_columns','attribute_role_columns'}})
+    append_parts('completed_relations',relations,**{k:v for k,v in columns.items() if k not in {'vocabulary_columns','question_columns','attribute_role_columns'}})
+    work=[dict(job,input=reference_ids({key:value for key,value in job['input'].items()
+            if key not in {'available_concepts','completed_relations'}},handles)) for job in data]
+    append_parts('jobs',work)
+    return messages
 
 
 def validate_action_text(node):
@@ -96,6 +315,19 @@ def wait_until(jobs, deadline):
 
 def accept_response(jobs, request, response):
     ids=json.loads(request['job_ids']);valid={};invalid={ident:'missing_result' for ident in ids}
+    inverse={}
+    payload=json.loads(request['payload'])
+    shared=None
+    for message in payload.get('messages',payload.get('body',{}).get('input',[])):
+        if not isinstance(message,dict) or message.get('role')!='user':continue
+        try:packet=json.loads(message.get('content',''))
+        except (TypeError,ValueError):continue
+        if isinstance(packet,dict) and packet.get('wire_contract') in {'draft-shared-1','patch-shared-1'}:
+            shared=packet['wire_contract'];break
+    if shared:
+        data=[dict(job_id=ident,input=json.loads(jobs.db.execute('SELECT normalized_input FROM jobs WHERE job_id=?',(ident,)).fetchone()[0])) for ident in ids]
+        _,handles=(patch_catalog(data) if shared=='patch-shared-1' else draft_catalog(data))
+        inverse={value:key for key,value in handles.items()}
     try:
         if response['finish_reason'] not in {'stop','length'}:
             raise ValueError('response_finish_reason:'+response['finish_reason'])
@@ -122,11 +354,13 @@ def accept_response(jobs, request, response):
             invalid[ident]='duplicate_job_id'
             continue
         try:
+            if inverse:row=reference_ids(row,inverse,strict=True)
             phase=jobs.db.execute('SELECT phase FROM jobs WHERE job_id=?',(ident,)).fetchone()[0]
-            result=Result.model_validate(normalization_result(row) if phase=='normalize' else row)
+            source=json.loads(jobs.db.execute('SELECT normalized_input FROM jobs WHERE job_id=?',(ident,)).fetchone()[0])
+            value=normalization_result(row) if phase=='normalize' else question_result(row,source) if phase=='questions' else row
+            result=Result.model_validate(value)
             if phase in {'normalize','questions'} and not result.concepts:
                 raise ValueError('missing_generated_concepts')
-            source=json.loads(jobs.db.execute('SELECT normalized_input FROM jobs WHERE job_id=?',(ident,)).fetchone()[0])
             if phase=='final':
                 proposed={node['id']:node for node in source.get('proposed_concepts',[])}
                 proposed.update({node.id:node.model_dump() for node in result.concepts})
@@ -141,10 +375,17 @@ def accept_response(jobs, request, response):
                     raise ValueError('completed_relation_cannot_be_redrawn')
             vocabulary={node['id']:node for node in jobs.get('vocabulary',[])}
             vocabulary.update({node['id']:node for node in source.get('concepts',[])})
+            if phase=='draft' and any(node.id in vocabulary for node in result.concepts):
+                raise ValueError('draft_cannot_redefine_registered_concept')
             vocabulary.update({node.id:node.model_dump() for node in result.concepts})
-            for relation in result.relations:
+            for relation_index,relation in enumerate(result.relations):
+                if phase=='draft' and relation.disease_id!=source['disease']['id']:
+                    raise ValueError('draft_disease_mismatch')
                 if vocabulary.get(relation.disease_id,{}).get('kind')!='Disease' or vocabulary.get(relation.target_id,{}).get('kind') not in {'Symptom','ExamFinding','ContextFactor'}:
-                    raise ValueError('invalid_relation_endpoint')
+                    raise ValueError('invalid_relation_endpoint:'+canonical(dict(relation_index=relation_index,
+                        disease_id=relation.disease_id,disease_kind=vocabulary.get(relation.disease_id,{}).get('kind'),
+                        target_id=relation.target_id,target_kind=vocabulary.get(relation.target_id,{}).get('kind'),
+                        allowed_target_kinds=['Symptom','ExamFinding','ContextFactor'])))
                 for condition in relation.applicability:
                     if vocabulary.get(condition.concept_id,{}).get('kind')!='ContextFactor': raise ValueError('invalid_applicability_endpoint')
                 for feature in relation.features:
@@ -198,20 +439,20 @@ def run_phase(jobs, phase, config, provider=None, retry_unknown=False):
             raise OutcomeUnknown('outcome_unknown_requires_explicit_retry')
     if phase=='normalize': exclude_empty_sources(jobs)
     size=config['batch_size']
-    while pending:=jobs.pending(phase):
+    while jobs.db.execute("SELECT 1 FROM jobs WHERE phase=? AND status!='done' LIMIT 1",(phase,)).fetchone():
         jobs.boundary()
-        if any(row['attempt_count']>=6 for row in pending):
+        if jobs.db.execute("SELECT 1 FROM jobs WHERE phase=? AND status!='done' AND attempt_count>=6 LIMIT 1",(phase,)).fetchone():
             with jobs.db:
                 jobs.db.execute("UPDATE jobs SET status='failed' WHERE phase=? AND status!='done' AND attempt_count>=6",(phase,))
             raise RuntimeError('output_contract_failed:'+phase)
-        batch=pending[:size]
+        batch=jobs.db.execute("SELECT * FROM jobs WHERE phase=? AND status!='done' ORDER BY job_id LIMIT ?",(phase,size)).fetchall()
         final=phase in {'final','conflict','patch'}
-        prompt_path=Path(config['prompt_directory'])/('final.txt' if final else phase+'.txt')
-        data=[{'job_id':row['job_id'],'input':json.loads(row['normalized_input']),
+        prompt_path=Path(config['prompt_directory'])/('patch.txt' if phase=='patch' else 'final.txt' if final else phase+'.txt')
+        data=[{'job_id':row['job_id'],'input':question_input(json.loads(row['normalized_input'])) if phase=='questions' else json.loads(row['normalized_input']),
             'validation_error':row['error']} for row in batch]
-        messages=[{'role':'system','content':prompt_path.read_text()},
-            {'role':'user','content':canonical({'phase':phase,'jobs':data})}]
-        request_id=str(uuid4());payload=provider.payload(request_id,messages,phase_schema(phase),final)
+        messages=[{'role':'system','content':prompt_path.read_text()}]+(draft_messages(data) if phase=='draft' else patch_messages(data) if phase=='patch' else
+            [{'role':'user','content':canonical({'phase':phase,'jobs':data})}])
+        request_id=str(uuid4());payload=provider.payload(request_id,messages,phase_schema(phase,data),final)
         ids=[row['job_id'] for row in batch]
         jobs.prepare_request(request_id,provider.name,payload,ids)
         print(canonical({'event':'request_started','phase':phase,'request_id':request_id,'jobs':len(ids)}),flush=True)
@@ -237,6 +478,8 @@ def transmit(jobs, provider, request_id, payload, config):
             jobs.request_state(request_id,'received',response)
             return request_id,response
         except ProviderError as error:
+            print(canonical(dict(event='provider_request_error',request_id=request_id,error=str(error),
+                http_status=error.status,unknown=error.unknown)),flush=True)
             if error.new_request and provider.name=='nova_dev' and not error.unknown:
                 jobs.request_state(request_id,'failed',error=str(error))
                 print(canonical({'event':'provider_response_failed','request_id':request_id,

@@ -40,12 +40,11 @@ class ClinicalKnowledge:
         self.questions = questions or {}
         self.attribute_roles = attribute_roles or {}
         self.guidelines = None
-        self.labels = {}
         self._feature_cache, self._profile_cache, self._refinement_cache = {}, {}, {}
         self._target_profiles = self._disease_profiles = self._refinement_parents = None
-        self._pattern_profiles, self._alias_grams, self._labels = {}, {}, {}
+        self._alias_grams, self._labels = {}, {}
         self._label_index = self._concept_cache = self._types = None
-        self._target_values, self._term_ids, self._value_ids = {}, {}, {}
+        self._term_ids, self._value_ids = {}, {}
 
     @classmethod
     def load(cls, manifest_path: Path) -> ClinicalKnowledge:
@@ -134,8 +133,7 @@ class ClinicalKnowledge:
         if key in self._labels:
             return self._labels[key]
         labels = list(self._graph.objects(URIRef(concept_id), RDFS.label))
-        preferred = self.labels.get(concept_id) if language == "ko" else None
-        value = preferred or str(next((label for label in labels if label.language == language),
+        value = str(next((label for label in labels if label.language == language),
             next((label for label in labels if label.language is None), next(iter(labels), concept_id))))
         self._labels[key] = value
         return value
@@ -152,8 +150,6 @@ class ClinicalKnowledge:
             for predicate in (RDFS.label, SKOS.altLabel):
                 for subject, label in self._graph.subject_objects(predicate):
                     self._label_index.setdefault(self.normalize_alias(str(label)), set()).add(str(subject))
-            for subject, label in self.labels.items():
-                self._label_index.setdefault(self.normalize_alias(label), set()).add(subject)
             self._alias_grams = {}
             for label in self._label_index:
                 for gram in {label[i:i + 2] for i in range(max(1, len(label) - 1))}:
@@ -183,17 +179,6 @@ class ClinicalKnowledge:
                    for label in labels for subject in self._label_index[label]
                    if kind is None or self.has_type(subject, kind)]
         return list(dict.fromkeys(subject for _, _, subject in sorted(matches, key=lambda p: (-p[0], -p[1], p[2]))))[:64]
-
-    def iter_concepts(self, ids=None):
-        if self._concept_cache is None:
-            self.concepts()
-        for key in self._concept_cache if ids is None else ids:
-            if key in self._concept_cache:
-                yield self._concept_cache[key]
-
-    def get_target_values(self, target_id: str, attribute_id: str) -> list[str]:
-        values = self._target_values.get((target_id, attribute_id))
-        return list(values) if values is not None else []
 
     def get_symptom_attributes(self, symptom_id: str) -> list[str]:
         values = {str(value) for value in self._graph.objects(URIRef(symptom_id), OW.hasAttribute)}
@@ -355,9 +340,6 @@ class ClinicalKnowledge:
         return [{"id": str(method), "text": str(self._one(method, OW.examRequestText))}
                 for method in sorted(self._graph.objects(URIRef(finding_id), OW.detectedBy), key=str)]
 
-    def get_planned_tests(self, disease_id: str) -> list[str]:
-        return [self.label(str(test)) for test in sorted(self._graph.objects(URIRef(disease_id), OW.evaluatedBy), key=str)]
-
     def question(self, key: str, target_id: str | None = None) -> str:
         template = self.question_contract(key, target_id)
         if template is None or not template.interviewable:
@@ -370,12 +352,6 @@ class ClinicalKnowledge:
             return base
         return self.questions.get(f"{target_id}|{key}", self.questions.get(key))
 
-    def get_target_patterns(self, target_id):
-        return sorted({p.id for p in self.get_patterns_by_target(target_id)})
-
-    def get_pattern_associations(self, pattern_id):
-        return self._pattern_profiles.get(pattern_id, [])
-
     def validate_question_assets(self):
         for profile in (p for disease in self._graph.subjects(RDF.type,OW.Disease) for p in self.get_disease_patterns(str(disease))):
             self.execution_time(profile.target,profile.target_scope)
@@ -384,6 +360,11 @@ class ClinicalKnowledge:
         attributes = {str(node) for node in self._graph.subjects(RDF.type, OW.FindingAttribute)}
         if set(self.attribute_roles) != attributes:
             raise ValueError("Every FindingAttribute requires an explicit role")
+        for role in self.attribute_roles.values():
+            text = role.clarification
+            if text is not None and (unicodedata.normalize("NFC", text) != text
+                    or not 1 <= len(text) <= 30 or not re.search("[가-힣]", text)):
+                raise ValueError("Prepared clarification must contain 1 to 30 NFC Korean codepoints")
         for key, template in self.questions.items():
             for _, field, spec, conversion in Formatter().parse(template.text):
                 if field not in {None, "symptom"} or spec or conversion:
@@ -422,10 +403,8 @@ class ClinicalKnowledge:
         self._refinement_cache.clear()
         self._target_profiles = self._disease_profiles = self._label_index = None
         self._refinement_parents = None
-        self._pattern_profiles = {}
         self._labels.clear()
         self._concept_cache = None
-        self._target_values = {}
         self._types = None
         if self._optional(OW.OntologySchema, OW.schemaVersion) != "5.0":
             raise ValueError("Knowledge graph requires schema version 5.0")
@@ -495,15 +474,6 @@ class ClinicalKnowledge:
             self._target_profiles.setdefault(profile.target, []).append(profile)
         for profile in sorted(profiles, key=lambda p: p.association_id):
             self._disease_profiles.setdefault(profile.disease_id, []).append(profile)
-            self._pattern_profiles.setdefault(profile.id, []).append(profile)
-        target_values = {}
-        for target, members in self._target_profiles.items():
-            for pattern_id in {p.id for p in members}:
-                for feature in self.get_pattern_features(pattern_id):
-                    if feature.expected:
-                        values = [feature.expected.concept] if feature.expected.kind == "concept" else feature.expected.concepts
-                        target_values.setdefault((target, feature.attribute), set()).update(values)
-        self._target_values = {key: sorted(values) for key, values in target_values.items()}
         targets = {}
         for profile in profiles:
             targets.setdefault(profile.target,set()).add(profile.id)

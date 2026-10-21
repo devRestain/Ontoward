@@ -1,0 +1,162 @@
+{
+  "contract": "draft-transport-diagnosis-1",
+  "created_at": "2026-10-20T15:00:05+09:00",
+  "source_run_id": "6042b1d5239f52f82324d1d8f2bc05c9",
+  "current_run_id": "eaa7abf36326fdb8fcefc1f52f8f444d",
+  "original_diagnosis": {
+    "error": "INVALID_API_RESPONSE",
+    "http_status": 413,
+    "returned_format": "Cloudflare HTML",
+    "payload_bytes": 119494967
+  },
+  "offline_packet_implemented": true,
+  "preflight": {
+    "jobs": 40,
+    "unique_definitions": 4808,
+    "messages": 13,
+    "largest_message_chars": 49990,
+    "messages_json_bytes": 711197,
+    "source_material_preserved": true,
+    "clinical_definitions_and_units_preserved": true
+  },
+  "verification": {
+    "run_id": "eaa7abf36326fdb8fcefc1f52f8f444d",
+    "source_run_id": "6042b1d5239f52f82324d1d8f2bc05c9",
+    "source_sha256": "71d007b7d7babc38f95879bd12a0b61243a82070d1018ede680c435fb16e6be1",
+    "source_bytes_unchanged": true,
+    "all_job_inputs_results_counters_preserved": true,
+    "requests_usage_preserved": true,
+    "raw_cursors_and_clinical_pins_preserved": true,
+    "completed": {
+      "normalize": 6429,
+      "questions": 2957
+    },
+    "pending_drafts": 945,
+    "requests_preserved": 1534,
+    "config": {
+      "api_base": "https://nova.snubhai.org",
+      "batch_size": 40,
+      "effort": "medium",
+      "index_chunk_size": 1000,
+      "inputs": {},
+      "max_tokens": {
+        "draft": 32000,
+        "final": 32000
+      },
+      "models": {
+        "draft": "gpt-6.1-sol",
+        "final": "gpt-6.1-sol"
+      },
+      "nova_daily_calls": {
+        "draft": 100,
+        "final": 100
+      },
+      "prompt_directory": "/app/prompts",
+      "provider": "nova_dev",
+      "timeout_seconds": 600
+    },
+    "counters_reset": 0,
+    "recovery_model_calls": 0
+  },
+  "actual_compact_attempts": [
+    {
+      "request_id": "64c1da79-5d0b-43dd-bd30-39f2135aa2fd",
+      "state": "failed",
+      "error": "INVALID_REQUEST_BODY",
+      "jobs": 40,
+      "messages": 16,
+      "payload_bytes": 842361,
+      "maximum_user_characters": 49995,
+      "response_saved": false
+    },
+    {
+      "request_id": "17e2c9c6-5be6-48a4-8fe6-35dd0dc1e825",
+      "state": "failed",
+      "error": "INVALID_REQUEST_BODY",
+      "jobs": 40,
+      "messages": 10,
+      "payload_bytes": 841033,
+      "maximum_user_characters": 89964,
+      "response_saved": false
+    },
+    {
+      "request_id": "c45f0c0a-fcb0-42ac-a89e-6c118d261333",
+      "state": "failed",
+      "error": "INVALID_REQUEST_BODY",
+      "jobs": 40,
+      "messages": 2,
+      "payload_bytes": 839372,
+      "maximum_user_characters": 698708,
+      "response_saved": false
+    }
+  ],
+  "counts": [
+    {
+      "phase": "draft",
+      "status": "pending",
+      "count": 905
+    },
+    {
+      "phase": "draft",
+      "status": "running",
+      "count": 40
+    },
+    {
+      "phase": "normalize",
+      "status": "done",
+      "count": 6429
+    },
+    {
+      "phase": "questions",
+      "status": "done",
+      "count": 2957
+    }
+  ],
+  "usage": [
+    {
+      "day": "2026-10-19",
+      "model": "openai/gpt-6-luna",
+      "calls": 548,
+      "input_tokens": 2534916,
+      "output_tokens": 1046486
+    },
+    {
+      "day": "2026-10-20",
+      "model": "openai/gpt-6-luna",
+      "calls": 943,
+      "input_tokens": 9638519,
+      "output_tokens": 3143208
+    },
+    {
+      "day": "2026-10-20",
+      "model": "openai/gpt-6.1-sol",
+      "calls": 25,
+      "input_tokens": 477622,
+      "output_tokens": 146514
+    }
+  ],
+  "image": "sha256:b4cd27d124b134b086dc0d774e74483bb86cde911300cb1d433de22e73bac264",
+  "tests": {
+    "development": 82,
+    "image": 82
+  },
+  "live_draft_acceptance": "not_achieved",
+  "model_quality": "not_run",
+  "real_installation": "not_run",
+  "pending_decision": "staged NOVA graph retrieval or separately authorized provider route",
+  "files": {
+    "Extraction/ontoward_extraction/build.py": "eb143cd82bdacc0e382eea2b2ffa1d3c11276d3072fb680a447124b091140379",
+    "Extraction/ontoward_extraction/recovery.py": "a161b9bcf9dd20a7d2eb5329babe210658ef8fe4a0883864474266adc2aad30d",
+    "Extraction/prompts/draft.txt": "236209375c36f51f421262cd9844a99715b3eef0b8941c987dda3316ee3ced6e",
+    "Extraction/tests/test_draft_packet.py": "5fb110ec46228d1edb90b6688a0cba6b4163ef2ee668e8f1060265d40a9607dc",
+    "Tmp/extraction-draft-repair-2026-10-20/http-diagnostic.log": "3008271b7cf4308bca5a49a44f491387edb7959251d4e8a3cf603a34d0172cf1",
+    "Tmp/extraction-draft-repair-2026-10-20/inspection.json": "28dbc11300b777ff33ee8241951e4d9ac35754aa38a51f3e6f4e373064b9cca7",
+    "Tmp/extraction-draft-repair-2026-10-20/preflight.json": "f67baf39405b0c1d4b707d7b3c1eb87fab2b6ddabdd8c4740b43ccd7fe509db6",
+    "Tmp/extraction-draft-repair-2026-10-20/tests.log": "df90c2d6a37349ada10188a526577d38b6a26ceeffd9cecbc38deeff3179962e",
+    "Tmp/extraction-draft-repair-2026-10-20/image-tests.log": "62ed5ac71545ad44d74802e4fd5ee05fc0e01fb1090d81b0b8a5304f58730169",
+    "Tmp/extraction-draft-repair-2026-10-20/verification.json": "f79c405473e0f958ff079dca3c95bba38d328219a822023ed5b75dc38972952a",
+    "Tmp/extraction-draft-repair-2026-10-20/resume-console.log": "9bbf34c5ffb138dcc25b0f2573a0aa211a0968620fc989723e3ba0729074ed7e",
+    "Tmp/extraction-draft-repair-2026-10-20/layout-probe.log": "a994d0b71a4d377c93816259823e545a4dacc3ff4f288383e0a5b4ff392f8545",
+    "Tmp/extraction-draft-repair-2026-10-20/single-probe.log": "ce997218fbac5df8f289a83587f64a531a41a4e2a5c607507a13c76b591da43f"
+  }
+}

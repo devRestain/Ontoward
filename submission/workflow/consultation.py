@@ -39,7 +39,7 @@ class Consultation:
                 break
             if state.interview.status == 'uninitialized':
                 self.enter_session(state)
-            elif state.interview.queue or state.interview.empathy:
+            elif state.interview.queue:
                 self.select_action(state)
                 self.mouth.validate_action(state)
                 if state.turn and state.turn.stage == 'ready' and not state.session.termination:
@@ -64,12 +64,16 @@ class Consultation:
                         state.case.revision, state.case.chief_fact_id)):
                 assessment = None
             self.sessions[scope].enter(state, assessment)
-        if scope == 'Education':
-            self.interactions.skip_empathy(state,'education_record_only')
         self.prepare_session(state)
 
     def prepare_session(self, state):
         current = state.interview.current
+        if current == 'ContextFactor':
+            session = self.sessions[current]
+            specs = session.context_specs(state)
+            self.budget.required_counts = {current: session.required_actions(state, specs=specs)}
+            session.prepare(state, specs=specs)
+            return
         self.refresh_requirements(state)
         if current in {'DifferentialDiagnosis', 'Education'}:
             self.sessions[current].prepare(state, self.client)
@@ -110,11 +114,9 @@ class Consultation:
         self.refresh_requirements(state)
         decision = self.budget.evaluate(state)
         if decision.expired:
-            self.interactions.skip_empathy(state, 'session_expired')
             state.stop('expired', 'session_expired')
             return
         if decision.finalize:
-            self.interactions.skip_empathy(state, 'finalization_budget')
             state.interview.collection[f'{state.interview.current}:completion'] = decision.reason
             self.interactions.clear_selected(state)
             self.questions.discard_unasked(state, decision.discard, reason=decision.reason)
@@ -133,18 +135,6 @@ class Consultation:
         self.questions.discard_unasked(state, decision.discard)
 
     def select_action(self, state):
-        if state.interview.current == 'Education':
-            self.interactions.skip_empathy(state, 'education_record_only')
-        event = state.interview.empathy
-        greeting_due = state.interview.current == 'Initiation' and not any(
-            a.purpose == 'greeting' and a.outcome != 'undelivered' for a in state.interview.answers)
-        if event and not greeting_due and state.interview.current != 'Education':
-            if self.budget.can_empathize(state):
-                self.mouth.prepare_empathy(state, self.client, event)
-                if state.turn or state.session.termination:
-                    return
-            else:
-                self.interactions.skip_empathy(state, 'empathy_budget')
         self.tools.select_question(state)
 
     def advance_session(self, state):

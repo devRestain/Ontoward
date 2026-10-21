@@ -1,8 +1,8 @@
 # Ontoward
 
-Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D50·d50.1**이며 D49 무점수 지식, D47 세션 소유권·통합 사실·평가 고정과 D48 프롬프트 모듈을 유지한다. Python이 등록 그래프의 관계·조건·질문을 준비하고, 공통 DoctorBrain을 호출한 세션이 질환 순위와 선택 질문을 수용한다.
+Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D53·d50.4**이며 D51 입력 복구, D49 무점수 지식, D47 세션 소유권·통합 사실·평가 고정과 D48 프롬프트 모듈을 유지한다. Python이 등록 그래프의 관계·조건·질문을 준비하고, 공통 DoctorBrain을 호출한 세션이 질환 순위와 선택 질문을 수용한다.
 
-**기존 실행 DB는 철회했다. 실제 새 지식 번들은 아직 설치하지 않았다.** 현재 `prepare()`와 정식 ZIP 생성은 `knowledge_bundle_not_installed`로 실패한다. 과거 원자료·준비 DB·수용 ZIP·증거는 보존했으며 [철회 영수증](data/extraction/retired-d42-2026-10-19/withdrawal.json)에 해시를 남겼다. 합성 번들은 Tmp/에서만 검증했다.
+**기존 실행 DB를 철회한 뒤 새 실제 지식 번들을 로컬 설치했다.** 설치 manifest의 경로·해시·loader·coverage와 변경 없는 `run.py`의 `prepare()`를 검증했다. [설치 증빙](data/provenance/extraction-installed-2026-10-21.json)을 기준으로 읽으며, 실제 번들 대표 상담·임상·공식 평가와 정식 ZIP은 별도다. 원자료·source-custody·수용 ZIP·작은 증빙은 유지하고, 완료된 추출 체크포인트·로그·중복 출력·추출 임시 기록과 철회 생성물 압축본은 사용자 요청으로 정리했다. [삭제 영수증](data/provenance/extraction-storage-cleanup-2026-10-21.json)과 [철회 영수증](data/extraction/retired-d42-2026-10-19/withdrawal.json)이 이력을 관리한다.
 
 **처음에는 [워크플로우·데이터베이스 아틀라스](Test/atlas.html)를 열어 보세요.** 서버 없이 HTML 파일을 직접 열면 진료 순서, 지식 생성, 객체별 기능, 환자 정보와 RDF·SQLite·JSON 스키마를 한 문서에서 읽을 수 있습니다. 색상별 도식 다음에 표와 친절한 설명을 배치했습니다. 2026-10-20의 소스 스냅샷이며 실시간 진행 화면은 아닙니다.
 
@@ -38,7 +38,7 @@ flowchart TD
 | DoctorEar | 초기 입력·SAY·EXAM의 문맥 해석, 정확한 Python 연결, 선택적 정규화, CaseFact 수용 |
 | 세션 객체 | 필수 수집, 그래프 검색 자료, LLM 순위·행동의 검증·수용, 평가 고정 |
 | DoctorBrain | 같은 지정 모델의 공통 실행·effort·한도·사용량·전송 복구 |
-| DoctorMouth | 한국어 표현·공감·진단 안내와 SAY·EXAM |
+| DoctorMouth | 한국어 표현·진단 안내와 SAY·EXAM |
 | Consultation | 다섯 세션·공식 자원·입력→판단→행동의 조정 |
 | SubmissionWriter | frozen Assessment와 사실의 Python SOAP·DIAGNOSE·완료 확인 |
 
@@ -50,7 +50,15 @@ Initiation과 CC 종료에서 순위를 판단하고, Context 종료와 DD 첫 �
 
 Consultation이 검증한 CC 평가 자료만 ContextFactor에 전달한다. EducationSession은 영어 계획과 전달 순서·턴 배분·큐·준비 상태를 관리하고, Mouth는 한국어 표현과 행동 실행을 담당한다. 이미 큐나 전달·미전달 결과가 있는 교육 계획 그룹은 재진입해도 다시 표현하지 않는다.
 
-입력 부분 복구는 정상 demographic·형제 진술을 보존하고 typed age와 미매핑 영문 메모를 수용한다. 속성의 그래프 자격은 현재 같은 범위의 존재 확인으로 계산한다. 정확한 단답과 공감 템플릿, 성공 응답의 자원 재사용, 공유 관계 JSON으로 불필요한 호출·조회·중복 표현을 줄인다.
+[D51 후속 결정](DECISION_STATE.md#D51)은 미사용 계약을 정리하고 실제 role clarification을 준비 단계에서 검증한다. Ear의 의미 처리 호출은 문맥 2회·매핑 2회 이내이고 초기 chief도 같은 복구를 공유한다. 첫 후보 강제 확정은 제거했으며 정상 input 2회 보호와 선택적 복구를 구분한다. 진단 안내 모델은 실제 번들 전체의 짧은 한국어 문구가 검증될 때까지 유지한다.
+
+입력 부분 복구는 정상 demographic·형제 진술을 보존하고 typed age와 미매핑 영문 메모를 수용한다. 속성의 그래프 자격은 현재 같은 범위의 존재 확인으로 계산한다. 정확한 단답과 성공 응답의 자원 재사용, 공유 관계 JSON으로 불필요한 호출·조회·중복 표현을 줄인다.
+
+[D52 수정](DECISION_STATE.md#D52)은 설치 후 C10 로그에서 확인한 관계 정의 중복을 제거한다. 같은 target·effect·전체 Pattern·scope·applicability를 질환 간 공유하며 모든 후보·조건·관찰별 근거는 유지한다. CONTEXT_LIMIT_EXCEEDED는 출력 한도를 높여 재시도하지 않고 해당 원인으로 종료한다. 새 실제 NOVA C10의 완료 여부는 별도 실행으로 확인해야 한다.
+
+[D53](DECISION_STATE.md#D53)은 인사·공감 SAY를 삭제하여 초기 입력 수용 후 Initiation의 첫 미확인 질문부터 시작한다. Education은 설치 인덱스 순서의 앞 다섯 문서만 원문 그대로 제공하고, 문서를 참고 자료로 명시하여 원래 계획 요청·환자 사실·안전·출력 계약을 우선한다. 선택 원문의 해시·인용과 영어 P·한국어 독립 수용을 유지한다. [D53 증빙](data/provenance/algorithm-d50-4-2026-10-21.json)이 소스·합성 ZIP·관측·저장 C01 입력 재구성 검증을 소유한다.
+
+[D52 증빙](data/provenance/algorithm-d50-3-2026-10-21.json)은 소스·독립 ZIP 회귀 각각 180개, 저장된 두 순위 요청의 임상 입력 동등성, 관측 16시나리오와 독립 합성 상담 3개·원본 SDK completed를 기록한다. 실제 NOVA 재실행과 공식 수용 증거는 포함하지 않는다.
 
 ## 추출 이미지와 현재 생성 경계
 
@@ -63,15 +71,15 @@ docker compose run --rm -T control status
 
 첫 명령은 이미지 빌드이며 다운로드가 필요할 수 있습니다. 둘째는 네트워크 없는 키 없는 로컬 상태 조회입니다. 둘 다 생성이나 로그인을 시작하지 않습니다. 생성·중단·재개·명시적 불명 요청 재시도·설치 명령은 [추출 안내](Extraction/README.md)를 따릅니다. 입력 hash와 job·요청·응답·사용량은 SQLite 체크포인트에 저장합니다. pause와 SIGINT/SIGTERM은 새 전송을 막고 진행 중 응답을 저장한 뒤 종료합니다. 정상 완료·중단 후 자동 재시작하지 않습니다.
 
-2026-10-20 01:33 KST에 읽은 [로컬 체크포인트 스냅샷](Tmp/docs-atlas-2026-10-20/snapshot.json)에서는 별도 승인으로 시작된 NOVA 빌드 `10282b2e382f085d756e9f6645dc05fe`가 **normalize 단계에서 실행 중**이었습니다. 108/108파일의 12,587,695행을 색인했고 정규화 2,306작업을 완료했습니다. 이것은 전체 생성 완료율이나 임상 품질 지표가 아닙니다. 실제 manifest 설치는 아직 확인되지 않았으며 최신 수치는 [데이터 상태](data/PROJECT_STATE.md)를 따릅니다. 이번 문서 갱신에서는 기존 worker를 중단·재개하거나 모델을 호출하지 않았습니다.
+실제 빌드 `87e8b4c54b0689453cea91b3bb316290`는 108개 파일·12,587,695행의 색인과 완료 작업을 보존한 상태에서 정보 처리 오류만 수동 교정하고 컴파일·검증·설치를 완료했다. 교정 당시 원래 결과·요청·사용량을 보존하고 추가 모델 호출 0회로 설치했다. 설치 후 보관 해제 요청에 따라 원래 작업 DB는 삭제했으며, 최종 설정·사용량 요약·수동 교정 내역은 [최종 감사 기록](data/provenance/extraction-final-audit-2026-10-21.json)에 남겼다. [수동 처리 증빙](data/provenance/extraction-readiness-repair-2026-10-21.json)과 [데이터 상태](data/PROJECT_STATE.md)가 정확한 범위와 진행을 관리한다.
 
-`bash Extraction/extraction.sh status`, `watch`, `logs`로 진행과 저장된 콘솔을 확인한다. NOVA 요청에는 출력 스키마를 포함하며 로그는 요청별 수용·무효 건수와 검증 원인을 보여준다. 스키마 누락은 [스키마 복구](Extraction/README.md#정규화-output_contract_failednormalize-복구), 정규화에서 잘못 생성된 행동 문구는 [행동 문구 복구](Extraction/README.md#정규화-중-행동-문구-오류와-안전한-중단)를 따른다. 후자는 완료 결과를 보존하며 미완료 행의 저장 응답을 모델 재호출 없이 복구한다.
+현재 완료 빌드의 work·staging·콘솔 로그는 정리했으므로 과거 ID로 status·resume·recover를 실행하지 않는다. `status`의 `not_started`는 보관된 작업 DB가 없다는 뜻이며 설치 지식의 완료를 취소하지 않는다. 설치 번들은 `docker compose run --rm --no-deps -T verify verify`로 독립 검증한다. 생성·복구 안내의 예시는 앞으로 별도로 시작한 작업에만 적용한다.
 
 ## 디렉터리와 검증
 
 | 경로 | 역할 |
 |---|---|
-| submission/ | 제출 런타임·설정·새 지식 loader; 실제 manifest는 설치 전까지 없음 |
+| submission/ | 제출 런타임·설정·설치된 실제 지식 번들과 manifest loader |
 | Extraction/ | 네 원자료 기반 생성기·세 공급자·체크포인트·독립 이미지 |
 | Dev/ | 유지 행동 회귀·합성 번들 구성·패키저 |
 | Test/ | 로컬 평가·관측·읽기 전용 지식 뷰어·독립 SDK 하네스 |
@@ -83,6 +91,6 @@ docker compose run --rm -T control status
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm -T --no-deps dev python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py'
 ```
 
-보존된 [D50 증빙](data/provenance/algorithm-d50-2026-10-20.json)은 소스·독립 ZIP 각각의 유지 회귀 169개, 관측 일치 14시나리오, 원본 SDK의 SOAP·completed 수신을 기록합니다. 이들은 합성 프로토콜 수용이며 실제 모델·임상·공식 성능과 다릅니다. 이번 문서 작업은 해당 증빙 13개 파일의 해시를 재확인하고 문서·도식·스키마·링크와 예상된 prepare 실패를 확인했습니다. 실제 상담 회귀를 재실행한 결과로 표현하지 않습니다.
+[D51 후속 증빙](data/provenance/algorithm-d50-2-2026-10-20.json)은 소스·독립 읽기 전용 ZIP의 회귀 각각 176개, 정상 scripted 상담 3개의 전후 행동·사실·평가·P·SOAP·사용량 일치, 관측 16시나리오와 1,516 작업 snapshot 재구성을 기록한다. 독립 합성 ZIP은 원본 SDK·run.py를 통해 21행동·44 HTTP 요청 뒤 completed를 받았다. [D50 증빙](data/provenance/algorithm-d50-2026-10-20.json)은 이전 d50.1의 역사적 수용 기록으로 보존한다. 합성 프로토콜 수용은 실제 모델·임상·공식 성능 검증과 구분한다.
 
-실제 생성은 별도 실행 중이며, 생성 완료 → 검증된 번들 설치 → 실제 번들 대표 상담 수용이 남아 있습니다. 실제 모델 품질·임상적 정확성·공식 평가·업로드·배포와 브라우저 시각 검증은 이번 문서 작업에서 실행하지 않았습니다.
+실제 지식 번들의 로컬 생성·검증·설치는 완료했습니다. 설치 번들을 사용한 대표 상담 수용은 다음 한정 작업입니다. 실제 모델 품질·임상적 정확성·공식 평가·정식 ZIP·업로드·배포와 브라우저 시각 검증은 이 설치 검증에 포함하지 않습니다.

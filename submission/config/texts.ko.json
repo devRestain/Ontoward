@@ -1,5 +1,4 @@
 {
-  "greeting": "병원 오시는 길이 불편하진 않으셨나요?",
   "diagnosis_announcement": "지금까지 확인한 결과 {diagnosis} 질환이 의심됩니다.",
   "diagnosis_announcement_short": "{diagnosis} 의심됩니다.",
   "symptom_announcement": "지금까지 확인한 결과 {diagnosis} 증상이 확인됩니다.",
@@ -21,25 +20,7 @@
   "primary_chief_question": "어떤 증상이 가장 불편하세요?",
   "open_question": "그 밖에 불편한 증상이 있나요?",
   "clarification_question": "불편한 증상을 조금 더 설명해 주세요.",
-  "clarification_questions": {
-    "Location": "어느 부위인지 다시 말씀해 주세요.",
-    "Laterality": "어느 쪽인지 다시 말씀해 주세요.",
-    "Quality": "어떤 느낌인지 다시 말씀해 주세요.",
-    "PainQuality": "어떻게 아픈지 다시 말씀해 주세요.",
-    "TimeSinceOnset": "언제 시작했는지 다시 말씀해 주세요.",
-    "EpisodeDuration": "한 번에 얼마나 가는지 알려주세요.",
-    "Severity": "얼마나 심한지 다시 말씀해 주세요."
-  },
   "symptom_assessment": "Cause undetermined; provisional symptom diagnosis",
-  "empathy_fallback": "많이 힘드셨겠어요. 함께 살펴볼게요.",
-  "empathy_templates": {
-    "fear": "걱정이 크시겠어요. 함께 살펴볼게요.",
-    "anxiety": "불안하셨겠어요. 차근차근 살펴볼게요.",
-    "pain": "많이 아프셨겠어요. 함께 살펴볼게요.",
-    "frustration": "답답하셨겠어요. 말씀을 듣고 살펴볼게요.",
-    "sadness": "마음이 힘드셨겠어요. 함께 살펴볼게요.",
-    "other": "많이 힘드셨겠어요. 함께 살펴볼게요."
-  },
   "unknown_replies": [
     "모르겠습니다",
     "모르겠어요",
@@ -57,7 +38,12 @@
     "예",
     "있어요"
   ],
-  "absent_replies": ["아니요", "아니오", "없어요", "없습니다"],
+  "absent_replies": [
+    "아니요",
+    "아니오",
+    "없어요",
+    "없습니다"
+  ],
   "reply_trailing_punctuation": ".!?。",
   "status_labels": {
     "present": "+",
@@ -92,15 +78,10 @@
   "measurement_format": "{operator}{value} {unit}",
   "interval_format": "{lower_bound}{lower}, {upper}{upper_bound}",
   "range_format": "{lower}–{upper} {unit}",
-  "onset_format": "{duration} before presentation",
   "nrs_format": "NRS {value}",
   "category_format": "{category}: {content}",
-  "assessment_format": "Diagnosis: #1. {diagnosis}\nEvidence: {evidence}",
-  "differential_format": "r/o {diagnosis}: {evidence}",
   "exam_turn_format": "{text} (turn {turn})",
   "initial_exam_format": "{text} (initial information)",
-  "label_separator": " / ",
-  "test_separator": "、",
   "record_separator": "\n",
   "record_labels": {
     "onset": "Onset",
@@ -128,39 +109,14 @@
     "review_of_systems": "Additional symptoms",
     "other": "Other"
   },
-  "term_abbreviations": {
-    "diabetes": "DM",
-    "diabetes mellitus": "DM",
-    "hypertension": "HTN",
-    "tuberculosis": "Tbc",
-    "current smoker": "Smoking",
-    "tobacco user": "Smoking",
-    "smoker": "Smoking",
-    "smoking": "Smoking",
-    "alcohol use": "Alcohol"
-  },
-  "history_prefixes": [
-    "Family history of ",
-    "History of ",
-    "F/H ",
-    "F/H: ",
-    "FH ",
-    "H/O ",
-    "H/O: "
-  ],
   "soap_labels": {
-    "patient_report": "Patient report (unstructured)",
     "cc": "C.C",
     "hpi": "P.I",
-    "pain": "Pain assessment",
     "exam": "PE",
-    "vitals": "V/S",
     "tests": "Tests",
     "treatment": "Treatment",
     "disposition": "Disposition",
     "follow_up": "Follow-up",
-    "education": "Education",
-    "unknown": "Unknown",
-    "unmapped": "Unmapped report"
+    "education": "Education"
   }
 }

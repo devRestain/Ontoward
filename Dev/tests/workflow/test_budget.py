@@ -27,14 +27,6 @@ class OfficialBudgetTests(unittest.TestCase):
             s.session.output_tokens=s.session.output_token_limit-reserve
             self.assertEqual(c.budget.model_allowance(s.session,'gateway',state=s),0)
 
-    def test_empathy_preserves_response_judgment_repair_and_optional_delivery(self):
-        for enabled in (False,True):
-            c=f.consultation(prepared=f.resources(education=enabled));s=f.chief(f.state('DifferentialDiagnosis'))
-            s.session.doctor_calls=s.session.call_limit-c.budget.collection_calls(s)+1
-            self.assertFalse(c.budget.can_empathize(s))
-            s.session.doctor_calls-=1
-            self.assertTrue(c.budget.can_empathize(s))
-
     def ready_action(self, *, kind='SAY', purpose='feature', turns=50, education=False):
         c = f.consultation(prepared=f.resources(education=education))
         s = f.chief(f.state('Education' if education else 'DifferentialDiagnosis', turns=turns, initialized=True))
@@ -168,14 +160,6 @@ class OfficialBudgetTests(unittest.TestCase):
                 self.assertEqual(s.session.turns_remaining, 50)
                 self.assertEqual(s.session.usage['DifferentialDiagnosis'].actions, 0)
                 self.assertEqual(s.turn.response, {'error': code})
-
-    def test_empathy_charges_a_turn_separately_from_interview_capacity(self):
-        c, s = self.ready_action(purpose='empathy')
-        c.mouth.execute_action(s, c.client)
-        self.assertEqual(s.session.turns_remaining, 49)
-        self.assertEqual((s.session.usage['DifferentialDiagnosis'].actions,
-                          s.session.usage['DifferentialDiagnosis'].empathy_actions), (1, 1))
-        self.assertEqual(c.budget.interview_actions(s), 0)
 
     def test_lost_response_replays_same_request_and_charges_once(self):
         c, s = self.ready_action()

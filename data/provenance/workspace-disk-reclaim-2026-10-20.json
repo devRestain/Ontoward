@@ -1,0 +1,95 @@
+{
+  "contract": "workspace-disk-reclaim-1",
+  "created_at": "2026-10-20T04:47:39.234117+00:00",
+  "initial_workspace_approx_gib": 60,
+  "initial_checkpoint_work_approx_gib": 41,
+  "archive_original_bytes": 9147158528,
+  "archive_bytes": 1723145854,
+  "workspace_database_bytes_saved": 7424012674,
+  "archive_receipt": "data/provenance/extraction-checkpoint-archives-2026-10-20.json",
+  "discarded_derived_reports": [
+    {
+      "path": "Tmp/d47-2026-10-19/http-current/report.html",
+      "sha256": "12990b78ea77e64eb9b1330bb1d021ce2e4c4f741ebdd2743fa11f43db2fd250"
+    },
+    {
+      "path": "Tmp/d47-2026-10-19/http-verified/report.html",
+      "sha256": "8039be055572f8d2fb1a4c212ea84ab7cc5f10c4c0b86689d5f31832f6940d08"
+    }
+  ],
+  "source_traces_preserved": true,
+  "physical_space_diagnosis": {
+    "apfs_snapshots": "none_on_disk3s5",
+    "deleted_workspace_files_held_by_pid": 84280,
+    "executable": "/System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
+    "colima_backend": "macOS Virtualization.Framework",
+    "mount_type": "virtiofs",
+    "running_docker_containers_before_restart": 0,
+    "user_approved_colima_restart": true,
+    "free_space_before_restart_approx_mib": 130,
+    "free_space_after_restart_display": "38GiB"
+  },
+  "partial_archive_failure": {
+    "run_id": "cd25fa99307faf8b89b5c691df203c45",
+    "error": "ENOSPC",
+    "original_preserved": true,
+    "temporary_removed": true
+  },
+  "current_checkpoint_health": {
+    "run_id": "6042b1d5239f52f82324d1d8f2bc05c9",
+    "sqlite_quick_check": "ok",
+    "unsettled_requests": 0,
+    "counts": [
+      {
+        "phase": "normalize",
+        "status": "done",
+        "count": 6429
+      },
+      {
+        "phase": "questions",
+        "status": "done",
+        "count": 1997
+      },
+      {
+        "phase": "questions",
+        "status": "pending",
+        "count": 960
+      }
+    ],
+    "fingerprint_config": {
+      "api_base": "https://nova.snubhai.org",
+      "batch_size": 40,
+      "effort": "medium",
+      "index_chunk_size": 1000,
+      "inputs": {},
+      "max_tokens": {
+        "draft": 32000,
+        "final": 32000
+      },
+      "models": {
+        "draft": "gpt-6.1-sol",
+        "final": "gpt-6.1-sol"
+      },
+      "nova_daily_calls": {
+        "draft": 100,
+        "final": 100
+      },
+      "prompt_directory": "/app/prompts",
+      "provider": "nova_dev",
+      "timeout_seconds": 600
+    },
+    "stored_state": "running",
+    "stored_phase": "index"
+  },
+  "protected": [
+    "current Sol checkpoint",
+    "original assets",
+    "historical preparation",
+    "accepted archives and receipts",
+    "source transcripts and traces",
+    "Docker authentication volumes"
+  ],
+  "further_archiving": "stopped_after_sufficient_physical_space_was_reclaimed",
+  "disk_after_text": "Filesystem      Size    Used   Avail Capacity iused ifree %iused  Mounted on\n/dev/disk3s5   228Gi   165Gi    38Gi    82%    941k  402M    0%   /System/Volumes/Data\n",
+  "workspace_after_text": "620K\t./Test\n244K\t./Dev\n204M\t./.git\n 47G\t./data\n4.4G\t./assets\n344K\t./Extraction\n1.9G\t./Tmp\n652K\t./submission\n 53G\t.\n"
+}
