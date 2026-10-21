@@ -19,6 +19,10 @@ support·strong_support·against·strong_against는 전체 Pattern과 applicabil
 
 ContextFactor는 Target과 applicability에서 같은 CaseFact를 사용한다. 주체·가족 구성원·시점·관찰·episode를 보존하며 any 규칙과 질문의 구체 시점을 구별한다. 속성만 있는 Pattern도 존재 질문을 먼저 제공한다. attribute_roles가 질문 순서·SOAP category·clarification을 정하며 URI localname에 의존하지 않는다.
 
+D54 런타임은 recall과 evidence의 같은 scoped 판정으로 모순 경로를 차단하고 unknown 부분 후보와 유효한 prior opposition은 유지한다. 어휘 검색은 영어 hint·한국어 원문의 후보를 상한 적용 전에 통합하고 질의별 최선 별칭만 계산한다. 단일 frozen Disease 문서는 exact AND care_navigation을 먼저 안정 분할한 뒤 최대 다섯 개를 고정하며 실패를 보충하지 않는다. 전체 원문과 UTF-8 인용은 보존하되 모델 projection에는 path/hash/내부 관리 필드를 넣지 않는다.
+
+현재 bundle의 hasAttribute range 9개, canHaveValue domain 423개·range 146개 위반은 [오프라인 목록](../../data/provenance/runtime-link-audit-2026-10-21.json)에 남긴다. getter는 잘못된 타입을 임상 속성/허용 값으로 반환하지 않으며 원본 RDF를 고치거나 production strict gate를 활성화하지 않는다. Weight loss 계열과 Dyspnea/Breathlessness의 관계 분산 및 타입 링크 정정은 별도 작업 B다. 이 방어를 데이터 정정 완료로 해석하지 않는다.
+
 설치는 검증된 build 전용 파일 뒤 manifest를 원자적으로 교체한다. 상담은 읽기 전용 Graph 하나를 준비하고 부모 data나 원자료 DB를 읽지 않는다. 원문 지침은 지정 마운트에서 경로/hash/인용을 검증하며 ZIP에 넣지 않는다. 빈 selections는 명시적 model-knowledge Education에 사용한다. 생성·검증·설치 명령은 [Extraction](../../Extraction/README.md)을 따른다.
 
 다섯 asset은 서로 다른 파일이어야 한다. any 규칙에는 구체 질문 scope가 필요하다. 물리적 EXAM은 환자의 current 시점에만 실행하며 컴파일러가 진찰 문구와 current 질문 자산을 함께 만든다. 가족·과거 사실도 등록 scope가 맞으면 같은 관찰 단위에서 매칭하지만 다른 사람의 현재 진찰로 대신하지 않는다.

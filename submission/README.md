@@ -1,6 +1,6 @@
 # Ontoward 진료 워크플로우 백서
 
-현재 구현은 **D53·d50.4**이며 D52 관계 공유·컨텍스트 종료, D51 입력 복구, D49 무점수 지식, D48 프롬프트 모듈과 D47 객체·사실 소유권을 유지한다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D53 결정](../DECISION_STATE.md#D53), [D53 증빙](../data/provenance/algorithm-d50-4-2026-10-21.json), [D51 후속 검토 결정](../DECISION_STATE.md#D51), [D48 프롬프트 결정](../DECISION_STATE.md#D48), [D47 객체 결정](../DECISION_STATE.md#D47), [PRD](../PRD.md), [상태 정의](workflow/state/models.py)를 기준으로 읽는다. 기존 DB의 활성 사용은 철회했고 D45 공식 턴 예산을 유지한다. 새 실제 번들 `87e8b4c54b0689453cea91b3bb316290`는 로컬 설치했고 변경 없는 run.py의 prepare와 설치 해시·loader·coverage를 검증했다. [설치 증빙](../data/provenance/extraction-installed-2026-10-21.json)을 따르며, 실제 번들 대표 상담·임상·공식 평가와 정식 ZIP은 별도다. 합성 번들은 계속 Tmp/에서만 사용한다.
+현재 구현은 **D54·d50.5**이며 D53 직접 문진·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D49 무점수 지식, D48 프롬프트 모듈과 D47 객체·사실 소유권을 유지한다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D54 결정](../DECISION_STATE.md#D54), [D54 검증](../data/provenance/algorithm-d50-5-2026-10-21.json), [PRD](../PRD.md), [상태 정의](workflow/state/models.py)를 기준으로 읽으며 [D53 당시 증빙](../data/provenance/algorithm-d50-4-2026-10-21.json)은 보존한다. 기존 DB의 활성 사용은 철회했고 D45 공식 턴 예산을 유지한다. 새 실제 번들 `87e8b4c54b0689453cea91b3bb316290`의 bytes/hash를 유지하며 변경 없는 run.py의 prepare를 검증했다. 실제 모델 상담·임상·공식 평가와 정식 ZIP은 별도다. 합성 번들은 계속 Tmp/에서만 사용한다.
 
 처음 읽을 때는 [아틀라스의 진료 순서](../Test/atlas.html#consultation)를 먼저 보고 아래 백서를 따라오면 편합니다. 같은 문서에서 [환자 사실 스키마](../Test/atlas.html#facts), [실행 RDF](../Test/atlas.html#rdf), [추출 SQLite](../Test/atlas.html#sqlite)도 비교할 수 있습니다. 아틀라스는 현재 소스의 정적 설명이고 실행 결과는 [제출 상태](PROJECT_STATE.md)가 관리합니다.
 
@@ -85,7 +85,9 @@ Ear는 초기 opening과 vital_signs를 첫 SAY 전에 해석한다. 정확한 �
 
 [rules/decision.py](workflow/rules/decision.py)는 호출 목적에 필요한 Key와 Value만 고른다. 사실 f_, 후보 d_, 근거 e_, 질문 q_, 범위 s_, 조건 condition_, 관계 r_를 지역 참조로 연결하고 같은 사실·조건·미확인을 한 번 정의한다. relations 표에 effect·scope·전체 Pattern·applicability를 한 번 정의하고 근거와 expected_by_disease에서 참조한다. 필요한 dict/list를 한 JSON 객체로 직렬화한다. 전체 상태 model_dump·큰 Pydantic schema·그래프 profile 전문을 프롬프트에 넣지 않는다. 기존 유효 후보를 보존하고 고정 Top-K를 두지 않는다. 순위 전용 요청에는 질문을 넣지 않으며 행동 복구는 수용 순위와 실행 가능한 질문 중심이다.
 
-**프롬프트 바이트 측정·목표·제한·진단 통계·크기 비교는 없다.** 이를 맞추기 위한 절단·배치·조각 읽기·근거 결합 경로도 제거했다. 의미별 전처리와 공유 참조는 필요한 정보를 명확히 전달하기 위해 사용한다. 공식 토큰·호출·행동·시간 예산은 각자 유지한다.
+**런타임은 프롬프트 바이트 측정·목표·제한·진단 통계·크기 비교를 하지 않는다.** 이를 맞추기 위한 절단·배치·조각 읽기·근거 결합 경로도 없다. D54의 문자/UTF-8 크기·참조 무결성은 별도 오프라인 검증이며 런타임 상태나 모델 입력에 넣지 않는다. 의미별 전처리와 공유 참조는 필요한 정보를 명확히 전달하기 위해 사용한다. 공식 토큰·호출·행동·시간 예산은 각자 유지한다.
+
+D54는 초기 원문을 opening/vital_signs별 input_segments로 한 번 보내고 mapping에 Context의 해석 의미 normalized_claim을 전달한다. 어휘 후보는 영어 hint·한국어 인용 전체를 통합한 뒤 상한을 적용하고 별칭 수만으로 점수를 누적하지 않는다. recall과 근거 구성은 같은 관찰별 Pattern/applicability 판정을 공유하여 모순 경로를 차단한다. unknown 부분 후보·Target 미관찰 Context 경로·유효한 prior opposition은 유지한다. 질문은 미관찰 observation도 구분하는 scopes 참조를 가지며, relation/feature로 기대값을 복원한다. full_pattern과 applicability는 그대로 두고 Context·존재 전제는 명시한다.
 
 [D52 수정](../DECISION_STATE.md#D52)은 서로 다른 질환 Association의 관계 정의가 target·effect·순서가 있는 전체 Pattern·rule scope·applicability까지 동일할 때 전송 정의를 공유한다. 모든 후보·조건·관찰별 사실 연결과 Python의 원래 그래프 근거는 유지한다. CONTEXT_LIMIT_EXCEEDED는 출력 잘림과 구별하여 즉시 종료하고 출력 한도 확대 재호출이나 후속 수집을 실행하지 않는다. 실제 NOVA에서 수정 입력의 수용과 C10 완료 여부는 별도 검증이다.
 
@@ -109,7 +111,9 @@ D45의 공식 turns_remaining이 행동 예산의 기준이다. 성공 응답의
 
 input 2회·8192토큰은 정상 경로 보호량이며 선택적 복구는 각 호출에서 최종 임상·교육 자원을 남긴 allowance로 수행한다. 새 행동 전에 응답 해석·최종 판단과 복구·활성 계획·한국어 안내·제출을 보호한다. 임상 정상 출력은 4096·한 번의 복구 8000토큰이다. Education은 7턴을 보호하고 상한은 10이다. 명시적 비활성 설정은 교육 행동·예약·P.education을 사용하지 않는다. 일시 전송 오류는 동일 ID·payload로 2초 뒤 한 번 재전송한다.
 
-EducationSession은 고정 진단 안내 후 통합 환자 사실과 설치 인덱스 순서의 앞 다섯 지침 원문만 해시 검증하여 영어 P와 대응 한국어 발화를 high 호출 한 번에 준비한다. 영어 내용·인용과 한국어 발화를 독립 검증하고, 한국어만 실패하면 정상 영어 P를 보존하여 해당 그룹만 medium으로 복구한다. 인용과 일반 모델 지식을 구별한다. 원문 문서는 NOVA_GUIDELINES_DIR 마운트에서 읽고 ZIP에 넣지 않는다. EducationSession이 진단 안내와 계획 그룹의 순서·턴 배분·큐 등록·준비 실패 결과를 관리하고 Mouth가 한국어 표현과 실제 SAY를 담당한다. Mouth의 교육 표현은 큐·준비 상태를 수정하지 않으며 각 발화를 NFC 1–30자로 검증한다. 공급자 응답 복구와 문구 복구는 별도이고 미전달 계획은 전달 완료로 기록하지 않는다. 재진입 때 이미 큐나 전달·미전달 결과가 있는 계획 그룹은 다시 표현하거나 자동 재시도하지 않는다. 실제 완료·취소 기록에는 공통 QuestionLifecycle을 사용한다. 새 Disease의 guideline selections가 비어 있어도 model-knowledge 출처로 계획을 생성한다. 선택한 원문은 전체 내용·경로·hash·인용 검증을 유지하며 선택 실패를 뒤 문서로 자동 보충하지 않는다. 프롬프트는 문서를 참고 자료로 명시하여 원래 계획 요청·고정 진단·환자 사실·안전·출력 계약을 우선한다. 인덱스에 관련도 점수가 없어 기존 순서만 사용하며 TOP-5는 실제 NOVA 입력 수용을 보장하지 않는다.
+EducationSession은 고정 진단 안내 후 환자 사실과 단일 frozen primary Disease의 지침으로 영어 P·한국어 발화를 high 호출 한 번에 준비한다. 문서는 exact AND care_navigation을 먼저 안정 분할한 뒤 최대 다섯 개를 읽기 전에 고정한다. 각 범주 내부 순서·전체 원문·경로/hash/인용 검증·실패 비보충을 유지한다. 모델용 documents에는 document_id·relation·evidence_use·text와 의미 있는 scope만 남기며 원문 UTF-8 offset은 내부에서 검증한다. 교육 생성·Mouth 표현·진단 fallback은 같은 current_facts의 f_ map으로 patient와 fixed_diagnosis를 함께 투영한다. 내부 GraphRef dump나 없는 근거를 조용히 전달하지 않는다.
+
+영어 내용·인용과 한국어 발화를 독립 검증하고 한국어만 실패하면 정상 영어 P를 보존하여 해당 그룹만 medium으로 복구한다. 원문 문서는 NOVA_GUIDELINES_DIR 마운트에서 읽고 ZIP에 넣지 않는다. EducationSession이 안내/계획의 순서·턴 배분·큐·실패 결과를 관리하고 Mouth는 큐·준비 상태를 바꾸지 않고 NFC 1–30자 표현과 실제 SAY를 담당한다. 공급자·문구 복구 상한과 미전달 receipt·재진입 비재생성·공통 QuestionLifecycle을 유지한다. 빈 selections는 명시적 model-knowledge 출처로 계획을 생성한다. 문서는 참고 자료이며 원래 요청·환자 사실·안전·출력 계약이 우선한다. 이 선택 정책은 실제 NOVA 입력 수용이나 임상 품질을 보장하지 않는다.
 
 ## 9. Python SOAP와 완료 계약
 
@@ -154,6 +158,8 @@ Association의 effect는 support·strong_support·against·strong_against다. ne
 ExpectedValue는 concept·concept_set·quantity·interval과 any_of/all_of·연산자·단위·구간 경계를 보존한다. ValueMatch는 등록된 is_a·regional_part·approved_region 방향성 값 비교 경로다. 속성 역할·질문은 URI localname 대신 새 JSON에서 읽는다. Context의 환자/가족·구성원·시점과 관찰/episode를 섞지 않으며 한 가족 구성원의 부재를 전체 가족 부재로 만들지 않는다. 같은 관찰·scope·applicability·effect에서 완전히 일치한 refinement만 일반 지지를 대표한다.
 
 manifest에는 schema_version·knowledge_contract·build_id와 schema·vocabulary·clinical·questions·guidelines 다섯 asset의 상대 경로·SHA-256만 둔다. 번들은 manifest 포함 여섯 파일이다. 각 경로는 manifest 디렉터리를 기준으로 검증하며 경계 이탈·hash 불일치·이전 형식을 거절한다. 실제 설치 전 현재 실행 인스턴스 수는 제공하지 않는다. 스키마와 loader는 각각 [schema.ttl](knowledge/schema.ttl)·[graph.py](knowledge/graph.py), 상세 계약은 [지식 안내](knowledge/README.md)에서 확인한다.
+
+D54의 getter 방어는 잘못된 hasAttribute/canHaveValue 타입을 임상 후보로 내보내지 않고 속성 조회 실패를 존재 질문으로 바꾸지 않는다. [432개 위반 edge](../data/provenance/runtime-link-audit-2026-10-21.json)는 원형대로 남아 있으며 bundle bytes/hash도 같다. 동의어 관계 분산·원본 링크 정정·새 immutable bundle과 strict loader의 동시 활성화는 작업 B에서 별도로 다룬다.
 
 <a id="extraction-pipeline"></a>
 ## 14. 원자료에서 새 실행 번들까지

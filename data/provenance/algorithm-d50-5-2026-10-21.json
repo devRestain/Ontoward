@@ -1,0 +1,2122 @@
+{
+  "task": "A",
+  "decision": "D54",
+  "algorithm": "d50.5",
+  "baseline_revision": "ec386147b58299418fb855b47c529c9503315ab1",
+  "initially_dirty": false,
+  "recorded_at": "2026-10-21T15:06:36+09:00",
+  "build_id": "87e8b4c54b0689453cea91b3bb316290",
+  "knowledge_contract": "v5-enum-1",
+  "schema_version": "5.0",
+  "manifest_sha256": "a4c10f3a897485c1d4eb57ad8dc35e9d60dcb59e4d14a5d8ae5ef54f2ebbb2eb",
+  "installed_asset_sha256": {
+    "schema": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "vocabulary": "23ae78abea1dc55c1d48545feba0fbe54d0516a1f2c5335bc4fc30beed5f1af8",
+    "clinical": "69d37b3c92faf3312378b24d8bf984112cbf538dd456a62c023d780f860a2d9e",
+    "questions": "66f0426172d1a6c761a3f553314e9f7ebecd1784b1fb7f786beaf7091e5f0561",
+    "guidelines": "8f0e9b1e937aecc4df73d955924505730fcd0aecf8e8ce57e3fbd5edc41d0c85"
+  },
+  "installed_bundle_changed": false,
+  "production_strict_endpoint_gate": false,
+  "dependency_versions": {
+    "pydantic": "2.14.0",
+    "rdflib": "7.6.0"
+  },
+  "dev_image": "sha256:0999f2b28fd11f6783b849e94ff0c59b3c791a8afb49034b6e57fee225395da7",
+  "container_ownership_evidence": "Tmp/d54-2026-10-21/container-ownership.json",
+  "network": "none",
+  "changes": {
+    "facts": "Use one request-local fact projection in planning expression and announcement fallback; reject missing frozen evidence",
+    "questions": "Reference scopes and distinguish needed unobserved observations and episodes",
+    "ear": "Send initial segments once and preserve interpreted normalized_claim within unchanged repair limits",
+    "recall": "Share operation-local scoped Pattern/applicability evaluation and reject contradicted-only paths",
+    "lexical": "Integrate all English/Korean queries using best alias matches and normalized corpus-weighted character and phrase similarity",
+    "documents": "Select exact AND care_navigation first by stable partition and fix at most five full verified sources without backfill",
+    "projection": "Allow only document_id relation evidence_use text and meaningful scope; preserve original UTF-8 citations",
+    "compression": "Replace only recoverable repeated expectations with relation/feature references; retain complete Pattern/applicability and explicit context/presence prerequisites",
+    "getters": "Filter wrong attribute/value endpoints without changing RDF or production prepare gates"
+  },
+  "checks": [
+    {
+      "id": "baseline",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "tests": 181,
+      "source": "Tmp/d54-2026-10-21/baseline-workflow.log"
+    },
+    {
+      "id": "workflow",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "tests": 204,
+      "source": "Tmp/d54-2026-10-21/final/workflow.log"
+    },
+    {
+      "id": "extraction",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "tests": 106,
+      "source": "Tmp/d54-2026-10-21/final/extraction.log"
+    },
+    {
+      "id": "observer",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "scenarios": 16,
+      "operation_snapshots": 1438,
+      "source": "Tmp/d54-2026-10-21/final/observer/verification.json"
+    },
+    {
+      "id": "evaluator",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "tests": 54,
+      "source": "Tmp/test-evaluator/verify-d54-final-20261021/verification.json"
+    },
+    {
+      "id": "installed_prepare",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "source": "Tmp/d54-2026-10-21/final/prepare.log"
+    },
+    {
+      "id": "installed_protocol_cases",
+      "evidence_class": "runtime",
+      "status": "pass",
+      "consultations": 3,
+      "source": "Tmp/d54-2026-10-21/final/installed-cases/verification.json"
+    },
+    {
+      "id": "archive_workflow",
+      "evidence_class": "artifact",
+      "status": "pass",
+      "tests": 204,
+      "skipped": 1,
+      "skip_reason": "Require real Night sweats vocabulary; pass that test in the installed source suite",
+      "source": "Tmp/d54-2026-10-21/final/archive-workflow.log"
+    },
+    {
+      "id": "archive_protocol_cases",
+      "evidence_class": "artifact",
+      "status": "pass",
+      "consultations": 3,
+      "source": "Tmp/d54-2026-10-21/final/isolated-cases/verification.json"
+    },
+    {
+      "id": "original_sdk",
+      "evidence_class": "artifact",
+      "status": "pass",
+      "requests": 42,
+      "actions": 20,
+      "receipt": "completed",
+      "trace_status": "complete",
+      "inspection_status": "pass",
+      "source": "Tmp/d54-2026-10-21/final/isolated-sdk/sdk-http.json"
+    },
+    {
+      "id": "reference_and_compression",
+      "evidence_class": "semantic",
+      "status": "pass",
+      "source": "Dev/tests/workflow/test_d54.py"
+    },
+    {
+      "id": "current_link_audit",
+      "evidence_class": "semantic",
+      "status": "pass",
+      "source": "data/provenance/runtime-link-audit-2026-10-21.json"
+    }
+  ],
+  "measurements": {
+    "baseline": {
+      "source": "Tmp/d54-2026-10-21/baseline",
+      "actual_models": "not_run",
+      "provider_tokens": "not_measured",
+      "tasks": {
+        "saved_c01_clinical_rank": {
+          "user_characters": 64355,
+          "user_utf8_bytes": 64357,
+          "message_characters": 66959,
+          "message_utf8_bytes": 66961,
+          "counts": {
+            "facts": 38,
+            "scopes": 22,
+            "candidates": 58,
+            "relations": 115,
+            "evidence": 128,
+            "questions": 0,
+            "prior_order": 56
+          },
+          "reference_integrity": {
+            "dangling_fact": 0,
+            "dangling_relation": 0,
+            "missing_question_scope": 0,
+            "dangling_condition": 0
+          },
+          "distinct_relation_definitions": 115,
+          "unresolved_reasons": {
+            "unasked": 100,
+            "nonclinical": 1,
+            "applicability_unknown": 20,
+            "presence_required": 1
+          }
+        },
+        "saved_c01_clinical_action": {
+          "user_characters": 51431,
+          "user_utf8_bytes": 51433,
+          "message_characters": 54205,
+          "message_utf8_bytes": 54207,
+          "counts": {
+            "facts": 38,
+            "scopes": 18,
+            "candidates": 56,
+            "relations": 88,
+            "evidence": 0,
+            "questions": 82,
+            "prior_order": 56
+          },
+          "reference_integrity": {
+            "dangling_relation": 0,
+            "dangling_feature": 0,
+            "missing_question_scope": 82,
+            "dangling_condition": 0
+          },
+          "distinct_relation_definitions": 88,
+          "unresolved_reasons": {}
+        },
+        "saved_c01_clinical_decision": {
+          "user_characters": 82042,
+          "user_utf8_bytes": 82044,
+          "message_characters": 85141,
+          "message_utf8_bytes": 85143,
+          "counts": {
+            "facts": 38,
+            "scopes": 22,
+            "candidates": 58,
+            "relations": 115,
+            "evidence": 128,
+            "questions": 86,
+            "prior_order": 56
+          },
+          "reference_integrity": {
+            "dangling_fact": 0,
+            "dangling_relation": 0,
+            "dangling_feature": 0,
+            "missing_question_scope": 86,
+            "dangling_condition": 0
+          },
+          "distinct_relation_definitions": 115,
+          "unresolved_reasons": {
+            "unasked": 100,
+            "nonclinical": 1,
+            "applicability_unknown": 20,
+            "presence_required": 1
+          }
+        },
+        "saved_c01_plan": {
+          "user_characters": 209889,
+          "user_utf8_bytes": 210591,
+          "message_characters": 213363,
+          "message_utf8_bytes": 214065,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 5,
+          "documents": [
+            {
+              "document_id": "urn:ontoward:Document9e1dce9041969d3be1026d79",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "3d73b1b25fe02a6eb4064f247f190f05d17f994ccd7c8a6322a8c7e0a867ad2e"
+            },
+            {
+              "document_id": "urn:ontoward:Documentd00811505658652867579744",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "91dc0663354bb98c6e62a3e6fb35d175f3ed8ff8e85e887b3c76b539207a71ae"
+            },
+            {
+              "document_id": "urn:ontoward:Document8e680c94d7a9fc7b6b7f1c93",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "db42ebd56f5e85d523f06df96cf723e2e424551ed302d32a9121159c85bc4bbe"
+            },
+            {
+              "document_id": "urn:ontoward:Document9b5bfb8aae9aa4d5052a8839",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "2eaf389d6ebc56a2e560b1a1311023ce5050b34ac881bb0f994171ef672341f6"
+            },
+            {
+              "document_id": "urn:ontoward:Documentc7da188e15fa1fb2df19c648",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "e56e827c36c055eab3dfe92d0607082d615ba40e5c2631ffc40c70ea8c875de6"
+            }
+          ]
+        },
+        "saved_c01_plan_repair": {
+          "user_characters": 209995,
+          "user_utf8_bytes": 210697,
+          "message_characters": 213762,
+          "message_utf8_bytes": 214464,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 5,
+          "documents": [
+            {
+              "document_id": "urn:ontoward:Document9e1dce9041969d3be1026d79",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "3d73b1b25fe02a6eb4064f247f190f05d17f994ccd7c8a6322a8c7e0a867ad2e"
+            },
+            {
+              "document_id": "urn:ontoward:Documentd00811505658652867579744",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "91dc0663354bb98c6e62a3e6fb35d175f3ed8ff8e85e887b3c76b539207a71ae"
+            },
+            {
+              "document_id": "urn:ontoward:Document8e680c94d7a9fc7b6b7f1c93",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "db42ebd56f5e85d523f06df96cf723e2e424551ed302d32a9121159c85bc4bbe"
+            },
+            {
+              "document_id": "urn:ontoward:Document9b5bfb8aae9aa4d5052a8839",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "2eaf389d6ebc56a2e560b1a1311023ce5050b34ac881bb0f994171ef672341f6"
+            },
+            {
+              "document_id": "urn:ontoward:Documentc7da188e15fa1fb2df19c648",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "e56e827c36c055eab3dfe92d0607082d615ba40e5c2631ffc40c70ea8c875de6"
+            }
+          ]
+        },
+        "saved_c01_mouth": {
+          "user_characters": 12691,
+          "user_utf8_bytes": 12692,
+          "message_characters": 14124,
+          "message_utf8_bytes": 14147,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 5
+        },
+        "saved_c01_mouth_repair": {
+          "user_characters": 12833,
+          "user_utf8_bytes": 12834,
+          "message_characters": 14525,
+          "message_utf8_bytes": 14548,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 5
+        },
+        "saved_c01_announcement": {
+          "user_characters": 13558,
+          "user_utf8_bytes": 13559,
+          "message_characters": 14861,
+          "message_utf8_bytes": 14876,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 5
+        },
+        "saved_c01_announcement_repair": {
+          "user_characters": 13693,
+          "user_utf8_bytes": 13694,
+          "message_characters": 15255,
+          "message_utf8_bytes": 15270,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 5
+        },
+        "fixture_ear_initial": {
+          "user_characters": 300,
+          "user_utf8_bytes": 300,
+          "message_characters": 5499,
+          "message_utf8_bytes": 5499
+        },
+        "fixture_ear_reply": {
+          "user_characters": 846,
+          "user_utf8_bytes": 886,
+          "message_characters": 6133,
+          "message_utf8_bytes": 6173
+        },
+        "fixture_ear_exam": {
+          "user_characters": 5393,
+          "user_utf8_bytes": 5947,
+          "message_characters": 10392,
+          "message_utf8_bytes": 10946
+        },
+        "fixture_mapping": {
+          "user_characters": 296,
+          "user_utf8_bytes": 308,
+          "message_characters": 2010,
+          "message_utf8_bytes": 2022
+        },
+        "fixture_mapping_repair": {
+          "user_characters": 354,
+          "user_utf8_bytes": 366,
+          "message_characters": 2494,
+          "message_utf8_bytes": 2506
+        }
+      },
+      "compression_on_same_decision": {
+        "projected_characters": 82042,
+        "projected_utf8_bytes": 82044,
+        "repeated_expectations_characters": 82042,
+        "repeated_expectations_utf8_bytes": 82044
+      },
+      "candidate_evidence_sha256": {
+        "Eczema": "35b8a97d93af64fc6424467360be211b6eeb2b7004ada981c23906caa58a96ff",
+        "Addison disease": "bd74edad8b568348eb866ff007d67a4ed5e34fc9788916efc835e56280b6940c",
+        "Iron deficiency": "dc386a61387b467e2ca426cbe4279dc5a4aaf04964d56349e92d639553515d9c",
+        "Hypothyroidism": "c389b98fcf33938df52b237691b08a71d7992544ec308565b984f94bcd9aac59",
+        "Threatened abortion": "644cac77850eef55ae39b06bff664fd1d8f071f46c3a8181c59733901c56c59f",
+        "Eclampsia": "1c564238e42253243d8c4a5c0878b39c2ff474dff75c8f962c16351a4b78bab7",
+        "Atopy": "c7eb26e47f9aed68f612bd0af4305180d38424496955d4da8a96e5e220e5f19d",
+        "Fibromyalgia": "430e188bba8ee640287619299524d66e1f78b3b57ce004cc29c23adbc411cd69",
+        "Chronic kidney failure": "15966052688cedd03599ec46097258ba622f3001e1c20171854520f4135adff8",
+        "Active cancer": "03792e2b7ed853fb9d6bd0aa5baf5d62ac47a4077f4e0b144f3023f6d59b5996",
+        "Pulmonary embolism": "866bf8be430ffd3e5c475912cbfdebe3fd08607927db7a5fa66d2d37dd9d4627",
+        "Pre-eclampsia": "8e8c16865e6a1e9b06b97a3a17524df691c11c17d4b686b36298ecacf6da5cc7",
+        "Adenoiditis": "56f6b7cbaa57635c8f1e6cacaf11b66baa3ab988d367a46e0321a17241db4f58",
+        "Nephrogenic diabetes insipidus": "8315509c6b1338fb8fd946648fd8f872d4b032bb87f6045cdfd0914794295a1e",
+        "Circadian rhythm sleep-wake disorder": "efcc419fcce7fa9cdf86fc1e522393ed87f7cf256514bc48ac2202c5a05e7339",
+        "Infectious mononucleosis": "716a6c58c2164e8a1646e4fa65a9c276cc0f14e266eb9805b6731ad1e96aebfa",
+        "Aplastic anemia": "53573bc98e5ec4a633405d3e39c3ec206cce34cabcaf2548668483191d17de89",
+        "Nicotine withdrawal": "06937b52ec5ef1ba9fcd7fa1d0d12890ec14ddf54a585c8692a9809cfee91593",
+        "Insomnia disorder": "d961a84da70d88c378cd664dbabf006e85e324fe368ab1853c779c16054ece96",
+        "Secondary hypertension": "38dd138665a1c3b2d8c63330cbd453b020b660df6377342670042b45e6107ae7",
+        "Placenta previa": "933dbb9f111bb18ba9afab198bafc1f920e893887801a3c671e4f7196ee4db2e",
+        "Hepatitis C": "076fcd6f21596b5dc4f69b9c5f87747e478ea6340e6b51ae7ebed5e7a91360cf",
+        "Narcolepsy": "b72a55850ecbc0f9a3daa120821f53f417ca347bda0be2f0b63bc37634c92fac",
+        "Autoimmune hepatitis": "60f814b4efc7f8b88ea30631efd927068d40119354bc53ee3e943af13d2cfcf1",
+        "Postpartum depression": "85d5f59681ba046a80c849b9d024adfcd2a78b4d94eda6f050ce163b9c6ed8d0",
+        "Kidney disease": "be139861a6b04e18caad361e1d8fe4c16961bc6fb441e6327044870c66808bfe",
+        "Obstructive sleep apnea syndrome": "24a2dfa284c53b9812d8e1b01ede4370adc8ab6c83c70c98d9bd864c965ac4ec",
+        "Spontaneous abortion": "a9e016d1d05a8b8101bb151f3591a9c70f0cc5eba81d49a0380c35505f2f7eb5",
+        "Preeclampsia": "392e3ce7c7ce31ea1b8137f709f83014018903d685a852e7603aaeac2ad9a30a",
+        "Generalized anxiety disorder": "988af8360dce4530c557bedd42f8907d58b6cf465825be50944fd531a936a7eb",
+        "Anemia": "069eb0e473bcda2be006c992f60882144ab309aee98047c70c0fe655adcb1c7b",
+        "Major depressive disorder": "7241f6607730955949bc0de26727467eae7772148b06b52d36238d57ad13ce41",
+        "Iron deficiency anemia": "f484c5ecfd89dc74fa713259b8ac7ce9a247d7b978c1abe2205b01a1bfecddcd",
+        "Preterm prelabor rupture of membranes": "fc7f63f348fe9f505c99393db8858af07e4cc73c11e270a17944edeaab670a17",
+        "Disorder of thyroid gland": "dfa2a919517779fb1a58d17a96c03faa399c199e2be830b4756b90a96e18b5ac",
+        "Chronic hepatitis": "12614f194c2d2aeef33ba60a24bba4d6c103b6ef640bfee544e8fad44c533dd6",
+        "Schizophrenia": "c058a82c61e18ca4f8e6ab7d97dc3a092f84a4de09c3befb703736f35ae63dd8",
+        "Megaloblastic anemia": "67e245524899cdd786755339e5b1f8d96923cd3d8a9206b4aa7c39a08e56a10d",
+        "Persistent depressive disorder": "8b861854a21bc359acaa8ac50dcf6e80b4cdd5524ac3ae5a79b94fad2d57a311",
+        "Post-acute COVID-19": "5a24a475bed810fa26e95db4de531ba12d66c3dcdd4213f798bc7a255fd664f5",
+        "Placental abruption": "2edc7e10335bdd13bcdc1579652fd2d4ea1e2f1c74e7bf7699b603ad4d365196",
+        "HELLP syndrome": "2840acc74554fad83e774a9b9020eb7a10738bdcd46c499a7adf90e339b0352b",
+        "Sheehan syndrome": "c3ee6d2f5873cea9ff4ebbed87a28823f3888e553e8c039b548467f5ca835bb9",
+        "Depressive disorder": "b174129b22163b8704128c6a7c611f8c9d32e7b00907f1f30c488b0a110bcdab",
+        "Hypopituitarism": "3908a544dd85358d541cba8d5386ad871c0548ce7e929a60fc6b5cbe9ad28a45",
+        "Obstructive sleep apnea": "b9e3fa187353c8a8e74dcf049cbfc290cb46420660d4ceacab619646414837a7",
+        "Systemic lupus erythematosus": "6aaa5e3974b62708e4650a81500dab690cf73a54e803fe9964241f95dc93853b",
+        "Influenza": "910a6948d8cce056e7498dd18f9248e7868b8fca1ad5d32d5c8f7b272de2b94f",
+        "Sjögren's syndrome": "ec93399be9572e4276e11390b6929e1136f651efab5e10e00c0b3229c56fb6f5",
+        "Ectopic pregnancy": "b0282e1c8013346548a790617dda1994e75f004795c43b508e5d2277cc3ab77e",
+        "Metastatic cancer": "fdcf361f508f0984fc9c2c559868049a1673785069ad8435c8414370196cc216",
+        "Myalgic encephalomyelitis/chronic fatigue syndrome": "36fb9e9fcf12433b8bbb989b20cfdb00e8d1c84bfde2f450be6c8242d3c28679",
+        "Insomnia": "56fc9ebd725c58af4017ba43faaf618f161e1729ec2fa763f6af854f0cc4c6b4",
+        "Hepatitis B": "18249f89c78498603fdfa97987026e85ad1fc09ab4ec399a06e2d2e1e69261e0",
+        "Chronic stress disorder": "16cfc5d10f2d8475fd2f8c4d3a4365dda675170139114065c67fd50954018622",
+        "Hashimoto thyroiditis": "8d6142fff6cbd05b409e22c0eeefbede700dde65ffe17f95bd2274a3377b20ca",
+        "Hyperprolactinemia": "5886708310a2ea672d62a52d2cd3ea4a7be705e30bb42bc8ecf1711a227dcba6",
+        "Restless legs syndrome": "b7b92424475fa2975443fbdc5978008def78d5fa6a710e978671f0a22b624f71"
+      },
+      "candidate_routes": {
+        "Eczema": [
+          "Allergic disposition"
+        ],
+        "Addison disease": [
+          "Fatigue"
+        ],
+        "Iron deficiency": [
+          "Fatigue"
+        ],
+        "Hypothyroidism": [
+          "Fatigue"
+        ],
+        "Threatened abortion": [
+          "Pregnant state"
+        ],
+        "Eclampsia": [
+          "Pregnant state"
+        ],
+        "Atopy": [
+          "Allergic disposition"
+        ],
+        "Fibromyalgia": [
+          "Fatigue"
+        ],
+        "Chronic kidney failure": [
+          "Fatigue"
+        ],
+        "Active cancer": [
+          "Fatigue"
+        ],
+        "Pulmonary embolism": [
+          "Pregnant state"
+        ],
+        "Pre-eclampsia": [
+          "Pregnant state"
+        ],
+        "Adenoiditis": [
+          "Habitual snoring"
+        ],
+        "Nephrogenic diabetes insipidus": [
+          "History of kidney disease"
+        ],
+        "Circadian rhythm sleep-wake disorder": [
+          "Insomnia complaint",
+          "Shift work"
+        ],
+        "Infectious mononucleosis": [
+          "Fatigue"
+        ],
+        "Aplastic anemia": [
+          "Fatigue"
+        ],
+        "Nicotine withdrawal": [
+          "Insomnia complaint"
+        ],
+        "Insomnia disorder": [
+          "Insomnia complaint"
+        ],
+        "Secondary hypertension": [
+          "History of kidney disease"
+        ],
+        "Placenta previa": [
+          "Pregnant state"
+        ],
+        "Hepatitis C": [
+          "Fatigue"
+        ],
+        "Narcolepsy": [
+          "Daytime sleepiness"
+        ],
+        "Autoimmune hepatitis": [
+          "Fatigue"
+        ],
+        "Postpartum depression": [
+          "Loss of capacity for enjoyment"
+        ],
+        "Kidney disease": [
+          "History of kidney disease"
+        ],
+        "Obstructive sleep apnea syndrome": [
+          "Habitual snoring"
+        ],
+        "Spontaneous abortion": [
+          "Pregnant state"
+        ],
+        "Preeclampsia": [
+          "Pregnant state"
+        ],
+        "Generalized anxiety disorder": [
+          "Insomnia complaint"
+        ],
+        "Anemia": [
+          "Fatigue"
+        ],
+        "Major depressive disorder": [
+          "Fatigue",
+          "Loss of capacity for enjoyment",
+          "Suicidal ideation"
+        ],
+        "Iron deficiency anemia": [
+          "Fatigue"
+        ],
+        "Preterm prelabor rupture of membranes": [
+          "Pregnant state"
+        ],
+        "Disorder of thyroid gland": [
+          "Fatigue"
+        ],
+        "Chronic hepatitis": [
+          "Fatigue"
+        ],
+        "Schizophrenia": [
+          "Suicidal ideation"
+        ],
+        "Megaloblastic anemia": [
+          "Fatigue"
+        ],
+        "Persistent depressive disorder": [
+          "Insomnia complaint",
+          "Loss of capacity for enjoyment",
+          "Suicidal ideation"
+        ],
+        "Post-acute COVID-19": [
+          "Fatigue"
+        ],
+        "Placental abruption": [
+          "Pregnant state"
+        ],
+        "HELLP syndrome": [
+          "Pregnant state"
+        ],
+        "Sheehan syndrome": [
+          "Fatigue"
+        ],
+        "Depressive disorder": [
+          "Loss of capacity for enjoyment"
+        ],
+        "Hypopituitarism": [
+          "Fatigue"
+        ],
+        "Obstructive sleep apnea": [
+          "Daytime sleepiness",
+          "Habitual snoring"
+        ],
+        "Systemic lupus erythematosus": [
+          "Fatigue"
+        ],
+        "Influenza": [
+          "Fatigue"
+        ],
+        "Sjögren's syndrome": [
+          "Fatigue"
+        ],
+        "Ectopic pregnancy": [
+          "Pregnant state"
+        ],
+        "Metastatic cancer": [
+          "Fatigue"
+        ],
+        "Myalgic encephalomyelitis/chronic fatigue syndrome": [
+          "Fatigue"
+        ],
+        "Insomnia": [
+          "Caffeine consumption",
+          "Fatigue",
+          "Insomnia complaint"
+        ],
+        "Hepatitis B": [
+          "Fatigue"
+        ],
+        "Chronic stress disorder": [
+          "Insomnia complaint"
+        ],
+        "Hashimoto thyroiditis": [
+          "Fatigue"
+        ],
+        "Hyperprolactinemia": [
+          "Pregnant state"
+        ],
+        "Restless legs syndrome": [
+          "History of anemia diagnosis",
+          "History of kidney disease",
+          "Insomnia complaint",
+          "Pregnant state",
+          "Urge to move legs"
+        ]
+      },
+      "routes_total": 70,
+      "relations_semantics_sha256": [
+        "0324532eb7346eb13e81bae16e062d2b8e1ccb9869fef6cdc6324649c5b30582",
+        "049e7008a0d52c352707b4b63024d67c5371bd650154b3be0b2ae40c9de59ae5",
+        "059369c6253228bcfa89e482bf0daff02b8bcc7db700e2736162373ea6414384",
+        "060959d1d4b9396c01aacf3efe71c9fa780a9cd39cfaeb44e5f039884cbd4ff9",
+        "0630dc8a5ce076dc5390b04c735b0096fcbd1996eac38ba4e074c6fe29fbe1a6",
+        "081e55a1175cd960296c833f853393589c3b6de2c314cfca3b7b9c86b6c3621e",
+        "098645f367f25003fe23b5d5ebb279905c652b1cdfc06c1586bf056dc4679288",
+        "101a68b517daacf18bb076aa0fe47e80a5a3c96bfe97b1374d40d495c77867fa",
+        "10a29f071708c3c6ca28e72a9c8290c638ffa1c069677da462558b57de6328a6",
+        "11fdd2c047da32c4b3adaa0c8b9a64524175e0688f0929ce8cd8ee6605e5e80c",
+        "154f39e5a0cbaca29252eb782514da3a9d40c8e763fefe4edb35735921c79099",
+        "163d0a61fdd312b1be05edd578fe622f7550b28e30bd0f23fab484b6e6a71719",
+        "173fd1b3d970f1db90d446fa5bd2a4e5fcaa8d5c57188d4613d81ff5de435b9f",
+        "17b7a945712f59fbe8c3ab7d395090924c7e3b6b441e9aacae8faf408199f5f6",
+        "1877194d39ed2f403e42551e6102625a6ad14711562b9e514d51a576ddda9eec",
+        "18c77cda0dfd678261245712191c78d86e831d0bba17941b3840a033e08be6dd",
+        "1a70d6c7cd6acde8ab94860c1ef7395d70456f93598cde1c6a68fa06b93194de",
+        "1abac9c2b16e3f9c41159168fca2f7b59115d78f247cb3a277f8860db995d960",
+        "1bd3ed55a3089456c974375b23c23023c6c1529c10f9790e60f92ca0106fe06a",
+        "1c9ca2d39f2f54eeeae2cb70b910565a95b32f80edd0ea02e12aa70c77547077",
+        "1ebce82f68728c8d6d9cf76898bd86cd0f9eb6e0323a3861d7bb5451433659eb",
+        "21d350687192f62ab97b023631a2b7a741e69c26e5bd61ac3593bffbdf198544",
+        "2972add152898f936d7cef3249da7f259640c47641badac9b599294070942902",
+        "2b06e3ce2b004e6a1d369ba9cb688006c84fce028a36c31b81298fb67728a9cf",
+        "2c2c74c6aa6628c4003c3a55beb6cf79a6fb121cd570f6800c9c05bd9fe364f4",
+        "2ef2921f701394549c13a838224f4c382c66c730eddee0bd203edf9001d290ce",
+        "3003b25746badd1f710bbf735567cc13fd25f2677873d8583f9c4cbb2ad1e9de",
+        "312392aceabcc4fe4a94ac1f497d4b40cdb4950b4345c7826c505dc00a6fef2d",
+        "35d46d5e10556d50d10b0202d5c7682f385e2b5ac0cef154b2129ad1c501f101",
+        "368bb461a9186f4b7e98328f83be7cfd85c5f362208f607f533183afbe04c3ca",
+        "379e73614a20fb0b4062efe5d602556f30124104c77bfe7c991bd885e8e0a641",
+        "398fbf138be6024ef69e3c27a0765a53223d62e4a71425003d188c4d95a1fac1",
+        "3f797304a266b15278e643815f32d7207904853b4462f0d12a5d1f95b3876a7d",
+        "42e7b3005f96cf5d47a53c89a4bb89e87a435ed55704ed230217e2e66b8a2ea0",
+        "4334c16044b3675454b54ed96ec7b8bcae032a6cdb4234a748dba81f1c1ca2b5",
+        "4507383fe52c3d49a6dda6d9700f531d16546bd41bec488bb67be120a1aa18c8",
+        "45825d9d6c148f1baf062f550d9b85c5348bb94d1c0dc69dc20818c32c057270",
+        "4ab7eb657b6bdb598c5ed6638df10b7ee467944aade02ad83b2140fd50ddbb47",
+        "4aee0c9ed1d5519e98c59d06804ab70297f1d1275302e864c9efa7d33e2b0821",
+        "4b9a5c274a80586c12f8a106e53c075780040bb59bdfc8dc3de0bff85b6307ea",
+        "4ca8a435b06dd30ea0eacc702b3037bbb38119ff4a45616ca937a6ea4e8b5351",
+        "4d38a0b9e8781c6d89da942ef85b50f223e8fb13624512fa335be2d58c70563b",
+        "4d832e0921703d553164234090799e255f6533c52442d172b9782e4a7699c35b",
+        "4d9f4209d6818e096f2d0d59b4dff8efc77e774ce49738622edf0256780cee22",
+        "4e04aa7f7f4b4e96536630f33dcf5063008a5935d77ea7398d1733ba33f7b266",
+        "4f704ef368600cc12d3a4013996de42c846cc491e3d5fefbada93bf2d62f20ee",
+        "554bd9ac287c888b877e16d9c19d73e93c4481d3ca625586bdc09b9dc6c6e769",
+        "55aaa35f68d158e0554e40791371558918181cdb68af6fa538ba09055e496e45",
+        "568856537e67188af9e0db8b49301ba2d30cea3c342f046b9ed4b64571b9f7ca",
+        "584303c872c42bcd9ebbef94a5820d4d86f41ae4d5dc37283c5f4dc219a15043",
+        "58be0a3261fcd90e6e6db4b4b1d492222cddcb5dab1e15c169e9bbf7e67b9ee0",
+        "5ccbb4c684a379191458dbd603e9336a91ebafeb9e69405d920e8c94b3beb278",
+        "5ce3751f004b51e1e01d5f51543403631b3c91c0a64c4ad977cd83ce6ae032ff",
+        "5d8a389018ab58442cf3d3046ed1fe41bc0491fc999d1b3ac920c42c95dd68bb",
+        "5eb0dc8bf165934319d854968f5e9021ef01c939fa20220acf17f12b016ed83b",
+        "6242a619530ba338fd1070279dea280732e9324746896c2e843f113fe7ee931b",
+        "62553987afc3e4c580effadc9956354c9b0099f03acdcecd64e61133e2cba519",
+        "65dcbaf5a716513431eee565468fa7d4b7e245f820d9a596df5a7abdda438fa7",
+        "66d8ae3e9f4d3ea2017d4094d84faf8bc35c4ac5f756356dfae0f1d53e257cc3",
+        "6709918cc107f323c0bd524b56a633cd91e57159f2b3394afb489dc3cc454c71",
+        "68463cb9a90ea44971ff34ecbfe47a6319ced4c9fe79a8c40862273bdc08cdbd",
+        "6afd36c2d0eb5bb1cc95f8696a3cd62a34bbe0c397708c4dbfbfd40c2eb362c9",
+        "6fc18067114c5cf0ebc1dabd9317d7b4d62dbaf090595777b5b02a809d7b536a",
+        "71b641b2fc9a2f03bfc009355c80091157ea9fc9e15801f8980374d82b2729ef",
+        "73f48ec65bb42133fad78341d18392e0e5d0e32768caf86d6bece5939c2dee4c",
+        "740d609bc6c9c3e5d23f633fb07679691d24c6e440e365360450a2d4f51ac202",
+        "75d519b50360fe81a51d9e015f4719c83c72ef745b049a051869c6fa631f4013",
+        "79dcf4f9c7ff74e549ed6755c3889090abd2a2f495bce795e33c51489f5a609a",
+        "7c455c2e6d2a230fac3089024993e2e3b4ef3cab3c085db84c73f73ae92b5077",
+        "829e3c4b85c5b33375d8231e4512188fda2bc437efe734a438b88339a8c53b1a",
+        "84c2f3672b5f3c36a1d06b0a566e22e948fd1f95e4571b9f0a01bcff7d0ad6a9",
+        "8aa1afa4d18cf7406875fa8324819e01a9abc84713de590fc211a4916fbbffd4",
+        "8ae13a1f4adbf9dc1ad66e65935cdb855d7f29c34bbfe5abd39829da49908207",
+        "8cf1063da8ad22b2851ac07722581f6a2642a0394ae03373c7594d95ef4a74ba",
+        "8f123dcad7c5219fdbba1aae15a33d64a87655d3885506d7a166aefebdac81c0",
+        "8fda24d39d075e4ee79b23a025ff49542ab8e5b85358c50296454e8af8e92e87",
+        "940c48c8adc7a04ec6ffd980bf0845feb9977ae36a6be428e41f3f03cd7f71e8",
+        "97a5b5497de783973e1f977643773d728c1e4e58d50c3e94b467284f8c484607",
+        "9826b9c86dbdba637f72bc332713035d88f60c3d7101d6a1b8a0610ba3fef826",
+        "9927c9d69fb3d557cf8ba8c239883abf3804099c8cd89d1d0c61084a169fca1c",
+        "9b822f31f56ff7e3644ea7514ccb128437204cb448bfa5bffdb05cca56d43d8c",
+        "9bd5d1946e2d1b5131c29154ad70f397005f15f17708d4422e2d153cd65a5acd",
+        "9d4888fae47d095736a910061a50279b145b3e9555b36c4c498950d22aaef9d1",
+        "9d53565b762e42c134246984d42b365e3e11e64bc3c602335d2f358571e5cf76",
+        "a0e4f4ae247458c8fb40126481111b572e6e7da74b455bb9d293b1ce2c915218",
+        "a2d072d4abf735d2e1845646adad02ae6475299e676424acca47fdf25abbc320",
+        "a670724776494b0b22f62746cb7ff9033d8d074db54bf0887ab8addcd34e02f1",
+        "a686102513486cf075fe0a7816d66f7160699d9a5b6a88631feee5b81faea3d8",
+        "a92c8a1b0ae32cf83442bd243b8f79d644ab954f2b7d5bb46aeb93e49c109c3d",
+        "aa880a03f9806f42cb08755144ad65cfbea1849ebf805568de087691aa23ed06",
+        "ac4afe4143683b80fe3b660e69956fe8ffacbfd5c6c0599f77ee0cf3de87fa2d",
+        "af1cfe7c5383a13f991a8cbde3870e6e737a6d970db280d0face4d19bfe7a8a5",
+        "af31691149d9266244ec70ff43dc7d21281ec460afe89cb803d91b0040e951bd",
+        "af5ea189555e57c62fc83c0f868aa0256076a778b9d1f5b5ed87e9b2d62f7170",
+        "af7169e89241ab889091876d954bb2a1145ce79ce5e0c12654e97ab8e179feda",
+        "b0132f984f2c2f604cbb49b4c8992702dd67a6017fdf031789f729cc3b3f7a44",
+        "b4760a72f623b86089410bb5e6bce0b5d6926379f65de6fd76617519605f68ed",
+        "b4a08605f9c2537bb66e85cd675b4acb31e0e6a8187e213fc427a97038abb00c",
+        "b4fae303cfc872ddb9af8e4f79e0e79ecd9bd40fb91f649e9836ba0af1f4b43d",
+        "b5b58a0babc2490c2b079e4c522f08a6699ab7519fef02824c4bdc1278025025",
+        "b5bae2705a798d1b070070e58848e2fa874ef3335898591e01057c2a6d0b3aaf",
+        "b7ba1c827dbb88413cf1d886492842bfb12a6d64a1495c39bc51c6ecdeeaf52f",
+        "b86740a6d1a0f548c3733af74c1954fcac25953b7f1220203cfba7ac67eb7c8f",
+        "b98d5396cda59f275ecf9de49ca9f5b30179d7416b56cb2da617bb029e63717a",
+        "b9db3e5d1c5a5b73adb16b79705be9e869ac8d019801a7e8d7470d3871e2b90e",
+        "baa11cb913ec964238fe9236399bf595fc6b5265f112c9f0ebb82081f1b0c9d5",
+        "bfab9589686b777ea9cf36fc75ef7b87049598d74f0e14990677073bc2482115",
+        "c24d68e6fae71c2fc725e17c92763bc9c601c707d013aed8134e119f2a6724ea",
+        "c2e0bf5eb47be5dac16d839e6089cfcde279857466d95460d1bd9ccf9ee43213",
+        "c2fa00471391c13baa58dbd181a07a710d305ddcc12bd9a00b542be3a1eac8a7",
+        "c3424697b75f3af3b5a32ae757ca42a0ee41087e85a07261ebec0c81c5b2517a",
+        "c5e6e7e277e8457e8d186e0544939a984b1b64a4247977804bf23db956bd4eb6",
+        "c6f94bbe1070606acb36f72c469cb33dfee3157e66f6551fbe2f794d4d9171c2",
+        "c72b78f74dc4ef9886850e68bcb5d37c66ae75f183595ace324bc6a03cf9ee8c",
+        "c74d3361f068610a28d0f7a2ef07979705633e37ba52ece57664fdc62fdce657",
+        "c769aea6c44eb3ba8c0cbc37d28718a16076abd20e15f8eb401302ac61c7511c",
+        "c862edc048c8e9fe381e4b69607c92eadb534ca466b2bd53219676b5323f88e7",
+        "c8f08c6892a1ccd96906dfc77d6481eb6d5bf4ccbab9083ce9f591361c99b308",
+        "c9f3b086c62a262d6051228190488dc874fbe2511cbf521c4ab405e46b66324d",
+        "ca543895a38d33dd8453a5024e0928ee68723ac07cc9d6fa0c102d48d9e5dbe4",
+        "cd3ced032be2ef65ec1eb64b8d4b92d28e53cea41574a437e33c336b6b7d33e6",
+        "cf343047ff7411ee64f4ea94b0f50858784061a62f6c9f7dbc552d8d608b6567",
+        "cfd8c3e314d8ba3d710eff270390fc17daa782d63e33eadc76e7631799e649ce",
+        "d066f7d50b5e65a3b0345a85cb41953c28266d6a7efda02ef3be7742ee5893ee",
+        "d0d4c990ec4da669e852487b8fdf8301d04450b7edd53d84b99a4dac4483ac18",
+        "d72a89e177c350a86a41f857dbfd1a3843c95e30e564db48348fd29e1bf9ebb9",
+        "d80485b69d15fac40364a2df8f0b9eb0bc0ce9f8ba55ef46aefb1279be277e2a",
+        "d9636de47405bf135365e7251d0eb440e00bec1eb02638e337fafdbdc0ac9ade",
+        "dadda36cb7fb5514b1834da2a6dc35148871c1dd681101749df1187f56b6eed7",
+        "dbc004d30954cec8a3c31bf98c6a5407690a51b5fb39b38117ad9af718407be7",
+        "dc395cf77479af0f3d2624609504818297bbc9103876bdbbe92ae3e4933749ae",
+        "de52a001a5d1cc5b39052440b495cbe7a71c7c89175e9dc773450f4b5d333468",
+        "df6a8787e340e28ea39ada3101c23d7d7abab7b020b220a239a14428d3fe2a75",
+        "e2ba6412941eaa1815b3dbe06bc45a6cba0ca9a220e4a4ea36f2dcdbc849d9de",
+        "e4a7aab920abc314c6d514874f2e09e46265b7207be60363ae8ad3fc51833125",
+        "e5d6225f4c3b2281c837746bfabc3ed5ecbe860fe40cafa6c256711ac8cb1e5d",
+        "eb330f9020cb6f31ec276411fe257829af71e30821ec71d239c4cc31addf9bd4",
+        "eb89d675d285628835e59913de2901ecbc2b472f8ff2d6f8181221153ece03a8",
+        "f4064b03b5b5a347a80bc366565a85fa2cd617b1c643a3a7d400592a25ffd877",
+        "f585a5d3c3fe1a163f1825ac3cbf0fe8e06067804c3f84ad9b001f242f8037f8",
+        "f5acf1d70bb9d60c07b8a69990817fec71cded462835f85c78365e0860efcce2",
+        "f85dcc2e755e2242fb4fe0a17133bfb2c69d81257544f470f4395aa0af672c56",
+        "fab3a4ff1a1f4c8614774c487f6b690a27c9d1721583c007962e07e397ec90cc",
+        "fb86dd0950fc02a1c3372a440522a82dce29af0e351f9bedb345d4329faf9f28",
+        "fc11ce372f6753588bff16985208fc003ffd6bb9240085ed6730f4c1568ef138"
+      ],
+      "isolated_absent_recall": {
+        "Habitual snoring": 3,
+        "Fatigue": 27
+      },
+      "saved_evidence_sha256": {
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/started": "5c76272c196abd033196a8d3338d28eb7f5b5fddb7b540bd30e3940d5b840aa1",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/result.json": "2cffd333d5818373083eb64f136cfb8228a50f1245f08adee0664b59057c717a",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/runner.log": "3208d281f889592b2351ad5e40004d83b9dfe4a5f73f005c0fe68ef969c8a443",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/ended": "394fc4e566a574b063100132e5aa8f04329ff316c05a3388499f4578948cf64d",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/status": "6da5b18878e110928643ebcc38dbb7552cf3a296eea56493e23edc2b93eecff8",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run-id": "910bd88e9189ac1f5fd5304d952d639158ff01ff30772e376294d001dfb04cdc",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run.args": "b7f9d7f33c715e8d06a04268280abd613807f55cf701d8bf33391b992bf46089",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/report.html": "be944d7f9208961ae250fce4476b201d84d30a27e8ae8684b7083b6cf4b47aee",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/inspection.json": "57b55890806c08c6575e6712be755825803f4d62a9d5e68bf2dd94c3807c8b36",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run.json": "4e86516d70079b848812802064483ec7db24ec66725f5d3cef06d5457092dd56",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/exit-code": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/stderr.log": "ca3782e115e959bb14594a659a91eccdadb2851b743854710d159ed50733f9f8",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/trace.jsonl": "4fc6fb5879036b1af1ab1e59175d0768fa8ad2daafecf8d2444f7ba5cb953800",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/process.json": "850c5d290b691140eecec7be3cd31b95e01913e6bad178213a0e3625c7855a45",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/summary.json": "75a36d87198d06c84e93a5acdfac6d5d893a89323a6605350e39a32685fad87d",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/model-calls.jsonl": "1dd47e2dc7237f80db4dfd1014226b73414b16e89319ea813febf5f49d1a720c",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/transcript.json": "b11ee9c959ccfc8b7a57bf5ffc48a64bcd64874e3c5625d0a814320436a5de08",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/requests.json": "e967752f9d59bf40857ea466f19afeb187dfa4b1eb1b6efded077b2298f33107",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/nova-requests.jsonl": "69bebf5965d2f2a755ceaae74f890bb05873b8d982739d436230835031cf9da2",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/started": "b4fa2d2d30a92ab002fd275a0df5f7f15eb215ee6446acaacd1042389e09ead0",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/result.json": "c5947395bc6c79c40edb8ba591f21f83229c8652572756f61d4a02d8329b1e1a",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/runner.log": "61d4388ec5481fee77bcd62280bf560488156f10babe2fda727a7bb94dff2b56",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/ended": "a755125218537168688c26284fef2ffdad48edb0428afac841f67973d25b52b5",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/status": "6da5b18878e110928643ebcc38dbb7552cf3a296eea56493e23edc2b93eecff8",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run-id": "dc1eaf099ba3ea0e049b3a038553a650125c045caded9719edba5d6439f99d79",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run.args": "b7f9d7f33c715e8d06a04268280abd613807f55cf701d8bf33391b992bf46089",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/report.html": "c0c47ed3ef7da2b973833ae7a3f4cc62d3ed8832e7eb504ae296b31f7528424e",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/inspection.json": "5e6d5e93c6d94b5dccfdf14e3f89ddc22c980c6faa78689867120bc3c2b2f0a4",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run.json": "b600406816a5e397245a82a5617243ee016c7e3c6b50daf8042329e23e279305",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/exit-code": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/stderr.log": "f63430938da76a2dbf066f90f1fca5629a42df6b0dfea577d82b27f051b5cc95",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/trace.jsonl": "b7c37480b3fef19c553f8a12d41a96471454b8b00bafb9763ac2018ec5277473",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/process.json": "2eb82ee29d86c527b4863d06bb0a044992b8d5f42f56e7ecebf541804284f682",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/summary.json": "f27de7dc8b77b625b96577489ec5c8ceb329522a12e0c1c3e06902054acd0e1a",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/model-calls.jsonl": "978258208a2300303d886a0b76cb0d6075766f40b833c54effe8d4e99a0eee37",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/transcript.json": "48049cf13879981debf6af70760d4c667e883150a7a49dcf8d1f3525013676f3",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/requests.json": "b53184c53da5c2a273ef96d27133016eb06fc4cb13065762209fbff0d5d25433",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/nova-requests.jsonl": "a3af1cc811494be9f75be1c82afd44c6a8a0124844fc834f6b07e62c58772718"
+      },
+      "manifest_sha256": "a4c10f3a897485c1d4eb57ad8dc35e9d60dcb59e4d14a5d8ae5ef54f2ebbb2eb",
+      "build_id": "87e8b4c54b0689453cea91b3bb316290",
+      "asset_sha256": {
+        "schema": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+        "vocabulary": "23ae78abea1dc55c1d48545feba0fbe54d0516a1f2c5335bc4fc30beed5f1af8",
+        "clinical": "69d37b3c92faf3312378b24d8bf984112cbf538dd456a62c023d780f860a2d9e",
+        "questions": "66f0426172d1a6c761a3f553314e9f7ebecd1784b1fb7f786beaf7091e5f0561",
+        "guidelines": "8f0e9b1e937aecc4df73d955924505730fcd0aecf8e8ce57e3fbd5edc41d0c85"
+      },
+      "guideline_distribution": {
+        "old": {
+          "related/background_only": 1280,
+          "exact/care_navigation": 447
+        },
+        "selected": {
+          "exact/care_navigation": 555,
+          "related/background_only": 1172
+        },
+        "changed_sets": 98,
+        "changed_order": 240
+      }
+    },
+    "current": {
+      "source": "submission",
+      "actual_models": "not_run",
+      "provider_tokens": "not_measured",
+      "tasks": {
+        "saved_c01_clinical_rank": {
+          "user_characters": 51204,
+          "user_utf8_bytes": 51206,
+          "message_characters": 54234,
+          "message_utf8_bytes": 54236,
+          "counts": {
+            "facts": 38,
+            "scopes": 84,
+            "candidates": 37,
+            "relations": 82,
+            "evidence": 91,
+            "questions": 0,
+            "prior_order": 37
+          },
+          "reference_integrity": {
+            "dangling_fact": 0,
+            "dangling_relation": 0,
+            "dangling_feature": 0,
+            "missing_question_scope": 0,
+            "dangling_condition": 0
+          },
+          "distinct_relation_definitions": 82,
+          "unresolved_reasons": {
+            "unasked": 73,
+            "nonclinical": 1,
+            "applicability_unknown": 10,
+            "presence_required": 1
+          }
+        },
+        "saved_c01_clinical_action": {
+          "user_characters": 44424,
+          "user_utf8_bytes": 44426,
+          "message_characters": 47624,
+          "message_utf8_bytes": 47626,
+          "counts": {
+            "facts": 38,
+            "scopes": 80,
+            "candidates": 37,
+            "relations": 64,
+            "evidence": 0,
+            "questions": 62,
+            "prior_order": 37
+          },
+          "reference_integrity": {
+            "dangling_relation": 0,
+            "dangling_feature": 0,
+            "missing_question_scope": 0,
+            "dangling_condition": 0
+          },
+          "distinct_relation_definitions": 64,
+          "unresolved_reasons": {}
+        },
+        "saved_c01_clinical_decision": {
+          "user_characters": 62999,
+          "user_utf8_bytes": 63001,
+          "message_characters": 66524,
+          "message_utf8_bytes": 66526,
+          "counts": {
+            "facts": 38,
+            "scopes": 84,
+            "candidates": 37,
+            "relations": 82,
+            "evidence": 91,
+            "questions": 62,
+            "prior_order": 37
+          },
+          "reference_integrity": {
+            "dangling_fact": 0,
+            "dangling_relation": 0,
+            "dangling_feature": 0,
+            "missing_question_scope": 0,
+            "dangling_condition": 0
+          },
+          "distinct_relation_definitions": 82,
+          "unresolved_reasons": {
+            "unasked": 73,
+            "nonclinical": 1,
+            "applicability_unknown": 10,
+            "presence_required": 1
+          }
+        },
+        "saved_c01_plan": {
+          "user_characters": 208697,
+          "user_utf8_bytes": 209399,
+          "message_characters": 212171,
+          "message_utf8_bytes": 212873,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 0,
+          "documents": [
+            {
+              "document_id": "urn:ontoward:Document9e1dce9041969d3be1026d79",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "3d73b1b25fe02a6eb4064f247f190f05d17f994ccd7c8a6322a8c7e0a867ad2e"
+            },
+            {
+              "document_id": "urn:ontoward:Documentd00811505658652867579744",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "91dc0663354bb98c6e62a3e6fb35d175f3ed8ff8e85e887b3c76b539207a71ae"
+            },
+            {
+              "document_id": "urn:ontoward:Document8e680c94d7a9fc7b6b7f1c93",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "db42ebd56f5e85d523f06df96cf723e2e424551ed302d32a9121159c85bc4bbe"
+            },
+            {
+              "document_id": "urn:ontoward:Document9b5bfb8aae9aa4d5052a8839",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "2eaf389d6ebc56a2e560b1a1311023ce5050b34ac881bb0f994171ef672341f6"
+            },
+            {
+              "document_id": "urn:ontoward:Documentc7da188e15fa1fb2df19c648",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "e56e827c36c055eab3dfe92d0607082d615ba40e5c2631ffc40c70ea8c875de6"
+            }
+          ]
+        },
+        "saved_c01_plan_repair": {
+          "user_characters": 208803,
+          "user_utf8_bytes": 209505,
+          "message_characters": 212570,
+          "message_utf8_bytes": 213272,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 0,
+          "documents": [
+            {
+              "document_id": "urn:ontoward:Document9e1dce9041969d3be1026d79",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "3d73b1b25fe02a6eb4064f247f190f05d17f994ccd7c8a6322a8c7e0a867ad2e"
+            },
+            {
+              "document_id": "urn:ontoward:Documentd00811505658652867579744",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "91dc0663354bb98c6e62a3e6fb35d175f3ed8ff8e85e887b3c76b539207a71ae"
+            },
+            {
+              "document_id": "urn:ontoward:Document8e680c94d7a9fc7b6b7f1c93",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "db42ebd56f5e85d523f06df96cf723e2e424551ed302d32a9121159c85bc4bbe"
+            },
+            {
+              "document_id": "urn:ontoward:Document9b5bfb8aae9aa4d5052a8839",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "2eaf389d6ebc56a2e560b1a1311023ce5050b34ac881bb0f994171ef672341f6"
+            },
+            {
+              "document_id": "urn:ontoward:Documentc7da188e15fa1fb2df19c648",
+              "relation": "related",
+              "evidence_use": "background_only",
+              "text_sha256": "e56e827c36c055eab3dfe92d0607082d615ba40e5c2631ffc40c70ea8c875de6"
+            }
+          ]
+        },
+        "saved_c01_mouth": {
+          "user_characters": 12506,
+          "user_utf8_bytes": 12507,
+          "message_characters": 13939,
+          "message_utf8_bytes": 13962,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 0
+        },
+        "saved_c01_mouth_repair": {
+          "user_characters": 12648,
+          "user_utf8_bytes": 12649,
+          "message_characters": 14340,
+          "message_utf8_bytes": 14363,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 0
+        },
+        "saved_c01_announcement": {
+          "user_characters": 12503,
+          "user_utf8_bytes": 12504,
+          "message_characters": 13806,
+          "message_utf8_bytes": 13821,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 0
+        },
+        "saved_c01_announcement_repair": {
+          "user_characters": 12638,
+          "user_utf8_bytes": 12639,
+          "message_characters": 14200,
+          "message_utf8_bytes": 14215,
+          "facts": 41,
+          "evidence_references": 5,
+          "unresolved_fact_references": 0
+        },
+        "fixture_ear_initial": {
+          "user_characters": 207,
+          "user_utf8_bytes": 207,
+          "message_characters": 5568,
+          "message_utf8_bytes": 5568
+        },
+        "fixture_ear_reply": {
+          "user_characters": 846,
+          "user_utf8_bytes": 886,
+          "message_characters": 6133,
+          "message_utf8_bytes": 6173
+        },
+        "fixture_ear_exam": {
+          "user_characters": 5393,
+          "user_utf8_bytes": 5947,
+          "message_characters": 10392,
+          "message_utf8_bytes": 10946
+        },
+        "fixture_mapping": {
+          "user_characters": 349,
+          "user_utf8_bytes": 361,
+          "message_characters": 2337,
+          "message_utf8_bytes": 2349
+        },
+        "fixture_mapping_repair": {
+          "user_characters": 407,
+          "user_utf8_bytes": 419,
+          "message_characters": 2821,
+          "message_utf8_bytes": 2833
+        }
+      },
+      "compression_on_same_decision": {
+        "projected_characters": 62999,
+        "projected_utf8_bytes": 63001,
+        "repeated_expectations_characters": 67662,
+        "repeated_expectations_utf8_bytes": 67664
+      },
+      "candidate_evidence_sha256": {
+        "Addison disease": "bd74edad8b568348eb866ff007d67a4ed5e34fc9788916efc835e56280b6940c",
+        "Iron deficiency": "dc386a61387b467e2ca426cbe4279dc5a4aaf04964d56349e92d639553515d9c",
+        "Hypothyroidism": "c389b98fcf33938df52b237691b08a71d7992544ec308565b984f94bcd9aac59",
+        "Fibromyalgia": "430e188bba8ee640287619299524d66e1f78b3b57ce004cc29c23adbc411cd69",
+        "Chronic kidney failure": "15966052688cedd03599ec46097258ba622f3001e1c20171854520f4135adff8",
+        "Active cancer": "03792e2b7ed853fb9d6bd0aa5baf5d62ac47a4077f4e0b144f3023f6d59b5996",
+        "Circadian rhythm sleep-wake disorder": "efcc419fcce7fa9cdf86fc1e522393ed87f7cf256514bc48ac2202c5a05e7339",
+        "Infectious mononucleosis": "716a6c58c2164e8a1646e4fa65a9c276cc0f14e266eb9805b6731ad1e96aebfa",
+        "Aplastic anemia": "53573bc98e5ec4a633405d3e39c3ec206cce34cabcaf2548668483191d17de89",
+        "Nicotine withdrawal": "06937b52ec5ef1ba9fcd7fa1d0d12890ec14ddf54a585c8692a9809cfee91593",
+        "Insomnia disorder": "d961a84da70d88c378cd664dbabf006e85e324fe368ab1853c779c16054ece96",
+        "Hepatitis C": "076fcd6f21596b5dc4f69b9c5f87747e478ea6340e6b51ae7ebed5e7a91360cf",
+        "Narcolepsy": "b72a55850ecbc0f9a3daa120821f53f417ca347bda0be2f0b63bc37634c92fac",
+        "Autoimmune hepatitis": "60f814b4efc7f8b88ea30631efd927068d40119354bc53ee3e943af13d2cfcf1",
+        "Generalized anxiety disorder": "988af8360dce4530c557bedd42f8907d58b6cf465825be50944fd531a936a7eb",
+        "Anemia": "069eb0e473bcda2be006c992f60882144ab309aee98047c70c0fe655adcb1c7b",
+        "Major depressive disorder": "7241f6607730955949bc0de26727467eae7772148b06b52d36238d57ad13ce41",
+        "Iron deficiency anemia": "f484c5ecfd89dc74fa713259b8ac7ce9a247d7b978c1abe2205b01a1bfecddcd",
+        "Disorder of thyroid gland": "dfa2a919517779fb1a58d17a96c03faa399c199e2be830b4756b90a96e18b5ac",
+        "Chronic hepatitis": "12614f194c2d2aeef33ba60a24bba4d6c103b6ef640bfee544e8fad44c533dd6",
+        "Megaloblastic anemia": "67e245524899cdd786755339e5b1f8d96923cd3d8a9206b4aa7c39a08e56a10d",
+        "Persistent depressive disorder": "8b861854a21bc359acaa8ac50dcf6e80b4cdd5524ac3ae5a79b94fad2d57a311",
+        "Post-acute COVID-19": "5a24a475bed810fa26e95db4de531ba12d66c3dcdd4213f798bc7a255fd664f5",
+        "Sheehan syndrome": "c3ee6d2f5873cea9ff4ebbed87a28823f3888e553e8c039b548467f5ca835bb9",
+        "Hypopituitarism": "3908a544dd85358d541cba8d5386ad871c0548ce7e929a60fc6b5cbe9ad28a45",
+        "Obstructive sleep apnea": "b9e3fa187353c8a8e74dcf049cbfc290cb46420660d4ceacab619646414837a7",
+        "Systemic lupus erythematosus": "6aaa5e3974b62708e4650a81500dab690cf73a54e803fe9964241f95dc93853b",
+        "Influenza": "910a6948d8cce056e7498dd18f9248e7868b8fca1ad5d32d5c8f7b272de2b94f",
+        "Sjögren's syndrome": "ec93399be9572e4276e11390b6929e1136f651efab5e10e00c0b3229c56fb6f5",
+        "Metastatic cancer": "fdcf361f508f0984fc9c2c559868049a1673785069ad8435c8414370196cc216",
+        "Myalgic encephalomyelitis/chronic fatigue syndrome": "36fb9e9fcf12433b8bbb989b20cfdb00e8d1c84bfde2f450be6c8242d3c28679",
+        "Insomnia": "56fc9ebd725c58af4017ba43faaf618f161e1729ec2fa763f6af854f0cc4c6b4",
+        "Hepatitis B": "18249f89c78498603fdfa97987026e85ad1fc09ab4ec399a06e2d2e1e69261e0",
+        "Chronic stress disorder": "16cfc5d10f2d8475fd2f8c4d3a4365dda675170139114065c67fd50954018622",
+        "Hashimoto thyroiditis": "8d6142fff6cbd05b409e22c0eeefbede700dde65ffe17f95bd2274a3377b20ca",
+        "Hyperprolactinemia": "5886708310a2ea672d62a52d2cd3ea4a7be705e30bb42bc8ecf1711a227dcba6",
+        "Restless legs syndrome": "b7b92424475fa2975443fbdc5978008def78d5fa6a710e978671f0a22b624f71"
+      },
+      "candidate_routes": {
+        "Addison disease": [
+          "Fatigue"
+        ],
+        "Iron deficiency": [
+          "Fatigue"
+        ],
+        "Hypothyroidism": [
+          "Fatigue"
+        ],
+        "Fibromyalgia": [
+          "Fatigue"
+        ],
+        "Chronic kidney failure": [
+          "Fatigue"
+        ],
+        "Active cancer": [
+          "Fatigue"
+        ],
+        "Circadian rhythm sleep-wake disorder": [
+          "Insomnia complaint"
+        ],
+        "Infectious mononucleosis": [
+          "Fatigue"
+        ],
+        "Aplastic anemia": [
+          "Fatigue"
+        ],
+        "Nicotine withdrawal": [
+          "Insomnia complaint"
+        ],
+        "Insomnia disorder": [
+          "Insomnia complaint"
+        ],
+        "Hepatitis C": [
+          "Fatigue"
+        ],
+        "Narcolepsy": [
+          "Daytime sleepiness"
+        ],
+        "Autoimmune hepatitis": [
+          "Fatigue"
+        ],
+        "Generalized anxiety disorder": [
+          "Insomnia complaint"
+        ],
+        "Anemia": [
+          "Fatigue"
+        ],
+        "Major depressive disorder": [
+          "Fatigue"
+        ],
+        "Iron deficiency anemia": [
+          "Fatigue"
+        ],
+        "Disorder of thyroid gland": [
+          "Fatigue"
+        ],
+        "Chronic hepatitis": [
+          "Fatigue"
+        ],
+        "Megaloblastic anemia": [
+          "Fatigue"
+        ],
+        "Persistent depressive disorder": [
+          "Insomnia complaint"
+        ],
+        "Post-acute COVID-19": [
+          "Fatigue"
+        ],
+        "Sheehan syndrome": [
+          "Fatigue"
+        ],
+        "Hypopituitarism": [
+          "Fatigue"
+        ],
+        "Obstructive sleep apnea": [
+          "Daytime sleepiness"
+        ],
+        "Systemic lupus erythematosus": [
+          "Fatigue"
+        ],
+        "Influenza": [
+          "Fatigue"
+        ],
+        "Sjögren's syndrome": [
+          "Fatigue"
+        ],
+        "Metastatic cancer": [
+          "Fatigue"
+        ],
+        "Myalgic encephalomyelitis/chronic fatigue syndrome": [
+          "Fatigue"
+        ],
+        "Insomnia": [
+          "Caffeine consumption",
+          "Fatigue",
+          "Insomnia complaint"
+        ],
+        "Hepatitis B": [
+          "Fatigue"
+        ],
+        "Chronic stress disorder": [
+          "Insomnia complaint"
+        ],
+        "Hashimoto thyroiditis": [
+          "Fatigue"
+        ],
+        "Hyperprolactinemia": [
+          "Pregnant state"
+        ],
+        "Restless legs syndrome": [
+          "Insomnia complaint",
+          "Urge to move legs"
+        ]
+      },
+      "routes_total": 40,
+      "relations_semantics_sha256": [
+        "0324532eb7346eb13e81bae16e062d2b8e1ccb9869fef6cdc6324649c5b30582",
+        "049e7008a0d52c352707b4b63024d67c5371bd650154b3be0b2ae40c9de59ae5",
+        "059369c6253228bcfa89e482bf0daff02b8bcc7db700e2736162373ea6414384",
+        "0630dc8a5ce076dc5390b04c735b0096fcbd1996eac38ba4e074c6fe29fbe1a6",
+        "081e55a1175cd960296c833f853393589c3b6de2c314cfca3b7b9c86b6c3621e",
+        "101a68b517daacf18bb076aa0fe47e80a5a3c96bfe97b1374d40d495c77867fa",
+        "10a29f071708c3c6ca28e72a9c8290c638ffa1c069677da462558b57de6328a6",
+        "11fdd2c047da32c4b3adaa0c8b9a64524175e0688f0929ce8cd8ee6605e5e80c",
+        "163d0a61fdd312b1be05edd578fe622f7550b28e30bd0f23fab484b6e6a71719",
+        "1877194d39ed2f403e42551e6102625a6ad14711562b9e514d51a576ddda9eec",
+        "18c77cda0dfd678261245712191c78d86e831d0bba17941b3840a033e08be6dd",
+        "1a70d6c7cd6acde8ab94860c1ef7395d70456f93598cde1c6a68fa06b93194de",
+        "1abac9c2b16e3f9c41159168fca2f7b59115d78f247cb3a277f8860db995d960",
+        "1ebce82f68728c8d6d9cf76898bd86cd0f9eb6e0323a3861d7bb5451433659eb",
+        "21d350687192f62ab97b023631a2b7a741e69c26e5bd61ac3593bffbdf198544",
+        "2b06e3ce2b004e6a1d369ba9cb688006c84fce028a36c31b81298fb67728a9cf",
+        "2c2c74c6aa6628c4003c3a55beb6cf79a6fb121cd570f6800c9c05bd9fe364f4",
+        "2ef2921f701394549c13a838224f4c382c66c730eddee0bd203edf9001d290ce",
+        "3003b25746badd1f710bbf735567cc13fd25f2677873d8583f9c4cbb2ad1e9de",
+        "35d46d5e10556d50d10b0202d5c7682f385e2b5ac0cef154b2129ad1c501f101",
+        "368bb461a9186f4b7e98328f83be7cfd85c5f362208f607f533183afbe04c3ca",
+        "3f797304a266b15278e643815f32d7207904853b4462f0d12a5d1f95b3876a7d",
+        "42e7b3005f96cf5d47a53c89a4bb89e87a435ed55704ed230217e2e66b8a2ea0",
+        "4334c16044b3675454b54ed96ec7b8bcae032a6cdb4234a748dba81f1c1ca2b5",
+        "4ab7eb657b6bdb598c5ed6638df10b7ee467944aade02ad83b2140fd50ddbb47",
+        "4b9a5c274a80586c12f8a106e53c075780040bb59bdfc8dc3de0bff85b6307ea",
+        "4d9f4209d6818e096f2d0d59b4dff8efc77e774ce49738622edf0256780cee22",
+        "4e04aa7f7f4b4e96536630f33dcf5063008a5935d77ea7398d1733ba33f7b266",
+        "4f704ef368600cc12d3a4013996de42c846cc491e3d5fefbada93bf2d62f20ee",
+        "554bd9ac287c888b877e16d9c19d73e93c4481d3ca625586bdc09b9dc6c6e769",
+        "584303c872c42bcd9ebbef94a5820d4d86f41ae4d5dc37283c5f4dc219a15043",
+        "58be0a3261fcd90e6e6db4b4b1d492222cddcb5dab1e15c169e9bbf7e67b9ee0",
+        "5ccbb4c684a379191458dbd603e9336a91ebafeb9e69405d920e8c94b3beb278",
+        "5ce3751f004b51e1e01d5f51543403631b3c91c0a64c4ad977cd83ce6ae032ff",
+        "65dcbaf5a716513431eee565468fa7d4b7e245f820d9a596df5a7abdda438fa7",
+        "66d8ae3e9f4d3ea2017d4094d84faf8bc35c4ac5f756356dfae0f1d53e257cc3",
+        "6709918cc107f323c0bd524b56a633cd91e57159f2b3394afb489dc3cc454c71",
+        "68463cb9a90ea44971ff34ecbfe47a6319ced4c9fe79a8c40862273bdc08cdbd",
+        "6fc18067114c5cf0ebc1dabd9317d7b4d62dbaf090595777b5b02a809d7b536a",
+        "71b641b2fc9a2f03bfc009355c80091157ea9fc9e15801f8980374d82b2729ef",
+        "73f48ec65bb42133fad78341d18392e0e5d0e32768caf86d6bece5939c2dee4c",
+        "740d609bc6c9c3e5d23f633fb07679691d24c6e440e365360450a2d4f51ac202",
+        "79dcf4f9c7ff74e549ed6755c3889090abd2a2f495bce795e33c51489f5a609a",
+        "829e3c4b85c5b33375d8231e4512188fda2bc437efe734a438b88339a8c53b1a",
+        "8aa1afa4d18cf7406875fa8324819e01a9abc84713de590fc211a4916fbbffd4",
+        "8ae13a1f4adbf9dc1ad66e65935cdb855d7f29c34bbfe5abd39829da49908207",
+        "8cf1063da8ad22b2851ac07722581f6a2642a0394ae03373c7594d95ef4a74ba",
+        "8f123dcad7c5219fdbba1aae15a33d64a87655d3885506d7a166aefebdac81c0",
+        "9826b9c86dbdba637f72bc332713035d88f60c3d7101d6a1b8a0610ba3fef826",
+        "9b822f31f56ff7e3644ea7514ccb128437204cb448bfa5bffdb05cca56d43d8c",
+        "9bd5d1946e2d1b5131c29154ad70f397005f15f17708d4422e2d153cd65a5acd",
+        "9d4888fae47d095736a910061a50279b145b3e9555b36c4c498950d22aaef9d1",
+        "9d53565b762e42c134246984d42b365e3e11e64bc3c602335d2f358571e5cf76",
+        "a2d072d4abf735d2e1845646adad02ae6475299e676424acca47fdf25abbc320",
+        "aa880a03f9806f42cb08755144ad65cfbea1849ebf805568de087691aa23ed06",
+        "af1cfe7c5383a13f991a8cbde3870e6e737a6d970db280d0face4d19bfe7a8a5",
+        "af31691149d9266244ec70ff43dc7d21281ec460afe89cb803d91b0040e951bd",
+        "af5ea189555e57c62fc83c0f868aa0256076a778b9d1f5b5ed87e9b2d62f7170",
+        "af7169e89241ab889091876d954bb2a1145ce79ce5e0c12654e97ab8e179feda",
+        "b0132f984f2c2f604cbb49b4c8992702dd67a6017fdf031789f729cc3b3f7a44",
+        "b4760a72f623b86089410bb5e6bce0b5d6926379f65de6fd76617519605f68ed",
+        "b4a08605f9c2537bb66e85cd675b4acb31e0e6a8187e213fc427a97038abb00c",
+        "b5b58a0babc2490c2b079e4c522f08a6699ab7519fef02824c4bdc1278025025",
+        "b7ba1c827dbb88413cf1d886492842bfb12a6d64a1495c39bc51c6ecdeeaf52f",
+        "b86740a6d1a0f548c3733af74c1954fcac25953b7f1220203cfba7ac67eb7c8f",
+        "b98d5396cda59f275ecf9de49ca9f5b30179d7416b56cb2da617bb029e63717a",
+        "b9db3e5d1c5a5b73adb16b79705be9e869ac8d019801a7e8d7470d3871e2b90e",
+        "baa11cb913ec964238fe9236399bf595fc6b5265f112c9f0ebb82081f1b0c9d5",
+        "bfab9589686b777ea9cf36fc75ef7b87049598d74f0e14990677073bc2482115",
+        "c24d68e6fae71c2fc725e17c92763bc9c601c707d013aed8134e119f2a6724ea",
+        "c2e0bf5eb47be5dac16d839e6089cfcde279857466d95460d1bd9ccf9ee43213",
+        "c2fa00471391c13baa58dbd181a07a710d305ddcc12bd9a00b542be3a1eac8a7",
+        "c3424697b75f3af3b5a32ae757ca42a0ee41087e85a07261ebec0c81c5b2517a",
+        "c72b78f74dc4ef9886850e68bcb5d37c66ae75f183595ace324bc6a03cf9ee8c",
+        "c74d3361f068610a28d0f7a2ef07979705633e37ba52ece57664fdc62fdce657",
+        "c9f3b086c62a262d6051228190488dc874fbe2511cbf521c4ab405e46b66324d",
+        "ca543895a38d33dd8453a5024e0928ee68723ac07cc9d6fa0c102d48d9e5dbe4",
+        "cd3ced032be2ef65ec1eb64b8d4b92d28e53cea41574a437e33c336b6b7d33e6",
+        "d066f7d50b5e65a3b0345a85cb41953c28266d6a7efda02ef3be7742ee5893ee",
+        "d80485b69d15fac40364a2df8f0b9eb0bc0ce9f8ba55ef46aefb1279be277e2a",
+        "dadda36cb7fb5514b1834da2a6dc35148871c1dd681101749df1187f56b6eed7",
+        "dc395cf77479af0f3d2624609504818297bbc9103876bdbbe92ae3e4933749ae",
+        "de52a001a5d1cc5b39052440b495cbe7a71c7c89175e9dc773450f4b5d333468",
+        "e4a7aab920abc314c6d514874f2e09e46265b7207be60363ae8ad3fc51833125",
+        "e5d6225f4c3b2281c837746bfabc3ed5ecbe860fe40cafa6c256711ac8cb1e5d",
+        "eb330f9020cb6f31ec276411fe257829af71e30821ec71d239c4cc31addf9bd4",
+        "eb89d675d285628835e59913de2901ecbc2b472f8ff2d6f8181221153ece03a8",
+        "f4064b03b5b5a347a80bc366565a85fa2cd617b1c643a3a7d400592a25ffd877",
+        "f585a5d3c3fe1a163f1825ac3cbf0fe8e06067804c3f84ad9b001f242f8037f8",
+        "f5acf1d70bb9d60c07b8a69990817fec71cded462835f85c78365e0860efcce2",
+        "fab3a4ff1a1f4c8614774c487f6b690a27c9d1721583c007962e07e397ec90cc",
+        "fb86dd0950fc02a1c3372a440522a82dce29af0e351f9bedb345d4329faf9f28",
+        "fc11ce372f6753588bff16985208fc003ffd6bb9240085ed6730f4c1568ef138"
+      ],
+      "isolated_absent_recall": {
+        "Habitual snoring": 0,
+        "Fatigue": 0
+      },
+      "saved_evidence_sha256": {
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/started": "5c76272c196abd033196a8d3338d28eb7f5b5fddb7b540bd30e3940d5b840aa1",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/result.json": "2cffd333d5818373083eb64f136cfb8228a50f1245f08adee0664b59057c717a",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/runner.log": "3208d281f889592b2351ad5e40004d83b9dfe4a5f73f005c0fe68ef969c8a443",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/ended": "394fc4e566a574b063100132e5aa8f04329ff316c05a3388499f4578948cf64d",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/status": "6da5b18878e110928643ebcc38dbb7552cf3a296eea56493e23edc2b93eecff8",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run-id": "910bd88e9189ac1f5fd5304d952d639158ff01ff30772e376294d001dfb04cdc",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run.args": "b7f9d7f33c715e8d06a04268280abd613807f55cf701d8bf33391b992bf46089",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/report.html": "be944d7f9208961ae250fce4476b201d84d30a27e8ae8684b7083b6cf4b47aee",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/inspection.json": "57b55890806c08c6575e6712be755825803f4d62a9d5e68bf2dd94c3807c8b36",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run.json": "4e86516d70079b848812802064483ec7db24ec66725f5d3cef06d5457092dd56",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/exit-code": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/stderr.log": "ca3782e115e959bb14594a659a91eccdadb2851b743854710d159ed50733f9f8",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/trace.jsonl": "4fc6fb5879036b1af1ab1e59175d0768fa8ad2daafecf8d2444f7ba5cb953800",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/process.json": "850c5d290b691140eecec7be3cd31b95e01913e6bad178213a0e3625c7855a45",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/summary.json": "75a36d87198d06c84e93a5acdfac6d5d893a89323a6605350e39a32685fad87d",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/model-calls.jsonl": "1dd47e2dc7237f80db4dfd1014226b73414b16e89319ea813febf5f49d1a720c",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/transcript.json": "b11ee9c959ccfc8b7a57bf5ffc48a64bcd64874e3c5625d0a814320436a5de08",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/requests.json": "e967752f9d59bf40857ea466f19afeb187dfa4b1eb1b6efded077b2298f33107",
+        "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/nova-requests.jsonl": "69bebf5965d2f2a755ceaae74f890bb05873b8d982739d436230835031cf9da2",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/started": "b4fa2d2d30a92ab002fd275a0df5f7f15eb215ee6446acaacd1042389e09ead0",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/result.json": "c5947395bc6c79c40edb8ba591f21f83229c8652572756f61d4a02d8329b1e1a",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/runner.log": "61d4388ec5481fee77bcd62280bf560488156f10babe2fda727a7bb94dff2b56",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/ended": "a755125218537168688c26284fef2ffdad48edb0428afac841f67973d25b52b5",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/status": "6da5b18878e110928643ebcc38dbb7552cf3a296eea56493e23edc2b93eecff8",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run-id": "dc1eaf099ba3ea0e049b3a038553a650125c045caded9719edba5d6439f99d79",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run.args": "b7f9d7f33c715e8d06a04268280abd613807f55cf701d8bf33391b992bf46089",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/report.html": "c0c47ed3ef7da2b973833ae7a3f4cc62d3ed8832e7eb504ae296b31f7528424e",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/inspection.json": "5e6d5e93c6d94b5dccfdf14e3f89ddc22c980c6faa78689867120bc3c2b2f0a4",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run.json": "b600406816a5e397245a82a5617243ee016c7e3c6b50daf8042329e23e279305",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/exit-code": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/stderr.log": "f63430938da76a2dbf066f90f1fca5629a42df6b0dfea577d82b27f051b5cc95",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/trace.jsonl": "b7c37480b3fef19c553f8a12d41a96471454b8b00bafb9763ac2018ec5277473",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/process.json": "2eb82ee29d86c527b4863d06bb0a044992b8d5f42f56e7ecebf541804284f682",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/summary.json": "f27de7dc8b77b625b96577489ec5c8ceb329522a12e0c1c3e06902054acd0e1a",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/model-calls.jsonl": "978258208a2300303d886a0b76cb0d6075766f40b833c54effe8d4e99a0eee37",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/transcript.json": "48049cf13879981debf6af70760d4c667e883150a7a49dcf8d1f3525013676f3",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/requests.json": "b53184c53da5c2a273ef96d27133016eb06fc4cb13065762209fbff0d5d25433",
+        "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/nova-requests.jsonl": "a3af1cc811494be9f75be1c82afd44c6a8a0124844fc834f6b07e62c58772718"
+      },
+      "manifest_sha256": "a4c10f3a897485c1d4eb57ad8dc35e9d60dcb59e4d14a5d8ae5ef54f2ebbb2eb",
+      "build_id": "87e8b4c54b0689453cea91b3bb316290",
+      "asset_sha256": {
+        "schema": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+        "vocabulary": "23ae78abea1dc55c1d48545feba0fbe54d0516a1f2c5335bc4fc30beed5f1af8",
+        "clinical": "69d37b3c92faf3312378b24d8bf984112cbf538dd456a62c023d780f860a2d9e",
+        "questions": "66f0426172d1a6c761a3f553314e9f7ebecd1784b1fb7f786beaf7091e5f0561",
+        "guidelines": "8f0e9b1e937aecc4df73d955924505730fcd0aecf8e8ce57e3fbd5edc41d0c85"
+      },
+      "guideline_distribution": {
+        "old": {
+          "related/background_only": 1280,
+          "exact/care_navigation": 447
+        },
+        "selected": {
+          "exact/care_navigation": 555,
+          "related/background_only": 1172
+        },
+        "changed_sets": 98,
+        "changed_order": 240
+      }
+    },
+    "comparison": {
+      "tasks": {
+        "saved_c01_clinical_rank": {
+          "before_characters": 64355,
+          "after_characters": 51204,
+          "before_bytes": 64357,
+          "after_bytes": 51206,
+          "before_dangling_facts": null,
+          "after_dangling_facts": null
+        },
+        "saved_c01_clinical_action": {
+          "before_characters": 51431,
+          "after_characters": 44424,
+          "before_bytes": 51433,
+          "after_bytes": 44426,
+          "before_dangling_facts": null,
+          "after_dangling_facts": null
+        },
+        "saved_c01_clinical_decision": {
+          "before_characters": 82042,
+          "after_characters": 62999,
+          "before_bytes": 82044,
+          "after_bytes": 63001,
+          "before_dangling_facts": null,
+          "after_dangling_facts": null
+        },
+        "saved_c01_plan": {
+          "before_characters": 209889,
+          "after_characters": 208697,
+          "before_bytes": 210591,
+          "after_bytes": 209399,
+          "before_dangling_facts": 5,
+          "after_dangling_facts": 0
+        },
+        "saved_c01_plan_repair": {
+          "before_characters": 209995,
+          "after_characters": 208803,
+          "before_bytes": 210697,
+          "after_bytes": 209505,
+          "before_dangling_facts": 5,
+          "after_dangling_facts": 0
+        },
+        "saved_c01_mouth": {
+          "before_characters": 12691,
+          "after_characters": 12506,
+          "before_bytes": 12692,
+          "after_bytes": 12507,
+          "before_dangling_facts": 5,
+          "after_dangling_facts": 0
+        },
+        "saved_c01_mouth_repair": {
+          "before_characters": 12833,
+          "after_characters": 12648,
+          "before_bytes": 12834,
+          "after_bytes": 12649,
+          "before_dangling_facts": 5,
+          "after_dangling_facts": 0
+        },
+        "saved_c01_announcement": {
+          "before_characters": 13558,
+          "after_characters": 12503,
+          "before_bytes": 13559,
+          "after_bytes": 12504,
+          "before_dangling_facts": 5,
+          "after_dangling_facts": 0
+        },
+        "saved_c01_announcement_repair": {
+          "before_characters": 13693,
+          "after_characters": 12638,
+          "before_bytes": 13694,
+          "after_bytes": 12639,
+          "before_dangling_facts": 5,
+          "after_dangling_facts": 0
+        },
+        "fixture_ear_initial": {
+          "before_characters": 300,
+          "after_characters": 207,
+          "before_bytes": 300,
+          "after_bytes": 207,
+          "before_dangling_facts": null,
+          "after_dangling_facts": null
+        },
+        "fixture_ear_reply": {
+          "before_characters": 846,
+          "after_characters": 846,
+          "before_bytes": 886,
+          "after_bytes": 886,
+          "before_dangling_facts": null,
+          "after_dangling_facts": null
+        },
+        "fixture_ear_exam": {
+          "before_characters": 5393,
+          "after_characters": 5393,
+          "before_bytes": 5947,
+          "after_bytes": 5947,
+          "before_dangling_facts": null,
+          "after_dangling_facts": null
+        },
+        "fixture_mapping": {
+          "before_characters": 296,
+          "after_characters": 349,
+          "before_bytes": 308,
+          "after_bytes": 361,
+          "before_dangling_facts": null,
+          "after_dangling_facts": null
+        },
+        "fixture_mapping_repair": {
+          "before_characters": 354,
+          "after_characters": 407,
+          "before_bytes": 366,
+          "after_bytes": 419,
+          "before_dangling_facts": null,
+          "after_dangling_facts": null
+        }
+      },
+      "common_candidates": 37,
+      "identical_common_python_evidence": 37,
+      "removed_candidates": [
+        "Adenoiditis",
+        "Atopy",
+        "Depressive disorder",
+        "Eclampsia",
+        "Ectopic pregnancy",
+        "Eczema",
+        "HELLP syndrome",
+        "Kidney disease",
+        "Nephrogenic diabetes insipidus",
+        "Obstructive sleep apnea syndrome",
+        "Placenta previa",
+        "Placental abruption",
+        "Postpartum depression",
+        "Pre-eclampsia",
+        "Preeclampsia",
+        "Preterm prelabor rupture of membranes",
+        "Pulmonary embolism",
+        "Schizophrenia",
+        "Secondary hypertension",
+        "Spontaneous abortion",
+        "Threatened abortion"
+      ],
+      "removed_route_diagnostics": {
+        "Adenoiditis": [
+          {
+            "target": "Habitual snoring",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Atopy": [
+          {
+            "target": "Allergic disposition",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Depressive disorder": [
+          {
+            "target": "Loss of capacity for enjoyment",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Eclampsia": [
+          {
+            "target": "High blood pressure",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "Abnormal vision",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "Seizure",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "Headache",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          }
+        ],
+        "Ectopic pregnancy": [
+          {
+            "target": "Pregnant state",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Eczema": [
+          {
+            "target": "Allergic disposition",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "HELLP syndrome": [
+          {
+            "target": "High blood pressure",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "Abdominal pain in pregnancy with increasing intensity",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "Abnormal vaginal bleeding",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "Jaundice",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          }
+        ],
+        "Kidney disease": [
+          {
+            "target": "History of kidney disease",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Nephrogenic diabetes insipidus": [
+          {
+            "target": "History of kidney disease",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Obstructive sleep apnea syndrome": [
+          {
+            "target": "Habitual snoring",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Placenta previa": [
+          {
+            "target": "Abdominal pain",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "Vaginal bleeding",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          }
+        ],
+        "Placental abruption": [
+          {
+            "target": "Pregnant state",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Postpartum depression": [
+          {
+            "target": "Loss of capacity for enjoyment",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Pre-eclampsia": [
+          {
+            "target": "Pregnant state",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Preeclampsia": [
+          {
+            "target": "Abdominal pain",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "Headache",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "High blood pressure",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "Blurred vision",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          }
+        ],
+        "Preterm prelabor rupture of membranes": [
+          {
+            "target": "Pregnant state",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Pulmonary embolism": [
+          {
+            "target": "Dyspnea",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          }
+        ],
+        "Schizophrenia": [
+          {
+            "target": "Suicidal ideation",
+            "applicability": "matched",
+            "feature_statuses": [
+              "contradicted"
+            ]
+          }
+        ],
+        "Secondary hypertension": [
+          {
+            "target": "High blood pressure",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          }
+        ],
+        "Spontaneous abortion": [
+          {
+            "target": "Vaginal bleeding",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "Pelvic pain",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          }
+        ],
+        "Threatened abortion": [
+          {
+            "target": "Pelvic pain",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          },
+          {
+            "target": "Vaginal bleeding",
+            "applicability": "contradicted",
+            "feature_statuses": [
+              "unknown"
+            ]
+          }
+        ]
+      },
+      "source_relation_semantics_subset": true,
+      "routes_before": 70,
+      "routes_after": 40,
+      "isolated_absent_recall_before": {
+        "Habitual snoring": 3,
+        "Fatigue": 27
+      },
+      "isolated_absent_recall_after": {
+        "Habitual snoring": 0,
+        "Fatigue": 0
+      },
+      "compression": {
+        "projected_characters": 62999,
+        "projected_utf8_bytes": 63001,
+        "repeated_expectations_characters": 67662,
+        "repeated_expectations_utf8_bytes": 67664
+      },
+      "guideline_distribution": {
+        "old": {
+          "related/background_only": 1280,
+          "exact/care_navigation": 447
+        },
+        "selected": {
+          "exact/care_navigation": 555,
+          "related/background_only": 1172
+        },
+        "changed_sets": 98,
+        "changed_order": 240
+      }
+    }
+  },
+  "measurement_boundary": "Measure local serialization characters and UTF-8 bytes only; do not infer provider token usage or context capacity",
+  "artifact": {
+    "path": "Tmp/d54-2026-10-21/final/ontoward-submission.zip",
+    "sha256": "37b04f63a4191e8a60cdbe26c26bcc041d3aefd8978e44c60ef48892768dd903",
+    "files": 89,
+    "kind": "synthetic_protocol_fixture",
+    "production_submission": false
+  },
+  "runtime_source_sha256": {
+    "run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+    "requirements.txt": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01",
+    "nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    ".env": "9c2e46b5b22e0f0c47f026cb0cc5a047b10b8cabc7e44e625640513cf6cf6595",
+    "settings.py": "8a1b8d095a7da79558c5638def738d5d4c586d83b0b1b67f0a500c7510fc17bf",
+    "config/texts.ko.json": "5e9ea2af6114a2da71133e825f2c851c717a227ce8e789e09d565ab91348cad1",
+    "config/prompts.json": "5f9dcbb4b228403c84bc9be4690dca831bbda768830e171848f9b0d324715e6f",
+    "knowledge/graph.py": "b430843472d73afd9fdeb220176a8e3e737cae0e7b0b75048c91ec6b1bd10bec",
+    "knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "knowledge/conditions.py": "8a24ac94772538ddba59c6bb962efab68fc4bb24181de2a11060d2406819ee2a",
+    "knowledge/manifest.json": "a4c10f3a897485c1d4eb57ad8dc35e9d60dcb59e4d14a5d8ae5ef54f2ebbb2eb",
+    "knowledge/guidelines.py": "f2855176cb175967df15deaee6bdcdeeacf7d07491ebb33c4bdf5c84e8d097ba",
+    "workflow/model_context.py": "33f0bd75bc58664a344ebd0ea1ed7285c8044d7ca90d724c780798e036610092",
+    "workflow/consultation.py": "31dd3180473c16c3d929375c6cde285c8485ea5ba27467ad590886d3b7315629",
+    "workflow/doctor_mouth.py": "475ae7bf651f74252f406245574515d6069459b15473b45796bbe6ceee67612d",
+    "workflow/doctor_ear.py": "ac68808070631a892f35560a3539bf9d0de797c00d5935938b3da01c344195c2",
+    "workflow/input_types.py": "f7c487dd587e9b0725085c3fc71a5cbd7f1644e1b27359881f1f847fa8faa930",
+    "workflow/text_config.py": "81007fcf36b5668b97d495ed1cd0249213771968ff645c07ab021c9f98fe77b5",
+    "workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workflow/education.py": "c896389142875b7a7560fcd3c31e5bdcf6c59dee72683cad29d6e02443d2ae9c",
+    "workflow/submission_writer.py": "8b7e4953ea3e8c2aac6548b8450f99de5080c9fa8ce4b4003fec7280886e6af0",
+    "workflow/runtime.py": "2be3ee090254b472cd926dc3254fca07ac38d63d552e8037b3ee8ac22f3358ed",
+    "workflow/output_types.py": "af24b35d0a1195889f1e1b256b6eb2d24f422ee46e7f89794cf979953eaf184a",
+    "workflow/doctor_brain.py": "6ec2d9c23d18215521f6275a2182ef4ef0c373a32030a3a29ae3dc24ae141c6d",
+    "config/prompts/clinical_action_output.txt": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769",
+    "config/prompts/session_differential_diagnosis.txt": "25286d10199c3a2aaced6785dcbb8e918b2cc36be873177d8ac0d9b01f1d86e5",
+    "config/prompts/session_initiation.txt": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d",
+    "config/prompts/mouth_plan.txt": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538",
+    "config/prompts/plan_common.txt": "7c73629f7b146932e95de00854b62759ea39b564726ee0b0fe7d4ba117c752bc",
+    "config/prompts/plan_repair.txt": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3",
+    "config/prompts/session_context_factor.txt": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9",
+    "config/prompts/input_reply.txt": "9619bf9e29c185ae9045bea7b19c631dc4f6fc0fbf2b28a1c75fcca5e447cefb",
+    "config/prompts/mouth_disease_notice.txt": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4",
+    "config/prompts/clinical_rank_output.txt": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0",
+    "config/prompts/input_repair.txt": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3",
+    "config/prompts/clinical_ranking.txt": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29",
+    "config/prompts/clinical_action.txt": "98cbc6547ecb7d84e91589557ab5e44d8e489dfaaa8a9048d55029445f6dddc8",
+    "config/prompts/input_common.txt": "4e7105059e96f251de19496c957791eafd1001afbff1f5c28aaa61b45e51bb97",
+    "config/prompts/input_chief_repair.txt": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d",
+    "config/prompts/plan_output.txt": "9c6373c4758e052243124b37faea78633fe2d230787cc9bf2a688158383010ce",
+    "config/prompts/session_chief_complaint.txt": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54",
+    "config/prompts/mapping_common.txt": "2bc48cedc9021323beeb52248e6cace47ad81e9ee211dd5def9672eaa8b0b1b6",
+    "config/prompts/input_fields.txt": "e10ffed09056a14244d6c09e2cc9e0036ff2b8cfd7cfd2b83e42144e97d68dc7",
+    "config/prompts/mapping_select.txt": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36",
+    "config/prompts/clinical_common.txt": "7d61c8f427274324ea015a42e10ba981e8171463e3d582aded574d6ce1a641e2",
+    "config/prompts/plan_complete.txt": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4",
+    "config/prompts/clinical_repair.txt": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2",
+    "config/prompts/input_rows_repair.txt": "f2f472dc9c9cbd5d2d3de9361c0dec68c5705cd45b016aca3e558ecef52b7366",
+    "config/prompts/input_exam.txt": "9272db7d9b9a47381b7459ccca79143a3603b029519255057e03a917b509452b",
+    "config/prompts/mouth_output.txt": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739",
+    "config/prompts/input_initial.txt": "6b9cf8fa8f2b5da80014756067b049bd79027a8437787f2b949f801b10bc521a",
+    "config/prompts/mapping_repair.txt": "9e248b59b4374651e34ca3be4f1b5b33a9efe8b1c5ecf0ad373443d42b1bc1d6",
+    "config/prompts/mouth_common.txt": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19",
+    "config/prompts/clinical_decision_output.txt": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25",
+    "config/prompts/mouth_symptom_notice.txt": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493",
+    "config/prompts/data.txt": "be9dc59c6a2496ac9b392f9f0a246abeaf91be73cb2ae602d8ca0aa890de9f65",
+    "config/prompts/mouth_response_repair.txt": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31",
+    "config/prompts/mouth_text_repair.txt": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5",
+    "workflow/io/nova_session.py": "1e30df7153cb92e8deb58b99e39a8a669f873ffabe0482215aecb14e35dd686c",
+    "workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+    "workflow/state/models.py": "2f8ba98adf8ea65899965a22e2b4f65ac30d7cda85bd49875b8057d70209e2fb",
+    "workflow/state/questions.py": "1ef702194bf0137e22b3d831204abba2423404d8df7badd0f69f1622784dd25d",
+    "workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workflow/state/interactions.py": "386f54838b85506da0a477ace5269d76458b6dc58a473a928e4e6a0dddfbe5d0",
+    "workflow/state/evidence.py": "6a121ea121d85e46b8de82db8e9e08515176ad27be99e10fd86a8477bde14029",
+    "workflow/state/usage.py": "2a54856accb8fa9cfb62557d60b33f42c7dc0e8bd168b4995976321809c9cefb",
+    "workflow/sessions/differential_diagnosis.py": "c98ca038a777560832feb60d53d52e636006cf65f6eda4d95e5cef36d022275a",
+    "workflow/sessions/chief_complaint.py": "d99294957a0e74a800d49072ede3050a30bc8f5bbd823253925787bda0cfbd7a",
+    "workflow/sessions/initiation.py": "b9acc707231e29f3f9c445c537809b0985f3df975be989c9ff94b838a53f6bf3",
+    "workflow/sessions/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workflow/sessions/education.py": "486c826acc7b269fd5551d9d2ed45d2a371b81051035b4e4eb1324aece50a506",
+    "workflow/sessions/context_factor.py": "a66d47c0a4628498ebcdbf15723950460fd97715dfc7d67879fa8987dd8cbf75",
+    "workflow/rules/assessment.py": "ebb0a40ecadf6e22b87cd1c2be63205753d65fa970dd2f3032d5d939b0b194ad",
+    "workflow/rules/limits.py": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a",
+    "workflow/rules/budget.py": "b470e90c4709fea6af924928b9082f69aa316bd2dc4d9f9b5c1f1f841c387806",
+    "workflow/rules/submission.py": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267",
+    "workflow/rules/questions.py": "0dab7769c5eb3dba1ae6a0af3009c34b82c9750f51beb95ab1b9c51819f68f10",
+    "workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workflow/rules/decision.py": "8245534323bc480406c4b909e8452aa9789c77899d358b1c17fad2aedfa40bcb",
+    "workflow/rules/action.py": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb",
+    "workflow/rules/input.py": "23bc29c0586e8fa6e08c4013da44d480e9e1b83567e809ff96e4fdf88e682d9a",
+    "workflow/rules/collection.py": "ff2d5d755e9c2393a4a7bf2df7624d5e68dcde5188e319f668c9e3529f045048",
+    "workflow/rules/normalization.py": "a0d50523eb1dabd0217c48d9c5a59d0c0a948214e6f5305fe87d04cb15a1814a"
+  },
+  "protected_sha256": {
+    "submission/run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+    "submission/requirements.txt": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01",
+    "submission/nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    "submission/knowledge/manifest.json": "a4c10f3a897485c1d4eb57ad8dc35e9d60dcb59e4d14a5d8ae5ef54f2ebbb2eb",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/questions.ko.json": "66f0426172d1a6c761a3f553314e9f7ebecd1784b1fb7f786beaf7091e5f0561",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/guideline-index.json": "8f0e9b1e937aecc4df73d955924505730fcd0aecf8e8ce57e3fbd5edc41d0c85",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/manifest.json": "7058fd9121aa82fd120cdd802374137ce69b054153e6d70e3d52864ac764e549",
+    "Extraction/requirements.txt": "81796ac0f9dfb486bc57301821e97bebb2a1028921da12e0b5df2819dc8127a4",
+    "Extraction/config.json": "7ad2974511e475f65c0dc0bf3a2684b4a617a1021e742277ff638f0777fdf980",
+    "Extraction/config.sol.json": "e8ddb440b1ce3494f5115ff57d83e4a6dabd97d5f9493368fcdd661a12535769",
+    "Extraction/config.api-luna.json": "9e7bf6f5f834f227c25f9b96ceca40b07c62054a97c7d36d4c75be4b9a99e778",
+    "Extraction/README.md": "bf54137784f3762ae0196766d868916265b3af3ba0a6f2f47d8431fff50adf4a",
+    "Extraction/compose.yaml": "6921926ce432a0ec59af476c1f713cd04315a420aaf2e0ee6aec6d435dfe911b",
+    "Extraction/AGENTS.md": "12b098d2f3c7a252808044a60e1cf00bba3ca54a91a10bcbac488b9877fbdcae",
+    "Extraction/DATA_USE.md": "b459df06c2faba2c8516becee985c4661e8b179f5f89e0466b8b4c42851def7d",
+    "Extraction/tests/test_draft_packet.py": "5fb110ec46228d1edb90b6688a0cba6b4163ef2ee668e8f1060265d40a9607dc",
+    "Extraction/tests/test_job_packets.py": "26b9ea7bb0efdf4c119973662cec5d9eaa0287d5af726bcc7132cf6678afa510",
+    "Extraction/tests/support.py": "001bc0ccd43757e9c21d80f6760a609e1b721f3bbb74a7852ef78a06a0bf64ca",
+    "Extraction/tests/test_role_identity.py": "2ab3c1d57372c316a72300c53b5b5af9ea47d56c6b07c2d81fc23098e2ead07e",
+    "Extraction/tests/test_providers.py": "cf47dbfa43336a139497444c69ccc8e39dfeaa1949257df99219de591913a3fb",
+    "Extraction/tests/test_draft_endpoints.py": "ecdb5e2eeb3f941fc3bdb923863159776867f189cdf0989bde9928da01fb722d",
+    "Extraction/tests/test_extraction.py": "c541445bf84d36b3e6e7edea16e9905a4cf8cd141e50854ae29578fbdab597e3",
+    "Extraction/tests/test_normalize_recovery.py": "85dab9b8fc09cf7af7db10a7746044011d80ebad5cd0f0d27da345756baac52d",
+    "Extraction/tests/test_provider_retry.py": "ea978fe30e356ac2eeab966a155002ce45d944b7eef655b23d3f451f5ada4008",
+    "Extraction/tests/test_provider_switch.py": "608c5e5ad7ba2574f84959e054b2f7a023c986451faf0d36ccc4eda80b826209",
+    "Extraction/tests/image_acceptance.py": "e0c0927ea1431d1818c8130cd853296303b24c35e7447e8acdd33b8d29860374",
+    "Extraction/tests/test_question_output.py": "d185999911a6623aaf25afbfb473c2ab097810d5e897ecec1924318eb66e2cdf",
+    "Extraction/tests/test_patch_packets.py": "559e15688f88d7999fa0501ed7cdef00c17dbc59dc2c60ff19252484c6bfd347",
+    "Extraction/tests/test_korean_phase.py": "f713f4c90d464dcc4c087ce259c699dbbd13f6f395841e54140d580b906e5505",
+    "Extraction/tests/test_index_progress.py": "027d362bf0526ce4c5dd2444075f21660eecae38188a0aabf7729951d61cedfd",
+    "Extraction/tests/test_batch.py": "f8ffc1009951fce07b9c466009f53d85e80bfe22f066815d497be16bbdefaecc",
+    "Extraction/tests/test_empty_source.py": "b70449847f00af20ef7ea397431e6fb2dc90a499556e7b3f0bd9d9c9a90b3998",
+    "Extraction/prompts/questions.txt": "fceb67257990042feaf5b2b2335844e50bc8ac2d880a9b8368d23946de7b0c82",
+    "Extraction/prompts/final.txt": "70e7c3422285b3e4537c18e5c1502031532abfae8d398ab45366828ac6ed9d56",
+    "Extraction/prompts/draft.txt": "29f0cec94addc05682075a59fa2b529e9455efd7b8e9f0ac3924c43fbf077274",
+    "Extraction/prompts/patch.txt": "afc402f9f60cdb135f2c002b83a1b123257a08d4504ff86f1e4a0b8cf56ca0bb",
+    "Extraction/prompts/normalize.txt": "a1bf53ebf5f310a94e3c8715be5700db6d2b4c64313b469456692e0de11f4b0f",
+    "Extraction/ontoward_extraction/build.py": "7cf89ee73466288410bcc312e3f0a93b8777c7b4cadf9e6248a6adedcb30a27d",
+    "Extraction/ontoward_extraction/recovery.py": "1bf1a832254be8296399ac3f333a6333da04c05a35f5cb790153b3e70d0c82b3",
+    "Extraction/ontoward_extraction/models.py": "f4410f71d2ca4b3d074b32059060d21af073c61c2676e2c732c2097b4335afc6",
+    "Extraction/ontoward_extraction/normalize.py": "158f1a1ad9167f614a99e8addbfb4e765c0e59ddc091d2f397bdec0f823f23bf",
+    "Extraction/ontoward_extraction/__init__.py": "b0fa6a1d5eb69c16800185180e7ac1c42cd4df30ef34af3162cbfc8f9cadc597",
+    "Extraction/ontoward_extraction/llm.py": "57df4f093389a6ba4edf352a1a0bdc51c0394d4d5e02baaeefca4a3cc2ad1194",
+    "Extraction/ontoward_extraction/jobs.py": "b4a7e644348af381a7935e6e1e958273f54710c86c71f1df1c3035fd49a34063",
+    "Extraction/ontoward_extraction/inputs.py": "c8f0aee3bb11913c7f9221ea6f64226839407d2c74c05cb84b3330e4f2aa95cb",
+    "Extraction/ontoward_extraction/compile.py": "253209245ccff09d3b3c6dd74a9c5414956ed0f5b45e7b71582808378360c4de",
+    "Extraction/ontoward_extraction/install.py": "e59e68ea4521724b94feb68ba72b116506262e834e183736751d8db53dbea25d",
+    "Extraction/ontoward_extraction/progress.py": "9950cfda223fdf6aa7dcd7d3f0d36cf121035243cb1320c4775dee1970bb8962",
+    "Extraction/ontoward_extraction/verify.py": "b50174706e41e439ed40819b077b09f43bacc1d25e51082764acca742a9a8b6c",
+    "Extraction/ontoward_extraction/__main__.py": "b80467985457fc6f9a87daa9c1de53c69faf9632765d1d42ef06643b8e04c7cf",
+    "Extraction/ontoward_extraction/guidelines.py": "bcf7b88be2d84f5a0c6394c449b613c87480928091e26b30105e98c42f11288c",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/started": "b4fa2d2d30a92ab002fd275a0df5f7f15eb215ee6446acaacd1042389e09ead0",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/result.json": "c5947395bc6c79c40edb8ba591f21f83229c8652572756f61d4a02d8329b1e1a",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/runner.log": "61d4388ec5481fee77bcd62280bf560488156f10babe2fda727a7bb94dff2b56",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/ended": "a755125218537168688c26284fef2ffdad48edb0428afac841f67973d25b52b5",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/status": "6da5b18878e110928643ebcc38dbb7552cf3a296eea56493e23edc2b93eecff8",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run-id": "dc1eaf099ba3ea0e049b3a038553a650125c045caded9719edba5d6439f99d79",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run.args": "b7f9d7f33c715e8d06a04268280abd613807f55cf701d8bf33391b992bf46089",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/report.html": "c0c47ed3ef7da2b973833ae7a3f4cc62d3ed8832e7eb504ae296b31f7528424e",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/inspection.json": "5e6d5e93c6d94b5dccfdf14e3f89ddc22c980c6faa78689867120bc3c2b2f0a4",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/run.json": "b600406816a5e397245a82a5617243ee016c7e3c6b50daf8042329e23e279305",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/exit-code": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/stderr.log": "f63430938da76a2dbf066f90f1fca5629a42df6b0dfea577d82b27f051b5cc95",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/trace.jsonl": "b7c37480b3fef19c553f8a12d41a96471454b8b00bafb9763ac2018ec5277473",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/agent/process.json": "2eb82ee29d86c527b4863d06bb0a044992b8d5f42f56e7ecebf541804284f682",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/summary.json": "f27de7dc8b77b625b96577489ec5c8ceb329522a12e0c1c3e06902054acd0e1a",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/model-calls.jsonl": "978258208a2300303d886a0b76cb0d6075766f40b833c54effe8d4e99a0eee37",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/transcript.json": "48049cf13879981debf6af70760d4c667e883150a7a49dcf8d1f3525013676f3",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/requests.json": "b53184c53da5c2a273ef96d27133016eb06fc4cb13065762209fbff0d5d25433",
+    "Tmp/test-evaluator/C01-20261020T182115Z-7b141c3074/simulator/nova-requests.jsonl": "a3af1cc811494be9f75be1c82afd44c6a8a0124844fc834f6b07e62c58772718",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/vocabulary.ttl": "23ae78abea1dc55c1d48545feba0fbe54d0516a1f2c5335bc4fc30beed5f1af8",
+    "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/clinical.ttl": "69d37b3c92faf3312378b24d8bf984112cbf538dd456a62c023d780f860a2d9e",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/started": "5c76272c196abd033196a8d3338d28eb7f5b5fddb7b540bd30e3940d5b840aa1",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/result.json": "2cffd333d5818373083eb64f136cfb8228a50f1245f08adee0664b59057c717a",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/runner.log": "3208d281f889592b2351ad5e40004d83b9dfe4a5f73f005c0fe68ef969c8a443",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/ended": "394fc4e566a574b063100132e5aa8f04329ff316c05a3388499f4578948cf64d",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/status": "6da5b18878e110928643ebcc38dbb7552cf3a296eea56493e23edc2b93eecff8",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run-id": "910bd88e9189ac1f5fd5304d952d639158ff01ff30772e376294d001dfb04cdc",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run.args": "b7f9d7f33c715e8d06a04268280abd613807f55cf701d8bf33391b992bf46089",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/report.html": "be944d7f9208961ae250fce4476b201d84d30a27e8ae8684b7083b6cf4b47aee",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/inspection.json": "57b55890806c08c6575e6712be755825803f4d62a9d5e68bf2dd94c3807c8b36",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/run.json": "4e86516d70079b848812802064483ec7db24ec66725f5d3cef06d5457092dd56",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/exit-code": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/stderr.log": "ca3782e115e959bb14594a659a91eccdadb2851b743854710d159ed50733f9f8",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/trace.jsonl": "4fc6fb5879036b1af1ab1e59175d0768fa8ad2daafecf8d2444f7ba5cb953800",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/agent/process.json": "850c5d290b691140eecec7be3cd31b95e01913e6bad178213a0e3625c7855a45",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/summary.json": "75a36d87198d06c84e93a5acdfac6d5d893a89323a6605350e39a32685fad87d",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/model-calls.jsonl": "1dd47e2dc7237f80db4dfd1014226b73414b16e89319ea813febf5f49d1a720c",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/transcript.json": "b11ee9c959ccfc8b7a57bf5ffc48a64bcd64874e3c5625d0a814320436a5de08",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/requests.json": "e967752f9d59bf40857ea466f19afeb187dfa4b1eb1b6efded077b2298f33107",
+    "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/nova-requests.jsonl": "69bebf5965d2f2a755ceaae74f890bb05873b8d982739d436230835031cf9da2"
+  },
+  "initial_verification_findings": [
+    "Update protocol fixtures to input_segments and relation/feature expectations; retain independent valid rows and explicit opposition priors",
+    "Correct exact-query index initialization found during final review and add its behavior regression",
+    "Correct capture-only measurement handling of limitation strings and scoped fixture selection before final acceptance"
+  ],
+  "task_B_remaining": [
+    "Correct 432 typed endpoint edges in a new immutable bundle after review",
+    "Review Weight loss Weight decreased Decreased body weight and Dyspnea Breathlessness synonym distribution without alias-only merging",
+    "Correct compiler endpoint emission and activate strict loader only with a verified corrected bundle",
+    "Preserve parent bytes and full Pattern/applicability/question/value ownership and refuse uncertain merges"
+  ],
+  "not_run": [
+    "additional_API_LLM_NOVA_calls",
+    "extraction_resume",
+    "actual_model_quality",
+    "clinical_validity",
+    "fresh_C01_C10_provider_acceptance",
+    "official_evaluation",
+    "production_packaging",
+    "publication",
+    "commits",
+    "push",
+    "deployment"
+  ],
+  "modified_files": [
+    "AGENTS.md",
+    "DECISION_STATE.md",
+    "Dev/AGENTS.md",
+    "Dev/README.md",
+    "Dev/tests/workflow/audit_links.py",
+    "Dev/tests/workflow/fixtures.py",
+    "Dev/tests/workflow/test_brain.py",
+    "Dev/tests/workflow/test_d49.py",
+    "Dev/tests/workflow/test_d54.py",
+    "Dev/tests/workflow/test_delivery.py",
+    "PRD.md",
+    "PROJECT_STATE.md",
+    "README.md",
+    "Test/AGENTS.md",
+    "Test/models.py",
+    "data/AGENTS.md",
+    "data/PROJECT_STATE.md",
+    "data/provenance/algorithm-d50-5-2026-10-21.json",
+    "data/provenance/runtime-link-audit-2026-10-21.json",
+    "submission/AGENTS.md",
+    "submission/PROJECT_STATE.md",
+    "submission/README.md",
+    "submission/config/README.md",
+    "submission/config/prompts/clinical_common.txt",
+    "submission/config/prompts/input_initial.txt",
+    "submission/config/prompts/mapping_common.txt",
+    "submission/knowledge/README.md",
+    "submission/knowledge/graph.py",
+    "submission/knowledge/guidelines.py",
+    "submission/settings.py",
+    "submission/workflow/doctor_ear.py",
+    "submission/workflow/doctor_mouth.py",
+    "submission/workflow/education.py",
+    "submission/workflow/rules/assessment.py",
+    "submission/workflow/rules/decision.py",
+    "submission/workflow/rules/normalization.py",
+    "submission/workflow/rules/questions.py",
+    "submission/workflow/sessions/chief_complaint.py",
+    "submission/workflow/state/evidence.py"
+  ],
+  "changed_test_and_document_sha256": {
+    "AGENTS.md": "77fd9010f3aa3e2a244b4cf2294ba5784057370140c85ad6e1ed7ac0ceacfd86",
+    "DECISION_STATE.md": "b1420c132ff4b94fcd1bf1af0826b99f073e6c6cd16613b92e661cc38cee4d52",
+    "Dev/AGENTS.md": "36b4952d0df31be1d3129e3b51ec505cdf9bac23312c9dbdf3f73bdda4a49adb",
+    "Dev/README.md": "c5abea2a1b2d342d95ad01bc7c9c915c9ea5dba0f49f960ffb758d5658c4559a",
+    "Dev/tests/workflow/audit_links.py": "0ca1826d8bbd5992ce97d3998fddea6a2044bddc6754ccf06513674a495b68b3",
+    "Dev/tests/workflow/fixtures.py": "837eafa0e21c5d6e3bc0937f0296c1d5eeb511adf5527c8fc09f37dede7d4ef1",
+    "Dev/tests/workflow/test_brain.py": "015d555c05295aeee676cf47823d7191bbdc07049972314a55a19142e43db160",
+    "Dev/tests/workflow/test_d49.py": "3b6479a4f20a4ae59ef75ad9a0fba4acb221e692afccf87852f55319c04d2855",
+    "Dev/tests/workflow/test_d54.py": "8eacabd4044a29a7e5337ea1f69abc6e5890719effc14b0ce90d863d11bb9472",
+    "Dev/tests/workflow/test_delivery.py": "6f4e3886fc6d5fd1d794e4ff38866f51910837a3812fed99141faa1524e05799",
+    "PRD.md": "f133e6e64c588ad7198aba1aebc9566619bdaa410fe2df389d7c6266eb7168ef",
+    "PROJECT_STATE.md": "cbcdc49c5fd01c9abd505aeed9699cdce08bb189841a3420832ffc351339646c",
+    "README.md": "f2f1e50315f8af6c461a0a9ee9038a0d47879437743549b017e31729da8e1a12",
+    "Test/AGENTS.md": "713bbe18f1c721da71c04b261a03f85f728f85d14a3555cee6bd59d719064a74",
+    "Test/models.py": "d51d53b6988b34ce7b70604abbe1f2672884c8ea2d8ca3d1d1be0f74b259548a",
+    "data/AGENTS.md": "dbd85da9a09a3d0a184be45a9c7cacdaf74b698b43f69e48e14fc127e41c878c",
+    "data/PROJECT_STATE.md": "6ad38b647219c71b5ebfc0cb0ebaecfa06a5ba42ae487b6208eca703ee86caf1",
+    "submission/AGENTS.md": "db0a6526ad94c39e848aabf33374a3a5f23b77e2f57656287eec10b54b5b68ea",
+    "submission/PROJECT_STATE.md": "3f696b0d077e5552877b3400e681c8b0645276ad8536c1d1b0ce956e976fbed0",
+    "submission/README.md": "ea4959f08ad968e87f691c738da420ca4e013204680813436e3fb4f228d5c412",
+    "submission/config/README.md": "b9834ac32bbc99c4fbd62cf3a0a936dcb170490229f1c1388a1ff3360d1835e4",
+    "submission/knowledge/README.md": "7b22b5b5dcaa362c58428a8303fea9e1023de0afd172165580a50e5557c0d9df",
+    "submission/knowledge/graph.py": "b430843472d73afd9fdeb220176a8e3e737cae0e7b0b75048c91ec6b1bd10bec",
+    "submission/knowledge/guidelines.py": "f2855176cb175967df15deaee6bdcdeeacf7d07491ebb33c4bdf5c84e8d097ba",
+    "submission/settings.py": "8a1b8d095a7da79558c5638def738d5d4c586d83b0b1b67f0a500c7510fc17bf"
+  }
+}

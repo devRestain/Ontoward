@@ -115,6 +115,9 @@ class QuestionTools:
 
     def _spec(self, state, target, attribute=None, observation=None, episode=None, *, purpose='feature', field=None,
               subject='patient', time_context='current', subject_member=None):
+        if attribute and (not self.knowledge.has_type(attribute, 'FindingAttribute')
+                          or attribute not in self.knowledge.get_symptom_attributes(target)):
+            return None
         exam = self.knowledge.has_type(target, 'ExamFinding')
         if exam:
             if subject != 'patient' or time_context != 'current':
@@ -223,7 +226,10 @@ class QuestionTools:
             kind, name, attr, subject, member, timing, observation, episode = key
             target = next((ident for t in ('Symptom','ExamFinding','ContextFactor')
                 if (ident := self.knowledge.term_id(name, t))), None)
-            spec = self._spec(state, target, self.knowledge.term_id(attr,'FindingAttribute') if attr else None,
+            attribute = self.knowledge.term_id(attr, 'FindingAttribute') if attr else None
+            if attr and attribute is None:
+                continue
+            spec = self._spec(state, target, attribute,
                 observation or None, episode or None, purpose='context' if self.knowledge.has_type(target,'ContextFactor') else 'feature',
                 subject=subject, subject_member=member or None, time_context=timing)
             if spec and self._allowed_now(state, spec):

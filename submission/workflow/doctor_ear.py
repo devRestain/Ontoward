@@ -79,7 +79,10 @@ class DoctorEar:
         refs = list(dict.fromkeys([*(f['source_ref'] for f in records), *(row['id'] for row in reversed(self.dialogue[-2:]))]))
         current = state.turn.request_id or 'initial'
         by_id = {row['id']: row for row in self.dialogue}
-        dialogue = [by_id[ref] for ref in refs if ref in by_id and ref != current][:LIMITS.expanded_context_turns]
+        current_sources = {current}
+        if state.turn.kind == 'initial':
+            current_sources.update({'initial:opening', 'initial:vital_signs'})
+        dialogue = [by_id[ref] for ref in refs if ref in by_id and ref not in current_sources][:LIMITS.expanded_context_turns]
         return {'records': records, 'dialogue': dialogue}
 
     def _read_context(self, raw, payload, text, previous=None, indices=None, demographic_indices=None):
@@ -166,7 +169,9 @@ class DoctorEar:
                     if (ident := knowledge.term_id(question.target, kind))), None)
                 binding['allowed_values'] = [knowledge.term(value) for value in knowledge.get_attribute_values(attribute)]
                 binding['allowed_units'] = knowledge.numeric_units(target, attribute)
-        payload = {'task': 'input_context', 'phase': 'context', 'input': text, 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'patient_context': {n.context_key: n.value for n in state.case.current_facts() if n.context_key and n.subject == 'patient' and (n.status == 'present')}, 'input_segments': segments, **self._project_context(state, question)}
+        payload = {'task': 'input_context', 'phase': 'context', 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'patient_context': {n.context_key: n.value for n in state.case.current_facts() if n.context_key and n.subject == 'patient' and (n.status == 'present')}, 'input_segments': segments, **self._project_context(state, question)}
+        if segments is None:
+            payload['input'] = text
         context, indices, demographic_indices = (None, None, None)
         review_chief = False
         route = 'input.exam' if question and question.kind == 'EXAM' else 'input.reply' if question else 'input.initial'
@@ -241,7 +246,7 @@ class DoctorEar:
 
     @staticmethod
     def _mapping_payload(statements, indices, contracts, phase, feedback):
-        return {'task': 'input_mapping', 'phase': phase, 'statement_indices': indices, 'statements': [{'quote': statements[i].quote, 'focus': statements[i].focus, 'assertion': statements[i].assertion, 'candidates': contracts[i], **({'measurement': measurement_value(statements[i].measurement)} if statements[i].measurement else {})} for i in indices], 'validation_errors': feedback}
+        return {'task': 'input_mapping', 'phase': phase, 'statement_indices': indices, 'statements': [{'quote': statements[i].quote, 'focus': statements[i].focus, 'assertion': statements[i].assertion, 'normalized_claim': statements[i].note_value or '; '.join(dict.fromkeys([*statements[i].target_terms, *statements[i].attribute_terms, *statements[i].value_terms])), 'candidates': contracts[i], **({'measurement': measurement_value(statements[i].measurement)} if statements[i].measurement else {})} for i in indices], 'validation_errors': feedback}
 
     def _map_batch(self, state, knowledge, client, statements, indices, contracts):
         decoded, remaining, feedback = {}, list(indices), []

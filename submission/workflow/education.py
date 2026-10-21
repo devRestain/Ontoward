@@ -3,7 +3,7 @@ import re
 from dataclasses import dataclass, field
 from .rules.limits import LIMITS, PLAN_FIELDS
 from .state.models import PlanSentence, SourceReference
-from .state.evidence import patient_payload
+from .state.evidence import fixed_case_payload
 from .model_context import messages
 from .output_types import PlanRow
 
@@ -111,7 +111,7 @@ def generate_plan(state, client, knowledge, config, model):
     state.interview.education_status = 'failed'
     progress = _EducationWork()
     fixed = state.case.primary()
-    base = {'task': 'education', 'fixed_diagnosis': state.case.fixed_diagnosis(), 'patient': patient_payload(state.case), 'delivery_turn_budget': model.budget.action_capacity(state)}
+    base = {'task': 'education', **fixed_case_payload(state.case), 'delivery_turn_budget': model.budget.action_capacity(state)}
     documents = []
     if fixed.kind == 'disease':
         if knowledge.guidelines is None:
@@ -119,7 +119,13 @@ def generate_plan(state, client, knowledge, config, model):
         else:
             documents, failures = knowledge.guidelines.read(knowledge.term_id(fixed.name, 'Disease'))
             progress.errors.extend((f"guideline_unavailable:{item['document_id']}" for item in failures))
-    direct = {**base, 'phase': 'direct', 'documents': documents}
+    projected = []
+    for document in documents:
+        row = {key: document[key] for key in ('document_id', 'relation', 'evidence_use', 'text')}
+        if document.get('scope') and document['scope'] != 'Fresh disease label or alias match in the supplied guideline catalog':
+            row['scope'] = document['scope']
+        projected.append(row)
+    direct = {**base, 'phase': 'direct', 'documents': projected}
     contexts = {doc['document_id']: [(0, doc['text'])] for doc in documents}
     _request(state, client, model, config, progress, direct, lambda raw: parse_plan(raw, contexts, progress))
     state.case.plan = progress.sentences

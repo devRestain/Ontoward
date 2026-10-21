@@ -1,6 +1,6 @@
 # Ontoward
 
-Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D53·d50.4**이며 D51 입력 복구, D49 무점수 지식, D47 세션 소유권·통합 사실·평가 고정과 D48 프롬프트 모듈을 유지한다. Python이 등록 그래프의 관계·조건·질문을 준비하고, 공통 DoctorBrain을 호출한 세션이 질환 순위와 선택 질문을 수용한다.
+Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D54·d50.5**이며 D53의 직접 문진·다섯 전체 문서·실패 비보충, D52 컨텍스트 종료, D51 입력 복구, D49 무점수 지식, D47 세션 소유권·통합 사실·평가 고정과 D48 프롬프트 모듈을 유지한다. Python이 등록 그래프의 관계·조건·질문을 준비하고, 공통 DoctorBrain을 호출한 세션이 질환 순위와 선택 질문을 수용한다.
 
 **기존 실행 DB를 철회한 뒤 새 실제 지식 번들을 로컬 설치했다.** 설치 manifest의 경로·해시·loader·coverage와 변경 없는 `run.py`의 `prepare()`를 검증했다. [설치 증빙](data/provenance/extraction-installed-2026-10-21.json)을 기준으로 읽으며, 실제 번들 대표 상담·임상·공식 평가와 정식 ZIP은 별도다. 원자료·source-custody·수용 ZIP·작은 증빙은 유지하고, 완료된 추출 체크포인트·로그·중복 출력·추출 임시 기록과 철회 생성물 압축본은 사용자 요청으로 정리했다. [삭제 영수증](data/provenance/extraction-storage-cleanup-2026-10-21.json)과 [철회 영수증](data/extraction/retired-d42-2026-10-19/withdrawal.json)이 이력을 관리한다.
 
@@ -56,7 +56,9 @@ Consultation이 검증한 CC 평가 자료만 ContextFactor에 전달한다. Edu
 
 [D52 수정](DECISION_STATE.md#D52)은 설치 후 C10 로그에서 확인한 관계 정의 중복을 제거한다. 같은 target·effect·전체 Pattern·scope·applicability를 질환 간 공유하며 모든 후보·조건·관찰별 근거는 유지한다. CONTEXT_LIMIT_EXCEEDED는 출력 한도를 높여 재시도하지 않고 해당 원인으로 종료한다. 새 실제 NOVA C10의 완료 여부는 별도 실행으로 확인해야 한다.
 
-[D53](DECISION_STATE.md#D53)은 인사·공감 SAY를 삭제하여 초기 입력 수용 후 Initiation의 첫 미확인 질문부터 시작한다. Education은 설치 인덱스 순서의 앞 다섯 문서만 원문 그대로 제공하고, 문서를 참고 자료로 명시하여 원래 계획 요청·환자 사실·안전·출력 계약을 우선한다. 선택 원문의 해시·인용과 영어 P·한국어 독립 수용을 유지한다. [D53 증빙](data/provenance/algorithm-d50-4-2026-10-21.json)이 소스·합성 ZIP·관측·저장 C01 입력 재구성 검증을 소유한다.
+[D53](DECISION_STATE.md#D53)은 인사·공감 SAY를 삭제하여 초기 입력 수용 후 Initiation의 첫 미확인 질문부터 시작한다. 최대 다섯 전체 문서와 실패 비보충·참고 자료 경계·해시/인용·영어 P/한국어 독립 수용은 유지한다. 당시 인덱스 순서 검증은 [D53 증빙](data/provenance/algorithm-d50-4-2026-10-21.json)에 보존한다.
+
+[D54](DECISION_STATE.md#D54)는 단일 고정 주진단의 문서 중 exact이면서 care_navigation인 항목을 먼저 안정 분할한 뒤 다섯 개를 고정한다. 모순된 Pattern/applicability 경로의 후보 유입을 막고 unknown 부분 후보와 유효한 prior 반대 경로는 유지한다. 교육·안내의 fact ID, 질문의 observation/episode scope, 초기 원문 중복과 mapping 해석 의미, 영어/한국어 어휘 후보를 함께 정리했다. 문서의 내부 path/hash는 모델에 보내지 않고 전체 원문과 UTF-8 인용은 보존한다. [D54 검증](data/provenance/algorithm-d50-5-2026-10-21.json)과 [현재 연결 위반 목록](data/provenance/runtime-link-audit-2026-10-21.json)이 오프라인 근거를 소유한다. 현재 번들 bytes/hash는 같으며 동의어·DB 연결 정정과 새 strict gate는 작업 B에 남아 있다.
 
 [D52 증빙](data/provenance/algorithm-d50-3-2026-10-21.json)은 소스·독립 ZIP 회귀 각각 180개, 저장된 두 순위 요청의 임상 입력 동등성, 관측 16시나리오와 독립 합성 상담 3개·원본 SDK completed를 기록한다. 실제 NOVA 재실행과 공식 수용 증거는 포함하지 않는다.
 

@@ -74,8 +74,9 @@ class BrainTests(unittest.TestCase):
         payload=c.differential.prepare_decision(s).payload
         location=[q for q in payload['questions'] if q.get('attribute')=='Location']
         self.assertEqual(len(location),1);self.assertEqual(len(location[0]['expected_by_disease']),2)
-        expected=str(payload['evidence'])
-        self.assertIn('head',expected);self.assertIn('abdomen',expected)
+        expected={payload['relations'][row['relation']]['full_pattern'][row['feature']]['expected']
+            for rows in location[0]['expected_by_disease'].values() for row in rows}
+        self.assertEqual(expected, {'head', 'abdomen'})
 
     def test_rank_rejects_unregistered_duplicate_or_omitted_previous_candidates(self):
         for mode in ('unknown','duplicate','omitted'):

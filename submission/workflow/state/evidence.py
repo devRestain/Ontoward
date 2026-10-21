@@ -7,6 +7,18 @@ def patient_payload(case):
     return {'facts': [fact_record(f, f'f_{index}') for index, f in enumerate(case.current_facts(), 1)]}
 
 
+def fixed_case_payload(case):
+    """Project one frozen case with request-local, mutually resolvable fact IDs."""
+    facts = case.current_facts()
+    refs = {fact.id: f'f_{index}' for index, fact in enumerate(facts, 1)}
+    diagnosis = case.fixed_diagnosis()
+    if any(ident not in refs for ident in diagnosis['evidence_ids']):
+        raise ValueError('fixed_diagnosis_evidence_outside_current_facts')
+    diagnosis['evidence_ids'] = [refs[ident] for ident in diagnosis['evidence_ids']]
+    return {'patient': {'facts': [fact_record(fact, refs[fact.id]) for fact in facts]},
+            'fixed_diagnosis': diagnosis}
+
+
 @dataclass(frozen=True)
 class EvidenceRecord:
     id: str

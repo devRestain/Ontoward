@@ -7,6 +7,8 @@
 | tests/workflow/ | 입력·세션·조건·질문·평가 고정·Education·SOAP·전송 유지 회귀 |
 | tests/workflow/test_d49.py | qualitative effect·scope·부분/모순·Context·속성 존재 전제·첫 DD action |
 | tests/workflow/test_d50.py | 정상 입력 형제 보존·동적 graph 자격·정확한 단답·호출 일정·공동 교육·순차 실행 |
+| tests/workflow/test_d54.py | 모순 경로/부분 후보·관찰/취득 scope·세 교육 참조·어휘 통합·문서 안정 분할/projection·무손실 기대값 참조 |
+| tests/workflow/audit_links.py | 현재 vocabulary 연결의 타입 위반 목록 생성; production prepare gate 변경 없음 |
 | tests/workflow/fixture_bundle.py | Tmp/의 새 합성 번들 구성 |
 | tests/workflow/test_admitted.py | 명시적 새 번들의 전체 상담·Education 경로 |
 | packaging/package_submission.py | 필요한 runtime·공개 설정·참조 prompts/assets만 ZIP에 포함 |
@@ -26,4 +28,4 @@ docker compose build package
 docker compose run --rm -T package
 ```
 
-실제 새 manifest가 없는 현재 마지막 명령은 knowledge_bundle_not_installed로 실패한다. 실제 설치 이후에만 Tmp/packaging/ontoward-submission.zip을 만든다. 임시 합성 번들은 별도 읽기 전용 /submission mount와 Tmp/ 출력으로 검증하며 정식 경로에 설치하지 않는다. 운영 결과는 [루트 상태](../PROJECT_STATE.md), custody는 [D49 증빙](../data/provenance/algorithm-d49-2026-10-19.json)을 따른다.
+manifest가 없으면 마지막 명령은 knowledge_bundle_not_installed로 실패한다. 현재 설치 번들의 loader/prepare 검증과 정식 ZIP 생성은 별도이며 이 작업은 Tmp/의 합성 ZIP만 검증했다. 합성 번들은 별도 읽기 전용 /submission mount와 Tmp/ 출력으로 검증하며 정식 경로에 설치하지 않는다. 운영 결과는 [루트 상태](../PROJECT_STATE.md), D54 입력 지표와 보존 근거는 [d50.5 증빙](../data/provenance/algorithm-d50-5-2026-10-21.json)을 따른다.

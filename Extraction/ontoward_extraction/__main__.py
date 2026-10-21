@@ -49,7 +49,7 @@ def build_identity(entries, config, assets):
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description='Build qualitative clinical knowledge with explicit provider and durable checkpoints')
-    parser.add_argument('command',choices=['run','status','pause','verify','install','recover-normalize','recover-normalize-text','recover-normalize-provider','recover-normalize-batch','recover-normalize-empty','recover-questions','recover-questions-sol','recover-draft','recover-draft-provider','recover-draft-endpoints','recover-draft-packets','recover-patch'])
+    parser.add_argument('command',choices=['run','status','pause','verify','install','correct-bundle','recover-normalize','recover-normalize-text','recover-normalize-provider','recover-normalize-batch','recover-normalize-empty','recover-questions','recover-questions-sol','recover-draft','recover-draft-provider','recover-draft-endpoints','recover-draft-packets','recover-patch'])
     parser.add_argument('--config',default=os.environ.get('EXTRACTION_CONFIG','/app/config.json'))
     parser.add_argument('--assets',default='/assets')
     parser.add_argument('--work',default='/work')
@@ -57,6 +57,8 @@ def main(argv=None):
     parser.add_argument('--target',default='/target')
     parser.add_argument('--run-id')
     parser.add_argument('--manifest')
+    parser.add_argument('--corrections')
+    parser.add_argument('--preserve-build', action='append', default=[])
     parser.add_argument('--provider',choices=['nova_dev','codex_subscription','openai_api'])
     parser.add_argument('--resume',action='store_true')
     parser.add_argument('--install',action='store_true')
@@ -65,6 +67,13 @@ def main(argv=None):
     parser.add_argument('--watch',action='store_true',help='Refresh read-only status until Ctrl+C')
     parser.add_argument('--interval',type=float,default=3,help='Status refresh interval in seconds')
     args=parser.parse_args(argv)
+    if args.command=='correct-bundle':
+        if not args.manifest or not args.corrections or args.resume or args.retry_unknown or args.install or args.provider:
+            parser.error('correct-bundle requires --manifest and --corrections without model resume provider or installation flags')
+        from .maintenance import correct_bundle
+        print(canonical(correct_bundle(args.manifest, args.corrections, args.output)));return 0
+    if args.preserve_build and args.command!='install':
+        parser.error('--preserve-build is available only for install')
     if args.run_id and (not args.run_id.isalnum() or len(args.run_id)>64):
         parser.error('Invalid run ID')
     if args.command.startswith('recover-') and (not args.run_id or args.resume or args.install or args.retry_unknown):
@@ -92,7 +101,7 @@ def main(argv=None):
             return 0
     if args.command in {'verify','install'}:
         manifest=Path(args.manifest) if args.manifest else Path(args.output)/args.run_id/'manifest.json' if args.run_id else Path(args.target)/'manifest.json'
-        print(canonical(verify(manifest) if args.command=='verify' else install(manifest,args.target)));return 0
+        print(canonical(verify(manifest) if args.command=='verify' else install(manifest,args.target,preserve_build_ids=args.preserve_build)));return 0
     config=configuration(args.config,args.provider)
     interrupted=[False]
     jobs=None

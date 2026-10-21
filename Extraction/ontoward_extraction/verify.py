@@ -5,6 +5,7 @@ from knowledge.graph import ClinicalKnowledge, OW
 
 def verify(manifest, require_coverage=True):
     knowledge=ClinicalKnowledge.load(Path(manifest))
+    knowledge.validate_vocabulary_endpoints()
     diseases={str(node) for node in knowledge._graph.subjects(RDF.type,OW.Disease)}
     if not diseases:
         raise ValueError('bundle_requires_diseases')

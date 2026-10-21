@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-submission
-/status value=blocked
-/checkpoint revision=9c375d1075b56901ea7807143ffe83481280287f dirty=true updated=2026-10-21T13:47:27+09:00
-/goal phase=current id=APP.D53 state=complete action="Provide five Education reference documents and start unresolved intake without greeting or empathy actions"
+/status value=complete
+/checkpoint revision=ec386147b58299418fb855b47c529c9503315ab1 dirty=true updated=2026-10-21T15:06:36+09:00
+/goal phase=current id=APP.D54 state=complete action="Unify model input references scoped recall lexical retrieval and stable document selection without changing the installed bundle"
+/goal phase=history id=APP.D53 state=complete action="Provide five Education reference documents and start unresolved intake without greeting or empathy actions"
 /goal phase=history id=APP.D52 state=complete action="Share identical clinical definitions and terminate context rejection without redesigning consultation"
 /goal phase=history id=APP.D51 state=complete action="Apply validated D50.1 review repairs through bounded input preservation and independent offline acceptance"
 /goal phase=history id=APP.D50 state=complete action="Preserve input and simplify model calls graph work Education and sequential execution through offline acceptance"
@@ -388,5 +389,12 @@
 /evidence id=APP.D53.E4 class=external_service result=not_run source=../data/provenance/algorithm-d50-4-2026-10-21.json observed="Leave fresh NOVA input acceptance C01 completion actual model quality clinical validity official evaluation and production packaging unrun"
 /evidence id=APP.C01_DD_CONTEXT_DIAG.E1 class=runtime result=pass source=../Tmp/c01-dd-context-diagnosis-2026-10-21/audit.json observed="Reproduce the saved C01 first context rejection input with current d50.4 source; verify DD failure before Education and preserve the original run without runtime changes"
 /evidence id=APP.C01_DD_CONTEXT_DIAG.E2 class=semantic result=pass source=../Tmp/c01-dd-context-diagnosis-2026-10-21/audit.json observed="Isolate two new candidates introduced through the absent Habitual snoring target despite contradicted present-status recall rules; keep both actual facts and clinical assets unchanged"
-/blocker id=APP.C01_DD_CONTEXT_DIAG.B1 state=open action="Resolve DD candidate recall and request growth before completing planned APP.BUILD49" source=../Tmp/c01-dd-context-diagnosis-2026-10-21/DIAGNOSIS.md
-/handoff state=blocked action="Review the completed ROOT.C01_DD_CONTEXT_DIAG before the next bounded repair; preserve d50.4 and D53 offline evidence without claiming actual C01 completion or Education input acceptance"
+/blocker id=APP.C01_DD_CONTEXT_DIAG.B1 state=resolved action="Verify D54 scoped recall and input projections offline while leaving fresh model acceptance unrun" source=../data/provenance/algorithm-d50-5-2026-10-21.json
+/accept id=APP.D54.A1 state=pass action="Verify task A runtime semantics and resolvable request references" evidence=APP.D54.E1
+/accept id=APP.D54.A2 state=pass action="Verify installed readiness and independent offline consultations" evidence=APP.D54.E2
+/accept id=APP.D54.A3 state=pass action="Preserve bundle and runtime custody while recording task B exclusions" evidence=APP.D54.E3
+/evidence id=APP.D54.E1 class=semantic result=pass source=../data/provenance/algorithm-d50-5-2026-10-21.json observed="Pass twenty-three new semantic regressions within 204 source tests; preserve all 38 saved C01 facts and identical Python evidence for 37 retained candidates with zero dangling references"
+/evidence id=APP.D54.E2 class=runtime result=pass source=../data/provenance/algorithm-d50-5-2026-10-21.json observed="Pass installed entrypoint prepare three installed-bundle protocol consultations 204 archive tests with one real-vocabulary skip three independent synthetic consultations and original SDK completed with 42 requests and twenty actions"
+/evidence id=APP.D54.E3 class=artifact result=pass source=../data/provenance/algorithm-d50-5-2026-10-21.json observed="Pin d50.5 runtime hashes and the 89-file synthetic archive while preserving installed manifest SDK entrypoint and all five knowledge asset hashes"
+/evidence id=APP.D54.E4 class=external_service result=not_run source=../data/provenance/algorithm-d50-5-2026-10-21.json observed="Leave additional API LLM NOVA calls extraction resume actual model quality clinical validity official evaluation production ZIP commits push publication and deployment unrun"
+/handoff state=ready action="Review d50.5 and retain planned APP.BUILD49 for separately scoped representative model and diagnosis-notice verification"

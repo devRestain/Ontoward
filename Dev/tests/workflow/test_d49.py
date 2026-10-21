@@ -28,7 +28,11 @@ class D49Tests(unittest.TestCase):
                     with self.subTest(effect=effect,expected=expected,actual=actual):
                         k=f.knowledge();self.add(k,'effect',effect,status=expected)
                         s=f.chief(f.state());s.case.apply([f.fact(status=actual)])
-                        entry=graph_candidates(s.case,k)[str(f.OW.Beta)].entry
+                        if effect in {'against', 'strong_against'}:
+                            s.case.assessment=Assessment(differential=(DifferentialEntry(kind='disease',name='Disease beta'),),
+                                based_on_case_revision=s.case.revision,based_on_chief_fact_id=s.case.chief_fact_id)
+                        candidate=graph_candidates(s.case,k).get(str(f.OW.Beta))
+                        entry=candidate.entry if candidate else DifferentialEntry(kind='disease',name='Disease beta')
                         refs=(*entry.supports,*entry.against)
                         activated=any(r.graph_ref.id==str(f.OW.effectAssociation) for r in refs)
                         self.assertEqual(activated,actual==expected)
@@ -39,9 +43,8 @@ class D49Tests(unittest.TestCase):
         k=f.knowledge();f.add_pattern(k,'partial',f.OW.Complaint,[(f.OW.Quality,dict(kind='concept',concept=str(f.OW.Dull)))])
         s=f.chief(f.state());entry=graph_candidates(s.case,k)[str(f.OW.Beta)].entry
         self.assertFalse(any(r.graph_ref.id==str(f.OW.partialAssociation) for r in (*entry.supports,*entry.against)))
-        s.case.apply([f.fact(status='absent')]);entry=graph_candidates(s.case,k)[str(f.OW.Beta)].entry
-        self.assertFalse(any(r.graph_ref.association_id==str(f.OW.partialAssociation) for r in entry.unresolved))
-        self.assertFalse(entry.against)
+        s.case.apply([f.fact(status='absent')])
+        self.assertNotIn(str(f.OW.Beta),graph_candidates(s.case,k))
 
     def test_against_only_does_not_expand_new_candidate_but_keeps_current_prior_path(self):
         k=f.knowledge();self.add(k,'negativeOnly','against',target=f.OW.Other)

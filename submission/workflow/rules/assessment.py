@@ -110,11 +110,40 @@ def context_questions(knowledge, disease_ids):
     return sorted(result.values(), key=lambda row: (row[0], row[1].time_context == 'any', row[1].subject_member or '', row[1].time_context))
 
 
+def evaluate_profile(knowledge, profile, index):
+    """Evaluate one relation in each existing observation/acquisition group."""
+    applies, context_refs = applicability(profile.applicability, index.contexts)
+    features = knowledge.get_pattern_features(profile.id)
+    groups = []
+    for group in index.by_target.get(profile.target, ()):
+        bases = scoped_records(group['base'], profile.target_scope)
+        attributes = scoped_records(group['attributes'], profile.target_scope)
+        if bases or attributes:
+            groups.append((bases, attributes))
+    evaluated = []
+    for bases, attributes in groups or [([], [])]:
+        checks = [(feature, *match_feature(knowledge, feature,
+            scoped_records(bases, profile.target_scope, feature.status), attributes)) for feature in features]
+        pattern_status = ('contradicted' if any(status == 'contradicted' for _, status, _ in checks) else
+            'incomplete' if any(status == 'unknown' for _, status, _ in checks) else 'matched')
+        # Attribute evidence requires a present Target in this exact group. An
+        # explicit absent Target cannot create a partial attribute-only route.
+        if any(feature.attribute for feature in features) and {base.status for base in bases} == {'absent'}:
+            pattern_status = 'contradicted'
+        evaluated.append((bases, attributes, checks, pattern_status))
+    return applies, context_refs, evaluated
+
+
 def graph_candidates(case, knowledge, interview=None):
     index = EvidenceIndex.from_case(case, knowledge)
     chief = next((e for e in index.entries if e.id == case.chief_fact_id), None)
     prior = {knowledge.term_id(entry.name, 'Disease') for entry in case.assessment.differential} if case.assessment else set()
-    routes = {}
+    routes, evaluations = {}, {}
+    def evaluate(profile):
+        if profile.association_id not in evaluations:
+            evaluations[profile.association_id] = evaluate_profile(knowledge, profile, index)
+        return evaluations[profile.association_id]
+
     for fact in index.entries:
         profiles = knowledge.get_patterns_by_target(fact.target)
         profiles += knowledge.associations_by_context.get(fact.target, [])
@@ -122,28 +151,27 @@ def graph_candidates(case, knowledge, interview=None):
             positive = profile.effect in {'support', 'strong_support'}
             if not positive and profile.disease_id not in prior:
                 continue
-            target_path = fact.target == profile.target and scope_matches(fact, profile.target_scope)
-            context_path = any(c.concept_id == fact.target and scope_matches(fact, c) for c in profile.applicability)
+            applies, _, groups = evaluate(profile)
+            if applies == 'contradicted':
+                continue
+            viable = [(bases, attributes, checks) for bases, attributes, checks, status in groups
+                      if status != 'contradicted']
+            target_path = fact.target == profile.target and any(
+                fact.id in {row.id for row in (*bases, *attributes)}
+                and any(scope_matches(fact, profile.target_scope, status=feature.status) for feature, _, _ in checks)
+                for bases, attributes, checks in viable)
+            context_path = bool(viable) and any(c.concept_id == fact.target
+                and scope_matches(fact, c, status=c.status)
+                and fact.status in {c.status, 'unknown', 'uncertain'} for c in profile.applicability)
             if target_path or context_path:
                 routes.setdefault(profile.disease_id, set()).add(fact.target)
     candidates = {}
     for disease, paths in sorted(routes.items()):
         supports, against, unresolved, details, whole = [], [], [], [], []
         for profile in knowledge.get_disease_patterns(disease):
-            features = knowledge.get_pattern_features(profile.id)
-            applies, context_refs = applicability(profile.applicability, index.contexts)
-            groups = []
-            for group in index.by_target.get(profile.target, ()):
-                bases = scoped_records(group['base'], profile.target_scope)
-                attributes = scoped_records(group['attributes'], profile.target_scope)
-                if bases or attributes:
-                    groups.append((bases, attributes))
-            for bases, attributes in groups or [([], [])]:
+            applies, context_refs, groups = evaluate(profile)
+            for bases, attributes, checks, pattern_status in groups:
                 base = next(iter(bases or attributes), None)
-                checks = [(feature, *match_feature(knowledge, feature,
-                    scoped_records(bases, profile.target_scope, feature.status), attributes)) for feature in features]
-                pattern_status = ('contradicted' if any(status == 'contradicted' for _,status,_ in checks) else
-                    'incomplete' if any(status == 'unknown' for _,status,_ in checks) else 'matched')
                 detail = dict(association=profile.association_id, pattern=profile.id, target=knowledge.term(profile.target),
                     effect=profile.effect, target_scope=profile.target_scope.model_dump(), applicability=applies,
                     conditions=[dict(name=knowledge.term(c.concept_id), **c.model_dump()) for c in profile.applicability],

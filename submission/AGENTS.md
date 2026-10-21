@@ -2,7 +2,7 @@
 
 ## Ownership and State
 
-- Apply D53 top-five Education sources and direct Initiation without social SAY actions before D52 relation sharing and terminal context rejection; preserve D51 input recovery, D50 cadence and sequential execution, D49 qualitative knowledge, D48 prompts, D47 facts, D40 collection, and D45 turns.
+- Apply D54 scoped recall and request projections before D53 direct Initiation and five-source Education; preserve D52 context rejection, D51 recovery, and D49-D50 qualitative knowledge and sequential ownership.
 - Keep run.py as the unchanged SDK callback entrypoint and Consultation as the sole five-session coordinator.
 - Assign input interpretation and acceptance to DoctorEar clinical ranking and questions to the five session objects English plans and Education delivery scheduling to EducationSession all model execution to one injected DoctorBrain and patient expression and SAY/EXAM execution to DoctorMouth.
 - Pass only a current successful unfrozen CC Assessment into ContextFactor through Consultation without passing another session object.
@@ -28,10 +28,13 @@
 - Repair only requested statement or demographic rows and preserve omitted valid areas; normalize typed ages without changing units bounds or approximation and include unmapped non-English note content in bounded repair.
 - Preserve subject family member reporter time observation episode polarity and actual source segment at acceptance.
 - Accept objective initial observations only from verified vital_signs quotations and preserve opening reports as subjective information.
+- Send initial raw input once through input_segments and omit its duplicate input and current-source dialogue; pass normalized_claim from accepted Context meaning into mapping.
+- Integrate English hints and Korean quotations before the lexical result cap; rank each query by its best alias and preserve exact bindings role filters and mapping limits.
 - Store age sex historian medications reported numbers and qualified information in the same fact store; include them in clinical and planning inputs and record demographics at the start of HPI without invented graph rules.
 - Include all current normalized facts in clinical and planning inputs; derive graph eligibility from current unqualified bindings and confirmed base presence at the same complete scope including objective versus reported acquisition.
 - Admit objective_observation facts only for patient observations with actual EXAM or trusted initial objective acquisition.
 - Recall new diseases through support or strong_support Target/applicability paths without requiring complete Pattern matches; never expand new candidates from against-only paths. Retain prior candidates with any valid current scoped graph path.
+- Reuse one operation-local scoped Pattern/applicability evaluation for recall and evidence; reject contradicted paths and retain valid prior opposition and unknown partial or unobserved-Target context paths.
 - Activate an effect only when every Feature and applicability matches. Preserve partial/unknown separately; do not turn mismatch into opposition or ask remaining conditions of an explicitly impossible relation. Keep refinement within identical effect, scope, applicability, and observation.
 - Let code maintain supports against and unresolved while the calling session accepts ranked supplied disease references without numeric reranking. Send effect, rule scope, full Pattern, applicability, and disease-specific expected conditions even in first DD action-only input.
 - Preserve every existing candidate with a current graph path and reject unknown duplicate or omitted ranking references.
@@ -49,7 +52,9 @@
 - Reject answered unknown blocked incorrectly scoped unprepared or unaffordable optional questions without hypothetical utility gates.
 - Use high effort for clinical decisions and English planning and medium effort for Ear and Mouth on the existing designated model.
 - Generate English P with corresponding Korean utterances in one high-effort request. Validate both independently, preserve accepted English and source quotes, and repair only invalid Korean groups with the existing medium-effort response and text repair limits.
-- Read only the first five installed guideline selections in index order without promoting later sources after failure; retain full verified text and treat source contents as reference data under the plan task and patient facts.
+- Query only the frozen primary Disease and fix at most five documents after a stable exact-and-care_navigation partition; preserve within-group order full text and failure without backfill.
+- Project document_id relation evidence_use text and meaningful scope at the plan boundary; retain source custody and original UTF-8 citation offsets internally through repairs.
+- Project patient and frozen diagnosis with one request-local fact map across plan generation Education rendering and announcement fallback; reject missing frozen evidence without dumping GraphRefs.
 - Start with unresolved Initiation intake or necessary chief clarification after initial input acceptance; exclude greeting and empathy implementation and account every SAY or EXAM in its session actions.
 - Select explicit task keys and normalized values without whole-state dumps large schemas or full graph profiles; keep clinical output at 4096 tokens and one recovery at 8000 tokens. Do not measure cap or trim prompts by bytes.
 - Load task recipes from ONTOWARD_PROMPTS inside config and select initial reply EXAM mapping ranking action plan expression and repair routes in the owning Python caller.
@@ -58,6 +63,7 @@
 - Reuse confirmed response budgets without routine GETs; synchronize uncertain actions and server model-limit failures and retain pre-submission refresh. Keep clinical question computation in sessions and pass integer requirements into BudgetPolicy with one shared cost table and the existing reservation floor.
 - Serialize model data as one JSON object and share full relation definitions with shallow evidence and question references. Aggregate questions by complete scope before executability checks and reuse only operation-local graph work.
 - Share identical clinical relation definitions across disease associations only when target effect ordered full Pattern rule scope and applicability match. Preserve every disease candidate scoped fact match and Python graph reference. Terminate on CONTEXT_LIMIT_EXCEEDED without output-token escalation or another collection action.
+- Include every question scope and register needed unobserved observations locally; replace repeated expectations only with exact relation/feature references and retain context and presence prerequisites explicitly.
 - Preserve same-identity transient replay shared limits session caps and explicit unknown transport termination.
 - Validate every patient utterance independently as NFC Korean with 1-30 codepoints without truncation.
 - Deliver the frozen diagnosis before planning and preserve English P and undelivered receipts after rendering failure.
@@ -70,7 +76,8 @@
 ## Assets and Acceptance
 
 - Preserve the unchanged SDK and entrypoint, pinned Pydantic and RDFLib requirements, Python-selected task routes, and historical custody; load only the v5-enum-1 relative-path/hash-pinned six-file contract without old-format conversion.
-- Pin the algorithm as d50.4 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
+- Pin the algorithm as d50.5 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
+- Filter invalid attribute/value endpoints and block failed attribute lookup from becoming a presence question; preserve current bundle hashes and defer synonym correction and strict endpoint gates to task B.
 - Keep maintained behavior tests in Dev/tests/workflow observation and comparison in Test and disposable evidence in Tmp.
 - Verify source and independent read-only archive consultations in project containers with network disabled and original SDK HTTP on the internal project network.
 - Record runtime and artifact evidence separately from actual model quality clinical accuracy real NOVA official evaluation commits and deployment.

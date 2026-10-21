@@ -2,7 +2,7 @@
 
 ## 목적과 실행 경계
 
-Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D53](DECISION_STATE.md#D53)의 d50.4로 Education TOP-5와 인사·공감 행동 철회를 적용하고 D52 관계 공유·컨텍스트 종료, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 기존 DB의 활성 사용은 철회했으며 실제 새 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
+Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D54](DECISION_STATE.md#D54)의 d50.5로 scoped 후보 유입·호출 내 참조·어휘 통합·문서 projection과 직접 연결 문서 우선 순서를 적용한다. D53의 직접 Initiation·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 기존 DB의 활성 사용은 철회했으며 실제 새 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
 
 진료 중에는 ZIP 내부의 읽기 전용 RDFLib Graph를 사용한다. 원본 RF2·BODHI·DDXPlus·준비 SQLite는 개발 자산이다. 등록되지 않은 질환·관계·질문을 런타임에서 만들지 않는다. 제공 가이드라인 원문은 진단을 고정한 뒤 지정 마운트에서만 읽는다. 실제 모델 품질과 공식 평가는 로컬 실행 증거와 구분한다.
 
@@ -38,6 +38,8 @@ DoctorEar는 입력 전처리·해석·사실 수용을, 다섯 세션 객체는
 
 원문은 DoctorEar의 참조 해석 문맥에 한 번만 보관한다. 정확한 영어 용어·허용 속성 값은 Python이 먼저 연결하고 미해결 임상 진술만 제한된 DB 후보로 정규화한다. 독립 유효 행을 보존하며 문맥과 매핑 각각 기본 1회·복구 최대 1회로 제한한다. 초기 chief 검토는 같은 문맥 복구에 포함하고 매핑 형식·참조·미해결 오류도 같은 한 번에 복구한다. 의미 근거 없이 첫 후보·첫 값을 확정하지 않으며 미해결 내용은 영어·수치·조건·scope를 가진 unbound 사실로 보존한다. 실제 모름을 양성으로 만들거나 측정값만으로 증상 존재를 만들지 않는다.
 
+초기 원문의 전송 정본은 opening과 vital_signs를 구분한 input_segments다. 같은 초기 원문을 input·dialogue에 반복하지 않으며 일반 reply·EXAM의 input은 유지한다. 매핑은 Context가 이미 해소한 note_value 또는 짧은 의미 hint를 normalized_claim으로 함께 읽는다. 어휘 후보는 영어 hint와 한국어 인용 전체의 후보를 통합한 후 제한하며, 각 질의의 최선 별칭 일치만 합산한다. 이 어휘 유사도는 임상 근거 점수가 아니며 무관련 입력은 빈 후보를 허용한다. Target 8/32·속성 2/4·값 8/32와 기존 repair 상한을 유지한다.
+
 사실은 주체·가족 구성원·보고자·시점·관찰·episode·수치·단위·polarity·취득 경로·source·turn을 보존한다. 정정은 같은 대상·관찰·주체·시점·취득 범위를 지키며 SAY가 초기 객관 자료나 EXAM을 덮어쓰지 못한다. CaseState.facts의 CaseFact 하나에 정규화된 영어 내용과 수치·조건을 저장하고 선택적 graph_binding에 등록 target·attribute·values·연결 방식을 둔다. 그래프 사용 자격은 현재 같은 사람·시점·observation·episode·취득 범위의 존재 확인에서 계산한다. 매핑 결과와 부가 설명을 중복 사실로 저장하지 않는다. DB에 없는 정보도 같은 정본에 보존한다.
 
 부분 복구는 요청한 statement 또는 demographic 행만 바꾸고 생략된 정상 영역을 보존한다. 검증된 typed age는 Python으로 영문 표기하며 단위·범위·근사 여부를 유지한다. 미매핑 메모의 영문 정규화 실패도 기존 한 번의 행 복구에 포함한다. 정확한 unknown·감사 SAY와 등록 문구·scope가 고정된 affirmative presence 단답만 모델 없이 처리한다. 복합·부정형·병력 domain 질문과 추가 내용은 일반 해석으로 보낸다. 환자 감정 표현도 입력 문맥으로 해석하되 별도 공감 행동을 만들지 않는다.
@@ -48,6 +50,8 @@ DoctorEar는 입력 전처리·해석·사실 수용을, 다섯 세션 객체는
 
 새 후보는 support 또는 strong_support 관계의 scoped Target→Pattern→Association→Disease 또는 applicability 경로로 회수한다. 전체 Pattern 일치는 후보 진입 조건이 아니며 against-only 경로로 무관한 새 후보를 확장하지 않는다. 기존 후보는 현재 유효한 그래프 경로가 남아 있으면 보존한다. 전체 Feature와 applicability가 모두 일치할 때만 등록 effect를 활성화한다. 부분 일치는 활성 지지가 아니고 불일치를 반대 효과로 뒤집지 않는다. 명시적 모순으로 불가능해진 관계의 나머지 조건은 질문하지 않는다.
 
+후보 유입과 근거 구성은 호출 안에서 같은 관찰별 Pattern·applicability 판정을 공유한다. triggering Target의 관찰 그룹이나 전체 applicability가 명시적으로 모순되면 그 경로로 새 후보를 넣거나 prior를 보호하지 않는다. 다른 유효 경로와 prior의 유효한 against 경로는 보존한다. Target 미관찰 Context 경로·unknown 부분 조건·유효한 부재 지지는 유지하며 구성원·episode·취득 방식의 자료를 합쳐 조건을 완성하지 않는다.
+
 코드는 현재 supports·against·unresolved와 실제 fact·graph 참조를 유지한다. 수치·값 불일치는 실제 관찰 참조를 남기며 서로 다른 episode의 속성을 합치지 않는다. 일반 패턴의 부합은 refinement 미확인·불일치 때문에 사라지지 않는다. 같은 관찰의 반복 출처를 독립 근거처럼 계산하지 않는다.
 
 CaseState.assessment가 유일한 감별 정본이다. 순서가 순위이며 revision·chief·마지막 수용 응답 식별자·frozen·한계를 보관한다. Initiation과 CC는 정상 종료 때 각각 한 번 순위를 요청한다. Context 종료의 순위와 DD 첫 행동은 DD 진입의 joint decision 한 번으로 합친다. 이후 unknown을 포함한 새 DD 응답마다 순위와 행동을 판단하며 같은 응답의 재진입은 중복 호출하지 않는다. Context 도중과 DD 직전 자원 종료에서도 미처리 응답을 한 번 판단한 뒤 최신 성공 평가를 고정한다. 유효 순위는 잘못된 행동과 독립적으로 수용하고 행동만 제한 복구한다. 미등록·중복 참조와 기존 유효 후보 누락은 거절하며 그래프 경로가 소실된 후보만 코드가 무효화한다.
@@ -57,6 +61,8 @@ CaseState.assessment가 유일한 감별 정본이다. 순서가 순위이며 re
 공개 ONTOWARD_PROMPTS manifest에 책임·출력·상황별 프롬프트 모듈을 등록한다. Ear·세션·Education·Mouth가 Python에서 현재 작업과 initial·reply·EXAM, 일반 매핑·통합 복구, 질환·증상 안내, 실제 복구에 필요한 모듈만 선택한다. LLM에 여러 작업의 조건 분기를 해석시켜 작업을 고르게 하지 않는다. 지시와 JSON 입력을 분리하고 실제 임상 조건은 입력 데이터로 보존한다. 같은 manifest와 모듈을 독립 ZIP에 포함하고 관측기에서 해시·경로 조합을 확인한다.
 
 D52에서 target·effect·순서가 있는 전체 Pattern·rule scope·applicability가 동일한 관계는 서로 다른 질환 Association에서도 전송 정의를 공유한다. 질환별 참조·모든 후보·조건·관찰별 사실 연결과 Python의 원래 그래프 근거는 유지한다. CONTEXT_LIMIT_EXCEEDED는 출력 잘림과 구별하여 원래 오류로 즉시 종료하고, 출력 한도 확대 재호출이나 후속 수집을 실행하지 않는다.
+
+모든 임상 질문은 같은 scopes 표를 참조하며 facts에 아직 없는 유효한 질문 observation·episode도 호출 내 별도 참조로 구분한다. relation과 0 기반 feature index로 정확히 복원하는 기대값만 중복 전송에서 제외하고 전체 full_pattern·effect·rule_scope·applicability·질환 membership은 유지한다. Context 기대 상태와 presence_required의 존재 전제는 명시하며 0·false·unknown·의도된 빈 배열을 일괄 제거하지 않는다.
 
 필수 수집은 코드가 보장하고 선택적 질문은 LLM이 실행 가능한 선택지에서 고른다. 공유 relations 표에 effect·scope·전체 Pattern·applicability를 한 번 정의하고 근거와 expected_by_disease에서 참조한다. 고유 scope별로 질문을 먼저 합친 뒤 실행 가능성을 검사하며 질환별 기대 답을 보존한다. 질문 순서·SOAP category·clarification은 새 attribute_roles에서 읽는다. 실제 role clarification이 있으면 prepare에서 NFC·한글 포함·1–30자를 검사하며 null일 때 검증된 기본 문구를 사용한다. Context는 같은 CaseFact로 매칭하고 별도 supporting-context 경로를 두지 않는다. rule any와 구체 질문의 current/past/unspecified를 분리하며 해결 여부는 원래 rule scope로 검사한다. 속성만 있는 Pattern을 포함하여 같은 Target·scope의 존재를 확인한 뒤 속성 질문을 실행하며 질문의 등록 관계·문구·단계·주체·가족 구성원·시점·관찰·반복·자원을 검사한다. 유효 순위와 잘못된 행동을 분리하여 행동만 한 번 복구할 수 있다.
 
@@ -72,7 +78,11 @@ D45에서 SDK `client.session()`의 `turns_remaining`이 행동 예산의 기준
 
 Education은 고정 1위를 먼저 알린 뒤 원문 지침·일반 지식을 구별하여 영어 P와 대응 한국어 발화를 high 요청 한 번으로 생성한다. 영어 내용·출처 인용과 한국어 NFC 1–30 codepoint 문장을 독립 검증한다. 한국어만 잘못되면 정상 영어 P를 유지하고 해당 그룹만 medium으로 제한 복구한다. 영어 부분 복구와 한국어 공급자 응답·문구 복구의 기존 상한은 유지한다. 실제 SAY receipt로 전달을 확인하며, 환자 답변은 transcript-only로 facts·진단·A를 갱신하지 않는다. 명시적 교육 비활성화는 교육 행동·예약·P.education 없이 동작한다.
 
-Education은 설치된 guideline selections의 기존 순서에서 앞 다섯 항목만 읽는다. 별도 관련도 점수나 모델 재순위를 만들지 않으며 선택 문서의 경로·해시·원문 전체·인용 검증을 유지한다. 선택 문서가 실패해도 여섯 번째 이후로 자동 대체하지 않는다. 프롬프트는 제공 문서를 지시가 아닌 참고 자료로 명시하고 원래 계획 요청·고정 진단·환자 사실·불확실성·안전·출력 계약을 우선한다. 문서 수 제한은 실제 NOVA의 입력 수용이나 임상 품질을 보장하지 않는다.
+Education은 frozen primary Disease 하나만 조회한다. guideline selections에서 relation=exact이면서 evidence_use=care_navigation인 항목을 먼저, 나머지를 나중에 안정 분할하고 앞 다섯 항목을 읽기 전에 고정한다. 각 범주 내부의 기존 인덱스 순서·선택 문서의 경로·해시·전체 원문·인용 검증을 유지한다. 선택 문서가 실패해도 뒤의 문서로 자동 대체하지 않으며 미선택 파일은 열지 않는다. 이는 D53의 기존 인덱스 순서 정책을 개정한 D54 결정이며 임상 점수·모델 재순위를 추가하지 않는다.
+
+모델용 문서는 document_id·relation·evidence_use·text와 의미 있는 scope만 명시적으로 투영한다. 알려진 관리용 scope 상수만 제외하며 path·sha256·미래 내부 필드를 전송하지 않는다. 내부 검증 객체와 원문 UTF-8 인용 offset은 보존하고 본문 strip·헤더 삭제·절단은 하지 않는다. 교육 생성·교육 표현·진단 안내 fallback은 한 번의 current_facts에서 만든 같은 f_ 참조로 patient와 fixed_diagnosis를 함께 투영한다. 없는 근거 참조는 오류로 드러내고 도메인 ID나 정상 안내 템플릿을 바꾸지 않는다. 프롬프트는 문서를 참고 자료로 명시하여 원래 요청·환자 사실·불확실성·안전·출력 계약을 우선한다. 문서 수 제한은 실제 NOVA 입력 수용이나 임상 품질의 증거가 아니다.
+
+현재 번들의 잘못된 hasAttribute·canHaveValue 연결은 getter에서 타입으로 거르고 잘못된 속성을 존재 질문으로 바꾸지 않는다. 전수 위반은 오프라인 목록에 남긴다. 작업 A는 설치 번들의 bytes·hash를 유지하며 strict production endpoint gate를 먼저 켜지 않는다. 동의어 관계 분산·원본 링크 정정·새 immutable bundle과 strict gate의 동시 활성화는 별도 작업 B다.
 
 Education 전달 준비에 재진입해도 이미 큐에 있거나 전달·미전달 결과가 기록된 계획 그룹은 다시 표현하지 않는다. 준비 실패의 제한된 복구는 해당 표현 호출 안에서만 수행하며, 재진입으로 실패 그룹을 자동 재시도하거나 결과를 중복 기록하지 않는다. 실제 행동 완료·취소는 공통 QuestionLifecycle을 사용한다.
 

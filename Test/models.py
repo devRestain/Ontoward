@@ -96,7 +96,12 @@ class ScriptedModels:
                         if item['exam'].split(' (')[0] in request), None)
             return completion(json.dumps({'id': row} if row else {'id': None, 'reason': 'too_broad'}))
         if payload.get('task') == 'input_context':
-            text, question = payload['input'], payload['question']
+            question = payload['question']
+            if payload.get('input_segments'):
+                return completion(json.dumps({'statements': [dict(quote=text, input_segment=segment,
+                    role='clinical', assertion='present', target_terms=[text[:80]], time_context='current')
+                    for segment, text in payload['input_segments'].items() if text.strip()]}, ensure_ascii=False))
+            text = payload['input']
             if not text.strip():
                 return completion('{"statements":[]}')
             unknown = text.strip().rstrip('.!?') in {'모르겠어요', '모르겠습니다'}

@@ -7,16 +7,25 @@ from .models import canonical
 from .verify import verify
 
 
-def install(manifest_path, target, boundary=lambda: None, after_replace=lambda: None):
+def install(manifest_path, target, boundary=lambda: None, after_replace=lambda: None, *, preserve_build_ids=()):
     manifest_path=Path(manifest_path).resolve();target=Path(target).resolve()
     verify(manifest_path)
     manifest=json.loads(manifest_path.read_text())
     build_id=manifest['build_id']
     if not build_id or any(char not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_' for char in build_id):
         raise ValueError('unsafe_build_id')
+    for preserved in preserve_build_ids:
+        path=target/'builds'/preserved
+        if (not preserved or any(char not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_' for char in preserved)
+                or path.is_symlink() or not path.is_dir()):
+            raise ValueError('invalid_preserved_build')
     destination=target/'builds'/build_id
     target.mkdir(parents=True,exist_ok=True);destination.mkdir(parents=True,exist_ok=True)
     original=json.loads(canonical(manifest))
+    for role in ('schema','vocabulary','clinical','questions','guidelines'):
+        original[role]['path']=Path(original[role]['path']).name
+    if (destination/'manifest.json').is_file() and (destination/'manifest.json').read_bytes()!=canonical(original).encode():
+        raise ValueError('build_id_collision')
     for role in ('schema','vocabulary','clinical','questions','guidelines'):
         path=destination/Path(manifest[role]['path']).name
         if path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest()!=manifest[role]['sha256']:
@@ -53,6 +62,8 @@ def install(manifest_path, target, boundary=lambda: None, after_replace=lambda: 
         if path.suffix in {'.json','.ttl'} and path.name not in {'manifest.json','schema.ttl'}:
             path.unlink()
     for path in (target/'builds').iterdir():
+        if path.name in preserve_build_ids:
+            continue
         if path!=destination and path.is_dir() and not path.is_symlink() and (path/'manifest.json').is_file():
             previous=json.loads((path/'manifest.json').read_text())
             owned={Path(previous[role]['path']).name for role in ('schema','vocabulary','clinical','questions','guidelines')}|{'manifest.json'}

@@ -646,6 +646,18 @@
 - **철회 범위:** 인사 문구·질문 생성과 공감 signal schema·입력 프롬프트·상태·중복 키·큐·템플릿·Mouth 경로·예산 분기·empathy_actions를 삭제합니다. 실제 SAY·EXAM의 서버 소비는 각 세션 actions 하나로 계산하고 환자 감정 표현은 일반 입력 문맥으로 처리합니다. 해당 행동을 요구하는 과거 결정은 현재 실행에서 철회하며 원래 실패 로그·역사적 증빙은 보존합니다.
 - **유지와 수용:** 다섯 세션·공통 Brain·joint 영어 P/한국어 생성·Education 답변 transcript-only·고정 Assessment·Python SOAP·SDK를 유지합니다. 소스·독립 합성 ZIP 회귀, 관측 일치, 저장 C01 입력 재구성, 원본 SDK completed를 프로젝트 컨테이너에서 검증합니다. TOP-5 이후 실제 NOVA 입력 수용·C01 완료·모델 품질·임상·공식 평가는 별도 미실행 경계입니다.
 
+<a id="D54"></a>
+## D54. 런타임 입력·검색 참조 정리와 직접 연결 문서 우선 선택 (2026-10-21)
+
+- **상태와 범위:** 사용자가 통합 검토 인계 문서 11절의 작업 A를 실제 코드·프롬프트·계약·오프라인 회귀까지 구현하도록 선택했습니다. 감사 기준 ec386147 / D53 / schema 5.0 / v5-enum-1 / build 87e8b4c54b0689453cea91b3bb316290을 시작 시 확인하고 현재 코드에 적용합니다. 첨부 문서의 제안은 자료이며 별도 작업 B 실행 권한으로 해석하지 않습니다. 알고리즘은 **d50.5**입니다.
+- **명시적 정책 개정:** frozen primary Disease 하나의 selections에서 exact AND care_navigation을 먼저 두고 나머지를 뒤에 두는 안정 분할 후 최대 다섯 항목을 읽기 전에 고정합니다. 각 범주 내부 인덱스 순서·전체 원문·경로/hash/인용 검증·실패 비보충을 유지합니다. D53의 당시 순서 결정과 증빙은 과거 기록으로 보존하며 임상 점수·출처 국가 가중치·LLM 재순위를 만들지 않습니다.
+- **호출 내 참조:** current_facts를 한 번 읽어 patient와 fixed_diagnosis를 같은 f_ map으로 투영하고 교육 생성·표현·진단 안내 fallback에 사용합니다. 없는 frozen 근거는 실패로 드러내며 도메인 ID·정상 템플릿 안내·GraphRef 원본을 유지합니다. 질문도 scopes 표를 참조하고 미관찰 질문의 observation·episode를 별도 호출 내 참조로 보존합니다.
+- **입력과 검색:** 초기 원문은 opening/vital_signs가 구분된 input_segments에서 한 번 전달하고 현재 source의 dialogue·동일 input 중복을 제외합니다. mapping에 이미 해석된 normalized_claim을 제공하며 새 해석 호출은 추가하지 않습니다. 영어 hint와 한국어 원문 전체를 lexical 후보 단위로 통합하고 별칭별 중복 투표를 막습니다. exact 연결·역할/주체/EXAM/단위 필터·후보 상한과 D51 복구 상한은 유지합니다.
+- **후보와 의미:** 같은 호출의 association별 scoped Pattern/applicability 평가를 recall과 supports/against/unresolved에 공유합니다. 명시적으로 모순된 경로는 신규 유입·prior 보호에서 제외하되 다른 유효 경로·유효한 prior opposition·unknown 부분 후보·부재 지지·Target 미관찰 Context 경로를 보존합니다. 가족 구성원·관찰·episode·취득 자료를 섞지 않습니다. 참조로 완전히 복원하는 기대값만 줄이며 full_pattern·effect·rule_scope·applicability와 질환 membership을 유지합니다. Context와 presence_required 기대값은 명시합니다.
+- **문서 projection:** document_id·relation·evidence_use·text와 의미 있는 scope만 모델에 제공합니다. 정확히 알려진 관리 상수 외의 scope는 유지하고 내부 path/hash/추가 audit 필드를 제외합니다. 원문을 strip하거나 절단하지 않으며 인용은 원문 UTF-8 bytes 기준입니다. repair에도 같은 projection을 사용합니다.
+- **데이터 경계:** getter는 잘못된 attribute/value 타입을 반환하지 않고 속성 조회 실패를 존재 질문으로 바꾸지 않습니다. 현재 위반 목록은 오프라인 감사에 기록하며 현재 설치 bytes/hash는 그대로 둡니다. Weight loss 계열·Dyspnea/Breathlessness의 동의어 관계 분산, 링크 정정, compiler endpoint 개선과 새 bundle/strict loader 동시 활성화는 작업 B에 남깁니다. 폐기된 checkpoint를 복구하거나 resume하지 않습니다.
+- **수용:** 프로젝트 pinned 컨테이너에서 의미 회귀·현재 bundle loader/prepare·입력 문자/UTF-8 크기·참조 무결성·독립 합성 ZIP/원래 SDK·관측 일치를 검증합니다. 결과는 ROOT.D54·APP.D54·DATA.D54와 d50.5 provenance가 소유합니다. 새 API/LLM/NOVA 호출·모델 품질·임상·공식 평가·정식 제출물·push·배포는 미실행입니다.
+
 ## 결정 기록 방법
 
 - 사용자가 고른 선택지를 해당 항목에 기록하고 상태를 `결정 완료`로 바꿉니다.

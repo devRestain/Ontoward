@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 from pathlib import Path
 import unicodedata
@@ -42,7 +43,7 @@ class ClinicalKnowledge:
         self.guidelines = None
         self._feature_cache, self._profile_cache, self._refinement_cache = {}, {}, {}
         self._target_profiles = self._disease_profiles = self._refinement_parents = None
-        self._alias_grams, self._labels = {}, {}
+        self._alias_grams, self._gram_weights, self._alias_phrases, self._labels = {}, {}, {}, {}
         self._label_index = self._concept_cache = self._types = None
         self._term_ids, self._value_ids = {}, {}
 
@@ -147,18 +148,31 @@ class ClinicalKnowledge:
         normalized = self.normalize_alias(text)
         if self._label_index is None:
             self._label_index = {}
+            self._alias_phrases = {}
             for predicate in (RDFS.label, SKOS.altLabel):
                 for subject, label in self._graph.subject_objects(predicate):
-                    self._label_index.setdefault(self.normalize_alias(str(label)), set()).add(str(subject))
+                    alias = self.normalize_alias(str(label))
+                    self._label_index.setdefault(alias, set()).add(str(subject))
+                    phrase = ' '.join(re.findall(r'[a-z0-9]+|[가-힣]+', unicodedata.normalize('NFC', str(label)).casefold()))
+                    self._alias_phrases.setdefault(alias, set()).add(phrase)
             self._alias_grams = {}
             for label in self._label_index:
-                for gram in {label[i:i + 2] for i in range(max(1, len(label) - 1))}:
+                for gram in self.lexical_grams(label):
                     self._alias_grams.setdefault(gram, set()).add(label)
+            count = len(set().union(*self._label_index.values()))
+            self._gram_weights = {gram: 1 + math.log((count + 1) / (1 + len(set().union(
+                *(self._label_index[label] for label in labels))))) for gram, labels in self._alias_grams.items()}
         return sorted(self._label_index.get(normalized, set()))
 
     @staticmethod
     def normalize_alias(text):
         return "".join(unicodedata.normalize("NFC", text).casefold().split())
+
+    @staticmethod
+    def lexical_grams(text):
+        # Retain Korean syllables as well as adjacent characters. Do not strip
+        # particles or infer synonyms; corpus frequency downweights common text.
+        return {text[i:i + 2] for i in range(len(text) - 1)} | {c for c in text if '가' <= c <= '힣'}
 
     def concepts(self, ids=None) -> list[dict[str, object]]:
         if self._concept_cache is None:
@@ -170,18 +184,45 @@ class ClinicalKnowledge:
         selected = self._concept_cache if ids is None else dict.fromkeys(ids)
         return [dict(self._concept_cache[key]) for key in selected if key in self._concept_cache]
 
-    def search_concepts(self, text: str, *, kind: str | None = None) -> list[str]:
+    def search_concepts(self, text: str | list[str], *, kind: str | tuple | None = None) -> list[str]:
         self.resolve_concept("")
-        normalized = self.normalize_alias(text)
-        grams = {normalized[i:i + 2] for i in range(max(1, len(normalized) - 1))}
-        labels = set().union(*(self._alias_grams.get(gram, set()) for gram in grams)) if grams else set()
-        matches = [(label in normalized, len(label) if label in normalized else sum(g in label for g in grams) / max(1, len(label)), subject)
-                   for label in labels for subject in self._label_index[label]
-                   if kind is None or self.has_type(subject, kind)]
-        return list(dict.fromkeys(subject for _, _, subject in sorted(matches, key=lambda p: (-p[0], -p[1], p[2]))))[:64]
+        terms = [text] if isinstance(text, str) else text
+        queries = list(dict.fromkeys(self.normalize_alias(term) for term in terms if term.strip()))
+        phrases = {self.normalize_alias(term): ' '.join(re.findall(r'[a-z0-9]+|[가-힣]+',
+            unicodedata.normalize('NFC', term).casefold())) for term in terms}
+        kinds = (kind,) if isinstance(kind, str) else kind
+        scores, exact = {}, set()
+        def weight(items):
+            return sum(self._gram_weights.get(gram, 1) for gram in items)
+        for index, query in enumerate(queries):
+            grams = self.lexical_grams(query)
+            query_weight = weight(grams)
+            labels = set().union(*(self._alias_grams.get(gram, set()) for gram in grams)) if grams else set()
+            for label in labels:
+                alias_grams = self.lexical_grams(label)
+                shared = grams & alias_grams
+                similarity = 2 * weight(shared) / max(1, query_weight + weight(alias_grams))
+                if min(len(query), len(label)) >= 4 and any(
+                        f' {phrases[query]} ' in f' {phrase} ' or f' {phrase} ' in f' {phrases[query]} '
+                        for phrase in self._alias_phrases[label]):
+                    similarity = max(similarity, 2 * min(len(query), len(label)) / (len(query) + len(label)))
+                for subject in self._label_index[label]:
+                    if kinds and not any(self.has_type(subject, k) for k in kinds):
+                        continue
+                    if label == query:
+                        exact.add(subject)
+                    row = scores.setdefault(subject, [0.] * len(queries))
+                    row[index] = max(row[index], similarity)
+        # Aggregate each query's best alias match before applying any result cap.
+        # These are lexical retrieval values, never clinical evidence scores.
+        ranked = [subject for subject, row in scores.items()
+                  if subject in exact or max(row) >= .45 or sum(row) >= .6]
+        return sorted(ranked, key=lambda subject: (subject not in exact,
+            -sum(scores[subject]), -max(scores[subject]), subject))[:64]
 
     def get_symptom_attributes(self, symptom_id: str) -> list[str]:
-        values = {str(value) for value in self._graph.objects(URIRef(symptom_id), OW.hasAttribute)}
+        values = {str(value) for value in self._graph.objects(URIRef(symptom_id), OW.hasAttribute)
+                  if self.has_type(str(value), 'FindingAttribute')}
         return sorted(values, key=lambda value: (self.attribute_roles[value].order if value in self.attribute_roles else 1000000, value))
 
     def get_symptom_systems(self, symptom_id: str) -> list[str]:
@@ -193,7 +234,22 @@ class ClinicalKnowledge:
                        if self.has_type(str(value), "Symptom")})
 
     def get_attribute_values(self, attribute_id: str) -> list[str]:
-        return sorted(str(value) for value in self._graph.objects(URIRef(attribute_id), OW.canHaveValue))
+        if not attribute_id or not self.has_type(attribute_id, 'FindingAttribute'):
+            return []
+        return sorted(str(value) for value in self._graph.objects(URIRef(attribute_id), OW.canHaveValue)
+                      if self.has_type(str(value), 'AttributeValue'))
+
+    def validate_vocabulary_endpoints(self):
+        violations = []
+        for predicate, domain, range_kind in ((OW.hasAttribute, None, 'FindingAttribute'),
+                                             (OW.canHaveValue, 'FindingAttribute', 'AttributeValue')):
+            for subject, target in self._graph.subject_objects(predicate):
+                if (domain and not self.has_type(str(subject), domain)
+                        or not self.has_type(str(target), range_kind)):
+                    violations.append((str(subject), str(predicate), str(target)))
+        if violations:
+            raise ValueError('invalid_vocabulary_endpoints:' + json.dumps(
+                dict(count=len(violations), examples=sorted(violations)[:5]), sort_keys=True))
 
     def numeric_units(self, target_id, attribute_id):
         units = set()

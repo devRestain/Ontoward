@@ -36,9 +36,7 @@ def concept_rank(knowledge, terms, kinds):
     for term in terms:
         ranked.extend(c for c in knowledge.resolve_concept(term)
                       if any(knowledge.has_type(c, kind) for kind in kinds))
-    for term in terms:
-        for kind in kinds:
-            ranked.extend(knowledge.search_concepts(term, kind=kind))
+    ranked.extend(knowledge.search_concepts(terms, kind=kinds))
     return list(dict.fromkeys(ranked))
 
 

@@ -37,7 +37,7 @@ class ChiefComplaintSession:
                 continue
             attribute = self.tools.knowledge.term_id(name, 'FindingAttribute')
             spec = self.tools._spec(state, target, attribute, chief.observation_id, chief.episode_id,
-                              purpose='hpi', field='S.hpi', time_context=chief.time_context)
+                              purpose='hpi', field='S.hpi', time_context=chief.time_context) if attribute else None
             key = '|'.join(('SAY', chief.target, name, 'patient', '', chief.time_context, chief.observation_id or '', chief.episode_id or ''))
             if spec is None:
                 state.interview.collection[key] = 'blocked_asset'

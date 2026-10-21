@@ -7,6 +7,8 @@
 - Use test_d50.py for preserved repair siblings current scoped eligibility exact reply boundaries shared relation references response-aware cadence and independent joint Education acceptance; include D51 clarification invalid assets combined repair limits unbound preservation and dynamic Context eligibility. Test actual operation behavior instead of removed LangGraph nodes or routine GET counts.
 - Use test_context_limits.py for identical relation sharing across diseases preserved scoped evidence and terminal context rejection without output escalation.
 - Use test_d53.py for top-five guideline order full-text and citation preservation source failure boundaries direct Initiation and removal of greeting and empathy state and actions.
+- Use test_d54.py for scoped recall shared fact/question references lexical integration document partition/projection lossless expectation references and defensive getters; retain all D49-D53 boundaries.
+- Use tests/workflow/audit_links.py to record current vocabulary endpoint violations offline without changing installed assets or enabling a strict production gate.
 - Run python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py' in the root network-disabled dev service with Dev/tests/workflow/compose.offline.yaml.
 - Run Extraction/tests in the project container with PYTHONPATH=/workspace/submission:/workspace/Extraction. Keep dependencies off the host.
 - Use fixture_bundle.py only to stage a fresh synthetic submission beneath Tmp/. Verify complete consultations with test_admitted.py and the independent Test/compose.d49.yaml SDK process.

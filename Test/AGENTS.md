@@ -53,7 +53,7 @@
 - Preserve request identity, completed responses, refused turns, failed requests, and final submission receipts.
 - Preserve actual Gateway request bodies and responses in simulator output so transmitted candidates can be audited without exposing credentials.
 - Keep the scripted Gateway case-independent and limited to supplied source names and aliases; do not add case-to-concept fixtures or clinical synonym tables.
-- Handle DoctorEar input_context and input_mapping session clinical_rank clinical_decision and clinical_action and DoctorMouth empathy tasks through the common DoctorBrain executor in scripted doubles without treating protocol fixtures as semantic-quality evidence.
+- Handle DoctorEar input_segments and normalized_claim and session clinical_rank clinical_decision and clinical_action through the common DoctorBrain executor in scripted doubles without treating protocol fixtures as semantic-quality evidence.
 - Handle D37 education and education_doctor protocol fixtures and forward the requested reasoning effort through the model bridge.
 - Permit the runtime's single bounded Education response repair after PROVIDER_RESPONSE_INVALID within the shared request ceiling; preserve the failed reservation and keep other service and uncertain failures stopped.
 - Return D41 context statements and database dictionary batches while keeping scripted patient replies case-independent without clinical synonym tables.

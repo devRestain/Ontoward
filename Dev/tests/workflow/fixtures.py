@@ -131,7 +131,8 @@ class FakeSDK:
             return self.completion(education)
         if payload['task'] == 'input_mapping':
             return self.completion([{} for _ in payload['statements']])
-        q, text = payload['question'], payload['input']
+        q = payload['question']
+        text = payload['input'] if 'input' in payload else '\n'.join(payload['input_segments'].values())
         if q is None:
             return self.completion({'statements':[statement(text, target_terms=[self.target], primary_concern=True)]})
         purpose = q['purpose']
@@ -215,7 +216,7 @@ def add_pattern(k,name,target,expectations,*,disease=OW.Beta,applicability=None,
             (OW.targetScope,Literal(json.dumps(scope or dict(subject='patient',subject_member=None,time_context='current')),datatype=RDF.JSON))):
         k._graph.add((association,predicate,value))
     if applicability:
-        applicability=[dict(subject_member=None,**item) for item in applicability]
+        applicability=[{'subject_member':None,**item} for item in applicability]
         k._graph.add((association,OW.applicability,Literal(json.dumps(applicability),datatype=RDF.JSON)))
     k._graph.add((pattern,RDF.type,OW.ClinicalPattern))
     k._graph.add((pattern,OW.targets,target))

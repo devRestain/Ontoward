@@ -5,7 +5,7 @@ from .state import usage
 from .model_context import messages
 from .rules.action import ActionResponse, REFUSAL_ERRORS, RESPONSE_FORMAT_ERRORS, content_error, failure_outcome
 from .rules.limits import LIMITS
-from .state.evidence import patient_payload
+from .state.evidence import fixed_case_payload
 from .output_types import RenderedGroup
 from .doctor_brain import ModelResult
 
@@ -90,14 +90,14 @@ class DoctorMouth:
         text = prepared if any(('가' <= c <= '힣' for c in name)) else None
         errors = {}
         if text is None:
-            base = {'task': 'education_doctor', 'fixed_diagnosis': diagnosis.model_dump(), 'patient': patient_payload(state.case), 'turn_budget': 1, 'announcement': True}
+            base = {'task': 'education_doctor', **fixed_case_payload(state.case), 'turn_budget': 1, 'announcement': True}
             rendered, errors = self._render(state, client, base, [{'id': 'diagnosis', 'text': diagnosis.name}], {'diagnosis': 1})
             text = next(iter(rendered.get('diagnosis', [])), prepared)
         return text, errors
 
     def render_education(self, state, client, sentences, budgets, capacity, initial=None):
         """Render the session's allocated groups without changing their lifecycle."""
-        base = {'task': 'education_doctor', 'fixed_diagnosis': state.case.fixed_diagnosis(), 'patient': patient_payload(state.case), 'turn_budget': capacity}
+        base = {'task': 'education_doctor', **fixed_case_payload(state.case), 'turn_budget': capacity}
         return self._render(state, client, base, sentences, budgets, initial=initial)
 
     def validate_action(self, state):

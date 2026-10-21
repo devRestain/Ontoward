@@ -51,7 +51,8 @@ class DeliveryTests(unittest.TestCase):
     def test_full_source_context_is_preserved_in_plan_request(self):
         source = 'Source text.\n' * 10000
         c = f.consultation(prepared=f.resources(education=True))
-        c.knowledge.guidelines.read = lambda disease: ([{'document_id': 'd', 'text': source}], [])
+        c.knowledge.guidelines.read = lambda disease: ([{'document_id': 'd', 'text': source,
+            'relation': 'exact', 'evidence_use': 'care_navigation', 'scope': 'Synthetic full source'}], [])
         state = f.chief(f.state('DifferentialDiagnosis'))
         c.close_collection(state)
         state.interview.current = 'Education'

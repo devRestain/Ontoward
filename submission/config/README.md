@@ -31,7 +31,9 @@ manifest의 각 경로는 순서가 있는 파일 목록이다. 예를 들어 cl
 
 모델은 openai/gpt-6-luna이며 임상·영어 P와 한국어 공동 생성은 high, Ear와 Mouth의 남은 표현·복구는 medium이다. 인사 문구와 공감 signal·입력 모듈·템플릿·상태·SAY 경로는 D53에서 삭제했다. 사실 정본·정상 4096 및 임상 복구 8000 출력 토큰·임상·교육의 기존 복구 한도를 유지하고 호출 일정은 D50·D51을 따른다. Ear는 문맥 2회·매핑 2회 이내로 초기 chief와 형식·의미 복구를 공유하며 의미 근거 없는 첫 후보 강제 매핑은 하지 않는다. 입력은 필요한 dict/list를 한 번 직렬화한 JSON이며 전체 상태·큰 schema·그래프 profile을 넣지 않는다. 프롬프트 바이트 측정·제한·진단 통계·크기 기반 처리는 없다.
 
-환자 원문은 Ear 이후 임상·계획·SOAP로 전달하지 않는다. Education은 설치 인덱스 순서의 앞 다섯 문서 전체만 참고 자료로 제공한다. plan.generate와 plan.repair는 문서 내부 명령보다 원래 계획 요청·고정 진단·환자 사실·안전·출력 계약을 우선하며 정확한 인용 검증을 유지한다. 고정 진단 안내 후 영어 계획·한국어 전달을 진행하며 응답은 transcript-only다. ONTOWARD_EDUCATION_ENABLED=false는 기존 비활성 계약을 따른다. texts.ko.json과 manifest 고정 질문 자산의 역할도 유지한다.
+환자 원문은 Ear 이후 임상·계획·SOAP로 전달하지 않는다. 초기 input.initial은 opening/vital_signs가 구분된 input_segments를 읽으며 같은 원문을 input·dialogue에 다시 넣지 않는다. mapping.select와 repair는 Context가 해소한 normalized_claim을 quote·assertion·measurement와 함께 읽는다. clinical_common은 질문의 scope와 미관찰 observation도 구분하고 relation/full_pattern의 0 기반 feature 참조를 해소한다. Context·presence_required 기대값은 별도 전제로 유지한다.
+
+Education은 단일 frozen primary Disease의 exact AND care_navigation을 우선하는 안정 분할 후 최대 다섯 전체 문서를 고정한다. 선택 실패를 뒤 문서로 보충하지 않는다. 모델 documents에는 document_id·relation·evidence_use·text와 의미 있는 scope만 전달하고 원문 bytes와 내부 인용 검증은 유지한다. 교육 생성·표현·진단 fallback은 patient와 fixed_diagnosis에 같은 f_ 참조를 사용한다. plan.generate와 plan.repair는 문서 내부 명령보다 원래 계획 요청·고정 진단·환자 사실·안전·출력 계약을 우선한다. 고정 진단 안내 후 영어 계획·한국어 전달을 진행하며 응답은 transcript-only다. ONTOWARD_EDUCATION_ENABLED=false와 texts.ko.json·manifest 질문 자산의 역할도 유지한다.
 
 패키지는 manifest와 참조된 모듈만 포함한다. 문서·상태·개발 키는 제외한다. 새 Test trace에는 설정·manifest·모듈 해시와 경로 조합을 기록하고 저장된 실행은 변경하지 않는다. SDK·전송·캐시 동작과 실제 모델 품질은 프롬프트 작성 자체의 검증으로 대신하지 않는다.
 

@@ -74,20 +74,18 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
     refs = {ident: f'd_{index}' for index, ident in enumerate(ordered, 1)}
     facts = state.case.current_facts()
     fact_refs = {fact.id: f'f_{index}' for index, fact in enumerate(facts, 1)}
-    observations = {fact.observation_id for fact in facts if fact.observation_id}
     scopes, scope_refs, observation_refs, episode_refs = {}, {}, {}, {}
 
     def scope(subject, member, time, observation, episode):
-        observed = observation if observation in observations else None
-        key = (subject, member, time, observed, episode)
+        key = (subject, member, time, observation, episode)
         if key not in scope_refs:
             ident = f's_{len(scope_refs) + 1}'
             scope_refs[key] = ident
             row = dict(subject=subject, time=time)
             if member:
                 row['member'] = member
-            if observed:
-                row['observation'] = observation_refs.setdefault(observed, f'o_{len(observation_refs) + 1}')
+            if observation:
+                row['observation'] = observation_refs.setdefault(observation, f'o_{len(observation_refs) + 1}')
             if episode:
                 row['episode'] = episode_refs.setdefault(episode, f'episode_{len(episode_refs) + 1}')
             scopes[ident] = row
@@ -157,8 +155,15 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
         row = dict(level=graph.kind, facts=[fact_refs[i] for i in ref.fact_ids])
         if detail:
             row['relation'] = relation(detail)
-            features = detail['features'] if graph.kind == 'association' else [f for f in detail['features'] if f['id'] == graph.id]
-            row['expects'] = {f['attribute'] or 'presence': expected(f['expected']) for f in features}
+            feature = next((i for i, f in enumerate(detail['features']) if f['id'] == graph.id), None)
+            if graph.kind == 'feature' and feature is not None:
+                row['feature'] = feature
+            elif getattr(ref, 'reason', None) == 'presence_required':
+                row['expects'] = {'presence': 'present'}
+            elif graph.kind == 'context':
+                row['expects'] = {'presence': next(c['status'] for c in detail['conditions'] if c['concept_id'] == graph.id)}
+            elif graph.kind != 'association':
+                raise ValueError('evidence_feature_outside_relation')
         if graph.kind == 'context':
             row['context'] = knowledge.term(graph.id)
         if hasattr(ref, 'scope'):
@@ -190,6 +195,8 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
         question = tools._question(spec, '', 0, 0)
         row = dict(ref=ref, kind=question.kind, target=question.target, attribute=question.attribute,
             subject=question.subject, member=question.subject_member, time=question.time_context,
+            scope=scope(question.subject, question.subject_member, question.time_context,
+                        question.observation_id, question.episode_id),
             expected_by_disease={})
         for disease in sorted(diseases & included):
             entries = []
@@ -199,10 +206,12 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
                 graph = missing.graph_ref
                 detail = next((d for d in candidates[disease].details if d['association'] == graph.association_id), None)
                 feature = next((f for f in detail['features'] if f['id'] == graph.id), None) if detail else None
-                context_expected = next((c['status'] for c in detail['conditions'] if c['concept_id'] == graph.id), 'present') if detail else 'present'
-                value = dict(expected=expected(feature['expected']) if feature else context_expected,
-                    relation=relation(detail) if detail else None,
-                    feature=next((i for i, f in enumerate(detail['features']) if f['id'] == graph.id), None) if detail else None)
+                if detail and feature:
+                    value = dict(relation=relation(detail),
+                        feature=next(i for i, f in enumerate(detail['features']) if f['id'] == graph.id))
+                else:
+                    context_expected = next((c['status'] for c in detail['conditions'] if c['concept_id'] == graph.id), 'present') if detail else 'present'
+                    value = dict(expected=context_expected, relation=relation(detail) if detail else None, feature=None)
                 if value not in entries:
                     entries.append(value)
             row['expected_by_disease'][refs[disease]] = entries

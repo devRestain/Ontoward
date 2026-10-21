@@ -44,7 +44,12 @@ class GuidelineLibrary:
         root = Path(os.environ.get("NOVA_GUIDELINES_DIR", "/opt/nova/guidelines")).resolve()
         documents, failures = [], []
         seen = set()
-        for source in self.entries.get(disease_id, [])[:5]:
+        selections = self.entries.get(disease_id, [])
+        def direct(source):
+            return source['relation'] == 'exact' and source['evidence_use'] == 'care_navigation'
+        selected = ([source for source in selections if direct(source)]
+                    + [source for source in selections if not direct(source)])[:5]
+        for source in selected:
             if source["path"] in seen:
                 continue
             seen.add(source["path"])

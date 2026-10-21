@@ -9,9 +9,19 @@ from .models import Relation, Concept, ValuePath, CONTRACT, canonical, identifie
 from .normalize import concepts as normalize_concepts, relation as normalize_relation
 
 
-def compile_bundle(directory, build_id, raw_concepts, raw_relations, value_paths=(), guidelines=None, schema_path=None):
+def compile_bundle(directory, build_id, raw_concepts, raw_relations, value_paths=(), guidelines=None, schema_path=None,
+                   *, preserve_ids=False, question_overrides=None):
     directory=Path(directory);directory.mkdir(parents=True,exist_ok=True)
-    nodes,mapping,values=normalize_concepts(raw_concepts)
+    if preserve_ids:
+        # Offline maintenance starts with registered runtime identities, including
+        # finding-specific ExamMethods and attribute-owned values with equal names.
+        nodes=[Concept.model_validate(row).model_dump() for row in raw_concepts]
+        if len({node['id'] for node in nodes}) != len(nodes):
+            raise ValueError('duplicate_registered_identity')
+        mapping={node['id']:node['id'] for node in nodes}
+        values={(value,node['id']):value for node in nodes if node['kind']=='FindingAttribute' for value in node['values']}
+    else:
+        nodes,mapping,values=normalize_concepts(raw_concepts)
     vocabulary,clinical=Graph(),Graph()
     questions,roles={},{}
     by_id={node['id']:node for node in nodes}
@@ -30,7 +40,8 @@ def compile_bundle(directory, build_id, raw_concepts, raw_relations, value_paths
         vocabulary.add((subject,RDFS.label,Literal(node.korean,lang='ko')))
         for alias in node.aliases:
             vocabulary.add((subject,SKOS.altLabel,Literal(alias)))
-        for predicate,ids in ((OW.hasAttribute,node.attributes),(OW.canHaveValue,node.values),
+        for predicate,ids in ((OW.hasAttribute,node.attributes if node.kind in {'Symptom','ExamFinding'} else []),
+                (OW.canHaveValue,node.values if node.kind=='FindingAttribute' else []),
                 (OW.inSystem,node.systems if node.kind in {'Symptom','ExamFinding'} else [])):
             for ident in ids: vocabulary.add((subject,predicate,URIRef(ident)))
         if node.context_type: vocabulary.add((subject,OW.contextType,Literal(node.context_type)))
@@ -84,6 +95,7 @@ def compile_bundle(directory, build_id, raw_concepts, raw_relations, value_paths
     (directory/'schema.ttl').write_bytes(schema_path.read_bytes())
     for name,graph in [('vocabulary.ttl',vocabulary),('clinical.ttl',clinical)]:
         (directory/name).write_text('\n'.join(sorted(graph.serialize(format='nt').splitlines()))+'\n')
+    questions.update(question_overrides or {})
     (directory/'questions.ko.json').write_text(canonical({'questions':questions,'attribute_roles':roles}))
     diseases={node['id'] for node in nodes if node['kind']=='Disease'}
     index={'version':'guideline-runtime-1','build_id':build_id,'diseases':[
@@ -94,5 +106,5 @@ def compile_bundle(directory, build_id, raw_concepts, raw_relations, value_paths
         ('questions','questions.ko.json'),('guidelines','guideline-index.json')]:
         manifest[key]={'path':name,'sha256':hashlib.sha256((directory/name).read_bytes()).hexdigest()}
     temporary=directory/'manifest.json.tmp';temporary.write_text(canonical(manifest));os.replace(temporary,directory/'manifest.json')
-    ClinicalKnowledge.load(directory/'manifest.json')
+    ClinicalKnowledge.load(directory/'manifest.json').validate_vocabulary_endpoints()
     return {'build_id':build_id,'concepts':len(nodes),'effects':counts,'questions':len(questions),'manifest':str(directory/'manifest.json')}
