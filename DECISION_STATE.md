@@ -689,6 +689,20 @@
 - **번들과 보관:** 현재 해시 고정된 D56 build에서 질문 override 하나와 onset 역할 하나만 변경한 immutable 후속 build를 검증·로컬 활성화합니다. schema·vocabulary·clinical bytes, 지침 membership·본문·D56 EXAM text는 보존하며 guideline build_id와 manifest 해시만 새 식별자에 맞춥니다. loader·coverage·원래 prepare·실제 어휘의 scripted 초기 수용을 먼저 검증하고 installer가 parent를 보존한 뒤 manifest를 원자 교체합니다. 새 추출·폐기 checkpoint 복구·모델 작업을 수행하지 않습니다.
 - **수용 경계:** 유지 workflow·측정 참조·부분 응답·범위 반례·actual-bundle scripted opening과 독립 합성 ZIP/원래 SDK·관측 검증을 수행합니다. 원본 보고서와 C10 hashes·정확한 메타데이터 변경은 initiation-collection-2026-10-21.json, 통합 검증은 algorithm-d50-7-2026-10-21.json이 소유합니다. 새 프롬프트의 실제 모델 추출률·실제 C10 재실행·임상 타당성·공식 평가·정식 ZIP·커밋·원격 쓰기·배포는 별도 미실행 경계입니다.
 
+<a id="D58"></a>
+## D58. 최신 v5 번들의 유한 증분 보완 (2026-10-21)
+
+- **알고리즘:** DD Context 질문의 최소 수정과 프롬프트 보완은 `d50.8`로 식별하며 기존 Doctor 모델·effort와 세션 예산을 유지합니다.
+
+- **선택:** 사용자가 설치된 번들 위에 누락 진단·관계·질문을 자동 보완하도록 요청했고 후속으로 최신 build만 기준으로 업데이트하도록 명시했습니다. 실제 시작 HEAD는 `33a1395`이고 활성 부모는 `1bcaba1dffb744c468bb191df3267dad`입니다. 과거 build 선택 기능을 추가하지 않습니다. 부모 pin은 실행 중 새 업데이트를 덮어쓰지 않는 동시성 조건입니다.
+- **분리:** fresh extraction의 네 원자료·빈 DB 계약과 D55의 의미 보존 정정은 유지합니다. 새 augmentation 전용 adapter에서 Jobs·Provider·typed Concept/Relation·컴파일러·production loader를 재사용하고 전체 discover/run_pipeline/정규화는 호출하지 않습니다. 기존 모델·effort·배치를 자동 변경하지 않습니다.
+- **보존:** Python이 기존 정의·meaning/effect·질문·공유 AttributeRole의 precondition을 계산합니다. 신규 정의, aliases/attributes/values append, 허용 association 대체, 정확한 질문과 별도 role 변경만 적용합니다. 빈 delta round-trip과 부모 의미·숫자 단위·ValueMatch·질문 override·지침 payload를 비교합니다. neutral은 완료 작업에 남기고 runtime에서 제외합니다.
+- **수리:** 실제 첫 실행의 discovery 범위 중복과 최종 relation의 Target-status/가족 scope 표현 오류는 원본 DB·결과·응답·usage를 보존한 새 fingerprint에서 한정 수리합니다. 기존 전송 횟수와 시도 수를 승계하고 유효 행은 재호출하지 않습니다. 가족의 늦은 성숙력은 아이의 안정적 성장 조건이 있는 선택적 refinement로 검토하며 별도 독립 경로를 유지합니다.
+- **실행:** 부모·seed·config·prompt·구현을 plan에 고정하고 discovery 이후 각 유한 workset을 직전 완료 결과에서 한 번 저장합니다. URI mapping·요청·응답·사용량·유효 형제를 보존하고 명시적 전송 상한을 적용합니다. 하나의 정적 child를 생성하며 overlay·추가 서비스·벡터 DB·일반 workflow 엔진은 만들지 않습니다.
+- **활성화와 런타임:** 모든 installer가 같은 target lock을 공유하고 부모 hash 재검증 뒤 manifest를 원자 교체합니다. augmentation은 보관 파일을 삭제하지 않습니다. DD의 현재 평가에 연결된 Context/clarification만 기존 eligibility와 budget으로 허용합니다. 입력·임상 prompt에는 주체·실제 약물 조건·과거 금단·성장 경과·계획 검사와 관측 결과의 구별만 보완합니다. applicability의 여러 Context를 약물/episode로 조인하는 보장은 구현하지 않습니다.
+- **검증 경계:** 실제 부모 보존, production 후보/질문 함수의 합성 검사, mock 생성, 실제 모델 생성과 상담 정확도를 분리합니다. C01/C03/C10 정보는 평가 fixture에만 두고 생성 입력이나 runtime Case ID 분기에 넣지 않습니다. 수행 수치·설치 여부는 세 운영 상태와 D58 provenance에서 확인합니다.
+- **실행 결과와 정리:** 승인된 API Luna medium 생성은 16회 상한 중 7회로 완료했고 child `cec62f4596bedd9b9488aa75e3d38f04`를 최신 부모 위에 로컬 활성화했습니다. 사용자 후속 요청에 따라 이번 실행의 불필요한 체크포인트 네 개·mock DB·중복 번들·임시 파일을 별도 allowlist로 삭제했습니다. 518개·210.27 MiB의 [삭제 명세](data/provenance/augmentation-d58-cleanup-2026-10-21.json), [최종 보존·usage·검증](data/provenance/augmentation-d58-2026-10-21.json), [수용 delta](data/provenance/augmentation-d58-delta-2026-10-21.json)를 남기고 활성 child·기존 부모·현재 소스·원자료·인증은 유지합니다. installer의 기본 보존 동작은 바꾸지 않으며 삭제한 원래 요청/응답과 run의 재개는 불가능합니다.
+
 ## 결정 기록 방법
 
 - 사용자가 고른 선택지를 해당 항목에 기록하고 상태를 `결정 완료`로 바꿉니다.

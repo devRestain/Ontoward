@@ -1,0 +1,106 @@
+{
+  "version": "augmentation-seed-1",
+  "clusters": [
+    {
+      "id": "insomnia_medication",
+      "target_ids": [
+        "urn:ontoward:Symptomf7b9c3d8686cd49d3d509bc8"
+      ],
+      "reference_ids": [
+        "urn:ontoward:ContextFactorcd20de103d2e1b1b907d70cb",
+        "urn:ontoward:Disease727e4d1397147822082556da"
+      ],
+      "coverage_focus": [
+        "medication_or_substance_related_explanations",
+        "impaired_control_and_continued_use_despite_harm"
+      ],
+      "required_candidates": [
+        "Sedative, hypnotic, or anxiolytic use disorder"
+      ],
+      "instructions": [
+        "Distinguish normal prescribed use, tolerance or physical dependence, use disorder, past withdrawal, and current acute intoxication.",
+        "Use medication_history presence ContextFactors for specific hypnotic-use behaviors. Preserve dose and conditional raw facts outside Context attributes.",
+        "For insomnia entry require hypnotic use AND an actual discriminating behavior such as unsuccessful reduction or impaired control. Unknown behavior may open recall and questions but must not activate support; negative behavior must invalidate that path.",
+        "Provide an independent clinically valid behavior Context target path when insomnia is absent. Do not use weak positive effects solely for coverage.",
+        "Keep drug identity and timing explicit. Applicability cannot join different Contexts by drug or episode; ambiguous links require clarification, not an assumed common drug.",
+        "Use the supplied required canonical behavior names so deterministic offline controls can resolve them; include failed reduction as an unresolved DD question when only insomnia and medication use are known."
+      ],
+      "required_concepts": [
+        {
+          "name": "Unsuccessful attempts to reduce hypnotic use",
+          "kind": "ContextFactor"
+        },
+        {
+          "name": "Continued hypnotic use despite harm",
+          "kind": "ContextFactor"
+        }
+      ]
+    },
+    {
+      "id": "short_stature",
+      "target_ids": [
+        "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+      ],
+      "reference_ids": [
+        "urn:ontoward:Symptom67468fcb948daff3cf10d97b",
+        "urn:ontoward:Disease903e14e0b024d0656410feb5"
+      ],
+      "coverage_focus": [
+        "normal_growth_variants",
+        "growth_trajectory_discrimination"
+      ],
+      "required_candidates": [
+        "Constitutional growth delay",
+        "Familial short stature"
+      ],
+      "instructions": [
+        "Distinguish short stature from impaired height velocity. Register height velocity as a FindingAttribute linked to BOTH existing short-stature Targets with a measurement AttributeRole and quantity question in cm/year.",
+        "Preserve measured height velocity for age-aware clinical comparison. Do not create a universal numeric normal-growth threshold or derive normality from one number.",
+        "Use family_history ContextFactors with family subject and explicit member where known for late growth or maturation and familial short stature.",
+        "Provide CDGP and familial short stature paths from BOTH existing short-stature Targets. Family late maturation is useful support but must not be required by every CDGP path.",
+        "Do not automatically support a normal variant when actual growth impairment is known. Ask discriminating trajectory and family questions; do not diagnose from caregiver concern.",
+        "Keep child, caregiver and relatives distinct. A planned bone-age or IGF-1 test is not a result. Preserve pathological alternatives such as endocrine disease.",
+        "Use the supplied required canonical names so deterministic offline controls can resolve them. Make Declining linear growth trajectory an owned value of Linear growth trajectory and keep actual decline from activating normal-variant support even with positive family history. Do not encode a normality threshold from the probe fixtures."
+      ],
+      "required_concepts": [
+        {
+          "name": "Height velocity",
+          "kind": "FindingAttribute"
+        },
+        {
+          "name": "Linear growth trajectory",
+          "kind": "FindingAttribute"
+        },
+        {
+          "name": "Declining linear growth trajectory",
+          "kind": "AttributeValue"
+        },
+        {
+          "name": "Family history of late growth or maturation",
+          "kind": "ContextFactor"
+        },
+        {
+          "name": "Parental short stature",
+          "kind": "ContextFactor"
+        }
+      ]
+    }
+  ],
+  "limits": {
+    "max_new_diseases": 6,
+    "max_new_concepts": 48,
+    "max_new_relations": 60,
+    "max_questions": 48
+  },
+  "replace_association_ids": [
+    "urn:ontoward:Association1ccf825b2a7780a909a865eb",
+    "urn:ontoward:Association874702ab8c54b92b2e9dec56",
+    "urn:ontoward:Association1777b0ba6c02672a3ab8fe19",
+    "urn:ontoward:Associationad58f576dae61156cd0f2a4f",
+    "urn:ontoward:Association74883692586f4c50de0a3656"
+  ],
+  "extend_ids": [],
+  "question_keys": [],
+  "role_ids": []
+}

@@ -1,0 +1,3320 @@
+{
+  "version": "augmentation-d58-cleanup-1",
+  "status": "complete",
+  "created": "2026-10-21T21:10:38+09:00",
+  "authorization": "User explicitly requested deletion of unused checkpoints and legacy database-related files created for this build before completion",
+  "allowlist": [
+    {
+      "path": "data/extraction/v5-enum/work/fc03d037dc4086b06953509f0ed423a1",
+      "kind": "directory",
+      "file_count": 4,
+      "bytes": 2682880,
+      "files": [
+        {
+          "path": "data/extraction/v5-enum/work/fc03d037dc4086b06953509f0ed423a1/.worker.lock",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "data/extraction/v5-enum/work/fc03d037dc4086b06953509f0ed423a1/jobs.sqlite3",
+          "bytes": 2650112,
+          "sha256": "a46ab32708662bfcd8d98c76330f11a63b0075c3b90faf230bef6cb33ae4b991"
+        },
+        {
+          "path": "data/extraction/v5-enum/work/fc03d037dc4086b06953509f0ed423a1/jobs.sqlite3-shm",
+          "bytes": 32768,
+          "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+        },
+        {
+          "path": "data/extraction/v5-enum/work/fc03d037dc4086b06953509f0ed423a1/jobs.sqlite3-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "path": "data/extraction/v5-enum/work/3472c0ee89dcf386804459ea227b5108",
+      "kind": "directory",
+      "file_count": 4,
+      "bytes": 9281536,
+      "files": [
+        {
+          "path": "data/extraction/v5-enum/work/3472c0ee89dcf386804459ea227b5108/.worker.lock",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "data/extraction/v5-enum/work/3472c0ee89dcf386804459ea227b5108/jobs.sqlite3",
+          "bytes": 9248768,
+          "sha256": "958925e44c9e36191920ba18affdedac91f23b2a72612df1b4d0bd37d809e786"
+        },
+        {
+          "path": "data/extraction/v5-enum/work/3472c0ee89dcf386804459ea227b5108/jobs.sqlite3-shm",
+          "bytes": 32768,
+          "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+        },
+        {
+          "path": "data/extraction/v5-enum/work/3472c0ee89dcf386804459ea227b5108/jobs.sqlite3-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "path": "data/extraction/v5-enum/work/fa35cab08ba0894d84d8eef4572357e8",
+      "kind": "directory",
+      "file_count": 2,
+      "bytes": 9248768,
+      "files": [
+        {
+          "path": "data/extraction/v5-enum/work/fa35cab08ba0894d84d8eef4572357e8/jobs.sqlite3",
+          "bytes": 9248768,
+          "sha256": "62dfb94ef1f4fff7370c06b0a127b5d714a6d01666bf894488086b0b664d11db"
+        },
+        {
+          "path": "data/extraction/v5-enum/work/fa35cab08ba0894d84d8eef4572357e8/.worker.lock",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "path": "data/extraction/v5-enum/work/7c7762f3b3564f27ca14f4eb24290a86",
+      "kind": "directory",
+      "file_count": 2,
+      "bytes": 10014720,
+      "files": [
+        {
+          "path": "data/extraction/v5-enum/work/7c7762f3b3564f27ca14f4eb24290a86/.worker.lock",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "data/extraction/v5-enum/work/7c7762f3b3564f27ca14f4eb24290a86/jobs.sqlite3",
+          "bytes": 10014720,
+          "sha256": "3f9e4a2891f17372de4fd4fcdabf49382b6a10c883ac5518b55f2986120f3355"
+        }
+      ]
+    },
+    {
+      "path": "data/extraction/v5-enum/output/augmentation",
+      "kind": "directory",
+      "file_count": 47,
+      "bytes": 81124057,
+      "files": [
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/3472c0ee89dcf386804459ea227b5108/plan.json",
+          "bytes": 2422017,
+          "sha256": "1c8b7a2cbcea7e03c01c028c7f1dcf523b27c3e7085d926de913c9c65903ba0e"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/3472c0ee89dcf386804459ea227b5108/roundtrip/d46ea5c961898918527eec2e7c4d7031/augmentation.json",
+          "bytes": 1451,
+          "sha256": "e9dfbbe6136507b04e8db47c12e5942aeb7284d6a5f342040ad62f36d5bdc935"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/3472c0ee89dcf386804459ea227b5108/roundtrip/d46ea5c961898918527eec2e7c4d7031/clinical.ttl",
+          "bytes": 3352036,
+          "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/3472c0ee89dcf386804459ea227b5108/roundtrip/d46ea5c961898918527eec2e7c4d7031/guideline-index.json",
+          "bytes": 1418264,
+          "sha256": "a7b18624b832241503b57d8b4bef278aa23a40d0ae83c1752ae9f326e0225fee"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/3472c0ee89dcf386804459ea227b5108/roundtrip/d46ea5c961898918527eec2e7c4d7031/manifest.json",
+          "bytes": 674,
+          "sha256": "3e26fed59e928a0d9c123a6375e3687a2de73173b25f3aae32be1b0bf822a63a"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/3472c0ee89dcf386804459ea227b5108/roundtrip/d46ea5c961898918527eec2e7c4d7031/questions.ko.json",
+          "bytes": 713061,
+          "sha256": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/3472c0ee89dcf386804459ea227b5108/roundtrip/d46ea5c961898918527eec2e7c4d7031/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/3472c0ee89dcf386804459ea227b5108/roundtrip/d46ea5c961898918527eec2e7c4d7031/vocabulary.ttl",
+          "bytes": 6392196,
+          "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/76a6f92312ae93ea75d4920b9f0502e2/augmentation.json",
+          "bytes": 34697,
+          "sha256": "c36a2058de6cc963ddb17d337b1d4e9ce52369eba3dab705cb045289884bce18"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/76a6f92312ae93ea75d4920b9f0502e2/clinical.ttl",
+          "bytes": 3367411,
+          "sha256": "22a27676c9922cf9c70b70c413832499a7cc03df6fb3583f62c27243c022e268"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/76a6f92312ae93ea75d4920b9f0502e2/guideline-index.json",
+          "bytes": 1418498,
+          "sha256": "b84e027f45d1a7c432759ce38762789144fe7f1893048f1eaa8250e7d8042ad2"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/76a6f92312ae93ea75d4920b9f0502e2/manifest.json",
+          "bytes": 674,
+          "sha256": "ca8d9ae7bc780d1904bd67ac253ac6fa1c609c8466bfad293b93895b4e931857"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/76a6f92312ae93ea75d4920b9f0502e2/questions.ko.json",
+          "bytes": 714858,
+          "sha256": "b53449739ecbfcf5cad4cd21de199fb487063fbe9a19aec1a2eb680a359e1a3e"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/76a6f92312ae93ea75d4920b9f0502e2/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/76a6f92312ae93ea75d4920b9f0502e2/vocabulary.ttl",
+          "bytes": 6401375,
+          "sha256": "f15b60ebeb50fb1ee4c200c621dbcca49b8cc6d49a72047aabf003950ee1c985"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/7c7762f3b3564f27ca14f4eb24290a86/plan.json",
+          "bytes": 2422017,
+          "sha256": "916cf92f7b5f4879c31e0a4ed25b67ee90dcefefb302a379731df53c9e6d128f"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/7c7762f3b3564f27ca14f4eb24290a86/roundtrip/5077757ad0e02c641506d5f9d5f7e479/augmentation.json",
+          "bytes": 1451,
+          "sha256": "e0581aef6961a84b49fb6fdab876e6a1ad27b53434b1612aae42540693273918"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/7c7762f3b3564f27ca14f4eb24290a86/roundtrip/5077757ad0e02c641506d5f9d5f7e479/clinical.ttl",
+          "bytes": 3352036,
+          "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/7c7762f3b3564f27ca14f4eb24290a86/roundtrip/5077757ad0e02c641506d5f9d5f7e479/guideline-index.json",
+          "bytes": 1418264,
+          "sha256": "9d1061e93f2792be476fd0ad445ef7abbbf1b83dae1a27934230b15c29c6929e"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/7c7762f3b3564f27ca14f4eb24290a86/roundtrip/5077757ad0e02c641506d5f9d5f7e479/manifest.json",
+          "bytes": 674,
+          "sha256": "6a513a411f449a8f96341f7c1c973350ebd43625fb9e14b4e54ef5e823c5a355"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/7c7762f3b3564f27ca14f4eb24290a86/roundtrip/5077757ad0e02c641506d5f9d5f7e479/questions.ko.json",
+          "bytes": 713061,
+          "sha256": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/7c7762f3b3564f27ca14f4eb24290a86/roundtrip/5077757ad0e02c641506d5f9d5f7e479/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/7c7762f3b3564f27ca14f4eb24290a86/roundtrip/5077757ad0e02c641506d5f9d5f7e479/vocabulary.ttl",
+          "bytes": 6392196,
+          "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/cec62f4596bedd9b9488aa75e3d38f04/augmentation.json",
+          "bytes": 34244,
+          "sha256": "4a352b6843699c7b8c1d2310d3bb2e0672a72daedb6d58e47ee1009393ce62cc"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/cec62f4596bedd9b9488aa75e3d38f04/clinical.ttl",
+          "bytes": 3366868,
+          "sha256": "eed873cb3bec008440ddd687d5c97f60ac3dc13175a5ac38c0c092b1250fdd69"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/cec62f4596bedd9b9488aa75e3d38f04/guideline-index.json",
+          "bytes": 1418498,
+          "sha256": "676a029d6ef1727fb3a201cea28662908ca48af9df0edfa30cc78bd4f1df6161"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/cec62f4596bedd9b9488aa75e3d38f04/manifest.json",
+          "bytes": 674,
+          "sha256": "85597f767026a948bafd2a9571650dffea2c9870ea2952130baec5e1794c86cc"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/cec62f4596bedd9b9488aa75e3d38f04/questions.ko.json",
+          "bytes": 714858,
+          "sha256": "b53449739ecbfcf5cad4cd21de199fb487063fbe9a19aec1a2eb680a359e1a3e"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/cec62f4596bedd9b9488aa75e3d38f04/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/cec62f4596bedd9b9488aa75e3d38f04/vocabulary.ttl",
+          "bytes": 6401375,
+          "sha256": "f15b60ebeb50fb1ee4c200c621dbcca49b8cc6d49a72047aabf003950ee1c985"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/discovery-scope-amendments.json",
+          "bytes": 10905,
+          "sha256": "b96f6e074bc0916a67eb9e32b8e09094f7d095b6b758af86992c6e4c6dd92ac4"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fa35cab08ba0894d84d8eef4572357e8/plan.json",
+          "bytes": 2422017,
+          "sha256": "7c392d96a5b357b5d53c3a5a0fe163660d0f2ee1e9d0dcafbd20da00526e9dcf"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fa35cab08ba0894d84d8eef4572357e8/roundtrip/1c66b8249b028cfb8cc79a97c232b04e/augmentation.json",
+          "bytes": 1451,
+          "sha256": "7764b1c9a2309d72a4cf6a140469bf2ca515705bc2fec7306e1cfe91987da72e"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fa35cab08ba0894d84d8eef4572357e8/roundtrip/1c66b8249b028cfb8cc79a97c232b04e/clinical.ttl",
+          "bytes": 3352036,
+          "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fa35cab08ba0894d84d8eef4572357e8/roundtrip/1c66b8249b028cfb8cc79a97c232b04e/guideline-index.json",
+          "bytes": 1418264,
+          "sha256": "32366b449cfc9e10d04d89ed1a7cf22f6b9175a7f65cd7d635f25ef4df473a1c"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fa35cab08ba0894d84d8eef4572357e8/roundtrip/1c66b8249b028cfb8cc79a97c232b04e/manifest.json",
+          "bytes": 674,
+          "sha256": "acfd9ea793a6d3bcbff2043194e000c0cf891e6399cc758a802cccd628187ba5"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fa35cab08ba0894d84d8eef4572357e8/roundtrip/1c66b8249b028cfb8cc79a97c232b04e/questions.ko.json",
+          "bytes": 713061,
+          "sha256": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fa35cab08ba0894d84d8eef4572357e8/roundtrip/1c66b8249b028cfb8cc79a97c232b04e/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fa35cab08ba0894d84d8eef4572357e8/roundtrip/1c66b8249b028cfb8cc79a97c232b04e/vocabulary.ttl",
+          "bytes": 6392196,
+          "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fc03d037dc4086b06953509f0ed423a1/plan.json",
+          "bytes": 2422017,
+          "sha256": "05205b37b1203ba3da222c416d0c502587cdc02cf85425d1705ac8f12ced88f5"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fc03d037dc4086b06953509f0ed423a1/roundtrip/8468387aff432acc31329bc248285384/augmentation.json",
+          "bytes": 1451,
+          "sha256": "c1a55bfaedb50e37097765fc9982f9d5618a5d844863b09cb0c326610a7a55b1"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fc03d037dc4086b06953509f0ed423a1/roundtrip/8468387aff432acc31329bc248285384/clinical.ttl",
+          "bytes": 3352036,
+          "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fc03d037dc4086b06953509f0ed423a1/roundtrip/8468387aff432acc31329bc248285384/guideline-index.json",
+          "bytes": 1418264,
+          "sha256": "d81bea933f9b0486e7007907b807747a5e14362c88d0b9f424768a3ea645e620"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fc03d037dc4086b06953509f0ed423a1/roundtrip/8468387aff432acc31329bc248285384/manifest.json",
+          "bytes": 674,
+          "sha256": "fa0cc88ccfc49543176cf375949056f0e0b7fb4c73e9fb3f1fd0cd525e3515e9"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fc03d037dc4086b06953509f0ed423a1/roundtrip/8468387aff432acc31329bc248285384/questions.ko.json",
+          "bytes": 713061,
+          "sha256": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fc03d037dc4086b06953509f0ed423a1/roundtrip/8468387aff432acc31329bc248285384/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "data/extraction/v5-enum/output/augmentation/fc03d037dc4086b06953509f0ed423a1/roundtrip/8468387aff432acc31329bc248285384/vocabulary.ttl",
+          "bytes": 6392196,
+          "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/initial",
+      "kind": "directory",
+      "file_count": 8,
+      "bytes": 13444615,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/initial/42c0b88af1a90b1aa695c88d53ce4739/plan.json",
+          "bytes": 1560410,
+          "sha256": "4d86af6c73f576480f8c8e7bec064e96b4a82a1cdf1705e4308edce157c6b4e3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/initial/42c0b88af1a90b1aa695c88d53ce4739/roundtrip/9f04ce2c92bb6f023a991dbb620414f6/augmentation.json",
+          "bytes": 1253,
+          "sha256": "5f6638e2ad34f459f7792198e0bb58582f7d9560a0367b1b6c5bf78e2833f157"
+        },
+        {
+          "path": "Tmp/augmentation-d58/initial/42c0b88af1a90b1aa695c88d53ce4739/roundtrip/9f04ce2c92bb6f023a991dbb620414f6/clinical.ttl",
+          "bytes": 3352036,
+          "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+        },
+        {
+          "path": "Tmp/augmentation-d58/initial/42c0b88af1a90b1aa695c88d53ce4739/roundtrip/9f04ce2c92bb6f023a991dbb620414f6/guideline-index.json",
+          "bytes": 1418264,
+          "sha256": "c75bdeb63b998e15d01c4c490ae1089ff8351929a736bdf1bb4469a346666517"
+        },
+        {
+          "path": "Tmp/augmentation-d58/initial/42c0b88af1a90b1aa695c88d53ce4739/roundtrip/9f04ce2c92bb6f023a991dbb620414f6/manifest.json",
+          "bytes": 674,
+          "sha256": "3049445bc1bd4fb10425a46086e4c462439f4f0006a61124bee8f34494b26344"
+        },
+        {
+          "path": "Tmp/augmentation-d58/initial/42c0b88af1a90b1aa695c88d53ce4739/roundtrip/9f04ce2c92bb6f023a991dbb620414f6/questions.ko.json",
+          "bytes": 713061,
+          "sha256": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f"
+        },
+        {
+          "path": "Tmp/augmentation-d58/initial/42c0b88af1a90b1aa695c88d53ce4739/roundtrip/9f04ce2c92bb6f023a991dbb620414f6/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/initial/42c0b88af1a90b1aa695c88d53ce4739/roundtrip/9f04ce2c92bb6f023a991dbb620414f6/vocabulary.ttl",
+          "bytes": 6392196,
+          "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/actual-parent-mock",
+      "kind": "directory",
+      "file_count": 39,
+      "bytes": 68961402,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/74077851f0483d6055dfac763823ae98/augmentation.json",
+          "bytes": 21287,
+          "sha256": "e74f1ab96b4ed117b7fb9ec2efd7e19c4f7ca5dfcb5c4e09ce6d5de296e6c8f6"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/74077851f0483d6055dfac763823ae98/clinical.ttl",
+          "bytes": 3363606,
+          "sha256": "52668e703acf8090c66ff3ef3db98a8934530e93c052eefa485dec3228822b5d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/74077851f0483d6055dfac763823ae98/guideline-index.json",
+          "bytes": 1418498,
+          "sha256": "8fad8b04be81e5ffeace00024a62c7dc3421a6de420f27cfb7b7d7a90e7ee80d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/74077851f0483d6055dfac763823ae98/manifest.json",
+          "bytes": 674,
+          "sha256": "e1210737776cf3bfb266e3f0b75fec9de7e8c2d58ed381ab6d07ae0b14850684"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/74077851f0483d6055dfac763823ae98/questions.ko.json",
+          "bytes": 714620,
+          "sha256": "c551c9e738f4d9949536d20e267fe675bccb0411c7b0e281ee881229376d868b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/74077851f0483d6055dfac763823ae98/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/74077851f0483d6055dfac763823ae98/vocabulary.ttl",
+          "bytes": 6397740,
+          "sha256": "1b57d79ad236d41b988cce572c8d4a6e27400cede8219e321bf4cd2f224cd991"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/ed0e4f58b5d01ba30c837e671a651507/augmentation.json",
+          "bytes": 21287,
+          "sha256": "9c5529fa059b6f15129c0dd70966174f48b0ed275f5bec665194fd1444a548ad"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/ed0e4f58b5d01ba30c837e671a651507/clinical.ttl",
+          "bytes": 3363606,
+          "sha256": "52668e703acf8090c66ff3ef3db98a8934530e93c052eefa485dec3228822b5d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/ed0e4f58b5d01ba30c837e671a651507/guideline-index.json",
+          "bytes": 1418498,
+          "sha256": "c7c22cc4ac22349450fa71d193cb4c08bee134c78b0eb10f68ddb151026c2c99"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/ed0e4f58b5d01ba30c837e671a651507/manifest.json",
+          "bytes": 674,
+          "sha256": "5f17b8315a8ddfe3779b3e68ef85e1bc7fdb56633f71b54da7a7fad8c468bf51"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/ed0e4f58b5d01ba30c837e671a651507/questions.ko.json",
+          "bytes": 714620,
+          "sha256": "c551c9e738f4d9949536d20e267fe675bccb0411c7b0e281ee881229376d868b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/ed0e4f58b5d01ba30c837e671a651507/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/output/ed0e4f58b5d01ba30c837e671a651507/vocabulary.ttl",
+          "bytes": 6397740,
+          "sha256": "1b57d79ad236d41b988cce572c8d4a6e27400cede8219e321bf4cd2f224cd991"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/4984038453204c3b78de5c9fa439219b/plan.json",
+          "bytes": 2422058,
+          "sha256": "c5d931bb810d693ff96877b3a74ad0538c812263df40b52a2ad46316973d2114"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/4984038453204c3b78de5c9fa439219b/roundtrip/c002cc1e59ec4579ca2b825e63e7a1a5/augmentation.json",
+          "bytes": 1487,
+          "sha256": "89aa0ed9c6880c43858a29e4adba9963850e8350929615de190a724aba7608e4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/4984038453204c3b78de5c9fa439219b/roundtrip/c002cc1e59ec4579ca2b825e63e7a1a5/clinical.ttl",
+          "bytes": 3352036,
+          "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/4984038453204c3b78de5c9fa439219b/roundtrip/c002cc1e59ec4579ca2b825e63e7a1a5/guideline-index.json",
+          "bytes": 1418264,
+          "sha256": "55b664559d00b25f5d1671bf3c34bd776ea5c750199d631f37521dd2656534a1"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/4984038453204c3b78de5c9fa439219b/roundtrip/c002cc1e59ec4579ca2b825e63e7a1a5/manifest.json",
+          "bytes": 674,
+          "sha256": "9be659268a0f0b67912b9215e7bb6bc5c79dd8eb96e69b3684d61fb64e3d9c30"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/4984038453204c3b78de5c9fa439219b/roundtrip/c002cc1e59ec4579ca2b825e63e7a1a5/questions.ko.json",
+          "bytes": 713061,
+          "sha256": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/4984038453204c3b78de5c9fa439219b/roundtrip/c002cc1e59ec4579ca2b825e63e7a1a5/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/4984038453204c3b78de5c9fa439219b/roundtrip/c002cc1e59ec4579ca2b825e63e7a1a5/vocabulary.ttl",
+          "bytes": 6392196,
+          "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/537dada848bf48ef790bd8ea07366120/plan.json",
+          "bytes": 2421365,
+          "sha256": "54882648454652488f4555a4b97433c1695ffb6179dc49a2e1e359e43cbdf82f"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/537dada848bf48ef790bd8ea07366120/roundtrip/e5e3a065367102b90b1ef189f60d8751/augmentation.json",
+          "bytes": 1487,
+          "sha256": "f0329bada6474e0b169e5df0369ccede683341a81401e31187863196504956fd"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/537dada848bf48ef790bd8ea07366120/roundtrip/e5e3a065367102b90b1ef189f60d8751/clinical.ttl",
+          "bytes": 3352036,
+          "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/537dada848bf48ef790bd8ea07366120/roundtrip/e5e3a065367102b90b1ef189f60d8751/guideline-index.json",
+          "bytes": 1418264,
+          "sha256": "6b44714c826170fa07d5fd09ba432bbb126690606d7b430247bd48c3bac4e842"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/537dada848bf48ef790bd8ea07366120/roundtrip/e5e3a065367102b90b1ef189f60d8751/manifest.json",
+          "bytes": 674,
+          "sha256": "d8bee4e70574ddde3217f332e0231a7c5de61e7eebd9a310720dbe844735aeab"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/537dada848bf48ef790bd8ea07366120/roundtrip/e5e3a065367102b90b1ef189f60d8751/questions.ko.json",
+          "bytes": 713061,
+          "sha256": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/537dada848bf48ef790bd8ea07366120/roundtrip/e5e3a065367102b90b1ef189f60d8751/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/plans/537dada848bf48ef790bd8ea07366120/roundtrip/e5e3a065367102b90b1ef189f60d8751/vocabulary.ttl",
+          "bytes": 6392196,
+          "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/verification.json",
+          "bytes": 28697,
+          "sha256": "9d31bb797ca9c18f457ca91f1f869b7d148e97487608cddafced48de66a5d515"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/work/4984038453204c3b78de5c9fa439219b/.worker.lock",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/work/4984038453204c3b78de5c9fa439219b/jobs.sqlite3",
+          "bytes": 8204288,
+          "sha256": "721928e96511c61ac99beb3fb192b26d29a0b6678aa3409fffe69b1f858d2ee8"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/work/4984038453204c3b78de5c9fa439219b/jobs.sqlite3-shm",
+          "bytes": 32768,
+          "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/work/4984038453204c3b78de5c9fa439219b/jobs.sqlite3-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/work/537dada848bf48ef790bd8ea07366120/.worker.lock",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/work/537dada848bf48ef790bd8ea07366120/jobs.sqlite3",
+          "bytes": 8204288,
+          "sha256": "110de2432b1d80006f25900fa84189b2b87f5607df19b1ae72d29368c4eaed88"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/work/537dada848bf48ef790bd8ea07366120/jobs.sqlite3-shm",
+          "bytes": 32768,
+          "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock/work/537dada848bf48ef790bd8ea07366120/jobs.sqlite3-wal",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/extracted",
+      "kind": "directory",
+      "file_count": 89,
+      "bytes": 325824,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/extracted/.env",
+          "bytes": 233,
+          "sha256": "9c2e46b5b22e0f0c47f026cb0cc5a047b10b8cabc7e44e625640513cf6cf6595"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/clinical_action.txt",
+          "bytes": 590,
+          "sha256": "0fe704e263becff05ce5f5431ae8f4bdc539a0a755f868f5dd5b8c1540ed4ed5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/clinical_action_output.txt",
+          "bytes": 248,
+          "sha256": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/clinical_common.txt",
+          "bytes": 3061,
+          "sha256": "616a678fbda51a41aadcf7e1c5d699b2929d43fc8fdebf0f5fc52d1f72865cd8"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/clinical_decision_output.txt",
+          "bytes": 229,
+          "sha256": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/clinical_rank_output.txt",
+          "bytes": 90,
+          "sha256": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/clinical_ranking.txt",
+          "bytes": 343,
+          "sha256": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/clinical_repair.txt",
+          "bytes": 229,
+          "sha256": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/data.txt",
+          "bytes": 233,
+          "sha256": "be9dc59c6a2496ac9b392f9f0a246abeaf91be73cb2ae602d8ca0aa890de9f65"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/input_chief_repair.txt",
+          "bytes": 262,
+          "sha256": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/input_common.txt",
+          "bytes": 5239,
+          "sha256": "a82034ea9739462beb1f3a2d7e25b1c63e98eeaf7f1e04ff7a925578fa2c5cce"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/input_exam.txt",
+          "bytes": 304,
+          "sha256": "9272db7d9b9a47381b7459ccca79143a3603b029519255057e03a917b509452b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/input_fields.txt",
+          "bytes": 1901,
+          "sha256": "e10ffed09056a14244d6c09e2cc9e0036ff2b8cfd7cfd2b83e42144e97d68dc7"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/input_initial.txt",
+          "bytes": 973,
+          "sha256": "7a985361093040383254e1f329a8845b94fd5111aad6d9a50a1aed588995c8a0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/input_repair.txt",
+          "bytes": 221,
+          "sha256": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/input_reply.txt",
+          "bytes": 592,
+          "sha256": "9619bf9e29c185ae9045bea7b19c631dc4f6fc0fbf2b28a1c75fcca5e447cefb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/input_rows_repair.txt",
+          "bytes": 516,
+          "sha256": "f2f472dc9c9cbd5d2d3de9361c0dec68c5705cd45b016aca3e558ecef52b7366"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/mapping_common.txt",
+          "bytes": 2259,
+          "sha256": "3e732c28c54fff90da423509e7837f4672b5adae9c25af87ad2c095454893a80"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/mapping_repair.txt",
+          "bytes": 425,
+          "sha256": "9e248b59b4374651e34ca3be4f1b5b33a9efe8b1c5ecf0ad373443d42b1bc1d6"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/mapping_select.txt",
+          "bytes": 145,
+          "sha256": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/mouth_common.txt",
+          "bytes": 652,
+          "sha256": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/mouth_disease_notice.txt",
+          "bytes": 241,
+          "sha256": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/mouth_output.txt",
+          "bytes": 189,
+          "sha256": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/mouth_plan.txt",
+          "bytes": 379,
+          "sha256": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/mouth_response_repair.txt",
+          "bytes": 247,
+          "sha256": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/mouth_symptom_notice.txt",
+          "bytes": 219,
+          "sha256": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/mouth_text_repair.txt",
+          "bytes": 258,
+          "sha256": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/plan_common.txt",
+          "bytes": 1748,
+          "sha256": "7c73629f7b146932e95de00854b62759ea39b564726ee0b0fe7d4ba117c752bc"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/plan_complete.txt",
+          "bytes": 75,
+          "sha256": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/plan_output.txt",
+          "bytes": 1416,
+          "sha256": "9c6373c4758e052243124b37faea78633fe2d230787cc9bf2a688158383010ce"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/plan_repair.txt",
+          "bytes": 368,
+          "sha256": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/session_chief_complaint.txt",
+          "bytes": 183,
+          "sha256": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/session_context_factor.txt",
+          "bytes": 223,
+          "sha256": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/session_differential_diagnosis.txt",
+          "bytes": 275,
+          "sha256": "c07d8b98bef0431ea2248bcc06932e264e8645ded09fa3ee51d413b790703fc9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts/session_initiation.txt",
+          "bytes": 181,
+          "sha256": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/prompts.json",
+          "bytes": 2719,
+          "sha256": "5f9dcbb4b228403c84bc9be4690dca831bbda768830e171848f9b0d324715e6f"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/config/texts.ko.json",
+          "bytes": 3884,
+          "sha256": "5e9ea2af6114a2da71133e825f2c851c717a227ce8e789e09d565ab91348cad1"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/knowledge/__init__.py",
+          "bytes": 1,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/knowledge/clinical.ttl",
+          "bytes": 8424,
+          "sha256": "fd3b9233746a313cb262b28708189de93304aa5ce37444d1094342fb714764c6"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/knowledge/conditions.py",
+          "bytes": 9036,
+          "sha256": "eb67520a5bed828d994d3bc1551789bbdc2500e795cdd637e6a908977d888575"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/knowledge/graph.py",
+          "bytes": 35420,
+          "sha256": "d695bab0c42ec495b9dfc9f60a318101241f7601918ae586b84fd3c2721b3ab9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/knowledge/guideline-index.json",
+          "bytes": 228,
+          "sha256": "cee8d19280c81a33b2d95bf9ff08e896b0015269ba9abe994f490bbf722bd094"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/knowledge/guidelines.py",
+          "bytes": 3160,
+          "sha256": "f2855176cb175967df15deaee6bdcdeeacf7d07491ebb33c4bdf5c84e8d097ba"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/knowledge/manifest.json",
+          "bytes": 654,
+          "sha256": "e3a4e60dc81feffc94a57c90bfe54f4b8308319e92fd8e39bc4a322ee8ee9ebc"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/knowledge/questions.ko.json",
+          "bytes": 1505,
+          "sha256": "b98ec25c0a1ef0b74ef7ad8ce6f1f283e96065f99692089f34dff3036b4ae34e"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/knowledge/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/knowledge/vocabulary.ttl",
+          "bytes": 5714,
+          "sha256": "416bf2b5382f2065b505a844ca2a2dafc6ecffafd35692df58eddfe020c5f40c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/nova_sdk.py",
+          "bytes": 7965,
+          "sha256": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/requirements.txt",
+          "bytes": 31,
+          "sha256": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/run.py",
+          "bytes": 201,
+          "sha256": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/settings.py",
+          "bytes": 3124,
+          "sha256": "1d2e6225d1d1df40e1026e2345165b149147c953fc5e17c4fd56b1d04c0162df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/consultation.py",
+          "bytes": 8143,
+          "sha256": "31dd3180473c16c3d929375c6cde285c8485ea5ba27467ad590886d3b7315629"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/doctor_brain.py",
+          "bytes": 3017,
+          "sha256": "6ec2d9c23d18215521f6275a2182ef4ef0c373a32030a3a29ae3dc24ae141c6d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/doctor_ear.py",
+          "bytes": 27066,
+          "sha256": "cf80398bd37886dccefc0dc85847fc7a5d7d514d3e84ce3484a25a0311032616"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/doctor_mouth.py",
+          "bytes": 9485,
+          "sha256": "475ae7bf651f74252f406245574515d6069459b15473b45796bbe6ceee67612d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/education.py",
+          "bytes": 7397,
+          "sha256": "c896389142875b7a7560fcd3c31e5bdcf6c59dee72683cad29d6e02443d2ae9c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/input_types.py",
+          "bytes": 4776,
+          "sha256": "f7c487dd587e9b0725085c3fc71a5cbd7f1644e1b27359881f1f847fa8faa930"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/io/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/io/nova_session.py",
+          "bytes": 3198,
+          "sha256": "1e30df7153cb92e8deb58b99e39a8a669f873ffabe0482215aecb14e35dd686c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/io/request_executor.py",
+          "bytes": 1739,
+          "sha256": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/model_context.py",
+          "bytes": 1180,
+          "sha256": "33f0bd75bc58664a344ebd0ea1ed7285c8044d7ca90d724c780798e036610092"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/output_types.py",
+          "bytes": 515,
+          "sha256": "af24b35d0a1195889f1e1b256b6eb2d24f422ee46e7f89794cf979953eaf184a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/rules/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/rules/action.py",
+          "bytes": 1097,
+          "sha256": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/rules/assessment.py",
+          "bytes": 13974,
+          "sha256": "ebb0a40ecadf6e22b87cd1c2be63205753d65fa970dd2f3032d5d939b0b194ad"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/rules/budget.py",
+          "bytes": 8198,
+          "sha256": "b470e90c4709fea6af924928b9082f69aa316bd2dc4d9f9b5c1f1f841c387806"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/rules/collection.py",
+          "bytes": 2355,
+          "sha256": "5b4608b810bea07b76786ee9ee876c45de1b5be39a0d7afb77c573ccbdb58412"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/rules/decision.py",
+          "bytes": 13149,
+          "sha256": "62d74ab0730a0770cbaa14d94ad042fc09bee6288523bfedd00f8e677f775573"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/rules/input.py",
+          "bytes": 7634,
+          "sha256": "9c7657e7faa2803eab7d6bac47cacd5500165c7906f8ae3adea00d49e5748da4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/rules/limits.py",
+          "bytes": 1644,
+          "sha256": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/rules/normalization.py",
+          "bytes": 13248,
+          "sha256": "21b6f41aaa4d5f0fc705297f5761d6f78a879d74336f7df91cde346d0cb0c383"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/rules/questions.py",
+          "bytes": 16634,
+          "sha256": "8fc70b2f054ef68b178f784cee33b3ba5fb9aa7df7a08807c1e83dff56c9f313"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/rules/submission.py",
+          "bytes": 1517,
+          "sha256": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/runtime.py",
+          "bytes": 3407,
+          "sha256": "2be3ee090254b472cd926dc3254fca07ac38d63d552e8037b3ee8ac22f3358ed"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/sessions/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/sessions/chief_complaint.py",
+          "bytes": 3111,
+          "sha256": "d99294957a0e74a800d49072ede3050a30bc8f5bbd823253925787bda0cfbd7a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/sessions/context_factor.py",
+          "bytes": 3076,
+          "sha256": "a66d47c0a4628498ebcdbf15723950460fd97715dfc7d67879fa8987dd8cbf75"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/sessions/differential_diagnosis.py",
+          "bytes": 6768,
+          "sha256": "c98ca038a777560832feb60d53d52e636006cf65f6eda4d95e5cef36d022275a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/sessions/education.py",
+          "bytes": 5220,
+          "sha256": "486c826acc7b269fd5551d9d2ed45d2a371b81051035b4e4eb1324aece50a506"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/sessions/initiation.py",
+          "bytes": 1238,
+          "sha256": "b9acc707231e29f3f9c445c537809b0985f3df975be989c9ff94b838a53f6bf3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/state/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/state/evidence.py",
+          "bytes": 4228,
+          "sha256": "6a121ea121d85e46b8de82db8e9e08515176ad27be99e10fd86a8477bde14029"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/state/interactions.py",
+          "bytes": 555,
+          "sha256": "386f54838b85506da0a477ace5269d76458b6dc58a473a928e4e6a0dddfbe5d0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/state/models.py",
+          "bytes": 15137,
+          "sha256": "05fbebfaedacaa2adf532604b19fbe544ccfd1ea06de0ac2657f3a7e66e14c4e"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/state/questions.py",
+          "bytes": 2646,
+          "sha256": "1ef702194bf0137e22b3d831204abba2423404d8df7badd0f69f1622784dd25d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/state/usage.py",
+          "bytes": 1177,
+          "sha256": "2a54856accb8fa9cfb62557d60b33f42c7dc0e8bd168b4995976321809c9cefb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/submission_writer.py",
+          "bytes": 14403,
+          "sha256": "8b7e4953ea3e8c2aac6548b8450f99de5080c9fa8ce4b4003fec7280886e6af0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted/workflow/text_config.py",
+          "bytes": 5358,
+          "sha256": "81007fcf36b5668b97d495ed1cd0249213771968ff645c07ab021c9f98fe77b5"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/extracted-final",
+      "kind": "directory",
+      "file_count": 89,
+      "bytes": 325824,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/.env",
+          "bytes": 233,
+          "sha256": "9c2e46b5b22e0f0c47f026cb0cc5a047b10b8cabc7e44e625640513cf6cf6595"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/clinical_action.txt",
+          "bytes": 590,
+          "sha256": "0fe704e263becff05ce5f5431ae8f4bdc539a0a755f868f5dd5b8c1540ed4ed5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/clinical_action_output.txt",
+          "bytes": 248,
+          "sha256": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/clinical_common.txt",
+          "bytes": 3061,
+          "sha256": "616a678fbda51a41aadcf7e1c5d699b2929d43fc8fdebf0f5fc52d1f72865cd8"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/clinical_decision_output.txt",
+          "bytes": 229,
+          "sha256": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/clinical_rank_output.txt",
+          "bytes": 90,
+          "sha256": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/clinical_ranking.txt",
+          "bytes": 343,
+          "sha256": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/clinical_repair.txt",
+          "bytes": 229,
+          "sha256": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/data.txt",
+          "bytes": 233,
+          "sha256": "be9dc59c6a2496ac9b392f9f0a246abeaf91be73cb2ae602d8ca0aa890de9f65"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/input_chief_repair.txt",
+          "bytes": 262,
+          "sha256": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/input_common.txt",
+          "bytes": 5239,
+          "sha256": "a82034ea9739462beb1f3a2d7e25b1c63e98eeaf7f1e04ff7a925578fa2c5cce"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/input_exam.txt",
+          "bytes": 304,
+          "sha256": "9272db7d9b9a47381b7459ccca79143a3603b029519255057e03a917b509452b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/input_fields.txt",
+          "bytes": 1901,
+          "sha256": "e10ffed09056a14244d6c09e2cc9e0036ff2b8cfd7cfd2b83e42144e97d68dc7"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/input_initial.txt",
+          "bytes": 973,
+          "sha256": "7a985361093040383254e1f329a8845b94fd5111aad6d9a50a1aed588995c8a0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/input_repair.txt",
+          "bytes": 221,
+          "sha256": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/input_reply.txt",
+          "bytes": 592,
+          "sha256": "9619bf9e29c185ae9045bea7b19c631dc4f6fc0fbf2b28a1c75fcca5e447cefb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/input_rows_repair.txt",
+          "bytes": 516,
+          "sha256": "f2f472dc9c9cbd5d2d3de9361c0dec68c5705cd45b016aca3e558ecef52b7366"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/mapping_common.txt",
+          "bytes": 2259,
+          "sha256": "3e732c28c54fff90da423509e7837f4672b5adae9c25af87ad2c095454893a80"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/mapping_repair.txt",
+          "bytes": 425,
+          "sha256": "9e248b59b4374651e34ca3be4f1b5b33a9efe8b1c5ecf0ad373443d42b1bc1d6"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/mapping_select.txt",
+          "bytes": 145,
+          "sha256": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/mouth_common.txt",
+          "bytes": 652,
+          "sha256": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/mouth_disease_notice.txt",
+          "bytes": 241,
+          "sha256": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/mouth_output.txt",
+          "bytes": 189,
+          "sha256": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/mouth_plan.txt",
+          "bytes": 379,
+          "sha256": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/mouth_response_repair.txt",
+          "bytes": 247,
+          "sha256": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/mouth_symptom_notice.txt",
+          "bytes": 219,
+          "sha256": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/mouth_text_repair.txt",
+          "bytes": 258,
+          "sha256": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/plan_common.txt",
+          "bytes": 1748,
+          "sha256": "7c73629f7b146932e95de00854b62759ea39b564726ee0b0fe7d4ba117c752bc"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/plan_complete.txt",
+          "bytes": 75,
+          "sha256": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/plan_output.txt",
+          "bytes": 1416,
+          "sha256": "9c6373c4758e052243124b37faea78633fe2d230787cc9bf2a688158383010ce"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/plan_repair.txt",
+          "bytes": 368,
+          "sha256": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/session_chief_complaint.txt",
+          "bytes": 183,
+          "sha256": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/session_context_factor.txt",
+          "bytes": 223,
+          "sha256": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/session_differential_diagnosis.txt",
+          "bytes": 275,
+          "sha256": "c07d8b98bef0431ea2248bcc06932e264e8645ded09fa3ee51d413b790703fc9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts/session_initiation.txt",
+          "bytes": 181,
+          "sha256": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/prompts.json",
+          "bytes": 2719,
+          "sha256": "5f9dcbb4b228403c84bc9be4690dca831bbda768830e171848f9b0d324715e6f"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/config/texts.ko.json",
+          "bytes": 3884,
+          "sha256": "5e9ea2af6114a2da71133e825f2c851c717a227ce8e789e09d565ab91348cad1"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/knowledge/__init__.py",
+          "bytes": 1,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/knowledge/clinical.ttl",
+          "bytes": 8424,
+          "sha256": "fd3b9233746a313cb262b28708189de93304aa5ce37444d1094342fb714764c6"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/knowledge/conditions.py",
+          "bytes": 9036,
+          "sha256": "eb67520a5bed828d994d3bc1551789bbdc2500e795cdd637e6a908977d888575"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/knowledge/graph.py",
+          "bytes": 35420,
+          "sha256": "d695bab0c42ec495b9dfc9f60a318101241f7601918ae586b84fd3c2721b3ab9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/knowledge/guideline-index.json",
+          "bytes": 228,
+          "sha256": "cee8d19280c81a33b2d95bf9ff08e896b0015269ba9abe994f490bbf722bd094"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/knowledge/guidelines.py",
+          "bytes": 3160,
+          "sha256": "f2855176cb175967df15deaee6bdcdeeacf7d07491ebb33c4bdf5c84e8d097ba"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/knowledge/manifest.json",
+          "bytes": 654,
+          "sha256": "e3a4e60dc81feffc94a57c90bfe54f4b8308319e92fd8e39bc4a322ee8ee9ebc"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/knowledge/questions.ko.json",
+          "bytes": 1505,
+          "sha256": "b98ec25c0a1ef0b74ef7ad8ce6f1f283e96065f99692089f34dff3036b4ae34e"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/knowledge/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/knowledge/vocabulary.ttl",
+          "bytes": 5714,
+          "sha256": "416bf2b5382f2065b505a844ca2a2dafc6ecffafd35692df58eddfe020c5f40c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/nova_sdk.py",
+          "bytes": 7965,
+          "sha256": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/requirements.txt",
+          "bytes": 31,
+          "sha256": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/run.py",
+          "bytes": 201,
+          "sha256": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/settings.py",
+          "bytes": 3124,
+          "sha256": "45fe7d0a52863f5664aabd1085bb7098221ab9b3611dcab7ffd6f2e3a69c2acd"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/consultation.py",
+          "bytes": 8143,
+          "sha256": "31dd3180473c16c3d929375c6cde285c8485ea5ba27467ad590886d3b7315629"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/doctor_brain.py",
+          "bytes": 3017,
+          "sha256": "6ec2d9c23d18215521f6275a2182ef4ef0c373a32030a3a29ae3dc24ae141c6d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/doctor_ear.py",
+          "bytes": 27066,
+          "sha256": "cf80398bd37886dccefc0dc85847fc7a5d7d514d3e84ce3484a25a0311032616"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/doctor_mouth.py",
+          "bytes": 9485,
+          "sha256": "475ae7bf651f74252f406245574515d6069459b15473b45796bbe6ceee67612d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/education.py",
+          "bytes": 7397,
+          "sha256": "c896389142875b7a7560fcd3c31e5bdcf6c59dee72683cad29d6e02443d2ae9c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/input_types.py",
+          "bytes": 4776,
+          "sha256": "f7c487dd587e9b0725085c3fc71a5cbd7f1644e1b27359881f1f847fa8faa930"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/io/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/io/nova_session.py",
+          "bytes": 3198,
+          "sha256": "1e30df7153cb92e8deb58b99e39a8a669f873ffabe0482215aecb14e35dd686c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/io/request_executor.py",
+          "bytes": 1739,
+          "sha256": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/model_context.py",
+          "bytes": 1180,
+          "sha256": "33f0bd75bc58664a344ebd0ea1ed7285c8044d7ca90d724c780798e036610092"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/output_types.py",
+          "bytes": 515,
+          "sha256": "af24b35d0a1195889f1e1b256b6eb2d24f422ee46e7f89794cf979953eaf184a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/rules/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/rules/action.py",
+          "bytes": 1097,
+          "sha256": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/rules/assessment.py",
+          "bytes": 13974,
+          "sha256": "ebb0a40ecadf6e22b87cd1c2be63205753d65fa970dd2f3032d5d939b0b194ad"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/rules/budget.py",
+          "bytes": 8198,
+          "sha256": "b470e90c4709fea6af924928b9082f69aa316bd2dc4d9f9b5c1f1f841c387806"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/rules/collection.py",
+          "bytes": 2355,
+          "sha256": "5b4608b810bea07b76786ee9ee876c45de1b5be39a0d7afb77c573ccbdb58412"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/rules/decision.py",
+          "bytes": 13149,
+          "sha256": "62d74ab0730a0770cbaa14d94ad042fc09bee6288523bfedd00f8e677f775573"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/rules/input.py",
+          "bytes": 7634,
+          "sha256": "9c7657e7faa2803eab7d6bac47cacd5500165c7906f8ae3adea00d49e5748da4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/rules/limits.py",
+          "bytes": 1644,
+          "sha256": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/rules/normalization.py",
+          "bytes": 13248,
+          "sha256": "21b6f41aaa4d5f0fc705297f5761d6f78a879d74336f7df91cde346d0cb0c383"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/rules/questions.py",
+          "bytes": 16634,
+          "sha256": "8fc70b2f054ef68b178f784cee33b3ba5fb9aa7df7a08807c1e83dff56c9f313"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/rules/submission.py",
+          "bytes": 1517,
+          "sha256": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/runtime.py",
+          "bytes": 3407,
+          "sha256": "2be3ee090254b472cd926dc3254fca07ac38d63d552e8037b3ee8ac22f3358ed"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/sessions/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/sessions/chief_complaint.py",
+          "bytes": 3111,
+          "sha256": "d99294957a0e74a800d49072ede3050a30bc8f5bbd823253925787bda0cfbd7a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/sessions/context_factor.py",
+          "bytes": 3076,
+          "sha256": "a66d47c0a4628498ebcdbf15723950460fd97715dfc7d67879fa8987dd8cbf75"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/sessions/differential_diagnosis.py",
+          "bytes": 6768,
+          "sha256": "c98ca038a777560832feb60d53d52e636006cf65f6eda4d95e5cef36d022275a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/sessions/education.py",
+          "bytes": 5220,
+          "sha256": "486c826acc7b269fd5551d9d2ed45d2a371b81051035b4e4eb1324aece50a506"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/sessions/initiation.py",
+          "bytes": 1238,
+          "sha256": "b9acc707231e29f3f9c445c537809b0985f3df975be989c9ff94b838a53f6bf3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/state/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/state/evidence.py",
+          "bytes": 4228,
+          "sha256": "6a121ea121d85e46b8de82db8e9e08515176ad27be99e10fd86a8477bde14029"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/state/interactions.py",
+          "bytes": 555,
+          "sha256": "386f54838b85506da0a477ace5269d76458b6dc58a473a928e4e6a0dddfbe5d0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/state/models.py",
+          "bytes": 15137,
+          "sha256": "05fbebfaedacaa2adf532604b19fbe544ccfd1ea06de0ac2657f3a7e66e14c4e"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/state/questions.py",
+          "bytes": 2646,
+          "sha256": "1ef702194bf0137e22b3d831204abba2423404d8df7badd0f69f1622784dd25d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/state/usage.py",
+          "bytes": 1177,
+          "sha256": "2a54856accb8fa9cfb62557d60b33f42c7dc0e8bd168b4995976321809c9cefb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/submission_writer.py",
+          "bytes": 14403,
+          "sha256": "8b7e4953ea3e8c2aac6548b8450f99de5080c9fa8ce4b4003fec7280886e6af0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/extracted-final/workflow/text_config.py",
+          "bytes": 5358,
+          "sha256": "81007fcf36b5668b97d495ed1cd0249213771968ff645c07ab021c9f98fe77b5"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/package",
+      "kind": "directory",
+      "file_count": 1,
+      "bytes": 107859,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/package/ontoward-submission.zip",
+          "bytes": 107859,
+          "sha256": "e1f799016c877db6740cd012883824e51563c27536a923384372f0bb5e236dcd"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/isolated",
+      "kind": "directory",
+      "file_count": 1,
+      "bytes": 345,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/isolated/sdk-http.json",
+          "bytes": 345,
+          "sha256": "123b45ca9839116781bea9a5c558cb063deae9f7c3989cb0157346edd6c27d1d"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/synthetic-submission",
+      "kind": "directory",
+      "file_count": 103,
+      "bytes": 12390644,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/.DS_Store",
+          "bytes": 8196,
+          "sha256": "7f8b88536372b6eef84c63b890ebb79a4b815c5b2e6644834291a11008c61d45"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/.env",
+          "bytes": 233,
+          "sha256": "9c2e46b5b22e0f0c47f026cb0cc5a047b10b8cabc7e44e625640513cf6cf6595"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/AGENTS.md",
+          "bytes": 14176,
+          "sha256": "fda0540720ea03a38181f4e7436ebd987c18934156494ebc12b4392576d62f47"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/PROJECT_STATE.md",
+          "bytes": 102646,
+          "sha256": "37c81ff8da64fd171dc81c1d2c473084f77dbd62fc6c45d7126a0d37d3c0cf25"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/README.md",
+          "bytes": 31508,
+          "sha256": "32e2725bcf14d74d71b3a547754d42c3a7e9880ef85d67efff919d6c93c6a41b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/README.md",
+          "bytes": 6532,
+          "sha256": "b9834ac32bbc99c4fbd62cf3a0a936dcb170490229f1c1388a1ff3360d1835e4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/clinical_action.txt",
+          "bytes": 590,
+          "sha256": "0fe704e263becff05ce5f5431ae8f4bdc539a0a755f868f5dd5b8c1540ed4ed5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/clinical_action_output.txt",
+          "bytes": 248,
+          "sha256": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/clinical_common.txt",
+          "bytes": 3061,
+          "sha256": "616a678fbda51a41aadcf7e1c5d699b2929d43fc8fdebf0f5fc52d1f72865cd8"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/clinical_decision_output.txt",
+          "bytes": 229,
+          "sha256": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/clinical_rank_output.txt",
+          "bytes": 90,
+          "sha256": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/clinical_ranking.txt",
+          "bytes": 343,
+          "sha256": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/clinical_repair.txt",
+          "bytes": 229,
+          "sha256": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/data.txt",
+          "bytes": 233,
+          "sha256": "be9dc59c6a2496ac9b392f9f0a246abeaf91be73cb2ae602d8ca0aa890de9f65"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/input_chief_repair.txt",
+          "bytes": 262,
+          "sha256": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/input_common.txt",
+          "bytes": 5239,
+          "sha256": "a82034ea9739462beb1f3a2d7e25b1c63e98eeaf7f1e04ff7a925578fa2c5cce"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/input_exam.txt",
+          "bytes": 304,
+          "sha256": "9272db7d9b9a47381b7459ccca79143a3603b029519255057e03a917b509452b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/input_fields.txt",
+          "bytes": 1901,
+          "sha256": "e10ffed09056a14244d6c09e2cc9e0036ff2b8cfd7cfd2b83e42144e97d68dc7"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/input_initial.txt",
+          "bytes": 973,
+          "sha256": "7a985361093040383254e1f329a8845b94fd5111aad6d9a50a1aed588995c8a0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/input_repair.txt",
+          "bytes": 221,
+          "sha256": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/input_reply.txt",
+          "bytes": 592,
+          "sha256": "9619bf9e29c185ae9045bea7b19c631dc4f6fc0fbf2b28a1c75fcca5e447cefb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/input_rows_repair.txt",
+          "bytes": 516,
+          "sha256": "f2f472dc9c9cbd5d2d3de9361c0dec68c5705cd45b016aca3e558ecef52b7366"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/mapping_common.txt",
+          "bytes": 2259,
+          "sha256": "3e732c28c54fff90da423509e7837f4672b5adae9c25af87ad2c095454893a80"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/mapping_repair.txt",
+          "bytes": 425,
+          "sha256": "9e248b59b4374651e34ca3be4f1b5b33a9efe8b1c5ecf0ad373443d42b1bc1d6"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/mapping_select.txt",
+          "bytes": 145,
+          "sha256": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/mouth_common.txt",
+          "bytes": 652,
+          "sha256": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/mouth_disease_notice.txt",
+          "bytes": 241,
+          "sha256": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/mouth_output.txt",
+          "bytes": 189,
+          "sha256": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/mouth_plan.txt",
+          "bytes": 379,
+          "sha256": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/mouth_response_repair.txt",
+          "bytes": 247,
+          "sha256": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/mouth_symptom_notice.txt",
+          "bytes": 219,
+          "sha256": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/mouth_text_repair.txt",
+          "bytes": 258,
+          "sha256": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/plan_common.txt",
+          "bytes": 1748,
+          "sha256": "7c73629f7b146932e95de00854b62759ea39b564726ee0b0fe7d4ba117c752bc"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/plan_complete.txt",
+          "bytes": 75,
+          "sha256": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/plan_output.txt",
+          "bytes": 1416,
+          "sha256": "9c6373c4758e052243124b37faea78633fe2d230787cc9bf2a688158383010ce"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/plan_repair.txt",
+          "bytes": 368,
+          "sha256": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/session_chief_complaint.txt",
+          "bytes": 183,
+          "sha256": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/session_context_factor.txt",
+          "bytes": 223,
+          "sha256": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/session_differential_diagnosis.txt",
+          "bytes": 275,
+          "sha256": "c07d8b98bef0431ea2248bcc06932e264e8645ded09fa3ee51d413b790703fc9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts/session_initiation.txt",
+          "bytes": 181,
+          "sha256": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/prompts.json",
+          "bytes": 2719,
+          "sha256": "5f9dcbb4b228403c84bc9be4690dca831bbda768830e171848f9b0d324715e6f"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/config/texts.ko.json",
+          "bytes": 3884,
+          "sha256": "5e9ea2af6114a2da71133e825f2c851c717a227ce8e789e09d565ab91348cad1"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/.DS_Store",
+          "bytes": 6148,
+          "sha256": "ee5974bd39b481d05ff811dfa9f77b19fca60d997b7180ee30ee1dec2479345b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/README.md",
+          "bytes": 6514,
+          "sha256": "7d4b7ee0ae04362a1f539a394d7a51591e7998ed18bbfcae24d59218905683b0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/__init__.py",
+          "bytes": 1,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/builds/.DS_Store",
+          "bytes": 6148,
+          "sha256": "d65165279105ca6773180500688df4bdc69a2c7b771752f0a46ef120b7fd8ec3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/clinical.ttl",
+          "bytes": 3352036,
+          "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/guideline-index.json",
+          "bytes": 1418264,
+          "sha256": "6aae5720a4789b878d75e4cb280f888428826613cad435a9603a4236c5cc30b0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/manifest.json",
+          "bytes": 674,
+          "sha256": "1e571b7145601cb795297244b71321671b577174066225fd7af0f7a791076185"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/questions.ko.json",
+          "bytes": 713061,
+          "sha256": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/vocabulary.ttl",
+          "bytes": 6392196,
+          "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/clinical.ttl",
+          "bytes": 8424,
+          "sha256": "fd3b9233746a313cb262b28708189de93304aa5ce37444d1094342fb714764c6"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/conditions.py",
+          "bytes": 9036,
+          "sha256": "eb67520a5bed828d994d3bc1551789bbdc2500e795cdd637e6a908977d888575"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/graph.py",
+          "bytes": 35420,
+          "sha256": "d695bab0c42ec495b9dfc9f60a318101241f7601918ae586b84fd3c2721b3ab9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/guideline-index.json",
+          "bytes": 228,
+          "sha256": "cee8d19280c81a33b2d95bf9ff08e896b0015269ba9abe994f490bbf722bd094"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/guidelines.py",
+          "bytes": 3160,
+          "sha256": "f2855176cb175967df15deaee6bdcdeeacf7d07491ebb33c4bdf5c84e8d097ba"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/manifest.json",
+          "bytes": 654,
+          "sha256": "e3a4e60dc81feffc94a57c90bfe54f4b8308319e92fd8e39bc4a322ee8ee9ebc"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/questions.ko.json",
+          "bytes": 1505,
+          "sha256": "b98ec25c0a1ef0b74ef7ad8ce6f1f283e96065f99692089f34dff3036b4ae34e"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/knowledge/vocabulary.ttl",
+          "bytes": 5714,
+          "sha256": "416bf2b5382f2065b505a844ca2a2dafc6ecffafd35692df58eddfe020c5f40c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/nova_sdk.py",
+          "bytes": 7965,
+          "sha256": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/requirements.txt",
+          "bytes": 31,
+          "sha256": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/run.py",
+          "bytes": 201,
+          "sha256": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/settings.py",
+          "bytes": 3124,
+          "sha256": "1d2e6225d1d1df40e1026e2345165b149147c953fc5e17c4fd56b1d04c0162df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/consultation.py",
+          "bytes": 8143,
+          "sha256": "31dd3180473c16c3d929375c6cde285c8485ea5ba27467ad590886d3b7315629"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/doctor_brain.py",
+          "bytes": 3017,
+          "sha256": "6ec2d9c23d18215521f6275a2182ef4ef0c373a32030a3a29ae3dc24ae141c6d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/doctor_ear.py",
+          "bytes": 27066,
+          "sha256": "cf80398bd37886dccefc0dc85847fc7a5d7d514d3e84ce3484a25a0311032616"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/doctor_mouth.py",
+          "bytes": 9485,
+          "sha256": "475ae7bf651f74252f406245574515d6069459b15473b45796bbe6ceee67612d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/education.py",
+          "bytes": 7397,
+          "sha256": "c896389142875b7a7560fcd3c31e5bdcf6c59dee72683cad29d6e02443d2ae9c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/input_types.py",
+          "bytes": 4776,
+          "sha256": "f7c487dd587e9b0725085c3fc71a5cbd7f1644e1b27359881f1f847fa8faa930"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/io/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/io/nova_session.py",
+          "bytes": 3198,
+          "sha256": "1e30df7153cb92e8deb58b99e39a8a669f873ffabe0482215aecb14e35dd686c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/io/request_executor.py",
+          "bytes": 1739,
+          "sha256": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/model_context.py",
+          "bytes": 1180,
+          "sha256": "33f0bd75bc58664a344ebd0ea1ed7285c8044d7ca90d724c780798e036610092"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/output_types.py",
+          "bytes": 515,
+          "sha256": "af24b35d0a1195889f1e1b256b6eb2d24f422ee46e7f89794cf979953eaf184a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/rules/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/rules/action.py",
+          "bytes": 1097,
+          "sha256": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/rules/assessment.py",
+          "bytes": 13974,
+          "sha256": "ebb0a40ecadf6e22b87cd1c2be63205753d65fa970dd2f3032d5d939b0b194ad"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/rules/budget.py",
+          "bytes": 8198,
+          "sha256": "b470e90c4709fea6af924928b9082f69aa316bd2dc4d9f9b5c1f1f841c387806"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/rules/collection.py",
+          "bytes": 2355,
+          "sha256": "5b4608b810bea07b76786ee9ee876c45de1b5be39a0d7afb77c573ccbdb58412"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/rules/decision.py",
+          "bytes": 13149,
+          "sha256": "62d74ab0730a0770cbaa14d94ad042fc09bee6288523bfedd00f8e677f775573"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/rules/input.py",
+          "bytes": 7634,
+          "sha256": "9c7657e7faa2803eab7d6bac47cacd5500165c7906f8ae3adea00d49e5748da4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/rules/limits.py",
+          "bytes": 1644,
+          "sha256": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/rules/normalization.py",
+          "bytes": 13248,
+          "sha256": "21b6f41aaa4d5f0fc705297f5761d6f78a879d74336f7df91cde346d0cb0c383"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/rules/questions.py",
+          "bytes": 16634,
+          "sha256": "8fc70b2f054ef68b178f784cee33b3ba5fb9aa7df7a08807c1e83dff56c9f313"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/rules/submission.py",
+          "bytes": 1517,
+          "sha256": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/runtime.py",
+          "bytes": 3407,
+          "sha256": "2be3ee090254b472cd926dc3254fca07ac38d63d552e8037b3ee8ac22f3358ed"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/sessions/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/sessions/chief_complaint.py",
+          "bytes": 3111,
+          "sha256": "d99294957a0e74a800d49072ede3050a30bc8f5bbd823253925787bda0cfbd7a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/sessions/context_factor.py",
+          "bytes": 3076,
+          "sha256": "a66d47c0a4628498ebcdbf15723950460fd97715dfc7d67879fa8987dd8cbf75"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/sessions/differential_diagnosis.py",
+          "bytes": 6768,
+          "sha256": "c98ca038a777560832feb60d53d52e636006cf65f6eda4d95e5cef36d022275a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/sessions/education.py",
+          "bytes": 5220,
+          "sha256": "486c826acc7b269fd5551d9d2ed45d2a371b81051035b4e4eb1324aece50a506"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/sessions/initiation.py",
+          "bytes": 1238,
+          "sha256": "b9acc707231e29f3f9c445c537809b0985f3df975be989c9ff94b838a53f6bf3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/state/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/state/evidence.py",
+          "bytes": 4228,
+          "sha256": "6a121ea121d85e46b8de82db8e9e08515176ad27be99e10fd86a8477bde14029"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/state/interactions.py",
+          "bytes": 555,
+          "sha256": "386f54838b85506da0a477ace5269d76458b6dc58a473a928e4e6a0dddfbe5d0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/state/models.py",
+          "bytes": 15137,
+          "sha256": "05fbebfaedacaa2adf532604b19fbe544ccfd1ea06de0ac2657f3a7e66e14c4e"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/state/questions.py",
+          "bytes": 2646,
+          "sha256": "1ef702194bf0137e22b3d831204abba2423404d8df7badd0f69f1622784dd25d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/state/usage.py",
+          "bytes": 1177,
+          "sha256": "2a54856accb8fa9cfb62557d60b33f42c7dc0e8bd168b4995976321809c9cefb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/submission_writer.py",
+          "bytes": 14403,
+          "sha256": "8b7e4953ea3e8c2aac6548b8450f99de5080c9fa8ce4b4003fec7280886e6af0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission/workflow/text_config.py",
+          "bytes": 5358,
+          "sha256": "81007fcf36b5668b97d495ed1cd0249213771968ff645c07ab021c9f98fe77b5"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/synthetic-submission-final",
+      "kind": "directory",
+      "file_count": 104,
+      "bytes": 12390644,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/.DS_Store",
+          "bytes": 8196,
+          "sha256": "7f8b88536372b6eef84c63b890ebb79a4b815c5b2e6644834291a11008c61d45"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/.env",
+          "bytes": 233,
+          "sha256": "9c2e46b5b22e0f0c47f026cb0cc5a047b10b8cabc7e44e625640513cf6cf6595"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/AGENTS.md",
+          "bytes": 14176,
+          "sha256": "fda0540720ea03a38181f4e7436ebd987c18934156494ebc12b4392576d62f47"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/PROJECT_STATE.md",
+          "bytes": 102646,
+          "sha256": "37c81ff8da64fd171dc81c1d2c473084f77dbd62fc6c45d7126a0d37d3c0cf25"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/README.md",
+          "bytes": 31508,
+          "sha256": "32e2725bcf14d74d71b3a547754d42c3a7e9880ef85d67efff919d6c93c6a41b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/README.md",
+          "bytes": 6532,
+          "sha256": "b9834ac32bbc99c4fbd62cf3a0a936dcb170490229f1c1388a1ff3360d1835e4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/clinical_action.txt",
+          "bytes": 590,
+          "sha256": "0fe704e263becff05ce5f5431ae8f4bdc539a0a755f868f5dd5b8c1540ed4ed5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/clinical_action_output.txt",
+          "bytes": 248,
+          "sha256": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/clinical_common.txt",
+          "bytes": 3061,
+          "sha256": "616a678fbda51a41aadcf7e1c5d699b2929d43fc8fdebf0f5fc52d1f72865cd8"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/clinical_decision_output.txt",
+          "bytes": 229,
+          "sha256": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/clinical_rank_output.txt",
+          "bytes": 90,
+          "sha256": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/clinical_ranking.txt",
+          "bytes": 343,
+          "sha256": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/clinical_repair.txt",
+          "bytes": 229,
+          "sha256": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/data.txt",
+          "bytes": 233,
+          "sha256": "be9dc59c6a2496ac9b392f9f0a246abeaf91be73cb2ae602d8ca0aa890de9f65"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/input_chief_repair.txt",
+          "bytes": 262,
+          "sha256": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/input_common.txt",
+          "bytes": 5239,
+          "sha256": "a82034ea9739462beb1f3a2d7e25b1c63e98eeaf7f1e04ff7a925578fa2c5cce"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/input_exam.txt",
+          "bytes": 304,
+          "sha256": "9272db7d9b9a47381b7459ccca79143a3603b029519255057e03a917b509452b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/input_fields.txt",
+          "bytes": 1901,
+          "sha256": "e10ffed09056a14244d6c09e2cc9e0036ff2b8cfd7cfd2b83e42144e97d68dc7"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/input_initial.txt",
+          "bytes": 973,
+          "sha256": "7a985361093040383254e1f329a8845b94fd5111aad6d9a50a1aed588995c8a0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/input_repair.txt",
+          "bytes": 221,
+          "sha256": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/input_reply.txt",
+          "bytes": 592,
+          "sha256": "9619bf9e29c185ae9045bea7b19c631dc4f6fc0fbf2b28a1c75fcca5e447cefb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/input_rows_repair.txt",
+          "bytes": 516,
+          "sha256": "f2f472dc9c9cbd5d2d3de9361c0dec68c5705cd45b016aca3e558ecef52b7366"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/mapping_common.txt",
+          "bytes": 2259,
+          "sha256": "3e732c28c54fff90da423509e7837f4672b5adae9c25af87ad2c095454893a80"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/mapping_repair.txt",
+          "bytes": 425,
+          "sha256": "9e248b59b4374651e34ca3be4f1b5b33a9efe8b1c5ecf0ad373443d42b1bc1d6"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/mapping_select.txt",
+          "bytes": 145,
+          "sha256": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/mouth_common.txt",
+          "bytes": 652,
+          "sha256": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/mouth_disease_notice.txt",
+          "bytes": 241,
+          "sha256": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/mouth_output.txt",
+          "bytes": 189,
+          "sha256": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/mouth_plan.txt",
+          "bytes": 379,
+          "sha256": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/mouth_response_repair.txt",
+          "bytes": 247,
+          "sha256": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/mouth_symptom_notice.txt",
+          "bytes": 219,
+          "sha256": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/mouth_text_repair.txt",
+          "bytes": 258,
+          "sha256": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/plan_common.txt",
+          "bytes": 1748,
+          "sha256": "7c73629f7b146932e95de00854b62759ea39b564726ee0b0fe7d4ba117c752bc"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/plan_complete.txt",
+          "bytes": 75,
+          "sha256": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/plan_output.txt",
+          "bytes": 1416,
+          "sha256": "9c6373c4758e052243124b37faea78633fe2d230787cc9bf2a688158383010ce"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/plan_repair.txt",
+          "bytes": 368,
+          "sha256": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/session_chief_complaint.txt",
+          "bytes": 183,
+          "sha256": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/session_context_factor.txt",
+          "bytes": 223,
+          "sha256": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/session_differential_diagnosis.txt",
+          "bytes": 275,
+          "sha256": "c07d8b98bef0431ea2248bcc06932e264e8645ded09fa3ee51d413b790703fc9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts/session_initiation.txt",
+          "bytes": 181,
+          "sha256": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/prompts.json",
+          "bytes": 2719,
+          "sha256": "5f9dcbb4b228403c84bc9be4690dca831bbda768830e171848f9b0d324715e6f"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/config/texts.ko.json",
+          "bytes": 3884,
+          "sha256": "5e9ea2af6114a2da71133e825f2c851c717a227ce8e789e09d565ab91348cad1"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/.DS_Store",
+          "bytes": 6148,
+          "sha256": "ee5974bd39b481d05ff811dfa9f77b19fca60d997b7180ee30ee1dec2479345b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/.install.lock",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/README.md",
+          "bytes": 6514,
+          "sha256": "7d4b7ee0ae04362a1f539a394d7a51591e7998ed18bbfcae24d59218905683b0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/__init__.py",
+          "bytes": 1,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/builds/.DS_Store",
+          "bytes": 6148,
+          "sha256": "d65165279105ca6773180500688df4bdc69a2c7b771752f0a46ef120b7fd8ec3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/clinical.ttl",
+          "bytes": 3352036,
+          "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/guideline-index.json",
+          "bytes": 1418264,
+          "sha256": "6aae5720a4789b878d75e4cb280f888428826613cad435a9603a4236c5cc30b0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/manifest.json",
+          "bytes": 674,
+          "sha256": "1e571b7145601cb795297244b71321671b577174066225fd7af0f7a791076185"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/questions.ko.json",
+          "bytes": 713061,
+          "sha256": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/vocabulary.ttl",
+          "bytes": 6392196,
+          "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/clinical.ttl",
+          "bytes": 8424,
+          "sha256": "fd3b9233746a313cb262b28708189de93304aa5ce37444d1094342fb714764c6"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/conditions.py",
+          "bytes": 9036,
+          "sha256": "eb67520a5bed828d994d3bc1551789bbdc2500e795cdd637e6a908977d888575"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/graph.py",
+          "bytes": 35420,
+          "sha256": "d695bab0c42ec495b9dfc9f60a318101241f7601918ae586b84fd3c2721b3ab9"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/guideline-index.json",
+          "bytes": 228,
+          "sha256": "cee8d19280c81a33b2d95bf9ff08e896b0015269ba9abe994f490bbf722bd094"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/guidelines.py",
+          "bytes": 3160,
+          "sha256": "f2855176cb175967df15deaee6bdcdeeacf7d07491ebb33c4bdf5c84e8d097ba"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/manifest.json",
+          "bytes": 654,
+          "sha256": "e3a4e60dc81feffc94a57c90bfe54f4b8308319e92fd8e39bc4a322ee8ee9ebc"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/questions.ko.json",
+          "bytes": 1505,
+          "sha256": "b98ec25c0a1ef0b74ef7ad8ce6f1f283e96065f99692089f34dff3036b4ae34e"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/schema.ttl",
+          "bytes": 6721,
+          "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/knowledge/vocabulary.ttl",
+          "bytes": 5714,
+          "sha256": "416bf2b5382f2065b505a844ca2a2dafc6ecffafd35692df58eddfe020c5f40c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/nova_sdk.py",
+          "bytes": 7965,
+          "sha256": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/requirements.txt",
+          "bytes": 31,
+          "sha256": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/run.py",
+          "bytes": 201,
+          "sha256": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/settings.py",
+          "bytes": 3124,
+          "sha256": "45fe7d0a52863f5664aabd1085bb7098221ab9b3611dcab7ffd6f2e3a69c2acd"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/consultation.py",
+          "bytes": 8143,
+          "sha256": "31dd3180473c16c3d929375c6cde285c8485ea5ba27467ad590886d3b7315629"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/doctor_brain.py",
+          "bytes": 3017,
+          "sha256": "6ec2d9c23d18215521f6275a2182ef4ef0c373a32030a3a29ae3dc24ae141c6d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/doctor_ear.py",
+          "bytes": 27066,
+          "sha256": "cf80398bd37886dccefc0dc85847fc7a5d7d514d3e84ce3484a25a0311032616"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/doctor_mouth.py",
+          "bytes": 9485,
+          "sha256": "475ae7bf651f74252f406245574515d6069459b15473b45796bbe6ceee67612d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/education.py",
+          "bytes": 7397,
+          "sha256": "c896389142875b7a7560fcd3c31e5bdcf6c59dee72683cad29d6e02443d2ae9c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/input_types.py",
+          "bytes": 4776,
+          "sha256": "f7c487dd587e9b0725085c3fc71a5cbd7f1644e1b27359881f1f847fa8faa930"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/io/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/io/nova_session.py",
+          "bytes": 3198,
+          "sha256": "1e30df7153cb92e8deb58b99e39a8a669f873ffabe0482215aecb14e35dd686c"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/io/request_executor.py",
+          "bytes": 1739,
+          "sha256": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/model_context.py",
+          "bytes": 1180,
+          "sha256": "33f0bd75bc58664a344ebd0ea1ed7285c8044d7ca90d724c780798e036610092"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/output_types.py",
+          "bytes": 515,
+          "sha256": "af24b35d0a1195889f1e1b256b6eb2d24f422ee46e7f89794cf979953eaf184a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/rules/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/rules/action.py",
+          "bytes": 1097,
+          "sha256": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/rules/assessment.py",
+          "bytes": 13974,
+          "sha256": "ebb0a40ecadf6e22b87cd1c2be63205753d65fa970dd2f3032d5d939b0b194ad"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/rules/budget.py",
+          "bytes": 8198,
+          "sha256": "b470e90c4709fea6af924928b9082f69aa316bd2dc4d9f9b5c1f1f841c387806"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/rules/collection.py",
+          "bytes": 2355,
+          "sha256": "5b4608b810bea07b76786ee9ee876c45de1b5be39a0d7afb77c573ccbdb58412"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/rules/decision.py",
+          "bytes": 13149,
+          "sha256": "62d74ab0730a0770cbaa14d94ad042fc09bee6288523bfedd00f8e677f775573"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/rules/input.py",
+          "bytes": 7634,
+          "sha256": "9c7657e7faa2803eab7d6bac47cacd5500165c7906f8ae3adea00d49e5748da4"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/rules/limits.py",
+          "bytes": 1644,
+          "sha256": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/rules/normalization.py",
+          "bytes": 13248,
+          "sha256": "21b6f41aaa4d5f0fc705297f5761d6f78a879d74336f7df91cde346d0cb0c383"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/rules/questions.py",
+          "bytes": 16634,
+          "sha256": "8fc70b2f054ef68b178f784cee33b3ba5fb9aa7df7a08807c1e83dff56c9f313"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/rules/submission.py",
+          "bytes": 1517,
+          "sha256": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/runtime.py",
+          "bytes": 3407,
+          "sha256": "2be3ee090254b472cd926dc3254fca07ac38d63d552e8037b3ee8ac22f3358ed"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/sessions/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/sessions/chief_complaint.py",
+          "bytes": 3111,
+          "sha256": "d99294957a0e74a800d49072ede3050a30bc8f5bbd823253925787bda0cfbd7a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/sessions/context_factor.py",
+          "bytes": 3076,
+          "sha256": "a66d47c0a4628498ebcdbf15723950460fd97715dfc7d67879fa8987dd8cbf75"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/sessions/differential_diagnosis.py",
+          "bytes": 6768,
+          "sha256": "c98ca038a777560832feb60d53d52e636006cf65f6eda4d95e5cef36d022275a"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/sessions/education.py",
+          "bytes": 5220,
+          "sha256": "486c826acc7b269fd5551d9d2ed45d2a371b81051035b4e4eb1324aece50a506"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/sessions/initiation.py",
+          "bytes": 1238,
+          "sha256": "b9acc707231e29f3f9c445c537809b0985f3df975be989c9ff94b838a53f6bf3"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/state/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/state/evidence.py",
+          "bytes": 4228,
+          "sha256": "6a121ea121d85e46b8de82db8e9e08515176ad27be99e10fd86a8477bde14029"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/state/interactions.py",
+          "bytes": 555,
+          "sha256": "386f54838b85506da0a477ace5269d76458b6dc58a473a928e4e6a0dddfbe5d0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/state/models.py",
+          "bytes": 15137,
+          "sha256": "05fbebfaedacaa2adf532604b19fbe544ccfd1ea06de0ac2657f3a7e66e14c4e"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/state/questions.py",
+          "bytes": 2646,
+          "sha256": "1ef702194bf0137e22b3d831204abba2423404d8df7badd0f69f1622784dd25d"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/state/usage.py",
+          "bytes": 1177,
+          "sha256": "2a54856accb8fa9cfb62557d60b33f42c7dc0e8bd168b4995976321809c9cefb"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/submission_writer.py",
+          "bytes": 14403,
+          "sha256": "8b7e4953ea3e8c2aac6548b8450f99de5080c9fa8ce4b4003fec7280886e6af0"
+        },
+        {
+          "path": "Tmp/augmentation-d58/synthetic-submission-final/workflow/text_config.py",
+          "bytes": 5358,
+          "sha256": "81007fcf36b5668b97d495ed1cd0249213771968ff645c07ab021c9f98fe77b5"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/actual_parent_mock.py",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 1702,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/actual_parent_mock.py",
+          "bytes": 1702,
+          "sha256": "4dc3298ac1480113c6b0cfab07b189d065ad73d2a6b6bda6e9571d49f6cadc69"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/prepare_discovery_amendment.py",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 2622,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/prepare_discovery_amendment.py",
+          "bytes": 2622,
+          "sha256": "6dfac95732751b9308106ea8629de3b8d1c4c6697c9009685d22e7996b8851d2"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/record_progress.py",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 5641,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/record_progress.py",
+          "bytes": 5641,
+          "sha256": "5b648483d16dbd65a15ecd25c193c2aa1a7b9e11da6b93d80d307adf0bfe987e"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/verify_child.py",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 3329,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/verify_child.py",
+          "bytes": 3329,
+          "sha256": "c6a443290203eaaf92c8dfd09e1bdcd89422785bd112625e25d4ba79db1bd2ab"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/augmentation-tests.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 13133,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/augmentation-tests.log",
+          "bytes": 13133,
+          "sha256": "22d443eb4b4d40a832c9f0b71a2313b8af1f8a7576322f3f7f451a7e72fbabd9"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/actual-parent-mock.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 7016,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/actual-parent-mock.log",
+          "bytes": 7016,
+          "sha256": "e984c772b44e10fabe8cb26b8e5f5bc8a82cc9153ad98faaadc8a5e87d22691c"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/actual-child-structure.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 1060,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/actual-child-structure.log",
+          "bytes": 1060,
+          "sha256": "8c525928e980879a1e2e51169ec3d586bc99c8cbbf9323783351313cad1ae826"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/discovery-repair.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 1430,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/discovery-repair.log",
+          "bytes": 1430,
+          "sha256": "fd508f449681d17024f9689901da4438f4b33220ded9ced188c32faea883e7db"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/generation-final.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 42552,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/generation-final.log",
+          "bytes": 42552,
+          "sha256": "b9046d43f5b82bb15952ab98e81a77c3bc96c46ce7e6c8a531e9af13adeb7498"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/generation-repaired.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 1942,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/generation-repaired.log",
+          "bytes": 1942,
+          "sha256": "72fa1f859d6d43fa6999f9702348f0d26d8093fe1166d551e83293fc0bbc69d4"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/generation.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 1188,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/generation.log",
+          "bytes": 1188,
+          "sha256": "b1465c893aa8cdf16fd3af679f0d9a7f08f652c5ee1debc98b3b6848b7461748"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/idempotent-resume.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 41875,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/idempotent-resume.log",
+          "bytes": 41875,
+          "sha256": "d8da4295fd8d4f1e82b751f59291fb603dda4800758ee884599b81569180c8af"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/image-build.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 3033,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/image-build.log",
+          "bytes": 3033,
+          "sha256": "6f388dc6aaded67947151e0d7df6e17d745b7378770c0725708ca6288a9dd84f"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/package-image.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 1105,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/package-image.log",
+          "bytes": 1105,
+          "sha256": "e787d58a1d5b4c6f5723bcd0b152129c0879a7fe6a6f22c952f891c6a424ad6c"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/package.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 3947,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/package.log",
+          "bytes": 3947,
+          "sha256": "17096ba30eeec1295a7023790620828ea3de99c02fd0f4d74f88260c951f7951"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/production-plan-final.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 1591,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/production-plan-final.log",
+          "bytes": 1591,
+          "sha256": "8192304a7ae923b837ee4fa79a7da2f5c02b34c8a3156710d09f3bc857c229d1"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/production-plan-repaired.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 1591,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/production-plan-repaired.log",
+          "bytes": 1591,
+          "sha256": "c681cbdea64b2dca3cd0892d3601592970f6dd3569857e0587c101df6f93c522"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/production-plan-reviewed.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 1591,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/production-plan-reviewed.log",
+          "bytes": 1591,
+          "sha256": "ff2fbb9f2f55c837b143e190aeb1ba88c9af89fbd10168a29b3ce1bb32759998"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/production-plan.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 1591,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/production-plan.log",
+          "bytes": 1591,
+          "sha256": "b9206e150a8da08d653635c8d9a85ee130a4682d131708af4b67aa428ff28110"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/rebuild.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 37122,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/rebuild.log",
+          "bytes": 37122,
+          "sha256": "d8a17b8800014346cb4f9d08175c88edca7044d33d2358906f01b34f9ab2d583"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/review-repair-final.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 2554,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/review-repair-final.log",
+          "bytes": 2554,
+          "sha256": "1b291827122169883a8f1cdcb071a664f490482dcc31a672bddd70e4d9012d10"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/review-repair.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 2553,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/review-repair.log",
+          "bytes": 2553,
+          "sha256": "d4112431b8dd8c9043d52b3acd08277cf64ca4c3cea3751bb4756ea2d04beb2b"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/sdk-archive.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 774,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/sdk-archive.log",
+          "bytes": 774,
+          "sha256": "be5431a65a0028ee688db9cf5c1bf86bc6c1133737dede1f4d512e054f7fd3c5"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/synthetic-stage-final.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 684,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/synthetic-stage-final.log",
+          "bytes": 684,
+          "sha256": "876e6d91cef26129f69d3ea82fe88b3a6b78be6f1d47ae5eca5910eced20c43e"
+        }
+      ]
+    },
+    {
+      "path": "Tmp/augmentation-d58/synthetic-stage.log",
+      "kind": "file",
+      "file_count": 1,
+      "bytes": 678,
+      "files": [
+        {
+          "path": "Tmp/augmentation-d58/synthetic-stage.log",
+          "bytes": 678,
+          "sha256": "e8da3912d73963e5acdcf0402fd6a6702ed8545230402b51012f03922f86aab3"
+        }
+      ]
+    }
+  ],
+  "total_files": 518,
+  "total_bytes": 220481422,
+  "disposed_run_ids": [
+    "fc03d037dc4086b06953509f0ed423a1",
+    "3472c0ee89dcf386804459ea227b5108",
+    "fa35cab08ba0894d84d8eef4572357e8",
+    "7c7762f3b3564f27ca14f4eb24290a86"
+  ],
+  "protected_before": {
+    "Dev/packaging/package_submission.py": "5d85855cc76db189ec61b342f21ea284dcf592a86dc630042266ddfdf9095e8c",
+    "Dev/tests/workflow/audit_links.py": "7b91a01bda429ce0ae5de5e7a732ee3f677d570b2e64027de82a925b48cdc3c2",
+    "Dev/tests/workflow/compose.offline.yaml": "81cdc10cd7b17215a0cc8f089408afc7157bd2e7b859731c158e2031b5d24825",
+    "Dev/tests/workflow/education_fixtures.py": "c3e22ce3a129fe2514c2a11f6dacea36df3280a95fa03382a291aec1a8335951",
+    "Dev/tests/workflow/fixture_bundle.py": "4b5cd70126bcecc32ca895421bfb5fe58fff9f1b6ea660f4f28b4caa6bcd43b5",
+    "Dev/tests/workflow/fixtures.py": "837eafa0e21c5d6e3bc0937f0296c1d5eeb511adf5527c8fc09f37dede7d4ef1",
+    "Dev/tests/workflow/initiation_fixtures.py": "7eeda2c50be8700b245f5ab19ff7faf63d61e0bbc4cb7d6f49f3019a9fe6c526",
+    "Dev/tests/workflow/replay_c03.py": "1f8732524f0d8edb586835e21175a97f76bc3d2823e819121711208019c37648",
+    "Dev/tests/workflow/test_admitted.py": "6405034a19c4762499c8462d65d646a10d2fa8ad584d3121b024087ad81b9640",
+    "Dev/tests/workflow/test_binding.py": "598dfd876d13d368486513bce1580d4e8cc7012c46e4a7fa8ebf7e7c87a6db3b",
+    "Dev/tests/workflow/test_brain.py": "015d555c05295aeee676cf47823d7191bbdc07049972314a55a19142e43db160",
+    "Dev/tests/workflow/test_budget.py": "2525c806567cf85794cd0b0c46d451049367c66c99d253acbeada3e69598f151",
+    "Dev/tests/workflow/test_context_limits.py": "de7a321b2d3babbfa8386e834715a151415760e52fbdfd47df98bb262293e7f7",
+    "Dev/tests/workflow/test_d47.py": "f64aef2068b462467ed4b83a2e2c6520641f04d74ea63375e0706229206d51fb",
+    "Dev/tests/workflow/test_d49.py": "3b6479a4f20a4ae59ef75ad9a0fba4acb221e692afccf87852f55319c04d2855",
+    "Dev/tests/workflow/test_d50.py": "f2a66ca69b707f1d1febca7c7c6b10de8af54b9dd77ce727347112e41a2c61d4",
+    "Dev/tests/workflow/test_d53.py": "460eba1f821e6120452653d879ed256a9a4e186f09ef0c5f1a8cb14dc4b3a6b0",
+    "Dev/tests/workflow/test_d54.py": "8eacabd4044a29a7e5337ea1f69abc6e5890719effc14b0ce90d863d11bb9472",
+    "Dev/tests/workflow/test_d57.py": "9b186b84f5a659b969f20bdd232c66189ca74341777113ed53fff2619ab8122a",
+    "Dev/tests/workflow/test_d58.py": "2c869fdbf6d72fae2fc81982f0ee5ba054ec5c5992e2cbecda4bcad318235ac6",
+    "Dev/tests/workflow/test_delivery.py": "6f4e3886fc6d5fd1d794e4ff38866f51910837a3812fed99141faa1524e05799",
+    "Dev/tests/workflow/test_lifecycle.py": "3e1066d4090b0be7ccf54d78f720eadeeff537d96bd548403adf39ffc3cc1a1f",
+    "Dev/tests/workflow/test_prompts.py": "190ac81fdc4668020fb566731be33c5cfd6030f892856ee75d2dabdd8c4de2ce",
+    "Dev/tests/workflow/test_record.py": "700f5a3ac534efdfd0fa8cc6c985e90daa49b80e715c47d635b73e18888fe6de",
+    "Dev/tests/workflow/test_session_ownership.py": "bf2de87ca9bac6bff679c84841f28fe0fbfdc7232ffb48370a825ef8b7359440",
+    "Dev/tests/workflow/test_transport.py": "603b5caf3d43cd0c9153e4b878dd31f7d2be12409dc9bde129570fd519857e09",
+    "Dockerfile": "c7efa8c4a290b37aa203ce9ae019c4804ef7fd04238f7985eeaaf3e7959b2bd8",
+    "Extraction/Dockerfile": "b0d9b6ad05b491952cb0416627de7499ddb9f21746fd3c6cd90ff0f98a6fa1e5",
+    "Extraction/Dockerfile.dockerignore": "f7c7c84ab535bee1f3205e1940cb2eb647d31bb1282961969dadc5db3e804ec4",
+    "Extraction/augmentation/insomnia_growth.seed.json": "efc61de82375f40c4c5907636734ed275424323b8450e3792fa7e25541bcb059",
+    "Extraction/compose.yaml": "5cf363fafba0e3d967529b61672b11a7613ab172c3a91cc08f43030006596d98",
+    "Extraction/config.api-luna.json": "9e7bf6f5f834f227c25f9b96ceca40b07c62054a97c7d36d4c75be4b9a99e778",
+    "Extraction/ontoward_extraction/__init__.py": "b0fa6a1d5eb69c16800185180e7ac1c42cd4df30ef34af3162cbfc8f9cadc597",
+    "Extraction/ontoward_extraction/__main__.py": "535ca96a249baed8ed1815a4f407075cfc8de2fa6aeb49b8e130c5169b8bb991",
+    "Extraction/ontoward_extraction/augmentation.py": "23cd6328a2b741c7d7868f25790f23e57d7f0607503f79ff00cda9727fb8647b",
+    "Extraction/ontoward_extraction/augmentation_models.py": "6375fa42f51781a5178372669c23a030efcc0a0e0e1c20ab8208b13292c7661a",
+    "Extraction/ontoward_extraction/augmentation_run.py": "634a38e4700cef62e6b455c313e973ad157dfd0e781ef477a906c5b5a64197d5",
+    "Extraction/ontoward_extraction/augmentation_verify.py": "953b80c64cb64b897b780a8883c91436f330022e3ca51eb300a9c00c0f097895",
+    "Extraction/ontoward_extraction/build.py": "0e98941949dfbb64ea15c3a5a9baf044b91d688e97ba0a06333d9882d333cdfc",
+    "Extraction/ontoward_extraction/compile.py": "52b6df7d127534c582cab01c922b15eeecbf91a4e5595d4cbc7f5881d730a86d",
+    "Extraction/ontoward_extraction/guidelines.py": "bcf7b88be2d84f5a0c6394c449b613c87480928091e26b30105e98c42f11288c",
+    "Extraction/ontoward_extraction/inputs.py": "c8f0aee3bb11913c7f9221ea6f64226839407d2c74c05cb84b3330e4f2aa95cb",
+    "Extraction/ontoward_extraction/install.py": "d59c63d08e75c94045b1a39fc0ecaf98f6daa7b27636223e86b4f1a76e10972c",
+    "Extraction/ontoward_extraction/jobs.py": "dd2cc9b1675747be16e0c1e32967c19d62c6af21079acecc011b0e9c9da3cade",
+    "Extraction/ontoward_extraction/llm.py": "437b797e27c5f7db47f2b1f08a628709b8eebcf12a236322a2909956ad001ce9",
+    "Extraction/ontoward_extraction/maintenance.py": "9a32b192f0380530b2c4c9b24ad70f068e1f7e9a73691f6fb055a9cadec9e81e",
+    "Extraction/ontoward_extraction/models.py": "f4410f71d2ca4b3d074b32059060d21af073c61c2676e2c732c2097b4335afc6",
+    "Extraction/ontoward_extraction/normalize.py": "158f1a1ad9167f614a99e8addbfb4e765c0e59ddc091d2f397bdec0f823f23bf",
+    "Extraction/ontoward_extraction/progress.py": "781b73588439b67378e7625ac80b984d1bfbfd233c122e7e13aa89385278e8c1",
+    "Extraction/ontoward_extraction/recovery.py": "1bf1a832254be8296399ac3f333a6333da04c05a35f5cb790153b3e70d0c82b3",
+    "Extraction/ontoward_extraction/verify.py": "dc0e575aa1bb7e00d8bc207ce7cc5cac497981f29222c29681209bb8ba8e3bc5",
+    "Extraction/prompts/augment_concepts.txt": "c39d67c6f45ecc95c0b741acc9430892cc0fac3e42a426cabb0d0b3863fab5c2",
+    "Extraction/prompts/augment_discover.txt": "b95cbf1e1432ed468dd9927ee286c2c37776acb4399b546dec6408b71a9f0ce8",
+    "Extraction/prompts/augment_questions.txt": "e365031ce6e9699ac63245235e156f433bc6243cfee55b2d28f944fcd1fc8ecf",
+    "Extraction/prompts/augment_relations.txt": "05cf4234867f88123b2a9c2932514eadca27afc10d0c6ddf325c16340db3eeca",
+    "Extraction/prompts/augment_review.txt": "43dee9694eae389935c8de8fc208f3e8716feee1cb3cd351ed35a08af8cc3243",
+    "Extraction/prompts/draft.txt": "29f0cec94addc05682075a59fa2b529e9455efd7b8e9f0ac3924c43fbf077274",
+    "Extraction/prompts/final.txt": "70e7c3422285b3e4537c18e5c1502031532abfae8d398ab45366828ac6ed9d56",
+    "Extraction/prompts/normalize.txt": "a1bf53ebf5f310a94e3c8715be5700db6d2b4c64313b469456692e0de11f4b0f",
+    "Extraction/prompts/patch.txt": "afc402f9f60cdb135f2c002b83a1b123257a08d4504ff86f1e4a0b8cf56ca0bb",
+    "Extraction/prompts/questions.txt": "fceb67257990042feaf5b2b2335844e50bc8ac2d880a9b8368d23946de7b0c82",
+    "Extraction/tests/augmentation_fixture.py": "f09bcf1c261fc19d3e86c15ac71d71c4cce7dc804378212a2716982a0ff5a49f",
+    "Extraction/tests/image_acceptance.py": "e0c0927ea1431d1818c8130cd853296303b24c35e7447e8acdd33b8d29860374",
+    "Extraction/tests/support.py": "001bc0ccd43757e9c21d80f6760a609e1b721f3bbb74a7852ef78a06a0bf64ca",
+    "Extraction/tests/test_augmentation.py": "b852eb4e09f41fde6be528a4d1722d4d1151fcc7e9b3c3e7e1c9c3dec6247c5c",
+    "Extraction/tests/test_batch.py": "f8ffc1009951fce07b9c466009f53d85e80bfe22f066815d497be16bbdefaecc",
+    "Extraction/tests/test_draft_endpoints.py": "ecdb5e2eeb3f941fc3bdb923863159776867f189cdf0989bde9928da01fb722d",
+    "Extraction/tests/test_draft_packet.py": "5fb110ec46228d1edb90b6688a0cba6b4163ef2ee668e8f1060265d40a9607dc",
+    "Extraction/tests/test_empty_source.py": "b70449847f00af20ef7ea397431e6fb2dc90a499556e7b3f0bd9d9c9a90b3998",
+    "Extraction/tests/test_extraction.py": "c541445bf84d36b3e6e7edea16e9905a4cf8cd141e50854ae29578fbdab597e3",
+    "Extraction/tests/test_index_progress.py": "027d362bf0526ce4c5dd2444075f21660eecae38188a0aabf7729951d61cedfd",
+    "Extraction/tests/test_job_packets.py": "26b9ea7bb0efdf4c119973662cec5d9eaa0287d5af726bcc7132cf6678afa510",
+    "Extraction/tests/test_korean_phase.py": "f713f4c90d464dcc4c087ce259c699dbbd13f6f395841e54140d580b906e5505",
+    "Extraction/tests/test_maintenance.py": "cb8cbcdba7ba06c0be0fa2744a4ef733073268ede79e0cecf15240f8285e2ccf",
+    "Extraction/tests/test_normalize_recovery.py": "85dab9b8fc09cf7af7db10a7746044011d80ebad5cd0f0d27da345756baac52d",
+    "Extraction/tests/test_patch_packets.py": "559e15688f88d7999fa0501ed7cdef00c17dbc59dc2c60ff19252484c6bfd347",
+    "Extraction/tests/test_provider_retry.py": "ea978fe30e356ac2eeab966a155002ce45d944b7eef655b23d3f451f5ada4008",
+    "Extraction/tests/test_provider_switch.py": "608c5e5ad7ba2574f84959e054b2f7a023c986451faf0d36ccc4eda80b826209",
+    "Extraction/tests/test_providers.py": "cf47dbfa43336a139497444c69ccc8e39dfeaa1949257df99219de591913a3fb",
+    "Extraction/tests/test_question_output.py": "d185999911a6623aaf25afbfb473c2ab097810d5e897ecec1924318eb66e2cdf",
+    "Extraction/tests/test_role_identity.py": "2ab3c1d57372c316a72300c53b5b5af9ea47d56c6b07c2d81fc23098e2ead07e",
+    "compose.yaml": "df37c67301982760978a301595b8bd9134a6d9f0b4114f2a023ecc5eee5e6a99",
+    "submission/.DS_Store": "7f8b88536372b6eef84c63b890ebb79a4b815c5b2e6644834291a11008c61d45",
+    "submission/.env": "9c2e46b5b22e0f0c47f026cb0cc5a047b10b8cabc7e44e625640513cf6cf6595",
+    "submission/config/prompts/clinical_action.txt": "0fe704e263becff05ce5f5431ae8f4bdc539a0a755f868f5dd5b8c1540ed4ed5",
+    "submission/config/prompts/clinical_action_output.txt": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769",
+    "submission/config/prompts/clinical_common.txt": "616a678fbda51a41aadcf7e1c5d699b2929d43fc8fdebf0f5fc52d1f72865cd8",
+    "submission/config/prompts/clinical_decision_output.txt": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25",
+    "submission/config/prompts/clinical_rank_output.txt": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0",
+    "submission/config/prompts/clinical_ranking.txt": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29",
+    "submission/config/prompts/clinical_repair.txt": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2",
+    "submission/config/prompts/data.txt": "be9dc59c6a2496ac9b392f9f0a246abeaf91be73cb2ae602d8ca0aa890de9f65",
+    "submission/config/prompts/input_chief_repair.txt": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d",
+    "submission/config/prompts/input_common.txt": "a82034ea9739462beb1f3a2d7e25b1c63e98eeaf7f1e04ff7a925578fa2c5cce",
+    "submission/config/prompts/input_exam.txt": "9272db7d9b9a47381b7459ccca79143a3603b029519255057e03a917b509452b",
+    "submission/config/prompts/input_fields.txt": "e10ffed09056a14244d6c09e2cc9e0036ff2b8cfd7cfd2b83e42144e97d68dc7",
+    "submission/config/prompts/input_initial.txt": "7a985361093040383254e1f329a8845b94fd5111aad6d9a50a1aed588995c8a0",
+    "submission/config/prompts/input_repair.txt": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3",
+    "submission/config/prompts/input_reply.txt": "9619bf9e29c185ae9045bea7b19c631dc4f6fc0fbf2b28a1c75fcca5e447cefb",
+    "submission/config/prompts/input_rows_repair.txt": "f2f472dc9c9cbd5d2d3de9361c0dec68c5705cd45b016aca3e558ecef52b7366",
+    "submission/config/prompts/mapping_common.txt": "3e732c28c54fff90da423509e7837f4672b5adae9c25af87ad2c095454893a80",
+    "submission/config/prompts/mapping_repair.txt": "9e248b59b4374651e34ca3be4f1b5b33a9efe8b1c5ecf0ad373443d42b1bc1d6",
+    "submission/config/prompts/mapping_select.txt": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36",
+    "submission/config/prompts/mouth_common.txt": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19",
+    "submission/config/prompts/mouth_disease_notice.txt": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4",
+    "submission/config/prompts/mouth_output.txt": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739",
+    "submission/config/prompts/mouth_plan.txt": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538",
+    "submission/config/prompts/mouth_response_repair.txt": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31",
+    "submission/config/prompts/mouth_symptom_notice.txt": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493",
+    "submission/config/prompts/mouth_text_repair.txt": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5",
+    "submission/config/prompts/plan_common.txt": "7c73629f7b146932e95de00854b62759ea39b564726ee0b0fe7d4ba117c752bc",
+    "submission/config/prompts/plan_complete.txt": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4",
+    "submission/config/prompts/plan_output.txt": "9c6373c4758e052243124b37faea78633fe2d230787cc9bf2a688158383010ce",
+    "submission/config/prompts/plan_repair.txt": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3",
+    "submission/config/prompts/session_chief_complaint.txt": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54",
+    "submission/config/prompts/session_context_factor.txt": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9",
+    "submission/config/prompts/session_differential_diagnosis.txt": "c07d8b98bef0431ea2248bcc06932e264e8645ded09fa3ee51d413b790703fc9",
+    "submission/config/prompts/session_initiation.txt": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d",
+    "submission/config/prompts.json": "5f9dcbb4b228403c84bc9be4690dca831bbda768830e171848f9b0d324715e6f",
+    "submission/config/texts.ko.json": "5e9ea2af6114a2da71133e825f2c851c717a227ce8e789e09d565ab91348cad1",
+    "submission/knowledge/.DS_Store": "ee5974bd39b481d05ff811dfa9f77b19fca60d997b7180ee30ee1dec2479345b",
+    "submission/knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "submission/knowledge/builds/.DS_Store": "d65165279105ca6773180500688df4bdc69a2c7b771752f0a46ef120b7fd8ec3",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/clinical.ttl": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/guideline-index.json": "6aae5720a4789b878d75e4cb280f888428826613cad435a9603a4236c5cc30b0",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/manifest.json": "1e571b7145601cb795297244b71321671b577174066225fd7af0f7a791076185",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/questions.ko.json": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/vocabulary.ttl": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/clinical.ttl": "eed873cb3bec008440ddd687d5c97f60ac3dc13175a5ac38c0c092b1250fdd69",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/guideline-index.json": "676a029d6ef1727fb3a201cea28662908ca48af9df0edfa30cc78bd4f1df6161",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/manifest.json": "85597f767026a948bafd2a9571650dffea2c9870ea2952130baec5e1794c86cc",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/questions.ko.json": "b53449739ecbfcf5cad4cd21de199fb487063fbe9a19aec1a2eb680a359e1a3e",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/vocabulary.ttl": "f15b60ebeb50fb1ee4c200c621dbcca49b8cc6d49a72047aabf003950ee1c985",
+    "submission/knowledge/conditions.py": "eb67520a5bed828d994d3bc1551789bbdc2500e795cdd637e6a908977d888575",
+    "submission/knowledge/graph.py": "d695bab0c42ec495b9dfc9f60a318101241f7601918ae586b84fd3c2721b3ab9",
+    "submission/knowledge/guidelines.py": "f2855176cb175967df15deaee6bdcdeeacf7d07491ebb33c4bdf5c84e8d097ba",
+    "submission/knowledge/manifest.json": "04accb50722f2c4f8583e25f0a3b1600bf2d384c820d91cc68e5dc42a1fa21db",
+    "submission/knowledge/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "submission/nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    "submission/requirements.txt": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01",
+    "submission/run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+    "submission/settings.py": "45fe7d0a52863f5664aabd1085bb7098221ab9b3611dcab7ffd6f2e3a69c2acd",
+    "submission/workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/consultation.py": "31dd3180473c16c3d929375c6cde285c8485ea5ba27467ad590886d3b7315629",
+    "submission/workflow/doctor_brain.py": "6ec2d9c23d18215521f6275a2182ef4ef0c373a32030a3a29ae3dc24ae141c6d",
+    "submission/workflow/doctor_ear.py": "cf80398bd37886dccefc0dc85847fc7a5d7d514d3e84ce3484a25a0311032616",
+    "submission/workflow/doctor_mouth.py": "475ae7bf651f74252f406245574515d6069459b15473b45796bbe6ceee67612d",
+    "submission/workflow/education.py": "c896389142875b7a7560fcd3c31e5bdcf6c59dee72683cad29d6e02443d2ae9c",
+    "submission/workflow/input_types.py": "f7c487dd587e9b0725085c3fc71a5cbd7f1644e1b27359881f1f847fa8faa930",
+    "submission/workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/io/nova_session.py": "1e30df7153cb92e8deb58b99e39a8a669f873ffabe0482215aecb14e35dd686c",
+    "submission/workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+    "submission/workflow/model_context.py": "33f0bd75bc58664a344ebd0ea1ed7285c8044d7ca90d724c780798e036610092",
+    "submission/workflow/output_types.py": "af24b35d0a1195889f1e1b256b6eb2d24f422ee46e7f89794cf979953eaf184a",
+    "submission/workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/rules/action.py": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb",
+    "submission/workflow/rules/assessment.py": "ebb0a40ecadf6e22b87cd1c2be63205753d65fa970dd2f3032d5d939b0b194ad",
+    "submission/workflow/rules/budget.py": "b470e90c4709fea6af924928b9082f69aa316bd2dc4d9f9b5c1f1f841c387806",
+    "submission/workflow/rules/collection.py": "5b4608b810bea07b76786ee9ee876c45de1b5be39a0d7afb77c573ccbdb58412",
+    "submission/workflow/rules/decision.py": "62d74ab0730a0770cbaa14d94ad042fc09bee6288523bfedd00f8e677f775573",
+    "submission/workflow/rules/input.py": "9c7657e7faa2803eab7d6bac47cacd5500165c7906f8ae3adea00d49e5748da4",
+    "submission/workflow/rules/limits.py": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a",
+    "submission/workflow/rules/normalization.py": "21b6f41aaa4d5f0fc705297f5761d6f78a879d74336f7df91cde346d0cb0c383",
+    "submission/workflow/rules/questions.py": "8fc70b2f054ef68b178f784cee33b3ba5fb9aa7df7a08807c1e83dff56c9f313",
+    "submission/workflow/rules/submission.py": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267",
+    "submission/workflow/runtime.py": "2be3ee090254b472cd926dc3254fca07ac38d63d552e8037b3ee8ac22f3358ed",
+    "submission/workflow/sessions/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/sessions/chief_complaint.py": "d99294957a0e74a800d49072ede3050a30bc8f5bbd823253925787bda0cfbd7a",
+    "submission/workflow/sessions/context_factor.py": "a66d47c0a4628498ebcdbf15723950460fd97715dfc7d67879fa8987dd8cbf75",
+    "submission/workflow/sessions/differential_diagnosis.py": "c98ca038a777560832feb60d53d52e636006cf65f6eda4d95e5cef36d022275a",
+    "submission/workflow/sessions/education.py": "486c826acc7b269fd5551d9d2ed45d2a371b81051035b4e4eb1324aece50a506",
+    "submission/workflow/sessions/initiation.py": "b9acc707231e29f3f9c445c537809b0985f3df975be989c9ff94b838a53f6bf3",
+    "submission/workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/state/evidence.py": "6a121ea121d85e46b8de82db8e9e08515176ad27be99e10fd86a8477bde14029",
+    "submission/workflow/state/interactions.py": "386f54838b85506da0a477ace5269d76458b6dc58a473a928e4e6a0dddfbe5d0",
+    "submission/workflow/state/models.py": "05fbebfaedacaa2adf532604b19fbe544ccfd1ea06de0ac2657f3a7e66e14c4e",
+    "submission/workflow/state/questions.py": "1ef702194bf0137e22b3d831204abba2423404d8df7badd0f69f1622784dd25d",
+    "submission/workflow/state/usage.py": "2a54856accb8fa9cfb62557d60b33f42c7dc0e8bd168b4995976321809c9cefb",
+    "submission/workflow/submission_writer.py": "8b7e4953ea3e8c2aac6548b8450f99de5080c9fa8ce4b4003fec7280886e6af0",
+    "submission/workflow/text_config.py": "81007fcf36b5668b97d495ed1cd0249213771968ff645c07ab021c9f98fe77b5"
+  },
+  "retained": {
+    "active_build": "cec62f4596bedd9b9488aa75e3d38f04",
+    "preexisting_parent": "1bcaba1dffb744c468bb191df3267dad",
+    "compact_receipts": [
+      "data/provenance/augmentation-d58-2026-10-21.json",
+      "data/provenance/augmentation-d58-delta-2026-10-21.json",
+      "data/provenance/augmentation-discovery-scope-repair-2026-10-21.json"
+    ],
+    "tests": "Tmp/augmentation-d58/extraction-tests.log and workflow-tests.log",
+    "synthetic_archive": "Tmp/augmentation-d58/package-final/ontoward-submission.zip",
+    "current_source_and_original_assets": "retained",
+    "authentication_volumes_and_Docker_resources": "untouched"
+  },
+  "boundary": "Delete only these workspace paths. Raw Jobs, model payloads/responses, original work plans, neutral job history, and staging bundles from disposed runs are unavailable after disposal; retained accepted delta, hashes, usage totals, provenance and installed bundles support audit, not raw checkpoint resume.",
+  "deleted_at": "2026-10-21T21:11:12+09:00",
+  "deleted_files": 518,
+  "deleted_bytes": 220481422,
+  "protected_after": {
+    "Dev/packaging/package_submission.py": "5d85855cc76db189ec61b342f21ea284dcf592a86dc630042266ddfdf9095e8c",
+    "Dev/tests/workflow/audit_links.py": "7b91a01bda429ce0ae5de5e7a732ee3f677d570b2e64027de82a925b48cdc3c2",
+    "Dev/tests/workflow/compose.offline.yaml": "81cdc10cd7b17215a0cc8f089408afc7157bd2e7b859731c158e2031b5d24825",
+    "Dev/tests/workflow/education_fixtures.py": "c3e22ce3a129fe2514c2a11f6dacea36df3280a95fa03382a291aec1a8335951",
+    "Dev/tests/workflow/fixture_bundle.py": "4b5cd70126bcecc32ca895421bfb5fe58fff9f1b6ea660f4f28b4caa6bcd43b5",
+    "Dev/tests/workflow/fixtures.py": "837eafa0e21c5d6e3bc0937f0296c1d5eeb511adf5527c8fc09f37dede7d4ef1",
+    "Dev/tests/workflow/initiation_fixtures.py": "7eeda2c50be8700b245f5ab19ff7faf63d61e0bbc4cb7d6f49f3019a9fe6c526",
+    "Dev/tests/workflow/replay_c03.py": "1f8732524f0d8edb586835e21175a97f76bc3d2823e819121711208019c37648",
+    "Dev/tests/workflow/test_admitted.py": "6405034a19c4762499c8462d65d646a10d2fa8ad584d3121b024087ad81b9640",
+    "Dev/tests/workflow/test_binding.py": "598dfd876d13d368486513bce1580d4e8cc7012c46e4a7fa8ebf7e7c87a6db3b",
+    "Dev/tests/workflow/test_brain.py": "015d555c05295aeee676cf47823d7191bbdc07049972314a55a19142e43db160",
+    "Dev/tests/workflow/test_budget.py": "2525c806567cf85794cd0b0c46d451049367c66c99d253acbeada3e69598f151",
+    "Dev/tests/workflow/test_context_limits.py": "de7a321b2d3babbfa8386e834715a151415760e52fbdfd47df98bb262293e7f7",
+    "Dev/tests/workflow/test_d47.py": "f64aef2068b462467ed4b83a2e2c6520641f04d74ea63375e0706229206d51fb",
+    "Dev/tests/workflow/test_d49.py": "3b6479a4f20a4ae59ef75ad9a0fba4acb221e692afccf87852f55319c04d2855",
+    "Dev/tests/workflow/test_d50.py": "f2a66ca69b707f1d1febca7c7c6b10de8af54b9dd77ce727347112e41a2c61d4",
+    "Dev/tests/workflow/test_d53.py": "460eba1f821e6120452653d879ed256a9a4e186f09ef0c5f1a8cb14dc4b3a6b0",
+    "Dev/tests/workflow/test_d54.py": "8eacabd4044a29a7e5337ea1f69abc6e5890719effc14b0ce90d863d11bb9472",
+    "Dev/tests/workflow/test_d57.py": "9b186b84f5a659b969f20bdd232c66189ca74341777113ed53fff2619ab8122a",
+    "Dev/tests/workflow/test_d58.py": "2c869fdbf6d72fae2fc81982f0ee5ba054ec5c5992e2cbecda4bcad318235ac6",
+    "Dev/tests/workflow/test_delivery.py": "6f4e3886fc6d5fd1d794e4ff38866f51910837a3812fed99141faa1524e05799",
+    "Dev/tests/workflow/test_lifecycle.py": "3e1066d4090b0be7ccf54d78f720eadeeff537d96bd548403adf39ffc3cc1a1f",
+    "Dev/tests/workflow/test_prompts.py": "190ac81fdc4668020fb566731be33c5cfd6030f892856ee75d2dabdd8c4de2ce",
+    "Dev/tests/workflow/test_record.py": "700f5a3ac534efdfd0fa8cc6c985e90daa49b80e715c47d635b73e18888fe6de",
+    "Dev/tests/workflow/test_session_ownership.py": "bf2de87ca9bac6bff679c84841f28fe0fbfdc7232ffb48370a825ef8b7359440",
+    "Dev/tests/workflow/test_transport.py": "603b5caf3d43cd0c9153e4b878dd31f7d2be12409dc9bde129570fd519857e09",
+    "Dockerfile": "c7efa8c4a290b37aa203ce9ae019c4804ef7fd04238f7985eeaaf3e7959b2bd8",
+    "Extraction/Dockerfile": "b0d9b6ad05b491952cb0416627de7499ddb9f21746fd3c6cd90ff0f98a6fa1e5",
+    "Extraction/Dockerfile.dockerignore": "f7c7c84ab535bee1f3205e1940cb2eb647d31bb1282961969dadc5db3e804ec4",
+    "Extraction/augmentation/insomnia_growth.seed.json": "efc61de82375f40c4c5907636734ed275424323b8450e3792fa7e25541bcb059",
+    "Extraction/compose.yaml": "5cf363fafba0e3d967529b61672b11a7613ab172c3a91cc08f43030006596d98",
+    "Extraction/config.api-luna.json": "9e7bf6f5f834f227c25f9b96ceca40b07c62054a97c7d36d4c75be4b9a99e778",
+    "Extraction/ontoward_extraction/__init__.py": "b0fa6a1d5eb69c16800185180e7ac1c42cd4df30ef34af3162cbfc8f9cadc597",
+    "Extraction/ontoward_extraction/__main__.py": "535ca96a249baed8ed1815a4f407075cfc8de2fa6aeb49b8e130c5169b8bb991",
+    "Extraction/ontoward_extraction/augmentation.py": "23cd6328a2b741c7d7868f25790f23e57d7f0607503f79ff00cda9727fb8647b",
+    "Extraction/ontoward_extraction/augmentation_models.py": "6375fa42f51781a5178372669c23a030efcc0a0e0e1c20ab8208b13292c7661a",
+    "Extraction/ontoward_extraction/augmentation_run.py": "634a38e4700cef62e6b455c313e973ad157dfd0e781ef477a906c5b5a64197d5",
+    "Extraction/ontoward_extraction/augmentation_verify.py": "953b80c64cb64b897b780a8883c91436f330022e3ca51eb300a9c00c0f097895",
+    "Extraction/ontoward_extraction/build.py": "0e98941949dfbb64ea15c3a5a9baf044b91d688e97ba0a06333d9882d333cdfc",
+    "Extraction/ontoward_extraction/compile.py": "52b6df7d127534c582cab01c922b15eeecbf91a4e5595d4cbc7f5881d730a86d",
+    "Extraction/ontoward_extraction/guidelines.py": "bcf7b88be2d84f5a0c6394c449b613c87480928091e26b30105e98c42f11288c",
+    "Extraction/ontoward_extraction/inputs.py": "c8f0aee3bb11913c7f9221ea6f64226839407d2c74c05cb84b3330e4f2aa95cb",
+    "Extraction/ontoward_extraction/install.py": "d59c63d08e75c94045b1a39fc0ecaf98f6daa7b27636223e86b4f1a76e10972c",
+    "Extraction/ontoward_extraction/jobs.py": "dd2cc9b1675747be16e0c1e32967c19d62c6af21079acecc011b0e9c9da3cade",
+    "Extraction/ontoward_extraction/llm.py": "437b797e27c5f7db47f2b1f08a628709b8eebcf12a236322a2909956ad001ce9",
+    "Extraction/ontoward_extraction/maintenance.py": "9a32b192f0380530b2c4c9b24ad70f068e1f7e9a73691f6fb055a9cadec9e81e",
+    "Extraction/ontoward_extraction/models.py": "f4410f71d2ca4b3d074b32059060d21af073c61c2676e2c732c2097b4335afc6",
+    "Extraction/ontoward_extraction/normalize.py": "158f1a1ad9167f614a99e8addbfb4e765c0e59ddc091d2f397bdec0f823f23bf",
+    "Extraction/ontoward_extraction/progress.py": "781b73588439b67378e7625ac80b984d1bfbfd233c122e7e13aa89385278e8c1",
+    "Extraction/ontoward_extraction/recovery.py": "1bf1a832254be8296399ac3f333a6333da04c05a35f5cb790153b3e70d0c82b3",
+    "Extraction/ontoward_extraction/verify.py": "dc0e575aa1bb7e00d8bc207ce7cc5cac497981f29222c29681209bb8ba8e3bc5",
+    "Extraction/prompts/augment_concepts.txt": "c39d67c6f45ecc95c0b741acc9430892cc0fac3e42a426cabb0d0b3863fab5c2",
+    "Extraction/prompts/augment_discover.txt": "b95cbf1e1432ed468dd9927ee286c2c37776acb4399b546dec6408b71a9f0ce8",
+    "Extraction/prompts/augment_questions.txt": "e365031ce6e9699ac63245235e156f433bc6243cfee55b2d28f944fcd1fc8ecf",
+    "Extraction/prompts/augment_relations.txt": "05cf4234867f88123b2a9c2932514eadca27afc10d0c6ddf325c16340db3eeca",
+    "Extraction/prompts/augment_review.txt": "43dee9694eae389935c8de8fc208f3e8716feee1cb3cd351ed35a08af8cc3243",
+    "Extraction/prompts/draft.txt": "29f0cec94addc05682075a59fa2b529e9455efd7b8e9f0ac3924c43fbf077274",
+    "Extraction/prompts/final.txt": "70e7c3422285b3e4537c18e5c1502031532abfae8d398ab45366828ac6ed9d56",
+    "Extraction/prompts/normalize.txt": "a1bf53ebf5f310a94e3c8715be5700db6d2b4c64313b469456692e0de11f4b0f",
+    "Extraction/prompts/patch.txt": "afc402f9f60cdb135f2c002b83a1b123257a08d4504ff86f1e4a0b8cf56ca0bb",
+    "Extraction/prompts/questions.txt": "fceb67257990042feaf5b2b2335844e50bc8ac2d880a9b8368d23946de7b0c82",
+    "Extraction/tests/augmentation_fixture.py": "f09bcf1c261fc19d3e86c15ac71d71c4cce7dc804378212a2716982a0ff5a49f",
+    "Extraction/tests/image_acceptance.py": "e0c0927ea1431d1818c8130cd853296303b24c35e7447e8acdd33b8d29860374",
+    "Extraction/tests/support.py": "001bc0ccd43757e9c21d80f6760a609e1b721f3bbb74a7852ef78a06a0bf64ca",
+    "Extraction/tests/test_augmentation.py": "b852eb4e09f41fde6be528a4d1722d4d1151fcc7e9b3c3e7e1c9c3dec6247c5c",
+    "Extraction/tests/test_batch.py": "f8ffc1009951fce07b9c466009f53d85e80bfe22f066815d497be16bbdefaecc",
+    "Extraction/tests/test_draft_endpoints.py": "ecdb5e2eeb3f941fc3bdb923863159776867f189cdf0989bde9928da01fb722d",
+    "Extraction/tests/test_draft_packet.py": "5fb110ec46228d1edb90b6688a0cba6b4163ef2ee668e8f1060265d40a9607dc",
+    "Extraction/tests/test_empty_source.py": "b70449847f00af20ef7ea397431e6fb2dc90a499556e7b3f0bd9d9c9a90b3998",
+    "Extraction/tests/test_extraction.py": "c541445bf84d36b3e6e7edea16e9905a4cf8cd141e50854ae29578fbdab597e3",
+    "Extraction/tests/test_index_progress.py": "027d362bf0526ce4c5dd2444075f21660eecae38188a0aabf7729951d61cedfd",
+    "Extraction/tests/test_job_packets.py": "26b9ea7bb0efdf4c119973662cec5d9eaa0287d5af726bcc7132cf6678afa510",
+    "Extraction/tests/test_korean_phase.py": "f713f4c90d464dcc4c087ce259c699dbbd13f6f395841e54140d580b906e5505",
+    "Extraction/tests/test_maintenance.py": "cb8cbcdba7ba06c0be0fa2744a4ef733073268ede79e0cecf15240f8285e2ccf",
+    "Extraction/tests/test_normalize_recovery.py": "85dab9b8fc09cf7af7db10a7746044011d80ebad5cd0f0d27da345756baac52d",
+    "Extraction/tests/test_patch_packets.py": "559e15688f88d7999fa0501ed7cdef00c17dbc59dc2c60ff19252484c6bfd347",
+    "Extraction/tests/test_provider_retry.py": "ea978fe30e356ac2eeab966a155002ce45d944b7eef655b23d3f451f5ada4008",
+    "Extraction/tests/test_provider_switch.py": "608c5e5ad7ba2574f84959e054b2f7a023c986451faf0d36ccc4eda80b826209",
+    "Extraction/tests/test_providers.py": "cf47dbfa43336a139497444c69ccc8e39dfeaa1949257df99219de591913a3fb",
+    "Extraction/tests/test_question_output.py": "d185999911a6623aaf25afbfb473c2ab097810d5e897ecec1924318eb66e2cdf",
+    "Extraction/tests/test_role_identity.py": "2ab3c1d57372c316a72300c53b5b5af9ea47d56c6b07c2d81fc23098e2ead07e",
+    "compose.yaml": "df37c67301982760978a301595b8bd9134a6d9f0b4114f2a023ecc5eee5e6a99",
+    "submission/.DS_Store": "7f8b88536372b6eef84c63b890ebb79a4b815c5b2e6644834291a11008c61d45",
+    "submission/.env": "9c2e46b5b22e0f0c47f026cb0cc5a047b10b8cabc7e44e625640513cf6cf6595",
+    "submission/config/prompts/clinical_action.txt": "0fe704e263becff05ce5f5431ae8f4bdc539a0a755f868f5dd5b8c1540ed4ed5",
+    "submission/config/prompts/clinical_action_output.txt": "e848acfa84793eb69b58097af0f75a81d8322856c48a9cbee22064d18ae19769",
+    "submission/config/prompts/clinical_common.txt": "616a678fbda51a41aadcf7e1c5d699b2929d43fc8fdebf0f5fc52d1f72865cd8",
+    "submission/config/prompts/clinical_decision_output.txt": "e999a98348e1d47b54f99e2d7e2d0bd86bc463ade82ca9dc2b3f49d558f66e25",
+    "submission/config/prompts/clinical_rank_output.txt": "c3e6a1c816232c4aca6f257241411a6459280e89cafd67bc9d2fa34937918ee0",
+    "submission/config/prompts/clinical_ranking.txt": "ac14096df4495c572ef8457a1096f37183f4626c9328031656ea0eec47bdeb29",
+    "submission/config/prompts/clinical_repair.txt": "055b7f849d54566654ce4e47cb1e684b680b651dd01c8ec45dd492777ceb5ba2",
+    "submission/config/prompts/data.txt": "be9dc59c6a2496ac9b392f9f0a246abeaf91be73cb2ae602d8ca0aa890de9f65",
+    "submission/config/prompts/input_chief_repair.txt": "26b0f4913fc9b70fad7038a2fff4e11503eb8578253b10fdf32faeb1112b0b6d",
+    "submission/config/prompts/input_common.txt": "a82034ea9739462beb1f3a2d7e25b1c63e98eeaf7f1e04ff7a925578fa2c5cce",
+    "submission/config/prompts/input_exam.txt": "9272db7d9b9a47381b7459ccca79143a3603b029519255057e03a917b509452b",
+    "submission/config/prompts/input_fields.txt": "e10ffed09056a14244d6c09e2cc9e0036ff2b8cfd7cfd2b83e42144e97d68dc7",
+    "submission/config/prompts/input_initial.txt": "7a985361093040383254e1f329a8845b94fd5111aad6d9a50a1aed588995c8a0",
+    "submission/config/prompts/input_repair.txt": "df48563943f030e5105cf59b6a154867188da0a181ba1754947ec16f4e0f9de3",
+    "submission/config/prompts/input_reply.txt": "9619bf9e29c185ae9045bea7b19c631dc4f6fc0fbf2b28a1c75fcca5e447cefb",
+    "submission/config/prompts/input_rows_repair.txt": "f2f472dc9c9cbd5d2d3de9361c0dec68c5705cd45b016aca3e558ecef52b7366",
+    "submission/config/prompts/mapping_common.txt": "3e732c28c54fff90da423509e7837f4672b5adae9c25af87ad2c095454893a80",
+    "submission/config/prompts/mapping_repair.txt": "9e248b59b4374651e34ca3be4f1b5b33a9efe8b1c5ecf0ad373443d42b1bc1d6",
+    "submission/config/prompts/mapping_select.txt": "4ca395203e36e9b3851a8da2fcf4b851b351e396b2225e3feaa01e3d62b98d36",
+    "submission/config/prompts/mouth_common.txt": "1b8c15f9365c6ad7c475a7e152ce5351476204a2b4e6caa196f827b884d01f19",
+    "submission/config/prompts/mouth_disease_notice.txt": "bf52b1ee6d7058026e57b5c0f9e9e62f35ac82df36d50b52ff74dd0226cb45d4",
+    "submission/config/prompts/mouth_output.txt": "255e48c87980bf82f5c0ec37623c411f8fe65e170f901582710c3dcfb073f739",
+    "submission/config/prompts/mouth_plan.txt": "09f90b16a20cf979bf566e0c797841077b10b4e311d677632ec2ddf5081f2538",
+    "submission/config/prompts/mouth_response_repair.txt": "4582eca10a25fc6c5f17bac14eca02202873f3cc438eae6319590ef90a7cdb31",
+    "submission/config/prompts/mouth_symptom_notice.txt": "fd3066575467dc89baa17b50a47daae2aa7103074d08a9782a69ceb5cadb5493",
+    "submission/config/prompts/mouth_text_repair.txt": "f067ae73d65bb99af3696ed9f46dd46c0832a5aa7074bf720ccc5f3a3e402ea5",
+    "submission/config/prompts/plan_common.txt": "7c73629f7b146932e95de00854b62759ea39b564726ee0b0fe7d4ba117c752bc",
+    "submission/config/prompts/plan_complete.txt": "143ee7bad9ce2abb31bbb67b20b71cc0a6c18efa9a5e3e3c5daf36b93ad78fd4",
+    "submission/config/prompts/plan_output.txt": "9c6373c4758e052243124b37faea78633fe2d230787cc9bf2a688158383010ce",
+    "submission/config/prompts/plan_repair.txt": "9eb707770b5d7e7a3a1f60fae90c643682e2f483e30e5108b9cc0b7bff078ec3",
+    "submission/config/prompts/session_chief_complaint.txt": "05335a34ce96acd27a8b81751ac00ac40697f22726c887d697412c2c63d4ea54",
+    "submission/config/prompts/session_context_factor.txt": "c6533f602207e83a8e8c1bca5d77adb1552f1c6c271659fa48a4b339670dc3d9",
+    "submission/config/prompts/session_differential_diagnosis.txt": "c07d8b98bef0431ea2248bcc06932e264e8645ded09fa3ee51d413b790703fc9",
+    "submission/config/prompts/session_initiation.txt": "e8c60267af50d60530b04bb0688825795bcf58c2c70c87aec394c858f889be5d",
+    "submission/config/prompts.json": "5f9dcbb4b228403c84bc9be4690dca831bbda768830e171848f9b0d324715e6f",
+    "submission/config/texts.ko.json": "5e9ea2af6114a2da71133e825f2c851c717a227ce8e789e09d565ab91348cad1",
+    "submission/knowledge/.DS_Store": "ee5974bd39b481d05ff811dfa9f77b19fca60d997b7180ee30ee1dec2479345b",
+    "submission/knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "submission/knowledge/builds/.DS_Store": "d65165279105ca6773180500688df4bdc69a2c7b771752f0a46ef120b7fd8ec3",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/clinical.ttl": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/guideline-index.json": "6aae5720a4789b878d75e4cb280f888428826613cad435a9603a4236c5cc30b0",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/manifest.json": "1e571b7145601cb795297244b71321671b577174066225fd7af0f7a791076185",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/questions.ko.json": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/vocabulary.ttl": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/clinical.ttl": "eed873cb3bec008440ddd687d5c97f60ac3dc13175a5ac38c0c092b1250fdd69",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/guideline-index.json": "676a029d6ef1727fb3a201cea28662908ca48af9df0edfa30cc78bd4f1df6161",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/manifest.json": "85597f767026a948bafd2a9571650dffea2c9870ea2952130baec5e1794c86cc",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/questions.ko.json": "b53449739ecbfcf5cad4cd21de199fb487063fbe9a19aec1a2eb680a359e1a3e",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/vocabulary.ttl": "f15b60ebeb50fb1ee4c200c621dbcca49b8cc6d49a72047aabf003950ee1c985",
+    "submission/knowledge/conditions.py": "eb67520a5bed828d994d3bc1551789bbdc2500e795cdd637e6a908977d888575",
+    "submission/knowledge/graph.py": "d695bab0c42ec495b9dfc9f60a318101241f7601918ae586b84fd3c2721b3ab9",
+    "submission/knowledge/guidelines.py": "f2855176cb175967df15deaee6bdcdeeacf7d07491ebb33c4bdf5c84e8d097ba",
+    "submission/knowledge/manifest.json": "04accb50722f2c4f8583e25f0a3b1600bf2d384c820d91cc68e5dc42a1fa21db",
+    "submission/knowledge/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+    "submission/nova_sdk.py": "c6238ac466abc5b99b3e80de9ace2c7a54b51f7efc8d8a671d1c08bb0476f00d",
+    "submission/requirements.txt": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01",
+    "submission/run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+    "submission/settings.py": "45fe7d0a52863f5664aabd1085bb7098221ab9b3611dcab7ffd6f2e3a69c2acd",
+    "submission/workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/consultation.py": "31dd3180473c16c3d929375c6cde285c8485ea5ba27467ad590886d3b7315629",
+    "submission/workflow/doctor_brain.py": "6ec2d9c23d18215521f6275a2182ef4ef0c373a32030a3a29ae3dc24ae141c6d",
+    "submission/workflow/doctor_ear.py": "cf80398bd37886dccefc0dc85847fc7a5d7d514d3e84ce3484a25a0311032616",
+    "submission/workflow/doctor_mouth.py": "475ae7bf651f74252f406245574515d6069459b15473b45796bbe6ceee67612d",
+    "submission/workflow/education.py": "c896389142875b7a7560fcd3c31e5bdcf6c59dee72683cad29d6e02443d2ae9c",
+    "submission/workflow/input_types.py": "f7c487dd587e9b0725085c3fc71a5cbd7f1644e1b27359881f1f847fa8faa930",
+    "submission/workflow/io/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/io/nova_session.py": "1e30df7153cb92e8deb58b99e39a8a669f873ffabe0482215aecb14e35dd686c",
+    "submission/workflow/io/request_executor.py": "0c2f855fa71aab5873583a4ea15d4d44dcd2a0a2d07e3ed3a290191038514c5a",
+    "submission/workflow/model_context.py": "33f0bd75bc58664a344ebd0ea1ed7285c8044d7ca90d724c780798e036610092",
+    "submission/workflow/output_types.py": "af24b35d0a1195889f1e1b256b6eb2d24f422ee46e7f89794cf979953eaf184a",
+    "submission/workflow/rules/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/rules/action.py": "8f40c49029c8b60c10ff935f734b530e6d39186c3a1812e9794209ae25da76eb",
+    "submission/workflow/rules/assessment.py": "ebb0a40ecadf6e22b87cd1c2be63205753d65fa970dd2f3032d5d939b0b194ad",
+    "submission/workflow/rules/budget.py": "b470e90c4709fea6af924928b9082f69aa316bd2dc4d9f9b5c1f1f841c387806",
+    "submission/workflow/rules/collection.py": "5b4608b810bea07b76786ee9ee876c45de1b5be39a0d7afb77c573ccbdb58412",
+    "submission/workflow/rules/decision.py": "62d74ab0730a0770cbaa14d94ad042fc09bee6288523bfedd00f8e677f775573",
+    "submission/workflow/rules/input.py": "9c7657e7faa2803eab7d6bac47cacd5500165c7906f8ae3adea00d49e5748da4",
+    "submission/workflow/rules/limits.py": "8ea6df60b54be11739fd43a61da6fb525af335475d054ebcf06b0cf24d95a63a",
+    "submission/workflow/rules/normalization.py": "21b6f41aaa4d5f0fc705297f5761d6f78a879d74336f7df91cde346d0cb0c383",
+    "submission/workflow/rules/questions.py": "8fc70b2f054ef68b178f784cee33b3ba5fb9aa7df7a08807c1e83dff56c9f313",
+    "submission/workflow/rules/submission.py": "6a5e42b7699a61f8f36c89f69ad67fcdd53e972f123ae6496a19690d9f1df267",
+    "submission/workflow/runtime.py": "2be3ee090254b472cd926dc3254fca07ac38d63d552e8037b3ee8ac22f3358ed",
+    "submission/workflow/sessions/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/sessions/chief_complaint.py": "d99294957a0e74a800d49072ede3050a30bc8f5bbd823253925787bda0cfbd7a",
+    "submission/workflow/sessions/context_factor.py": "a66d47c0a4628498ebcdbf15723950460fd97715dfc7d67879fa8987dd8cbf75",
+    "submission/workflow/sessions/differential_diagnosis.py": "c98ca038a777560832feb60d53d52e636006cf65f6eda4d95e5cef36d022275a",
+    "submission/workflow/sessions/education.py": "486c826acc7b269fd5551d9d2ed45d2a371b81051035b4e4eb1324aece50a506",
+    "submission/workflow/sessions/initiation.py": "b9acc707231e29f3f9c445c537809b0985f3df975be989c9ff94b838a53f6bf3",
+    "submission/workflow/state/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "submission/workflow/state/evidence.py": "6a121ea121d85e46b8de82db8e9e08515176ad27be99e10fd86a8477bde14029",
+    "submission/workflow/state/interactions.py": "386f54838b85506da0a477ace5269d76458b6dc58a473a928e4e6a0dddfbe5d0",
+    "submission/workflow/state/models.py": "05fbebfaedacaa2adf532604b19fbe544ccfd1ea06de0ac2657f3a7e66e14c4e",
+    "submission/workflow/state/questions.py": "1ef702194bf0137e22b3d831204abba2423404d8df7badd0f69f1622784dd25d",
+    "submission/workflow/state/usage.py": "2a54856accb8fa9cfb62557d60b33f42c7dc0e8bd168b4995976321809c9cefb",
+    "submission/workflow/submission_writer.py": "8b7e4953ea3e8c2aac6548b8450f99de5080c9fa8ce4b4003fec7280886e6af0",
+    "submission/workflow/text_config.py": "81007fcf36b5668b97d495ed1cd0249213771968ff645c07ab021c9f98fe77b5"
+  },
+  "protected_hashes_equal": true,
+  "allowlisted_paths_remaining": [],
+  "verified_at": "2026-10-21T21:16:22+09:00",
+  "post_delete_checks": {
+    "loader": {
+      "command": "docker compose run --rm -T --no-deps verify verify --manifest /target/manifest.json",
+      "exit_code": 0,
+      "result": {
+        "diseases": 948,
+        "gaps": [],
+        "status": "pass"
+      }
+    },
+    "prepare": {
+      "command": "docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm -T --no-deps -w /workspace/submission dev python -B -c 'import run; result=run.prepare(); print({\"entrypoint\":\"run.py\",\"prepared\":result is not None,\"knowledge_contract\":\"v5-enum-1\"})'",
+      "exit_code": 0,
+      "result": {
+        "entrypoint": "run.py",
+        "prepared": true,
+        "knowledge_contract": "v5-enum-1"
+      }
+    }
+  },
+  "work_directory_empty": true,
+  "output_directory_empty": true
+}

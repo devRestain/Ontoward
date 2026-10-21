@@ -1,1 +1,1 @@
-Use the current DifferentialDiagnosis evidence, supplied executable ROS, interview and EXAM options, and remaining collection resources. Leave assessment freezing and action execution to Python.
+Use the current DifferentialDiagnosis evidence, supplied executable ROS, Context, clarification, interview and EXAM options, and remaining collection resources. Choose only supplied unresolved graph-linked questions. Leave assessment freezing and action execution to Python.

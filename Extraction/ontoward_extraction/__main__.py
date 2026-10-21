@@ -49,7 +49,7 @@ def build_identity(entries, config, assets):
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description='Build qualitative clinical knowledge with explicit provider and durable checkpoints')
-    parser.add_argument('command',choices=['run','status','pause','verify','install','correct-bundle','recover-normalize','recover-normalize-text','recover-normalize-provider','recover-normalize-batch','recover-normalize-empty','recover-questions','recover-questions-sol','recover-draft','recover-draft-provider','recover-draft-endpoints','recover-draft-packets','recover-patch'])
+    parser.add_argument('command',choices=['run','status','pause','verify','install','correct-bundle','augment-plan','augment','augment-build','augment-install','augment-repair-discovery','augment-repair-review','recover-normalize','recover-normalize-text','recover-normalize-provider','recover-normalize-batch','recover-normalize-empty','recover-questions','recover-questions-sol','recover-draft','recover-draft-provider','recover-draft-endpoints','recover-draft-packets','recover-patch'])
     parser.add_argument('--config',default=os.environ.get('EXTRACTION_CONFIG','/app/config.json'))
     parser.add_argument('--assets',default='/assets')
     parser.add_argument('--work',default='/work')
@@ -58,6 +58,11 @@ def main(argv=None):
     parser.add_argument('--run-id')
     parser.add_argument('--manifest')
     parser.add_argument('--corrections')
+    parser.add_argument('--seed')
+    parser.add_argument('--plan')
+    parser.add_argument('--source-plan')
+    parser.add_argument('--amendments')
+    parser.add_argument('--max-model-requests', type=int)
     parser.add_argument('--preserve-build', action='append', default=[])
     parser.add_argument('--provider',choices=['nova_dev','codex_subscription','openai_api'])
     parser.add_argument('--resume',action='store_true')
@@ -67,6 +72,44 @@ def main(argv=None):
     parser.add_argument('--watch',action='store_true',help='Refresh read-only status until Ctrl+C')
     parser.add_argument('--interval',type=float,default=3,help='Status refresh interval in seconds')
     args=parser.parse_args(argv)
+    # Parent augmentation must never enter raw-input discovery or fresh extraction.
+    if args.command.startswith('augment'):
+        if args.install or args.provider or args.run_id or args.preserve_build or args.corrections:
+            parser.error('augmentation uses the pinned config and a separate explicit augment-install command')
+        if args.command == 'augment-plan':
+            if not args.seed or args.plan or args.resume or args.retry_unknown or args.max_model_requests:
+                parser.error('augment-plan requires --seed and uses the current --target/manifest.json')
+            if args.manifest:
+                parser.error('augment-plan reads the latest active --target/manifest.json; omit --manifest')
+            from .augmentation import make_plan
+            result = make_plan(Path(args.target)/'manifest.json', args.seed, configuration(args.config), args.output)
+        elif args.command == 'augment-repair-review':
+            if not args.plan or not args.source_plan or args.amendments or args.resume or args.retry_unknown or args.max_model_requests:
+                parser.error('augment-repair-review requires --plan --source-plan and makes no model calls')
+            from .augmentation_run import repair_review
+            result = repair_review(args.source_plan, args.plan, args.work)
+        elif args.command == 'augment-repair-discovery':
+            if not args.plan or not args.source_plan or not args.amendments or args.resume or args.retry_unknown or args.max_model_requests:
+                parser.error('augment-repair-discovery requires --plan --source-plan --amendments and makes no model calls')
+            from .augmentation_run import repair_discovery
+            result = repair_discovery(args.source_plan, args.plan, args.work, args.amendments)
+        else:
+            if not args.plan or args.manifest or args.seed:
+                parser.error('augmentation requires --plan without --manifest or --seed')
+            from .augmentation_run import activate, rebuild, run_augmentation
+            if args.command == 'augment':
+                if args.max_model_requests is None:
+                    parser.error('augment requires explicit --max-model-requests')
+                result = run_augmentation(args.plan, configuration(args.config), args.work, args.output,
+                    args.max_model_requests, resume=args.resume, retry_unknown=args.retry_unknown)
+            elif args.resume or args.retry_unknown or args.max_model_requests:
+                parser.error('augment-build/install do not call models or accept resume/budget flags')
+            elif args.command == 'augment-build':
+                result = rebuild(args.plan, args.work, args.output)
+            else:
+                result = activate(args.plan, args.work, args.output, args.target)
+        print(canonical(result), flush=True)
+        return 0
     if args.command=='correct-bundle':
         if (not args.manifest or not args.corrections or args.resume or args.retry_unknown or args.install
                 or args.provider or args.run_id or args.preserve_build):

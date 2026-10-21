@@ -472,6 +472,9 @@ def transmit(jobs, provider, request_id, payload, config):
             model=payload['model'];limit=config['nova_daily_calls']['final' if model.endswith('gpt-6.1-sol') else 'draft']
             row=jobs.db.execute('SELECT calls FROM usage WHERE day=? AND model=?',(kst_day(),model)).fetchone()
             if row and row[0]>=limit: wait_until(jobs,next_kst_day())
+        before_send = getattr(provider, 'before_send', None)
+        if before_send is not None:
+            before_send(payload, request_id)
         jobs.request_state(request_id,'sent')
         try:
             response=provider.send(payload)

@@ -1,5 +1,7 @@
 # Data Contract
 
+- Keep D58 plans, URI mappings, frozen worksets, requests, accepted delta, neutral judgments and usage in new fingerprint directories. Use the latest active strict runtime bundle as parent only for this route; keep fresh extraction and D55 distinct. Preserve unrelated builds during activation and distinguish actual generation from offline fixtures.
+
 - Apply explicit post-install user disposal after checkpoint-preservation duties for recovery have ended. Remove the enumerated extraction work DBs staged duplicates logs retired generated archives and extraction-only scratch; retain installed asset hashes final typed-amendment audit deletion receipt supplied originals source custody and unrelated accepted artifacts. Record disposed paths honestly and never claim their raw requests or checkpoints remain available.
 
 - Preserve the complete failed checkpoint during an explicitly requested manual readiness repair. Keep every original job input accepted result request response usage row raw index counter and prior manual receipt unchanged in the new fingerprint; store the typed before/after amendments runtime exclusions and derived-input hash separately from original model results. Bind source SHA256 preservation installed asset hashes and performed loader checks without claiming clinical or official acceptance.

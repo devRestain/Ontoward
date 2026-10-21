@@ -1,6 +1,6 @@
 # 무점수 v5.0 지식 구조
 
-[schema.ttl](schema.ttl)은 D49의 `schema_version=5.0`, `knowledge_contract=v5-enum-1` 구조다. 실행 copy는 submission/knowledge/schema.ttl이며 실제 manifest는 새 번들 설치 전까지 없다. 과거 점수·source-required·admission 정책은 활성 계약에서 철회했다.
+[schema.ttl](schema.ttl)은 D49의 `schema_version=5.0`, `knowledge_contract=v5-enum-1` 구조다. 실제 [활성 manifest](../../submission/knowledge/manifest.json)가 제출 내부 build별 schema·어휘·임상·질문·지침 자산을 가리킨다. 과거 점수·source-required·admission 정책은 활성 계약에서 철회했다. fresh 생성과 별도로 D58은 최신 strict 부모의 schema·기존 의미를 보존하는 typed delta를 적용해 하나의 정적 child를 만든다. [현재 보존·설치 결과](../provenance/augmentation-d58-2026-10-21.json)와 [수용 delta](../provenance/augmentation-d58-delta-2026-10-21.json)를 따른다.
 
 한눈에 구조를 보려면 [아틀라스의 RDF 스키마](../../Test/atlas.html#rdf)를 먼저 읽어 보세요. 현재 작성 스키마의 **14클래스·23속성·130 triples**를 도식·카디널리티·필드 표로 설명합니다. 이는 구조 정의의 수이며 실제 설치된 질환·패턴 개수가 아닙니다. [번들·질문 JSON](../../Test/atlas.html#bundle), [환자 사실](../../Test/atlas.html#facts), [추출 SQLite](../../Test/atlas.html#sqlite)는 별도 스키마로 연결해 두었습니다.
 

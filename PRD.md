@@ -2,7 +2,7 @@
 
 ## 목적과 실행 경계
 
-Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D57](DECISION_STATE.md#D57)의 d50.7로 초기 상세정보의 수치 연결·scope·원자 질문 수집을 보존하고, [D55](DECISION_STATE.md#D55)의 strict 번들과 D56 진찰 문구를 유지한다. [D54](DECISION_STATE.md#D54)의 scoped 후보 유입·호출 내 참조·어휘 통합·문서 projection과 직접 연결 문서 우선 순서를 유지한다. D53의 직접 Initiation·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 기존 DB의 활성 사용은 철회했으며 실제 새 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
+Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D58](DECISION_STATE.md#D58)의 d50.8로 최신 strict 번들의 유한 증분 보완과 현재 평가의 DD Context 질문을 허용한다. [D57](DECISION_STATE.md#D57)의 초기 상세정보 수치 연결·scope·원자 질문 수집, [D55](DECISION_STATE.md#D55)의 strict 번들과 D56 진찰 문구를 유지한다. [D54](DECISION_STATE.md#D54)의 scoped 후보 유입·호출 내 참조·어휘 통합·문서 projection과 직접 연결 문서 우선 순서를 유지한다. D53의 직접 Initiation·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 검증되지 않은 과거 DB fallback은 허용하지 않으며 실제 설치 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
 
 진료 중에는 ZIP 내부의 읽기 전용 RDFLib Graph를 사용한다. 원본 RF2·BODHI·DDXPlus·준비 SQLite는 개발 자산이다. 등록되지 않은 질환·관계·질문을 런타임에서 만들지 않는다. 제공 가이드라인 원문은 진단을 고정한 뒤 지정 마운트에서만 읽는다. 실제 모델 품질과 공식 평가는 로컬 실행 증거와 구분한다.
 
@@ -129,7 +129,7 @@ patch의 공통 어휘와 완료 관계는 작업마다 복제하지 않고 배�
 
 Disease→Association→Pattern→Feature를 유지하고 ContextFactor를 Target에 추가한다. Association은 명시적 target_scope·applicability와 정성 effect를 가진다. 생성 effect는 support·strong_support·against·strong_against·neutral이며 neutral은 작업 DB에 완료 결과로 보존하고 RDF에서는 제외한다. 점수·가중치·전형성·ScoringPolicy·scoring/reasoning policy·관계 source/confidence/reviewer·옛 admission 필수 검증을 제거한다. 환자 취득 source/turn·주체·시점과 Education의 문서 경로/hash/인용은 유지한다. 수치 진단 점수 제거는 나이·실측값·기간·통증 수치·단위·비교 연산자 제거를 뜻하지 않는다.
 
-Extraction/은 네 원자료에서 빈 SQLite 작업 DB로 시작한다. RF2 Snapshot·배포 의존성, 실제 BODHI CSV, DDXPlus evidence/condition metadata, Astra 후보·속성·값·CPX 범위를 사용한다. 환자 ZIP·이전 생성 DB/질문/어휘/source-custody SQLite·Astra 과거 snapshot/등록 정책을 새 정본으로 사용하지 않는다. 입력 인덱싱→개념/역할 정규화→질문/진찰→유한 관계 초안→최종 분류/충돌 해소→한 번의 결손 보완→staging 컴파일/검증/명시적 설치를 수행한다. 원자료가 부족한 일반 관계는 최종 모델 내부 지식으로 완성하되 환자 관찰은 생성하지 못한다.
+Extraction/의 fresh 경로는 네 원자료에서 빈 SQLite 작업 DB로 시작한다. RF2 Snapshot·배포 의존성, 실제 BODHI CSV, DDXPlus evidence/condition metadata, Astra 후보·속성·값·CPX 범위를 사용한다. 환자 ZIP·이전 생성 DB/질문/어휘/source-custody SQLite·Astra 과거 snapshot/등록 정책을 새 정본으로 사용하지 않는다. 입력 인덱싱→개념/역할 정규화→질문/진찰→유한 관계 초안→최종 분류/충돌 해소→한 번의 결손 보완→staging 컴파일/검증/명시적 설치를 수행한다. 원자료가 부족한 일반 관계는 최종 모델 내부 지식으로 완성하되 환자 관찰은 생성하지 못한다.
 
 공급자는 nova_dev·codex_subscription·openai_api 중 빌드당 하나다. 초안 gpt-6-luna·최종 gpt-6.1-sol의 effort는 모두 medium이다. NOVA는 원본 SDK의 세션 밖 Client.chat, 구독은 새 전용 volume의 사용자 ChatGPT device login과 도구를 비활성화한 read-only codex exec, API는 도구 없는 Responses 구조화 출력을 사용한다. 인증은 선택 경로에만 전달하고 자동 모델 변경·provider fallback·계정 전환은 없다. NOVA/API 출력 상한은 8000/32000이고 CLI에는 강제 토큰 상한을 주장하지 않는다. 요청/CLI 제한은 600초, Compose 종료 유예는 660초다. NOVA KST 일일 한도와 다른 공급자의 한도·재시도 시점을 구별한다.
 
@@ -160,3 +160,9 @@ NOVA의 명시적 PROVIDER_RESPONSE_INVALID는 실패한 요청을 보존하고 
 이미지는 ontoward-extraction:local이며 Python 3.12·기존 고정 Python 의존성·@openai/codex@0.162.1을 포함한다. D49의 초기 구현 수용은 이미지·무점수 워크플로우·합성 오프라인 검증으로 한정한다. 실제 로그인·유료 생성·설치·정식 ZIP은 각각 승인된 실행 범위에서만 수행한다. 이후 별도로 승인된 실제 빌드의 진행과 설치 여부는 루트·data PROJECT_STATE가 소유하며 이 요구사항 문서를 실시간 상태로 사용하지 않는다. 기존 자산/점수 builder는 활성 경로에서 철회하고 과거 원자료·준비 결과·수용 ZIP·증거는 보존한다.
 
 D56 검증 완료 뒤 사용자가 과거 build 삭제를 요청하면 현재 manifest가 참조하는 build와 실행 가능성을 먼저 확인하고 열거한 이전 build만 삭제한다. 원본 테스트와 과거 manifest·자산 해시·설치·정정·삭제 영수증은 보존한다.
+
+## 기존 번들의 제한된 증분 보완 (D58)
+
+최신 활성 manifest를 해시 검증한 부모로 삼아 불면의 약물 관련 설명과 저신장의 정상 성장변이만 별도 보완한다. 유한 누락 발견→개념→관계→한 번의 최종 임상 검토→질문을 수행하고, Python이 URI와 부모 precondition을 확정한다. 기존 정의는 명시적 append-only 확장만 허용하며 관계 대체와 공유 속성 역할 변경은 개별 allowlist와 이전 hash를 검증한다. 부모 의미·질문 override·단위·값 소유권·진찰·지침을 보존하고 단일 정적 immutable child로 컴파일한다. 상담 중 overlay와 새 서비스는 추가하지 않는다.
+
+키 없는 plan은 실제 부모의 빈 delta round-trip을 먼저 검사한다. 각 후속 workset은 직전 완료 결과에서 한 번 고정하고 재개 시 완료·neutral·유효 형제 결과를 재사용한다. 실제 생성에는 명시적 요청 상한과 기존 선택 provider/model 설정을 적용하고 설치는 별도 명령으로 실행한다. 모든 설치가 공유하는 lock 안에서 최신 부모 일치와 manifest 원자 교체를 수행하며 augmentation은 보관 build를 정리하지 않는다. DD는 현재 평가의 미확인 Context·clarification 질문만 기존 자격·범위·중복·예산 검사로 허용한다. 모델 없는 검사·mock 생성·실제 생성·상담 정확도는 별도 보고한다.

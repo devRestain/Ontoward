@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-data
 /status value=complete
-/checkpoint revision=3ee68f75b2667ae00a8c1e5e5e8e168a797d45d9 dirty=true updated=2026-10-21T19:30:01+09:00
-/goal phase=current id=DATA.D57 state=complete action="Pin the review saved-run custody and immutable collection-metadata bundle lineage"
+/checkpoint revision=33a1395ab37149e4d81e57f3f9f2cb5f5c7d87ec dirty=true updated=2026-10-21T21:16:22+09:00
+/goal phase=current id=DATA.D58 state=complete action="Preserve immutable augmentation lineage and dispose verified unused generation records"
+/goal phase=history id=DATA.D57 state=complete action="Pin the review saved-run custody and immutable collection-metadata bundle lineage"
 /goal phase=history id=DATA.D56 state=complete action="Pin exact EXAM text amendments and retain active assets original C03 and parent hash receipts"
 /goal phase=history id=DATA.D55 state=complete action="Preserve the parent bundle and record exact reviewed corrections and canonical meaning conservation"
 /goal phase=history id=DATA.D54 state=complete action="Pin task A source payload and artifact evidence while preserving current bundle and unresolved typed edge custody"
@@ -394,4 +395,13 @@
 /evidence id=DATA.D57.E2 class=semantic result=pass source=provenance/algorithm-d50-7-2026-10-21.json observed="Activate build 1bcaba1dffb744c468bb191df3267dad with one target-specific collect_via override and one onset-role change while preserving all graph bytes and guideline membership"
 /evidence id=DATA.D57.E3 class=artifact result=pass source=provenance/algorithm-d50-7-2026-10-21.json observed="Retain exact collection amendments source and independent synthetic ZIP hashes original-SDK trace inspection and performed-check receipts without model calls or extraction resume"
 /evidence id=DATA.D57.E4 class=external_service result=not_run source=provenance/algorithm-d50-7-2026-10-21.json observed="Leave fresh NOVA C10 actual-model extraction quality clinical validity official evaluation production ZIP publication and deployment unrun"
-/handoff state=ready action="Use verified local d50.7 and retain fresh model and clinical acceptance as unrun"
+/accept id=DATA.D58.A1 state=pass action="Verify latest-parent lossless reconstruction and semantic preservation" evidence=DATA.D58.E1
+/evidence id=DATA.D58.E1 class=semantic result=pass source=provenance/augmentation-d58-2026-10-21.json observed="Pass actual-parent empty delta roundtrip and child diff with zero unauthorized changes 2760 unchanged numeric pairs six ValueMatches exact schema roles overrides and disease guideline payloads"
+/accept id=DATA.D58.A2 state=pass action="Complete bounded generation and immutable child installation" evidence=DATA.D58.E2,DATA.D58.E3
+/evidence id=DATA.D58.E2 class=external_service result=pass source=provenance/augmentation-d58-2026-10-21.json observed="Complete seven API Luna medium transmissions using 1203089 input and 28298 output tokens within the sixteen-transmission cap"
+/evidence id=DATA.D58.E3 class=artifact result=pass source=provenance/augmentation-d58-delta-2026-10-21.json observed="Retain typed delta and URI mapping for eleven added concepts nine exported relations six questions and four changed parent associations in installed child cec62f4596bedd9b9488aa75e3d38f04"
+/accept id=DATA.D58.A3 state=pass action="Dispose unused checkpoints and duplicate database outputs after verification" evidence=DATA.D58.E4
+/evidence id=DATA.D58.E4 class=artifact result=pass source=provenance/augmentation-d58-cleanup-2026-10-21.json observed="Delete 518 allowlisted files totaling 220481422 bytes preserve 182 protected hashes and recheck loader and prepare; retain active child preexisting parent and compact receipts without raw resume capability"
+/evidence id=DATA.D58.E5 class=runtime result=pass source=provenance/augmentation-d58-2026-10-21.json observed="Pass 140 extraction tests actual-parent mock generation keyless recompile and completed-run resume with zero additional model calls before explicit disposal"
+/evidence id=DATA.D58.E6 class=external_service result=not_run source=provenance/augmentation-d58-2026-10-21.json observed="Defer actual-model consultation accuracy clinical validity official evaluation and deployment"
+/handoff state=ready action="Use the verified active child and compact receipts; obtain separate authorization before optional actual-model consultation evaluation"

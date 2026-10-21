@@ -1,0 +1,33 @@
+{
+  "reason": "Project the mixed insomnia result to its own complaint cluster; retain the independent short-stature result and transfer its missing stable-trajectory value from the original model response with only the same-role owner reference changed",
+  "source_run_id": "fc03d037dc4086b06953509f0ed423a1",
+  "source_result_hashes": {
+    "21de86b9c8cccbb3f6e51b5ebdadcfd9576c04ae02dbfabd8d0df9e5931585ce": "fae7618fea617d3254ff7c62bd94152ca2adbbd1bbb87cad4c4991d4ded4831a",
+    "dfe44af289659730066c7ac5a8d43ca5261b9d4bc34e536fe5d64b8a0be490f1": "70b9a3d9bea61730eb2619dff47f05563c2d4430283d9bfad5ca98e1f14e2cbe"
+  },
+  "operations": [
+    {
+      "job_id": "21de86b9c8cccbb3f6e51b5ebdadcfd9576c04ae02dbfabd8d0df9e5931585ce",
+      "keep_concept_refs": [
+        "new:context_hypnotic_use_despite_harm",
+        "new:context_unsuccessful_hypnotic_reduction",
+        "new:disease_sedative_hypnotic_anxiolytic_use_disorder"
+      ],
+      "remove_out_of_cluster_extensions": true,
+      "keep_relation_count": 4
+    },
+    {
+      "job_id": "dfe44af289659730066c7ac5a8d43ca5261b9d4bc34e536fe5d64b8a0be490f1",
+      "append_model_generated_value_ref": "new:value_stable_linear_growth_trajectory",
+      "owner_ref": "new:attribute:linear_growth_trajectory"
+    }
+  ],
+  "model_calls": 0,
+  "parent_changed": false,
+  "post_install_disposal": {
+    "status": "complete",
+    "source_db_sha256": "a46ab32708662bfcd8d98c76330f11a63b0075c3b90faf230bef6cb33ae4b991",
+    "receipt": "data/provenance/augmentation-d58-cleanup-2026-10-21.json",
+    "boundary": "Original settled source was preserved through review and activation, then disposed by explicit user request. Retain this compact amendment receipt; no raw source resume or response recovery remains."
+  }
+}

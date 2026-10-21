@@ -194,7 +194,7 @@ class QuestionTools:
             return False
         if state.interview.current == 'DifferentialDiagnosis':
             if self.knowledge.has_type(spec['target_id'], 'ContextFactor'):
-                return False
+                return spec['purpose'] in {'context', 'clarification'}
             if spec['kind'] == 'EXAM':
                 return True
             if spec['attribute_id']:

@@ -1,4 +1,5 @@
 import hashlib
+import fcntl
 import json
 import os
 import shutil
@@ -7,7 +8,23 @@ from .models import canonical
 from .verify import verify
 
 
-def install(manifest_path, target, boundary=lambda: None, after_replace=lambda: None, *, preserve_build_ids=()):
+def install(manifest_path, target, boundary=lambda: None, after_replace=lambda: None, *, preserve_build_ids=(),
+            cleanup=True, expected_parent_manifest_sha256=None):
+    """Serialize every installer at the target, including fresh and maintenance."""
+    target = Path(target).resolve()
+    target.mkdir(parents=True, exist_ok=True)
+    with (target / '.install.lock').open('a') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise RuntimeError('target_install_already_running') from error
+        return _install(manifest_path, target, boundary, after_replace,
+            preserve_build_ids=preserve_build_ids, cleanup=cleanup,
+            expected_parent_manifest_sha256=expected_parent_manifest_sha256)
+
+
+def _install(manifest_path, target, boundary, after_replace, *, preserve_build_ids,
+             cleanup, expected_parent_manifest_sha256):
     manifest_path=Path(manifest_path).resolve();target=Path(target).resolve()
     verify(manifest_path)
     manifest=json.loads(manifest_path.read_text())
@@ -50,14 +67,23 @@ def install(manifest_path, target, boundary=lambda: None, after_replace=lambda: 
     finally: os.close(directory_fd)
     staged=target/('manifest-'+build_id+'.tmp')
     staged.write_text(canonical(manifest))
-    verify(staged)
-    boundary()
-    with staged.open('rb') as source: os.fsync(source.fileno())
-    os.replace(staged,target/'manifest.json')
+    try:
+        verify(staged)
+        boundary()
+        if expected_parent_manifest_sha256 is not None:
+            active = target / 'manifest.json'
+            if not active.is_file() or hashlib.sha256(active.read_bytes()).hexdigest() != expected_parent_manifest_sha256:
+                raise ValueError('active_parent_changed_child_preserved_not_activated')
+        with staged.open('rb') as source: os.fsync(source.fileno())
+        os.replace(staged,target/'manifest.json')
+    finally:
+        staged.unlink(missing_ok=True)
     directory_fd=os.open(target,os.O_RDONLY)
     try: os.fsync(directory_fd)
     finally: os.close(directory_fd)
     after_replace()
+    if not cleanup:
+        return {'status':'installed','build_id':build_id,'manifest':str(target/'manifest.json'), 'cleanup':False}
     for path in target.iterdir():
         if path.suffix in {'.json','.ttl'} and path.name not in {'manifest.json','schema.ttl'}:
             path.unlink()

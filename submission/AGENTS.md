@@ -50,6 +50,7 @@
 
 - Preserve one chief full applicable attributes Open Inquiry five history domains and up to two protected related Context targets.
 - Restrict Context questions to the CC exit assessment and move focused ROS to DD with six targets inside its ten-action cap.
+- Permit DD Context and clarification questions only from current assessment unresolved graph paths through existing eligibility, scope, duplicate, unknown, reference and budget checks; keep the protected ContextFactor session unchanged.
 - Include subject_member in question keys answer completion scope and duplicate checks. Match Context targets and applicability against the same CaseFacts; preserve whole-family absence separately from one member and never merge members or episodes.
 - Offer one executable graph-linked question at a time and confirm Target presence at the same scope before attribute questions, including attribute-only Patterns. Read order, SOAP category, and clarification from attribute_roles rather than URI localnames. Separate any rule timing from concrete execution timing.
 - Expand target-specific one-level collect_via before CC counts and DD options; prune resolved atomic questions and preserve composite graph criteria and separate time-window questions.

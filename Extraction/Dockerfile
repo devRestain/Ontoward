@@ -14,6 +14,7 @@ RUN python -m pip install --no-cache-dir --only-binary=:all: --index-url https:/
 COPY submission /runtime
 COPY Extraction/ontoward_extraction /app/ontoward_extraction
 COPY Extraction/prompts /app/prompts
+COPY Extraction/augmentation /app/augmentation
 COPY Extraction/config.json /app/config.json
 COPY Extraction/config.sol.json /app/config.sol.json
 COPY Extraction/config.api-luna.json /app/config.api-luna.json

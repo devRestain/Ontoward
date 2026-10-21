@@ -1,6 +1,20 @@
 name: ontoward
 
 services:
+  augmentation:
+    profiles: [tools]
+    image: ontoward-extraction:local
+    command: [status]
+    network_mode: none
+    read_only: true
+    volumes:
+      - ../data/extraction/v5-enum/work:/work
+      - ../data/extraction/v5-enum/output:/output
+      - ../submission/knowledge:/target
+    cpus: 2
+    mem_limit: 8g
+    stop_grace_period: 660s
+    restart: "no"
   extraction:
     profiles: [extraction]
     image: ontoward-extraction:local

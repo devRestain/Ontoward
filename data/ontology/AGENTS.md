@@ -1,5 +1,7 @@
 # Ontology Contract
 
+- Permit D58 typed augmentation of the latest active strict bundle. Preserve unrelated registered meanings, value ownership, questions, global AttributeRole, numeric units, ValueMatch and guidelines. Keep clinical judgments and neutral results in a separate Jobs lineage; never claim runtime RDF recovers historical judgments. Export one merged static bundle without overlays or runtime metadata.
+
 - Own schema.ttl as the authored schema_version 5.0 contract for knowledge_contract v5-enum-1. Keep its runtime copy synchronized.
 - Keep extraction code in root Extraction/ and runtime validation in submission/knowledge/. Record progress only in ../PROJECT_STATE.md.
 - Use language-tagged English/Korean labels and bilingual aliases; keep upstream identities in preparation and new role-specific identifiers in the runtime graph.

@@ -108,4 +108,5 @@ htmlcov/
 /data/preparation/**/catalog/**
 
 # Runtime Turtle and Korean JSON under submission/knowledge remain versioned.
+/submission/knowledge/.install.lock
 

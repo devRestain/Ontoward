@@ -161,5 +161,10 @@ class Jobs:
             'requests': {row[0]:row[1] for row in self.db.execute('SELECT state,COUNT(*) FROM requests GROUP BY state')},
             'job_errors': [dict(row) for row in self.db.execute("SELECT job_id,phase,attempt_count,SUBSTR(error,1,600) AS error FROM jobs WHERE error IS NOT NULL ORDER BY attempt_count DESC,job_id LIMIT 3")],
             'recovery': self.get('recovery'),
+            'augmentation': ({'plan_id':identity['plan_id'], 'model_transmissions':self.get('model_transmissions',0),
+                'request_budget_history':self.get('request_budget_history',[]), 'uri_mapping':self.get('uri_mapping'),
+                'build':({key:self.get('build')[key] for key in ('build_id','manifest','changes')}
+                    if self.get('build') else None), 'activation':self.get('activation')}
+                if identity.get('contract')=='augmentation-1' else None),
             'usage': [dict(row) for row in self.db.execute('SELECT * FROM usage ORDER BY day,model')],
             'error': self.get('error')}

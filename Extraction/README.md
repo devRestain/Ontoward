@@ -1,10 +1,80 @@
 # 새 지식 DB 추출
 
-현재 D55의 제한된 오프라인 유지보수 정정은 새 build `0fd42155c3171c9c9dcf66cb7f733245`와 strict loader를 함께 로컬 활성화한 상태입니다. 원본 `87e8b4c54b0689453cea91b3bb316290` 여섯 파일은 그대로 보존합니다. [정정 명세](../data/provenance/v5-maintenance-plan-2026-10-21.json)가 실제 ID/edge와 승인 근거를, [변환 기록](../data/provenance/v5-maintenance-correction-2026-10-21.json)이 전체 RDF 차이와 의미 보존을, [검증 기록](../data/provenance/algorithm-d50-6-2026-10-21.json)이 활성화 결과를 관리합니다. 이 경로는 현재 해시 고정된 runtime 자산에서 의미를 복원하는 예외이며 폐기한 work DB·원래 요청/응답·neutral 판단·source history를 복구하지 않습니다. 일반 신규 생성은 계속 아래의 네 원자료 시작 규칙을 따릅니다.
+## 최신 번들 증분 보완 (D58)
+
+`augment-plan → augment → augment-build → augment-install`은 **최신 활성 번들 위에** 누락 개념·관계·질문을 추가하는 별도 경로입니다. 과거 build 선택, 전체 원자료 재색인, D55 correct-bundle의 임상 변경 용도 전환은 없습니다. 상담은 계속 하나의 정적 번들을 읽습니다. 구현과 검증 증빙은 [D58 결정](../DECISION_STATE.md#D58)과 [루트 상태](../PROJECT_STATE.md)를 따릅니다.
+
+첫 seed는 [insomnia_growth.seed.json](augmentation/insomnia_growth.seed.json)입니다. 불면의 수면제 사용장애와 저신장의 CDGP·가족성 저신장, 성장속도·경과·가족력을 보완합니다. 신규 Disease 최대 6개, 전체 신규 Concept 48개, 관계 작업 60개, 질문 48개로 제한합니다. 기존 불면 관계 2개와 GHD 관계 3개만 최종 검토 allowlist에 있으며, 유지·조건 수정·effect 변경·neutral을 구별해 저장합니다. 수면제 복용만으로 사용장애를 지지하지 않고, 성장속도 수치 하나를 모든 연령의 정상 기준으로 만들지 않습니다.
+
+**이번 실행은 완료했습니다.** 당시 최신 부모 `1bcaba1dffb744c468bb191df3267dad`에서 child `cec62f4596bedd9b9488aa75e3d38f04`를 생성해 활성화했습니다. 개념 11개(진단 3개), runtime 관계 9개와 질문 6개를 추가하고 허용된 부모 관계 4개를 변경했습니다. 최종 neutral 4개는 runtime에서 제외했습니다. API Luna medium 실제 전송은 상한 16회 중 7회, 입력 1,203,089·출력 28,298 tokens입니다. 추출 테스트 140개·워크플로우 234개, 실제 부모 빈 delta 보존, production 함수의 후보·질문 검사, 키 없는 재컴파일·추가 호출 없는 재개, 설치 지식의 scripted 상담 3개를 통과했습니다. 실제 모델 상담 정확도·임상·공식 평가는 미실행입니다. [수행 결과](../data/provenance/augmentation-d58-2026-10-21.json)를 따릅니다.
+
+사용자 요청으로 이번 실행의 체크포인트 네 개·mock DB·round-trip/staging 복사본·미사용 로그와 임시 파일 518개(210.27 MiB)를 삭제했습니다. 활성 child와 작업 전부터 있던 부모는 유지하며, 182개 보호 파일의 hash와 삭제 후 loader·prepare를 다시 확인했습니다. [삭제 영수증](../data/provenance/augmentation-d58-cleanup-2026-10-21.json)과 [수용 delta·URI mapping](../data/provenance/augmentation-d58-delta-2026-10-21.json)은 남습니다. 삭제한 `fc03…`, `3472…`, `fa35…`, `7c77…` run의 plan·원래 요청/응답·SQLite는 복구·재개할 수 없습니다.
+
+기존 설치의 마지막 선택은 `config.api-luna.json`의 **OpenAI API / draft·final gpt-6-luna / medium / 배치 40 / 출력 32000 / timeout 600초**입니다. 아래 명령은 이 설정을 유지합니다. 구현 에이전트의 모델 이름을 생성 모델에 적용하지 않습니다. 명시적 `--max-model-requests 16`은 예측 비용이 아니라 **해당 run의 누적 실제 전송 상한**이며 형식 수리·전송 재시도도 셉니다. 입력·출력 token은 실제 응답 usage로 기록합니다.
+
+모든 명령은 프로젝트 루트에서 실행합니다. **Compose 기본 command가 full run이므로 augmentation command를 반드시 명시합니다.**
+
+아래 생성·재개·복구·설치 명령은 체크포인트가 존재할 때의 검증한 운영 절차입니다. 이번 완료 run을 다시 실행하는 명령은 아닙니다. 첫 seed의 relation allowlist는 실행 당시 최신 부모의 ID를 고정했으므로, 후속 보완은 최신 활성 관계를 검토해 seed를 갱신하고 새 plan을 만들어야 합니다. 과거 부모를 선택하거나 존재하지 않는 association을 묵인하지 않습니다. 현재 설치 확인에는 마지막 `verify --manifest /target/manifest.json`만 필요합니다.
+
+```sh
+# 코드·공개 설정·seed를 포함한 프로젝트 이미지를 만듭니다.
+docker compose build extraction
+
+# 키·네트워크 없이 최신 /target/manifest.json을 읽고 빈 delta 보존 검사를 합니다.
+docker compose run --rm -T --no-deps augmentation augment-plan \
+  --target /target --seed /app/augmentation/insomnia_growth.seed.json \
+  --config /app/config.api-luna.json --output /output/augmentation
+```
+
+출력의 `plan` 경로와 `run_id`를 사용합니다. 예를 들어 출력이 `/output/augmentation/PLAN_ID/plan.json`이면 다음과 같습니다. `PLAN_ID`는 출력된 실제 값으로 바꿉니다. plan은 부모 hash, seed, provider/model/effort/batch, prompt와 구현을 고정합니다. 모든 후속 job을 미리 만들지 않고 직전 완료 결과에서 각 workset을 한 번 고정합니다.
+
+```sh
+# 이 명령만 실제 유료 API 생성과 최종 임상 검토를 실행합니다. 기본 설치는 없습니다.
+docker compose run --rm -T --no-deps extraction augment \
+  --plan /output/augmentation/PLAN_ID/plan.json --config /app/config.api-luna.json \
+  --work /work --output /output/augmentation --max-model-requests 16
+
+# 키·네트워크 없는 상태 조회와 중단 요청입니다.
+docker compose run --rm -T --no-deps control status --run-id PLAN_ID --human
+docker compose run --rm -T --no-deps control pause --run-id PLAN_ID
+
+# 동일 plan의 미완료 작업만 재개합니다. 완료·neutral·유효 형제 결과는 재호출하지 않습니다.
+docker compose run --rm -T --no-deps extraction augment \
+  --plan /output/augmentation/PLAN_ID/plan.json --config /app/config.api-luna.json \
+  --work /work --output /output/augmentation --max-model-requests 16 --resume
+
+# 저장된 accepted delta만 재컴파일·검증합니다. 모델 client를 만들지 않습니다.
+docker compose run --rm -T --no-deps augmentation augment-build \
+  --plan /output/augmentation/PLAN_ID/plan.json --work /work --output /output/augmentation
+
+# 별도 로컬 활성화입니다. parent와 무관한 보관 build도 삭제하지 않습니다.
+docker compose run --rm -T --no-deps augmentation augment-install \
+  --plan /output/augmentation/PLAN_ID/plan.json --work /work --output /output/augmentation --target /target
+
+docker compose run --rm -T --no-deps verify verify --manifest /target/manifest.json
+```
+
+`augmentation`은 network none·키/인증 volume 없음·read-only rootfs이며 `/work`, `/output`, 프로젝트 `/target`만 씁니다. `control`은 기존 keyless status/pause를 그대로 사용합니다. API/구독의 불명 전송 결과는 자동 재전송하지 않습니다. 중복 실행 가능성을 명시적으로 수용한 경우에만 같은 `augment ... --resume --retry-unknown`을 사용합니다. 요청 상한 도달은 완료 작업을 보존한 paused 상태이며, 상한을 늘리려면 새 값을 명시합니다. config나 prompt를 바꿔 이어 붙이는 것은 거절합니다.
+
+설치 시작과 활성화 직전에 최신 parent pins를 다시 확인합니다. 그 사이 다른 작업이 manifest를 바꾸면 child를 보존하고 활성화하지 않습니다. 모든 기존 installer도 같은 target lock을 사용합니다. `.install.lock`은 제출 ZIP에서 제외합니다. 신규 build는 `preserve_ids=True`로 컴파일하고 기존 URI·ValueMatch·ExpectedValue·unit·기본/override 질문·전역 AttributeRole·기존 질환별 guideline payload를 비교합니다. build_id 때문에 바뀐 guideline index bytes는 membership 변경과 구별합니다.
+
+최종 번들은 실제 `graph_candidates`, assessment와 `QuestionTools`로 필수 후보와 DD 질문 도달성을 검사하고, 수면제 정상 복용·행동 unknown·불면 없는 행동 경로·가족력 음성·성장경과 악화·제공 수치 재질문 방지 반례를 통과해야 합니다. neutral을 coverage용 support로 바꾸지 않습니다. 검사 실패 시 활성 manifest는 그대로 두고 저장 결과와 오류를 남깁니다. 실제 상담 정확도나 공식 임상 검증을 대신하지 않습니다. 여러 Context의 약물/episode join은 구현하지 않았으므로 모호한 약물-행동 연결은 qualified 또는 추가 확인으로 유지합니다.
+
+```sh
+# 모델·키·네트워크 없는 유지 검증입니다.
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm -T --no-deps \
+  -e PYTHONPATH=/workspace/submission:/workspace/Extraction dev \
+  python -B -m unittest discover -s Extraction/tests -p 'test_*.py'
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm -T --no-deps dev \
+  python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py'
+```
+
+
+D55의 제한된 오프라인 유지보수 정정은 당시 build `0fd42155c3171c9c9dcf66cb7f733245`와 strict loader를 함께 로컬 활성화한 이력입니다. 당시 보존한 원본과 이후 별도 승인된 삭제 내역은 각 역사적 영수증을 따르며 현재 활성 지식은 위 D58 child입니다. [정정 명세](../data/provenance/v5-maintenance-plan-2026-10-21.json)가 실제 ID/edge와 승인 근거를, [변환 기록](../data/provenance/v5-maintenance-correction-2026-10-21.json)이 전체 RDF 차이와 의미 보존을, [검증 기록](../data/provenance/algorithm-d50-6-2026-10-21.json)이 당시 활성화 결과를 관리합니다. 이 경로는 해시 고정된 runtime 자산에서 의미를 복원하는 예외이며 폐기한 work DB·원래 요청/응답·neutral 판단·source history를 복구하지 않습니다. fresh 신규 생성은 계속 아래의 네 원자료 시작 규칙을 따릅니다.
 
 유지보수 CLI는 `python -m ontoward_extraction correct-bundle --manifest PARENT_MANIFEST --corrections REVIEWED_PLAN --output FRESH_DIRECTORY`입니다. 프로젝트 dev 컨테이너에서 `PYTHONPATH=/workspace/submission:/workspace/Extraction`, network none으로 실행하며 provider·resume·run-id·install 플래그를 받지 않습니다. 검토 명세가 전수 invalid edge와 정확히 일치해야 하며 이름 기반 재정규화 없이 등록 ID, 별도 ExamMethod와 owner별 값을 보존합니다. effect나 비문구 질문 계약이 충돌한 병합은 보류하고 독립적인 타입 정정은 완료합니다. 출력 디렉터리가 이미 있으면 덮어쓰지 않습니다. 새 후보는 원래 loader·strict 검사·coverage·prepare와 전후 canonical graph 비교를 모두 통과해야 합니다. 설치는 기존 installer를 사용하고 `--preserve-build PARENT_BUILD_ID`로 부모를 정리 대상에서 제외합니다. strict gate를 invalid parent에 먼저 적용하지 않습니다.
 
-현재 실제 추출·컴파일·로컬 설치는 완료했습니다. 사용자 요청으로 모든 이전 work 체크포인트, 중복 staging, 콘솔 로그와 추출 전용 임시 기록을 삭제했습니다. 현재 생성기·설정·프롬프트·테스트와 설치된 `submission/knowledge/`는 유지합니다. [삭제 영수증](../data/provenance/extraction-storage-cleanup-2026-10-21.json)과 [최종 감사 기록](../data/provenance/extraction-final-audit-2026-10-21.json)을 따르세요.
+최초 실제 추출·컴파일·로컬 설치와 이전 work 체크포인트·중복 staging·로그 정리는 [과거 삭제 영수증](../data/provenance/extraction-storage-cleanup-2026-10-21.json)과 [당시 최종 감사 기록](../data/provenance/extraction-final-audit-2026-10-21.json)에 남습니다. 현재 생성기·설정·프롬프트·테스트와 설치된 `submission/knowledge/`는 유지하며 이번 D58의 결과와 정리는 위 별도 영수증을 따릅니다.
 
 이 문서의 status·pause·resume·recover·logs 예시는 체크포인트가 존재하는 별도 작업을 위한 일반 안내입니다. 삭제된 과거 실행은 재개하거나 복구할 수 없습니다. 현재 설치 번들은 작업 DB 없이 `docker compose run --rm --no-deps -T verify verify`로 확인합니다. `status`가 `not_started`를 보여도 설치 번들이 미완료라는 뜻은 아닙니다.
 
@@ -15,6 +85,46 @@
 `patch`에서 `string_above_max_length`가 발생한 첫 거절 체크포인트는 `bash Extraction/extraction.sh recover-patch --run-id 기존_ID`로 모델 호출 없이 새 실행 ID에 복구합니다. 수정된 이미지는 어휘·완료 관계를 배치에서 한 번만 전달하고, 각 JSON 메시지를 50,000자 이하로 나누며 40개 배치를 유지합니다. 임상 조건·질문·진찰·단위·scope는 보존하고 검색 별칭은 원래 SQLite에 남깁니다. 복구는 이전 단계가 모두 완료되고 요청이 확정된 해당 실패만 허용하며, 원본 DB·결과·시도 횟수·사용량을 보존합니다. 새 ID를 확인한 뒤 API Luna 설정으로 명시적으로 재개합니다.
 
 D49의 독립 실행기는 네 원자료에서 새 `v5-enum-1` 번들을 만듭니다. 이미지는 **ontoward-extraction:local**, 진입점은 `python -m ontoward_extraction`입니다. 이미지·합성 파이프라인과 실제 RF2/CSV의 읽기 전용 파싱을 검증했습니다. 별도로 승인된 실제 생성의 공급자·실행 ID·진행 상태는 [루트 상태](../PROJECT_STATE.md)·[데이터 상태](../data/PROJECT_STATE.md)를 따릅니다. 실제 번들이 설치되기 전 `prepare()`와 정식 패키징은 `knowledge_bundle_not_installed`로 실패합니다.
+
+## 증분 discovery 범위 충돌의 제한된 복구
+
+두 discovery 결과가 같은 신규 identity를 중복 제안해 `ambiguous_new_identity_use_registered_ref`로 끝난 경우만 `augment-repair-discovery`를 사용할 수 있습니다. 원본이 failed/paused이고 discovery만 완료됐으며 모든 요청 결과가 확정되어야 합니다. 부모·seed·임상 범위·config·완료 결과는 그대로 두고, 명시한 원래 결과 hash와 검토한 파생 discovery를 별도 amendment로 고정합니다. 임상·런타임·다른 단계 prompt가 달라진 복구는 거절합니다.
+
+원본 SQLite와 job result·요청·응답·usage를 덮어쓰지 않습니다. 새 plan fingerprint에 SQLite backup을 만들고 별도 metadata의 amendment만 downstream 입력에 적용합니다. 기존 전송 횟수도 승계하므로 상한 16을 새로 시작하지 않습니다. 이 경로는 폐기 checkpoint 복구나 과거 부모 build 선택 기능이 아닙니다.
+
+```sh
+# 최신 부모에서 수정된 계약의 새 augment-plan을 먼저 만듭니다.
+# OLD_PLAN_ID/NEW_PLAN_ID와 AMENDMENTS.json은 실제 검토 결과 경로입니다.
+docker compose run --rm -T --no-deps augmentation augment-repair-discovery \
+  --source-plan /output/augmentation/OLD_PLAN_ID/plan.json \
+  --plan /output/augmentation/NEW_PLAN_ID/plan.json \
+  --amendments /output/augmentation/AMENDMENTS.json --work /work
+
+# 복구는 모델을 부르지 않습니다. 완료 후 같은 설정과 누적 상한으로 재개합니다.
+docker compose run --rm -T --no-deps extraction augment \
+  --plan /output/augmentation/NEW_PLAN_ID/plan.json --config /app/config.api-luna.json \
+  --work /work --output /output/augmentation --max-model-requests 16 --resume
+```
+
+실제 첫 실행의 범위 정정은 [복구 영수증](../data/provenance/augmentation-discovery-scope-repair-2026-10-21.json)에 남깁니다. 결과별 cluster를 검사하고 각 배치의 정확한 job ID와 결과 개수를 schema에 고정하여 같은 오류를 후속 요청에서 거절합니다.
+
+## 최종 검토의 typed 의미 오류 복구
+
+`Feature.status`는 속성값의 부정이 아니라 **Target의 존재 상태**입니다. 같은 Pattern에 Target present와 attribute feature의 status absent를 함께 넣으면 실제 후보 경로가 모순됩니다. 안정된 경과가 필요한 관계는 등록된 Stable trajectory 값을 실제 양성 소견으로 요구하며 unknown을 음성으로 바꾸지 않습니다. 부모가 누구인지 모르면 `subject_member=null`을 사용하고 `parent`라는 미등록 member를 만들지 않습니다. 아이의 성장 조건을 표현할 수 없는 가족 Context Target 관계는 neutral로 완료합니다. 유용한 가족력은 아이의 Target 위에 선택적 조건부 refinement로 검토하고 독립 경로도 유지합니다.
+
+모든 요청·질문 단계가 완료된 후 후보/의미 검사에서 실패한 해당 실행만 `augment-repair-review`로 재검증할 수 있습니다. 원본 DB·모델 결과·usage·시도 수를 보존한 새 fingerprint에서 새 typed 검증에 실패한 검토 행만 pending repair job으로 만듭니다. 이미 유효한 개념·관계 검토·질문은 다시 호출하지 않습니다. 원래 검토 결과는 덮어쓰지 않고 effective result 참조만 새 수용 결과로 바꿉니다. 원래 시도 횟수와 누적 전송 상한을 승계하며, 별도의 다중 심판을 추가하지 않습니다.
+
+```sh
+# 최신 parent로 만든 새 plan을 사용합니다. 이 명령 자체는 키·모델 없이 실행합니다.
+docker compose run --rm -T --no-deps augmentation augment-repair-review \
+  --source-plan /output/augmentation/OLD_PLAN_ID/plan.json \
+  --plan /output/augmentation/NEW_PLAN_ID/plan.json --work /work
+
+# 검토가 필요한 행만 동일한 최종 검토 단계에서 수리합니다.
+docker compose run --rm -T --no-deps extraction augment \
+  --plan /output/augmentation/NEW_PLAN_ID/plan.json --config /app/config.api-luna.json \
+  --work /work --output /output/augmentation --max-model-requests 16 --resume
+```
 
 ## 전체 생성 순서와 DB를 먼저 이해하기
 

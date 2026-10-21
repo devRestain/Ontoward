@@ -21,6 +21,10 @@
 !Extraction/Dockerfile.dockerignore
 !Extraction/requirements.txt
 !Extraction/config.json
+!Extraction/config.api-luna.json
+!Extraction/config.sol.json
+!Extraction/augmentation/
+!Extraction/augmentation/*.json
 !Extraction/ontoward_extraction/
 !Extraction/ontoward_extraction/*.py
 !Extraction/prompts/

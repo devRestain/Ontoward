@@ -1,0 +1,1000 @@
+{
+  "version": "augmentation-d58-2",
+  "decision": "D58",
+  "algorithm": "d50.8",
+  "revision": "33a1395ab37149e4d81e57f3f9f2cb5f5c7d87ec",
+  "updated": "2026-10-21T21:16:22+09:00",
+  "status": "complete",
+  "parent": {
+    "assets": {
+      "clinical": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06",
+      "guidelines": "6aae5720a4789b878d75e4cb280f888428826613cad435a9603a4236c5cc30b0",
+      "questions": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f",
+      "schema": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "vocabulary": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+    },
+    "build_id": "1bcaba1dffb744c468bb191df3267dad",
+    "manifest_sha256": "6f07428eff759ec1e3aad8840804364f56ff7869192df8922e60c1121d839838"
+  },
+  "child": {
+    "build_id": "cec62f4596bedd9b9488aa75e3d38f04",
+    "active_manifest": "submission/knowledge/manifest.json",
+    "active_manifest_sha256": "04accb50722f2c4f8583e25f0a3b1600bf2d384c820d91cc68e5dc42a1fa21db",
+    "assets": {
+      "schema": {
+        "path": "builds/cec62f4596bedd9b9488aa75e3d38f04/schema.ttl",
+        "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+      },
+      "vocabulary": {
+        "path": "builds/cec62f4596bedd9b9488aa75e3d38f04/vocabulary.ttl",
+        "sha256": "f15b60ebeb50fb1ee4c200c621dbcca49b8cc6d49a72047aabf003950ee1c985"
+      },
+      "clinical": {
+        "path": "builds/cec62f4596bedd9b9488aa75e3d38f04/clinical.ttl",
+        "sha256": "eed873cb3bec008440ddd687d5c97f60ac3dc13175a5ac38c0c092b1250fdd69"
+      },
+      "questions": {
+        "path": "builds/cec62f4596bedd9b9488aa75e3d38f04/questions.ko.json",
+        "sha256": "b53449739ecbfcf5cad4cd21de199fb487063fbe9a19aec1a2eb680a359e1a3e"
+      },
+      "guidelines": {
+        "path": "builds/cec62f4596bedd9b9488aa75e3d38f04/guideline-index.json",
+        "sha256": "676a029d6ef1727fb3a201cea28662908ca48af9df0edfa30cc78bd4f1df6161"
+      }
+    }
+  },
+  "plan": {
+    "id": "7c7762f3b3564f27ca14f4eb24290a86",
+    "sha256": "916cf92f7b5f4879c31e0a4ed25b67ee90dcefefb302a379731df53c9e6d128f",
+    "config": {
+      "batch_size": 40,
+      "effort": "medium",
+      "index_chunk_size": 1000,
+      "inputs": {},
+      "max_tokens": {
+        "draft": 32000,
+        "final": 32000
+      },
+      "models": {
+        "draft": "gpt-6-luna",
+        "final": "gpt-6-luna"
+      },
+      "nova_daily_calls": {
+        "draft": 100,
+        "final": 100
+      },
+      "prompt_directory": "/app/prompts",
+      "provider": "openai_api",
+      "timeout_seconds": 600
+    },
+    "contracts": {
+      "generator": {
+        "__init__.py": "b0fa6a1d5eb69c16800185180e7ac1c42cd4df30ef34af3162cbfc8f9cadc597",
+        "__main__.py": "535ca96a249baed8ed1815a4f407075cfc8de2fa6aeb49b8e130c5169b8bb991",
+        "augmentation.py": "23cd6328a2b741c7d7868f25790f23e57d7f0607503f79ff00cda9727fb8647b",
+        "augmentation_models.py": "6375fa42f51781a5178372669c23a030efcc0a0e0e1c20ab8208b13292c7661a",
+        "augmentation_run.py": "634a38e4700cef62e6b455c313e973ad157dfd0e781ef477a906c5b5a64197d5",
+        "augmentation_verify.py": "953b80c64cb64b897b780a8883c91436f330022e3ca51eb300a9c00c0f097895",
+        "build.py": "0e98941949dfbb64ea15c3a5a9baf044b91d688e97ba0a06333d9882d333cdfc",
+        "compile.py": "52b6df7d127534c582cab01c922b15eeecbf91a4e5595d4cbc7f5881d730a86d",
+        "guidelines.py": "bcf7b88be2d84f5a0c6394c449b613c87480928091e26b30105e98c42f11288c",
+        "inputs.py": "c8f0aee3bb11913c7f9221ea6f64226839407d2c74c05cb84b3330e4f2aa95cb",
+        "install.py": "d59c63d08e75c94045b1a39fc0ecaf98f6daa7b27636223e86b4f1a76e10972c",
+        "jobs.py": "dd2cc9b1675747be16e0c1e32967c19d62c6af21079acecc011b0e9c9da3cade",
+        "llm.py": "437b797e27c5f7db47f2b1f08a628709b8eebcf12a236322a2909956ad001ce9",
+        "maintenance.py": "9a32b192f0380530b2c4c9b24ad70f068e1f7e9a73691f6fb055a9cadec9e81e",
+        "models.py": "f4410f71d2ca4b3d074b32059060d21af073c61c2676e2c732c2097b4335afc6",
+        "normalize.py": "158f1a1ad9167f614a99e8addbfb4e765c0e59ddc091d2f397bdec0f823f23bf",
+        "progress.py": "781b73588439b67378e7625ac80b984d1bfbfd233c122e7e13aa89385278e8c1",
+        "recovery.py": "1bf1a832254be8296399ac3f333a6333da04c05a35f5cb790153b3e70d0c82b3",
+        "verify.py": "dc0e575aa1bb7e00d8bc207ce7cc5cac497981f29222c29681209bb8ba8e3bc5"
+      },
+      "prompts": {
+        "augment_concepts.txt": "c39d67c6f45ecc95c0b741acc9430892cc0fac3e42a426cabb0d0b3863fab5c2",
+        "augment_discover.txt": "b95cbf1e1432ed468dd9927ee286c2c37776acb4399b546dec6408b71a9f0ce8",
+        "augment_questions.txt": "e365031ce6e9699ac63245235e156f433bc6243cfee55b2d28f944fcd1fc8ecf",
+        "augment_relations.txt": "05cf4234867f88123b2a9c2932514eadca27afc10d0c6ddf325c16340db3eeca",
+        "augment_review.txt": "43dee9694eae389935c8de8fc208f3e8716feee1cb3cd351ed35a08af8cc3243"
+      },
+      "runtime": {
+        "knowledge/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "knowledge/conditions.py": "eb67520a5bed828d994d3bc1551789bbdc2500e795cdd637e6a908977d888575",
+        "knowledge/graph.py": "d695bab0c42ec495b9dfc9f60a318101241f7601918ae586b84fd3c2721b3ab9",
+        "knowledge/guidelines.py": "f2855176cb175967df15deaee6bdcdeeacf7d07491ebb33c4bdf5c84e8d097ba",
+        "settings.py": "45fe7d0a52863f5664aabd1085bb7098221ab9b3611dcab7ffd6f2e3a69c2acd",
+        "workflow/rules/assessment.py": "ebb0a40ecadf6e22b87cd1c2be63205753d65fa970dd2f3032d5d939b0b194ad",
+        "workflow/rules/budget.py": "b470e90c4709fea6af924928b9082f69aa316bd2dc4d9f9b5c1f1f841c387806",
+        "workflow/rules/questions.py": "8fc70b2f054ef68b178f784cee33b3ba5fb9aa7df7a08807c1e83dff56c9f313",
+        "workflow/state/evidence.py": "6a121ea121d85e46b8de82db8e9e08515176ad27be99e10fd86a8477bde14029",
+        "workflow/state/models.py": "05fbebfaedacaa2adf532604b19fbe544ccfd1ea06de0ac2657f3a7e66e14c4e",
+        "workflow/text_config.py": "81007fcf36b5668b97d495ed1cd0249213771968ff645c07ab021c9f98fe77b5"
+      }
+    },
+    "seed": {
+      "clusters": [
+        {
+          "coverage_focus": [
+            "medication_or_substance_related_explanations",
+            "impaired_control_and_continued_use_despite_harm"
+          ],
+          "id": "insomnia_medication",
+          "instructions": [
+            "Distinguish normal prescribed use, tolerance or physical dependence, use disorder, past withdrawal, and current acute intoxication.",
+            "Use medication_history presence ContextFactors for specific hypnotic-use behaviors. Preserve dose and conditional raw facts outside Context attributes.",
+            "For insomnia entry require hypnotic use AND an actual discriminating behavior such as unsuccessful reduction or impaired control. Unknown behavior may open recall and questions but must not activate support; negative behavior must invalidate that path.",
+            "Provide an independent clinically valid behavior Context target path when insomnia is absent. Do not use weak positive effects solely for coverage.",
+            "Keep drug identity and timing explicit. Applicability cannot join different Contexts by drug or episode; ambiguous links require clarification, not an assumed common drug.",
+            "Use the supplied required canonical behavior names so deterministic offline controls can resolve them; include failed reduction as an unresolved DD question when only insomnia and medication use are known."
+          ],
+          "reference_ids": [
+            "urn:ontoward:ContextFactorcd20de103d2e1b1b907d70cb",
+            "urn:ontoward:Disease727e4d1397147822082556da"
+          ],
+          "required_candidates": [
+            "Sedative, hypnotic, or anxiolytic use disorder"
+          ],
+          "required_concepts": [
+            {
+              "kind": "ContextFactor",
+              "name": "Unsuccessful attempts to reduce hypnotic use"
+            },
+            {
+              "kind": "ContextFactor",
+              "name": "Continued hypnotic use despite harm"
+            }
+          ],
+          "target_ids": [
+            "urn:ontoward:Symptomf7b9c3d8686cd49d3d509bc8"
+          ]
+        },
+        {
+          "coverage_focus": [
+            "normal_growth_variants",
+            "growth_trajectory_discrimination"
+          ],
+          "id": "short_stature",
+          "instructions": [
+            "Distinguish short stature from impaired height velocity. Register height velocity as a FindingAttribute linked to BOTH existing short-stature Targets with a measurement AttributeRole and quantity question in cm/year.",
+            "Preserve measured height velocity for age-aware clinical comparison. Do not create a universal numeric normal-growth threshold or derive normality from one number.",
+            "Use family_history ContextFactors with family subject and explicit member where known for late growth or maturation and familial short stature.",
+            "Provide CDGP and familial short stature paths from BOTH existing short-stature Targets. Family late maturation is useful support but must not be required by every CDGP path.",
+            "Do not automatically support a normal variant when actual growth impairment is known. Ask discriminating trajectory and family questions; do not diagnose from caregiver concern.",
+            "Keep child, caregiver and relatives distinct. A planned bone-age or IGF-1 test is not a result. Preserve pathological alternatives such as endocrine disease.",
+            "Use the supplied required canonical names so deterministic offline controls can resolve them. Make Declining linear growth trajectory an owned value of Linear growth trajectory and keep actual decline from activating normal-variant support even with positive family history. Do not encode a normality threshold from the probe fixtures."
+          ],
+          "reference_ids": [
+            "urn:ontoward:Symptom67468fcb948daff3cf10d97b",
+            "urn:ontoward:Disease903e14e0b024d0656410feb5"
+          ],
+          "required_candidates": [
+            "Constitutional growth delay",
+            "Familial short stature"
+          ],
+          "required_concepts": [
+            {
+              "kind": "FindingAttribute",
+              "name": "Height velocity"
+            },
+            {
+              "kind": "FindingAttribute",
+              "name": "Linear growth trajectory"
+            },
+            {
+              "kind": "AttributeValue",
+              "name": "Declining linear growth trajectory"
+            },
+            {
+              "kind": "ContextFactor",
+              "name": "Family history of late growth or maturation"
+            },
+            {
+              "kind": "ContextFactor",
+              "name": "Parental short stature"
+            }
+          ],
+          "target_ids": [
+            "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+            "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+          ]
+        }
+      ],
+      "extend_ids": [],
+      "limits": {
+        "max_new_concepts": 48,
+        "max_new_diseases": 6,
+        "max_new_relations": 60,
+        "max_questions": 48
+      },
+      "question_keys": [],
+      "replace_association_ids": [
+        "urn:ontoward:Association1ccf825b2a7780a909a865eb",
+        "urn:ontoward:Association874702ab8c54b92b2e9dec56",
+        "urn:ontoward:Association1777b0ba6c02672a3ab8fe19",
+        "urn:ontoward:Associationad58f576dae61156cd0f2a4f",
+        "urn:ontoward:Association74883692586f4c50de0a3656"
+      ],
+      "role_ids": [],
+      "version": "augmentation-seed-1"
+    },
+    "seed_hash": "fcd6bd7019b006a77c5beeaa834c329791c0a0e287c24599886808b9cb436cd9",
+    "scope": {
+      "extend_ids": [
+        "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+        "urn:ontoward:Symptomf7b9c3d8686cd49d3d509bc8"
+      ],
+      "replace_association_ids": [
+        "urn:ontoward:Association1ccf825b2a7780a909a865eb",
+        "urn:ontoward:Association874702ab8c54b92b2e9dec56",
+        "urn:ontoward:Association1777b0ba6c02672a3ab8fe19",
+        "urn:ontoward:Associationad58f576dae61156cd0f2a4f",
+        "urn:ontoward:Association74883692586f4c50de0a3656"
+      ],
+      "question_keys": [],
+      "role_ids": [],
+      "local_ids_count": 1087,
+      "local_ids_sha256": "54da6c11f1181ca09ee3a6695bfb7540bf496f550ab7d6b718c457d91355a8c1"
+    },
+    "workset_rules": "discover -> concepts -> relations -> one final review -> questions; freeze each once",
+    "frozen_worksets": {
+      "workset:augment_discover": {
+        "sha256": "b2cac25632849fcaf359e70958e4b6faa65e217cfacfe30b6214fc824d71f987",
+        "count": 2
+      },
+      "workset:augment_concepts": {
+        "sha256": "c4ee6ae4c24b3dacb69623449a7f51952bc2a5517d702dbe08d24ef18e1bb76f",
+        "count": 11
+      },
+      "workset:augment_relations": {
+        "sha256": "4cad7ee55720af99dd73ab3a74b019d81db0c2a5d8c35f4062c8c657bee64237",
+        "count": 10
+      },
+      "workset:augment_review": {
+        "sha256": "1a02d75c3287706a745d76c4c77273d7ccd986e1dc06f12b84651f626d739559",
+        "count": 15
+      },
+      "workset:augment_questions": {
+        "sha256": "e1a134fd0c3082dd0aaf7ce7b7008a82e63ca9adb08132c816794c2c457db7e1",
+        "count": 6
+      },
+      "workset:augment_review_repairs": {
+        "sha256": "ed5334622d8682bd1aba46a714af98754ab9471821681b161c06fd38ea0578b8",
+        "count": 6
+      },
+      "workset:augment_review_family_refinements": {
+        "sha256": "ba755ddd63da834d46a5e0e915df94358494f864b0f960681e778bea158da933",
+        "count": 2
+      }
+    },
+    "raw_plan_state": "disposed_by_explicit_user_request"
+  },
+  "attachment": {
+    "name": "ONTOWARD_Incremental_Augmentation_Context_GPT61SOLMAX.md",
+    "sha256": "53e05583b2b25ab6db5560066f0d38e85c6c01a95e4803790148e876cf29d798",
+    "boundary": "Treat attachment as implementation context under the explicit user request, not independent authority"
+  },
+  "empty_delta": {
+    "changed_numeric_units": {},
+    "empty_delta": true,
+    "exact_empty_clinical_graph": true,
+    "guideline_selections_equal": true,
+    "parent_files_hash_verified": true,
+    "parent_meanings_unauthorized_changes": 0,
+    "parent_vocabulary_removed": 0,
+    "questions_roles_exact": true,
+    "schema_equal": true,
+    "unchanged_numeric_pairs": 2760,
+    "value_matches_preserved": 6
+  },
+  "build": {
+    "build_id": "cec62f4596bedd9b9488aa75e3d38f04",
+    "bundle_manifest_sha256": "85597f767026a948bafd2a9571650dffea2c9870ea2952130baec5e1794c86cc",
+    "changes": {
+      "added_concepts": [
+        "urn:ontoward:AttributeValue05caa5b4a700abad74871d88",
+        "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+        "urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6",
+        "urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e",
+        "urn:ontoward:ContextFactorc37f961cf64713c65da20d3c",
+        "urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb",
+        "urn:ontoward:Disease17541b38c5aba0a66869e066",
+        "urn:ontoward:Disease3708e7a9477c752e596cc31e",
+        "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+        "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f",
+        "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54"
+      ],
+      "added_relations": 12,
+      "changed_parent_associations": [
+        "urn:ontoward:Association1777b0ba6c02672a3ab8fe19",
+        "urn:ontoward:Association74883692586f4c50de0a3656",
+        "urn:ontoward:Association874702ab8c54b92b2e9dec56",
+        "urn:ontoward:Associationad58f576dae61156cd0f2a4f"
+      ],
+      "duplicate_relations_skipped": 0,
+      "extended_concepts": [
+        "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+      ],
+      "global_question_impacts": {
+        "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f": [
+          "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+        ],
+        "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54": [
+          "urn:ontoward:AttributeValue05caa5b4a700abad74871d88",
+          "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+          "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+        ]
+      },
+      "neutral_relations": 4,
+      "question_keys": [
+        "urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6",
+        "urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e",
+        "urn:ontoward:ContextFactorc37f961cf64713c65da20d3c",
+        "urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb",
+        "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f",
+        "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54"
+      ],
+      "replaced_associations": [
+        "urn:ontoward:Association1777b0ba6c02672a3ab8fe19",
+        "urn:ontoward:Association1ccf825b2a7780a909a865eb",
+        "urn:ontoward:Association74883692586f4c50de0a3656",
+        "urn:ontoward:Association874702ab8c54b92b2e9dec56",
+        "urn:ontoward:Associationad58f576dae61156cd0f2a4f"
+      ],
+      "role_impacts": {
+        "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f": [
+          "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+        ],
+        "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54": [
+          "urn:ontoward:AttributeValue05caa5b4a700abad74871d88",
+          "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+          "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+        ]
+      }
+    },
+    "concepts": 6350,
+    "coverage": {
+      "diseases": 948,
+      "gaps": [],
+      "status": "pass"
+    },
+    "delta_hash": "a31cb4b39ee2a46b9fe7ac852da8d983f59e17770c9aef70f5e6da4734d5d95d",
+    "effects": {
+      "against": 78,
+      "neutral": 4,
+      "strong_against": 17,
+      "strong_support": 438,
+      "support": 2663
+    },
+    "parent_build": "1bcaba1dffb744c468bb191df3267dad",
+    "plan_id": "7c7762f3b3564f27ca14f4eb24290a86",
+    "preservation": {
+      "changed_numeric_units": {},
+      "empty_delta": false,
+      "exact_empty_clinical_graph": false,
+      "guideline_selections_equal": true,
+      "parent_files_hash_verified": true,
+      "parent_meanings_unauthorized_changes": 0,
+      "parent_vocabulary_removed": 0,
+      "questions_roles_exact": true,
+      "schema_equal": true,
+      "unchanged_numeric_pairs": 2760,
+      "value_matches_preserved": 6
+    },
+    "questions": 2809,
+    "source_history_boundary": "Reconstruct runtime knowledge only; historical neutral judgments and responses are unavailable"
+  },
+  "accepted_delta_receipt": "data/provenance/augmentation-d58-delta-2026-10-21.json",
+  "generation": {
+    "state": "complete",
+    "provider": "openai_api",
+    "models": {
+      "draft": "gpt-6-luna",
+      "final": "gpt-6-luna"
+    },
+    "effort": "medium",
+    "batch_size": 40,
+    "max_tokens": {
+      "draft": 32000,
+      "final": 32000
+    },
+    "timeout_seconds": 600,
+    "max_model_transmissions": 16,
+    "model_transmissions": 7,
+    "usage": [
+      {
+        "day": "2026-10-21",
+        "model": "gpt-6-luna",
+        "calls": 7,
+        "input_tokens": 1203089,
+        "output_tokens": 28298
+      }
+    ],
+    "requests": [
+      {
+        "request_id": "3f950a54-6104-4f5d-a56e-2ea062bfbc9d",
+        "provider": "openai_api",
+        "state": "accepted",
+        "job_ids": [
+          "21de86b9c8cccbb3f6e51b5ebdadcfd9576c04ae02dbfabd8d0df9e5931585ce",
+          "dfe44af289659730066c7ac5a8d43ca5261b9d4bc34e536fe5d64b8a0be490f1"
+        ],
+        "payload_sha256": "b5227a5d68c8b1e1332b577ae4eb2a202771a61f729b6aa8cba6e2cf38f67cd1",
+        "response_sha256": "ea9be43c48c381c1c95b1e5553d839c79b81e5857a8b730deb9597fff84b04c9",
+        "error": null
+      },
+      {
+        "request_id": "91808b71-0ffe-4a62-8ff4-dc518bcd847c",
+        "provider": "openai_api",
+        "state": "accepted",
+        "job_ids": [
+          "0b8dbf5d5610b1af1ad786762272fcc279b8fffa81dbb5021e5b9540e775a178",
+          "73fe01ceea6518b92183f24160bd6edb3e4ea23eb9ba34901aa68ee256165f0f",
+          "799c65cb0984f8b315f76cbb167e3d59a66537a7715e265c26fb79374b1fb0b0",
+          "8e05bfe3b9f98cb2bf728151ea1b4eb02cc4ceb8a28c889867a501fb47fe97cb",
+          "9add5d381b47891a16b806fca874b3b570c6e42490215ac7d5007b8b2d5f9f1f",
+          "9d44db84e570993494d1217b5221e49f70e738360e6dbb1912c9bd50f3a56009",
+          "a31455b2045fec6168db22ad3a2676d7d89888838920cf4c14681f42371f61df",
+          "d039c45ca7bae71ba4e6524b9e94f4b27bcbb6ead6e5b209f62e5627a6a0cf76"
+        ],
+        "payload_sha256": "711b20eb369621edbfa399bdc4a163f068ab91507108d3c9615f6b917f7a4aa9",
+        "response_sha256": "3b776257599cb7864b548947680db7668ffd7771464bf7f6554630f36cbf635a",
+        "error": null
+      },
+      {
+        "request_id": "92e0d968-bc01-40dc-ab65-6bc52d43a50d",
+        "provider": "openai_api",
+        "state": "accepted",
+        "job_ids": [
+          "14c3b2db6b6b1d4b18178332c4eeaf529ba51c97782a51d4963d563bb80fd264",
+          "5ed7a62b67abfcd04df762bfa658a9ed7cc91215eb7adaefd947f2bed1df4006",
+          "60e6e66bdc50210bcf0b3bc0d1421c4f4f65e1d10b8c1ba7f3120cc46b893b0a",
+          "87fc57ad7a396af1aec0b95eff2e32a3962358ff32c387c23e6f8d0ffe040c60",
+          "96db946df2ecbf9962ccb2a5ef216b2f2804d7ee4a4e2e38bcb3ebec36d3cf95",
+          "d603eab1cd067344aaee28a7f86e7edf802edbd240031bd7d4463ff621348d95"
+        ],
+        "payload_sha256": "e7d887239573a1b22e538ca7ad1c54500668128e45961797d9368b617fafff02",
+        "response_sha256": "7618c9f48a2fffc22fca3c80d12350a6ad43bd137418906bc5e4382c4de52e51",
+        "error": null
+      },
+      {
+        "request_id": "96802469-dd3e-4ee5-9b7a-43eda01c3e44",
+        "provider": "openai_api",
+        "state": "accepted",
+        "job_ids": [
+          "10ef5b102c8bda83ea3552e85b65bd9de6c89f70b746240833ac718b91d69981",
+          "2f0bc9ef2d0f298221dd72ce9c40f046665a2bbbc78a8899b17d9d7cb86a6e48",
+          "38c38c3fdeb64bcfea9c5a9cab9d30d03c0c0011f8d51afb0522f11bb86b0311",
+          "4079dc96d28fe912fc5e4f320600b8bdebbbf8c330853bf9b92bf1be8a34acbe",
+          "5006b666d400d46a78b691e19ced8adb6cb422f9c0e204320c0839fee9d3e1b7",
+          "859025f9c0f528054dfea0355c2768d0057ad0d92ca6e6482ed3862b86528f24",
+          "8e5e644f4f44e1ffd458a87fda054a45c9d3242f95d1ff33c1066437758a64cb",
+          "af1e9d5b1a97b27da3f83ca484daa2ac11679acbc7e782faf3b8c9244631459c",
+          "b9450ed2befad9d4d9081f68ec8a2bc04ff40557bbb796e9a88f3aa5519a3f99",
+          "bb76310b85093056265d7c76d84b665a1895fe0fc55238a5b03e0619d1f4adc5",
+          "bf40f3f1c5d85317c9c13dda5e5812a46cae347ba5126488c38c0448f3c2b784",
+          "c14422f5212a3c8dcc71d00e6a26d665cb9683fdb6f020c9f477424d591eabb5",
+          "d42d90003a15da56f85feeaf51092d6246426a67dcf68fbdbd62152a694f981a",
+          "ea18389bff6f16d48db380d98236810f23b92997a0eabeed6d1fd6826234d977",
+          "ef8c9de4f51a0009d39fac9af5df01bebdb1e5ee3a1ec1705431400d57e582d2"
+        ],
+        "payload_sha256": "e49e70f5876409f48ee2e9e1d25a2ca06ed612cdaf22effff5af52e0ebaa9692",
+        "response_sha256": "5063109cac19d7c6528f7ad7c5230e9ee1bfd5505bce4ebed69c43349bcdc938",
+        "error": null
+      },
+      {
+        "request_id": "a0fda67d-3eae-4796-b3ec-9e8f1d53850b",
+        "provider": "openai_api",
+        "state": "accepted",
+        "job_ids": [
+          "dfe44af289659730066c7ac5a8d43ca5261b9d4bc34e536fe5d64b8a0be490f1"
+        ],
+        "payload_sha256": "28bfb90fc3f966ad0973bef2d899ffab5dfb20753b67e9bee3b56bb46fbeb5df",
+        "response_sha256": "f43691e8bed0e0eca43e1d50f3e2be39fdf3642ada5ebd1afc8fb79659c905bd",
+        "error": null
+      },
+      {
+        "request_id": "d6c25c64-6ade-4bd8-9ced-a2ed9ee112ed",
+        "provider": "openai_api",
+        "state": "accepted",
+        "job_ids": [
+          "1411875ea9f26c3f6cc99ae13600f8810873ffa8f58aa7398cde5009ac6001dc",
+          "2c219382a0dffcf9e017b9dc9f45ff9395934de6950657d1113e97e846b2891e",
+          "4a0cdfac635e3ffb698f97cc44efe16d228f15a5662b4d29609ff8896a7584bc",
+          "677d65f6108dd0131b0e7ac2f9fcd75a967d7af6a54c1ab176793d55e8d1f216",
+          "6b31d43da792351f1ebad0c0e7f3c0e97940322f60f1563a20de34e2243b0947",
+          "7a71d9ca99b34ad1500874e5099075c6745ad2d788619bf915522150a307876b",
+          "af48ad7bc293d057a9edbab71bd12787e081aeac0faa72dff1024d1dfae397f9",
+          "b996021b1a3bca8aac96c764f7b1cb5ff5829e92459a242a31f254343456c5b6",
+          "f2e80e9f352a04eaad09d88d30e63ba11d276b9a89659d835d0aef1971f2028d",
+          "faba4abe9ac45423a91eda872844add0b805c529d80b025e3bd70aa9a6086b2c"
+        ],
+        "payload_sha256": "d2b92e1c96301240220108fd0a695ea4ae6b343449fd1aaa259b1acb2bd85ec9",
+        "response_sha256": "af6958208633295c0c7aaa5b27b28c52672da22074448b6390349e439e65cf2e",
+        "error": null
+      },
+      {
+        "request_id": "f41dc543-4e16-486f-a842-452adb9b7f65",
+        "provider": "openai_api",
+        "state": "accepted",
+        "job_ids": [
+          "62e66be8ba6cbfceaf7d73b01ae3836c9d6e3d39ae32a7e15b8a6bd80df348c1",
+          "71e8cc57976324f71a9753b22d8ea06451a78f9782827cd7dabb0a7c84bb97a3",
+          "7f494fe4be4a83a39b79a4f53b4d17f5bd6300b325121e23f43d66455c763b2f",
+          "81ada074486b784a942d26779fedd873bf97e804508380fa5ec7d99b07c28326",
+          "8c1b20e2efd04c2ff252af3a22974b97658728f3fc518d0b5586cf1d63a08df3",
+          "92777d278da93a3bb37e276704cd30bd495c06f285b2189a695b4c3ab0323f02",
+          "93c4099691a2363fa98a650b8f2b3b000235ee3ab99329065963871a03d27e2a",
+          "962ee33a03496ac41824005bce69d31f5461c5a9364d6a6a720ac36520b44891",
+          "979e037ebecc33295f58a5d6f732665b5fe0bd28d232e6116bf355853256b74c",
+          "cab8aa38a272cd031fe212da54764284941d78143a87d62d1cd19b0d2a37cb1e",
+          "f518a828fd4e25ab017d305f88b3c54766bc8c12546fc5dc0a89487790ba60d6"
+        ],
+        "payload_sha256": "9cbbd060ea5fb2b2dacc1f80d407255180aee08fc76c708d35b17b0fc28d0abd",
+        "response_sha256": "d8d8b3fb0ddab3f00b559cb62dd046c7551da521ab9941608a2bea956a567258",
+        "error": null
+      }
+    ],
+    "jobs": [
+      {
+        "phase": "augment_concepts",
+        "status": "done",
+        "count": 11
+      },
+      {
+        "phase": "augment_discover",
+        "status": "done",
+        "count": 2
+      },
+      {
+        "phase": "augment_questions",
+        "status": "done",
+        "count": 6
+      },
+      {
+        "phase": "augment_relations",
+        "status": "done",
+        "count": 10
+      },
+      {
+        "phase": "augment_review",
+        "status": "done",
+        "count": 23
+      }
+    ],
+    "recovery_history": [
+      {
+        "amendments_sha256": "b96f6e074bc0916a67eb9e32b8e09094f7d095b6b758af86992c6e4c6dd92ac4",
+        "model_calls": 0,
+        "repair": "explicit_discovery_scope_amendment",
+        "source_run_id": "fc03d037dc4086b06953509f0ed423a1",
+        "source_sha256": "a46ab32708662bfcd8d98c76330f11a63b0075c3b90faf230bef6cb33ae4b991"
+      }
+    ],
+    "recovery": {
+      "invalid_review_rows": 6,
+      "model_calls": 0,
+      "repair": "typed_review_semantic_revalidation",
+      "source_run_id": "3472c0ee89dcf386804459ea227b5108",
+      "source_sha256": "958925e44c9e36191920ba18affdedac91f23b2a72612df1b4d0bd37d809e786"
+    },
+    "review_replacements": {
+      "2f0bc9ef2d0f298221dd72ce9c40f046665a2bbbc78a8899b17d9d7cb86a6e48": "9d44db84e570993494d1217b5221e49f70e738360e6dbb1912c9bd50f3a56009",
+      "38c38c3fdeb64bcfea9c5a9cab9d30d03c0c0011f8d51afb0522f11bb86b0311": "9add5d381b47891a16b806fca874b3b570c6e42490215ac7d5007b8b2d5f9f1f",
+      "8e5e644f4f44e1ffd458a87fda054a45c9d3242f95d1ff33c1066437758a64cb": "799c65cb0984f8b315f76cbb167e3d59a66537a7715e265c26fb79374b1fb0b0",
+      "c14422f5212a3c8dcc71d00e6a26d665cb9683fdb6f020c9f477424d591eabb5": "8e05bfe3b9f98cb2bf728151ea1b4eb02cc4ceb8a28c889867a501fb47fe97cb",
+      "d42d90003a15da56f85feeaf51092d6246426a67dcf68fbdbd62152a694f981a": "d039c45ca7bae71ba4e6524b9e94f4b27bcbb6ead6e5b209f62e5627a6a0cf76",
+      "ea18389bff6f16d48db380d98236810f23b92997a0eabeed6d1fd6826234d977": "a31455b2045fec6168db22ad3a2676d7d89888838920cf4c14681f42371f61df"
+    },
+    "effective_final_review_rows": 17,
+    "original_rows_preserved_until_authorized_disposal": true,
+    "authorization": "User approved generation with existing API Luna medium profile up to 16 cumulative transmissions and local activation after checks pass."
+  },
+  "activation": {
+    "build_id": "cec62f4596bedd9b9488aa75e3d38f04",
+    "cleanup": false,
+    "manifest": "/target/manifest.json",
+    "model_transmissions": 7,
+    "parent_build": "1bcaba1dffb744c468bb191df3267dad",
+    "plan_id": "7c7762f3b3564f27ca14f4eb24290a86",
+    "status": "installed",
+    "usage": [
+      {
+        "calls": 7,
+        "day": "2026-10-21",
+        "input_tokens": 1203089,
+        "model": "gpt-6-luna",
+        "output_tokens": 28298
+      }
+    ]
+  },
+  "tests": {
+    "extraction": {
+      "count": 140,
+      "result": "pass",
+      "log": "Tmp/augmentation-d58/extraction-tests.log",
+      "sha256": "005c7b3defef18e6ec509d4640d6222dd627abcc654657a5b8601a5f058477be"
+    },
+    "workflow": {
+      "count": 234,
+      "result": "pass",
+      "log": "Tmp/augmentation-d58/workflow-tests.log",
+      "sha256": "9193a20b6752701e2f0d7291620c91aec2a1be5a3b09c2dd9c5283ef64aa03ca"
+    },
+    "actual_parent_mock": {
+      "actual_model_calls": 0,
+      "synthetic_transmissions": 5,
+      "resume_additional_requests": 0,
+      "installed": false,
+      "source_snapshot": "Earlier D58 implementation snapshot before final semantic guards; maintained final suites pass separately",
+      "roundtrip": {
+        "changed_numeric_units": {},
+        "empty_delta": true,
+        "exact_empty_clinical_graph": true,
+        "guideline_selections_equal": true,
+        "parent_files_hash_verified": true,
+        "parent_meanings_unauthorized_changes": 0,
+        "parent_vocabulary_removed": 0,
+        "questions_roles_exact": true,
+        "schema_equal": true,
+        "unchanged_numeric_pairs": 2760,
+        "value_matches_preserved": 6
+      },
+      "preservation": {
+        "changed_numeric_units": {},
+        "empty_delta": false,
+        "exact_empty_clinical_graph": false,
+        "guideline_selections_equal": true,
+        "parent_files_hash_verified": true,
+        "parent_meanings_unauthorized_changes": 0,
+        "parent_vocabulary_removed": 0,
+        "questions_roles_exact": true,
+        "schema_equal": true,
+        "unchanged_numeric_pairs": 2760,
+        "value_matches_preserved": 6
+      },
+      "reachability": {
+        "applicability_drug_episode_join": "not_implemented",
+        "boundary": "Production functions with synthetic facts; actual-model quality and clinical accuracy are not evaluated",
+        "controls": [
+          "insomnia_behavior_unknown_candidate_without_support",
+          "impaired_control_dd_context_question",
+          "normal_use_not_use_disorder_support",
+          "dependence_note_not_automatic_use_disorder_support",
+          "behavior_candidate_without_insomnia",
+          "pathological_thyroid_candidate_control",
+          "thyroid_findings_not_automatic_use_disorder_support",
+          "registered_declining_growth_value",
+          "height_velocity_quantity_units:urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "negative_family_history_keeps_cdgp_path:urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "declining_growth_not_automatic_normal_variant:urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "provided_velocity_not_reasked:urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "height_velocity_quantity_units:urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+          "negative_family_history_keeps_cdgp_path:urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+          "declining_growth_not_automatic_normal_variant:urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+          "provided_velocity_not_reasked:urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+        ],
+        "probes": [
+          {
+            "cluster": "insomnia_medication",
+            "disease_id": "urn:ontoward:Disease17541b38c5aba0a66869e066",
+            "executable_questions": 3,
+            "supports": 0,
+            "target_id": "urn:ontoward:Symptomf7b9c3d8686cd49d3d509bc8",
+            "unresolved": 6
+          },
+          {
+            "cluster": "short_stature",
+            "disease_id": "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+            "executable_questions": 3,
+            "supports": 0,
+            "target_id": "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+            "unresolved": 10
+          },
+          {
+            "cluster": "short_stature",
+            "disease_id": "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+            "executable_questions": 3,
+            "supports": 0,
+            "target_id": "urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+            "unresolved": 10
+          },
+          {
+            "cluster": "short_stature",
+            "disease_id": "urn:ontoward:Disease3708e7a9477c752e596cc31e",
+            "executable_questions": 3,
+            "supports": 0,
+            "target_id": "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+            "unresolved": 6
+          },
+          {
+            "cluster": "short_stature",
+            "disease_id": "urn:ontoward:Disease3708e7a9477c752e596cc31e",
+            "executable_questions": 3,
+            "supports": 0,
+            "target_id": "urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+            "unresolved": 6
+          }
+        ],
+        "status": "pass"
+      }
+    },
+    "actual_child_production_probes": {
+      "applicability_drug_episode_join": "not_implemented",
+      "boundary": "Production functions with synthetic facts; actual-model quality and clinical accuracy are not evaluated",
+      "controls": [
+        "insomnia_behavior_unknown_candidate_without_support",
+        "impaired_control_dd_context_question",
+        "normal_use_not_use_disorder_support",
+        "dependence_note_not_automatic_use_disorder_support",
+        "behavior_candidate_without_insomnia",
+        "pathological_thyroid_candidate_control",
+        "thyroid_findings_not_automatic_use_disorder_support",
+        "registered_declining_growth_value",
+        "family_late_maturation_dd_question:urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "height_velocity_quantity_units:urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "negative_family_history_keeps_cdgp_path:urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "declining_growth_not_automatic_normal_variant:urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "provided_velocity_not_reasked:urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "family_late_maturation_dd_question:urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+        "height_velocity_quantity_units:urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+        "negative_family_history_keeps_cdgp_path:urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+        "declining_growth_not_automatic_normal_variant:urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+        "provided_velocity_not_reasked:urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+      ],
+      "probes": [
+        {
+          "cluster": "insomnia_medication",
+          "disease_id": "urn:ontoward:Disease17541b38c5aba0a66869e066",
+          "executable_questions": 3,
+          "supports": 0,
+          "target_id": "urn:ontoward:Symptomf7b9c3d8686cd49d3d509bc8",
+          "unresolved": 6
+        },
+        {
+          "cluster": "short_stature",
+          "disease_id": "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+          "executable_questions": 3,
+          "supports": 0,
+          "target_id": "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "unresolved": 10
+        },
+        {
+          "cluster": "short_stature",
+          "disease_id": "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+          "executable_questions": 3,
+          "supports": 0,
+          "target_id": "urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+          "unresolved": 10
+        },
+        {
+          "cluster": "short_stature",
+          "disease_id": "urn:ontoward:Disease3708e7a9477c752e596cc31e",
+          "executable_questions": 3,
+          "supports": 0,
+          "target_id": "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "unresolved": 6
+        },
+        {
+          "cluster": "short_stature",
+          "disease_id": "urn:ontoward:Disease3708e7a9477c752e596cc31e",
+          "executable_questions": 3,
+          "supports": 0,
+          "target_id": "urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+          "unresolved": 6
+        }
+      ],
+      "status": "pass"
+    },
+    "additional_child_controls": {
+      "actual_models": "not_run",
+      "checks": [
+        "insomnia_use_behavior_unknown_has_candidate_and_question_without_support",
+        "past_behavior_independent_of_current_insomnia",
+        "stable_growth_family_negative_retains_cdgp:Short stature for age",
+        "decline_not_normal_variant_despite_family_history:Short stature for age",
+        "stable_growth_family_negative_retains_cdgp:Short stature complaint",
+        "decline_not_normal_variant_despite_family_history:Short stature complaint",
+        "thyroid_control_with_coexisting_insomnia_preserves_pathology_without_drug_support"
+      ],
+      "child": "cec62f4596bedd9b9488aa75e3d38f04",
+      "clinical_accuracy": "not_run",
+      "status": "pass"
+    },
+    "keyless_recompile": {
+      "result": "pass",
+      "build_id": "cec62f4596bedd9b9488aa75e3d38f04",
+      "log_sha256": "d8a17b8800014346cb4f9d08175c88edca7044d33d2358906f01b34f9ab2d583"
+    },
+    "keyless_resume": {
+      "result": "pass",
+      "model_transmissions_before": 7,
+      "model_transmissions_after": 7,
+      "additional_model_calls": 0,
+      "log_sha256": "d8da4295fd8d4f1e82b751f59291fb603dda4800758ee884599b81569180c8af"
+    },
+    "installed_loader": {
+      "status": "pass",
+      "diseases": 948,
+      "gaps": [],
+      "log": "Tmp/augmentation-d58/installed-verify.log"
+    },
+    "original_entrypoint": {
+      "prepare": true,
+      "log": "Tmp/augmentation-d58/installed-prepare.log"
+    },
+    "scripted_consultations": {
+      "status": "pass",
+      "cases": [
+        {
+          "education": false,
+          "context": "unknown",
+          "termination": "submitted",
+          "nodes": 165
+        },
+        {
+          "education": true,
+          "context": "present",
+          "termination": "submitted",
+          "nodes": 205
+        },
+        {
+          "education": true,
+          "context": "absent",
+          "termination": "submitted",
+          "nodes": 205
+        }
+      ],
+      "knowledge_contract": "v5-enum-1",
+      "actual_models": "not_run",
+      "clinical_accuracy": "not_run",
+      "manifest_sha256": "04accb50722f2c4f8583e25f0a3b1600bf2d384c820d91cc68e5dc42a1fa21db"
+    },
+    "unchanged_sdk_entrypoint": {
+      "result": "pass",
+      "files": [
+        "submission/run.py",
+        "submission/nova_sdk.py"
+      ],
+      "basis": "No working-tree diff from current HEAD"
+    }
+  },
+  "synthetic_artifact": {
+    "path": "Tmp/augmentation-d58/package-final/ontoward-submission.zip",
+    "sha256": "9800c929d9b60c6c534bf77158e8e6a2f4c4a4fdff38331f1df95399a2de8850",
+    "files": 89,
+    "expanded_bytes": 325824,
+    "compressed_bytes": 107858,
+    "install_lock_excluded": true,
+    "original_sdk": {
+      "status": "pass",
+      "entrypoint": "run.py",
+      "transport": "original_sdk_http_loopback",
+      "receipt": "completed",
+      "requests": 42,
+      "actions": 20,
+      "diagnosis": "Disease alpha",
+      "network": "none",
+      "development_credentials": false,
+      "actual_models": "not_run",
+      "clinical_accuracy": "not_run",
+      "langgraph_import": "not_checked"
+    },
+    "boundary": "Synthetic knowledge archive with production runtime; not the actual clinical bundle or official submission"
+  },
+  "docker_images": {
+    "extraction": "sha256:9f5d4de7fafd90697410abbdd7927b9de4c357b317a26d4098c20016dd695b23",
+    "dev": "sha256:0999f2b28fd11f6783b849e94ff0c59b3c791a8afb49034b6e57fee225395da7",
+    "package": "sha256:adab7aafb1009814a7be06d99629378a00433bbcf6a5080500acc55a36b035b8"
+  },
+  "actual_consultation_accuracy": "not_run",
+  "clinical_validity": "not_run",
+  "official_evaluation": "not_run",
+  "production_zip_with_actual_knowledge": "not_run",
+  "publication": "not_run",
+  "deployment": "not_run",
+  "commits": "not_run",
+  "limitations": [
+    "Applicability cannot join multiple Contexts by medication or episode; preserve qualified linking and clarification",
+    "No automatic height-velocity unit conversion; quantity questions use cm/year",
+    "No historical neutral or rejected responses reconstructed from parent RDF",
+    "Model clinical generation was run; real-model consultations and clinical validity were not evaluated"
+  ],
+  "cleanup": {
+    "status": "complete",
+    "receipt": "data/provenance/augmentation-d58-cleanup-2026-10-21.json",
+    "authority": "User explicitly requested deletion of checkpoints and legacy database files created for this build that are not used in workflow before declaring completion",
+    "retained_parent": "1bcaba1dffb744c468bb191df3267dad",
+    "retained_active_child": "cec62f4596bedd9b9488aa75e3d38f04",
+    "deleted_files": 518,
+    "deleted_bytes": 220481422,
+    "protected_files": 182,
+    "protected_hashes_equal": true,
+    "post_delete_loader": "pass",
+    "post_delete_prepare": true,
+    "raw_checkpoint_resume": "unavailable",
+    "receipt_sha256": "6980d4a4eb24a2110048469ba3f8f0e0690a239bd44a2b43933409d7ceae8607"
+  },
+  "unrelated_worktree_deletions_preserved": [
+    "submission/knowledge/builds/1e8539d9c0910b37517f6475266f6df1/"
+  ],
+  "counts": {
+    "parent": {
+      "concepts": 6339,
+      "diseases": 945,
+      "associations": 3188,
+      "questions": 2803,
+      "attribute_roles": 661
+    },
+    "child": {
+      "concepts": 6350,
+      "diseases": 948,
+      "associations": 3196,
+      "questions": 2809,
+      "attribute_roles": 663
+    },
+    "additions": {
+      "concepts": 11,
+      "diseases": 3,
+      "exported_relations": 9,
+      "relation_judgments": 12,
+      "questions": 6,
+      "attribute_roles": 2
+    },
+    "parent_associations_reviewed": 5,
+    "parent_associations_changed": 4,
+    "final_neutral_judgments": 4
+  },
+  "implementation_files": [
+    ".gitignore",
+    "AGENTS.md",
+    "DECISION_STATE.md",
+    "Dev/packaging/package_submission.py",
+    "Dev/tests/workflow/test_d58.py",
+    "Extraction/AGENTS.md",
+    "Extraction/Dockerfile",
+    "Extraction/Dockerfile.dockerignore",
+    "Extraction/README.md",
+    "Extraction/augmentation/insomnia_growth.seed.json",
+    "Extraction/compose.yaml",
+    "Extraction/ontoward_extraction/__main__.py",
+    "Extraction/ontoward_extraction/augmentation.py",
+    "Extraction/ontoward_extraction/augmentation_models.py",
+    "Extraction/ontoward_extraction/augmentation_run.py",
+    "Extraction/ontoward_extraction/augmentation_verify.py",
+    "Extraction/ontoward_extraction/build.py",
+    "Extraction/ontoward_extraction/install.py",
+    "Extraction/ontoward_extraction/jobs.py",
+    "Extraction/ontoward_extraction/llm.py",
+    "Extraction/ontoward_extraction/progress.py",
+    "Extraction/prompts/augment_concepts.txt",
+    "Extraction/prompts/augment_discover.txt",
+    "Extraction/prompts/augment_questions.txt",
+    "Extraction/prompts/augment_relations.txt",
+    "Extraction/prompts/augment_review.txt",
+    "Extraction/tests/augmentation_fixture.py",
+    "Extraction/tests/test_augmentation.py",
+    "PRD.md",
+    "PROJECT_STATE.md",
+    "README.md",
+    "data/AGENTS.md",
+    "data/PROJECT_STATE.md",
+    "data/README.md",
+    "data/ontology/AGENTS.md",
+    "data/ontology/README.md",
+    "submission/AGENTS.md",
+    "submission/PROJECT_STATE.md",
+    "submission/README.md",
+    "submission/config/prompts/clinical_action.txt",
+    "submission/config/prompts/clinical_common.txt",
+    "submission/config/prompts/input_common.txt",
+    "submission/config/prompts/session_differential_diagnosis.txt",
+    "submission/knowledge/manifest.json",
+    "submission/settings.py",
+    "submission/workflow/rules/questions.py"
+  ]
+}

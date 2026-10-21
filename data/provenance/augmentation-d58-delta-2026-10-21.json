@@ -1,0 +1,1286 @@
+{
+  "version": "augmentation-d58-delta-1",
+  "plan_id": "7c7762f3b3564f27ca14f4eb24290a86",
+  "plan_sha256": "916cf92f7b5f4879c31e0a4ed25b67ee90dcefefb302a379731df53c9e6d128f",
+  "parent": {
+    "assets": {
+      "clinical": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06",
+      "guidelines": "6aae5720a4789b878d75e4cb280f888428826613cad435a9603a4236c5cc30b0",
+      "questions": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f",
+      "schema": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "vocabulary": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+    },
+    "build_id": "1bcaba1dffb744c468bb191df3267dad",
+    "manifest_sha256": "6f07428eff759ec1e3aad8840804364f56ff7869192df8922e60c1121d839838"
+  },
+  "child": "cec62f4596bedd9b9488aa75e3d38f04",
+  "delta_hash": "a31cb4b39ee2a46b9fe7ac852da8d983f59e17770c9aef70f5e6da4734d5d95d",
+  "accepted_delta": {
+    "operations": [
+      {
+        "concept": {
+          "aliases": [
+            "Family history of late puberty",
+            "Family history of delayed growth or maturation"
+          ],
+          "attribute_role": null,
+          "attributes": [],
+          "context_type": "family_history",
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6",
+          "kind": "ContextFactor",
+          "korean": "가족의 성장 또는 성숙 지연 병력",
+          "name": "Family history of late growth or maturation",
+          "question": null,
+          "systems": [],
+          "values": []
+        },
+        "op": "add_concept"
+      },
+      {
+        "concept": {
+          "aliases": [
+            "Maintained linear growth trajectory",
+            "Stable growth trajectory"
+          ],
+          "attribute_role": null,
+          "attributes": [
+            "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54"
+          ],
+          "context_type": null,
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+          "kind": "AttributeValue",
+          "korean": "안정적인 선형 성장 경과",
+          "name": "Stable linear growth trajectory",
+          "question": null,
+          "systems": [],
+          "values": []
+        },
+        "op": "add_concept"
+      },
+      {
+        "concept": {
+          "aliases": [
+            "Linear growth rate",
+            "Height growth velocity"
+          ],
+          "attribute_role": null,
+          "attributes": [],
+          "context_type": null,
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f",
+          "kind": "FindingAttribute",
+          "korean": "키 성장 속도",
+          "name": "Height velocity",
+          "question": null,
+          "systems": [],
+          "values": []
+        },
+        "op": "add_concept"
+      },
+      {
+        "concept": {
+          "aliases": [
+            "Unable to reduce hypnotic use",
+            "Failed attempts to cut down or stop hypnotic use"
+          ],
+          "attribute_role": null,
+          "attributes": [],
+          "context_type": "medication_history",
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e",
+          "kind": "ContextFactor",
+          "korean": "수면제 사용을 줄이거나 중단하려 했으나 실패함",
+          "name": "Unsuccessful attempts to reduce hypnotic use",
+          "question": null,
+          "systems": [],
+          "values": []
+        },
+        "op": "add_concept"
+      },
+      {
+        "concept": {
+          "aliases": [
+            "Linear growth pattern",
+            "Growth trajectory"
+          ],
+          "attribute_role": null,
+          "attributes": [],
+          "context_type": null,
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+          "kind": "FindingAttribute",
+          "korean": "선형 성장 경과",
+          "name": "Linear growth trajectory",
+          "question": null,
+          "systems": [],
+          "values": [
+            "urn:ontoward:AttributeValue05caa5b4a700abad74871d88",
+            "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9"
+          ]
+        },
+        "op": "add_concept"
+      },
+      {
+        "concept": {
+          "aliases": [
+            "Short stature in a parent",
+            "Parental history of short stature"
+          ],
+          "attribute_role": null,
+          "attributes": [],
+          "context_type": "family_history",
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb",
+          "kind": "ContextFactor",
+          "korean": "부모의 저신장 병력",
+          "name": "Parental short stature",
+          "question": null,
+          "systems": [],
+          "values": []
+        },
+        "op": "add_concept"
+      },
+      {
+        "concept": {
+          "aliases": [
+            "Continued hypnotic use despite adverse consequences",
+            "Persistent hypnotic use despite harm"
+          ],
+          "attribute_role": null,
+          "attributes": [],
+          "context_type": "medication_history",
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:ContextFactorc37f961cf64713c65da20d3c",
+          "kind": "ContextFactor",
+          "korean": "유해한 결과에도 수면제 사용 지속",
+          "name": "Continued hypnotic use despite harm",
+          "question": null,
+          "systems": [],
+          "values": []
+        },
+        "op": "add_concept"
+      },
+      {
+        "concept": {
+          "aliases": [
+            "Familial short stature"
+          ],
+          "attribute_role": null,
+          "attributes": [],
+          "context_type": null,
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:Disease3708e7a9477c752e596cc31e",
+          "kind": "Disease",
+          "korean": "가족성 저신장",
+          "name": "Familial short stature",
+          "question": null,
+          "systems": [],
+          "values": []
+        },
+        "op": "add_concept"
+      },
+      {
+        "concept": {
+          "aliases": [
+            "Constitutional delay of growth and puberty",
+            "CDGP",
+            "Constitutional growth and pubertal delay"
+          ],
+          "attribute_role": null,
+          "attributes": [],
+          "context_type": null,
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+          "kind": "Disease",
+          "korean": "체질성 성장 및 사춘기 지연",
+          "name": "Constitutional growth delay",
+          "question": null,
+          "systems": [],
+          "values": []
+        },
+        "op": "add_concept"
+      },
+      {
+        "concept": {
+          "aliases": [
+            "Declining growth trajectory",
+            "Decreasing linear growth"
+          ],
+          "attribute_role": null,
+          "attributes": [
+            "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54"
+          ],
+          "context_type": null,
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:AttributeValue05caa5b4a700abad74871d88",
+          "kind": "AttributeValue",
+          "korean": "선형 성장 경과 저하",
+          "name": "Declining linear growth trajectory",
+          "question": null,
+          "systems": [],
+          "values": []
+        },
+        "op": "add_concept"
+      },
+      {
+        "concept": {
+          "aliases": [
+            "Sedative, hypnotic, or anxiolytic use disorder",
+            "Sedative use disorder",
+            "Hypnotic use disorder",
+            "Anxiolytic use disorder"
+          ],
+          "attribute_role": null,
+          "attributes": [],
+          "context_type": null,
+          "exam_method": null,
+          "exam_text": null,
+          "id": "urn:ontoward:Disease17541b38c5aba0a66869e066",
+          "kind": "Disease",
+          "korean": "진정제·수면제·항불안제 사용장애",
+          "name": "Sedative, hypnotic, or anxiolytic use disorder",
+          "question": null,
+          "systems": [],
+          "values": []
+        },
+        "op": "add_concept"
+      },
+      {
+        "aliases": [],
+        "attributes": [
+          "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f",
+          "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54"
+        ],
+        "before_hash": "31d1101d626dd1e279900af959587cbc59affaf3fc2e16f879357f95b2e69970",
+        "id": "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "op": "extend_concept",
+        "values": []
+      },
+      {
+        "aliases": [],
+        "attributes": [
+          "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f",
+          "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54"
+        ],
+        "before_hash": "3d824abaedbb2c43e9c19e8759cde2324ef2d04cc828fbb8b9926ca99862296e",
+        "id": "urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+        "op": "extend_concept",
+        "values": []
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [
+            {
+              "concept_id": "urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6",
+              "status": "present",
+              "subject": "family",
+              "subject_member": null,
+              "time_context": "past"
+            }
+          ],
+          "disease_id": "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            },
+            {
+              "attribute": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+              "expected": {
+                "approximate": false,
+                "concept": "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+                "concepts": [],
+                "kind": "concept",
+                "lower": null,
+                "lower_inclusive": true,
+                "match": "exact",
+                "operator": "eq",
+                "selection": "any_of",
+                "unit": null,
+                "upper": null,
+                "upper_inclusive": true,
+                "upper_unit": null,
+                "value": null
+              },
+              "status": null
+            }
+          ],
+          "target_id": "urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "association_id": "urn:ontoward:Association1777b0ba6c02672a3ab8fe19",
+        "before_hash": "5481e694a64070d7c3cb7249aa2a60fed739d60ba87c9d86d8cf18842a36d3fa",
+        "op": "replace_relation",
+        "relation": {
+          "applicability": [],
+          "disease_id": "urn:ontoward:Disease903e14e0b024d0656410feb5",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            },
+            {
+              "attribute": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+              "expected": {
+                "approximate": false,
+                "concept": "urn:ontoward:AttributeValue05caa5b4a700abad74871d88",
+                "concepts": [],
+                "kind": "concept",
+                "lower": null,
+                "lower_inclusive": true,
+                "match": "exact",
+                "operator": "eq",
+                "selection": "any_of",
+                "unit": null,
+                "upper": null,
+                "upper_inclusive": true,
+                "upper_unit": null,
+                "value": null
+              },
+              "status": "present"
+            }
+          ],
+          "target_id": "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [],
+          "disease_id": "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            },
+            {
+              "attribute": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+              "expected": {
+                "approximate": false,
+                "concept": "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+                "concepts": [],
+                "kind": "concept",
+                "lower": null,
+                "lower_inclusive": true,
+                "match": "exact",
+                "operator": "eq",
+                "selection": "any_of",
+                "unit": null,
+                "upper": null,
+                "upper_inclusive": true,
+                "upper_unit": null,
+                "value": null
+              },
+              "status": null
+            }
+          ],
+          "target_id": "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [],
+          "disease_id": "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            },
+            {
+              "attribute": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+              "expected": {
+                "approximate": false,
+                "concept": "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+                "concepts": [],
+                "kind": "concept",
+                "lower": null,
+                "lower_inclusive": true,
+                "match": "exact",
+                "operator": "eq",
+                "selection": "any_of",
+                "unit": null,
+                "upper": null,
+                "upper_inclusive": true,
+                "upper_unit": null,
+                "value": null
+              },
+              "status": null
+            }
+          ],
+          "target_id": "urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [
+            {
+              "concept_id": "urn:ontoward:ContextFactorcd20de103d2e1b1b907d70cb",
+              "status": "present",
+              "subject": "patient",
+              "subject_member": null,
+              "time_context": "current"
+            }
+          ],
+          "disease_id": "urn:ontoward:Disease17541b38c5aba0a66869e066",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            }
+          ],
+          "target_id": "urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "past"
+          }
+        }
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [
+            {
+              "concept_id": "urn:ontoward:ContextFactorcd20de103d2e1b1b907d70cb",
+              "status": "present",
+              "subject": "patient",
+              "subject_member": null,
+              "time_context": "current"
+            }
+          ],
+          "disease_id": "urn:ontoward:Disease17541b38c5aba0a66869e066",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            }
+          ],
+          "target_id": "urn:ontoward:ContextFactorc37f961cf64713c65da20d3c",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "unspecified"
+          }
+        }
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [
+            {
+              "concept_id": "urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6",
+              "status": "present",
+              "subject": "family",
+              "subject_member": null,
+              "time_context": "past"
+            }
+          ],
+          "disease_id": "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            },
+            {
+              "attribute": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+              "expected": {
+                "approximate": false,
+                "concept": "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+                "concepts": [],
+                "kind": "concept",
+                "lower": null,
+                "lower_inclusive": true,
+                "match": "exact",
+                "operator": "eq",
+                "selection": "any_of",
+                "unit": null,
+                "upper": null,
+                "upper_inclusive": true,
+                "upper_unit": null,
+                "value": null
+              },
+              "status": null
+            }
+          ],
+          "target_id": "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "association_id": "urn:ontoward:Association74883692586f4c50de0a3656",
+        "before_hash": "a36a116aba90f3f0ad9f9218e814d177f8170c58823feccf930e407e16d3e239",
+        "op": "replace_relation",
+        "relation": {
+          "applicability": [],
+          "disease_id": "urn:ontoward:Disease903e14e0b024d0656410feb5",
+          "effect": "neutral",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            }
+          ],
+          "target_id": "urn:ontoward:Symptom0a403a3cfb3bb630d481b619",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [
+            {
+              "concept_id": "urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb",
+              "status": "present",
+              "subject": "family",
+              "subject_member": null,
+              "time_context": "past"
+            }
+          ],
+          "disease_id": "urn:ontoward:Disease3708e7a9477c752e596cc31e",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            },
+            {
+              "attribute": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+              "expected": {
+                "approximate": false,
+                "concept": "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+                "concepts": [],
+                "kind": "concept",
+                "lower": null,
+                "lower_inclusive": true,
+                "match": "exact",
+                "operator": "eq",
+                "selection": "any_of",
+                "unit": null,
+                "upper": null,
+                "upper_inclusive": true,
+                "upper_unit": null,
+                "value": null
+              },
+              "status": null
+            }
+          ],
+          "target_id": "urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [
+            {
+              "concept_id": "urn:ontoward:ContextFactorcd20de103d2e1b1b907d70cb",
+              "status": "present",
+              "subject": "patient",
+              "subject_member": null,
+              "time_context": "current"
+            },
+            {
+              "concept_id": "urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e",
+              "status": "present",
+              "subject": "patient",
+              "subject_member": null,
+              "time_context": "past"
+            }
+          ],
+          "disease_id": "urn:ontoward:Disease17541b38c5aba0a66869e066",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            }
+          ],
+          "target_id": "urn:ontoward:Symptomf7b9c3d8686cd49d3d509bc8",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "association_id": "urn:ontoward:Associationad58f576dae61156cd0f2a4f",
+        "before_hash": "d817857937282fbac5e9fc510144286c19d799e9a38407f2bfa0a52c450b717a",
+        "op": "replace_relation",
+        "relation": {
+          "applicability": [],
+          "disease_id": "urn:ontoward:Disease903e14e0b024d0656410feb5",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            },
+            {
+              "attribute": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+              "expected": {
+                "approximate": false,
+                "concept": "urn:ontoward:AttributeValue05caa5b4a700abad74871d88",
+                "concepts": [],
+                "kind": "concept",
+                "lower": null,
+                "lower_inclusive": true,
+                "match": "exact",
+                "operator": "eq",
+                "selection": "any_of",
+                "unit": null,
+                "upper": null,
+                "upper_inclusive": true,
+                "upper_unit": null,
+                "value": null
+              },
+              "status": "present"
+            }
+          ],
+          "target_id": "urn:ontoward:Symptom8fb34cbc486f364fc62a3243",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "association_id": "urn:ontoward:Association1ccf825b2a7780a909a865eb",
+        "before_hash": "3713ba566548073a3b5d54991c2ae91da2a0bd190660cb3a460d3e67f09bc2b6",
+        "op": "replace_relation",
+        "relation": {
+          "applicability": [],
+          "disease_id": "urn:ontoward:Disease5a4e12ac1b0db66c53779fa3",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            }
+          ],
+          "target_id": "urn:ontoward:Symptomf7b9c3d8686cd49d3d509bc8",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "association_id": "urn:ontoward:Association874702ab8c54b92b2e9dec56",
+        "before_hash": "a58c9da33f1207b0eb90268c19275f6023f41e2c1665342c37b1ba3a6fb18f2b",
+        "op": "replace_relation",
+        "relation": {
+          "applicability": [],
+          "disease_id": "urn:ontoward:Diseasee9fb3c87b1e0558b1ebbbaaf",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            }
+          ],
+          "target_id": "urn:ontoward:Symptomf7b9c3d8686cd49d3d509bc8",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [],
+          "disease_id": "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+          "effect": "neutral",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            }
+          ],
+          "target_id": "urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6",
+          "target_scope": {
+            "subject": "family",
+            "subject_member": null,
+            "time_context": "past"
+          }
+        }
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [],
+          "disease_id": "urn:ontoward:Disease3708e7a9477c752e596cc31e",
+          "effect": "neutral",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            }
+          ],
+          "target_id": "urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb",
+          "target_scope": {
+            "subject": "family",
+            "subject_member": null,
+            "time_context": "past"
+          }
+        }
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [
+            {
+              "concept_id": "urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb",
+              "status": "present",
+              "subject": "family",
+              "subject_member": null,
+              "time_context": "past"
+            }
+          ],
+          "disease_id": "urn:ontoward:Disease3708e7a9477c752e596cc31e",
+          "effect": "support",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            },
+            {
+              "attribute": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+              "expected": {
+                "approximate": false,
+                "concept": "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+                "concepts": [],
+                "kind": "concept",
+                "lower": null,
+                "lower_inclusive": true,
+                "match": "exact",
+                "operator": "eq",
+                "selection": "any_of",
+                "unit": null,
+                "upper": null,
+                "upper_inclusive": true,
+                "upper_unit": null,
+                "value": null
+              },
+              "status": null
+            }
+          ],
+          "target_id": "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "op": "add_relation",
+        "relation": {
+          "applicability": [],
+          "disease_id": "urn:ontoward:Disease17541b38c5aba0a66869e066",
+          "effect": "neutral",
+          "features": [
+            {
+              "attribute": null,
+              "expected": null,
+              "status": "present"
+            }
+          ],
+          "target_id": "urn:ontoward:ContextFactorcd20de103d2e1b1b907d70cb",
+          "target_scope": {
+            "subject": "patient",
+            "subject_member": null,
+            "time_context": "current"
+          }
+        }
+      },
+      {
+        "before_hash": null,
+        "key": "urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6",
+        "op": "set_question",
+        "question": {
+          "affirmative": true,
+          "answer_type": "presence",
+          "interviewable": true,
+          "reason": null,
+          "text": "가족 중 성장·성숙이 늦었던 분이 있나요? 누구인가요?",
+          "time_context": "past",
+          "units": []
+        },
+        "role": null
+      },
+      {
+        "before_hash": null,
+        "key": "urn:ontoward:ContextFactorc37f961cf64713c65da20d3c",
+        "op": "set_question",
+        "question": {
+          "affirmative": true,
+          "answer_type": "presence",
+          "interviewable": true,
+          "reason": null,
+          "text": "수면제 복용으로 해를 겪어도 계속 사용한 적이 있나요?",
+          "time_context": "past",
+          "units": []
+        },
+        "role": null
+      },
+      {
+        "before_hash": null,
+        "key": "urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e",
+        "op": "set_question",
+        "question": {
+          "affirmative": true,
+          "answer_type": "presence",
+          "interviewable": true,
+          "reason": null,
+          "text": "수면제를 줄이거나 끊으려다 실패한 적이 있나요?",
+          "time_context": "past",
+          "units": []
+        },
+        "role": null
+      },
+      {
+        "before_hash": null,
+        "key": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+        "op": "set_question",
+        "question": {
+          "affirmative": false,
+          "answer_type": "category",
+          "interviewable": true,
+          "reason": null,
+          "text": "아이의 키 성장은 시간이 지나며 어떻게 변했나요?",
+          "time_context": "current",
+          "units": []
+        },
+        "role": {
+          "attribute_id": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+          "before_hash": null,
+          "value": {
+            "category": "course",
+            "clarification": "시간에 따른 선형 성장 변화를 확인합니다.",
+            "order": 0
+          }
+        }
+      },
+      {
+        "before_hash": null,
+        "key": "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f",
+        "op": "set_question",
+        "question": {
+          "affirmative": false,
+          "answer_type": "quantity",
+          "interviewable": true,
+          "reason": null,
+          "text": "아이의 키 성장 속도는 얼마인가요?",
+          "time_context": "current",
+          "units": [
+            "cm/year"
+          ]
+        },
+        "role": {
+          "attribute_id": "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f",
+          "before_hash": null,
+          "value": {
+            "category": "measurement",
+            "clarification": "측정된 키 성장 속도를 기록합니다.",
+            "order": 0
+          }
+        }
+      },
+      {
+        "before_hash": null,
+        "key": "urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb",
+        "op": "set_question",
+        "question": {
+          "affirmative": true,
+          "answer_type": "presence",
+          "interviewable": true,
+          "reason": null,
+          "text": "부모 중 키가 작았던 분이 있나요? 누구인가요?",
+          "time_context": "past",
+          "units": []
+        },
+        "role": null
+      }
+    ],
+    "value_matches": [],
+    "version": "augmentation-delta-1"
+  },
+  "uri_mapping": {
+    "new:attribute:height_velocity": "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f",
+    "new:attribute:linear_growth_trajectory": "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54",
+    "new:context:family_late_growth_maturation": "urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6",
+    "new:context:parental_short_stature": "urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb",
+    "new:context_hypnotic_use_despite_harm": "urn:ontoward:ContextFactorc37f961cf64713c65da20d3c",
+    "new:context_unsuccessful_hypnotic_reduction": "urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e",
+    "new:disease:constitutional_growth_delay": "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+    "new:disease:familial_short_stature": "urn:ontoward:Disease3708e7a9477c752e596cc31e",
+    "new:disease_sedative_hypnotic_anxiolytic_use_disorder": "urn:ontoward:Disease17541b38c5aba0a66869e066",
+    "new:value:declining_linear_growth_trajectory": "urn:ontoward:AttributeValue05caa5b4a700abad74871d88",
+    "new:value_stable_linear_growth_trajectory": "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9"
+  },
+  "changes": {
+    "added_concepts": [
+      "urn:ontoward:AttributeValue05caa5b4a700abad74871d88",
+      "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+      "urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6",
+      "urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e",
+      "urn:ontoward:ContextFactorc37f961cf64713c65da20d3c",
+      "urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb",
+      "urn:ontoward:Disease17541b38c5aba0a66869e066",
+      "urn:ontoward:Disease3708e7a9477c752e596cc31e",
+      "urn:ontoward:Disease69136afd8cde96aed76bde5f",
+      "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f",
+      "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54"
+    ],
+    "added_relations": 12,
+    "changed_parent_associations": [
+      "urn:ontoward:Association1777b0ba6c02672a3ab8fe19",
+      "urn:ontoward:Association74883692586f4c50de0a3656",
+      "urn:ontoward:Association874702ab8c54b92b2e9dec56",
+      "urn:ontoward:Associationad58f576dae61156cd0f2a4f"
+    ],
+    "duplicate_relations_skipped": 0,
+    "extended_concepts": [
+      "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+      "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+    ],
+    "global_question_impacts": {
+      "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f": [
+        "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+      ],
+      "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54": [
+        "urn:ontoward:AttributeValue05caa5b4a700abad74871d88",
+        "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+        "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+      ]
+    },
+    "neutral_relations": 4,
+    "question_keys": [
+      "urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6",
+      "urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e",
+      "urn:ontoward:ContextFactorc37f961cf64713c65da20d3c",
+      "urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb",
+      "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f",
+      "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54"
+    ],
+    "replaced_associations": [
+      "urn:ontoward:Association1777b0ba6c02672a3ab8fe19",
+      "urn:ontoward:Association1ccf825b2a7780a909a865eb",
+      "urn:ontoward:Association74883692586f4c50de0a3656",
+      "urn:ontoward:Association874702ab8c54b92b2e9dec56",
+      "urn:ontoward:Associationad58f576dae61156cd0f2a4f"
+    ],
+    "role_impacts": {
+      "urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f": [
+        "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+      ],
+      "urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54": [
+        "urn:ontoward:AttributeValue05caa5b4a700abad74871d88",
+        "urn:ontoward:AttributeValue80aa205419f911a5bf023ea9",
+        "urn:ontoward:Symptom80df3ff49a69ca10ea6b977a",
+        "urn:ontoward:Symptom8fb34cbc486f364fc62a3243"
+      ]
+    }
+  },
+  "rdf_changes": {
+    "clinical": {
+      "added": [
+        "<urn:ontoward:Association0d8a0462d73681ecbc55b55d> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Association0d8a0462d73681ecbc55b55d> <urn:ontoward:applicability> \"[]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association0d8a0462d73681ecbc55b55d> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Association0d8a0462d73681ecbc55b55d> <urn:ontoward:pattern> <urn:ontoward:Patternf65c6e72c4a0719f2fc2f476> .",
+        "<urn:ontoward:Association0d8a0462d73681ecbc55b55d> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association0fa36b7c6dbf858356a39512> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Association0fa36b7c6dbf858356a39512> <urn:ontoward:applicability> \"[{\\\"concept_id\\\":\\\"urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb\\\",\\\"status\\\":\\\"present\\\",\\\"subject\\\":\\\"family\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"past\\\"}]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association0fa36b7c6dbf858356a39512> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Association0fa36b7c6dbf858356a39512> <urn:ontoward:pattern> <urn:ontoward:Patterna17565d5d45a25b9e986c58a> .",
+        "<urn:ontoward:Association0fa36b7c6dbf858356a39512> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association1a734928c48154d2e5182a1e> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Association1a734928c48154d2e5182a1e> <urn:ontoward:applicability> \"[{\\\"concept_id\\\":\\\"urn:ontoward:ContextFactorcd20de103d2e1b1b907d70cb\\\",\\\"status\\\":\\\"present\\\",\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association1a734928c48154d2e5182a1e> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Association1a734928c48154d2e5182a1e> <urn:ontoward:pattern> <urn:ontoward:Patterna159a390d39d34d3ca35a41f> .",
+        "<urn:ontoward:Association1a734928c48154d2e5182a1e> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"past\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association1b60061cb60b9ee7ef9a0130> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Association1b60061cb60b9ee7ef9a0130> <urn:ontoward:applicability> \"[{\\\"concept_id\\\":\\\"urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e\\\",\\\"status\\\":\\\"present\\\",\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"past\\\"},{\\\"concept_id\\\":\\\"urn:ontoward:ContextFactorcd20de103d2e1b1b907d70cb\\\",\\\"status\\\":\\\"present\\\",\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association1b60061cb60b9ee7ef9a0130> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Association1b60061cb60b9ee7ef9a0130> <urn:ontoward:pattern> <urn:ontoward:Pattern8bfee766be3c5be0a02de8b3> .",
+        "<urn:ontoward:Association1b60061cb60b9ee7ef9a0130> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association391d0c8492da42cf7580b757> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Association391d0c8492da42cf7580b757> <urn:ontoward:applicability> \"[]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association391d0c8492da42cf7580b757> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Association391d0c8492da42cf7580b757> <urn:ontoward:pattern> <urn:ontoward:Pattern8ae246a6151c1ec2163f1118> .",
+        "<urn:ontoward:Association391d0c8492da42cf7580b757> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association3b5ce71177aca9f5c2fdd65b> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Association3b5ce71177aca9f5c2fdd65b> <urn:ontoward:applicability> \"[{\\\"concept_id\\\":\\\"urn:ontoward:ContextFactorcd20de103d2e1b1b907d70cb\\\",\\\"status\\\":\\\"present\\\",\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association3b5ce71177aca9f5c2fdd65b> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Association3b5ce71177aca9f5c2fdd65b> <urn:ontoward:pattern> <urn:ontoward:Pattern9b654ac402de517c4c82a1e3> .",
+        "<urn:ontoward:Association3b5ce71177aca9f5c2fdd65b> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"unspecified\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association529d4c1a695e8fd870f67ec0> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Association529d4c1a695e8fd870f67ec0> <urn:ontoward:applicability> \"[{\\\"concept_id\\\":\\\"urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb\\\",\\\"status\\\":\\\"present\\\",\\\"subject\\\":\\\"family\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"past\\\"}]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association529d4c1a695e8fd870f67ec0> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Association529d4c1a695e8fd870f67ec0> <urn:ontoward:pattern> <urn:ontoward:Patternf65c6e72c4a0719f2fc2f476> .",
+        "<urn:ontoward:Association529d4c1a695e8fd870f67ec0> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association5896807d39f9ee2f131aaf34> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Association5896807d39f9ee2f131aaf34> <urn:ontoward:applicability> \"[]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association5896807d39f9ee2f131aaf34> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Association5896807d39f9ee2f131aaf34> <urn:ontoward:pattern> <urn:ontoward:Pattern9d70dc6d17dbbcc36ec4c508> .",
+        "<urn:ontoward:Association5896807d39f9ee2f131aaf34> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association874702ab8c54b92b2e9dec56> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Associationa3d079002cb01a20588d6ad7> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Associationa3d079002cb01a20588d6ad7> <urn:ontoward:applicability> \"[{\\\"concept_id\\\":\\\"urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6\\\",\\\"status\\\":\\\"present\\\",\\\"subject\\\":\\\"family\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"past\\\"}]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Associationa3d079002cb01a20588d6ad7> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Associationa3d079002cb01a20588d6ad7> <urn:ontoward:pattern> <urn:ontoward:Patterna17565d5d45a25b9e986c58a> .",
+        "<urn:ontoward:Associationa3d079002cb01a20588d6ad7> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Associationcdb6971250dcce1da1aed678> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Associationcdb6971250dcce1da1aed678> <urn:ontoward:applicability> \"[]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Associationcdb6971250dcce1da1aed678> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Associationcdb6971250dcce1da1aed678> <urn:ontoward:pattern> <urn:ontoward:Patterna17565d5d45a25b9e986c58a> .",
+        "<urn:ontoward:Associationcdb6971250dcce1da1aed678> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Associatione2aae063704f6aa0ba5594c1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Associatione2aae063704f6aa0ba5594c1> <urn:ontoward:applicability> \"[{\\\"concept_id\\\":\\\"urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6\\\",\\\"status\\\":\\\"present\\\",\\\"subject\\\":\\\"family\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"past\\\"}]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Associatione2aae063704f6aa0ba5594c1> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Associatione2aae063704f6aa0ba5594c1> <urn:ontoward:pattern> <urn:ontoward:Patternf65c6e72c4a0719f2fc2f476> .",
+        "<urn:ontoward:Associatione2aae063704f6aa0ba5594c1> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Disease17541b38c5aba0a66869e066> <urn:ontoward:hasAssociation> <urn:ontoward:Association1a734928c48154d2e5182a1e> .",
+        "<urn:ontoward:Disease17541b38c5aba0a66869e066> <urn:ontoward:hasAssociation> <urn:ontoward:Association1b60061cb60b9ee7ef9a0130> .",
+        "<urn:ontoward:Disease17541b38c5aba0a66869e066> <urn:ontoward:hasAssociation> <urn:ontoward:Association3b5ce71177aca9f5c2fdd65b> .",
+        "<urn:ontoward:Disease3708e7a9477c752e596cc31e> <urn:ontoward:hasAssociation> <urn:ontoward:Association0fa36b7c6dbf858356a39512> .",
+        "<urn:ontoward:Disease3708e7a9477c752e596cc31e> <urn:ontoward:hasAssociation> <urn:ontoward:Association529d4c1a695e8fd870f67ec0> .",
+        "<urn:ontoward:Disease69136afd8cde96aed76bde5f> <urn:ontoward:hasAssociation> <urn:ontoward:Association0d8a0462d73681ecbc55b55d> .",
+        "<urn:ontoward:Disease69136afd8cde96aed76bde5f> <urn:ontoward:hasAssociation> <urn:ontoward:Associationa3d079002cb01a20588d6ad7> .",
+        "<urn:ontoward:Disease69136afd8cde96aed76bde5f> <urn:ontoward:hasAssociation> <urn:ontoward:Associationcdb6971250dcce1da1aed678> .",
+        "<urn:ontoward:Disease69136afd8cde96aed76bde5f> <urn:ontoward:hasAssociation> <urn:ontoward:Associatione2aae063704f6aa0ba5594c1> .",
+        "<urn:ontoward:Disease903e14e0b024d0656410feb5> <urn:ontoward:hasAssociation> <urn:ontoward:Association391d0c8492da42cf7580b757> .",
+        "<urn:ontoward:Disease903e14e0b024d0656410feb5> <urn:ontoward:hasAssociation> <urn:ontoward:Association5896807d39f9ee2f131aaf34> .",
+        "<urn:ontoward:Expected2fd062e5847feb713e3d3cce> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ExpectedValue> .",
+        "<urn:ontoward:Expected2fd062e5847feb713e3d3cce> <urn:ontoward:valueJSON> \"{\\\"approximate\\\":false,\\\"concept\\\":\\\"urn:ontoward:AttributeValue05caa5b4a700abad74871d88\\\",\\\"concepts\\\":[],\\\"kind\\\":\\\"concept\\\",\\\"lower_inclusive\\\":true,\\\"match\\\":\\\"exact\\\",\\\"operator\\\":\\\"eq\\\",\\\"selection\\\":\\\"any_of\\\",\\\"upper_inclusive\\\":true}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Expectede717c3f3228cb29f7c398962> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ExpectedValue> .",
+        "<urn:ontoward:Expectede717c3f3228cb29f7c398962> <urn:ontoward:valueJSON> \"{\\\"approximate\\\":false,\\\"concept\\\":\\\"urn:ontoward:AttributeValue80aa205419f911a5bf023ea9\\\",\\\"concepts\\\":[],\\\"kind\\\":\\\"concept\\\",\\\"lower_inclusive\\\":true,\\\"match\\\":\\\"exact\\\",\\\"operator\\\":\\\"eq\\\",\\\"selection\\\":\\\"any_of\\\",\\\"upper_inclusive\\\":true}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Feature08b9800dd0f84e83d02d95f8> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalFeature> .",
+        "<urn:ontoward:Feature08b9800dd0f84e83d02d95f8> <urn:ontoward:expectedStatus> \"present\" .",
+        "<urn:ontoward:Feature4a5f01c9d814f66ad61ec9f3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalFeature> .",
+        "<urn:ontoward:Feature4a5f01c9d814f66ad61ec9f3> <urn:ontoward:expectedStatus> \"present\" .",
+        "<urn:ontoward:Feature57cdcd83ad24c8bac0bb2a71> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalFeature> .",
+        "<urn:ontoward:Feature57cdcd83ad24c8bac0bb2a71> <urn:ontoward:expectedStatus> \"present\" .",
+        "<urn:ontoward:Feature8d045a48dca1fda062aee365> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalFeature> .",
+        "<urn:ontoward:Feature8d045a48dca1fda062aee365> <urn:ontoward:expectedStatus> \"present\" .",
+        "<urn:ontoward:Featurea9e76242d57263543b0ad371> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalFeature> .",
+        "<urn:ontoward:Featurea9e76242d57263543b0ad371> <urn:ontoward:expected> <urn:ontoward:Expectede717c3f3228cb29f7c398962> .",
+        "<urn:ontoward:Featurea9e76242d57263543b0ad371> <urn:ontoward:onAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> .",
+        "<urn:ontoward:Featureadb2c542811e20dbeddc5729> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalFeature> .",
+        "<urn:ontoward:Featureadb2c542811e20dbeddc5729> <urn:ontoward:expected> <urn:ontoward:Expected2fd062e5847feb713e3d3cce> .",
+        "<urn:ontoward:Featureadb2c542811e20dbeddc5729> <urn:ontoward:expectedStatus> \"present\" .",
+        "<urn:ontoward:Featureadb2c542811e20dbeddc5729> <urn:ontoward:onAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> .",
+        "<urn:ontoward:Featurecb058a937ae5935557dd621e> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalFeature> .",
+        "<urn:ontoward:Featurecb058a937ae5935557dd621e> <urn:ontoward:expectedStatus> \"present\" .",
+        "<urn:ontoward:Featured4d739de688f51db83780841> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalFeature> .",
+        "<urn:ontoward:Featured4d739de688f51db83780841> <urn:ontoward:expected> <urn:ontoward:Expectede717c3f3228cb29f7c398962> .",
+        "<urn:ontoward:Featured4d739de688f51db83780841> <urn:ontoward:onAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> .",
+        "<urn:ontoward:Featuredff3255a33cfb5aa573fc9a1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalFeature> .",
+        "<urn:ontoward:Featuredff3255a33cfb5aa573fc9a1> <urn:ontoward:expected> <urn:ontoward:Expected2fd062e5847feb713e3d3cce> .",
+        "<urn:ontoward:Featuredff3255a33cfb5aa573fc9a1> <urn:ontoward:expectedStatus> \"present\" .",
+        "<urn:ontoward:Featuredff3255a33cfb5aa573fc9a1> <urn:ontoward:onAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> .",
+        "<urn:ontoward:Featuref060f0447911413bd4041e03> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalFeature> .",
+        "<urn:ontoward:Featuref060f0447911413bd4041e03> <urn:ontoward:expectedStatus> \"present\" .",
+        "<urn:ontoward:Pattern8ae246a6151c1ec2163f1118> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalPattern> .",
+        "<urn:ontoward:Pattern8ae246a6151c1ec2163f1118> <urn:ontoward:hasFeature> <urn:ontoward:Feature57cdcd83ad24c8bac0bb2a71> .",
+        "<urn:ontoward:Pattern8ae246a6151c1ec2163f1118> <urn:ontoward:hasFeature> <urn:ontoward:Featureadb2c542811e20dbeddc5729> .",
+        "<urn:ontoward:Pattern8ae246a6151c1ec2163f1118> <urn:ontoward:targets> <urn:ontoward:Symptom8fb34cbc486f364fc62a3243> .",
+        "<urn:ontoward:Pattern9b654ac402de517c4c82a1e3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalPattern> .",
+        "<urn:ontoward:Pattern9b654ac402de517c4c82a1e3> <urn:ontoward:hasFeature> <urn:ontoward:Featurecb058a937ae5935557dd621e> .",
+        "<urn:ontoward:Pattern9b654ac402de517c4c82a1e3> <urn:ontoward:targets> <urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> .",
+        "<urn:ontoward:Pattern9d70dc6d17dbbcc36ec4c508> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalPattern> .",
+        "<urn:ontoward:Pattern9d70dc6d17dbbcc36ec4c508> <urn:ontoward:hasFeature> <urn:ontoward:Featuredff3255a33cfb5aa573fc9a1> .",
+        "<urn:ontoward:Pattern9d70dc6d17dbbcc36ec4c508> <urn:ontoward:hasFeature> <urn:ontoward:Featuref060f0447911413bd4041e03> .",
+        "<urn:ontoward:Pattern9d70dc6d17dbbcc36ec4c508> <urn:ontoward:targets> <urn:ontoward:Symptom80df3ff49a69ca10ea6b977a> .",
+        "<urn:ontoward:Patterna159a390d39d34d3ca35a41f> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalPattern> .",
+        "<urn:ontoward:Patterna159a390d39d34d3ca35a41f> <urn:ontoward:hasFeature> <urn:ontoward:Feature8d045a48dca1fda062aee365> .",
+        "<urn:ontoward:Patterna159a390d39d34d3ca35a41f> <urn:ontoward:targets> <urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> .",
+        "<urn:ontoward:Patterna17565d5d45a25b9e986c58a> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalPattern> .",
+        "<urn:ontoward:Patterna17565d5d45a25b9e986c58a> <urn:ontoward:hasFeature> <urn:ontoward:Feature4a5f01c9d814f66ad61ec9f3> .",
+        "<urn:ontoward:Patterna17565d5d45a25b9e986c58a> <urn:ontoward:hasFeature> <urn:ontoward:Featurea9e76242d57263543b0ad371> .",
+        "<urn:ontoward:Patterna17565d5d45a25b9e986c58a> <urn:ontoward:targets> <urn:ontoward:Symptom80df3ff49a69ca10ea6b977a> .",
+        "<urn:ontoward:Patternf65c6e72c4a0719f2fc2f476> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ClinicalPattern> .",
+        "<urn:ontoward:Patternf65c6e72c4a0719f2fc2f476> <urn:ontoward:hasFeature> <urn:ontoward:Feature08b9800dd0f84e83d02d95f8> .",
+        "<urn:ontoward:Patternf65c6e72c4a0719f2fc2f476> <urn:ontoward:hasFeature> <urn:ontoward:Featured4d739de688f51db83780841> .",
+        "<urn:ontoward:Patternf65c6e72c4a0719f2fc2f476> <urn:ontoward:targets> <urn:ontoward:Symptom8fb34cbc486f364fc62a3243> ."
+      ],
+      "removed": [
+        "<urn:ontoward:Association1777b0ba6c02672a3ab8fe19> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Association1777b0ba6c02672a3ab8fe19> <urn:ontoward:applicability> \"[]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association1777b0ba6c02672a3ab8fe19> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Association1777b0ba6c02672a3ab8fe19> <urn:ontoward:pattern> <urn:ontoward:Pattern1b84d841135feac601699efb> .",
+        "<urn:ontoward:Association1777b0ba6c02672a3ab8fe19> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association74883692586f4c50de0a3656> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Association74883692586f4c50de0a3656> <urn:ontoward:applicability> \"[]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association74883692586f4c50de0a3656> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Association74883692586f4c50de0a3656> <urn:ontoward:pattern> <urn:ontoward:Patterna50c44e88f6b6fd0739b407d> .",
+        "<urn:ontoward:Association74883692586f4c50de0a3656> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Association874702ab8c54b92b2e9dec56> <urn:ontoward:diagnosticEffect> \"strong_support\" .",
+        "<urn:ontoward:Associationad58f576dae61156cd0f2a4f> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:DiseasePatternAssociation> .",
+        "<urn:ontoward:Associationad58f576dae61156cd0f2a4f> <urn:ontoward:applicability> \"[]\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Associationad58f576dae61156cd0f2a4f> <urn:ontoward:diagnosticEffect> \"support\" .",
+        "<urn:ontoward:Associationad58f576dae61156cd0f2a4f> <urn:ontoward:pattern> <urn:ontoward:Pattern48e0d376833e882e5258cf1e> .",
+        "<urn:ontoward:Associationad58f576dae61156cd0f2a4f> <urn:ontoward:targetScope> \"{\\\"subject\\\":\\\"patient\\\",\\\"subject_member\\\":null,\\\"time_context\\\":\\\"current\\\"}\"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON> .",
+        "<urn:ontoward:Disease903e14e0b024d0656410feb5> <urn:ontoward:hasAssociation> <urn:ontoward:Association1777b0ba6c02672a3ab8fe19> .",
+        "<urn:ontoward:Disease903e14e0b024d0656410feb5> <urn:ontoward:hasAssociation> <urn:ontoward:Association74883692586f4c50de0a3656> .",
+        "<urn:ontoward:Disease903e14e0b024d0656410feb5> <urn:ontoward:hasAssociation> <urn:ontoward:Associationad58f576dae61156cd0f2a4f> ."
+      ]
+    },
+    "vocabulary": {
+      "added": [
+        "<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:AttributeValue> .",
+        "<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <http://www.w3.org/2000/01/rdf-schema#label> \"Declining linear growth trajectory\"@en .",
+        "<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <http://www.w3.org/2000/01/rdf-schema#label> \"선형 성장 경과 저하\"@ko .",
+        "<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <http://www.w3.org/2004/02/skos/core#altLabel> \"Declining growth trajectory\" .",
+        "<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <http://www.w3.org/2004/02/skos/core#altLabel> \"Decreasing linear growth\" .",
+        "<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> .",
+        "<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:AttributeValue> .",
+        "<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <http://www.w3.org/2000/01/rdf-schema#label> \"Stable linear growth trajectory\"@en .",
+        "<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <http://www.w3.org/2000/01/rdf-schema#label> \"안정적인 선형 성장 경과\"@ko .",
+        "<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <http://www.w3.org/2004/02/skos/core#altLabel> \"Maintained linear growth trajectory\" .",
+        "<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <http://www.w3.org/2004/02/skos/core#altLabel> \"Stable growth trajectory\" .",
+        "<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> .",
+        "<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .",
+        "<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <http://www.w3.org/2000/01/rdf-schema#label> \"Family history of late growth or maturation\"@en .",
+        "<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <http://www.w3.org/2000/01/rdf-schema#label> \"가족의 성장 또는 성숙 지연 병력\"@ko .",
+        "<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <http://www.w3.org/2004/02/skos/core#altLabel> \"Family history of delayed growth or maturation\" .",
+        "<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <http://www.w3.org/2004/02/skos/core#altLabel> \"Family history of late puberty\" .",
+        "<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <urn:ontoward:contextType> \"family_history\" .",
+        "<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .",
+        "<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <http://www.w3.org/2000/01/rdf-schema#label> \"Unsuccessful attempts to reduce hypnotic use\"@en .",
+        "<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <http://www.w3.org/2000/01/rdf-schema#label> \"수면제 사용을 줄이거나 중단하려 했으나 실패함\"@ko .",
+        "<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <http://www.w3.org/2004/02/skos/core#altLabel> \"Failed attempts to cut down or stop hypnotic use\" .",
+        "<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <http://www.w3.org/2004/02/skos/core#altLabel> \"Unable to reduce hypnotic use\" .",
+        "<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <urn:ontoward:contextType> \"medication_history\" .",
+        "<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .",
+        "<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <http://www.w3.org/2000/01/rdf-schema#label> \"Continued hypnotic use despite harm\"@en .",
+        "<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <http://www.w3.org/2000/01/rdf-schema#label> \"유해한 결과에도 수면제 사용 지속\"@ko .",
+        "<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <http://www.w3.org/2004/02/skos/core#altLabel> \"Continued hypnotic use despite adverse consequences\" .",
+        "<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <http://www.w3.org/2004/02/skos/core#altLabel> \"Persistent hypnotic use despite harm\" .",
+        "<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <urn:ontoward:contextType> \"medication_history\" .",
+        "<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .",
+        "<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <http://www.w3.org/2000/01/rdf-schema#label> \"Parental short stature\"@en .",
+        "<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <http://www.w3.org/2000/01/rdf-schema#label> \"부모의 저신장 병력\"@ko .",
+        "<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <http://www.w3.org/2004/02/skos/core#altLabel> \"Parental history of short stature\" .",
+        "<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <http://www.w3.org/2004/02/skos/core#altLabel> \"Short stature in a parent\" .",
+        "<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <urn:ontoward:contextType> \"family_history\" .",
+        "<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:Disease> .",
+        "<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2000/01/rdf-schema#label> \"Sedative, hypnotic, or anxiolytic use disorder\"@en .",
+        "<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2000/01/rdf-schema#label> \"진정제·수면제·항불안제 사용장애\"@ko .",
+        "<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2004/02/skos/core#altLabel> \"Anxiolytic use disorder\" .",
+        "<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2004/02/skos/core#altLabel> \"Hypnotic use disorder\" .",
+        "<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2004/02/skos/core#altLabel> \"Sedative use disorder\" .",
+        "<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2004/02/skos/core#altLabel> \"Sedative, hypnotic, or anxiolytic use disorder\" .",
+        "<urn:ontoward:Disease3708e7a9477c752e596cc31e> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:Disease> .",
+        "<urn:ontoward:Disease3708e7a9477c752e596cc31e> <http://www.w3.org/2000/01/rdf-schema#label> \"Familial short stature\"@en .",
+        "<urn:ontoward:Disease3708e7a9477c752e596cc31e> <http://www.w3.org/2000/01/rdf-schema#label> \"가족성 저신장\"@ko .",
+        "<urn:ontoward:Disease3708e7a9477c752e596cc31e> <http://www.w3.org/2004/02/skos/core#altLabel> \"Familial short stature\" .",
+        "<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:Disease> .",
+        "<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/2000/01/rdf-schema#label> \"Constitutional growth delay\"@en .",
+        "<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/2000/01/rdf-schema#label> \"체질성 성장 및 사춘기 지연\"@ko .",
+        "<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/2004/02/skos/core#altLabel> \"CDGP\" .",
+        "<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/2004/02/skos/core#altLabel> \"Constitutional delay of growth and puberty\" .",
+        "<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/2004/02/skos/core#altLabel> \"Constitutional growth and pubertal delay\" .",
+        "<urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:FindingAttribute> .",
+        "<urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> <http://www.w3.org/2000/01/rdf-schema#label> \"Height velocity\"@en .",
+        "<urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> <http://www.w3.org/2000/01/rdf-schema#label> \"키 성장 속도\"@ko .",
+        "<urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> <http://www.w3.org/2004/02/skos/core#altLabel> \"Height growth velocity\" .",
+        "<urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> <http://www.w3.org/2004/02/skos/core#altLabel> \"Linear growth rate\" .",
+        "<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:FindingAttribute> .",
+        "<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <http://www.w3.org/2000/01/rdf-schema#label> \"Linear growth trajectory\"@en .",
+        "<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <http://www.w3.org/2000/01/rdf-schema#label> \"선형 성장 경과\"@ko .",
+        "<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <http://www.w3.org/2004/02/skos/core#altLabel> \"Growth trajectory\" .",
+        "<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <http://www.w3.org/2004/02/skos/core#altLabel> \"Linear growth pattern\" .",
+        "<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <urn:ontoward:canHaveValue> <urn:ontoward:AttributeValue05caa5b4a700abad74871d88> .",
+        "<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <urn:ontoward:canHaveValue> <urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> .",
+        "<urn:ontoward:Symptom80df3ff49a69ca10ea6b977a> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> .",
+        "<urn:ontoward:Symptom80df3ff49a69ca10ea6b977a> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> .",
+        "<urn:ontoward:Symptom8fb34cbc486f364fc62a3243> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> .",
+        "<urn:ontoward:Symptom8fb34cbc486f364fc62a3243> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> ."
+      ],
+      "removed": []
+    }
+  },
+  "source_history_boundary": "Accepted typed results from this new run only. Parent runtime RDF does not recover historical neutral judgments or responses.",
+  "disposal_boundary": "This compact accepted delta and URI mapping are retained for audit. The raw Jobs checkpoints and plans are disposed by explicit user request and are unavailable for resume or rebuild commands."
+}

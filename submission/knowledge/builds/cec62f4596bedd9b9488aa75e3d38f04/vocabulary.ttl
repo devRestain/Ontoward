@@ -319,6 +319,12 @@
 <urn:ontoward:AttributeValue05222ab315d6bad882ee1cb5> <http://www.w3.org/2000/01/rdf-schema#label> "Less than 10% over 6 months"@en .
 <urn:ontoward:AttributeValue05222ab315d6bad882ee1cb5> <http://www.w3.org/2004/02/skos/core#altLabel> "6개월 동안 10% 미만의 증가" .
 <urn:ontoward:AttributeValue05222ab315d6bad882ee1cb5> <http://www.w3.org/2004/02/skos/core#altLabel> "<10% in 6 months" .
+<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:AttributeValue> .
+<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <http://www.w3.org/2000/01/rdf-schema#label> "Declining linear growth trajectory"@en .
+<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <http://www.w3.org/2000/01/rdf-schema#label> "선형 성장 경과 저하"@ko .
+<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <http://www.w3.org/2004/02/skos/core#altLabel> "Declining growth trajectory" .
+<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <http://www.w3.org/2004/02/skos/core#altLabel> "Decreasing linear growth" .
+<urn:ontoward:AttributeValue05caa5b4a700abad74871d88> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> .
 <urn:ontoward:AttributeValue061964d2aaaf2c1910f34964> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:AttributeValue> .
 <urn:ontoward:AttributeValue061964d2aaaf2c1910f34964> <http://www.w3.org/2000/01/rdf-schema#label> "Localized edema"@en .
 <urn:ontoward:AttributeValue061964d2aaaf2c1910f34964> <http://www.w3.org/2000/01/rdf-schema#label> "국소 부종"@ko .
@@ -6982,6 +6988,12 @@
 <urn:ontoward:AttributeValue803bb855f827191a4eb4d785> <http://www.w3.org/2000/01/rdf-schema#label> "음경 배면"@ko .
 <urn:ontoward:AttributeValue803bb855f827191a4eb4d785> <http://www.w3.org/2004/02/skos/core#altLabel> "Ventral penis" .
 <urn:ontoward:AttributeValue803bb855f827191a4eb4d785> <http://www.w3.org/2004/02/skos/core#altLabel> "음경의 배쪽" .
+<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:AttributeValue> .
+<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <http://www.w3.org/2000/01/rdf-schema#label> "Stable linear growth trajectory"@en .
+<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <http://www.w3.org/2000/01/rdf-schema#label> "안정적인 선형 성장 경과"@ko .
+<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <http://www.w3.org/2004/02/skos/core#altLabel> "Maintained linear growth trajectory" .
+<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <http://www.w3.org/2004/02/skos/core#altLabel> "Stable growth trajectory" .
+<urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> .
 <urn:ontoward:AttributeValue80aaaec1e2086c42adc2d5d5> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:AttributeValue> .
 <urn:ontoward:AttributeValue80aaaec1e2086c42adc2d5d5> <http://www.w3.org/2000/01/rdf-schema#label> "Forearm"@en .
 <urn:ontoward:AttributeValue80aaaec1e2086c42adc2d5d5> <http://www.w3.org/2000/01/rdf-schema#label> "전완"@ko .
@@ -16204,6 +16216,12 @@
 <urn:ontoward:ContextFactor3b399149cab125039598b24c> <http://www.w3.org/2004/02/skos/core#altLabel> "결핵 접촉력" .
 <urn:ontoward:ContextFactor3b399149cab125039598b24c> <http://www.w3.org/2004/02/skos/core#altLabel> "결핵환자 접촉" .
 <urn:ontoward:ContextFactor3b399149cab125039598b24c> <urn:ontoward:contextType> "social_history" .
+<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .
+<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <http://www.w3.org/2000/01/rdf-schema#label> "Family history of late growth or maturation"@en .
+<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <http://www.w3.org/2000/01/rdf-schema#label> "가족의 성장 또는 성숙 지연 병력"@ko .
+<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <http://www.w3.org/2004/02/skos/core#altLabel> "Family history of delayed growth or maturation" .
+<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <http://www.w3.org/2004/02/skos/core#altLabel> "Family history of late puberty" .
+<urn:ontoward:ContextFactor3cbef98f10401dff2d109cb6> <urn:ontoward:contextType> "family_history" .
 <urn:ontoward:ContextFactor3fc8cd1b44ac86babea865b6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .
 <urn:ontoward:ContextFactor3fc8cd1b44ac86babea865b6> <http://www.w3.org/2000/01/rdf-schema#label> "4명 이상의 사람과 함께 거주함"@ko .
 <urn:ontoward:ContextFactor3fc8cd1b44ac86babea865b6> <http://www.w3.org/2000/01/rdf-schema#label> "Lives with four or more people"@en .
@@ -16740,6 +16758,12 @@
 <urn:ontoward:ContextFactor79438ade6b8a30f9be5c939f> <http://www.w3.org/2004/02/skos/core#altLabel> "Kneeling for a prolonged period" .
 <urn:ontoward:ContextFactor79438ade6b8a30f9be5c939f> <http://www.w3.org/2004/02/skos/core#altLabel> "장시간 무릎을 꿇고 있음" .
 <urn:ontoward:ContextFactor79438ade6b8a30f9be5c939f> <urn:ontoward:contextType> "social_history" .
+<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .
+<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <http://www.w3.org/2000/01/rdf-schema#label> "Unsuccessful attempts to reduce hypnotic use"@en .
+<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <http://www.w3.org/2000/01/rdf-schema#label> "수면제 사용을 줄이거나 중단하려 했으나 실패함"@ko .
+<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <http://www.w3.org/2004/02/skos/core#altLabel> "Failed attempts to cut down or stop hypnotic use" .
+<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <http://www.w3.org/2004/02/skos/core#altLabel> "Unable to reduce hypnotic use" .
+<urn:ontoward:ContextFactor794fd0ba7fb86a0d01dece5e> <urn:ontoward:contextType> "medication_history" .
 <urn:ontoward:ContextFactor799c281492c66cab5089f126> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .
 <urn:ontoward:ContextFactor799c281492c66cab5089f126> <http://www.w3.org/2000/01/rdf-schema#label> "Family history of narcolepsy"@en .
 <urn:ontoward:ContextFactor799c281492c66cab5089f126> <http://www.w3.org/2000/01/rdf-schema#label> "가족력: 기면증"@ko .
@@ -17524,6 +17548,12 @@
 <urn:ontoward:ContextFactorc3738d607d64f947ffd2b652> <http://www.w3.org/2004/02/skos/core#altLabel> "Anemia in a family member" .
 <urn:ontoward:ContextFactorc3738d607d64f947ffd2b652> <http://www.w3.org/2004/02/skos/core#altLabel> "가족 구성원의 빈혈 병력" .
 <urn:ontoward:ContextFactorc3738d607d64f947ffd2b652> <urn:ontoward:contextType> "family_history" .
+<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .
+<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <http://www.w3.org/2000/01/rdf-schema#label> "Continued hypnotic use despite harm"@en .
+<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <http://www.w3.org/2000/01/rdf-schema#label> "유해한 결과에도 수면제 사용 지속"@ko .
+<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <http://www.w3.org/2004/02/skos/core#altLabel> "Continued hypnotic use despite adverse consequences" .
+<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <http://www.w3.org/2004/02/skos/core#altLabel> "Persistent hypnotic use despite harm" .
+<urn:ontoward:ContextFactorc37f961cf64713c65da20d3c> <urn:ontoward:contextType> "medication_history" .
 <urn:ontoward:ContextFactorc3a8e471801ee1e32fe4555b> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .
 <urn:ontoward:ContextFactorc3a8e471801ee1e32fe4555b> <http://www.w3.org/2000/01/rdf-schema#label> "Corticosteroid use"@en .
 <urn:ontoward:ContextFactorc3a8e471801ee1e32fe4555b> <http://www.w3.org/2000/01/rdf-schema#label> "코르티코스테로이드 사용"@ko .
@@ -18006,6 +18036,12 @@
 <urn:ontoward:ContextFactoreefa03aac0df2c2840fa05b9> <http://www.w3.org/2004/02/skos/core#altLabel> "Frequent nasal decongestant use" .
 <urn:ontoward:ContextFactoreefa03aac0df2c2840fa05b9> <http://www.w3.org/2004/02/skos/core#altLabel> "반복적인 비충혈 제거제 사용" .
 <urn:ontoward:ContextFactoreefa03aac0df2c2840fa05b9> <urn:ontoward:contextType> "medication_history" .
+<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .
+<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <http://www.w3.org/2000/01/rdf-schema#label> "Parental short stature"@en .
+<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <http://www.w3.org/2000/01/rdf-schema#label> "부모의 저신장 병력"@ko .
+<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <http://www.w3.org/2004/02/skos/core#altLabel> "Parental history of short stature" .
+<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <http://www.w3.org/2004/02/skos/core#altLabel> "Short stature in a parent" .
+<urn:ontoward:ContextFactoref0ad3be808aa9b3e391b7bb> <urn:ontoward:contextType> "family_history" .
 <urn:ontoward:ContextFactoref2fbbea40f1e7996db725f7> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:ContextFactor> .
 <urn:ontoward:ContextFactoref2fbbea40f1e7996db725f7> <http://www.w3.org/2000/01/rdf-schema#label> "History of Crohn disease or ulcerative colitis"@en .
 <urn:ontoward:ContextFactoref2fbbea40f1e7996db725f7> <http://www.w3.org/2000/01/rdf-schema#label> "크론병 또는 궤양성 대장염 병력"@ko .
@@ -18857,6 +18893,13 @@
 <urn:ontoward:Disease16f9e497414773ae942b6085> <http://www.w3.org/2004/02/skos/core#altLabel> "Intracerebral haemorrhage" .
 <urn:ontoward:Disease16f9e497414773ae942b6085> <http://www.w3.org/2004/02/skos/core#altLabel> "뇌실질내 출혈" .
 <urn:ontoward:Disease16f9e497414773ae942b6085> <http://www.w3.org/2004/02/skos/core#altLabel> "뇌실질내출혈" .
+<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:Disease> .
+<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2000/01/rdf-schema#label> "Sedative, hypnotic, or anxiolytic use disorder"@en .
+<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2000/01/rdf-schema#label> "진정제·수면제·항불안제 사용장애"@ko .
+<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2004/02/skos/core#altLabel> "Anxiolytic use disorder" .
+<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2004/02/skos/core#altLabel> "Hypnotic use disorder" .
+<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2004/02/skos/core#altLabel> "Sedative use disorder" .
+<urn:ontoward:Disease17541b38c5aba0a66869e066> <http://www.w3.org/2004/02/skos/core#altLabel> "Sedative, hypnotic, or anxiolytic use disorder" .
 <urn:ontoward:Disease17789c724ef2a45b033e89f1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:Disease> .
 <urn:ontoward:Disease17789c724ef2a45b033e89f1> <http://www.w3.org/2000/01/rdf-schema#label> "Threatened abortion"@en .
 <urn:ontoward:Disease17789c724ef2a45b033e89f1> <http://www.w3.org/2000/01/rdf-schema#label> "절박 유산"@ko .
@@ -19687,6 +19730,10 @@
 <urn:ontoward:Disease36bc34ff8ab8b44c745aab24> <http://www.w3.org/2000/01/rdf-schema#label> "Mucormycosis"@en .
 <urn:ontoward:Disease36bc34ff8ab8b44c745aab24> <http://www.w3.org/2000/01/rdf-schema#label> "털곰팡이증"@ko .
 <urn:ontoward:Disease36bc34ff8ab8b44c745aab24> <http://www.w3.org/2004/02/skos/core#altLabel> "Mucormycosis (disorder)" .
+<urn:ontoward:Disease3708e7a9477c752e596cc31e> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:Disease> .
+<urn:ontoward:Disease3708e7a9477c752e596cc31e> <http://www.w3.org/2000/01/rdf-schema#label> "Familial short stature"@en .
+<urn:ontoward:Disease3708e7a9477c752e596cc31e> <http://www.w3.org/2000/01/rdf-schema#label> "가족성 저신장"@ko .
+<urn:ontoward:Disease3708e7a9477c752e596cc31e> <http://www.w3.org/2004/02/skos/core#altLabel> "Familial short stature" .
 <urn:ontoward:Disease371ff10fcf66540e18ac28f3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:Disease> .
 <urn:ontoward:Disease371ff10fcf66540e18ac28f3> <http://www.w3.org/2000/01/rdf-schema#label> "Malignant neoplasm of colorectum"@en .
 <urn:ontoward:Disease371ff10fcf66540e18ac28f3> <http://www.w3.org/2000/01/rdf-schema#label> "대장직장암"@ko .
@@ -20846,6 +20893,12 @@
 <urn:ontoward:Disease683c5cae2ecdc93a864e6b92> <http://www.w3.org/2004/02/skos/core#altLabel> "Colorectal carcinoma" .
 <urn:ontoward:Disease683c5cae2ecdc93a864e6b92> <http://www.w3.org/2004/02/skos/core#altLabel> "결장직장암" .
 <urn:ontoward:Disease683c5cae2ecdc93a864e6b92> <http://www.w3.org/2004/02/skos/core#altLabel> "대장직장암" .
+<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:Disease> .
+<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/2000/01/rdf-schema#label> "Constitutional growth delay"@en .
+<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/2000/01/rdf-schema#label> "체질성 성장 및 사춘기 지연"@ko .
+<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/2004/02/skos/core#altLabel> "CDGP" .
+<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/2004/02/skos/core#altLabel> "Constitutional delay of growth and puberty" .
+<urn:ontoward:Disease69136afd8cde96aed76bde5f> <http://www.w3.org/2004/02/skos/core#altLabel> "Constitutional growth and pubertal delay" .
 <urn:ontoward:Disease69872b206418bee3893fa68b> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:Disease> .
 <urn:ontoward:Disease69872b206418bee3893fa68b> <http://www.w3.org/2000/01/rdf-schema#label> "Chronic cholecystitis"@en .
 <urn:ontoward:Disease69872b206418bee3893fa68b> <http://www.w3.org/2000/01/rdf-schema#label> "만성 담낭염"@ko .
@@ -30088,6 +30141,11 @@
 <urn:ontoward:FindingAttribute47e7c6169ae2fcaa5ccb82d3> <http://www.w3.org/2004/02/skos/core#altLabel> "Type of tremor" .
 <urn:ontoward:FindingAttribute47e7c6169ae2fcaa5ccb82d3> <http://www.w3.org/2004/02/skos/core#altLabel> "떨림의 유형" .
 <urn:ontoward:FindingAttribute47e7c6169ae2fcaa5ccb82d3> <urn:ontoward:canHaveValue> <urn:ontoward:AttributeValueec777c25d03d6c9b4713adf3> .
+<urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:FindingAttribute> .
+<urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> <http://www.w3.org/2000/01/rdf-schema#label> "Height velocity"@en .
+<urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> <http://www.w3.org/2000/01/rdf-schema#label> "키 성장 속도"@ko .
+<urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> <http://www.w3.org/2004/02/skos/core#altLabel> "Height growth velocity" .
+<urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> <http://www.w3.org/2004/02/skos/core#altLabel> "Linear growth rate" .
 <urn:ontoward:FindingAttribute496b66e37a0538ba8bc22537> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:FindingAttribute> .
 <urn:ontoward:FindingAttribute496b66e37a0538ba8bc22537> <http://www.w3.org/2000/01/rdf-schema#label> "Skin discoloration site"@en .
 <urn:ontoward:FindingAttribute496b66e37a0538ba8bc22537> <http://www.w3.org/2000/01/rdf-schema#label> "피부 변색 부위"@ko .
@@ -31616,6 +31674,13 @@
 <urn:ontoward:FindingAttribute89b1280c7ce1ac5e31f9814f> <http://www.w3.org/2004/02/skos/core#altLabel> "Joint sound quality" .
 <urn:ontoward:FindingAttribute89b1280c7ce1ac5e31f9814f> <http://www.w3.org/2004/02/skos/core#altLabel> "관절음 양상" .
 <urn:ontoward:FindingAttribute89b1280c7ce1ac5e31f9814f> <urn:ontoward:canHaveValue> <urn:ontoward:AttributeValuefa2ec9bc783c1a511db3ff92> .
+<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:FindingAttribute> .
+<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <http://www.w3.org/2000/01/rdf-schema#label> "Linear growth trajectory"@en .
+<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <http://www.w3.org/2000/01/rdf-schema#label> "선형 성장 경과"@ko .
+<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <http://www.w3.org/2004/02/skos/core#altLabel> "Growth trajectory" .
+<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <http://www.w3.org/2004/02/skos/core#altLabel> "Linear growth pattern" .
+<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <urn:ontoward:canHaveValue> <urn:ontoward:AttributeValue05caa5b4a700abad74871d88> .
+<urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> <urn:ontoward:canHaveValue> <urn:ontoward:AttributeValue80aa205419f911a5bf023ea9> .
 <urn:ontoward:FindingAttribute8a202b0596a4e19dc8a206c0> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:FindingAttribute> .
 <urn:ontoward:FindingAttribute8a202b0596a4e19dc8a206c0> <http://www.w3.org/2000/01/rdf-schema#label> "Exertional activity level"@en .
 <urn:ontoward:FindingAttribute8a202b0596a4e19dc8a206c0> <http://www.w3.org/2000/01/rdf-schema#label> "활동 강도"@ko .
@@ -43046,6 +43111,8 @@
 <urn:ontoward:Symptom80df3ff49a69ca10ea6b977a> <http://www.w3.org/2000/01/rdf-schema#label> "나이에 비해 작은 키"@ko .
 <urn:ontoward:Symptom80df3ff49a69ca10ea6b977a> <http://www.w3.org/2004/02/skos/core#altLabel> "Short stature for age (finding)" .
 <urn:ontoward:Symptom80df3ff49a69ca10ea6b977a> <http://www.w3.org/2004/02/skos/core#altLabel> "나이에 비해 단신" .
+<urn:ontoward:Symptom80df3ff49a69ca10ea6b977a> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> .
+<urn:ontoward:Symptom80df3ff49a69ca10ea6b977a> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> .
 <urn:ontoward:Symptom80df3ff49a69ca10ea6b977a> <urn:ontoward:inSystem> <urn:ontoward:BodySystem14324f27f5df56dae31d385b> .
 <urn:ontoward:Symptom80ec6ab53113d5edf191cf2e> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:Symptom> .
 <urn:ontoward:Symptom80ec6ab53113d5edf191cf2e> <http://www.w3.org/2000/01/rdf-schema#label> "Shoulder joint crepitus"@en .
@@ -43831,6 +43898,8 @@
 <urn:ontoward:Symptom8fb34cbc486f364fc62a3243> <http://www.w3.org/2004/02/skos/core#altLabel> "Complaint of being short" .
 <urn:ontoward:Symptom8fb34cbc486f364fc62a3243> <http://www.w3.org/2004/02/skos/core#altLabel> "또래보다 키가 작아요" .
 <urn:ontoward:Symptom8fb34cbc486f364fc62a3243> <http://www.w3.org/2004/02/skos/core#altLabel> "키가 작다고 호소함" .
+<urn:ontoward:Symptom8fb34cbc486f364fc62a3243> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute492244efaa4c8e7abf66c70f> .
+<urn:ontoward:Symptom8fb34cbc486f364fc62a3243> <urn:ontoward:hasAttribute> <urn:ontoward:FindingAttribute89fa3024c7bd76b6c5225f54> .
 <urn:ontoward:Symptom8fb34cbc486f364fc62a3243> <urn:ontoward:inSystem> <urn:ontoward:BodySystemabfdaedd004a4e914284a57a> .
 <urn:ontoward:Symptom902f4b4a4495c93e08b931f6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontoward:Symptom> .
 <urn:ontoward:Symptom902f4b4a4495c93e08b931f6> <http://www.w3.org/2000/01/rdf-schema#label> "Sensation of breathing stopping"@en .

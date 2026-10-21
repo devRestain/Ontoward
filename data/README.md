@@ -13,7 +13,9 @@ D49에서 기존 임상 DB의 **활성 사용을 철회**했다. 과거 원자�
 | preparation/·catalog/ | 보존된 과거 원천 custody·준비·수용 결과 |
 | provenance/ | 수행한 검증·소스·이미지·임시 artifact 신원 |
 
-새 추출은 [Extraction](../Extraction/README.md)의 네 원자료 경로에서 빈 작업 DB로 시작한다. 이전 생성 데이터·질문·어휘·source-custody SQLite와 Astra snapshot/정책을 새 정본으로 읽지 않는다. 한 fingerprint에는 공급자 하나만 사용하고 완료·neutral을 재호출하지 않는다. API/CLI 불명 전송은 운영자의 명시적 재시도 전까지 멈춘다.
+fresh 추출은 [Extraction](../Extraction/README.md)의 네 원자료 경로에서 빈 작업 DB로 시작한다. 이전 생성 데이터·질문·어휘·source-custody SQLite와 Astra snapshot/정책을 fresh 정본으로 읽지 않는다. 별도 D58 augmentation만 최신 활성 strict 번들을 부모로 사용한다. 한 fingerprint에는 공급자 하나만 사용하고 완료·neutral을 재호출하지 않는다. API/CLI 불명 전송은 운영자의 명시적 재시도 전까지 멈춘다.
+
+현재 활성 번들은 최신 부모 `1bcaba1dffb744c468bb191df3267dad`를 보완한 D58 child `cec62f4596bedd9b9488aa75e3d38f04`다. 개념 11개·실행 관계 9개·질문 6개를 추가하고 허용 부모 관계 4개를 변경했다. 실제 API 생성은 7회이며 [생성·보존·활성화 결과](provenance/augmentation-d58-2026-10-21.json)에 usage와 수행한 검증을 남겼다. 사용자 요청으로 이번 작업의 체크포인트·중복 DB/번들·임시 파일 518개(210.27 MiB)를 삭제하고 [정확한 삭제·보호 hash 명세](provenance/augmentation-d58-cleanup-2026-10-21.json)와 [typed delta·URI mapping](provenance/augmentation-d58-delta-2026-10-21.json)을 보존한다. 활성 번들과 기존 부모는 남으며 삭제한 plan·SQLite·원래 요청/응답은 재개할 수 없다. 실제 모델 상담 정확도·임상·공식 평가는 미실행이다.
 
 실행 RDF와 임상 입력에는 점수·가중치·관계 출처·confidence·reviewer를 넣지 않는다. 실제 환자 취득 source/turn과 Education 문서 경로/hash/인용은 각 실행 책임에서 보존한다. 라이선스·원자료 역할은 [DATA_USE.md](../Extraction/DATA_USE.md)에 분리한다.
 

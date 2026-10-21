@@ -9,6 +9,11 @@ def display(results):
         index=status['index'];current=index['current_file']
         lines=[f"Run {status['run_id']} | {status['state']} | {status['provider']} | phase={status['phase']}",
             f"  Index: {index['files_completed']:,}/{index['files_total']:,} files complete; {index['rows_committed']:,} records committed"]
+        if status.get('augmentation'):
+            augmentation=status['augmentation']
+            lines.pop()
+            maximum=augmentation['request_budget_history'][-1]['maximum'] if augmentation['request_budget_history'] else 'unset'
+            lines.append(f"  Augmentation transmissions: {augmentation['model_transmissions']}/{maximum} (including retries)")
         if current:
             lines.append(f"  Current file: {current['path']}")
             lines.append(f"  File checkpoint: {current['rows_committed']:,} records committed")
@@ -24,6 +29,7 @@ def display(results):
             lines.append(f"  Job {row['job_id'][:12]} ({row['phase']}, attempts={row['attempt_count']}): {row['error']}")
         if status.get('recovery'):
             lines.append('  Recovered raw index from: '+status['recovery']['source_run_id'])
-        lines.append('  File counts are not an overall completion percentage; later worksets and ETA may be unknown.')
+        lines.append('  Later worksets and ETA may be unknown.' if status.get('augmentation') else
+            '  File counts are not an overall completion percentage; later worksets and ETA may be unknown.')
         blocks.append('\n'.join(lines))
     return '\n\n'.join(blocks)

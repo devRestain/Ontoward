@@ -4,7 +4,7 @@ import os
 import json
 from pathlib import Path
 
-ALGORITHM_VERSION = "d50.7"
+ALGORITHM_VERSION = "d50.8"
 ROOT = Path(__file__).resolve().parent
 SETTING = "ONTOWARD_KNOWLEDGE_MANIFEST"
 SETTINGS = {SETTING, 'ONTOWARD_PROMPTS', 'ONTOWARD_TEXTS', 'ONTOWARD_EDUCATION_ENABLED'}

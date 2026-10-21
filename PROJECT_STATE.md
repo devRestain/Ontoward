@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=3ee68f75b2667ae00a8c1e5e5e8e168a797d45d9 dirty=true updated=2026-10-21T19:30:01+09:00
-/goal phase=current id=ROOT.D57 state=complete action="Implement the reviewed Initiation input repair and verify bounded offline acceptance"
+/checkpoint revision=33a1395ab37149e4d81e57f3f9f2cb5f5c7d87ec dirty=true updated=2026-10-21T21:16:22+09:00
+/goal phase=current id=ROOT.D58 state=complete action="Complete latest-bundle augmentation activation and authorized checkpoint disposal"
+/goal phase=history id=ROOT.D57 state=complete action="Implement the reviewed Initiation input repair and verify bounded offline acceptance"
 /goal phase=history id=ROOT.D56 state=complete action="Normalize existing four-modality EXAM request text and verify immutable local activation"
 /goal phase=history id=ROOT.D55 state=complete action="Correct the current v5 bundle offline and activate only verified strict knowledge while preserving the parent"
 /goal phase=history id=ROOT.D54 state=complete action="Complete task A runtime input and retrieval repair through offline semantic and artifact acceptance"
@@ -688,4 +689,13 @@
 /evidence id=ROOT.D57.E2 class=runtime result=pass source=data/provenance/algorithm-d50-7-2026-10-21.json observed="Pass 231 workflow tests 118 extraction tests 55 evaluator checks and sixteen observer scenarios with 1438 snapshots in network-disabled project containers"
 /evidence id=ROOT.D57.E3 class=artifact result=pass source=data/provenance/algorithm-d50-7-2026-10-21.json observed="Bind DATA.D57 parent preservation exact metadata activation protected hashes and independent synthetic ZIP original-SDK custody"
 /evidence id=ROOT.D57.E4 class=external_service result=not_run source=data/provenance/algorithm-d50-7-2026-10-21.json observed="Leave fresh NOVA C10 actual-model extraction quality clinical validity official evaluation production ZIP publication and deployment unrun"
-/handoff state=ready action="Use verified local d50.7 and retain fresh model and clinical acceptance as unrun"
+/accept id=ROOT.D58.A1 state=pass action="Verify bounded extraction and runtime implementation" evidence=ROOT.D58.E1
+/evidence id=ROOT.D58.E1 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference 234 workflow regressions production graph probes original prepare and three scripted consultations with the active child"
+/accept id=ROOT.D58.A2 state=pass action="Complete authorized real generation and local activation" evidence=ROOT.D58.E2,ROOT.D58.E3
+/evidence id=ROOT.D58.E2 class=external_service result=pass source=data/provenance/augmentation-d58-2026-10-21.json observed="Complete API Luna medium generation with seven of sixteen transmissions and preserve input and output token totals"
+/evidence id=ROOT.D58.E3 class=artifact result=pass source=data/provenance/augmentation-d58-2026-10-21.json observed="Activate child cec62f4596bedd9b9488aa75e3d38f04 over latest parent 1bcaba1dffb744c468bb191df3267dad after loader preservation and reachability checks"
+/accept id=ROOT.D58.A3 state=pass action="Preserve unrelated parent knowledge and dispose unused build records" evidence=ROOT.D58.E4,ROOT.D58.E5
+/evidence id=ROOT.D58.E4 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference empty delta roundtrip zero unauthorized parent changes unchanged units overrides roles schema and guideline payloads"
+/evidence id=ROOT.D58.E5 class=artifact result=pass source=data/provenance/augmentation-d58-cleanup-2026-10-21.json observed="Delete 518 allowlisted files totaling 220481422 bytes and preserve all 182 protected hashes with successful post-deletion loader and prepare"
+/evidence id=ROOT.D58.E6 class=external_service result=not_run source=data/provenance/augmentation-d58-2026-10-21.json observed="Defer actual-model consultations clinical accuracy official evaluation publication and deployment beyond this authorized slice"
+/handoff state=ready action="Use the verified active child and compact receipts; obtain separate authorization before optional actual-model consultation evaluation"

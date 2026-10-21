@@ -48,7 +48,7 @@ REQUIRED = {
     'workflow/text_config.py',
     "knowledge/__init__.py", "knowledge/graph.py", "knowledge/conditions.py",
 }
-EXCLUDED = {"AGENTS.md", "README.md", "PROJECT_STATE.md", ".DS_Store"}
+EXCLUDED = {"AGENTS.md", "README.md", "PROJECT_STATE.md", ".DS_Store", ".install.lock"}
 
 
 def main() -> None:

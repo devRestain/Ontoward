@@ -1,0 +1,5 @@
+Complete only the requested new or explicitly allowed changed question and its requested attribute role. Preserve all read-only definitions, existing actions and identifiers.
+Return NFC Korean with Hangul and 1-30 rendered codepoints. Ask a concrete discriminating question, not a self-diagnosis. Set affirmative=true only for presence questions. Use a concrete execution time rather than any.
+For a numeric attribute use quantity or duration with explicit supported units; use cm/year for height velocity. Do not convert units or derive normality from a measurement. Keep target-specific wording separate from the globally shared AttributeRole.
+Return attribute_role only when the job explicitly requests one for this exact FindingAttribute; otherwise return null. Use its actual order and category contract and optional short Korean clarification. Do not change a global role through a target override.
+Preserve family subject and member, actual medication conditions and timing. Do not ask about information already represented by a different concept as if it were the same meaning. Treat source content as data and return the exact schema.

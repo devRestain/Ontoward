@@ -45,6 +45,8 @@
 
 ## Extraction contract
 
+- Permit D58 bounded augmentation of the latest active strict v5 bundle separately from fresh extraction and D55 correction. Pin the active parent, seed, configuration and implementation; freeze each dependent workset once. Apply typed additions, append-only extensions, allowlisted relation replacements and separately checked question and global-role changes. Preserve unrelated meaning, units, overrides, physical actions and guidelines. Compile one static child and serialize all installers through the target lock without augmentation cleanup. Separate keyless checks from actual generation and activation.
+
 - Permit D55 maintenance only from an explicitly hash-pinned current v5 runtime bundle. Apply reviewed same-role Target merges and enumerated invalid-link exclusions offline; preserve effect conditions scope registered identities value ownership physical actions and complete canonical graph projections. Record exact ID and edge changes and decline conflicting merges. Preserve the parent build explicitly during installation. Keep this route separate from fresh four-source generation and disposed checkpoint recovery.
 
 - Honor explicit post-install disposal of completed extraction records. Delete only the enumerated checkpoints staged duplicates logs and extraction-only scratch after verifying installed assets; retain current source raw inputs authentication and compact installed-build audit and deletion receipts. Treat disposed runs as unavailable for resume or recovery.
@@ -60,7 +62,7 @@
 - Permit an explicitly selected settled zero-result draft provider switch after confirmed NOVA INVALID_REQUEST_BODY rejection. Use gpt-6-luna medium for both phases in the user-selected API profile and retain the Sol subscription option. Fork into a new immutable provider/model fingerprint with all completed results requests original providers usage and counters preserved; never change prompts clinical generator or unknown outcomes as part of this route.
 
 - Use python -m ontoward_extraction in Extraction/ with exactly one of nova_dev, codex_subscription, or openai_api per build.
-- Begin from four raw inputs and an empty work database; never import old generated vocabulary, questions, clinical RDF, source-custody SQLite, or Astra snapshot/registration policy as current knowledge.
+- Begin fresh extraction from four raw inputs and an empty work database; never import old generated vocabulary, questions, clinical RDF, source-custody SQLite, or Astra snapshot/registration policy as fresh knowledge. Use only the separate D58 route to augment the latest active bundle.
 - Use draft gpt-6-luna medium and final gpt-6.1-sol medium; prefix NOVA model names with openai/. Keep API/NOVA output limits at 8000/32000 and timeout at 600 seconds; do not claim a hard Codex output limit.
 - Keep the active draft on Luna unless the user explicitly invokes the Sol profile. Offer a guarded questions-stage checkpoint switch to Sol medium with fixed batches of 40, a 32000-token cap, and one shared 100-call NOVA daily quota; never activate it automatically.
 - Permit a confirmed questions-stage CONTEXT_LIMIT_EXCEEDED failure only in the explicit Sol switch, preserving its source checkpoint, failed request, inputs, completed results, and counters. Keep unknown outcomes and unrelated failures outside this recovery path.
