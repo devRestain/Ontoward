@@ -29,13 +29,16 @@ class TransportTests(unittest.TestCase):
         self.assertEqual((s.session.doctor_calls,s.session.doctor_successes,s.session.input_tokens,s.session.output_tokens),(1,1,20,10))
         self.assertEqual(c.client.timeout,120)
 
-    def test_exhausted_transient_stops_before_actions_or_submission(self):
+    def test_exhausted_chat_transient_still_submits_without_fake_model_success(self):
         client=f.FakeSDK()
         client.chat=lambda **kw:(_ for _ in ()).throw(f.NovaError('REQUEST_PENDING'))
         c,s,_=f.run(client)
-        self.assertEqual(s.session.termination,'unknown')
-        self.assertFalse(client.actions)
-        self.assertFalse(client.submissions)
+        self.assertEqual(s.session.termination,'submitted')
+        self.assertLessEqual(len(client.actions), 50)
+        self.assertLessEqual(sum(row['content'] == '어느 부위인가요?' for row in client.actions), 1)
+        self.assertEqual(len(client.submissions), 1)
+        self.assertEqual(s.session.doctor_successes, 0)
+        self.assertTrue(s.session.final_payload['note']['A']['evidence'])
         self.assertIsNone(s.turn)
 
     def test_truncation_returns_typed_failure_without_partial_content(self):
@@ -48,7 +51,7 @@ class TransportTests(unittest.TestCase):
         self.assertEqual(s.session.doctor_calls,1)
         self.assertEqual(s.session.output_tokens,10)
 
-    def test_context_truncation_uses_one_larger_recovery(self):
+    def test_context_truncation_uses_one_bounded_recovery(self):
         requests=[]
         def handler(payload):
             requests.append(payload)
@@ -58,6 +61,27 @@ class TransportTests(unittest.TestCase):
         s,c,_=f.interpret([],text='Complaint',responses=handler)
         self.assertEqual([p['phase'] for p in requests],['context','context_repair'])
         self.assertTrue(s.case.chief())
+
+    def test_reported_per_call_input_boundary_reuses_context_error_handling(self):
+        for role in ('gateway', 'clinical', 'education', 'education_doctor'):
+            for count in (100_000, 100_001):
+                with self.subTest(role=role, count=count):
+                    c, s = f.consultation(), f.state()
+                    response = f.FakeSDK.completion('{}')
+                    response['usage']['prompt_tokens'] = count
+                    with patch.object(c.client, 'chat', return_value=response) as remote:
+                        result = c.brain.complete(s, c.client, role=role, messages=[])
+                    remote.assert_called_once()
+                    self.assertEqual(remote.call_args.kwargs['max_tokens'], 8000)
+                    self.assertEqual((s.session.input_tokens, s.session.output_tokens), (count, 10))
+                    if count == 100_000:
+                        self.assertIsNone(result.error)
+                        self.assertEqual(s.session.doctor_successes, 1)
+                    else:
+                        self.assertEqual(result.error, 'CONTEXT_LIMIT_EXCEEDED')
+                        self.assertEqual(s.session.doctor_successes, 0)
+                        self.assertEqual(s.session.budget_sync_required, role.startswith('education'))
+                        self.assertIsNone(s.session.termination)
 
     def test_malformed_usage_disables_models_without_false_success(self):
         c,s=f.consultation(),f.state()
@@ -156,7 +180,7 @@ class TransportTests(unittest.TestCase):
         c.writer.submit_diagnosis(s)
         c.writer.confirm_submission(s)
         self.assertEqual(s.session.termination,'submitted')
-        self.assertEqual(calls[0]['note'],calls[1]['note'])
+        self.assertNotEqual(calls[0]['note'],calls[1]['note'])
         self.assertNotEqual(calls[0]['request_id'],calls[1]['request_id'])
         c,s=f.consultation(),f.chief(f.state())
         s.session.doctor_successes=1
@@ -166,7 +190,8 @@ class TransportTests(unittest.TestCase):
         c.writer.submit_diagnosis(s)
         c.writer.confirm_submission(s)
         self.assertEqual(s.session.termination,'unknown')
-        self.assertIsNone(s.turn)
+        self.assertEqual(s.turn.payload, s.session.final_payload)
+        self.assertEqual(s.turn.request_id, s.session.submission_request_id)
 
     def test_actual_soap_fields_and_no_tests_or_unearned_doctor_success(self):
         c,s=f.consultation(),f.chief(f.state())

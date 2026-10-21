@@ -184,8 +184,7 @@ class EvaluatorTests(unittest.TestCase):
     def test_model_budgets_and_designated_model(self):
         self.evaluation.doctor_calls = 200
         self.assertEqual(self.chat()[1]['error']['code'], 'MODEL_CALL_LIMIT')
-        self.evaluation.doctor_calls, self.evaluation.output_tokens = 0, 100000
-        self.assertEqual(self.chat()[1]['error']['code'], 'MODEL_TOKEN_BUDGET')
+        self.evaluation.doctor_calls = 0
         self.assertEqual(self.request('/v1/chat/completions', session_id=self.evaluation.session_id,
                                       model='other')[1]['error']['code'], 'MODEL_NOT_ALLOWED')
         self.assertEqual(self.models.calls, 0)
@@ -215,11 +214,78 @@ class EvaluatorTests(unittest.TestCase):
         self.assertFalse(result['checks']['agent_exit_zero'])
         self.assertFalse(result['checks']['no_development_key_in_agent'])
 
-    def test_returned_usage_over_budget_is_not_success(self):
-        self.models.complete = lambda *args, **kwargs: completion('ok', prompt_tokens=500001)
-        self.assertEqual(self.chat()[1]['error']['code'], 'MODEL_TOKEN_BUDGET')
-        self.assertEqual(self.evaluation.doctor_successes, 0)
-        self.assertEqual(self.evaluation.input_tokens, 500001)
+    def test_output_totals_do_not_clip_calls_and_restored_input_budget_is_reported(self):
+        output_caps = []
+        def complete(role, messages, max_tokens, request_id, **options):
+            self.models.calls += 1
+            output_caps.append(max_tokens)
+            return completion('ok', prompt_tokens=20, completion_tokens=7000)
+        self.models.complete = complete
+        self.evaluation.input_tokens = 490000
+        self.evaluation.output_tokens = 93000
+        for _ in range(2):
+            self.assertEqual(self.request('/v1/chat/completions', session_id=self.evaluation.session_id,
+                messages=[{'role': 'user', 'content': 'Interpret acquired evidence'}],
+                model=MODEL, max_tokens=8000)[0], 200)
+        self.assertEqual(output_caps, [8000, 8000])
+        self.assertEqual((self.evaluation.doctor_successes, self.evaluation.input_tokens,
+                          self.evaluation.output_tokens), (2, 490040, 107000))
+        snapshot = self.evaluation.snapshot()
+        self.assertEqual(snapshot['input_tokens_remaining'], 9960)
+        self.assertNotIn('output_tokens_remaining', snapshot)
+        self.assertEqual(self.request(action='DIAGNOSE', note=self.record(), diagnosis='Test diagnosis')[0], 200)
+        summary = json.loads((Path(self.temp.name) / 'summary.json').read_text())
+        self.assertEqual(summary['limits']['input_tokens'], 500000)
+        self.assertEqual(summary['limits']['input_tokens_per_call'], 100000)
+        self.assertIsNone(summary['limits']['output_tokens'])
+        simulator = Path(self.temp.name) / 'simulator'
+        simulator.mkdir()
+        for name in ('summary.json', 'transcript.json', 'requests.json', 'record.json'):
+            (simulator / name).write_bytes((Path(self.temp.name) / name).read_bytes())
+        agent = Path(self.temp.name) / 'agent'
+        agent.mkdir()
+        (agent / 'process.json').write_text(json.dumps(dict(exit_code=0, development_key_present=False,
+            samples_visible=False, sandbox=dict(root_read_only=True, submission_read_only=True, output_writable=True))))
+        with redirect_stdout(io.StringIO()):
+            status = report(self.temp.name)
+        result = json.loads((Path(self.temp.name) / 'result.json').read_text())
+        self.assertEqual(status, 0, result)
+        self.assertTrue(result['checks']['within_model_limits'])
+        summary['input_tokens'] = 500001
+        (simulator / 'summary.json').write_text(json.dumps(summary))
+        with redirect_stdout(io.StringIO()):
+            self.assertEqual(report(self.temp.name), 1)
+        self.assertFalse(json.loads((Path(self.temp.name) / 'result.json').read_text())['checks']['within_model_limits'])
+
+    def test_default_output_and_oversized_output_error_match_supplied_contract(self):
+        with patch.object(self.models, 'complete', return_value=completion('ok')) as remote:
+            self.assertEqual(self.request('/v1/chat/completions', session_id=self.evaluation.session_id,
+                messages=[{'role': 'user', 'content': 'Interpret evidence'}], model=MODEL)[0], 200)
+            self.assertEqual(remote.call_args.args[2], 8000)
+            response = self.request('/v1/chat/completions', session_id=self.evaluation.session_id,
+                messages=[{'role': 'user', 'content': 'Interpret evidence'}], model=MODEL, max_tokens=8001)
+            self.assertEqual(response, (400, {'error': {'code': 'TOKEN_LIMIT_EXCEEDED'}}))
+            remote.assert_called_once()
+
+    def test_reported_request_input_limit_accounts_usage_and_rejects_oversize(self):
+        for count in (100000, 100001):
+            with patch.object(self.models, 'complete', return_value=completion('ok', prompt_tokens=count)):
+                response = self.chat()
+            self.assertEqual(response[0], 200 if count == 100000 else 400)
+        self.assertEqual(response[1]['error']['code'], 'CONTEXT_LIMIT_EXCEEDED')
+        self.assertEqual((self.evaluation.doctor_calls, self.evaluation.doctor_successes,
+                          self.evaluation.input_tokens), (2, 1, 200001))
+
+    def test_total_input_boundary_and_overshoot_stop_further_requests(self):
+        with patch.object(self.models, 'complete', return_value=completion('ok', prompt_tokens=20)) as remote:
+            self.evaluation.input_tokens = 499980
+            self.assertEqual(self.chat()[0], 200)
+            self.assertEqual(self.chat()[1]['error']['code'], 'MODEL_TOKEN_BUDGET')
+            remote.assert_called_once()
+            self.evaluation.input_tokens = 499990
+            self.assertEqual(self.chat()[1]['error']['code'], 'MODEL_TOKEN_BUDGET')
+            self.assertEqual(self.evaluation.input_tokens, 500010)
+            self.assertEqual(self.evaluation.doctor_successes, 1)
 
     def test_fiftieth_turn_can_submit_and_receipt_can_replay(self):
         self.models.values.append('{"facts":[]}')
@@ -264,15 +330,15 @@ class EvaluatorTests(unittest.TestCase):
             self.assertEqual(remote.call_count, 1)
         self.assertNotIn('test-key', (Path(self.temp.name) / 'nova-requests.jsonl').read_text())
 
-    def test_nova_failure_stops_new_calls_and_preserves_reservation(self):
+    def test_nova_failure_preserves_each_reservation_without_global_poisoning(self):
         models = NovaModels('https://nova.snubhai.org', 'test-key', self.temp.name, 5)
         with patch.object(models.client, 'chat', side_effect=NovaError('API_UNAVAILABLE')) as remote:
             for _ in range(2):
                 with self.assertRaises(NovaError):
                     models.complete('patient', [], 2048, str(uuid.uuid4()))
-            self.assertEqual(remote.call_count, 1)
+            self.assertEqual(remote.call_count, 2)
         entries = [json.loads(line) for line in (Path(self.temp.name) / 'nova-requests.jsonl').read_text().splitlines()]
-        self.assertEqual([entry['status'] for entry in entries], ['reserved', 'failed_or_unknown'])
+        self.assertEqual([entry['status'] for entry in entries], ['reserved', 'failed_or_unknown', 'reserved', 'failed_or_unknown'])
 
     def test_nova_education_response_failure_allows_explicit_repair_within_ceiling(self):
         models = NovaModels('https://nova.snubhai.org', 'test-key', self.temp.name, 2)
@@ -291,13 +357,60 @@ class EvaluatorTests(unittest.TestCase):
         self.assertEqual([entry['status'] for entry in entries], ['reserved', 'failed_or_unknown', 'reserved', 'received'])
         self.assertEqual(entries[1]['error'], 'PROVIDER_RESPONSE_INVALID')
 
-    def test_nova_non_education_response_failure_keeps_stop_boundary(self):
+    def test_nova_non_education_response_failure_stays_request_local(self):
         models = NovaModels('https://nova.snubhai.org', 'test-key', self.temp.name, 5)
         with patch.object(models.client, 'chat', side_effect=NovaError('PROVIDER_RESPONSE_INVALID', 503)) as remote:
             for _ in range(2):
                 with self.assertRaises(NovaError):
                     models.complete('patient', [], 2048, str(uuid.uuid4()))
-            self.assertEqual(remote.call_count, 1)
+            self.assertEqual(remote.call_count, 2)
+
+    def test_nova_education_context_error_preserves_reservation_and_allows_later_patient_role(self):
+        for role in ('education', 'education_doctor'):
+            with self.subTest(role=role):
+                models = NovaModels('https://nova.snubhai.org', 'test-key', self.temp.name, 2)
+                first, later = str(uuid.uuid4()), str(uuid.uuid4())
+                with patch.object(models.client, 'chat', side_effect=[NovaError('CONTEXT_LIMIT_EXCEEDED', 400), completion('ok')]) as remote:
+                    with self.assertRaises(NovaError) as caught:
+                        models.complete(role, [], 8000, first)
+                    self.assertEqual(caught.exception.code, 'CONTEXT_LIMIT_EXCEEDED')
+                    self.assertIsNone(models.stopped)
+                    models.complete('patient', [], 2048, later)
+                    self.assertEqual([call.kwargs['request_id'] for call in remote.call_args_list], [first, later])
+                    with self.assertRaises(NovaError) as limit:
+                        models.complete('patient', [], 2048, str(uuid.uuid4()))
+                    self.assertEqual(limit.exception.code, 'MODEL_CALL_LIMIT')
+                    self.assertEqual(remote.call_count, 2)
+                entries = [json.loads(line) for line in (Path(self.temp.name) / 'nova-requests.jsonl').read_text().splitlines()
+                           if json.loads(line)['request_id'] == first]
+                self.assertEqual([entry['status'] for entry in entries], ['reserved', 'failed_or_unknown'])
+                self.assertEqual(entries[-1]['error'], 'CONTEXT_LIMIT_EXCEEDED')
+
+    def test_nova_non_education_context_error_is_request_local(self):
+        for role in ('clinical_rank', 'clinical_decision', 'clinical_action', 'gateway', 'input_context', 'patient'):
+            with self.subTest(role=role):
+                models = NovaModels('https://nova.snubhai.org', 'test-key', self.temp.name, 5)
+                with patch.object(models.client, 'chat', side_effect=NovaError('CONTEXT_LIMIT_EXCEEDED', 400)) as remote:
+                    for requested_role in (role, 'patient'):
+                        with self.assertRaises(NovaError):
+                            models.complete(requested_role, [], 4096, str(uuid.uuid4()))
+                    self.assertEqual(remote.call_count, 2)
+                    self.assertEqual(models.calls, 2)
+
+    def test_nova_independent_roles_reach_provider_after_one_failure(self):
+        for role in ('input_context', 'input_mapping', 'clinical_decision', 'education', 'patient', 'examiner'):
+            with self.subTest(role=role):
+                models = NovaModels('https://nova.snubhai.org', 'test-key', self.temp.name, 2)
+                with patch.object(models.client, 'chat', side_effect=[NovaError('API_UNAVAILABLE'), completion('ok')]) as remote:
+                    with self.assertRaises(NovaError):
+                        models.complete(role, [], 2048, str(uuid.uuid4()))
+                    result = models.complete('patient', [], 2048, str(uuid.uuid4()))
+                    self.assertEqual(result['choices'][0]['message']['content'], 'ok')
+                    self.assertEqual((remote.call_count, models.calls), (2, 2))
+                    with self.assertRaises(NovaError) as limit:
+                        models.complete('patient', [], 2048, str(uuid.uuid4()))
+                    self.assertEqual(limit.exception.code, 'MODEL_CALL_LIMIT')
+                    self.assertEqual(remote.call_count, 2)
 
     def test_all_public_cases_are_read_only_inputs(self):
         for case_id in ('C01', 'C03', 'C10'):

@@ -9,6 +9,7 @@ BOUNDARIES = (
     ('mouth', 'execute_action'), ('', 'advance_session'), ('', 'finalize'),
     ('writer', 'validate_submission'), ('', 'repair_submission'),
     ('writer', 'submit_diagnosis'), ('writer', 'confirm_submission'),
+    ('', 'pass_session'), ('writer', 'build_minimal'),
 )
 
 

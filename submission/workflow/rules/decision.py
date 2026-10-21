@@ -71,6 +71,12 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
                 if ident in remaining:
                     ordered.append(ident)
                     remaining.remove(ident)
+    # Bound the clinical workset before building evidence and question choices.
+    # Preserve the existing prior/route order; never cut a relation's conditions.
+    recalled_count = len(ordered)
+    ordered = ordered[:min(LIMITS.graph_input_items, LIMITS.differential_entries)]
+    protected = [ident for ident in protected if ident in ordered]
+    candidates = {ident: candidates[ident] for ident in ordered}
     refs = {ident: f'd_{index}' for index, ident in enumerate(ordered, 1)}
     facts = state.case.current_facts()
     fact_refs = {fact.id: f'f_{index}' for index, fact in enumerate(facts, 1)}
@@ -104,7 +110,11 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
         facts=patient_rows, scopes=scopes, conditions={}, relations={},
         prior_order=[refs[ident] for ident in protected], required=[],
         resources=dict(turns=tools.budget.action_capacity(state), calls=tools.budget.calls_left(state.session)),
-        candidates=[], evidence={}, questions=[])
+        candidates=[], evidence={}, questions=[],
+        input_limits=dict(graph_items=LIMITS.graph_input_items, differential=LIMITS.differential_entries,
+                          omitted_candidates=max(0, recalled_count - len(ordered))))
+    if state.case.chief_route:
+        payload['chief_route'] = dict(target=state.case.chief_route.target, routing_only=True)
     evidence_refs = {}
     condition_refs = {}
     def expected(value):
@@ -189,8 +199,9 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
         payload['candidates'].append(row)
     included = set(shown)
     options = tools._options(state, {i: candidates[i] for i in shown}) if mode != 'rank' and not closing else {}
+    payload['input_limits']['omitted_question_options'] = max(0, len(options) - LIMITS.graph_input_items)
     question_refs = {}
-    for spec, diseases in options.values():
+    for spec, diseases in list(options.values())[:LIMITS.graph_input_items]:
         ref = f'q_{len(question_refs) + 1}'
         question = tools._question(spec, '', 0, 0)
         row = dict(ref=ref, kind=question.kind, target=question.target, attribute=question.attribute,
@@ -219,8 +230,51 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
             row['expected_by_disease'][refs[disease]] = entries
         payload['questions'].append({key: value for key, value in row.items() if value is not None})
         question_refs[ref] = spec
+    bound_graph_input(payload)
+    question_refs = {ref: spec for ref, spec in question_refs.items()
+                     if ref in {row['ref'] for row in payload['questions']}}
     work = DecisionWork(payload, {refs[i]: i for i in included}, candidates, question_refs)
     return work
+
+
+def bound_graph_input(payload):
+    """Keep complete graph records and close every retained wire reference."""
+    cap = LIMITS.graph_input_items
+    fact_scopes = {row['scope'] for row in payload['facts'].values()}
+    allowed_scopes = set(fact_scopes)
+    for ref in payload['scopes']:
+        if len(allowed_scopes) >= cap:
+            break
+        allowed_scopes.add(ref)
+    relations = dict(list(payload['relations'].items())[:cap])
+    evidence = {ref: row for ref, row in payload['evidence'].items()
+                if row.get('relation') in {None, *relations}
+                and row.get('scope') in {None, *allowed_scopes}}
+    evidence = dict(list(evidence.items())[:cap])
+    for candidate in payload['candidates']:
+        for category in ('supports', 'against', 'unresolved'):
+            if category in candidate:
+                candidate[category] = [ref for ref in candidate[category] if ref in evidence]
+    questions = []
+    for row in payload['questions'][:cap]:
+        if row['scope'] not in allowed_scopes:
+            continue
+        expected = {disease: [entry for entry in entries if entry.get('relation') in {None, *relations}]
+                    for disease, entries in row['expected_by_disease'].items()}
+        row['expected_by_disease'] = {key: entries for key, entries in expected.items() if entries}
+        if row['expected_by_disease']:
+            questions.append(row)
+    used_relations = {row['relation'] for row in evidence.values() if 'relation' in row}
+    used_relations.update(entry['relation'] for row in questions for entries in row['expected_by_disease'].values()
+                          for entry in entries if entry.get('relation'))
+    used_scopes = fact_scopes | {row['scope'] for row in evidence.values() if 'scope' in row} | {row['scope'] for row in questions}
+    payload['relations'] = {ref: row for ref, row in relations.items() if ref in used_relations}
+    used_conditions = {row['applicability'] for row in payload['relations'].values() if row.get('applicability')}
+    payload['conditions'] = {ref: row for ref, row in payload['conditions'].items() if ref in used_conditions}
+    payload['scopes'] = {ref: row for ref, row in payload['scopes'].items() if ref in used_scopes}
+    payload['input_limits']['omitted_evidence'] = len(payload['evidence']) - len(evidence)
+    payload['input_limits']['omitted_questions'] = len(payload['questions']) - len(questions)
+    payload['evidence'], payload['questions'] = evidence, questions
 
 
 def accept_ranking(state, raw, work):
@@ -230,7 +284,7 @@ def accept_ranking(state, raw, work):
     if (bool(work.refs) != bool(ranked) or len(ranked) != len(set(ranked))
             or any(ref not in work.refs for ref in ranked) or not set(work.payload['prior_order']) <= set(ranked)):
         raise ValueError('invalid_or_incomplete_ranking')
-    state.case.assessment = Assessment(differential=tuple(work.candidates[work.refs[ref]].entry for ref in ranked),
+    state.case.assessment = Assessment(differential=tuple(work.candidates[work.refs[ref]].entry for ref in ranked[:LIMITS.differential_entries]),
         based_on_case_revision=state.case.revision, based_on_chief_fact_id=state.case.chief_fact_id,
         based_on_response=latest_response(state))
 

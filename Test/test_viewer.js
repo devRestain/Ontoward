@@ -262,3 +262,17 @@ const outcomes=walk(d59.get('detail-panel')).find(node=>node.tagName==='details'
 outcomes.open=true;outcomes.emit('toggle');assert.match(outcomes.textContent,/LOCAL_EDUCATION_BUDGET_SYNC_REQUIRED/);
 assert.equal(JSON.stringify(d59Data),d59Original);
 console.log('PASS: D59 source packet navigation, guard outcomes, source checks and immutable historical reports');
+const preservedData=JSON.parse(JSON.stringify(data));
+preservedData.record={};preservedData.summary={status:'active',receipt:null};
+preservedData.inspection={outcome:{education_status:'failed',education_reason:'provider failure',plan_count:0,
+  diagnosis_announcement_delivered:1,fact_count:45,unbound_fact_count:23,payload_generated:true,
+  payload:{note:soap,diagnosis:'Preserved working diagnosis'},transmitted:false,received:false,submission_confirmed:false,
+  p_coverage:{tests:false,treatment:false,disposition:false,follow_up:false,education:false},plan_delivery:[]}};
+const preservedOriginal=JSON.stringify(preservedData),preservedPage=load(preservedData);
+assert.match(preservedPage.get('final-record').textContent,/생성·보존된 SOAP · 제출 수신 미확인/);
+assert.match(preservedPage.get('final-record').textContent,/Education 준비/);
+assert.match(preservedPage.get('final-record').textContent,/45 \/ 23/);
+assert.match(preservedPage.get('final-record').textContent,/평가하지 않음 · not_evaluated/);
+assert.match(preservedPage.get('final-record').textContent,/미확인 \/ 미확인 \/ 미확인/);
+assert.equal(JSON.stringify(preservedData),preservedOriginal);
+console.log('PASS: preserved unconfirmed SOAP, distinct Education metrics and immutable legacy input');

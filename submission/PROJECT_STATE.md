@@ -1,8 +1,10 @@
 /state version=1
 /project id=ontoward-submission
-/status value=complete
-/checkpoint revision=5e09affe00813e2a7da7a796d5c7ac34e4ec95f3 dirty=true updated=2026-10-21T22:20:13+09:00
-/goal phase=current id=APP.D59 state=complete action="Bound literal Education evidence and preserve finalization after context rejection"
+/status value=active
+/checkpoint revision=cd060492e1245793cd92d8575aae661f78683e67 dirty=true updated=2026-10-22T00:57:06+09:00
+/goal phase=current id=APP.D61 state=active action="Complete bounded consultation recovery and graph input limits through honest final submission"
+/goal phase=history id=APP.D60 state=complete action="Record token usage without cumulative case caps while preserving model calls actions and server errors"
+/goal phase=history id=APP.D59 state=complete action="Bound literal Education evidence and preserve finalization after context rejection"
 /goal phase=history id=APP.D58 state=complete action="Verify DD Context and input scope with the active augmented knowledge"
 /goal phase=history id=APP.D57 state=complete action="Preserve initial clinical details and collect only unresolved scoped atomic attributes"
 /goal phase=history id=APP.D56 state=complete action="Load normalized EXAM text and verify original prepare and all physical question paths"
@@ -440,4 +442,11 @@
 /evidence id=APP.D59.E2 class=runtime result=pass source=../Tmp/d59-2026-10-21/prepare.json observed="Pass original run.py prepare with d50.9 schema 5.0 v5-enum-1 active cec62f4596bedd9b9488aa75e3d38f04 and 948 Diseases"
 /evidence id=APP.D59.E3 class=runtime result=not_run source=../data/provenance/algorithm-d50-9-2026-10-21.json observed="Leave full workflow discovery and archive consultations unrun under the requested narrow acceptance"
 /evidence id=APP.D59.E4 class=external_service result=not_run source=../data/provenance/algorithm-d50-9-2026-10-21.json observed="Leave actual-model quality clinical accuracy and official evaluation unrun"
-/handoff state=ready action="Use verified d50.9 Education and the preserved active child with compact receipts; obtain separate authorization for optional actual-model evaluation"
+/accept id=APP.D60.A1 state=pass action="Continue collection and Education above historical cumulative token limits without clipping per-call output" evidence=APP.D60.E1
+/accept id=APP.D60.A2 state=pass action="Preserve call reserves server errors and completed submission through source and independent SDK checks" evidence=APP.D60.E1,APP.D60.E2
+/accept id=APP.D60.A3 state=pass action="Load unchanged active knowledge and preserve original SDK entrypoint and assets" evidence=APP.D60.E2,APP.D60.E3
+/evidence id=APP.D60.E1 class=runtime result=pass source=../Tmp/d60-2026-10-22/workflow.log observed="Pass all 240 maintained workflow tests including collection and all four model roles above token totals plus complete Education SAY and DIAGNOSE from 1500000 input and 250000 output tokens; preserve actual server errors and call action and deadline limits"
+/evidence id=APP.D60.E2 class=artifact result=pass source=../Tmp/d60-2026-10-22/verification.json observed="Match packaged runtime and config bytes in the ninety-file synthetic ZIP and complete forty-two unchanged SDK HTTP requests twenty actions and DIAGNOSE with blocked LangGraph complete trace and passing inspection; preserve ninety protected files"
+/evidence id=APP.D60.E3 class=runtime result=pass source=../Tmp/d60-2026-10-22/admitted/verification.json observed="Load active v5-enum-1 knowledge through prepare and complete three protocol-double consultations with Education disabled enabled present and enabled absent Context while preserving manifest hash 04accb50722f2c4f8583e25f0a3b1600bf2d384c820d91cc68e5dc42a1fa21db"
+/evidence id=APP.D60.E4 class=external_service result=not_run source=../Tmp/d60-2026-10-22/verification.json observed="Leave actual-model acceptance clinical accuracy and official evaluation unrun while the user prepares the fresh test"
+/handoff state=incomplete action="Finish D61 container and independent archive checks and reconcile current contracts"

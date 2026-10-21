@@ -292,6 +292,13 @@ class WebTests(unittest.TestCase):
         self.assertIsNone(data['inspection']['runtime'])
         self.assertIsNone(data['inspection']['graph'])
         self.assertTrue(all(c['status']=='not_collected' for c in data['inspection']['checks']))
+        from inspection import inspect_run
+        legacy = inspect_run(dict(trace={'events':[{'seq':1,'kind':'initial','state':{'session':{},'interaction':{'termination':'submitted'}}},
+                                                  {'seq':2,'kind':'end'}]}, warnings=[], record={},
+                                  summary={'status':'completed','receipt':{'status':'completed'}}))
+        checks = {c['id']:c['status'] for c in legacy['checks']}
+        self.assertEqual(checks['confirmed_completion'], 'pass')
+        self.assertEqual(checks['frozen_patient_state'], 'not_collected')
 
     def test_current_inspection_rejects_missing_observers_and_source_pins(self):
         from inspection import inspect_run
@@ -309,13 +316,6 @@ class WebTests(unittest.TestCase):
         for key in ('observation_coverage', 'runtime_sources', 'runtime_stability'):
             self.assertEqual(checks[key], 'fail')
         self.assertEqual(saved, original)
-        from inspection import inspect_run
-        legacy = inspect_run(dict(trace={'events':[{'seq':1,'kind':'initial','state':{'session':{},'interaction':{'termination':'submitted'}}},
-                                                  {'seq':2,'kind':'end'}]}, warnings=[], record={},
-                                  summary={'status':'completed','receipt':{'status':'completed'}}))
-        checks = {c['id']:c['status'] for c in legacy['checks']}
-        self.assertEqual(checks['confirmed_completion'], 'pass')
-        self.assertEqual(checks['frozen_patient_state'], 'not_collected')
 
     def test_state_patches_reconstruct_nested_values_lists_and_removals(self):
         states = [{'a': [1, {'값': '이전'}, 3], 'removed': True},

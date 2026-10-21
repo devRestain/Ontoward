@@ -3,7 +3,7 @@ import unicodedata
 from nova_sdk import NovaError
 from .state import usage
 from .model_context import messages
-from .rules.action import ActionResponse, REFUSAL_ERRORS, RESPONSE_FORMAT_ERRORS, content_error, failure_outcome
+from .rules.action import ActionResponse, content_error
 from .rules.limits import LIMITS
 from .state.evidence import fixed_case_payload
 from .output_types import RenderedGroup
@@ -81,6 +81,8 @@ class DoctorMouth:
         """Return the Korean announcement without scheduling or recording delivery."""
         diagnosis = state.case.primary()
         kind = 'Disease' if diagnosis.kind == 'disease' else 'Symptom'
+        if knowledge.term_id(diagnosis.name, kind) is None:
+            return self.config.texts.symptom_cause_unknown, {}
         name = knowledge.label(knowledge.term_id(diagnosis.name, kind))
         texts = self.config.texts
         full = texts.diagnosis_announcement if diagnosis.kind == 'disease' else texts.symptom_announcement
@@ -127,6 +129,7 @@ class DoctorMouth:
             return
         attempts = []
         request = {'content': q.text, 'request_id': turn.request_id}
+        turn.payload = request
         raw, error_code = (None, None)
         try:
             call = client.say if q.kind == 'SAY' else client.exam
@@ -145,20 +148,18 @@ class DoctorMouth:
         except (TypeError, ValueError):
             error_code = 'invalid_action_response'
         if error_code:
+            # Preserve the actual response or explicit error before any GET can fail.
+            turn.response = raw if isinstance(raw, dict) else {'error': error_code}
+            turn.error = error_code
             if attempts:
                 try:
                     self.nova_session.refresh_snapshot(state, client, account_action=True)
                 except NovaError as error:
-                    state.stop(failure_outcome(error), error.code)
+                    state.session.budget_sync_required = True
+                    state.interview.collection['action:budget_sync'] = error.code
                 except (TypeError, ValueError):
-                    state.stop('unknown', 'invalid_session_after_action')
-            if not state.session.termination:
-                if error_code == 'REQUEST_BUDGET_EXHAUSTED' and (not attempts):
-                    state.turn = None
-                    state.session.finalizing = True
-                elif error_code in RESPONSE_FORMAT_ERRORS or error_code in REFUSAL_ERRORS or error_code == 'TURN_LIMIT_REACHED':
-                    turn.response, turn.stage = (raw, 'received')
-                elif error_code == 'invalid_action_response':
-                    state.stop('unknown', error_code)
-                else:
-                    state.stop(failure_outcome(NovaError(error_code)), error_code)
+                    state.session.budget_sync_required = True
+                    state.interview.collection['action:budget_sync'] = 'invalid_session_after_action'
+            self.questions.pass_step(state, error_code)
+            if error_code == 'REQUEST_BUDGET_EXHAUSTED' and not attempts:
+                state.session.finalizing = True

@@ -1,6 +1,10 @@
 # Ontoward
 
-Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D59·d50.9**이며 Education의 짧고 완전한 원문 발췌·고정 입력 경계를 적용한다. D57·D58의 입력·수치·원자 수집과 활성 지식, D55 strict 지식·D56 진찰 문구, D53 직접 문진, D52 clinical/gateway 컨텍스트 종료, D49–D51 소유권·무점수 지식·복구를 유지한다. Python이 등록 그래프의 관계·조건·질문을 준비하고, 공통 DoctorBrain을 호출한 세션이 질환 순위와 선택 질문을 수용한다.
+Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D61·d50.12**다. 중간 오류가 발생한 질문·작업은 실제 수신과 범위를 보존해 마감하고 후속 세션과 최종 작성으로 전진한다. 정상 Writer 실패에는 추가 모델·그래프 조회 없는 최소 SOAP를 사용한다. 실제 matching completed 응답만 제출 성공이며, 수신 미확정에도 생성한 note·diagnosis와 최종 요청 ID·오류는 반환한다. 준비·manifest·임상 출처·수치·scope 검증은 유지한다.
+
+[D61](DECISION_STATE.md#D61)은 그래프에서 모델로 보내는 relation·evidence·question·condition 표를 **각 최대 50개**, 임상 후보와 Assessment를 **최대 10개**, note.A.differential을 **최대 5개**로 제한한다. 기존 prior·route 순서와 완전한 관계 조건을 유지하며 제외 참조를 함께 정리한다. 환자 facts는 이 제한으로 삭제하지 않는다. 저장 C10 DD 입력의 오프라인 재구성은 user JSON 83,720→24,713 bytes와 환자 facts 30개 보존을 확인했다. 모델의 실제 수용·진단 품질은 별도다. [현재 검증](Tmp/d61-2026-10-22/verification.json)과 [packet 재구성](Tmp/d61-2026-10-22/packet-replay.json)을 따른다.
+
+작업 시작 시 이미 있던 변경과 중간에 관찰한 d50.11 입력 정책을 보존했다. 현재 로컬 설정은 누적 입력 500,000·보고된 요청 입력 100,000·호출 출력 8,000이며 누적 출력 상한과 Education 입력 reserve는 없다. 모델·effort·호출 수·행동·시간·같은 ID retry는 유지한다. [D60](DECISION_STATE.md#D60)의 당시 제한 해제와 [당시 검증](Tmp/d60-2026-10-22/verification.json)은 역사적 기록이다. 현재 공식 서버 정책을 새로 확인하거나 실제 모델 평가를 수행한 것은 아니다.
 
 D56은 현재 저장된 시진·청진·촉진·타진 실행 문구 119개를 정규화한다. `목을 보여 주세요.`는 `목 시진합니다.`, `피부를 눈으로 살펴보세요.`는 `피부 시진합니다.`로 바뀌었다. 복합 동작·특수 수기·필요한 자세와 ID·임상 관계·질문 계약은 보존했다. 문구가 없던 메서드 37개는 그대로 두며 부위 미지정 공용 메서드 2개에는 임의 부위를 넣지 않는다. [D56 결정](DECISION_STATE.md#D56)·[전체 전후 명세](data/provenance/exam-text-normalization-plan-2026-10-21.json)·[현재 검증](data/provenance/exam-text-normalization-2026-10-21.json)을 따른다. 실제 NOVA의 새 문구 수용 여부는 재검증하지 않았다.
 
@@ -52,7 +56,7 @@ flowchart TD
 | Consultation | 다섯 세션·공식 자원·입력→판단→행동의 조정 |
 | SubmissionWriter | frozen Assessment와 사실의 Python SOAP·DIAGNOSE·완료 확인 |
 
-Association은 질환·Pattern·명시적 target_scope·applicability·`support / strong_support / against / strong_against`로 구성한다. 새 후보는 positive effect의 Target 또는 applicability 경로로 넓게 회수하고, **전체 Pattern과 applicability가 맞을 때만 effect를 활성화**한다. 부분 일치·수치 불일치가 자동 지지나 반대가 되지 않는다. 기존 후보는 현재 유효한 경로가 있는 동안 보존한다. LLM이 수용한 순서를 점수로 다시 정렬하지 않는다.
+Association은 질환·Pattern·명시적 target_scope·applicability·`support / strong_support / against / strong_against`로 구성한다. 새 후보는 positive effect의 Target 또는 applicability 경로로 넓게 회수하고, **전체 Pattern과 applicability가 맞을 때만 effect를 활성화**한다. 부분 일치·수치 불일치가 자동 지지나 반대가 되지 않는다. 기존 후보는 현재 유효한 경로에서 회수하며 모델 입력과 현재 Assessment에는 D61의 열 개 상한을 적용한다. LLM이 수용한 순서를 점수로 다시 정렬하지 않는다.
 
 Context도 같은 CaseFact를 사용하며 가족 구성원·시점·관찰·episode를 섞지 않는다. 속성 질문에는 같은 Target·scope의 존재 확인이 앞선다. rule의 any와 실제 질문의 current/past/unspecified를 구분한다. 나이·측정값·기간·단위·통증 수치와 실제 취득 경로는 유지한다.
 
@@ -60,17 +64,17 @@ Initiation과 CC 종료에서 순위를 판단하고, Context 종료와 DD 첫 �
 
 Consultation이 검증한 CC 평가 자료만 ContextFactor에 전달한다. EducationSession은 영어 계획과 전달 순서·턴 배분·큐·준비 상태를 관리하고, Mouth는 한국어 표현과 행동 실행을 담당한다. 이미 큐나 전달·미전달 결과가 있는 교육 계획 그룹은 재진입해도 다시 표현하지 않는다.
 
-[D51 후속 결정](DECISION_STATE.md#D51)은 미사용 계약을 정리하고 실제 role clarification을 준비 단계에서 검증한다. Ear의 의미 처리 호출은 문맥 2회·매핑 2회 이내이고 초기 chief도 같은 복구를 공유한다. 첫 후보 강제 확정은 제거했으며 정상 input 2회 보호와 선택적 복구를 구분한다. 진단 안내 모델은 실제 번들 전체의 짧은 한국어 문구가 검증될 때까지 유지한다.
+[D51 후속 결정](DECISION_STATE.md#D51)은 미사용 계약을 정리하고 실제 role clarification을 준비 단계에서 검증한다. Ear의 의미 처리 호출은 문맥 2회·매핑 2회 이내이고 초기 chief도 같은 복구를 공유한다. 일반 Ear의 첫 후보 강제 확정은 제거했으며 정상 input 2회 보호와 선택적 복구를 구분한다. 진단 안내 모델은 실제 번들 전체의 짧은 한국어 문구가 검증될 때까지 유지한다.
 
 입력 부분 복구는 정상 demographic·형제 진술을 보존하고 typed age와 미매핑 영문 메모를 수용한다. 속성의 그래프 자격은 현재 같은 범위의 존재 확인으로 계산한다. 정확한 단답과 성공 응답의 자원 재사용, 공유 관계 JSON으로 불필요한 호출·조회·중복 표현을 줄인다.
 
-[D52 수정](DECISION_STATE.md#D52)은 설치 후 C10 로그에서 확인한 관계 정의 중복을 제거한다. 같은 target·effect·전체 Pattern·scope·applicability를 질환 간 공유하며 모든 후보·조건·관찰별 근거는 유지한다. clinical/gateway의 CONTEXT_LIMIT_EXCEEDED는 출력 한도를 높여 재시도하지 않고 해당 원인으로 종료한다. Education 두 role은 아래 D59 예외를 따른다. 새 실제 NOVA C10의 완료 여부는 별도 실행으로 확인해야 한다.
+[D52 수정](DECISION_STATE.md#D52)은 설치 후 C10 로그에서 확인한 관계 정의 중복을 제거한다. 같은 target·effect·전체 Pattern·scope·applicability를 질환 간 공유하며 모든 후보·조건·관찰별 근거는 유지한다. clinical/gateway의 CONTEXT_LIMIT_EXCEEDED는 출력 한도를 높여 즉시 재시도하지 않으며 현재 D61에서는 오류 작업을 pass한 뒤 후속 단계나 최종 작성으로 진행한다. Education 두 role은 아래 D59 예외를 따른다. 새 실제 NOVA C10의 완료 여부는 별도 실행으로 확인해야 한다.
 
 [D53](DECISION_STATE.md#D53)은 인사·공감 SAY를 삭제하여 초기 입력 수용 후 Initiation의 첫 미확인 질문부터 시작한다. 참고 자료 경계·해시/인용·영어 P/한국어 독립 수용은 유지한다. 당시 다섯 전체 문서·실패 비보충 정책과 검증은 [D53 증빙](data/provenance/algorithm-d50-4-2026-10-21.json)에 보존하며 현재 Education 공급은 D59를 따른다.
 
 [D54](DECISION_STATE.md#D54)의 exact AND care_navigation 안정 분할과 그룹 내부 순서는 D59에서도 유지한다. 모순된 Pattern/applicability 경로의 후보 유입을 막고 unknown 부분 후보와 유효한 prior 반대 경로는 유지한다. 교육·안내의 fact ID, 질문의 observation/episode scope, 초기 원문 중복과 mapping 해석 의미, 영어/한국어 어휘 후보를 함께 정리했다. 문서의 내부 path/hash/offset은 모델에 보내지 않고 공급한 원문 span의 UTF-8 인용을 검증한다. [D54 검증](data/provenance/algorithm-d50-5-2026-10-21.json)과 [당시 연결 위반 목록](data/provenance/runtime-link-audit-2026-10-21.json)은 역사적 근거다. 이후 D55는 정정 번들과 strict gate를 함께 활성화했으며 Decreased body weight는 동등성 근거 부족으로 별도 개념을 유지한다.
 
-[D59](DECISION_STATE.md#D59)는 기존 질환 매핑에서 파일당 최대 1 MiB·총 16 MiB만 읽고, 완전한 짧은 ATX 구간과 상위 도입문을 묶어 공급한다. 원자 발췌 JSON은 2 KiB, 전체 documents는 8 KiB, 실제 messages는 32 KiB이며 작은 출처가 6개 이상 들어갈 수 있다. 두 Education role은 호출 전 잔여 입력 65,536 tokens와 pending sync도 검사한다. Education context 오류 후에는 추가 모델을 동기화 전 차단하고, 검증된 영어 P·사용 가능한 한국어를 보존하여 기존 SOAP·DIAGNOSE 완료 경로로 이어간다. 실제 SAY 영수증 없이 전달로 기록하지 않는다. 네 가지 경계 회귀를 포함한 [검증 증빙](data/provenance/algorithm-d50-9-2026-10-21.json)은 실제 모델·임상·공식 성능과 구별한다.
+[D59](DECISION_STATE.md#D59)는 기존 질환 매핑에서 파일당 최대 1 MiB·총 16 MiB만 읽고, 완전한 짧은 ATX 구간과 상위 도입문을 묶어 공급한다. 원자 발췌 JSON은 2 KiB, 전체 documents는 8 KiB, 실제 messages는 32 KiB이며 작은 출처가 6개 이상 들어갈 수 있다. 당시 두 Education role은 잔여 입력 65,536 tokens와 pending sync를 검사했으며 잔여 입력 조건은 [D60](DECISION_STATE.md#D60)에서 제거했다. Education context 오류 후에는 추가 모델을 동기화 전 차단하고, 검증된 영어 P·사용 가능한 한국어를 보존하여 기존 SOAP·DIAGNOSE 완료 경로로 이어간다. 실제 SAY 영수증 없이 전달로 기록하지 않는다. 네 가지 경계 회귀를 포함한 [검증 증빙](data/provenance/algorithm-d50-9-2026-10-21.json)은 실제 모델·임상·공식 성능과 구별한다.
 
 [D52 증빙](data/provenance/algorithm-d50-3-2026-10-21.json)은 소스·독립 ZIP 회귀 각각 180개, 저장된 두 순위 요청의 임상 입력 동등성, 관측 16시나리오와 독립 합성 상담 3개·원본 SDK completed를 기록한다. 실제 NOVA 재실행과 공식 수용 증거는 포함하지 않는다.
 
@@ -107,4 +111,6 @@ docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --
 
 [D51 후속 증빙](data/provenance/algorithm-d50-2-2026-10-20.json)은 소스·독립 읽기 전용 ZIP의 회귀 각각 176개, 정상 scripted 상담 3개의 전후 행동·사실·평가·P·SOAP·사용량 일치, 관측 16시나리오와 1,516 작업 snapshot 재구성을 기록한다. 독립 합성 ZIP은 원본 SDK·run.py를 통해 21행동·44 HTTP 요청 뒤 completed를 받았다. [D50 증빙](data/provenance/algorithm-d50-2026-10-20.json)은 이전 d50.1의 역사적 수용 기록으로 보존한다. 합성 프로토콜 수용은 실제 모델·임상·공식 성능 검증과 구분한다.
 
-D59의 좁은 검사 79개는 최초 78개 통과와 오래된 전문 기대 수정 후 영향받은 5개 재확인으로 검증했다. 변경 없는 run.py prepare는 활성 948 Diseases를 로드했고 보호 해시 17개가 일치했다. 정규 패키저로 [로컬 ZIP](Tmp/d59-2026-10-21/package/ontoward-submission.zip)을 한 번 생성하여 새 모듈·프롬프트 포함과 원문 지침 제외를 확인했다. 실제 모델 품질·임상적 정확성·공식 평가·최종 버전 선택·업로드·배포·브라우저 시각 검증과 이번 전체 회귀/독립 ZIP 상담은 not_run이다.
+D59의 좁은 검사 79개는 최초 78개 통과와 오래된 전문 기대 수정 후 영향받은 5개 재확인으로 검증했다. 변경 없는 run.py prepare는 활성 948 Diseases를 로드했고 보호 해시 17개가 일치했다. 정규 패키저로 [로컬 ZIP](Tmp/d59-2026-10-21/package/ontoward-submission.zip)을 한 번 생성하여 새 모듈·프롬프트 포함과 원문 지침 제외를 확인했다. D59 당시 실제 모델 품질·임상적 정확성·공식 평가·최종 버전 선택·업로드·배포·브라우저 시각 검증과 전체 회귀/독립 ZIP 상담은 not_run이었다.
+
+D61에서는 정상 chief가 없고 허용된 확인이 끝나면 등록 Symptom 최대 여덟 개와 gateway 한 번으로 수집 경로를 고정한다. 이 경로는 환자 present fact와 지지 근거를 만들지 않으며 근거 없는 fallback은 불완전한 working problem으로 제출한다. 보고서는 Education 준비·진단 안내·계획별 expected 발화와 전달·P 내용·facts·생성 payload·실제 수신 확인을 분리한다. 새 Test 이미지는 만들었으며 이미 실행 중인 웹 컨테이너는 보존했으므로 해당 실행기를 종료한 뒤 sh Test/web.sh로 다시 시작해야 새 리포트 코드가 적용된다.

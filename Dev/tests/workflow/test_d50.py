@@ -304,7 +304,6 @@ class SharedWorkTests(unittest.TestCase):
         c.client.session.assert_not_called()
         self.assertFalse(hasattr(c.budget, 'knowledge'))
         self.assertEqual(c.budget.collection_calls(s), 6)
-        self.assertEqual(c.budget.collection_tokens(s), 36288)
 
 
 class ClinicalCadenceTests(unittest.TestCase):

@@ -8,7 +8,7 @@ CATEGORY_FIELDS = {**dict.fromkeys((*INTAKE, 'duration', 'quality', 'aggravating
 
 
 def slot_records(case, slot):
-    chief = case.chief()
+    chief = case.collection_chief()
     return [f for f in case.current_facts() if f.category == slot
             and f.polarity_scope == 'general'
             and (slot not in INTAKE or chief and f.subject == chief.subject and f.subject_member == chief.subject_member
@@ -26,7 +26,7 @@ def slot_resolved(case, slot):
 def answered(state, slot):
     if slot_resolved(state.case, slot):
         return True
-    chief = state.case.chief()
+    chief = state.case.collection_chief()
     for answer in state.interview.answers:
         if answer.category != slot or answer.outcome == 'undelivered':
             continue

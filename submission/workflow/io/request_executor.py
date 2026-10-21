@@ -3,6 +3,7 @@ import time
 from nova_sdk import NovaError
 
 from ..rules.limits import LIMITS, TRANSIENT_ERRORS
+from .sdk_boundary import sdk_call
 
 
 class RequestExecutor:
@@ -21,7 +22,12 @@ class RequestExecutor:
                 if original_timeout is not None:
                     client.timeout = min(LIMITS.request_timeout, remaining)
                 try:
-                    result = call(**payload)
+                    result = sdk_call(call, **payload)
+                    if 'note' in payload and 'diagnosis' in payload and (not isinstance(result, dict) or result.get('status') != 'completed'):
+                        # A malformed receipt has an unknown outcome. Recover with
+                        # the identical ID/body within the existing transport bound.
+                        if not isinstance(result, dict) or result.get('status') not in {'active', 'ready', 'in_progress', 'closed', 'expired'}:
+                            raise NovaError('INVALID_API_RESPONSE')
                     attempts.append({"attempt": attempt + 1, "result": "response_received"})
                     return result
                 except NovaError as error:

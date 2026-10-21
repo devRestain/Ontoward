@@ -68,6 +68,7 @@ class EducationSession:
                 self.questions.register(state, Question(item_id=f'Education:{sentence.id}:{number}', purpose='education',
                     text=text, order=order, plan_sentence_id=sentence.id))
                 order += 1
+            state.interview.education_utterances[sentence.id] = len(utterances)
             capacity -= len(utterances)
         for sentence in ordered:
             self.generated_utterances.pop(sentence.id, None)

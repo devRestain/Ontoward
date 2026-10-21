@@ -192,9 +192,25 @@ class PlanSentence(Model):
     priority: Literal['safety', 'routine'] = 'routine'
 
 
+class ChiefRoute(Model):
+    target: str
+    target_id: str
+    method: Literal['model', 'lexical', 'stable_order']
+    source_ref: str | None = None
+    observation_id: str | None = None
+    episode_id: str | None = None
+    subject: Literal['patient'] = 'patient'
+    subject_member: None = None
+    time_context: Literal['current', 'past', 'unspecified'] = 'current'
+
+
 class CaseState(Model):
     facts: dict[str, CaseFact] = Field(default_factory=dict)
     chief_fact_id: str | None = None
+    chief_route: ChiefRoute | None = None
+    presenting_text: str = ''
+    initial_vital_signs: str | dict[str, object] | None = None
+    diagnosis: str | None = None
     assessment: Assessment | None = None
     plan: list[PlanSentence] = Field(default_factory=list)
     revision: int = 0
@@ -245,10 +261,20 @@ class CaseState(Model):
         return next((f for f in candidates if f.id == self.chief_fact_id),
                     candidates[0] if len(candidates) == 1 else None)
 
+    def collection_chief(self):
+        if self.chief_route:
+            route = self.chief_route
+            return next((fact for fact in self.chief_candidates(confirmed=True)
+                if (fact.target, fact.observation_id, fact.episode_id) ==
+                   (route.target, route.observation_id, route.episode_id)), route)
+        return self.chief(confirmed=True)
+
     def select_primary(self, preferred=None):
         if self.assessment and self.assessment.frozen:
             raise ValueError('Clinical information is frozen')
         current = {f.id: f for f in self.chief_candidates()}
+        if self.chief_route:
+            current = {ident: fact for ident, fact in current.items() if fact.target == self.chief_route.target}
         if preferred in current:
             self.chief_fact_id = preferred
         elif self.chief_fact_id not in current:
@@ -308,6 +334,7 @@ class Answer(Model):
     coverage: bool = False
     plan_sentence_id: str | None = None
     reason: str | None = None
+    response: dict[str, object] | None = None
 
 
 class InterviewState(Model):
@@ -318,6 +345,7 @@ class InterviewState(Model):
     collection: dict[str, str] = Field(default_factory=dict)
     education_status: Literal['not_started', 'complete', 'partial', 'failed', 'disabled'] = 'not_started'
     education_reason: str | None = None
+    education_utterances: dict[str, int] = Field(default_factory=dict)
 
 
 class Usage(Model):
@@ -338,13 +366,14 @@ class SessionContext(Model):
     output_tokens: int = 0
     call_limit: int = LIMITS.model_calls
     input_token_limit: int = LIMITS.input_tokens
-    output_token_limit: int = LIMITS.output_tokens
     models_available: bool = True
     budget_sync_required: bool = False
     clarifications: int = Field(default=0, ge=0, le=LIMITS.clarifications)
     termination: Literal['submitted', 'failed', 'unknown', 'expired', 'closed'] | None = None
     reason: str | None = None
     receipt: dict[str, object] | None = None
+    final_payload: dict[str, object] | None = None
+    submission_request_id: str | None = None
 
 
 class TurnContext(Model):
@@ -369,4 +398,3 @@ class WorkflowState(Model):
 
     def stop(self, outcome, reason):
         self.session.termination, self.session.reason = outcome, reason
-        self.turn = None

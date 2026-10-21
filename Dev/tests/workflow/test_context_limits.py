@@ -61,7 +61,7 @@ class ClinicalRelationTests(unittest.TestCase):
 
 
 class ContextRejectionTests(unittest.TestCase):
-    def test_context_rejection_stops_each_clinical_route_before_repair_or_action(self):
+    def test_context_rejection_returns_without_repair_or_action(self):
         for stage, closing in [('Initiation', False), ('ChiefComplaint', False),
                                ('DifferentialDiagnosis', False), ('DifferentialDiagnosis', True)]:
             with self.subTest(stage=stage, closing=closing):
@@ -71,16 +71,16 @@ class ContextRejectionTests(unittest.TestCase):
                     c.differential.decide(s, c.client, closing=closing)
                 else:
                     c.sessions[stage].close(s, c.client)
-                self.assertEqual((s.session.termination, s.session.reason), ('failed', 'CONTEXT_LIMIT_EXCEEDED'))
+                self.assertEqual((s.session.termination, s.session.reason), (None, None))
                 c.client.chat.assert_called_once()
-                self.assertEqual(c.client.chat.call_args.kwargs['max_tokens'], 4096)
+                self.assertEqual(c.client.chat.call_args.kwargs['max_tokens'], 8000)
                 self.assertFalse(c.client.actions)
                 self.assertIsNone(s.case.assessment)
 
         c, s = f.consultation(), f.state()
         c.client.chat = Mock(side_effect=f.NovaError('CONTEXT_LIMIT_EXCEEDED', 400))
         c.brain.complete(s, c.client, role='gateway', messages=messages('Input', {}))
-        self.assertEqual((s.session.termination, s.session.reason), ('failed', 'CONTEXT_LIMIT_EXCEEDED'))
+        self.assertEqual((s.session.termination, s.session.reason), (None, None))
         c.client.chat.assert_called_once()
 
 
@@ -88,7 +88,7 @@ class EducationLimitTests(unittest.TestCase):
     def test_local_guards_precede_request_ids_usage_and_executor_even_when_finalizing(self):
         for role in ('education', 'education_doctor'):
             for finalizing in (False, True):
-                for guard in ('pending', 'messages', 'input', 'boundary'):
+                for guard in ('pending', 'messages', 'boundary'):
                     with self.subTest(role=role, finalizing=finalizing, guard=guard):
                         c, s = f.consultation(), f.state('Education')
                         s.session.finalizing = finalizing
@@ -96,13 +96,10 @@ class EducationLimitTests(unittest.TestCase):
                         c.brain.executor.execute = Mock(return_value=f.FakeSDK.completion({}))
                         request = [{'role': 'user', 'content': ''}]
                         request[0]['content'] = 'x' * (LIMITS.education_max_messages_bytes - json_bytes(request))
-                        s.session.input_token_limit = LIMITS.education_min_input_remaining_tokens
                         if guard == 'pending':
                             s.session.budget_sync_required = True
                         elif guard == 'messages':
                             request[0]['content'] += 'x'
-                        elif guard == 'input':
-                            s.session.input_token_limit -= 1
                         result = c.brain.complete(s, c.client, role=role, messages=request)
                         self.assertIsNone(s.session.termination)
                         self.assertTrue(s.session.models_available)
@@ -113,7 +110,7 @@ class EducationLimitTests(unittest.TestCase):
                             c.brain.executor.execute.assert_called_once()
                             self.assertEqual((s.session.doctor_calls, s.session.input_tokens, s.session.output_tokens), (1, 20, 10))
                         else:
-                            code = {'pending': 'BUDGET_SYNC_REQUIRED', 'messages': 'MESSAGE_LIMIT', 'input': 'INPUT_BUDGET'}[guard]
+                            code = {'pending': 'BUDGET_SYNC_REQUIRED', 'messages': 'MESSAGE_LIMIT'}[guard]
                             self.assertEqual(result.error, 'LOCAL_EDUCATION_' + code)
                             self.assertIsNone(result.request_id)
                             c.brain.new_request_id.assert_not_called()

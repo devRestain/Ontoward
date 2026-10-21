@@ -36,10 +36,11 @@
 - Observe the original run.py through Test-only Consultation operation and SDK wrappers; delegate once and preserve errors retries routing and all clinical decisions. Use execution.py only outside the agent artifact.
 - Store the initial state and reversible node changes with actual node names session turn request IDs and source labels; mark missing or partial traces explicitly.
 - Observe DoctorEar DoctorBrain DoctorMouth the five session objects QuestionTools and other collaborator methods from Test-only wrappers without runtime audit injection and preserve each original call exception and method binding once.
-- Observe imported Python input-binding graph-candidate and English-plan functions at their actual call sites; record callable definition paths and distinguish functions from instance methods.
+- Observe input binding graph candidates frozen fact projections mapped guideline reads passage packets citation contexts and English-plan functions at their actual call sites; record definition paths and distinguish functions from methods.
 - Store large serialized call values once by content hash in trace value events; resolve recorded references in the viewer without implying Python object identity or losing argument mutation paths.
-- Pin runtime source hashes manifest collector and Test boundary hashes actual sequential operations and WorkflowState schema at Consultation.run. Record trace format 6 with sequential execution metadata and preserve historical graph and format 5 traces without inventing compiled topology or missing values.
-- Keep D50 inspection landmarks and explicit collaborator field allowlists in pipeline.py. Capture session decision keys fixed Context candidates generated Education utterances and required question counts only at actual call boundaries; exclude arbitrary service dictionaries and credentials.
+- Pin entrypoint SDK workflow knowledge Python prompt manifest collector and Test boundary hashes at Consultation.run; record format 7 and compare tracked sources at exit while preserving historical graph and format 5/6 traces.
+- Keep the D59 observation contract coverage inventory landmarks and collaborator field allowlists in pipeline.py; capture session-owned values only at actual call boundaries and exclude arbitrary service dictionaries and credentials.
+- Report model results request IDs local guards budget synchronization Education delivery outcomes missing observer bindings and source drift from recorded events without inferring transmissions or field reads.
 - Record callable definition files and lines and the first EvidenceIndex for each case revision and chief within an operation; count repeated inner lookups without reconstructing unrecorded eligibility or field reads.
 - Pin the configured prompt manifest modules settings and route composition in new traces while preserving saved runs unchanged.
 - Derive inspection.json only from preserved trace and simulator records; expose incomplete calls SDK pairs graph paths frozen patient state revision primary diagnosis SOAP equality and completed receipts without rerunning clinical logic.
@@ -51,13 +52,14 @@
 - Refresh saved report HTML from preserved logs when opened; keep LangSmith setup guidance distinct from an implemented exporter or authorized external upload.
 - Use the separate compose.nova.yaml overlay for explicitly scoped NOVA execution.
 - Preserve each run in a fresh root Tmp/test-evaluator directory and disable automatic resumption.
+- Preserve the inherited d50.11 cumulative input 500000 and reported request-input 100000 limits and 8000 per-call output cap. Keep output totals uncapped and actual reservations usage request ceilings deadlines and original saved runs intact; apply D61 request-local recovery.
 - Preserve request identity, completed responses, refused turns, failed requests, and final submission receipts.
 - Preserve actual Gateway request bodies and responses in simulator output so transmitted candidates can be audited without exposing credentials.
 - Keep the scripted Gateway case-independent and limited to supplied source names and aliases; do not add case-to-concept fixtures or clinical synonym tables.
 - Handle DoctorEar input_segments and normalized_claim and session clinical_rank clinical_decision and clinical_action through the common DoctorBrain executor in scripted doubles without treating protocol fixtures as semantic-quality evidence.
 - Return the exact use_measurement true marker for supplied compatible numeric Mapping rows in scripted doubles without regenerating their quantities or categorical thresholds.
 - Handle D37 education and education_doctor protocol fixtures and forward the requested reasoning effort through the model bridge.
-- Permit the runtime's single bounded Education response repair after PROVIDER_RESPONSE_INVALID within the shared request ceiling; preserve the failed reservation and keep other service and uncertain failures stopped.
+- Permit bounded Education response repair and D59 Education-local context rejection within the shared request ceiling; preserve failed reservations and isolate each provider or uncertain request failure; keep only a confirmed shared call ceiling globally stopped.
 - Return D41 context statements and database dictionary batches while keeping scripted patient replies case-independent without clinical synonym tables.
 - Label isolated synthetic archive acceptance separately from public-sample consultation and keep its patient fixture outside the agent container.
 
@@ -74,9 +76,11 @@
 
 - Use brain_double.py for protocol-only clinical responses. Keep compare_d47.py and compare_d46.py limited to explicit historical snapshots; do not run them as current acceptance against absent old assets. Keep atlas.html synchronized with a dated current source snapshot and never treat its explanations as execution acceptance.
 - Keep initial_reports.json limited to public start_information opening and vital_signs and exclude patient scripts examination tables and reference records.
-- Permit the single clinical provider response repair within the existing shared request ceiling while preserving other service and unknown-result stops.
+- Permit the single clinical provider response repair within the existing shared request ceiling while preserving request-local service and unknown outcomes and the shared call ceiling.
 
 - Use compose.d49.yaml and verify_d49_archive.py for a fresh synthetic ZIP consultation with read-only submission, network none, unchanged run.py, original SDK, ready handshake, fifteen-field SOAP, and completed receipt. Keep the fixture responder outside the archive and remove development credentials.
 - Set ONTOWARD_DENY_LANGGRAPH=1 for D50 independent SDK verification and use no_langgraph/sitecustomize.py only as an external test guard. Keep actual model and clinical quality distinct from blocked-import protocol acceptance.
 - Use verify_d49_archive.py --observe only with a fresh synthetic output directory to retain actual SDK exchanges trace inspection and a standalone report; keep fixture acceptance distinct from public cases and real knowledge installation.
 - Read only the new effect, target_scope, Pattern/applicability, attribute_roles, and five asset pins in current graph inspection; do not restore score or source-required metadata.
+
+- Apply D61 request-local adapter failures without clearing request caches reservations conflicts or pending outcomes. Show protocol completion Education preparation diagnosis announcements expected plan utterances facts preserved payload transmission and actual receipt separately; mark missing legacy fields not_collected.

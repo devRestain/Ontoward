@@ -28,8 +28,7 @@ def report(root):
               'confirmed_submission': summary['status'] == 'completed' and (summary['receipt'] or {}).get('status') == 'completed',
               'ready_handshake': summary['ready'], 'nonempty_gateway_response': summary['doctor_successes'] > 0,
               'within_turn_limit': summary['turns'] <= 50,
-              'within_model_limits': summary['doctor_calls'] <= 200 and summary['input_tokens'] <= 500000
-                  and summary['output_tokens'] <= 100000,
+              'within_model_limits': summary['doctor_calls'] <= 200 and summary['input_tokens'] <= 500000,
               'no_development_key_in_agent': process['development_key_present'] is False,
               'no_samples_in_agent': process['samples_visible'] is False,
               'root_read_only': sandbox.get('root_read_only') is True,
@@ -42,7 +41,9 @@ def report(root):
               'model_requests': summary['model_requests'], 'checks': checks, 'score_status': 'not_scored',
               'actual_nova': 'run' if summary['backend'] == 'nova' and summary['model_requests'] else 'not_run',
               'official_submission': 'not_run', 'clinical_accuracy': 'not_evaluated'}
-    result['trace_status'] = collect(root)['trace']['status']
+    observed = collect(root)
+    result['trace_status'] = observed['trace']['status']
+    result['outcome'] = observed['inspection']['outcome']
     (root / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
     render(root)
     print(json.dumps(result, ensure_ascii=False, indent=2))

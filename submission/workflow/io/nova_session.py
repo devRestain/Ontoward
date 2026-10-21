@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from ..state import usage
 from ..rules.limits import LIMITS
 from ..state.models import SessionContext, TurnContext, WorkflowState
+from .sdk_boundary import sdk_call
 
 
 class SessionInput(BaseModel):
@@ -16,7 +17,6 @@ class SessionInput(BaseModel):
     allowed_actions: list[str] = Field(default_factory=lambda: ["SAY", "EXAM", "DIAGNOSE"])
     doctor_calls_remaining: int | None = Field(default=None, ge=0)
     input_tokens_remaining: int | None = Field(default=None, ge=0)
-    output_tokens_remaining: int | None = Field(default=None, ge=0)
 
     @field_validator("initial")
     @classmethod
@@ -42,7 +42,7 @@ class NovaSessionClient:
         self.interactions = interactions
 
     def initialize_case(self, client) -> WorkflowState:
-        raw = client.session()
+        raw = sdk_call(client.session)
         incoming = SessionInput.model_validate(raw)
         state = WorkflowState(session=SessionContext(
             session_id=str(raw.get("session_id") or client.session_id),

@@ -15,7 +15,7 @@ class BindingTests(unittest.TestCase):
         self.assertEqual([p['task'] for p in client.requests],['input_context'])
         self.assertEqual(s.case.chief().target,'Test complaint')
         self.assertIsNone(s.turn)
-        self.assertNotIn('Reported complaint',s.model_dump_json())
+        self.assertEqual(s.case.presenting_text, 'Reported complaint')
 
     def test_prior_care_denial_and_observation_are_notes_without_mapping_calls(self):
         rows = [f.statement('No treatment',target_terms=['treatment'],assertion='absent',record_category='previous_care',
@@ -269,7 +269,9 @@ class NumericAndScopeTests(unittest.TestCase):
         self.assertFalse(note.measurement.upper_inclusive)
         self.assertFalse(f.graph_facts(s.case))
         c.close_collection(s)
-        self.assertEqual(s.session.termination,'failed')
+        self.assertIsNone(s.session.termination)
+        self.assertTrue(s.case.assessment.frozen)
+        self.assertFalse(s.case.primary().supports)
 
     def test_bad_correction_cannot_change_target_subject_or_episode(self):
         for change in ({'subject':'family','subject_member':'mother'}, {'target_terms':['Other symptom']}, {'episode_id':'foreign'}):

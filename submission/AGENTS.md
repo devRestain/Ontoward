@@ -2,7 +2,7 @@
 
 ## Ownership and State
 
-- Apply D59 bounded Education passages and local context recovery before D55 strict loading and D54 scoped projections; preserve D57-D58, D53 direct Initiation, D52 clinical/gateway rejection, and D49-D51 sequential ownership and recovery.
+- Apply D61 bounded recovery and graph input limits before historical fail-fast rules. Preserve current input and per-call limits, D59 Education byte and citation guards, D55 strict loading, D54 scopes, D57-D58, D53 direct Initiation, and D49-D51 ownership.
 - Keep run.py as the unchanged SDK callback entrypoint and Consultation as the sole five-session coordinator.
 - Assign input interpretation and acceptance to DoctorEar clinical ranking and questions to the five session objects English plans and Education delivery scheduling to EducationSession all model execution to one injected DoctorBrain and patient expression and SAY/EXAM execution to DoctorMouth.
 - Pass only a current successful unfrozen CC Assessment into ContextFactor through Consultation without passing another session object.
@@ -40,11 +40,11 @@
 - Reuse one operation-local scoped Pattern/applicability evaluation for recall and evidence; reject contradicted paths and retain valid prior opposition and unknown partial or unobserved-Target context paths.
 - Activate an effect only when every Feature and applicability matches. Preserve partial/unknown separately; do not turn mismatch into opposition or ask remaining conditions of an explicitly impossible relation. Keep refinement within identical effect, scope, applicability, and observation.
 - Let code maintain supports against and unresolved while the calling session accepts ranked supplied disease references without numeric reranking. Send effect, rule scope, full Pattern, applicability, and disease-specific expected conditions even in first DD action-only input.
-- Preserve every existing candidate with a current graph path and reject unknown duplicate or omitted ranking references.
+- Limit the clinical workset and accepted differential to ten using existing prior and route order; reject unknown duplicate or omitted retained-prior ranking references. Keep the full Python graph evidence outside the bounded wire projection.
 - Rank once at normal Initiation and ChiefComplaint exits. Replace ContextFactor exit rank and first DD action with one joint DD entry decision; judge each accepted response including unknown by revision chief and response identity and finalize unprocessed early-exit input once.
 - Accept a valid ranking independently of a faulty next action and repair only the action once.
 - Freeze the latest Assessment and its facts and chief before Education including resource exits.
-- Use a confirmed registered chief-only symptom Assessment when latest disease assessment cannot be recovered and fail without a confirmed chief.
+- Use the current successful Assessment, a confirmed chief or a quote-linked symptom route for freeze. Use an explicitly limited working problem when only an unsupported routing choice exists; never create a supporting fact for the route.
 
 ## Collection Delivery and Submission
 
@@ -61,7 +61,8 @@
 - Query only frozen primary Disease mappings in stable exact-and-care_navigation groups; bound reads to 1048576 bytes per accepted file and 16777216 total bytes, count failed reads, and visit later mapped candidates after failures.
 - Pack complete supported ATX leaves with ancestor introductions in warning-first document round robin; cap excerpt JSON at 2048 bytes and documents JSON at 8192 bytes without truncation or full-text fallback.
 - Project document_id relation evidence_use meaningful scope and excerpts with heading_path and literal spans; freeze the packet before contexts and repair, reject ambiguous quotes, and keep path hash and absolute offsets internal.
-- Cap actual Education messages at 32768 JSON bytes and require 65536 remaining input tokens before both roles, including finalization; apply pending-sync rejection before request IDs usage and execution without modifying messages.
+- Cap actual Education messages at 32768 JSON bytes, including finalization; apply pending-sync rejection before request IDs usage and execution without modifying messages.
+- Preserve the inherited 500000 cumulative input and 100000 reported request-input limits, 8000 output per call, actual usage, call and action ceilings and deadlines. Keep cumulative output uncapped and omit the withdrawn Education token reserve.
 - Project patient and frozen diagnosis with one request-local fact map across plan generation Education rendering and announcement fallback; reject missing frozen evidence without dumping GraphRefs.
 - Start with unresolved Initiation intake or necessary chief clarification after initial input acceptance; exclude greeting and empathy implementation and account every SAY or EXAM in its session actions.
 - Select explicit task keys and normalized values without whole-state dumps large schemas or full graph profiles; keep clinical output at 4096 tokens and one recovery at 8000 tokens. Apply byte limits only to D59 Education.
@@ -70,22 +71,30 @@
 - Preserve official server turns separate from model tokens calls internal nodes and DIAGNOSE while protecting response final clinical decision Education and submission resources.
 - Reuse confirmed response budgets without routine GETs; synchronize uncertain actions and server model-limit failures and retain pre-submission refresh. Keep clinical question computation in sessions and pass integer requirements into BudgetPolicy with one shared cost table and the existing reservation floor.
 - Serialize model data as one JSON object and share full relation definitions with shallow evidence and question references. Aggregate questions by complete scope before executability checks and reuse only operation-local graph work.
-- Share identical clinical relation definitions only when target effect ordered full Pattern rule scope and applicability match; preserve every disease candidate scoped match and graph reference, and terminate clinical/gateway CONTEXT_LIMIT_EXCEEDED without output escalation.
+- Share identical clinical relation definitions only when target effect ordered full Pattern rule scope and applicability match; preserve every disease candidate scoped match and graph reference, and return clinical/gateway CONTEXT_LIMIT_EXCEEDED without output escalation; pass the failed operation and continue toward final payload.
 - Mark Education CONTEXT_LIMIT_EXCEEDED as budget_sync_required without stopping or disabling models; preserve verified English and cached Korean, block subsequent models before sync, and use existing finalization and actual SAY/DIAGNOSE receipts.
 - Include every question scope and register needed unobserved observations locally; replace repeated expectations only with exact relation/feature references and retain context and presence prerequisites explicitly.
-- Preserve same-identity transient replay shared limits session caps and explicit unknown transport termination.
+- Preserve same-identity bounded transient replay shared limits and session caps; pass unresolved actions and preserve unresolved DIAGNOSE payload and request ID.
 - Validate every patient utterance independently as NFC Korean with 1-30 codepoints without truncation.
 - Deliver the frozen diagnosis before planning and preserve English P and undelivered receipts after rendering failure.
 - Keep guideline quotation and source validation in English planning and preserve independent provider and text repair budgets in Mouth.
 - Keep Education replies transcript-only and honor the explicit disabled setting without Education reservations or actions.
 - Group SOAP by observation time condition subject and actual acquisition and reuse its fact phrases for frozen A evidence.
 - Preserve fifteen English string fields separate diagnosis empty preliminary O.tests actual EXAM turns and planned versus delivered education.
-- Rebuild SOAP at most once from the same frozen assessment and finish only after completed.
+- Keep the frozen diagnosis through independent minimal SOAP recovery and one confirmed-rejection repair. Record submitted only from the matching completed DIAGNOSE response and return preserved output for unconfirmed submission.
+
+
+- Consume failed questions with scoped passed_unasked or passed_unknown markers; preserve actual response payloads and IDs before clearing the turn and never create an Answer for an unsent question.
+- Keep CC route selection separate from patient facts. Use at most one additional gateway selection over eight registered Symptoms after bounded clarification, then a deterministic registered route without invented findings.
+- Limit graph-derived relation evidence question and condition tables to fifty complete records and clinical candidates to ten; close retained references and keep all accepted patient facts. Write at most five note differentials.
+- Remove only verified ungrounded demographic echoes. Keep current quotations corrections changed values family scopes measurements and valid siblings; accept null or missing partial-repair replacements without renumbering anchors.
+- Preserve initial reports failed-input replies verified plans final payload and submission request ID; use an independent format-only minimal Writer after normal assembly or validation fails.
+- Keep preparation failures strict and actual closed expired or forbidden service states truthful; never fabricate a receipt or replay an unknown effect under a new ID.
 
 ## Assets and Acceptance
 
 - Preserve the unchanged SDK and entrypoint, pinned Pydantic and RDFLib requirements, Python-selected task routes, and historical custody; load only the v5-enum-1 relative-path/hash-pinned six-file contract without old-format conversion.
-- Pin the algorithm as d50.9 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
+- Pin the algorithm as d50.12 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
 - Reject invalid hasAttribute ranges and canHaveValue domains or ranges during load; retain typed getters and block failed attribute lookup from becoming a presence question. Keep D55 strict loading and preserve its original parent directory byte-for-byte until explicit post-verification disposal.
 - Load the D56 text-normalized descendant of the D55 bundle. Keep ExamMethod identities and question selection unchanged and preserve required actions and positioning in normalized Korean EXAM request text.
 - Load the D57 collection-metadata descendant only after strict loader, coverage, entrypoint, and scoped input verification; preserve its D56 parent and all graph bytes.

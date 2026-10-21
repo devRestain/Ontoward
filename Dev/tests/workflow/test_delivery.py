@@ -229,7 +229,7 @@ class DeliveryTests(unittest.TestCase):
         self.assertEqual(s.interview.queue[0].text, '가상질환A가 의심됩니다.')
         self.assertEqual(s.case.model_dump(), before)
 
-    def test_fatal_announcement_error_does_not_start_plan_generation(self):
+    def test_failed_announcement_keeps_undelivered_receipt_and_sync_gate(self):
         requests = []
         def response(payload):
             requests.append(payload)
@@ -243,7 +243,8 @@ class DeliveryTests(unittest.TestCase):
         c,s = f.consultation(f.FakeSDK(chat_handler=response),f.resources(k,education=True)),f.chief(f.state('Education'))
         f.freeze(s,kind='disease',name='Disease alpha')
         c.enter_session(s)
-        self.assertEqual(s.session.termination, 'unknown')
+        self.assertIsNone(s.session.termination)
+        self.assertTrue(s.session.budget_sync_required)
         self.assertEqual(len(requests), 2)
         self.assertEqual({p['task'] for p in requests}, {'education_doctor'})
         self.assertFalse(s.case.plan)

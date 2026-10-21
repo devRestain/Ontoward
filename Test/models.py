@@ -47,7 +47,9 @@ class NovaModels:
             response = self.client.chat(messages, model=MODEL, reasoning_effort=reasoning_effort,
                                         max_tokens=max_tokens, request_id=request_id)
         except NovaError as error:
-            if not (role in {'education', 'education_doctor', 'clinical_rank', 'clinical_decision', 'clinical_action'} and error.code == 'PROVIDER_RESPONSE_INVALID'):
+            # Only a confirmed shared ceiling closes independent role requests.
+            # Keep every failed reservation and let runtime owners consume the step.
+            if error.code == 'MODEL_CALL_LIMIT':
                 self.stopped = error.code
             self.record({**entry, 'status': 'failed_or_unknown', 'error': error.code})
             raise
@@ -72,6 +74,8 @@ class ScriptedModels:
     def complete(self, role, messages, max_tokens, request_id, *, reasoning_effort='medium'):
         self.calls += 1
         payload = decode_context(messages[-1]['content'])
+        if payload.get('task') == 'chief_selection':
+            return completion(json.dumps({'symptom_ref': payload['candidates'][0]['ref']}))
         clinical = clinical_response(payload)
         if clinical is not None:
             return completion(json.dumps(clinical))

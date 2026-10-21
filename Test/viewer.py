@@ -76,10 +76,10 @@ def render(root):
     html = '''<!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Ontoward · 진료 과정 리포트</title>
 <style>@@CSS@@</style></head><body class="report-page">
-<header class="report-heading"><div><h1>진료 내부 흐름</h1><p id="report-meta" class="muted"></p><p id="report-outcome" class="error-text small" hidden></p></div><div class="report-tools"><span id="trace-status" class="badge"></span><a href="inspection.json" download>검증 JSON</a></div></header>
+<header class="report-heading"><div><h1>진료 내부 흐름</h1><p id="report-meta" class="muted"></p><p id="report-outcome" class="error-text small" role="status" hidden></p></div><div class="report-tools"><span id="trace-status" class="badge"></span><a href="inspection.json" download>검증 JSON</a></div></header>
 <section id="summary" class="metrics" aria-label="실행 요약"></section>
 <div class="report-layout"><aside class="timeline-panel"><label for="session-filter">내부 세션</label><select id="session-filter"><option value="">전체 세션</option></select><label class="turn-picker-label" for="turn-picker">관측 턴</label><select id="turn-picker" class="turn-picker"></select><nav id="timeline" aria-label="세션과 턴"></nav></aside>
-<div class="report-content"><details class="final-record"><summary>최종 제출 · SOAP · 수신 확인</summary><div id="final-record"></div></details>
+<div class="report-content"><details class="final-record" open><summary>최종 결과 · SOAP · 수신 확인</summary><div id="final-record"></div></details>
 <main id="turn-detail" aria-live="polite"></main>
 <details class="all-logs"><summary>실행 로그 · 수집 상태</summary><div id="all-logs"></div></details>
 </div></div>

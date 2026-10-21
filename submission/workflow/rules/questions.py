@@ -3,6 +3,7 @@ import hashlib
 from ..state import usage
 from .collection import INTAKE, HISTORY, answered, slot_resolved
 from .limits import LIMITS
+from .chief import force_chief
 from ..state.models import Question
 
 
@@ -10,6 +11,7 @@ class QuestionTools:
     def __init__(self, knowledge, config, questions, interactions, budget):
         self.knowledge, self.config, self.questions = knowledge, config, questions
         self.interactions, self.budget = interactions, budget
+        self.chief_fallback = lambda state: force_chief(state, knowledge, config)
 
     def has_resolved_evidence(self, state, target, attribute=None, observation=None, episode=None,
                               subject='patient', time_context=None, subject_member=None):
@@ -47,7 +49,7 @@ class QuestionTools:
         return False
 
     def _prepare_common(self, state, categories, texts, purpose):
-        chief = state.case.chief()
+        chief = state.case.collection_chief()
         for order, slot in enumerate(categories):
             ident = f'{state.interview.current}:{slot}'
             if answered(state, slot):
@@ -67,7 +69,7 @@ class QuestionTools:
                 answer_type='presence' if slot in {'course', 'recurrence', 'medical_history', 'medication', 'allergy', 'family_history'} else 'free_text'))
 
     def chief_statuses(self, state):
-        chief = state.case.chief(confirmed=True)
+        chief = state.case.collection_chief()
         if chief is None:
             return {}
         target = self.knowledge.term_id(chief.target, 'Symptom')
@@ -85,6 +87,8 @@ class QuestionTools:
         return statuses
 
     def prepare_clarification(self, state, original=None, *, primary_choice=False):
+        if original and state.interview.collection.get('|'.join(original.semantic_key()), '').startswith('passed_'):
+            return False
         if any(q.purpose == 'clarification' for q in state.interview.queue):
             return True
         if not self.budget.can_clarify(state):
@@ -105,7 +109,7 @@ class QuestionTools:
         return True
 
     def ensure_chief(self, state):
-        if state.case.chief(confirmed=True):
+        if state.case.collection_chief():
             return True
         candidate, original = state.case.chief(), None
         if candidate:
@@ -116,7 +120,7 @@ class QuestionTools:
                 original = self._question(spec, 'chief_confirmation', 0, LIMITS.clarification_priority)
                 original.clarifies_id = candidate.id
         if not self.prepare_clarification(state, original, primary_choice=len(state.case.chief_candidates()) > 1):
-            state.stop('failed', 'primary_chief_unresolved')
+            return self.chief_fallback(state)
         return False
 
     def _spec(self, state, target, attribute=None, observation=None, episode=None, *, purpose='feature', field=None,
@@ -140,7 +144,11 @@ class QuestionTools:
                 return None
             text = self.knowledge.question(attribute or target, target)
             answer_type, affirmative = template.answer_type, template.affirmative
-        if observation is None and purpose != 'context':
+        route = state.case.chief_route
+        route_collection = (purpose in {'hpi', 'chief'} and route and route.target_id == target
+                            and (subject, subject_member, time_context, observation, episode) ==
+                            (route.subject, route.subject_member, route.time_context, route.observation_id, route.episode_id))
+        if observation is None and purpose != 'context' and not route_collection:
             observation = 'observation:' + hashlib.sha256(f'{target}:{episode}:current'.encode()).hexdigest()[:24]
         return dict(target_id=target, attribute_id=attribute, observation_id=observation, episode_id=episode,
             purpose=purpose, field=field or ('O.exam' if exam else 'S.ros'), kind='EXAM' if exam else 'SAY', text=text,
@@ -169,7 +177,8 @@ class QuestionTools:
             return False
         key = (spec['kind'], self.knowledge.term(target), self.knowledge.term(attribute) if attribute else '',
                spec['subject'], spec.get('subject_member') or '', spec['time_context'], spec['observation_id'] or '', spec['episode_id'] or '')
-        if '|'.join(key) in state.interview.collection and state.interview.collection['|'.join(key)] in {'blocked_asset', 'budget_stopped'}:
+        status = state.interview.collection.get('|'.join(key), '')
+        if status in {'blocked_asset', 'budget_stopped'} or status.startswith('passed_'):
             return False
         if self.was_asked(*args):
             prior = [a for a in state.interview.answers if a.key == key and a.outcome != 'undelivered']
@@ -199,7 +208,7 @@ class QuestionTools:
                 return True
             if spec['attribute_id']:
                 return True
-            chief = state.case.chief(confirmed=True)
+            chief = state.case.collection_chief()
             systems = self.knowledge.get_symptom_systems(self.knowledge.term_id(chief.target, 'Symptom')) if chief else []
             targets = {t for system in systems for t in self.knowledge.get_system_symptoms(system)}
             delivered = sum(a.purpose == 'ros' and a.outcome != 'undelivered' for a in state.interview.answers)
@@ -262,4 +271,5 @@ class QuestionTools:
 
     @staticmethod
     def open_done(state):
-        return any(a.purpose == 'open_inquiry' and a.outcome != 'undelivered' for a in state.interview.answers)
+        return ('pass:ChiefComplaint:open' in state.interview.collection or
+                any(a.purpose == 'open_inquiry' and a.outcome != 'undelivered' for a in state.interview.answers))

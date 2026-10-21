@@ -24,13 +24,13 @@ class ChiefComplaintSession:
             lambda raw: self.accept(state, raw, work))
 
     def prepare_collection(self, state):
-        chief = state.case.chief(confirmed=True)
+        if not self.tools.ensure_chief(state):
+            return False
+        chief = state.case.collection_chief()
         stale = {q.item_id for q in state.interview.queue if q.purpose in {'hpi', 'chief', 'open_inquiry'}
                  and q.target and (chief is None or (q.target, q.observation_id, q.episode_id, q.time_context) !=
                      (chief.target, chief.observation_id, chief.episode_id, chief.time_context))}
         self.tools.questions.discard_unasked(state, stale, reason='chief_changed')
-        if not self.tools.ensure_chief(state):
-            return False
         target = self.tools.knowledge.term_id(chief.target, 'Symptom')
         for order, (name, status) in enumerate(self.tools.chief_statuses(state).items()):
             if status != 'unasked':

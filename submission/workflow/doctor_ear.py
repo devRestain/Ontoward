@@ -4,7 +4,7 @@ from .input_types import ContextInput, ContextStatement, InputResult, PatientCon
 from .output_types import MappingBatch
 from .model_context import messages, fact_record
 from .rules.input import fact_scope, make_fact, note_fact
-from .state.models import CaseFact
+from .state.models import CaseFact, ObservedNumber
 from .rules.limits import LIMITS
 from .rules.normalization import candidate_contracts, exact_mapping, measurement_value, statement_outcome, strict_json, validate_mapping
 
@@ -27,6 +27,8 @@ class DoctorEar:
         raw = turn.response
         segments = None
         if turn.kind == 'initial':
+            state.case.presenting_text = str(raw.get('opening', ''))
+            state.case.initial_vital_signs = raw.get('vital_signs')
             segments = {'opening': str(raw.get('opening', ''))}
             if raw.get('vital_signs'):
                 segments['vital_signs'] = raw['vital_signs'] if isinstance(raw['vital_signs'], str) else json.dumps(raw['vital_signs'], ensure_ascii=False)
@@ -40,12 +42,14 @@ class DoctorEar:
             text = text if isinstance(text, str) else ''
             self.record_delivery(question, source, raw)
         else:
-            state.stop('failed', 'unexpected_action_response')
+            self.questions.pass_step(state, 'unexpected_action_response', operation='input:pass')
             return
         number = raw.get('turn', LIMITS.turns - state.session.turns_remaining)
         if state.interview.current == 'Education':
             if question:
-                self.questions.complete(state, question, source, outcome='delivered', turn=raw.get('turn'))
+                self.questions.complete(state, question, source,
+                    outcome='undelivered' if raw.get('error') else 'delivered',
+                    turn=raw.get('turn'), reason=raw.get('error'))
             state.turn = None
             return
         result = self._parse_text(state, knowledge, client, text, source, number, segments) if not raw.get('error') else InputResult(outcomes=['unknown'])
@@ -76,6 +80,9 @@ class DoctorEar:
             related = {f.id for f in facts if f.observation_id == question.observation_id and f.episode_id == question.episode_id}
         facts = sorted(facts, key=lambda f: (f.id not in related, -f.turn, f.id))
         records = [dict(fact_record(f), source_ref=f.source_ref) for f in facts[:LIMITS.expanded_context_records]]
+        for row in records:
+            if row['id'].startswith('patient_context:') and 'context_key' not in row:
+                row['context_key'] = row['id'].rsplit(':', 1)[-1]
         refs = list(dict.fromkeys([*(f['source_ref'] for f in records), *(row['id'] for row in reversed(self.dialogue[-2:]))]))
         current = state.turn.request_id or 'initial'
         by_id = {row['id']: row for row in self.dialogue}
@@ -86,12 +93,17 @@ class DoctorEar:
         return {'records': records, 'dialogue': dialogue}
 
     def _read_context(self, raw, payload, text, previous=None, indices=None, demographic_indices=None):
-        if not isinstance(raw, dict) or not isinstance(raw.get('statements'), list):
+        partial = previous is not None and (indices is not None or demographic_indices is not None)
+        if not isinstance(raw, dict) or not partial and not isinstance(raw.get('statements'), list):
             raise ValueError('context_requires_statement_array')
         ContextInput.model_validate({**raw, 'statements': [], 'patient_context': []})
-        rows = raw['statements']
-        if indices is not None and len(rows) != len(indices):
-            raise ValueError('context_repair_length_mismatch')
+        rows = raw.get('statements', [])
+        errors = []
+        if partial and (not isinstance(rows, list) or rows and len(rows) != len(indices or [])):
+            errors.append(dict(area='statements', reason='context_repair_length_mismatch', index=(indices or [0])[0]))
+            rows = []
+        if partial and not rows:
+            rows = [None] * len(indices or [])
         context = previous.model_copy(deep=True) if previous else ContextInput(statements=[ContextStatement(quote=text or ' ', role='unknown') for _ in rows])
         positions = indices if indices is not None else list(range(len(rows)))
         supplied = {f['id'] for f in payload['records']}
@@ -103,8 +115,10 @@ class DoctorEar:
             observations.add(question.get('observation_id'))
             episodes.add(question.get('episode_id'))
             scopes.add((question.get('observation_id'), question.get('episode_id')))
-        errors = []
         for index, row in zip(positions, rows):
+            if partial and row is None:
+                context.statements[index] = ContextStatement(quote=context.statements[index].quote, role='unknown')
+                continue
             try:
                 statement = ContextStatement.model_validate(row)
                 if not statement.quote.strip() or statement.quote not in text:
@@ -131,36 +145,65 @@ class DoctorEar:
                 context.statements[index] = statement
             except (TypeError, ValueError, ValidationError) as error:
                 errors.append({'area': 'statements', 'index': index, 'reason': str(error)[:320], 'raw': row})
-        for index in positions:
+        for index in range(len(context.statements)):
             s = context.statements[index]
             if s.anchor is not None:
                 anchor = context.statements[s.anchor]
-                if (s.role != 'clinical' or anchor.role != 'clinical' or anchor.focus != 'target'
+                if (anchor.role != 'clinical' or anchor.focus != 'target'
                         or s.anchor == index or anchor.input_segment != s.input_segment
                         or (anchor.subject, anchor.subject_member, anchor.time_context) != (s.subject, s.subject_member, s.time_context)):
+                    context.statements[index] = ContextStatement(quote=s.quote, role='unknown')
+                elif s.role != 'clinical':
                     s.anchor = None
                 elif s.focus == 'attribute' or s.measurement:
                     s.target_terms = list(dict.fromkeys([*anchor.target_terms, *s.target_terms]))[:8]
-        partial = previous is not None and (indices is not None or demographic_indices is not None)
         demographic = list(context.patient_context) if previous else []
         demographic_rows = raw.get('patient_context', [])
         if not isinstance(demographic_rows, list) or len(demographic_rows) > 8:
-            raise ValueError('patient_context_requires_at_most_eight_rows')
+            if not partial:
+                errors.append(dict(area='patient_context', index=0, reason='patient_context_requires_at_most_eight_rows'))
+            demographic_rows = []
         if partial and demographic_indices is None:
             demographic_indices = []
         if demographic_indices is not None and demographic_indices and len(demographic_rows) != len(demographic_indices):
-            raise ValueError('patient_context_repair_length_mismatch')
+            if demographic_rows:
+                errors.append(dict(area='patient_context', index=demographic_indices[0], reason='patient_context_repair_length_mismatch'))
+            demographic_rows = []
         positions = demographic_indices if demographic_indices is not None else range(len(demographic_rows))
         for index, row in zip(positions, demographic_rows):
+            if partial and row is None:
+                continue
             try:
                 item = PatientContextFact.model_validate(row)
                 if item.quote not in text:
+                    known = payload.get('known_context_records', payload.get('records', []))
+                    if self._demographic_echo(item, known):
+                        continue
                     raise ValueError('ungrounded_patient_context')
                 demographic.append(item)
             except (TypeError, ValueError, ValidationError) as error:
                 errors.append({'area': 'patient_context', 'index': index, 'reason': str(error)[:320], 'raw': row})
         context.patient_context = demographic
         return (context, errors)
+
+    @staticmethod
+    def _demographic_echo(item, known):
+        if item.correction:
+            return False
+        for row in known:
+            if ((row.get('context_key'), row.get('subject', 'patient'), row.get('subject_member'), row.get('value')) !=
+                    (item.key, item.subject, item.subject_member, item.value)
+                    or row.get('status', 'present') != 'present'
+                    or row.get('time_context', 'unspecified') != 'unspecified'
+                    or row.get('observation_id') or row.get('episode_id')):
+                continue
+            try:
+                measured = ObservedNumber.model_validate(row['measurement']) if row.get('measurement') else None
+                if measured == item.measurement:
+                    return True
+            except (TypeError, ValueError):
+                continue
+        return False
 
     def _context(self, state, knowledge, client, text, segments=None):
         question = state.question()
@@ -174,9 +217,9 @@ class DoctorEar:
                 attribute = knowledge.term_id(question.attribute, 'FindingAttribute')
                 target = next((ident for kind in ('Symptom', 'ExamFinding', 'ContextFactor')
                     if (ident := knowledge.term_id(question.target, kind))), None)
-                binding['allowed_values'] = [knowledge.term(value) for value in knowledge.get_attribute_values(attribute)]
+                binding['allowed_values'] = [knowledge.term(value) for value in knowledge.get_attribute_values(attribute)[:LIMITS.graph_input_items]]
                 binding['allowed_units'] = knowledge.numeric_units(target, attribute)
-        payload = {'task': 'input_context', 'phase': 'context', 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'patient_context': {n.context_key: n.value for n in state.case.current_facts() if n.context_key and n.subject == 'patient' and (n.status == 'present')}, 'input_segments': segments, **self._project_context(state, question)}
+        payload = {'task': 'input_context', 'phase': 'context', 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'known_patient_context': {n.context_key: n.value for n in state.case.current_facts() if n.context_key and n.subject == 'patient' and (n.status == 'present')}, 'input_segments': segments, **self._project_context(state, question)}
         if segments is None:
             payload['input'] = text
         context, indices, demographic_indices = (None, None, None)
@@ -217,6 +260,8 @@ class DoctorEar:
                     frozen_statements=[{'index': i, 'quote': s.quote} for i, s in enumerate(context.statements) if i not in indices])
             except (TypeError, ValueError, ValidationError) as error:
                 errors = [{'reason': response.error or str(error)[:320]}]
+            if response.error and response.error not in {'OUTPUT_TRUNCATED', 'PROVIDER_RESPONSE_INVALID'}:
+                break
             payload['validation_errors'] = errors
         context = context or ContextInput(statements=[ContextStatement(quote=text, role='unknown')] if text.strip() else [])
         reply = text.strip().rstrip(self.config.texts.reply_trailing_punctuation)
@@ -291,6 +336,8 @@ class DoctorEar:
                     raise ValueError('mapping_batch_length_or_type')
             except (TypeError, ValueError) as error:
                 feedback = [{'reason': response.error or str(error)[:240]}]
+                if response.error and response.error not in {'OUTPUT_TRUNCATED', 'PROVIDER_RESPONSE_INVALID'}:
+                    break
                 continue
             unresolved, feedback = [], []
             for i, mapping in zip(remaining, wire):

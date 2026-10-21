@@ -1,4 +1,5 @@
 {
+  "chief.select": ["config/prompts/data.txt", "config/prompts/chief_select.txt"],
   "input.initial": ["config/prompts/data.txt", "config/prompts/input_common.txt", "config/prompts/input_fields.txt", "config/prompts/input_initial.txt"],
   "input.reply": ["config/prompts/data.txt", "config/prompts/input_common.txt", "config/prompts/input_fields.txt", "config/prompts/input_reply.txt"],
   "input.exam": ["config/prompts/data.txt", "config/prompts/input_common.txt", "config/prompts/input_fields.txt", "config/prompts/input_exam.txt"],

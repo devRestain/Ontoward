@@ -324,9 +324,13 @@ if(failure){
 }
 for(const [title,value,warning] of [['로컬 실행 검사',result.status==='pass'?'통과':result.status==='fail'?'실패':'결과 없음',result.status!=='pass'],['최종 진단',data.record.diagnosis||finalState?.case?.assessment?.differential?.[0]?.name||finalState?.case?.diagnosis?.name||finalState?.case?.diagnosis||'미제출',false],['사용한 턴',`${summary.turns??'—'} / 50`,false],['Gateway / 전체 모델',`${summary.doctor_calls??'—'} / ${summary.model_requests??'—'}`,false],['공식 채점','미실행 · not_scored',false]]){const box=el('div',null,'metric');box.append(el('small',title),el('strong',value,warning?'error-text':''));$('summary').append(box);}
 const final=$('final-record');
+const outcome=data.inspection?.outcome||{};
+final.append(kv([['Education 준비',outcome.education_status??'미수집'],['Education 사유',outcome.education_reason??'없음 / 미수집'],['검증된 계획 문장',outcome.plan_count??'미수집'],['진단 안내 전달',outcome.diagnosis_announcement_delivered??'미수집'],['환자 사실 / 미매핑 사실',`${outcome.fact_count??'미수집'} / ${outcome.unbound_fact_count??'미수집'}`],['payload 생성·보존',outcome.payload_generated?'있음':'미확인'],['전송 / 서버 수신 / 완료 확인',`${outcome.transmitted?'확인':'미확인'} / ${outcome.received?'확인':'미확인'} / ${outcome.submission_confirmed?'확인':'미확인'}`],['임상 정확성','평가하지 않음 · not_evaluated']]));
 final.append(kv([['진단',data.record.diagnosis||'제출 기록 없음'],['프로세스 종료',data.process.exit_code??data.process.status??'미수집'],['프로세스 경과 시간',data.process.seconds!==undefined?`${data.process.seconds}초`:'미수집'],['수신 확인',summary.receipt?.status||'없음'],['모드',summary.backend==='scripted'?'고정 응답 대역':summary.backend||data.run.backend||'미확인']]));
 if(data.record.note)final.append(soapNote('시뮬레이터에 수신된 최종 SOAP',data.record));
+else if(outcome.payload?.note)final.append(soapNote('생성·보존된 SOAP · 제출 수신 미확인',outcome.payload));
 else final.append(note('시뮬레이터에 수신된 최종 SOAP가 없습니다.'));
+final.append(jsonDetail('P 필드 내용 유무 · 적절성 점수가 아님',outcome.p_coverage??'미수집'),jsonDetail('계획 발화별 전달 · 진단 안내와 별도',outcome.plan_delivery??'미수집'));
 final.append(jsonDetail('실행 검사 · 누락된 증거',result),jsonDetail('최종 제출 영수증',summary.receipt||null));
 const lastNote=el('button','마지막 Note 상태 보기');lastNote.type='button';lastNote.className='last-note';
 lastNote.addEventListener('click',()=>{$('session-filter').value='';tab='note';select(groups.length-1);$('tab-note').focus();$('turn-detail').scrollIntoView({block:'start'});});

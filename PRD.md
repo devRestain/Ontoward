@@ -2,7 +2,7 @@
 
 ## 목적과 실행 경계
 
-Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D58](DECISION_STATE.md#D58)의 d50.8로 최신 strict 번들의 유한 증분 보완과 현재 평가의 DD Context 질문을 허용한다. [D57](DECISION_STATE.md#D57)의 초기 상세정보 수치 연결·scope·원자 질문 수집, [D55](DECISION_STATE.md#D55)의 strict 번들과 D56 진찰 문구를 유지한다. [D54](DECISION_STATE.md#D54)의 scoped 후보 유입·호출 내 참조·어휘 통합·문서 projection과 직접 연결 문서 우선 순서를 유지한다. D53의 직접 Initiation·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 검증되지 않은 과거 DB fallback은 허용하지 않으며 실제 설치 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
+Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D61](DECISION_STATE.md#D61)의 d50.12로 상담 오류의 유한 pass·최소 SOAP·정직한 수신 상태와 그래프 50·감별 10·note 감별 5 상한을 적용한다. D58의 최신 strict 번들·현재 평가 DD Context 질문을 유지한다. [D57](DECISION_STATE.md#D57)의 초기 상세정보 수치 연결·scope·원자 질문 수집, [D55](DECISION_STATE.md#D55)의 strict 번들과 D56 진찰 문구를 유지한다. [D54](DECISION_STATE.md#D54)의 scoped 후보 유입·호출 내 참조·어휘 통합·문서 projection과 직접 연결 문서 우선 순서를 유지한다. D53의 직접 Initiation·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 재시도 금지와 D61의 실패 작업 pass, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 검증되지 않은 과거 DB fallback은 허용하지 않으며 실제 설치 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
 
 진료 중에는 ZIP 내부의 읽기 전용 RDFLib Graph를 사용한다. 원본 RF2·BODHI·DDXPlus·준비 SQLite는 개발 자산이다. 등록되지 않은 질환·관계·질문을 런타임에서 만들지 않는다. 제공 가이드라인 원문은 진단을 고정한 뒤 지정 마운트에서만 읽는다. 실제 모델 품질과 공식 평가는 로컬 실행 증거와 구분한다.
 
@@ -34,7 +34,7 @@ DoctorEar는 입력 전처리·해석·사실 수용을, 다섯 세션 객체는
 | DifferentialDiagnosis | 집중 ROS·등록 특징·조건·실제 진찰 중 다음 행동 선택·평가 고정 | 3 / 10 |
 | Education | 고정 진단 첫 안내·영어 P·한국어 전달; 답변은 대화 기록 전용 | 5 / 10 |
 
-기확인·unknown·not_applicable·자산 차단·예산 중단을 구별한다. 최소 목표를 채우기 위해 반복하거나 미확인을 음성으로 만들지 않는다. 세션별 최대치를 서로 빌리지 않는다. CC의 마지막 가용 슬롯은 Open Inquiry에 보호한다. 집중 ROS는 DD에서 chief의 계통·중복·존재 확인을 지키며 최대 여섯 대상을 기존 10행동 상한 안에서 확인한다. Context 질문 출처는 CC 종료의 유효 Assessment에 든 질환으로 고정하고 수집 중 새 후보로 확장하지 않는다. 유효 CC 평가가 없으면 기본 병력만 수집하고 관련 Context 준비 불가 사유를 남긴다. 기본 병력은 과거력·약물·알레르기·가족력·사회력이다.
+기확인·unknown·not_applicable·자산 차단·예산 중단을 구별한다. 최소 목표를 채우기 위해 반복하거나 미확인을 음성으로 만들지 않는다. 실패 질문은 같은 full scope의 passed 표식으로 마감하며 실제 수신 후 해석 실패만 unknown Answer로 남긴다. 세션별 최대치를 서로 빌리지 않는다. CC의 마지막 가용 슬롯은 Open Inquiry에 보호한다. 집중 ROS는 DD에서 chief의 계통·중복·존재 확인을 지키며 최대 여섯 대상을 기존 10행동 상한 안에서 확인한다. Context 질문 출처는 CC 종료의 유효 Assessment에 든 질환으로 고정하고 수집 중 새 후보로 확장하지 않는다. 유효 CC 평가가 없으면 기본 병력만 수집하고 관련 Context 준비 불가 사유를 남긴다. 기본 병력은 과거력·약물·알레르기·가족력·사회력이다.
 
 원문은 DoctorEar의 참조 해석 문맥에 한 번만 보관한다. 정확한 영어 용어·허용 속성 값은 Python이 먼저 연결하고 미해결 임상 진술만 제한된 DB 후보로 정규화한다. 독립 유효 행을 보존하며 문맥과 매핑 각각 기본 1회·복구 최대 1회로 제한한다. 초기 chief 검토는 같은 문맥 복구에 포함하고 매핑 형식·참조·미해결 오류도 같은 한 번에 복구한다. 의미 근거 없이 첫 후보·첫 값을 확정하지 않으며 미해결 내용은 영어·수치·조건·scope를 가진 unbound 사실로 보존한다. 실제 모름을 양성으로 만들거나 측정값만으로 증상 존재를 만들지 않는다.
 
@@ -62,25 +62,25 @@ DoctorEar는 입력 전처리·해석·사실 수용을, 다섯 세션 객체는
 
 CaseState.assessment가 유일한 감별 정본이다. 순서가 순위이며 revision·chief·마지막 수용 응답 식별자·frozen·한계를 보관한다. Initiation과 CC는 정상 종료 때 각각 한 번 순위를 요청한다. Context 종료의 순위와 DD 첫 행동은 DD 진입의 joint decision 한 번으로 합친다. 이후 unknown을 포함한 새 DD 응답마다 순위와 행동을 판단하며 같은 응답의 재진입은 중복 호출하지 않는다. Context 도중과 DD 직전 자원 종료에서도 미처리 응답을 한 번 판단한 뒤 최신 성공 평가를 고정한다. 유효 순위는 잘못된 행동과 독립적으로 수용하고 행동만 제한 복구한다. 미등록·중복 참조와 기존 유효 후보 누락은 거절하며 그래프 경로가 소실된 후보만 코드가 무효화한다.
 
-점수·chief coverage·완성 패턴·가상 답변 utility는 수용 gate가 아니다. 코드가 수용 LLM 순위를 재정렬하지 않는다. 정상 임상 출력은 4096토큰, 한 번의 복구는 8000토큰이다. 기능별로 필요한 dict/list만 선택하고 JSON으로 한 번 직렬화한다. 전체 상태·큰 schema·그래프 profile 전문을 주입하지 않으며 사실·조건·미확인은 지역 참조표에 한 번 정의한다. 기존 유효 후보·반대 근거·미확인을 보존하고 고정 Top-K를 두지 않는다. clinical/gateway의 프롬프트 바이트 제한·절단 정책은 추가하지 않으며 Education에만 D59의 고정 JSON 상한을 적용한다.
+점수·chief coverage·완성 패턴·가상 답변 utility는 수용 gate가 아니다. 코드가 수용 LLM 순위를 재정렬하지 않는다. 정상 임상 출력은 4096토큰, 한 번의 복구는 8000토큰이다. 기능별로 필요한 dict/list만 선택하고 JSON으로 한 번 직렬화한다. 전체 상태·큰 schema·그래프 profile 전문을 주입하지 않으며 사실·조건·미확인은 지역 참조표에 한 번 정의한다. Python의 전체 그래프 근거는 보존하고 기존 prior·route 순서에서 임상 후보와 Assessment는 최대 10개, 모델용 relation·evidence·question·condition 표는 각각 최대 50개로 제한한다. 제외 레코드의 참조와 미사용 조건·scope를 제거하고 환자 facts와 그 scope는 보존한다. 제외를 음성 근거로 해석하지 않는다. clinical/gateway의 프롬프트 바이트 제한·절단 정책은 추가하지 않으며 Education에만 D59의 고정 JSON 상한을 적용한다.
 
 공개 ONTOWARD_PROMPTS manifest에 책임·출력·상황별 프롬프트 모듈을 등록한다. Ear·세션·Education·Mouth가 Python에서 현재 작업과 initial·reply·EXAM, 일반 매핑·통합 복구, 질환·증상 안내, 실제 복구에 필요한 모듈만 선택한다. LLM에 여러 작업의 조건 분기를 해석시켜 작업을 고르게 하지 않는다. 지시와 JSON 입력을 분리하고 실제 임상 조건은 입력 데이터로 보존한다. 같은 manifest와 모듈을 독립 ZIP에 포함하고 관측기에서 해시·경로 조합을 확인한다.
 
-D52에서 target·effect·순서가 있는 전체 Pattern·rule scope·applicability가 동일한 관계는 서로 다른 질환 Association에서도 전송 정의를 공유한다. 질환별 참조·모든 후보·조건·관찰별 사실 연결과 Python의 원래 그래프 근거는 유지한다. clinical/gateway의 CONTEXT_LIMIT_EXCEEDED는 출력 잘림과 구별하여 원래 오류로 즉시 종료하고 출력 한도 확대 재호출이나 후속 수집을 실행하지 않는다. Education 두 role은 D59에 따라 예산 동기화를 요구하고 기존 최종화로 이어간다.
+D52에서 target·effect·순서가 있는 전체 Pattern·rule scope·applicability가 동일한 관계는 서로 다른 질환 Association에서도 전송 정의를 공유한다. 질환별 참조·모든 후보·조건·관찰별 사실 연결과 Python의 원래 그래프 근거는 유지한다. clinical/gateway의 CONTEXT_LIMIT_EXCEEDED는 출력 잘림과 구별하여 원래 오류를 반환하고 같은 packet의 출력 한도 확대 재호출을 하지 않으며 소유자가 해당 작업을 pass한 뒤 다음 진료 단계나 최종화로 진행한다. Education 두 role은 D59에 따라 예산 동기화를 요구하고 기존 최종화로 이어간다.
 
 모든 임상 질문은 같은 scopes 표를 참조하며 facts에 아직 없는 유효한 질문 observation·episode도 호출 내 별도 참조로 구분한다. relation과 0 기반 feature index로 정확히 복원하는 기대값만 중복 전송에서 제외하고 전체 full_pattern·effect·rule_scope·applicability·질환 membership은 유지한다. Context 기대 상태와 presence_required의 존재 전제는 명시하며 0·false·unknown·의도된 빈 배열을 일괄 제거하지 않는다.
 
 필수 수집은 코드가 보장하고 선택적 질문은 LLM이 실행 가능한 선택지에서 고른다. 공유 relations 표에 effect·scope·전체 Pattern·applicability를 한 번 정의하고 근거와 expected_by_disease에서 참조한다. 고유 scope별로 질문을 먼저 합친 뒤 실행 가능성을 검사하며 질환별 기대 답을 보존한다. 질문 순서·SOAP category·clarification은 새 attribute_roles에서 읽는다. 실제 role clarification이 있으면 prepare에서 NFC·한글 포함·1–30자를 검사하며 null일 때 검증된 기본 문구를 사용한다. Context는 같은 CaseFact로 매칭하고 별도 supporting-context 경로를 두지 않는다. rule any와 구체 질문의 current/past/unspecified를 분리하며 해결 여부는 원래 rule scope로 검사한다. 속성만 있는 Pattern을 포함하여 같은 Target·scope의 존재를 확인한 뒤 속성 질문을 실행하며 질문의 등록 관계·문구·단계·주체·가족 구성원·시점·관찰·반복·자원을 검사한다. 유효 순위와 잘못된 행동을 분리하여 행동만 한 번 복구할 수 있다.
 
-DD 종료는 마지막 응답 수용→최신 평가 확인·허용 복구→현재 미확인·한계 확정→Assessment와 기반 facts·chief 고정→Education 이동이다. 자원 종료도 같은 고정 절차를 사용한다. 최신 질환 평가를 얻지 못하면 확인된 등록 chief 하나의 symptom-only 평가를 고정하고, chief도 없으면 실패한다. Writer에서 다시 진단을 고르지 않는다.
+DD 종료는 마지막 응답 수용→최신 평가 확인·허용 복구→현재 미확인·한계 확정→Assessment와 기반 facts·chief 고정→Education 이동이다. 자원 종료도 같은 고정 절차를 사용한다. 최신 질환 평가를 얻지 못하면 확인 chief 또는 원문과 연결된 symptom route로 고정하고, 근거 없는 route만 있으면 평가 불완전성을 가진 working problem을 고정한다. Writer에서 다시 진단을 고르지 않는다.
 
-## 공식 예산·Education·SOAP
+## 예산·Education·SOAP
 
-D45에서 SDK `client.session()`의 `turns_remaining`이 행동 예산의 기준이다. SAY·EXAM은 서버 소비를 정산하며 모델·세션 조회·내부 노드·SOAP·DIAGNOSE는 행동 턴을 차감하지 않는다. 공통 한도는 50 행동·모델 200회·입력 500,000·출력 100,000토큰이다. 실제 서버 오류와 거절·잘못된 행동의 소비를 구별하고 같은 요청 재전송은 한 번만 계산한다.
+D45에서 SDK client.session()의 turns_remaining이 행동 예산의 기준이다. SAY·EXAM은 서버 소비를 정산하며 모델·세션 조회·내부 노드·SOAP·DIAGNOSE는 행동 턴을 차감하지 않는다. D60의 누적 출력 상한·Education 입력 reserve 제거는 유지한다. 현재 작업 트리에 이미 들어온 d50.11 정책인 누적 입력 500000·보고된 요청 입력 100000·호출 출력 8000을 보존하고 서버 input_tokens_remaining으로 확인한 입력 예산을 사용한다. 실제 token usage를 기록하며 누적 출력량으로 max_tokens를 줄이지 않는다. 50 행동·모델 200회·기한·retry를 유지하고 실제 서버 거절·사용량·불명 소비를 구별한다. 이는 현재 공식 서버 정책을 새로 확인했다는 주장이 아니다.
 
 정상 응답으로 확정된 자원은 반복 GET 없이 사용한다. 불명확한 소비·서버 한도 오류는 동기화하고 제출 직전 조회를 유지한다. 세션이 필요한 질문 수를 Budget에 전달하며 Budget은 공유 비용 표와 기존 보호 하한으로 자원을 계산한다.
 
-정상 input 2회·8192토큰과 최종화 자원을 보호하며 선택적 입력 복구는 각 호출의 잔여 allowance 안에서만 수행한다. 새 행동 전에 응답 해석, 최종 임상 판단과 허용 복구, 활성 P·한국어 안내와 제출 시간을 보호한다. Education 7턴·상한 10턴과 응답·최종화 시간 경계를 유지하며 모든 SAY·EXAM 소비를 해당 세션 actions에 계산한다. 받은 마지막 답변은 잔여 턴이 0이어도 먼저 처리하고 DIAGNOSE를 제출한다. 일시 전송 오류는 같은 ID·payload로 2초 뒤 한 번 재전송하며 불명 결과는 명시적으로 종료한다.
+정상 input 2회와 최종 임상·교육에 필요한 호출 수를 보호하며 선택적 입력 복구도 남은 호출 수와 호출별 출력 상한 안에서 수행한다. 누적 출력 토큰 잔여량을 예약하거나 max_tokens를 줄이지 않는다. 새 행동 전에 응답 해석, 최종 임상 판단과 허용 복구, 활성 P·한국어 안내와 제출 시간을 보호한다. Education 7턴·상한 10턴과 응답·최종화 시간 경계를 유지하며 모든 SAY·EXAM 소비를 해당 세션 actions에 계산한다. 받은 마지막 답변은 잔여 턴이 0이어도 먼저 처리하고 DIAGNOSE를 제출한다. 일시 전송 오류는 같은 ID·payload로 2초 뒤 한 번 재전송하며 불명 행동은 해당 질문만 pass하고 불명 제출은 payload·ID·오류를 보존해 반환한다.
 
 Education은 고정 1위를 먼저 알린 뒤 원문 지침·일반 지식을 구별하여 영어 P와 대응 한국어 발화를 high 요청 한 번으로 생성한다. 영어 내용·출처 인용과 한국어 NFC 1–30 codepoint 문장을 독립 검증한다. 한국어만 잘못되면 정상 영어 P를 유지하고 해당 그룹만 medium으로 제한 복구한다. 영어 부분 복구와 한국어 공급자 응답·문구 복구의 기존 상한은 유지한다. 실제 SAY receipt로 전달을 확인하며, 환자 답변은 transcript-only로 facts·진단·A를 갱신하지 않는다. 명시적 교육 비활성화는 교육 행동·예약·P.education 없이 동작한다.
 
@@ -90,7 +90,7 @@ D59는 제목 경로의 고정 관리·검사·경고·의뢰·추적·교육 �
 
 최종 system/user/repair messages JSON은 32768 bytes 이하이며 초기 초과 시 마지막 발췌 묶음부터 통째로 제거한다. 고정 facts·진단·지시만으로 초과하면 생성을 생략한다. 확정 packet의 spans로만 contexts를 만들고 초기·repair에 같은 packet과 contexts를 사용한다. 인용의 모든 출현을 원문 절대 byte 범위의 set으로 모아 한 위치일 때만 승인한다. repair 초과 시 호출 없이 검증된 영어 P를 유지한다. JSON 크기는 ensure_ascii=False, separators=(",", ":"), allow_nan=False 직렬화의 UTF-8 길이로 측정한다.
 
-DoctorBrain은 Education 두 role의 pending sync·messages 초과·잔여 입력 65536 tokens 미만을 ID·usage·실행 전에 각각 LOCAL_EDUCATION_BUDGET_SYNC_REQUIRED·LOCAL_EDUCATION_MESSAGE_LIMIT·LOCAL_EDUCATION_INPUT_BUDGET으로 차단한다. finalizing에서도 동일하다. 알려진 Education CONTEXT_LIMIT_EXCEEDED는 실제 요청 기록을 유지하고 소비를 추정하지 않은 채 budget_sync_required만 설정한다. 같은 prepare의 추가 Mouth 모델 호출을 차단하고 기존 외부 budget snapshot·최종화·Writer·실제 DIAGNOSE 완료 receipt를 사용한다. 검증된 영어와 사용 가능한 한국어 캐시는 보존하고 미전달을 전달로 기록하지 않는다. 지침이 없거나 개별 파일이 실패하면 model_knowledge와 빈 references를 사용할 수 있으며 정상 계획을 실패로 만들지 않는다.
+DoctorBrain은 Education 두 role의 pending sync·messages 초과를 ID·usage·실행 전에 각각 LOCAL_EDUCATION_BUDGET_SYNC_REQUIRED·LOCAL_EDUCATION_MESSAGE_LIMIT으로 차단한다. D60에서 누적 입력량 기반 LOCAL_EDUCATION_INPUT_BUDGET은 제거하며 finalizing에도 적용하지 않는다. 알려진 Education CONTEXT_LIMIT_EXCEEDED는 실제 요청 기록을 유지하고 소비를 추정하지 않은 채 budget_sync_required만 설정한다. 같은 prepare의 추가 Mouth 모델 호출을 차단하고 기존 외부 budget snapshot·최종화·Writer·실제 DIAGNOSE 완료 receipt를 사용한다. 검증된 영어와 사용 가능한 한국어 캐시는 보존하고 미전달을 전달로 기록하지 않는다. 지침이 없거나 개별 파일이 실패하면 model_knowledge와 빈 references를 사용할 수 있으며 정상 계획을 실패로 만들지 않는다.
 
 모델용 문서는 document_id·relation·evidence_use·text와 의미 있는 scope만 명시적으로 투영한다. 알려진 관리용 scope 상수만 제외하며 path·sha256·미래 내부 필드를 전송하지 않는다. 내부 검증 객체와 원문 UTF-8 인용 offset은 보존하고 본문 strip·헤더 삭제·절단은 하지 않는다. 교육 생성·교육 표현·진단 안내 fallback은 한 번의 current_facts에서 만든 같은 f_ 참조로 patient와 fixed_diagnosis를 함께 투영한다. 없는 근거 참조는 오류로 드러내고 도메인 ID나 정상 안내 템플릿을 바꾸지 않는다. 프롬프트는 문서를 참고 자료로 명시하여 원래 요청·환자 사실·불확실성·안전·출력 계약을 우선한다. 문서 수 제한은 실제 NOVA 입력 수용이나 임상 품질의 증거가 아니다.
 
@@ -111,15 +111,17 @@ SOAP는 통합 사실·frozen Assessment·영어 계획·실제 전달 결과를
 | A | evidence, differential |
 | P | tests, treatment, disposition, follow_up, education |
 
-별도 `diagnosis`는 frozen 목록의 1위와 일치한다. `note.A.diagnosis`를 추가하지 않는다. 예선 O.tests는 빈 문자열이다. 미질문·미시행·계획·실제 전달을 구별하며 기록 100,000바이트·진단 500바이트를 검증한다. 형식 복구는 같은 고정 평가에서 한 번 재구성한다. 정상 완료는 DIAGNOSE의 `completed` 응답이다.
+별도 `diagnosis`는 frozen 목록의 1위와 일치한다. `note.A.diagnosis`를 추가하지 않는다. 예선 O.tests는 빈 문자열이다. 미질문·미시행·계획·실제 전달을 구별하며 기록 100,000바이트·CR/LF 없는 한 행 진단 500바이트·note differential 최대 5개를 검증한다. 정상 작성 실패에는 추가 LLM·그래프 없는 최소 builder를 쓰고 확정 형식 반려는 기존 한 번의 실질 축소 복구를 허용한다. 정상 완료는 DIAGNOSE의 `completed` 응답이다.
 
 ## 상태·검증·제출물
 
-Consultation.run은 수용된 상태로 순차 실행하며 LangGraph와 매 작업 전체 상태 복사·재직렬화를 사용하지 않는다. 외부 데이터는 수용 전에 검증하며 처리되지 않은 예외 뒤에 행동이나 제출을 계속하지 않는다. WorkflowState에는 case·interview·session과 현재 turn만 둔다. CaseState는 통합 facts·chief·Assessment·plan·revision, InterviewState는 현재 질문·작은 Answer·수집 중단, SessionContext는 최신 제약·사용량·종료를 소유한다. SOAP는 제출 turn에만 존재한다. 그래프 후보 자료·LLM 교환·복구·원문 조각은 지역값이며 과거 순위·별도 진단 정본·가상 답변·런타임 audit를 보관하지 않는다.
+Consultation.run은 수용된 상태로 순차 실행하며 LangGraph와 매 작업 전체 상태 복사·재직렬화를 사용하지 않는다. 외부 데이터는 수용 전에 검증하며 작업별 예외를 scoped pass·세션 이동·독립 최소 작성으로 수습하며 실패한 연산이나 외부 효과를 새 ID로 재생하지 않는다. WorkflowState에는 case·interview·session과 현재 turn만 둔다. CaseState는 통합 facts·chief·별도 수집 route·초기 원문·고정 diagnosis·Assessment·plan·revision, InterviewState는 현재 질문·작은 Answer·수집 중단, SessionContext는 최신 제약·사용량·종료를 소유한다. SOAP는 제출 turn과 보존된 session.final_payload에 두며 미확정 요청 ID와 실제 receipt를 분리한다. 그래프 후보 자료·LLM 교환·복구·원문 조각은 지역값이며 과거 순위·별도 진단 정본·가상 답변·런타임 audit를 보관하지 않는다.
 
 프로젝트 Docker에서 유지 행동 회귀, 임시 새 합성 번들의 상담, 관측 유무 일치, 독립 읽기 전용 ZIP과 원본 SDK HTTP 완료를 검증한다. Test가 프로토콜 대역·재현·관측·비교를 소유하고 Dev/tests/workflow가 유지 회귀를 소유한다. 고정 응답 통과를 실제 모델 정확도나 임상 성능으로 해석하지 않는다.
 
 Test 웹에서는 단일 증례 또는 C01·C03·C10 세 시나리오를 한 번에 시작할 수 있다. 동시 실행은 시나리오별 Docker 네트워크·시뮬레이터·에이전트·출력을 분리하고 각각의 상태와 리포트를 제공한다. NOVA 요청 상한은 시나리오별로 적용하며 전체 최대 요청 수도 실행 전에 표시한다. 한 묶음이 끝나기 전에는 새 웹·CLI 실행을 받지 않으며 자동 대기열이나 재개를 두지 않는다.
+
+Test 관측은 현재 D59의 실제 호출 경계에서 지침 읽기·발췌 패킷·고정 인용 문맥·공유 사실/진단 투영과 모델 로컬 차단·예산 동기화·전달 결과를 추적한다. format 7은 진입점·SDK·workflow·knowledge Python·프롬프트와 관측기 해시를 기록하고 실행 중 추적 소스 변경과 선언한 관측 지점의 연결 누락을 검사한다. 기존 format 5/6과 그래프 trace에는 없는 자료를 보충하지 않는다. Test NOVA 어댑터도 Education의 확정 context 오류를 전역 중단으로 전파하지 않으며 실제 재호출과 동기화는 원래 런타임이 결정한다.
 
 제출 ZIP에는 실행 Python·고정 requirements·공개 .env·필요 프롬프트·manifest 자산만 넣는다. 루트 개발 키·Test·Dev·원본 자료·준비 DB·문서·상태·캐시는 제외한다. 구현 설명은 [한국어 백서](submission/README.md), 사용자 선택은 [결정 문서](DECISION_STATE.md), 관측 결과는 세 운영 상태와 [D51 후속 증빙](data/provenance/algorithm-d50-2-2026-10-20.json)에서 관리하며 D50 증빙은 과거 수용 기록으로 보존한다. 임상 코퍼스 확장·실제 유료 호출·공식 평가·게시·배포는 이 구현 수용과 별도다.
 
@@ -174,3 +176,5 @@ D56 검증 완료 뒤 사용자가 과거 build 삭제를 요청하면 현재 ma
 최신 활성 manifest를 해시 검증한 부모로 삼아 불면의 약물 관련 설명과 저신장의 정상 성장변이만 별도 보완한다. 유한 누락 발견→개념→관계→한 번의 최종 임상 검토→질문을 수행하고, Python이 URI와 부모 precondition을 확정한다. 기존 정의는 명시적 append-only 확장만 허용하며 관계 대체와 공유 속성 역할 변경은 개별 allowlist와 이전 hash를 검증한다. 부모 의미·질문 override·단위·값 소유권·진찰·지침을 보존하고 단일 정적 immutable child로 컴파일한다. 상담 중 overlay와 새 서비스는 추가하지 않는다.
 
 키 없는 plan은 실제 부모의 빈 delta round-trip을 먼저 검사한다. 각 후속 workset은 직전 완료 결과에서 한 번 고정하고 재개 시 완료·neutral·유효 형제 결과를 재사용한다. 실제 생성에는 명시적 요청 상한과 기존 선택 provider/model 설정을 적용하고 설치는 별도 명령으로 실행한다. 모든 설치가 공유하는 lock 안에서 최신 부모 일치와 manifest 원자 교체를 수행하며 augmentation은 보관 build를 정리하지 않는다. DD는 현재 평가의 미확인 Context·clarification 질문만 기존 자격·범위·중복·예산 검사로 허용한다. 모델 없는 검사·mock 생성·실제 생성·상담 정확도는 별도 보고한다.
+
+D61의 CC 강제선택은 정상 추출·허용 clarification 뒤 최대 8개의 등록 Symptom과 gateway 논리 호출 한 번만 사용한다. 선택 route는 실제 patient fact·지지 근거와 분리하며 정상 chief에는 추가 호출이 없다. demographic echo는 같은 canonical 값·measurement·scope·비교정·현재 quote 부재를 모두 확인할 때만 제거한다. partial repair의 null·빈/생략·영역별 개수 실패는 정상 형제와 원래 anchor 위치를 보존한다. Test 개별 오류는 요청 간 전파하지 않고 공유 ceiling·동일 ID cache를 유지한다. 실제 제출 completed·Education 준비·진단 안내·expected 계획 발화·P 내용은 별도 지표이며 수신 없는 생성 payload도 표시한다.

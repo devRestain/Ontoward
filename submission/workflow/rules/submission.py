@@ -7,11 +7,19 @@ from .limits import LIMITS
 
 def validate_payload(state):
     payload = state.turn.payload if state.turn and state.turn.kind == 'submission' else None
+    validate_wire_payload(payload)
+    if payload['diagnosis'] != state.case.primary().name:
+        raise ValueError('diagnosis_differs_from_frozen_assessment')
+    if state.session.doctor_successes < 1:
+        raise ValueError("doctor_call_required")
+    if "DIAGNOSE" not in state.session.allowed_actions:
+        raise ValueError("diagnosis_not_allowed")
+
+
+def validate_wire_payload(payload):
     if not payload or set(payload) != {"note", "diagnosis"}:
         raise ValueError("invalid_submission_payload")
     note, diagnosis = payload["note"], payload["diagnosis"]
-    if diagnosis != state.case.primary().name:
-        raise ValueError('diagnosis_differs_from_frozen_assessment')
     if not isinstance(note, dict) or set(note) != set(RECORD_FIELDS):
         raise ValueError("invalid_soap_fields")
     for section, fields in RECORD_FIELDS.items():
@@ -19,11 +27,7 @@ def validate_payload(state):
             raise ValueError("invalid_soap_fields")
     if note["O"]["tests"] or not any(text.strip() for fields in note.values() for text in fields.values()):
         raise ValueError("invalid_soap_content")
-    if not isinstance(diagnosis, str) or not diagnosis.strip() or len(diagnosis.encode("utf-8")) > LIMITS.diagnosis_bytes:
+    if not isinstance(diagnosis, str) or not diagnosis.strip() or any(c in diagnosis for c in '\r\n') or len(diagnosis.encode("utf-8")) > LIMITS.diagnosis_bytes:
         raise ValueError("invalid_diagnosis")
     if len(json.dumps(note, ensure_ascii=False).encode("utf-8")) > LIMITS.record_bytes:
         raise ValueError("record_too_large")
-    if state.session.doctor_successes < 1:
-        raise ValueError("doctor_call_required")
-    if "DIAGNOSE" not in state.session.allowed_actions:
-        raise ValueError("diagnosis_not_allowed")

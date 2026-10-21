@@ -78,7 +78,8 @@ def main(observe=False):
             (output / 'agent/stdout.log').write_text(result.stdout)
             (output / 'agent/stderr.log').write_text(result.stderr)
             save(output / 'agent/process.json', dict(exit_code=result.returncode))
-            save(output / 'run.json', dict(id='D50-synthetic-observed', fixture_kind='protocol_fixture', backend='scripted'))
+            save(output / 'run.json', dict(id=f'{__import__("settings").ALGORITHM_VERSION}-synthetic-observed',
+                fixture_kind='protocol_fixture', backend='scripted'))
             save(output / 'result.json', dict(status='pass', backend='scripted', score_status='not_scored'))
             save(simulator / 'summary.json', dict(status='completed', receipt={'status':'completed'},
                 backend='scripted', turns=len(client.actions), doctor_calls=len(client.requests), model_requests=len(client.requests)))

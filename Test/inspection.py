@@ -24,6 +24,42 @@ def apply(state, patch):
     return state
 
 
+def outcome_metrics(state, record, sent, summary):
+    """Describe preserved output and actual receipts without synthesizing a record."""
+    case, interview, session = ((state or {}).get(key, {}) for key in ('case', 'interview', 'session'))
+    payload = session.get('final_payload') or ((state or {}).get('turn') or {}).get('payload')
+    if not isinstance(payload, dict) or not isinstance(payload.get('note'), dict):
+        payload = {key: record[key] for key in ('note', 'diagnosis') if key in record} if record.get('note') else None
+    plans = case.get('plan')
+    answers = interview.get('answers')
+    delivery = None
+    if isinstance(plans, list) and isinstance(answers, list):
+        delivery = []
+        for sentence in plans:
+            rows = [row for row in answers if row.get('plan_sentence_id') == sentence['id']]
+            queued = [row for row in interview.get('queue', []) if row.get('plan_sentence_id') == sentence['id']]
+            good = sum(row.get('outcome') == 'delivered' for row in rows)
+            bad = sum(row.get('outcome') == 'undelivered' for row in rows)
+            expected = interview.get('education_utterances', {}).get(sentence['id'])
+            delivery.append(dict(id=sentence['id'], delivered_utterances=good, undelivered_utterances=bad,
+                pending_utterances=len(queued), expected_utterances=expected,
+                status='partial' if good and (bad or queued or expected and good < expected) else
+                'delivered' if expected and good == expected and not bad and not queued else
+                'undelivered' if bad and not good else 'not_collected'))
+    return dict(education_status=interview.get('education_status'), education_reason=interview.get('education_reason'),
+        plan_count=len(plans) if isinstance(plans, list) else None,
+        diagnosis_announcement_delivered=sum(row.get('outcome') == 'delivered' and row.get('question_id', '').startswith('Education:diagnosis:')
+                                            for row in answers) if isinstance(answers, list) else None,
+        plan_delivery=delivery, fact_count=len(case['facts']) if isinstance(case.get('facts'), dict) else None,
+        unbound_fact_count=sum(not row.get('graph_binding') for row in case['facts'].values())
+                          if isinstance(case.get('facts'), dict) and 'notes' not in case else None,
+        payload_generated=payload is not None, payload=payload,
+        transmitted=bool(sent), received=bool(record.get('note')),
+        submission_confirmed=summary.get('status') == 'completed' and (summary.get('receipt') or {}).get('status') == 'completed',
+        p_coverage={key: bool(value.strip()) for key, value in payload['note'].get('P', {}).items()} if payload else None,
+        clinical_accuracy='not_evaluated')
+
+
 def inspect_run(data):
     events = data['trace']['events']
     settings = next((e for e in events if e['kind'] == 'settings'), {})
@@ -141,7 +177,7 @@ def inspect_run(data):
                     model_calls[event['call_id']] = dict(seq=seq, role=event.get('inputs', {}).get('role'), before=budget)
                 elif kind == 'call_end':
                     result = resolve(event.get('output')) or {}
-                    result = result.get('data', {}) if result.get('type') == 'ModelResult' else {}
+                    result = result.get('data', {}) if isinstance(result, dict) and result.get('type') == 'ModelResult' else {}
                     error = result.get('error')
                     model_outcomes.append(dict(**model_calls.pop(event['call_id'], dict(seq=seq)),
                         end_seq=seq, error=error, request_id=result.get('request_id'), after=budget,
@@ -172,9 +208,9 @@ def inspect_run(data):
                                             for a in state.get('interview', {}).get('answers', [])),
                     education_undelivered=sum(a.get('purpose') == 'education' and a.get('outcome') == 'undelivered'
                                               for a in state.get('interview', {}).get('answers', [])),
-                    plan_count=len(case.get('plan', [])),
+                    plan_count=len(case['plan']) if 'plan' in case else None,
                     primary=primary, frozen=assessment.get('frozen'), turn_present=state.get('turn') is not None,
-                    fact_count=len(case.get('facts', {})), note_count=len(case.get('notes', {})),
+                    fact_count=len(case['facts']) if 'facts' in case else None,
                     measured_fact_count=sum(bool(f.get('measurement')) for f in case.get('facts', {}).values()),
                     unbound_fact_count=sum(not f.get('graph_binding') for f in case.get('facts', {}).values()) if unified else None))
         except (KeyError, IndexError, TypeError, ValueError) as error:
@@ -221,6 +257,7 @@ def inspect_run(data):
                 runtime=settings.get('runtime'), graph=settings.get('graph'), execution=settings.get('execution'),
                 pipeline=pipeline,
                 coverage=coverage, model_outcomes=model_outcomes,
+                outcome=outcome_metrics(state, record, sent, data['summary']),
                 state_layout='D50' if execution.get('kind') == 'sequential' else 'D47' if unified else 'D46' if modern else 'legacy_or_unknown', checks=checks,
                 event_counts=dict(counts), observed_methods=dict(methods),
                 declared_objects=settings.get('objects', []), checkpoints=checkpoints,

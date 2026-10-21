@@ -26,9 +26,9 @@ class LifecycleTests(unittest.TestCase):
             for answer in raw['interview']['answers']:
                 self.assertNotIn('text',answer)
                 self.assertNotIn('question',answer)
-                self.assertNotIn('response',answer)
+                self.assertIn('response',answer)
         self.assertGreater(len(c.ear.dialogue),1)
-        self.assertNotIn('확인한 환자 응답',s.model_dump_json())
+        self.assertIn('확인한 환자 응답',s.model_dump_json())
         c.release()
         self.assertFalse(c.ear.dialogue)
 
@@ -66,17 +66,18 @@ class LifecycleTests(unittest.TestCase):
         c.questions.complete(s,q,a.source_ref,outcome='recorded')
         self.assertEqual(len(s.interview.answers),1)
 
-    def test_loop_exception_stops_before_external_actions_or_submission(self):
+    def test_loop_exception_passes_session_and_submits_preserved_information(self):
         c, s = f.consultation(), f.chief(f.state('ChiefComplaint', initialized=True))
         c.refresh_after_input = lambda state: None
         c.questions.register(s, Question(item_id='pending', purpose='hpi', text='어떤 느낌인가요?'))
         def fail(state):
             raise ValueError('invalid operation')
         c.select_action = fail
-        with self.assertRaisesRegex(ValueError, 'invalid operation'):
-            c.run(s)
+        c.run(s)
         self.assertFalse(c.client.actions)
-        self.assertFalse(c.client.submissions)
+        self.assertEqual(s.session.termination, 'submitted')
+        self.assertEqual(len(c.client.submissions), 1)
+        self.assertIn('invalid operation', str(s.interview.collection))
 
     def test_one_assessment_and_one_call_per_input_revision(self):
         c,s = f.consultation(),f.chief(f.state('DifferentialDiagnosis'))
@@ -196,7 +197,7 @@ class LifecycleTests(unittest.TestCase):
         c.close_collection(s)
         c.writer.build_soap(s)
         self.assertEqual(s.turn.kind,'submission')
-        self.assertEqual(set(s.case.model_dump()),{'facts','chief_fact_id','assessment','plan','revision'})
+        self.assertEqual(set(s.case.model_dump()),{'facts','chief_fact_id','chief_route','presenting_text','initial_vital_signs','diagnosis','assessment','plan','revision'})
         c.writer.validate_submission(s)
         c.writer.submit_diagnosis(s)
         c.writer.confirm_submission(s)

@@ -1,6 +1,6 @@
 # 웹에서 실행하는 공개 샘플 테스트
 
-**D50 현재 상태:** 실제 새 지식 manifest가 없어 현재 submission으로 새 상담을 시작하면 knowledge_bundle_not_installed로 실패한다. 과거 결과·리포트는 계속 읽을 수 있다. 실제 생성/설치는 [Extraction 안내](../Extraction/README.md)를 따른다. Test 관측·화면은 trace format 6으로 갱신했다. 새 오프라인 검증은 Tmp/의 합성 번들과 독립 ZIP으로 수행하며 실제 DB나 공개 증례의 임상 품질과 구별한다.
+**D61 현재 상태:** 활성 v5-enum-1 지식은 build cec62f4596bedd9b9488aa75e3d38f04이며 runtime d50.12와 format 7 관측을 사용한다. 중간 오류 뒤에도 최종 payload로 전진하고 실제 completed와 미확정을 구분한다. 오프라인 프로토콜 수용과 실제 모델·임상 품질은 별도다.
 
 `Test/`는 기존 `submission/run.py`와 SDK를 그대로 실행하면서, 공모전의 세션 API와 예선 컨테이너 제약을 로컬에서 재현한다. 공개 `C01`·`C03`·`C10`의 `case.json`을 읽으며 공식 서버의 비공개 구현이나 채점 기준을 재현하지 않는다. 모든 결과의 채점 상태는 `not_scored`다.
 
@@ -79,7 +79,7 @@ sh Test/web.sh
 
 상단에서 최종 진단·SOAP·제출 수신·프로세스 종료와 실행 검사를 펼쳐 볼 수 있다. 시작 실패·시간 초과·중단도 결과로 남고, 부분 로그는 부분 수집으로 표시한다. 이전 실행에 내부 상태 로그가 없으면 기존 대화와 최종 결과만 표시한다. 로그의 원시 JSON과 모델 messages는 상세 영역을 펼칠 때 표시한다.
 
-**마지막 Note 상태 보기**를 누르면 마지막 관측 구간으로 이동한다. 현재 D50은 `case.facts/assessment/plan`을 보관하며 SOAP는 `turn.payload.note`에 제출 작업 중만 존재한다. 최종 수신본과 completed는 상단에서 별도로 확인한다. `case.assessment.differential[0]`과 별도 제출 diagnosis가 일치해야 한다. facts의 수집 상태·임상 상태·범위를 구별하며 Education 응답은 대화만 유지한다. 과거 `case.S/O/A/P`, `case.diagnosis`, `patient_reports`는 해당 저장 형식의 역사적 필드로만 읽는다.
+**마지막 Note 상태 보기**를 누르면 마지막 관측 구간으로 이동한다. 현재 D61은 case.facts/assessment/plan과 수집 route·초기 원문·고정 diagnosis를 보관하며 생성한 SOAP를 제출 turn과 session.final_payload에 보존한다. 최종 수신본과 completed는 상단에서 별도로 확인한다. `case.assessment.differential[0]`과 별도 제출 diagnosis가 일치해야 한다. facts의 수집 상태·임상 상태·범위를 구별하며 Education 응답은 대화만 유지한다. 과거 `case.S/O/A/P`, `case.diagnosis`, `patient_reports`는 해당 저장 형식의 역사적 필드로만 읽는다.
 
 저장된 실행을 웹에서 열면 현재 뷰어로 `report.html`을 다시 만든다. 테스트·모델 호출을 다시 실행하지 않는다. 이미 별도로 열어 둔 리포트는 새로고침한다. 내부 상태가 없는 과거 실행은 Note를 빈 상태로 추정하지 않고 미수집으로 표시하며 실제 최종 수신본만 제공한다.
 
@@ -185,7 +185,7 @@ NOVA 모드의 에이전트는 계속 내부 네트워크만 사용하지만 시
 | `simulator/model-calls.jsonl` | 역할별 실제 messages·응답·호출 설정·오류와 상위 행동 요청 ID |
 | `verification.json` | `verify` 명령의 오프라인 검사 결과 |
 
-ready 이전에는 증례를 공개하지 않고 준비는 10분, ready 이후 진료는 30분이다. SAY·EXAM은 최대 50턴·NFC 1–30자, TEST는 예선에서 차단한다. 모델은 Doctor/Gateway 호출 200회·입력 500,000·출력 100,000토큰을 별도로 추적한다. DIAGNOSE는 턴을 쓰지 않아 50번째 응답 이후에도 기한 내 제출할 수 있다.
+ready 이전에는 증례를 공개하지 않고 준비는 10분, ready 이후 진료는 30분이다. SAY·EXAM은 최대 50턴·NFC 1–30자, TEST는 예선에서 차단한다. Doctor/Gateway 호출은 200회로 제한하고 입력·출력 토큰은 사용량만 누적 추적한다. D60에서 증례 누적 입력 500,000·출력 100,000토큰 거절과 잔여량에 따른 출력 축소를 제거했다. summary의 누적 토큰 상한은 null이며 report는 누적 토큰으로 실패 처리하지 않는다. 호출별 출력 상한은 8000이고 실제 공급자 오류·공유 요청 상한은 유지한다. DIAGNOSE는 턴을 쓰지 않아 50번째 응답 이후에도 기한 내 제출할 수 있다.
 
 에이전트 종료 코드 0과 로컬 DIAGNOSE `completed` 영수증을 함께 확인해야 상담 성공이다. 빈/잘못된 SOAP, 비어 있지 않은 Gateway 응답 누락, 실패 프로세스나 증거 누락은 성공으로 표시하지 않는다. 웹에서 실행이 종료되어 리포트를 받는 것과 상담 성공은 각각 확인한다. scripted 응답으로 확정할 근거가 없으면 `no_supported_diagnosis`와 실패 결과를 그대로 보여준다.
 
@@ -233,12 +233,30 @@ docker compose -f Test/compose.d49.yaml run --rm -T d49-archive
 
 ## D50 순차 실행과 공동 교육 검증
 
-새 trace는 format 6의 execution.kind=sequential, 실제 작업 이름·소스/schema/prompt 해시와 observe.py·execution.py·pipeline.py의 해시를 기록한다. pipeline.py의 추적 지점은 탐색용이며 필수 호출 수나 실행 그래프가 아니다. 실행 객체의 허용된 필드만 수집하고, 이전 로그에 없던 값은 추정하지 않는다. execution.py는 Test에서만 작업 경계를 감싸고 중첩 검증은 객체 호출로 보존한다. 각 작업의 revision·chief별 첫 EvidenceIndex를 보존하고 반복 내부 조회는 횟수로 제한한다. 과거 그래프와 format 5 로그도 당시 형식으로 읽는다. 전체 상태 복사나 audit hook은 제출 코드에 넣지 않는다.
+D50 당시 trace는 format 6의 execution.kind=sequential, 실제 작업 이름·소스/schema/prompt 해시와 observe.py·execution.py·pipeline.py의 해시를 기록했다. pipeline.py의 추적 지점은 탐색용이며 필수 호출 수나 실행 그래프가 아니다. 실행 객체의 허용된 필드만 수집하고, 이전 로그에 없던 값은 추정하지 않는다. execution.py는 Test에서만 작업 경계를 감싸고 중첩 검증은 객체 호출로 보존한다. 각 작업의 revision·chief별 첫 EvidenceIndex를 보존하고 반복 내부 조회는 횟수로 제한한다. 과거 그래프와 format 5 로그도 당시 형식으로 읽는다. 전체 상태 복사나 audit hook은 제출 코드에 넣지 않는다.
 
 영어 P와 한국어는 정상 high 호출 한 번에 생성하고 영어·인용·한국어 문구를 별도로 수용한다. 잘못된 한국어 그룹만 medium으로 제한 복구한다. 독립 SDK 검사에는 ONTOWARD_DENY_LANGGRAPH=1을 주어 Test 외부 guard로 LangGraph import를 차단할 수 있다. guard와 fixtures는 ZIP에 포함하지 않는다.
 
-현재 수용 증거는 [D50 provenance](../data/provenance/algorithm-d50-2026-10-20.json)에 연결한다. 관측·텍스트 DOM·HTTP와 실제 브라우저 시각 검증, 실제 모델·임상·공식 평가는 구분한다.
+D50 당시 수용 증거는 [D50 provenance](../data/provenance/algorithm-d50-2026-10-20.json)에 연결한다. 관측·텍스트 DOM·HTTP와 실제 브라우저 시각 검증, 실제 모델·임상·공식 평가는 구분한다.
 
 독립 합성 ZIP의 관측과 화면을 함께 확인하려면 위 `compose.d49.yaml` 명령의 서비스 뒤에 `python -B /fixtures/Test/verify_d49_archive.py --observe`를 붙인다. `D49_OUTPUT`은 새 빈 폴더여야 한다. 원본 SDK의 실제 HTTP 요청·응답과 대화, `agent/trace.jsonl`, `inspection.json`, 자체 포함 `report.html`을 저장한다. 필요하면 `-e ONTOWARD_DENY_LANGGRAPH=1`을 서비스 앞에 지정한다. 실제 상담 알고리즘을 다시 계산하지 않고 리포트만 갱신할 때는 기존 저장 로그를 연다.
 
-이번 Test 갱신의 검증·합성 리포트 경로는 루트 상태의 `ROOT.TESTPIPE50`에 기록한다. 실제 브라우저 화면·모바일 렌더링·스크린리더 검증은 미실행이다.
+D50 Test 갱신의 검증·합성 리포트 경로는 루트 상태의 `ROOT.TESTPIPE50`에 기록한다. 실제 브라우저 화면·모바일 렌더링·스크린리더 검증은 미실행이다.
+
+## D59 최신 워크플로우 추적
+
+현재 d50.12 실행은 **format 7 / 관측 계약 D59 + D61 완료 지표**로 기록한다. 보존된 d50.11 입력 한도와 D59 byte·인용·pending-sync guard를 유지하며 D61이 실패 작업의 전진을 소유한다. **정보 흐름 → 이 턴의 추적 지점**에서 지침 원문 읽기, 발췌 패킷, 실제 전송 문서와 고정 인용 문맥, 고정 사실·진단의 공유 참조로 이동할 수 있다. 입력의 측정값·관찰·episode 범위와 실제 속성 수집 계약도 기존 입력/질문 객체의 인자·반환·상태에서 확인한다.
+
+**실행 검증**에는 선언한 관측 지점의 연결과 누락, 지식 Python·진입점·SDK 해시, 실행 중 추적 소스 변경 여부를 표시한다. **모델 반환 · 로컬 차단 · 전후 예산**을 펼치면 역할·실제 반환 오류·request ID와 호출 전후 모델 사용량·동기화 필요 상태를 확인한다. 로컬 차단 결과의 request ID가 없다는 사실을 보존하며 전송 여부를 추정하지 않는다. 작업별 체크포인트에는 교육 실패 사유와 실제 전달/미전달 수를 함께 기록한다.
+
+Test NOVA 어댑터는 Education 두 역할의 확정 `CONTEXT_LIMIT_EXCEEDED`를 다른 역할에 전역 오류로 전파하지 않는다. 실패 요청과 공통 요청 상한은 유지하고, 다음 호출·예산 동기화·기존 한국어 전달·최종 제출은 원래 런타임이 결정한다. D61에서는 모든 역할의 개별 provider·transport·response 오류를 요청에만 남긴다. 확인된 공유 MODEL_CALL_LIMIT·lock·reservation과 같은 ID의 성공/실패 cache·conflict·pending은 유지한다.
+
+저장된 format 5/6·그래프 trace를 열면 당시 수집한 자료만 표시한다. 새 관측 항목을 얻으려면 새 테스트를 명시적으로 시작해야 하며 과거 로그를 보완하려고 상담을 다시 실행하지 않는다. 검증과 독립 합성 리포트는 루트 상태의 `ROOT.TESTPIPE59`와 `Tmp/test-observer-d59-2026-10-21/`에 기록한다. 새 코드를 적용하려면 Test 이미지를 갱신하고 기존 웹 실행기를 종료한 뒤 `sh Test/web.sh`로 다시 시작한다.
+
+## D61 최종 결과 읽기
+
+상단 **최종 결과 · SOAP · 수신 확인**은 기본으로 펼쳐진다. Education 준비 상태/이유, 검증 plan 문장 수, 실제 진단 안내 발화 수, facts/unboundfacts, P 다섯 필드 내용 유무와 계획별 expected/delivered/undelivered/pending 발화를 구분한다. protocol pass는 교육 완료나 임상 정확도 점수가 아니다. case.notes=0으로 기록 부재를 판정하지 않는다.
+
+session.final_payload나 실제 제출 turn에 payload가 있지만 receipt가 없으면 **생성·보존된 SOAP · 제출 수신 미확인**을 보여 준다. SDK POST 시도·서버 record·completed receipt는 각각 별도다. legacy에 없는 plan·전달 기대 개수·facts는 미수집으로 표시하며 ID 하나의 등장으로 전체 계획 전달을 추론하지 않는다. 원본 저장 run을 새 schema로 다시 쓰거나 상담을 재실행하지 않는다.
+
+새 이미지는 빌드되어도 기존 웹 컨테이너 프로세스는 이전 이미지를 사용한다. 실행 중인 테스트를 마친 뒤 기존 웹 실행기를 종료하고 sh Test/web.sh로 다시 시작한다. 현재 검증 위치는 ROOT.D61와 Tmp/d61-2026-10-22/이다. 브라우저 렌더링·실제 NOVA·임상·공식 평가는 이번 오프라인 검증에 포함하지 않는다.

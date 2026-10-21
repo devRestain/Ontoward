@@ -4,7 +4,7 @@
 
 - Treat competition submission as the endpoint; implement one authorized acceptance slice without speculative platforms or compatibility layers.
 - Read root PROJECT_STATE.md, relevant PRD.md requirements, DECISION_STATE.md, and the owning child contract and state before changing a scope.
-- Apply D59 bounded Education passages and local context recovery before D55 strict loading and D54 scoped projections; preserve D57-D58, D53 direct Initiation, D52 clinical/gateway rejection, and D49-D51 ownership and recovery.
+- Apply D61 bounded recovery and graph input limits before historical fail-fast rules. Preserve current input and per-call limits, D59 Education byte and citation guards, D55 strict loading, D54 scopes, D57-D58, D53 direct Initiation, and D49-D51 ownership.
 - Apply D57 atomic input details, strict measurement references, scoped note identity, and one-level collection delegation before preparing questions.
 - Keep root integration, Docker configuration, requirements, and cross-scope coordination here; keep runtime Python in submission/, extraction code and prompts in Extraction/, maintained checks and packaging in Dev/, observation and local simulation in Test/, durable results in data/, and disposable evidence in Tmp/.
 - Maintain exactly root, submission/, and data/ PROJECT_STATE.md scopes. Record Extraction, Dev, Test, and Tmp operational progress in root state.
@@ -37,11 +37,20 @@
 - Reject invalid hasAttribute ranges and canHaveValue domains or ranges at production load; retain defensive getters and offline edge audits. Activate only a strictly verified corrected build and retain its immutable parent until explicit post-verification disposal.
 - Apply D56 to existing inspection auscultation palpation and percussion request text only. Preserve registered IDs links scope combined actions and required maneuvers; retain missing text and unknown anatomy rather than inventing an examination site.
 - Share relation definitions once per JSON model input and pass session-owned remaining question counts to arithmetic BudgetPolicy. Use confirmed response budgets and synchronize uncertain consumption or server-limit failures before further collection.
-- Share identical relation definitions across disease associations without dropping candidates conditions scoped matches or Python graph references. Stop clinical/gateway CONTEXT_LIMIT_EXCEEDED; synchronize Education errors through D59 without immediate model retries.
-- Run Consultation directly without LangGraph or per-operation whole-state copying. Keep external data validation and terminate on unhandled operation errors without replay.
+- Preserve the inherited 500000 cumulative input and 100000 reported request-input limits, 8000 output per call, call and action ceilings, deadlines and actual usage. Keep cumulative output uncapped and omit the withdrawn Education token reserve.
+- Share identical relation definitions across disease associations within the bounded workset without dropping complete conditions scoped matches or Python graph references. Return clinical/gateway CONTEXT_LIMIT_EXCEEDED without immediate model retries; let the owner pass the operation and continue. Synchronize Education errors through D59.
+- Run Consultation directly without LangGraph or per-operation whole-state copying. Keep external data validation and consume failed operations through pass_step or a session transition without replay.
 - Generate English P and Korean utterances jointly at high effort; validate and retain English independently, repair invalid Korean groups at medium effort, and keep EducationSession responsible for scheduling and receipts.
 - Select one task route in Python from submission/config/prompts.json. Preserve D48 modular prompts and existing runtime model/effort settings.
 - Load runtime knowledge only inside submission/ through a relative-path/hash-pinned manifest. Fail prepare and production packaging with knowledge_bundle_not_installed until a real new bundle is installed; use synthetic bundles only in Tmp/.
+
+
+- Consume failed questions with scoped passed_unasked or passed_unknown markers; preserve actual response payloads and IDs before clearing the turn and never create an Answer for an unsent question.
+- Keep CC route selection separate from patient facts. Use at most one additional gateway selection over eight registered Symptoms after bounded clarification, then a deterministic registered route without invented findings.
+- Limit graph-derived relation evidence question and condition tables to fifty complete records and clinical candidates to ten; close retained references and keep all accepted patient facts. Write at most five note differentials.
+- Remove only verified ungrounded demographic echoes. Keep current quotations corrections changed values family scopes measurements and valid siblings; accept null or missing partial-repair replacements without renumbering anchors.
+- Preserve initial reports failed-input replies verified plans final payload and submission request ID; use an independent format-only minimal Writer after normal assembly or validation fails.
+- Keep preparation failures strict and actual closed expired or forbidden service states truthful; never fabricate a receipt or replay an unknown effect under a new ID.
 
 ## Extraction contract
 

@@ -3,7 +3,8 @@ from nova_sdk import RECORD_FIELDS, NovaError
 from .rules.action import failure_outcome
 from .rules.collection import CATEGORY_FIELDS
 from .rules.limits import LIMITS
-from .rules.submission import validate_payload
+from .rules.submission import validate_payload, validate_wire_payload
+from .rules.minimal_record import minimal_payload
 from .rules.input import objective
 from .state.models import TurnContext
 
@@ -168,10 +169,10 @@ class SubmissionWriter:
         return self.config.texts.record_separator.join(parts)
 
     def build_soap(self, state):
-        if state.session.termination:
+        if state.session.termination == 'submitted':
             return
         if state.turn and state.turn.kind!='submission':
-            state.stop('unknown','pending_action_at_finalization'); return
+            raise ValueError('pending_action_at_finalization')
         primary = state.case.primary()
         assessment = state.case.assessment
         if (assessment.based_on_case_revision,assessment.based_on_chief_fact_id)!=(state.case.revision,state.case.chief_fact_id):
@@ -185,47 +186,65 @@ class SubmissionWriter:
         if assessment.limitations:
             fields['A.evidence'].append(self._line('Incomplete assessment','; '.join(assessment.limitations)))
         fields['A.differential'] = [self._line('r/o '+entry.name,self._assessment_text(entry,references))
-            for entry in assessment.differential[1:]]
+            for entry in assessment.differential[1:1 + LIMITS.note_differentials]]
         for sentence in state.case.plan:
             if sentence.field=='education' and not self.config.education_enabled:
                 continue
             label = texts.soap_labels[sentence.field]
             if sentence.field=='education':
                 answers = [a for a in state.interview.answers if a.plan_sentence_id==sentence.id]
-                delivered = bool(answers) and all(a.outcome=='delivered' for a in answers)
+                pending = any(q.plan_sentence_id == sentence.id for q in state.interview.queue)
+                expected = state.interview.education_utterances.get(sentence.id)
+                delivered = bool(expected) and len(answers) == expected and not pending and all(a.outcome=='delivered' for a in answers)
                 label = 'Education delivered' if delivered else 'Education planned (not delivered)'
             fields['P.'+sentence.field].append(self._line(label,sentence.text))
         note = {section:{name:texts.record_separator.join(filter(None,fields[f'{section}.{name}']))
             for name in names} for section,names in RECORD_FIELDS.items()}
         payload = {'note':note,'diagnosis':primary.name}
+        state.session.final_payload = payload
         if state.turn is None:
             state.turn = TurnContext(kind='submission',stage='ready',payload=payload)
         else:
             state.turn.payload,state.turn.error = payload,None
 
+    def build_minimal(self, state, reason):
+        state.interview.collection['submission:minimal'] = reason
+        repairs = state.turn.repairs if state.turn and state.turn.kind == 'submission' else 0
+        payload = minimal_payload(state.case, state.interview, state.case.diagnosis, compact=bool(repairs))
+        state.turn = TurnContext(kind='submission', stage='ready', payload=payload, repairs=repairs)
+        state.session.final_payload = payload
+
     def validate_submission(self, state):
-        if state.session.termination:
+        if state.session.termination == 'submitted':
             return
         state.turn.error = None
         try:
-            validate_payload(state)
+            if 'submission:minimal' in state.interview.collection:
+                validate_wire_payload(state.turn.payload)
+            else:
+                validate_payload(state)
         except (KeyError, TypeError, ValueError) as error:
             state.turn.error = str(error)
-            if state.turn.repairs or str(error) in {'doctor_call_required', 'diagnosis_not_allowed'}:
-                state.stop('failed', str(error))
 
     def submit_diagnosis(self, state):
         if state.session.termination:
             return
+        refreshed = False
         try:
             self.nova_session.refresh_snapshot(state, self.client, final=True)
+            refreshed = True
+        except (NovaError, TypeError, ValueError) as error:
+            state.interview.collection['submission:refresh'] = getattr(error, 'code', str(error))
+        try:
             if state.session.termination:
                 return
-            self.validate_submission(state)
-            if state.session.termination or state.turn.error:
+            if refreshed and 'DIAGNOSE' not in state.session.allowed_actions:
+                state.stop('closed', 'diagnosis_not_allowed')
                 return
+            validate_wire_payload(state.turn.payload)
             turn = state.turn
             turn.request_id = turn.request_id or self.new_request_id()
+            state.session.submission_request_id = turn.request_id
             request = {**turn.payload, 'request_id':turn.request_id}
             attempts = []
             turn.response = self.executor.execute(state, self.client, self.client.diagnose, request, attempts, final=True)
@@ -235,6 +254,8 @@ class SubmissionWriter:
                 state.turn.error = error.code
             else:
                 state.stop(failure_outcome(error), error.code)
+                if state.turn:
+                    state.turn.error = error.code
         except (TypeError, ValueError):
             state.stop('unknown', 'invalid_submission_response')
 
@@ -242,8 +263,9 @@ class SubmissionWriter:
         if state.session.termination:
             return
         turn = state.turn
-        if turn and isinstance(turn.response, dict) and turn.response.get('status') == 'completed':
-            state.session.receipt = {'status':'completed', 'request_id':turn.request_id}
+        if (turn and isinstance(turn.response, dict) and turn.response.get('status') == 'completed'
+                and turn.response.get('request_id', turn.request_id) == turn.request_id):
+            state.session.receipt = {**turn.response, 'request_id':turn.request_id}
             state.session.termination = 'submitted'
             state.turn = None
         else:

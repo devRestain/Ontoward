@@ -23,10 +23,7 @@ def record_clarification(state):
 def apply_server_budget(state, value):
     session = state.session
     session.turns_remaining = value.turns_remaining
-    for remaining, used, limit in (
-        (value.doctor_calls_remaining, session.doctor_calls, 'call_limit'),
-        (value.input_tokens_remaining, session.input_tokens, 'input_token_limit'),
-        (value.output_tokens_remaining, session.output_tokens, 'output_token_limit'),
-    ):
-        if remaining is not None:
-            setattr(session, limit, min(getattr(session, limit), used + remaining))
+    if value.doctor_calls_remaining is not None:
+        session.call_limit = min(session.call_limit, session.doctor_calls + value.doctor_calls_remaining)
+    if value.input_tokens_remaining is not None:
+        session.input_token_limit = min(session.input_token_limit, session.input_tokens + value.input_tokens_remaining)

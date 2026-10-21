@@ -4,15 +4,15 @@ from datetime import datetime, timezone
 from .limits import LIMITS, SESSION_INTERVIEW_LIMITS, SESSION_ORDER
 
 # Protect normal input (context + mapping) and final clinical/education work.
-# The optional Ear repairs share the remaining allowance; each call still protects
+# The optional Ear repairs share the remaining calls; each call still protects
 # final clinical and Education resources in model_allowance. Do not reserve four
 # input calls for every question, which would stop collection unnecessarily early.
-MODEL_WORK = {
-    'input': (2, 2 * LIMITS.gateway_tokens),
-    'decision': (1, LIMITS.gateway_tokens),
-    'clinical': (2, LIMITS.gateway_tokens + LIMITS.gateway_recovery_tokens),
-    'education': (1, LIMITS.education_tokens),
-    'education_doctor': (1, LIMITS.education_doctor_tokens),
+MODEL_CALLS = {
+    'input': 2,
+    'decision': 1,
+    'clinical': 2,
+    'education': 1,
+    'education_doctor': 1,
 }
 
 
@@ -38,7 +38,7 @@ class BudgetPolicy:
 
     def calls_left(self, session):
         if (not session.models_available or self.seconds_left(session) <= session.reserve_seconds
-                or session.input_tokens >= session.input_token_limit or session.output_tokens >= session.output_token_limit):
+                or session.input_tokens >= session.input_token_limit):
             return 0
         return max(0, session.call_limit - session.doctor_calls)
 
@@ -60,15 +60,14 @@ class BudgetPolicy:
         return max(0, target - usage.actions)
 
     def model_work(self, state):
-        work = {name: MODEL_WORK[name] for name in ('input', 'clinical')}
+        work = {name: MODEL_CALLS[name] for name in ('input', 'clinical')}
         if self.education_enabled and state.interview.education_status == 'not_started':
-            work.update({name: MODEL_WORK[name] for name in ('education', 'education_doctor')})
+            work.update({name: MODEL_CALLS[name] for name in ('education', 'education_doctor')})
         return work
 
     @staticmethod
     def reserve(work, tasks):
-        rows = [work[name] for name in tasks if name in work]
-        return sum(row[0] for row in rows), sum(row[1] for row in rows)
+        return sum(work[name] for name in tasks if name in work)
 
     def shared_action_capacity(self, state):
         following = SESSION_ORDER[SESSION_ORDER.index(state.interview.current) + 1:]
@@ -81,18 +80,13 @@ class BudgetPolicy:
 
     def collection_calls(self, state):
         work = self.model_work(state)
-        return self.reserve(work, work)[0]
-
-    def collection_tokens(self, state):
-        work = self.model_work(state)
-        return self.reserve(work, work)[1]
+        return self.reserve(work, work)
 
     def collection_available(self, state):
         session = state.session
         education = state.interview.current == 'Education' and self.education_enabled
         return (not session.finalizing and session.turns_remaining > 0 and (education or self.calls_left(session) >= self.collection_calls(state))
-            and self.seconds_left(session) > session.reserve_seconds + LIMITS.response_seconds
-            and (education or session.output_token_limit - session.output_tokens >= self.collection_tokens(state)))
+            and self.seconds_left(session) > session.reserve_seconds + LIMITS.response_seconds)
 
     def can_start_action(self, state):
         return self.collection_available(state) and self.action_capacity(state) > 0
@@ -111,23 +105,23 @@ class BudgetPolicy:
             return 0
         maximum = min(maximum or {'education':LIMITS.education_tokens,
             'education_doctor':LIMITS.education_doctor_tokens}.get(role, LIMITS.gateway_tokens), LIMITS.gateway_recovery_tokens)
-        reserve, calls = 0, 0
+        calls = 0
         if state:
             work = self.model_work(state)
             tasks = []
             if role == 'education' and not session.finalizing:
-                work['education_doctor'] = MODEL_WORK['education_doctor']
+                work['education_doctor'] = MODEL_CALLS['education_doctor']
                 tasks = ['education_doctor']
             elif state.interview.current != 'Education' and role in {'gateway', 'clinical'}:
                 tasks = ['education', 'education_doctor']
                 if role == 'gateway' and not (state.case.assessment and state.case.assessment.frozen):
                     tasks.append('clinical')
-            calls, reserve = self.reserve(work, tasks)
+            calls = self.reserve(work, tasks)
         elif role == 'education' and not session.finalizing:
-            calls, reserve = MODEL_WORK['education_doctor']
+            calls = MODEL_CALLS['education_doctor']
         if self.calls_left(session) <= calls:
             return 0
-        return max(0, min(maximum, session.output_token_limit - session.output_tokens - reserve))
+        return maximum
 
     def evaluate(self, state):
         if state.session.termination:
@@ -138,7 +132,8 @@ class BudgetPolicy:
             session = state.session
             reason = ('collection_complete' if session.finalizing else 'turn_budget' if not session.turns_remaining
                 else 'time_budget' if self.seconds_left(session) <= session.reserve_seconds + LIMITS.response_seconds
-                else 'model_call_budget' if self.calls_left(session) < self.collection_calls(state) else 'model_token_budget')
+                else 'model_token_budget' if session.input_tokens >= session.input_token_limit
+                else 'model_call_budget')
             return BudgetDecision(finalize=True, discard=frozenset(q.item_id for q in state.interview.queue), reason=reason)
         if state.interview.status == 'uninitialized':
             return BudgetDecision()
@@ -160,6 +155,6 @@ class BudgetPolicy:
                 if shared > 0 and calls >= self.collection_calls(state) and current > 0:
                     keep.add(q.item_id)
                     shared -= 1
-                    calls -= self.reserve(MODEL_WORK, ('input', 'decision'))[0]
+                    calls -= self.reserve(MODEL_CALLS, ('input', 'decision'))
                     current -= 1
         return BudgetDecision(discard=frozenset(q.item_id for q in state.interview.queue) - keep)

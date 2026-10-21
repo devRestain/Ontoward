@@ -9,7 +9,6 @@ from workflow.state.models import Question
 
 class OfficialBudgetTests(unittest.TestCase):
     def test_input_repairs_cannot_spend_final_judgment_and_enabled_delivery_reserves(self):
-        from workflow.rules.limits import LIMITS
         for enabled,protected in ((False,2),(True,4)):
             c=f.consultation(prepared=f.resources(education=enabled));s=f.chief(f.state('DifferentialDiagnosis'))
             s.session.doctor_calls=s.session.call_limit-protected
@@ -22,10 +21,61 @@ class OfficialBudgetTests(unittest.TestCase):
                 self.assertIsNone(c.brain.complete(s,c.client,role='education',messages=[]).error)
                 self.assertIsNone(c.mouth.model.complete(s,c.client,role='education_doctor',messages=[]).error)
             self.assertEqual(c.budget.calls_left(s.session),0)
-            s.session.doctor_calls=0
-            reserve=LIMITS.gateway_tokens+LIMITS.gateway_recovery_tokens+(16000 if enabled else 0)
-            s.session.output_tokens=s.session.output_token_limit-reserve
-            self.assertEqual(c.budget.model_allowance(s.session,'gateway',state=s),0)
+
+    def test_input_budget_and_snapshot_gate_calls_without_cumulative_output_cap(self):
+        from workflow.io.nova_session import SessionInput
+        c = f.consultation(prepared=f.resources(education=True))
+        s = f.chief(f.state('DifferentialDiagnosis'))
+        s.session.input_tokens, s.session.output_tokens = 490_020, 250_000
+        snapshot = c.client.session()
+        snapshot.update(input_tokens_remaining=9980, output_tokens_remaining=0)
+        c.nova_session.apply_snapshot(s, SessionInput.model_validate(snapshot))
+        self.assertTrue(c.budget.can_start_action(s))
+        c.client.chat = Mock(return_value=f.FakeSDK.completion('{}'))
+        for role in ('gateway', 'clinical', 'education', 'education_doctor'):
+            with self.subTest(role=role):
+                result = c.brain.complete(s, c.client, role=role,
+                    messages=[{'role': 'user', 'content': '{}'}])
+                self.assertIsNone(result.error)
+                self.assertEqual(c.client.chat.call_args.kwargs['max_tokens'], 8000)
+        self.assertEqual((s.session.input_tokens, s.session.output_tokens), (490_100, 250_040))
+        snapshot['input_tokens_remaining'] = 0
+        c.nova_session.apply_snapshot(s, SessionInput.model_validate(snapshot))
+        self.assertFalse(c.budget.can_start_action(s))
+        result = c.brain.complete(s, c.client, role='gateway', messages=[])
+        self.assertEqual(result.error, 'MODEL_UNAVAILABLE')
+        self.assertEqual(c.client.chat.call_count, 4)
+
+    def test_education_completes_with_less_than_old_reserve_and_high_output_usage(self):
+        c = f.consultation(prepared=f.resources(education=True))
+        s = f.chief(f.state())
+        f.freeze_for_education(c, s)
+        s.session.input_tokens, s.session.output_tokens = 490_020, 250_000
+        c.run(s)
+        self.assertEqual(s.session.termination, 'submitted')
+        self.assertEqual(s.interview.education_status, 'complete')
+        self.assertEqual({sentence.field for sentence in s.case.plan},
+                         {'tests', 'treatment', 'disposition', 'follow_up', 'education'})
+        self.assertTrue(c.client.submissions[-1]['note']['P']['education'])
+        self.assertTrue(any(answer.plan_sentence_id and answer.outcome == 'delivered'
+                            for answer in s.interview.answers))
+        self.assertGreater(s.session.input_tokens, 490_020)
+        self.assertLessEqual(s.session.input_tokens, 500_000)
+        self.assertGreater(s.session.output_tokens, 250_000)
+
+    def test_total_input_boundary_and_overshoot_account_once_then_block_models(self):
+        for before in (499_980, 499_981):
+            with self.subTest(before=before):
+                c, s = f.consultation(), f.state()
+                s.session.input_tokens = before
+                c.client.chat = Mock(return_value=f.FakeSDK.completion('{}'))
+                result = c.brain.complete(s, c.client, role='gateway', messages=[])
+                self.assertEqual(s.session.input_tokens, before + 20)
+                self.assertEqual(result.error, None if before == 499_980 else 'MODEL_TOKEN_BUDGET')
+                self.assertEqual(s.session.doctor_successes, 1 if before == 499_980 else 0)
+                self.assertEqual(c.budget.calls_left(s.session), 0)
+                self.assertEqual(c.brain.complete(s, c.client, role='gateway', messages=[]).error, 'MODEL_UNAVAILABLE')
+                c.client.chat.assert_called_once()
 
     def ready_action(self, *, kind='SAY', purpose='feature', turns=50, education=False):
         c = f.consultation(prepared=f.resources(education=education))
@@ -91,14 +141,14 @@ class OfficialBudgetTests(unittest.TestCase):
         self.assertIsNone(s.turn)
         self.assertFalse(c.client.actions)
 
-    def test_invalid_or_unavailable_snapshot_stops_without_guessing_turns(self):
+    def test_invalid_or_unavailable_snapshot_finalizes_without_guessing_turns(self):
         for response in ({'turns_remaining': 49}, f.NovaError('API_UNAVAILABLE')):
             with self.subTest(response=response):
                 c, s = self.ready_action()
                 c.client.session = Mock(side_effect=response) if isinstance(response, Exception) else Mock(return_value=response)
                 s.session.budget_sync_required = True
                 c.check_budget(s)
-                self.assertEqual(s.session.termination, 'unknown')
+                self.assertIsNone(s.session.termination)
                 self.assertEqual(s.session.turns_remaining, 50)
                 self.assertFalse(c.client.actions)
 
@@ -146,8 +196,9 @@ class OfficialBudgetTests(unittest.TestCase):
                 c.mouth.execute_action(s, c.client)
                 self.assertEqual(s.session.turns_remaining, 50 - cost)
                 self.assertEqual(s.session.usage['DifferentialDiagnosis'].actions, cost)
-                self.assertEqual(s.turn.response, {'error': code})
-                self.assertEqual(s.turn.stage, 'received')
+                self.assertIsNone(s.turn)
+                self.assertEqual(s.interview.answers[-1].response, {'error': code})
+                self.assertEqual(s.interview.answers[-1].outcome, 'undelivered')
                 self.assertIsNone(s.session.termination)
 
     def test_server_response_errors_are_free_and_not_reissued(self):
@@ -159,7 +210,8 @@ class OfficialBudgetTests(unittest.TestCase):
                 c.client.say.assert_called_once()
                 self.assertEqual(s.session.turns_remaining, 50)
                 self.assertEqual(s.session.usage['DifferentialDiagnosis'].actions, 0)
-                self.assertEqual(s.turn.response, {'error': code})
+                self.assertIsNone(s.turn)
+                self.assertEqual(s.interview.answers[-1].response, {'error': code})
 
     def test_lost_response_replays_same_request_and_charges_once(self):
         c, s = self.ready_action()
@@ -177,7 +229,7 @@ class OfficialBudgetTests(unittest.TestCase):
         self.assertEqual(s.session.turns_remaining, 49)
         self.assertEqual(s.session.usage['DifferentialDiagnosis'].actions, 1)
 
-    def test_unresolved_transport_accounts_server_effect_then_stops_unknown(self):
+    def test_unresolved_transport_accounts_server_effect_then_passes_unknown(self):
         c, s = self.ready_action()
         original, attempts = c.client.say, []
         def unavailable(**request):
@@ -188,7 +240,7 @@ class OfficialBudgetTests(unittest.TestCase):
         c.client.say = unavailable
         c.mouth.execute_action(s, c.client)
         self.assertEqual(attempts[0], attempts[1])
-        self.assertEqual(s.session.termination, 'unknown')
+        self.assertIsNone(s.session.termination)
         self.assertEqual(s.session.turns_remaining, 49)
         self.assertEqual(s.session.usage['DifferentialDiagnosis'].actions, 1)
 
@@ -206,7 +258,7 @@ class OfficialBudgetTests(unittest.TestCase):
                 c.client.say = Mock(side_effect=malformed)
                 c.mouth.execute_action(s, c.client)
                 c.client.say.assert_called_once()
-                self.assertEqual(s.session.termination, 'unknown')
+                self.assertIsNone(s.session.termination)
                 self.assertEqual(s.session.turns_remaining, 50 - cost)
                 self.assertEqual(s.session.usage['DifferentialDiagnosis'].actions, cost)
 
