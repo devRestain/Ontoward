@@ -110,11 +110,6 @@
     ]
   },
   "active_manifest_sha256": "b77d891aa581d40c9f4131a0b3d10a140d94151544ec2944e779621f63bc932c",
-  "preserved_builds": [
-    "0fd42155c3171c9c9dcf66cb7f733245",
-    "87e8b4c54b0689453cea91b3bb316290"
-  ],
-  "protected_files_preserved": true,
   "installed_at": "2026-10-21T09:19:05.139971+00:00",
   "installed_manifest": {
     "build_id": "1e8539d9c0910b37517f6475266f6df1",
@@ -181,8 +176,7 @@
     "submission/README.md",
     "submission/knowledge/README.md"
   ],
-  "protected_non_document_hashes_preserved": true,
-  "completed_at": "2026-10-21T18:26:21+09:00",
+  "completed_at": "2026-10-21T18:29:47+09:00",
   "documentation": [
     "AGENTS.md",
     "submission/AGENTS.md",
@@ -196,5 +190,80 @@
     "README.md",
     "submission/README.md",
     "submission/knowledge/README.md"
-  ]
+  ],
+  "post_install_disposal": {
+    "status": "complete",
+    "authorization": "User explicitly requested prior builds removal after task completion",
+    "build_ids": [
+      "0fd42155c3171c9c9dcf66cb7f733245",
+      "87e8b4c54b0689453cea91b3bb316290"
+    ],
+    "files": {
+      "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/clinical.ttl": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06",
+      "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/questions.ko.json": "c65c7083543867189c458e1fc7e13c32b7cb2266cef14510ef30d138ea1d4afd",
+      "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/guideline-index.json": "de6a92abd3333dd2b4620aabfabf37a46342f115f00a04276afdf9e1d6756089",
+      "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/manifest.json": "58e77c35bd47dbc4e96fb527b06a7b3c32bd4ec31da2158962cf1939c41543ab",
+      "submission/knowledge/builds/0fd42155c3171c9c9dcf66cb7f733245/vocabulary.ttl": "3c5975cc90c0730067f4ad8359f63f5b0a9b9dc20c22cd9506f4a5a8b468f9b1",
+      "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/clinical.ttl": "69d37b3c92faf3312378b24d8bf984112cbf538dd456a62c023d780f860a2d9e",
+      "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/questions.ko.json": "66f0426172d1a6c761a3f553314e9f7ebecd1784b1fb7f786beaf7091e5f0561",
+      "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/guideline-index.json": "8f0e9b1e937aecc4df73d955924505730fcd0aecf8e8ce57e3fbd5edc41d0c85",
+      "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/manifest.json": "7058fd9121aa82fd120cdd802374137ce69b054153e6d70e3d52864ac764e549",
+      "submission/knowledge/builds/87e8b4c54b0689453cea91b3bb316290/vocabulary.ttl": "23ae78abea1dc55c1d48545feba0fbe54d0516a1f2c5335bc4fc30beed5f1af8"
+    },
+    "file_count": 12,
+    "logical_bytes": 23825653,
+    "allocated_bytes": 23851008,
+    "active_manifest_sha256_before": "b77d891aa581d40c9f4131a0b3d10a140d94151544ec2944e779621f63bc932c",
+    "deleted_at": "2026-10-21T18:29:47+09:00",
+    "remaining_build_ids": [
+      "1e8539d9c0910b37517f6475266f6df1"
+    ],
+    "active_manifest_sha256_after": "b77d891aa581d40c9f4131a0b3d10a140d94151544ec2944e779621f63bc932c",
+    "active_assets_unchanged": true,
+    "original_entrypoint_prepare": "pass",
+    "coverage": {
+      "status": "pass",
+      "diseases": 945,
+      "gaps": []
+    },
+    "physical_question_paths": 185,
+    "protocol_consultations": {
+      "status": "pass",
+      "cases": [
+        {
+          "education": false,
+          "context": "unknown",
+          "termination": "submitted",
+          "nodes": 165
+        },
+        {
+          "education": true,
+          "context": "present",
+          "termination": "submitted",
+          "nodes": 205
+        },
+        {
+          "education": true,
+          "context": "absent",
+          "termination": "submitted",
+          "nodes": 205
+        }
+      ],
+      "knowledge_contract": "v5-enum-1",
+      "actual_models": "not_run",
+      "clinical_accuracy": "not_run",
+      "manifest_sha256": "b77d891aa581d40c9f4131a0b3d10a140d94151544ec2944e779621f63bc932c"
+    },
+    "receipt": "Tmp/exam-text-normalization-2026-10-21/consultations-after-cleanup/verification.json"
+  },
+  "preserved_builds_at_install": [
+    "0fd42155c3171c9c9dcf66cb7f733245",
+    "87e8b4c54b0689453cea91b3bb316290"
+  ],
+  "protected_files_preserved_at_install": true,
+  "retained_non_document_hashes_preserved": true,
+  "handoff_revision": "d39b48b6eaf81561abc76d37e27a2593c179e897",
+  "handoff_verified_at": "2026-10-21T18:31:32+09:00"
 }

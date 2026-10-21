@@ -1,8 +1,8 @@
 /state version=1
 /project id=ontoward-data
 /status value=active
-/checkpoint revision=01f6c96d8442c60220517b1eb59d65a201d89e2d dirty=true updated=2026-10-21T18:26:21+09:00
-/goal phase=current id=DATA.D56 state=complete action="Pin exact EXAM text amendments and preserve parent bundles and original C03 evidence"
+/checkpoint revision=d39b48b6eaf81561abc76d37e27a2593c179e897 dirty=true updated=2026-10-21T18:31:32+09:00
+/goal phase=current id=DATA.D56 state=complete action="Pin exact EXAM text amendments and retain active assets original C03 and parent hash receipts"
 /goal phase=history id=DATA.D55 state=complete action="Preserve the parent bundle and record exact reviewed corrections and canonical meaning conservation"
 /goal phase=history id=DATA.D54 state=complete action="Pin task A source payload and artifact evidence while preserving current bundle and unresolved typed edge custody"
 /goal phase=history id=DATA.D53 state=complete action="Pin D53 runtime and synthetic acceptance while preserving installed knowledge and original C01 evidence"
@@ -380,6 +380,8 @@
 /accept id=DATA.D56.A2 state=pass action="Verify local activation original entrypoint question paths and offline regression" evidence=DATA.D56.E2,DATA.D56.E3
 /evidence id=DATA.D56.E1 class=semantic result=pass source=provenance/exam-text-normalization-2026-10-21.json observed="Change exactly 119 ExamMethod text triples and preserve every other vocabulary triple schema clinical questions roles and guideline entry; retain 37 textless methods and two unspecified-anatomy methods"
 /evidence id=DATA.D56.E2 class=runtime result=pass source=provenance/exam-text-normalization-2026-10-21.json observed="Pass original run.py prepare 945-Disease coverage with zero gaps all 185 physical question paths 204 workflow tests and three actual-bundle protocol consultations without model calls"
-/evidence id=DATA.D56.E3 class=artifact result=pass source=provenance/exam-text-normalization-2026-10-21.json observed="Activate immutable build 1e8539d9c0910b37517f6475266f6df1 and preserve both parent builds and original C03 evidence; verify normalized text at the two saved rejected question paths"
+/evidence id=DATA.D56.E3 class=artifact result=pass source=provenance/exam-text-normalization-2026-10-21.json observed="Activate immutable build 1e8539d9c0910b37517f6475266f6df1 and preserve original C03 evidence and parent hash receipts before explicit prior-build disposal; verify normalized text at the two saved rejected question paths"
 /evidence id=DATA.D56.E4 class=external_service result=not_run source=provenance/exam-text-normalization-2026-10-21.json observed="Leave fresh NOVA acceptance actual-model quality clinical validation official evaluation production ZIP and deployment unrun"
-/handoff state=ready action="Retain normalized build parent custody exact amendments and original C03 evidence"
+/accept id=DATA.D56.A3 state=pass action="Delete only the explicitly authorized prior builds after verification" evidence=DATA.D56.E5
+/evidence id=DATA.D56.E5 class=artifact result=pass source=provenance/exam-text-normalization-2026-10-21.json observed="Delete twelve verified files in two prior builds and retain only active build 1e8539d9c0910b37517f6475266f6df1; preserve active manifest and asset hashes and pass post-disposal prepare 945-Disease coverage 185 EXAM paths and three protocol consultations"
+/handoff state=ready action="Retain the active normalized build parent hash receipts exact amendments and original C03 evidence"

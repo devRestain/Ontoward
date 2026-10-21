@@ -676,6 +676,8 @@
 - **보존과 활성화:** 새 immutable build에서 명시된 텍스트 triple만 바꾸고 ExamMethod ID·label·detectedBy·clinical RDF·schema·questions와 attribute_roles·지침 membership을 유지합니다. 지침 index의 build_id와 manifest 해시는 새 식별자에 맞춥니다. 모든 기존 build와 C03 원본을 보존하고 정식 loader·원래 prepare·전수 EXAM 질문 경로를 검증한 뒤 manifest를 원자 교체합니다.
 - **증거 경계:** 정규화 계획과 전후 감사는 `data/provenance/exam-text-normalization-plan-2026-10-21.json`과 `data/provenance/exam-text-normalization-2026-10-21.json`이 소유합니다. 로컬 문구·경로 검증을 실제 NOVA 오류 해소나 임상 타당성으로 해석하지 않으며 새 모델 호출·공식 평가·제출·배포를 실행하지 않습니다.
 
+- **후속 보관 해제:** 정규화 작업 완료 뒤 사용자가 `submission/knowledge/builds/` 아래 과거 build를 워크플로우에 지장이 없는 범위에서 삭제하도록 요청했습니다. 활성 manifest가 새 build의 다섯 자산만 참조함을 확인한 뒤 이전 `0fd42155c3171c9c9dcf66cb7f733245`와 `87e8b4c54b0689453cea91b3bb316290`의 각 여섯 파일만 삭제합니다. 원본 C03와 compact manifest·자산 해시·정정·삭제 영수증은 유지하고 삭제 후 원래 prepare·coverage·EXAM 경로와 protocol double 상담을 검증합니다. 이 명시적 요청은 설치 시 parent 보존 이후의 파일 보관만 해제합니다.
+
 ## 결정 기록 방법
 
 - 사용자가 고른 선택지를 해당 항목에 기록하고 상태를 `결정 완료`로 바꿉니다.

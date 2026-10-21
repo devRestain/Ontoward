@@ -31,7 +31,7 @@
 - Project patient facts and frozen diagnosis with one request-local fact map across planning and Mouth; preserve question observation and episode references through the shared scope table.
 - Send initial raw text through distinct input_segments once and preserve Context meaning in mapping; integrate all lexical queries before candidate limits without alias vote accumulation.
 - Project only document_id relation evidence_use text and meaningful scope; retain internal source custody and original UTF-8 offsets outside model input.
-- Reject invalid hasAttribute ranges and canHaveValue domains or ranges at production load; retain defensive getters and offline edge audits. Activate only a strictly verified corrected build and retain its immutable parent.
+- Reject invalid hasAttribute ranges and canHaveValue domains or ranges at production load; retain defensive getters and offline edge audits. Activate only a strictly verified corrected build and retain its immutable parent until explicit post-verification disposal.
 - Apply D56 to existing inspection auscultation palpation and percussion request text only. Preserve registered IDs links scope combined actions and required maneuvers; retain missing text and unknown anatomy rather than inventing an examination site.
 - Share relation definitions once per JSON model input and pass session-owned remaining question counts to arithmetic BudgetPolicy. Use confirmed response budgets and synchronize uncertain consumption or server-limit failures before further collection.
 - Share identical relation definitions across disease associations without dropping candidates conditions scoped matches or Python graph references. Stop on CONTEXT_LIMIT_EXCEEDED without escalating output tokens or continuing collection.
@@ -88,3 +88,5 @@
 - Use /state version=1 with one current bounded goal and at most one next goal. Reference child state from root without copying child work.
 - Reconcile every affected state and contract before declaring completion. Remove withdrawn active tasks and their exclusive records while preserving accepted historical evidence.
 - Report performed static, semantic, runtime, and artifact checks separately from actual model quality, clinical validity, official evaluation, publication, and deployment.
+
+- Honor explicit post-verification disposal of prior knowledge builds only after checking active manifest targets and runtime readiness. Retain current assets and compact hash and deletion receipts.

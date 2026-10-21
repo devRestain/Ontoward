@@ -152,3 +152,5 @@ NOVA의 압축 draft 요청도 확정 INVALID_REQUEST_BODY로 실패했다면 �
 NOVA의 명시적 PROVIDER_RESPONSE_INVALID는 실패한 요청을 보존하고 같은 모델·설정·내용에 새 request_id를 발급하여 최대 5회 전송 시도 안에서 재시도한다. 이 전송 교체로 출력 검증 시도 횟수를 추가 소모하지 않는다. 전송 결과를 모르는 경우와 PROVIDER_UNAVAILABLE·REQUEST_PENDING은 같은 ID로 복구한다. 과거 버전의 같은-ID 오류 반복으로 정규화가 실패했다면 recover-normalize-provider를 명시적으로 사용한다. 동일 입력·프롬프트·모델·임상 계약을 검증한 새 fingerprint에 완료 결과와 모든 시도 횟수·사용량을 보존하고, 확정된 오류 기록만 failed로 바꿔 미완료 작업을 새 요청으로 재개한다. 불명 결과는 이 경로로 바꾸지 않는다.
 
 이미지는 ontoward-extraction:local이며 Python 3.12·기존 고정 Python 의존성·@openai/codex@0.162.1을 포함한다. D49의 초기 구현 수용은 이미지·무점수 워크플로우·합성 오프라인 검증으로 한정한다. 실제 로그인·유료 생성·설치·정식 ZIP은 각각 승인된 실행 범위에서만 수행한다. 이후 별도로 승인된 실제 빌드의 진행과 설치 여부는 루트·data PROJECT_STATE가 소유하며 이 요구사항 문서를 실시간 상태로 사용하지 않는다. 기존 자산/점수 builder는 활성 경로에서 철회하고 과거 원자료·준비 결과·수용 ZIP·증거는 보존한다.
+
+D56 검증 완료 뒤 사용자가 과거 build 삭제를 요청하면 현재 manifest가 참조하는 build와 실행 가능성을 먼저 확인하고 열거한 이전 build만 삭제한다. 원본 테스트와 과거 manifest·자산 해시·설치·정정·삭제 영수증은 보존한다.

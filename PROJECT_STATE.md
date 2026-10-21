@@ -1,7 +1,7 @@
 /state version=1
 /project id=ontoward
 /status value=active
-/checkpoint revision=01f6c96d8442c60220517b1eb59d65a201d89e2d dirty=true updated=2026-10-21T18:26:21+09:00
+/checkpoint revision=d39b48b6eaf81561abc76d37e27a2593c179e897 dirty=true updated=2026-10-21T18:31:32+09:00
 /goal phase=current id=ROOT.D56 state=complete action="Normalize existing four-modality EXAM request text and verify immutable local activation"
 /goal phase=history id=ROOT.D55 state=complete action="Correct the current v5 bundle offline and activate only verified strict knowledge while preserving the parent"
 /goal phase=history id=ROOT.D54 state=complete action="Complete task A runtime input and retrieval repair through offline semantic and artifact acceptance"
@@ -674,6 +674,8 @@
 /accept id=ROOT.D56.A2 state=pass action="Verify local activation original entrypoint question paths and offline regression" evidence=ROOT.D56.E2,ROOT.D56.E3
 /evidence id=ROOT.D56.E1 class=semantic result=pass source=data/provenance/exam-text-normalization-2026-10-21.json observed="Change exactly 119 ExamMethod text triples and preserve every other vocabulary triple schema clinical questions roles and guideline entry; retain 37 textless methods and two unspecified-anatomy methods"
 /evidence id=ROOT.D56.E2 class=runtime result=pass source=data/provenance/exam-text-normalization-2026-10-21.json observed="Pass original run.py prepare 945-Disease coverage with zero gaps all 185 physical question paths 204 workflow tests and three actual-bundle protocol consultations without model calls"
-/evidence id=ROOT.D56.E3 class=artifact result=pass source=data/provenance/exam-text-normalization-2026-10-21.json observed="Activate immutable build 1e8539d9c0910b37517f6475266f6df1 and preserve both parent builds and original C03 evidence; verify normalized text at the two saved rejected question paths"
+/evidence id=ROOT.D56.E3 class=artifact result=pass source=data/provenance/exam-text-normalization-2026-10-21.json observed="Activate immutable build 1e8539d9c0910b37517f6475266f6df1 and preserve original C03 evidence and parent hash receipts before explicit prior-build disposal; verify normalized text at the two saved rejected question paths"
 /evidence id=ROOT.D56.E4 class=external_service result=not_run source=data/provenance/exam-text-normalization-2026-10-21.json observed="Leave fresh NOVA acceptance actual-model quality clinical validation official evaluation production ZIP and deployment unrun"
+/accept id=ROOT.D56.A3 state=pass action="Delete only the explicitly authorized prior builds after verification" evidence=ROOT.D56.E5
+/evidence id=ROOT.D56.E5 class=artifact result=pass source=data/provenance/exam-text-normalization-2026-10-21.json observed="Delete twelve verified files in two prior builds and retain only active build 1e8539d9c0910b37517f6475266f6df1; preserve active manifest and asset hashes and pass post-disposal prepare 945-Disease coverage 185 EXAM paths and three protocol consultations"
 /handoff state=ready action="Use the normalized local bundle and retain actual NOVA acceptance as unrun"
