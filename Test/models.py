@@ -124,7 +124,12 @@ class ScriptedModels:
                 selected = {target['id']: sign} if target and not target['attributes'] else {}
                 if target and target['attributes']:
                     attribute = target['attributes'][0]
-                    if attribute['values']:
+                    measured = statement.get('measurement')
+                    if measured:
+                        if (sign == '(+)' and measured['unit'] in attribute['units']
+                                and measured.get('upper_unit') in {None, *attribute['units']}):
+                            selected = {target['id']: {attribute['id']: {'use_measurement': True}}}
+                    elif attribute['values']:
                         value = attribute['values'][0]['id']
                         selected = {target['id']: {attribute['id']: value if sign == '(+)' else {value: sign}}}
                 mappings.append(selected)

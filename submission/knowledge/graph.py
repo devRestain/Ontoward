@@ -409,6 +409,14 @@ class ClinicalKnowledge:
             return base
         return self.questions.get(f"{target_id}|{key}", self.questions.get(key))
 
+    def collection_attributes(self, target, attribute=None):
+        """Expand one collection dependency level without creating clinical facts."""
+        result = []
+        for item in [attribute] if attribute else self.get_symptom_attributes(target):
+            template = self.question_contract(item, target)
+            result.extend(template.collect_via if template and template.collect_via else [item])
+        return list(dict.fromkeys(result))
+
     def validate_question_assets(self):
         for profile in (p for disease in self._graph.subjects(RDF.type,OW.Disease) for p in self.get_disease_patterns(str(disease))):
             self.execution_time(profile.target,profile.target_scope)
@@ -423,6 +431,19 @@ class ClinicalKnowledge:
                     or not 1 <= len(text) <= 30 or not re.search("[가-힣]", text)):
                 raise ValueError("Prepared clarification must contain 1 to 30 NFC Korean codepoints")
         for key, template in self.questions.items():
+            if template.collect_via:
+                if '|' not in key:
+                    raise ValueError("Collection delegation requires a target-attribute override")
+                target, attribute = key.split('|', 1)
+                allowed = self.get_symptom_attributes(target)
+                if (not any(self.has_type(target, kind) for kind in ('Symptom', 'ExamFinding', 'ContextFactor'))
+                        or attribute not in allowed or attribute in template.collect_via
+                        or any(component not in allowed for component in template.collect_via)):
+                    raise ValueError("Collection components must be direct attributes of the same target")
+                for component in template.collect_via:
+                    atomic = self.question_contract(component, target)
+                    if not atomic or not atomic.interviewable or atomic.collect_via:
+                        raise ValueError("Collection components require executable atomic questions without nesting")
             for _, field, spec, conversion in Formatter().parse(template.text):
                 if field not in {None, "symptom"} or spec or conversion:
                     raise ValueError("Questions allow only the symptom placeholder")

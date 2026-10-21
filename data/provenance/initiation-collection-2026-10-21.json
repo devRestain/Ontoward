@@ -1,0 +1,120 @@
+{
+  "decision": "D57",
+  "created_at": "2026-10-21T10:17:08.526881+00:00",
+  "review_sha256": "a8d494038fd6425c4ac00eff5cc78641becfa196ffbdcbc727fd06415a709b03",
+  "parent_manifest": {
+    "build_id": "1e8539d9c0910b37517f6475266f6df1",
+    "clinical": {
+      "path": "builds/1e8539d9c0910b37517f6475266f6df1/clinical.ttl",
+      "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+    },
+    "guidelines": {
+      "path": "builds/1e8539d9c0910b37517f6475266f6df1/guideline-index.json",
+      "sha256": "b68947f67f8cbfa6762692532e6ba820eed14e56c5d45a4a0fcd1312918c911d"
+    },
+    "knowledge_contract": "v5-enum-1",
+    "questions": {
+      "path": "builds/1e8539d9c0910b37517f6475266f6df1/questions.ko.json",
+      "sha256": "c65c7083543867189c458e1fc7e13c32b7cb2266cef14510ef30d138ea1d4afd"
+    },
+    "schema": {
+      "path": "builds/1e8539d9c0910b37517f6475266f6df1/schema.ttl",
+      "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+    },
+    "schema_version": "5.0",
+    "vocabulary": {
+      "path": "builds/1e8539d9c0910b37517f6475266f6df1/vocabulary.ttl",
+      "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+    }
+  },
+  "child_manifest": {
+    "schema_version": "5.0",
+    "knowledge_contract": "v5-enum-1",
+    "build_id": "1bcaba1dffb744c468bb191df3267dad",
+    "schema": {
+      "path": "schema.ttl",
+      "sha256": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df"
+    },
+    "vocabulary": {
+      "path": "vocabulary.ttl",
+      "sha256": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5"
+    },
+    "clinical": {
+      "path": "clinical.ttl",
+      "sha256": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06"
+    },
+    "questions": {
+      "path": "questions.ko.json",
+      "sha256": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f"
+    },
+    "guidelines": {
+      "path": "guideline-index.json",
+      "sha256": "6aae5720a4789b878d75e4cb280f888428826613cad435a9603a4236c5cc30b0"
+    }
+  },
+  "preserved_parent_build": "1e8539d9c0910b37517f6475266f6df1",
+  "parent_asset_hashes_preserved": true,
+  "exact_question_changes": [
+    {
+      "key": "urn:ontoward:Symptom366ac5a51ea09abe0114a080|urn:ontoward:FindingAttribute3273715c713498b3e43214b2",
+      "before": null,
+      "after": {
+        "affirmative": false,
+        "answer_type": "free_text",
+        "interviewable": true,
+        "reason": null,
+        "text": "체중이 얼마 동안 얼마나 줄었나요?",
+        "time_context": "current",
+        "units": [],
+        "collect_via": [
+          "urn:ontoward:FindingAttribute6968c33db26b47d9ec1d34b3",
+          "urn:ontoward:FindingAttributea964e32dc5f784cb1eec03e7"
+        ]
+      }
+    }
+  ],
+  "exact_role_changes": [
+    {
+      "key": "urn:ontoward:FindingAttributea964e32dc5f784cb1eec03e7",
+      "before": {
+        "category": "duration",
+        "clarification": null,
+        "order": 0
+      },
+      "after": {
+        "category": "onset",
+        "clarification": null,
+        "order": 0
+      }
+    }
+  ],
+  "graph_bytes_preserved": [
+    "schema",
+    "vocabulary",
+    "clinical"
+  ],
+  "guideline_entries_preserved": true,
+  "coverage": {
+    "status": "pass",
+    "diseases": 945,
+    "gaps": []
+  },
+  "original_entrypoint_prepare": "pass",
+  "exact_opening_fixture": "pass",
+  "numeric_and_intent_bindings": "pass",
+  "composite_threshold_and_six_month_value": "unasserted",
+  "actual_models": "not_run",
+  "clinical_validity": "not_run",
+  "official_evaluation": "not_run",
+  "status": "installed",
+  "installation": {
+    "status": "installed",
+    "build_id": "1bcaba1dffb744c468bb191df3267dad",
+    "manifest": "/workspace/submission/knowledge/manifest.json"
+  },
+  "active_coverage": {
+    "status": "pass",
+    "diseases": 945,
+    "gaps": []
+  }
+}

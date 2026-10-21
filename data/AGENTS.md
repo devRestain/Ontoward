@@ -37,6 +37,7 @@
 - Preserve D54 runtime verification in provenance/algorithm-d50-5-2026-10-21.json and its original endpoint audit in provenance/runtime-link-audit-2026-10-21.json as historical receipts.
 - Preserve the D55 parent assets and historical D54 audit unchanged; record the reviewed correction plan exact RDF and ID changes semantic conservation strict activation and remaining independent concepts in D55 provenance. Treat runtime maintenance as separate from disposed extraction history.
 - Preserve the D56 parent until verified activation and explicit disposal; retain original C03 evidence and parent hash receipts. Pin exact ExamMethod request-text amendments and verify that all other vocabulary triples clinical questions and guideline membership remain unchanged before atomic activation.
+- Pin D57 review and saved C10 hashes plus exact question delegation and onset-role amendments in provenance; preserve the D56 parent, all graph bytes, and guideline membership through verified atomic activation.
 - Treat real generation and installation not_run records from initial D49 acceptance as historical slice boundaries. Use current scoped state and installed-manifest evidence for observed real-build completion; keep clinical validity and official evaluation separate.
 
 - Honor explicit post-verification disposal of prior installed knowledge builds. Verify their exact file inventories and hashes and preserve active assets original test evidence and compact deletion receipts.

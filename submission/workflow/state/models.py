@@ -135,8 +135,9 @@ class CaseFact(Model):
     def key(self):
         return (self.subject, self.subject_member, self.observation_id, self.episode_id,
                 self.target, self.attribute, self.time_context, self.polarity_scope,
-                self.acquisition if self.kind == 'finding' or self.kind == 'attribute' and self.acquisition == 'EXAM'
-                else 'patient_report')
+                self.acquisition if self.kind == 'finding' or self.kind == 'attribute' and (
+                    self.acquisition == 'EXAM' or self.source_ref == 'initial:vital_signs')
+                else 'patient_report') + ((self.id,) if self.kind == 'note' else ())
 
 
 class GraphRef(Model):

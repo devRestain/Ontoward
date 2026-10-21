@@ -13,9 +13,14 @@ class QuestionTools:
 
     def has_resolved_evidence(self, state, target, attribute=None, observation=None, episode=None,
                               subject='patient', time_context=None, subject_member=None):
+        ident = target if target.startswith(('urn:', 'http')) else next((ident for kind in ('Symptom', 'ExamFinding', 'ContextFactor')
+            if (ident := self.knowledge.term_id(target, kind))), None)
+        exam = self.knowledge.has_type(ident, 'ExamFinding')
         target = self.knowledge.term(target) if target.startswith(('urn:', 'http')) else target
         attribute = self.knowledge.term(attribute) if attribute and attribute.startswith(('urn:', 'http')) else attribute
         values = [f for f in state.case.current_facts() if f.target == target and f.attribute == attribute
+            and f.polarity_scope == 'general'
+            and (f.acquisition == 'EXAM' or f.source_ref == 'initial:vital_signs') == exam
             and f.subject == subject and f.subject_member == subject_member and (time_context is not None or f.kind == 'context' or f.time_context != 'past')
             and (observation is None or f.observation_id == observation)
             and (episode is None or f.episode_id == episode)
@@ -57,6 +62,7 @@ class QuestionTools:
                 target=chief.target if chief and slot in INTAKE else None,
                 observation_id=chief.observation_id if chief and slot in INTAKE else None,
                 episode_id=chief.episode_id if chief and slot in INTAKE else None,
+                time_context=chief.time_context if chief and slot in INTAKE else 'unspecified',
                 subject='family' if slot == 'family_history' else 'patient',
                 answer_type='presence' if slot in {'course', 'recurrence', 'medical_history', 'medication', 'allergy', 'family_history'} else 'free_text'))
 
@@ -66,7 +72,7 @@ class QuestionTools:
             return {}
         target = self.knowledge.term_id(chief.target, 'Symptom')
         statuses = {}
-        for attribute in self.knowledge.get_symptom_attributes(target):
+        for attribute in self.knowledge.collection_attributes(target):
             name = self.knowledge.term(attribute)
             if self.has_resolved_evidence(state, target, attribute, chief.observation_id, chief.episode_id, 'patient', chief.time_context):
                 statuses[name] = 'acquired'
@@ -117,6 +123,8 @@ class QuestionTools:
               subject='patient', time_context='current', subject_member=None):
         if attribute and (not self.knowledge.has_type(attribute, 'FindingAttribute')
                           or attribute not in self.knowledge.get_symptom_attributes(target)):
+            return None
+        if attribute and self.knowledge.collection_attributes(target, attribute) != [attribute]:
             return None
         exam = self.knowledge.has_type(target, 'ExamFinding')
         if exam:
@@ -173,6 +181,7 @@ class QuestionTools:
         if attribute and spec['kind'] == 'SAY':
             return any(f.target == self.knowledge.term(target) and not f.attribute and f.status == 'present'
                 and f.graph_binding and f.polarity_scope == 'general'
+                and f.acquisition != 'EXAM' and f.source_ref != 'initial:vital_signs'
                 and (f.subject,f.subject_member,f.time_context,f.observation_id,f.episode_id) ==
                     (spec['subject'],spec.get('subject_member'),spec['time_context'],spec['observation_id'],spec['episode_id'])
                 for f in state.case.current_facts())
@@ -205,12 +214,26 @@ class QuestionTools:
     def select_question(self, state):
         if state.session.termination:
             return
-        redundant = {q.item_id for q in state.interview.queue if q.category in HISTORY and slot_resolved(state.case, q.category)}
+        redundant = {q.item_id for q in state.interview.queue if q.category in (*HISTORY, *INTAKE)
+                     and q.purpose in {'intake', 'history'} and answered(state, q.category)}
+        redundant.update(q.item_id for q in state.interview.queue if q.attribute and
+            self.collection_keys(q.semantic_key()) != [q.semantic_key()])
         redundant.update(q.item_id for q in state.interview.queue if q.target and q.purpose not in {'clarification', 'education', 'intake', 'history'}
             and self.has_resolved_evidence(state, q.target, q.attribute, q.observation_id, q.episode_id, q.subject, q.time_context, q.subject_member))
         self.questions.discard_unasked(state, redundant, reason='resolved')
         if state.interview.queue:
             self.interactions.select_question(state, min(state.interview.queue, key=lambda q:(q.order, q.item_id)))
+
+    def collection_keys(self, key):
+        if not key or not key[2]:
+            return [key]
+        target = next((ident for kind in ('Symptom', 'ExamFinding', 'ContextFactor')
+                       if (ident := self.knowledge.term_id(key[1], kind))), None)
+        attribute = self.knowledge.term_id(key[2], 'FindingAttribute')
+        if not target or not attribute:
+            return [key]
+        return [(*key[:2], self.knowledge.term(component), *key[3:])
+                for component in self.knowledge.collection_attributes(target, attribute)]
 
     def _options(self, state, candidates):
         if not self.budget.can_start_action(state):
@@ -220,7 +243,8 @@ class QuestionTools:
             for ref in candidate.entry.unresolved:
                 if not ref.scope:
                     continue
-                grouped.setdefault(ref.scope, set()).add(disease)
+                for key in self.collection_keys(ref.scope):
+                    grouped.setdefault(key, set()).add(disease)
         options = {}
         for key, diseases in grouped.items():
             kind, name, attr, subject, member, timing, observation, episode = key

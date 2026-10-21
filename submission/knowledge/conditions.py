@@ -134,9 +134,12 @@ class QuestionTemplate(Strict):
     reason: str | None = None
     units: list[str] = Field(default_factory=list)
     time_context: Literal["current", "past", "unspecified"] = "unspecified"
+    collect_via: list[str] = Field(default_factory=list, exclude_if=lambda value: not value)
 
     @model_validator(mode="after")
     def validate_contract(self):
+        if len(set(self.collect_via)) != len(self.collect_via) or any(not value.strip() for value in self.collect_via):
+            raise ValueError("Collection components must be distinct nonempty attribute identifiers")
         if len(set(self.units)) != len(self.units) or any(not unit.strip() for unit in self.units):
             raise ValueError("Question numeric units must be distinct nonempty source formats")
         if self.units and self.answer_type not in {"quantity", "duration"}:

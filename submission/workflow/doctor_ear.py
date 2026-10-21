@@ -3,7 +3,7 @@ from pydantic import ValidationError
 from .input_types import ContextInput, ContextStatement, InputResult, PatientContextFact, normalized_text
 from .output_types import MappingBatch
 from .model_context import messages, fact_record
-from .rules.input import make_fact, note_fact
+from .rules.input import fact_scope, make_fact, note_fact
 from .state.models import CaseFact
 from .rules.limits import LIMITS
 from .rules.normalization import candidate_contracts, exact_mapping, measurement_value, statement_outcome, strict_json, validate_mapping
@@ -97,10 +97,12 @@ class DoctorEar:
         supplied = {f['id'] for f in payload['records']}
         observations = {f.get('observation_id') for f in payload['records']}
         episodes = {f.get('episode_id') for f in payload['records']}
+        scopes = {(f.get('observation_id'), f.get('episode_id')) for f in payload['records']}
         question = payload['question']
         if question:
             observations.add(question.get('observation_id'))
             episodes.add(question.get('episode_id'))
+            scopes.add((question.get('observation_id'), question.get('episode_id')))
         errors = []
         for index, row in zip(positions, rows):
             try:
@@ -113,6 +115,9 @@ class DoctorEar:
                     raise ValueError('observation_outside_transmitted_context')
                 if statement.episode_id and statement.episode_id not in episodes:
                     raise ValueError('episode_outside_transmitted_context')
+                if (statement.observation_id and statement.episode_id
+                        and (statement.observation_id, statement.episode_id) not in scopes):
+                    raise ValueError('observation_episode_pair_outside_transmitted_context')
                 if statement.anchor is not None and statement.anchor >= len(context.statements):
                     raise ValueError('unknown_statement_anchor')
                 if payload.get('input_segments') and not any(statement.quote in segment for segment in payload['input_segments'].values()):
@@ -130,7 +135,9 @@ class DoctorEar:
             s = context.statements[index]
             if s.anchor is not None:
                 anchor = context.statements[s.anchor]
-                if s.role != 'clinical' or (anchor.subject, anchor.subject_member, anchor.time_context) != (s.subject, s.subject_member, s.time_context):
+                if (s.role != 'clinical' or anchor.role != 'clinical' or anchor.focus != 'target'
+                        or s.anchor == index or anchor.input_segment != s.input_segment
+                        or (anchor.subject, anchor.subject_member, anchor.time_context) != (s.subject, s.subject_member, s.time_context)):
                     s.anchor = None
                 elif s.focus == 'attribute' or s.measurement:
                     s.target_terms = list(dict.fromkeys([*anchor.target_terms, *s.target_terms]))[:8]
@@ -187,7 +194,7 @@ class DoctorEar:
                 context, errors = self._read_context(strict_json(response.content), payload, text, context, indices, demographic_indices)
                 review_chief = False
                 for i, statement in enumerate(context.statements):
-                    fallback = '; '.join(dict.fromkeys(statement.target_terms + statement.value_terms))
+                    fallback = '; '.join(dict.fromkeys(statement.target_terms + statement.attribute_terms + statement.value_terms))
                     if (statement_outcome(statement) is None and not statement.note_value
                             and not normalized_text(fallback)):
                         errors.append({'area': 'statements', 'index': i,
@@ -246,7 +253,18 @@ class DoctorEar:
 
     @staticmethod
     def _mapping_payload(statements, indices, contracts, phase, feedback):
-        return {'task': 'input_mapping', 'phase': phase, 'statement_indices': indices, 'statements': [{'quote': statements[i].quote, 'focus': statements[i].focus, 'assertion': statements[i].assertion, 'normalized_claim': statements[i].note_value or '; '.join(dict.fromkeys([*statements[i].target_terms, *statements[i].attribute_terms, *statements[i].value_terms])), 'candidates': contracts[i], **({'measurement': measurement_value(statements[i].measurement)} if statements[i].measurement else {})} for i in indices], 'validation_errors': feedback}
+        rows = []
+        for i in indices:
+            statement = statements[i]
+            hints = {key: getattr(statement, key) for key in ('target_terms', 'attribute_terms', 'value_terms')
+                     if getattr(statement, key)}
+            rows.append(dict(quote=statement.quote, focus=statement.focus, assertion=statement.assertion,
+                normalized_claim=statement.note_value or '; '.join(dict.fromkeys(value for values in hints.values() for value in values)),
+                meaning=dict(hints, time_context=statement.time_context,
+                    **({'category': statement.record_category} if statement.record_category else {})),
+                candidates=contracts[i], **({'measurement': measurement_value(statement.measurement)} if statement.measurement else {})))
+        return {'task': 'input_mapping', 'phase': phase, 'statement_indices': indices,
+                'statements': rows, 'validation_errors': feedback}
 
     def _map_batch(self, state, knowledge, client, statements, indices, contracts):
         decoded, remaining, feedback = {}, list(indices), []
@@ -278,7 +296,7 @@ class DoctorEar:
             for i, mapping in zip(remaining, wire):
                 try:
                     mapping = MappingBatch.model_validate([mapping]).root[0]
-                    values = validate_mapping(mapping, statements[i], contracts[i])
+                    values = validate_mapping(mapping, statements[i], contracts[i], external=True)
                     if not values:
                         raise ValueError('unresolved_mapping')
                     decoded[i] = (values, bool(attempt))
@@ -311,6 +329,19 @@ class DoctorEar:
             decoded.update(self._map_batch(state, knowledge, client, context.statements, waiting, contracts))
         preferred = []
         for i, statement in enumerate(context.statements):
+            if statement.anchor is not None:
+                anchor = context.statements[statement.anchor]
+                mapped = decoded.get(statement.anchor)
+                target = mapped[0][0][0] if mapped else None
+                observation, episode = fact_scope(anchor, self._source(anchor, source, segments),
+                    statement.anchor, question, case=state.case, target=target)
+                if (statement.observation_id and statement.observation_id != observation
+                        or statement.episode_id and statement.episode_id != episode):
+                    statement = statement.model_copy(update={'anchor': None})
+                else:
+                    statement = statement.model_copy(update={
+                        'observation_id': statement.observation_id or observation,
+                        'episode_id': statement.episode_id or episode})
             outcome = statement_outcome(statement)
             accepted = []
             if i in decoded:

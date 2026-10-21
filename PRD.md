@@ -2,7 +2,7 @@
 
 ## 목적과 실행 경계
 
-Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D55](DECISION_STATE.md#D55)의 d50.6으로 정정된 v5 번들을 strict하게 로드한다. [D54](DECISION_STATE.md#D54)의 scoped 후보 유입·호출 내 참조·어휘 통합·문서 projection과 직접 연결 문서 우선 순서를 유지한다. D53의 직접 Initiation·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 기존 DB의 활성 사용은 철회했으며 실제 새 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
+Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 알고리즘은 [D57](DECISION_STATE.md#D57)의 d50.7로 초기 상세정보의 수치 연결·scope·원자 질문 수집을 보존하고, [D55](DECISION_STATE.md#D55)의 strict 번들과 D56 진찰 문구를 유지한다. [D54](DECISION_STATE.md#D54)의 scoped 후보 유입·호출 내 참조·어휘 통합·문서 projection과 직접 연결 문서 우선 순서를 유지한다. D53의 직접 Initiation·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 기존 DB의 활성 사용은 철회했으며 실제 새 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
 
 진료 중에는 ZIP 내부의 읽기 전용 RDFLib Graph를 사용한다. 원본 RF2·BODHI·DDXPlus·준비 SQLite는 개발 자산이다. 등록되지 않은 질환·관계·질문을 런타임에서 만들지 않는다. 제공 가이드라인 원문은 진단을 고정한 뒤 지정 마운트에서만 읽는다. 실제 모델 품질과 공식 평가는 로컬 실행 증거와 구분한다.
 
@@ -40,6 +40,10 @@ DoctorEar는 입력 전처리·해석·사실 수용을, 다섯 세션 객체는
 
 초기 원문의 전송 정본은 opening과 vital_signs를 구분한 input_segments다. 같은 초기 원문을 input·dialogue에 반복하지 않으며 일반 reply·EXAM의 input은 유지한다. 매핑은 Context가 이미 해소한 note_value 또는 짧은 의미 hint를 normalized_claim으로 함께 읽는다. 어휘 후보는 영어 hint와 한국어 인용 전체의 후보를 통합한 후 제한하며, 각 질의의 최선 별칭 일치만 합산한다. 이 어휘 유사도는 임상 근거 점수가 아니며 무관련 입력은 빈 후보를 허용한다. Target 8/32·속성 2/4·값 8/32와 기존 repair 상한을 유지한다.
 
+첫 입력과 일반 답변에서 명시된 증상의 기간·변화량·의도성·수식어를 같은 증상의 원자 속성으로 분리한다. 이전 체중·현재 체중·감소량을 구별하고 근사값·단위·시점을 보존한다. Context가 검증한 수치는 외부 Mapping에서 다시 생성하지 않는다. Mapping은 빈 dictionary 또는 한 target·attribute의 정확한 `{"use_measurement":true}`만 반환하며 Python이 원래 measurement를 기존 수치 validator에 연결한다. 숫자와 marker의 혼합·1이나 문자열 true·단위 불일치·범주값 대체를 거절한다. 후보는 속성 의미를 확인한 뒤 단위를 검사하며 kg만 같다는 이유로 현재 체중을 감소량에 연결하지 않는다. note_value가 있어도 대상·속성·값 hint와 시점을 meaning에 보존한다.
+
+미매핑 상세도 같은 로컬 anchor의 observation·episode를 보존하며 서로 다른 note ID는 독립 사실로 유지한다. 실제 같은 bound attribute의 상충값 검사는 유지한다. Initiation은 현재 chief의 같은 사람·시점·observation·episode·보고 취득 범위에서 onset·course 등을 판단한다. 발현 후 경과와 개별 발작의 지속시간·측정 구간을 구별하고 duration 전체를 onset으로 바꾸지 않는다. 과거의 안정적 체중을 평생 재발 부정이나 현재 course 완료로 확대하지 않는다.
+
 사실은 주체·가족 구성원·보고자·시점·관찰·episode·수치·단위·polarity·취득 경로·source·turn을 보존한다. 정정은 같은 대상·관찰·주체·시점·취득 범위를 지키며 SAY가 초기 객관 자료나 EXAM을 덮어쓰지 못한다. CaseState.facts의 CaseFact 하나에 정규화된 영어 내용과 수치·조건을 저장하고 선택적 graph_binding에 등록 target·attribute·values·연결 방식을 둔다. 그래프 사용 자격은 현재 같은 사람·시점·observation·episode·취득 범위의 존재 확인에서 계산한다. 매핑 결과와 부가 설명을 중복 사실로 저장하지 않는다. DB에 없는 정보도 같은 정본에 보존한다.
 
 부분 복구는 요청한 statement 또는 demographic 행만 바꾸고 생략된 정상 영역을 보존한다. 검증된 typed age는 Python으로 영문 표기하며 단위·범위·근사 여부를 유지한다. 미매핑 메모의 영문 정규화 실패도 기존 한 번의 행 복구에 포함한다. 정확한 unknown·감사 SAY와 등록 문구·scope가 고정된 affirmative presence 단답만 모델 없이 처리한다. 복합·부정형·병력 domain 질문과 추가 내용은 일반 해석으로 보낸다. 환자 감정 표현도 입력 문맥으로 해석하되 별도 공감 행동을 만들지 않는다.
@@ -47,6 +51,8 @@ DoctorEar는 입력 전처리·해석·사실 수용을, 다섯 세션 객체는
 환자 age·sex·historian은 같은 facts 정본에서 관리한다. 환자와 보호자를 구별하고 나이·단위·성별을 추정하지 않는다. 반복은 합치고 명시적 정정만 교체하며 미해결 충돌은 uncertain으로 둔다. 현재 임상 자산에 없는 age·sex 적용 규칙을 만들지 않는다.
 
 ## 그래프·감별·질문 알고리즘
+
+질문 자산은 target|attribute override에 선택적 collect_via를 둘 수 있다. 같은 target에 직접 연결된 기존 원자 속성만 한 단계로 참조하며 중첩·순환·자기 참조·실행 불가 component를 prepare에서 거절한다. CC 속성 준비·required_actions·질문 큐 제거·DD 후보는 같은 전개를 사용하고 완전한 scope별 원자 질문을 한 번만 센다. 기간만 알면 감소량만, 감소량만 알면 기간만 수집한다. 수집 완료로 복합 임상 기준이나 새 graph fact·Answer를 만들지 않는다. DD의 collection_only 참조는 원래 전체 기준을 그대로 가리키며, 3개월 감소량으로 별도 6개월 감소율 질문이나 threshold를 완료 처리하지 않는다.
 
 새 후보는 support 또는 strong_support 관계의 scoped Target→Pattern→Association→Disease 또는 applicability 경로로 회수한다. 전체 Pattern 일치는 후보 진입 조건이 아니며 against-only 경로로 무관한 새 후보를 확장하지 않는다. 기존 후보는 현재 유효한 그래프 경로가 남아 있으면 보존한다. 전체 Feature와 applicability가 모두 일치할 때만 등록 effect를 활성화한다. 부분 일치는 활성 지지가 아니고 불일치를 반대 효과로 뒤집지 않는다. 명시적 모순으로 불가능해진 관계의 나머지 조건은 질문하지 않는다.
 

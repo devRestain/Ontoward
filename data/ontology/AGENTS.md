@@ -15,6 +15,7 @@
 - Stop asking remaining conditions of an explicitly contradicted impossible relation. Refine matched patterns only within the same effect, applicability, scope, and observation; never add repeated observations as numeric support.
 - Keep rule time any separate from concrete current/past/unspecified question time. Require same-target/scope presence before attribute questions, including attribute-only Patterns.
 - Keep question order, SOAP category, and clarification in questions JSON attribute_roles. Require NFC Korean executable text of 1-30 codepoints and concrete physical EXAM paths.
+- Permit target-specific collect_via only for direct registered atomic attributes without nesting or cycles; keep collection completion separate from clinical Pattern matching.
 - Normalize existing four-modality ExamMethod request text under D56 without changing IDs labels detectedBy links or clinical meaning. Preserve combined actions required maneuvers and original unspecified anatomy; do not add text to previously textless methods.
 - Require a six-file hashed bundle: schema, vocabulary, clinical, questions with attribute_roles, guideline index, and manifest. Resolve paths relative to the manifest and reject boundary escape/hash mismatch.
 - Permit empty guideline selections for a new Disease; preserve document-relative paths/hashes/citations where documents are selected. Keep originals outside the submission ZIP.

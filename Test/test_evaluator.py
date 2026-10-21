@@ -387,6 +387,18 @@ class EvaluatorTests(unittest.TestCase):
 
 
 class BrainProtocolTests(unittest.TestCase):
+    def test_scripted_numeric_mapping_references_context_without_rewriting_numbers(self):
+        model = ScriptedModels({})
+        row = dict(assertion='present', measurement=dict(kind='interval', lower=6, upper=2, unit='month',
+                   upper_unit='year', approximate=True, lower_inclusive=False),
+                   candidates=[dict(id='Complaint', attributes=[dict(id='Onset', units=['month', 'year'],
+                                   values=[dict(id='Categorical range')])])])
+        for units, expected in ((['month', 'year'], {'Complaint': {'Onset': {'use_measurement': True}}}), (['month'], {})):
+            row['candidates'][0]['attributes'][0]['units'] = units
+            payload = dict(task='input_mapping', statements=[row])
+            response = model.complete('gateway', [{'role': 'user', 'content': json.dumps(payload)}], 4096, 'numeric')
+            self.assertEqual(json.loads(response['choices'][0]['message']['content']), [expected])
+
     def test_scripted_brain_supports_rank_and_action_only_contracts(self):
         from models import ScriptedModels
         model=ScriptedModels({})

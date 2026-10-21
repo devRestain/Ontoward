@@ -91,12 +91,10 @@ def candidate_contracts(knowledge, statement, question, *, expanded=False):
         if feature:
             allowed = knowledge.get_symptom_attributes(target)
             matched = [a for a in attribute_rank if a in allowed]
-            if direct and qattribute:
+            if direct and qattribute and (not statement.measurement or statement.focus == 'attribute'):
                 matched.insert(0, qattribute)
             if statement.measurement:
                 matched = [a for a in matched if statement.measurement.unit in knowledge.numeric_units(target, a)]
-                if not matched:
-                    matched = [a for a in allowed if statement.measurement.unit in knowledge.numeric_units(target, a)]
             if not matched and statement.value_terms:
                 values = set(value_rank)
                 matched = [a for a in allowed if values & set(knowledge.get_attribute_values(a))]
@@ -127,7 +125,7 @@ def measurement_value(measured):
     return value
 
 
-def validate_mapping(mapping, statement, contracts):
+def validate_mapping(mapping, statement, contracts, *, external=False):
     if not isinstance(mapping, dict) or len(mapping) > 1:
         raise ValueError("mapping_requires_one_target_dictionary")
     if not mapping:
@@ -140,17 +138,32 @@ def validate_mapping(mapping, statement, contracts):
         raise ValueError("target_outside_supplied_database")
     sign = "(+)" if statement.assertion == "present" else "(-)"
     if not contract["attributes"]:
+        if statement.measurement:
+            raise ValueError("numeric_statement_requires_attribute")
         if value != sign:
             raise ValueError("assertion_changed")
         return [(target, None, [], None, statement.assertion)]
     if not isinstance(value, dict) or not value:
         raise ValueError("feature_requires_attribute_dictionary")
+    if statement.measurement and len(value) != 1:
+        raise ValueError("numeric_statement_requires_one_attribute")
     decoded = []
     for attribute, selected in value.items():
         spec = next((a for a in contract["attributes"] if a["id"] == attribute), None)
         if spec is None:
             raise ValueError("attribute_outside_target_contract")
+        reference = isinstance(selected, dict) and "use_measurement" in selected
+        if reference:
+            if set(selected) != {"use_measurement"} or selected["use_measurement"] is not True:
+                raise ValueError("invalid_measurement_reference")
+            if statement.measurement is None:
+                raise ValueError("measurement_reference_without_measurement")
+            selected = measurement_value(statement.measurement)
+        if statement.measurement and external and not reference:
+            raise ValueError("numeric_mapping_requires_measurement_reference")
         allowed = {v["id"] for v in spec["values"]}
+        if statement.measurement and not isinstance(selected, dict):
+            raise ValueError("numeric_statement_cannot_select_category")
         if isinstance(selected, str):
             if selected not in allowed or statement.assertion != "present":
                 raise ValueError("invalid_or_negated_categorical_value")
@@ -173,6 +186,8 @@ def validate_mapping(mapping, statement, contracts):
                 raise ValueError("unreported_or_unregistered_numeric_value")
             decoded.append((target, attribute, [], measurement, "present"))
         elif isinstance(selected, dict) and selected and set(selected) <= allowed:
+            if statement.measurement:
+                raise ValueError("numeric_statement_cannot_select_category")
             if any(v != sign for v in selected.values()):
                 raise ValueError("feature_assertion_changed")
             decoded.append((target, attribute, list(selected), None, statement.assertion))

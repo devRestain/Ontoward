@@ -10,8 +10,13 @@ CATEGORY_FIELDS = {**dict.fromkeys((*INTAKE, 'duration', 'quality', 'aggravating
 def slot_records(case, slot):
     chief = case.chief()
     return [f for f in case.current_facts() if f.category == slot
-            and (slot not in INTAKE or f.subject == 'patient' and (not chief or not f.observation_id
-                 or (f.observation_id, f.episode_id) == (chief.observation_id, chief.episode_id)))]
+            and f.polarity_scope == 'general'
+            and (slot not in INTAKE or chief and f.subject == chief.subject and f.subject_member == chief.subject_member
+                 and f.time_context == chief.time_context
+                 and f.acquisition != 'EXAM' and f.source_ref != 'initial:vital_signs'
+                 and f.observation_id and f.episode_id
+                 and (f.observation_id, f.episode_id) == (chief.observation_id, chief.episode_id)
+                 and (not f.target or f.target == chief.target))]
 
 
 def slot_resolved(case, slot):
@@ -25,7 +30,13 @@ def answered(state, slot):
     for answer in state.interview.answers:
         if answer.category != slot or answer.outcome == 'undelivered':
             continue
-        if slot not in INTAKE or not chief or answer.key and (
-                answer.key[1], answer.key[6], answer.key[7]) == (chief.target, chief.observation_id or '', chief.episode_id or ''):
+        if slot not in INTAKE or chief and answer.key and (
+                answer.key[0], answer.key[1], answer.key[3], answer.key[4], answer.key[5], answer.key[6], answer.key[7]) == (
+                'SAY', chief.target, chief.subject, chief.subject_member or '', chief.time_context,
+                chief.observation_id or '', chief.episode_id or ''):
             return True
+    if slot in INTAKE:
+        key = '|'.join(('SAY', chief.target, '', chief.subject, chief.subject_member or '', chief.time_context,
+                        chief.observation_id or '', chief.episode_id or '', slot)) if chief else None
+        return bool(key and key in state.interview.collection)
     return slot in state.interview.collection

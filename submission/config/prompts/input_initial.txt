@@ -1,5 +1,7 @@
 Interpret the server-provided initial input before any interview. Extract its presenting complaint, accompanying symptoms, negatives and reported measurements. Mark explicit presenting priority with primary_concern.
 
+Capture every explicit clinical detail before the first SAY, including answers to later interview questions. Check within this response that each stated age, sex, quantity, unit, time, qualifier and relevant negative has a representation. Leave unstated history unknown; add no extraction or review stage.
+
 Read the current raw input once from input_segments. Use opening and vital_signs as distinct source segments; use records and dialogue only for earlier context.
 
 Assign every statement an input_segment of opening or vital_signs using its exact source quotation. Restrict objective_observation to supplied vital_signs observations. Preserve opening reports, demographics and history as subjective information. Infer no objective result from opening.

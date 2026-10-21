@@ -201,7 +201,7 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
         for disease in sorted(diseases & included):
             entries = []
             for missing in candidates[disease].entry.unresolved:
-                if missing.scope != question.semantic_key():
+                if question.semantic_key() not in tools.collection_keys(missing.scope):
                     continue
                 graph = missing.graph_ref
                 detail = next((d for d in candidates[disease].details if d['association'] == graph.association_id), None)
@@ -212,6 +212,8 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
                 else:
                     context_expected = next((c['status'] for c in detail['conditions'] if c['concept_id'] == graph.id), 'present') if detail else 'present'
                     value = dict(expected=context_expected, relation=relation(detail) if detail else None, feature=None)
+                if missing.scope != question.semantic_key():
+                    value['collection_only'] = True
                 if value not in entries:
                     entries.append(value)
             row['expected_by_disease'][refs[disease]] = entries

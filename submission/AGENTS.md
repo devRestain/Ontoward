@@ -22,6 +22,9 @@
 ## Input and Graph Decisions
 
 - Accept initial input before the first SAY and every collection reply through DoctorEar; bypass generation only for configured exact unknown/acknowledgement SAY replies and canonical affirmative single-target presence questions.
+- Capture explicit complaint modifiers as scoped atomic attributes and keep baseline, current, and change measurements distinct without adding model stages.
+- Accept external numeric selections only through the exact use_measurement true marker and reuse the validated Context measurement; reject categorical substitutions and unit-only candidate expansion.
+- Preserve local anchor scope for bound and unbound facts and keep each unbound note identity independent of other notes in that scope.
 - Bind exact admitted English terms in Python and normalize only unresolved statements with supplied compatible candidates.
 - Preserve independent valid rows bounded recovery meaning-preserving bindings numeric units scope corrections and acquisition guards.
 - Limit Ear to context plus one shared row/chief repair and mapping plus one shared format/reference/meaning repair. Reject arbitrary first-candidate completion and retain normalized unbound facts.
@@ -49,6 +52,8 @@
 - Restrict Context questions to the CC exit assessment and move focused ROS to DD with six targets inside its ten-action cap.
 - Include subject_member in question keys answer completion scope and duplicate checks. Match Context targets and applicability against the same CaseFacts; preserve whole-family absence separately from one member and never merge members or episodes.
 - Offer one executable graph-linked question at a time and confirm Target presence at the same scope before attribute questions, including attribute-only Patterns. Read order, SOAP category, and clarification from attribute_roles rather than URI localnames. Separate any rule timing from concrete execution timing.
+- Expand target-specific one-level collect_via before CC counts and DD options; prune resolved atomic questions and preserve composite graph criteria and separate time-window questions.
+- Resolve Initiation slots only from the current chief's complete reported scope and distinguish elapsed onset from attack duration and measurement windows.
 - Reject answered unknown blocked incorrectly scoped unprepared or unaffordable optional questions without hypothetical utility gates.
 - Use high effort for clinical decisions and English planning and medium effort for Ear and Mouth on the existing designated model.
 - Generate English P with corresponding Korean utterances in one high-effort request. Validate both independently, preserve accepted English and source quotes, and repair only invalid Korean groups with the existing medium-effort response and text repair limits.
@@ -76,9 +81,10 @@
 ## Assets and Acceptance
 
 - Preserve the unchanged SDK and entrypoint, pinned Pydantic and RDFLib requirements, Python-selected task routes, and historical custody; load only the v5-enum-1 relative-path/hash-pinned six-file contract without old-format conversion.
-- Pin the algorithm as d50.6 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
+- Pin the algorithm as d50.7 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
 - Reject invalid hasAttribute ranges and canHaveValue domains or ranges during load; retain typed getters and block failed attribute lookup from becoming a presence question. Keep D55 strict loading and preserve its original parent directory byte-for-byte until explicit post-verification disposal.
 - Load the D56 text-normalized descendant of the D55 bundle. Keep ExamMethod identities and question selection unchanged and preserve required actions and positioning in normalized Korean EXAM request text.
+- Load the D57 collection-metadata descendant only after strict loader, coverage, entrypoint, and scoped input verification; preserve its D56 parent and all graph bytes.
 - Keep maintained behavior tests in Dev/tests/workflow observation and comparison in Test and disposable evidence in Tmp.
 - Verify source and independent read-only archive consultations in project containers with network disabled and original SDK HTTP on the internal project network.
 - Record runtime and artifact evidence separately from actual model quality clinical accuracy real NOVA official evaluation commits and deployment.

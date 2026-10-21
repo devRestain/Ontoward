@@ -1,10 +1,10 @@
 # Ontoward 진료 워크플로우 백서
 
-현재 구현은 **D55·d50.6**이며 D53 직접 문진·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D49 무점수 지식, D48 프롬프트 모듈과 D47 객체·사실 소유권을 유지한다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D55 결정](../DECISION_STATE.md#D55), [D55 검증](../data/provenance/algorithm-d50-6-2026-10-21.json), [PRD](../PRD.md), [상태 정의](workflow/state/models.py)를 기준으로 읽으며 [D53 당시 증빙](../data/provenance/algorithm-d50-4-2026-10-21.json)은 보존한다. 기존 DB의 활성 사용은 철회했고 D45 공식 턴 예산을 유지한다. D56 문구 정규화 build `1e8539d9c0910b37517f6475266f6df1`를 로컬 활성화했다. 검증 후 사용자 요청에 따라 이전 두 build 파일을 삭제하고 해시·정정 증빙을 보존했다. 변경 없는 run.py의 prepare와 protocol double 상담을 검증했다. 실제 모델 상담·임상·공식 평가와 정식 ZIP은 별도다. 합성 번들은 계속 Tmp/에서만 사용한다.
+현재 구현은 **D57·d50.7**이며 D55 strict 지식·D56 진찰 문구, D53 직접 문진·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D49 무점수 지식, D48 프롬프트 모듈과 D47 객체·사실 소유권을 유지한다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D57 결정](../DECISION_STATE.md#D57), [D57 검증](../data/provenance/algorithm-d50-7-2026-10-21.json), [PRD](../PRD.md), [상태 정의](workflow/state/models.py)를 기준으로 읽으며 과거 증빙은 보존한다. D57 수집 메타데이터 build `1bcaba1dffb744c468bb191df3267dad`를 로컬 활성화하고 D56 parent `1e8539d9c0910b37517f6475266f6df1`를 보존한다. 두 번들의 그래프 bytes·D56 진찰 문구·지침 membership은 같다. 변경 없는 run.py의 prepare와 protocol double 상담을 검증했다. 실제 모델 상담·임상·공식 평가와 정식 ZIP은 별도다. 합성 번들은 계속 Tmp/에서만 사용한다.
 
 D56은 현재 저장된 시진·청진·촉진·타진 실행 문구 119개를 정규화한다. `목을 보여 주세요.`는 `목 시진합니다.`, `피부를 눈으로 살펴보세요.`는 `피부 시진합니다.`로 바뀌었다. 복합 동작·특수 수기·필요한 자세와 ID·임상 관계·질문 계약은 보존했다. 문구가 없던 메서드 37개는 그대로 두며 부위 미지정 공용 메서드 2개에는 임의 부위를 넣지 않는다. [D56 결정](../DECISION_STATE.md#D56)·[전체 전후 명세](../data/provenance/exam-text-normalization-plan-2026-10-21.json)·[현재 검증](../data/provenance/exam-text-normalization-2026-10-21.json)을 따른다. 실제 NOVA의 새 문구 수용 여부는 재검증하지 않았다.
 
-처음 읽을 때는 [아틀라스의 진료 순서](../Test/atlas.html#consultation)를 먼저 보고 아래 백서를 따라오면 편합니다. 같은 문서에서 [환자 사실 스키마](../Test/atlas.html#facts), [실행 RDF](../Test/atlas.html#rdf), [추출 SQLite](../Test/atlas.html#sqlite)도 비교할 수 있습니다. 아틀라스는 현재 소스의 정적 설명이고 실행 결과는 [제출 상태](PROJECT_STATE.md)가 관리합니다.
+처음 읽을 때는 [아틀라스의 진료 순서](../Test/atlas.html#consultation)를 먼저 보고 아래 백서를 따라오면 편합니다. 같은 문서에서 [환자 사실 스키마](../Test/atlas.html#facts), [실행 RDF](../Test/atlas.html#rdf), [추출 SQLite](../Test/atlas.html#sqlite)도 비교할 수 있습니다. 아틀라스는 2026-10-20의 정적 설명이며 이후 D57 입력·수집 변경은 이 백서를 따릅니다. 실행 결과는 [제출 상태](PROJECT_STATE.md)가 관리합니다.
 
 <a id="workflow-graph"></a>
 ## 1. 진료 실행 흐름
@@ -80,6 +80,10 @@ Ear는 초기 opening과 vital_signs를 첫 SAY 전에 해석한다. 정확한 �
 
 초기 구간 인용·취득 검증을 지키며 보고값·가정 측정은 S, 신뢰된 객관 구간·실제 EXAM은 O에 둔다. 정정은 기존 취득·범위 정책을 유지한다. 환자 원문은 Ear의 참조 해석에만 남고 임상·계획·SOAP에는 전달하지 않는다. Education 답변은 transcript-only다.
 
+D57에서는 첫 입력과 여러 내용을 함께 답한 일반 응답의 onset·개별 발작 지속시간·변화량·의도성을 원자 속성으로 나눈다. Mapping은 수치를 재작성하지 않고 한 target·attribute의 `{"use_measurement":true}`만 선택하며 Python이 이미 검증된 quantity/interval·단위·상하한·근사값을 기존 validator에 전달한다. marker와 숫자를 섞거나 수치 대신 임의 범주를 고르면 거절한다. 현재 체중·기준 체중을 단위가 같다는 이유로 감소량에 연결하지 않는다. normalized_claim 외의 meaning에 기존 대상·속성·값 hint·시점을 보존한다.
+
+미매핑 note에도 동일한 로컬 anchor의 observation·episode를 부여하고 note ID로 독립성을 유지한다. 같은 관찰 안의 3개월과 7kg가 서로 충돌하지 않으며 동일 bound 속성의 실제 모순은 계속 uncertain으로 검출한다. 전달된 observation과 다른 episode를 조합할 수 없다. Initiation은 현재 chief의 같은 사람·시점·관찰·episode·보고 취득 범위만 사용하며 모든 duration을 onset으로 치환하지 않는다. 초기의 과거 안정적 체중·미보고 재발력·치료력·6개월 비교는 임의 확정하지 않는다.
+
 <a id="reasoning"></a>
 ## 5. 목적별 임상 입력
 
@@ -103,6 +107,8 @@ D54는 초기 원문을 opening/vital_signs별 input_segments로 한 번 보내�
 ## 7. 질문과 평가 고정
 
 필수 chief 속성·Open Inquiry·기본 병력은 해당 세션이 준비한다. 질문을 완전한 scope key로 먼저 합친 뒤 고유 질문마다 검사하고, 그래프 관찰 묶음과 행동 복구의 후보 자료는 같은 작업 안에서 재사용한다. 공통 QuestionTools가 등록 문구·존재 전제·계통·주체·가족 구성원·시점·관찰·중복·예산을 검사한다. 질문 순서·SOAP category·clarification은 attribute_roles에서 읽고 실제 명료화 문구의 NFC·한글·1–30자를 prepare에서 확인한다. Context의 고정 CC 규칙은 진입 때 준비하고 requirements와 질문 준비는 같은 작업의 specs를 공유하며 응답·예산 변경 뒤에는 다시 계산한다. Context는 별도 supporting-context 없이 같은 CaseFact를 매칭한다. rule any와 실제 질문의 current/past/unspecified를 분리하고 원래 rule scope로 해결 여부를 검사한다. 속성만 있는 Pattern도 같은 Target·scope의 존재 확인을 먼저 제공한다. DD의 선택 질문은 후보의 미확인 feature와 진찰에서 구성하며 질환별 기대 답과 조건을 보존한다. ask는 공급한 실행 가능한 질문 하나를 선택해야 한다.
+
+target|attribute 질문 override의 선택적 collect_via는 같은 target의 기존 원자 문항을 한 단계로 참조한다. CC 준비·required_actions·이미 쌓인 질문 제거·DD 옵션이 같은 전개를 사용하며 완전한 scope key로 중복을 제거한다. Weight loss의 감소량·기간 복합 문항은 감소량과 발현 후 경과 문항에 위임한다. 기간만 있으면 감소량만, 감소량만 있으면 기간만 남는다. 수집 완료로 복합 범주 fact나 Answer를 만들지 않으며 DD collection_only는 원래 전체 임상 조건을 보존한다. 최근 6개월 감소율은 따로 확인한다.
 
 DD 종료는 **마지막 응답 수용→필요 판단→최신 평가 재사용→현재 미확인·한계 확정→Assessment·기반 facts·chief 고정→Education**이다. 최신 질환 평가를 얻지 못하면 확인된 chief의 symptom-only 평가를 고정하고 chief도 없으면 명시적으로 실패한다. Writer는 다시 진단을 고르지 않는다. Education과 SOAP 복구는 같은 고정 평가를 사용한다.
 

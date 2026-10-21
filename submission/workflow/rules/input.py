@@ -12,9 +12,32 @@ def objective(acquisition, source):
     return acquisition == 'EXAM' or acquisition == 'initial' and initial_objective(source)
 
 
+def fact_scope(statement, source, index, question=None, *, case=None, target=None):
+    same = (question and (question.subject, question.subject_member) == (statement.subject, statement.subject_member)
+            and question.time_context == statement.time_context
+            and (not statement.observation_id or statement.observation_id == question.observation_id)
+            and (not statement.episode_id or statement.episode_id == question.episode_id)
+            and (question.target == target if target else not statement.target_terms or question.target in statement.target_terms))
+    observation = statement.observation_id or (question.observation_id if same else None)
+    episode = statement.episode_id or (question.episode_id if same else None)
+    if case and target and statement.focus == 'attribute' and statement.anchor is None and not observation:
+        acquisition = question.kind if question else 'initial'
+        anchors = {(f.observation_id, f.episode_id) for f in case.current_facts()
+            if f.target == target and f.kind in {'symptom', 'finding'}
+            and (f.subject, f.subject_member, f.time_context) ==
+                (statement.subject, statement.subject_member, statement.time_context)
+            and (episode is None or f.episode_id == episode)
+            and objective(f.acquisition, f.source_ref) == objective(acquisition, source)}
+        if len(anchors) == 1:
+            observation, episode = next(iter(anchors))
+    occurrence = statement.anchor if statement.anchor is not None else index
+    observation = observation or 'observation:' + hashlib.sha256(f'{source}:{occurrence}'.encode()).hexdigest()[:24]
+    return observation, episode or observation
+
+
 def note_fact(statement, source, index, turn, question=None):
     category = statement.record_category or (question.category if question else None) or 'other'
-    value = statement.note_value or '; '.join(dict.fromkeys(statement.target_terms + statement.value_terms))
+    value = statement.note_value or '; '.join(dict.fromkeys(statement.target_terms + statement.attribute_terms + statement.value_terms))
     if not value and statement.measurement is None:
         return None
     if value and (not re.search('[A-Za-z]', value) or re.search('[가-힣]', value)
@@ -23,11 +46,11 @@ def note_fact(statement, source, index, turn, question=None):
     acquisition = question.kind if question else 'initial'
     if category == 'objective_observation' and (statement.subject!='patient' or not objective(acquisition, source)):
         return None
+    observation, episode = fact_scope(statement, source, index, question)
     return CaseFact(id=f'{source}:note:{index}', category=category, value=value, measurement=statement.measurement,
         status=statement.assertion, subject=statement.subject, subject_member=statement.subject_member,
         reported_by=statement.reported_by, time_context=statement.time_context,
-        observation_id=statement.observation_id or (question.observation_id if question else None),
-        episode_id=statement.episode_id or (question.episode_id if question else None), source_ref=source, turn=turn,
+        observation_id=observation, episode_id=episode, source_ref=source, turn=turn,
         acquisition=acquisition, polarity_scope=statement.polarity_scope)
 
 
@@ -46,18 +69,9 @@ def make_fact(case, knowledge, statement, decoded, *, source, index, offset, tur
     if kind == 'context' and (knowledge.get_context_type(target_id) == 'family_history') != (statement.subject == 'family'):
         raise ValueError('Context subject does not match its meaning')
     same = question and question.target == target and (question.subject, question.subject_member) == (statement.subject, statement.subject_member)
-    observation = statement.observation_id or (question.observation_id if same else None)
-    episode = statement.episode_id or (question.episode_id if same else None)
-    if attribute and not observation:
-        anchors = {(f.observation_id, f.episode_id) for f in case.current_facts()
-                   if f.target == target and f.kind in {'symptom', 'finding'} and f.subject == statement.subject
-                   and f.subject_member == statement.subject_member and f.time_context == statement.time_context}
-        if len(anchors) == 1:
-            observation, episode = next(iter(anchors))
-    occurrence = statement.anchor if statement.anchor is not None else index
-    observation = observation or 'observation:' + hashlib.sha256(f'{source}:{occurrence}'.encode()).hexdigest()[:24]
-    episode = episode or observation
-    category = statement.record_category or (knowledge.attribute_category(knowledge.term_id(attribute, 'FindingAttribute')) if attribute else None)
+    observation, episode = fact_scope(statement, source, index, question, case=case, target=target)
+    role = knowledge.attribute_category(knowledge.term_id(attribute, 'FindingAttribute')) if attribute else None
+    category = role if role and role != 'other' else statement.record_category or role
     if category is None and question and (same or question.purpose in {'intake', 'history'}):
         category = question.category
     if kind == 'symptom' and status == 'present' and statement.subject == 'patient' and statement.time_context != 'past':

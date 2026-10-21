@@ -678,6 +678,17 @@
 
 - **후속 보관 해제:** 정규화 작업 완료 뒤 사용자가 `submission/knowledge/builds/` 아래 과거 build를 워크플로우에 지장이 없는 범위에서 삭제하도록 요청했습니다. 활성 manifest가 새 build의 다섯 자산만 참조함을 확인한 뒤 이전 `0fd42155c3171c9c9dcf66cb7f733245`와 `87e8b4c54b0689453cea91b3bb316290`의 각 여섯 파일만 삭제합니다. 원본 C03와 compact manifest·자산 해시·정정·삭제 영수증은 유지하고 삭제 후 원래 prepare·coverage·EXAM 경로와 protocol double 상담을 검증합니다. 이 명시적 요청은 설치 시 parent 보존 이후의 파일 보관만 해제합니다.
 
+<a id="D57"></a>
+## D57. 초기 상세정보의 수치 참조와 범위 보존 및 원자 질문 수집 (2026-10-21)
+
+- **요청과 근거:** 사용자가 ONTOWARD_Initiation_Review_2026-10-21.md의 오류를 확인하고 제안한 기술 방향으로 구현하도록 요청했습니다. 첨부 문서는 분석 자료로 취급하며 그 내부의 실제 모델 재실행 제안을 외부 호출 권한으로 해석하지 않습니다. 검토 commit 3ee68f75와 현재 D56 build를 대조하고 저장 C10-20261021T090617Z-25696c7aa3의 두 수치 거절·onset 미완료·복합 문항 미완료·note 충돌을 오프라인으로 재현했습니다. 알고리즘은 **d50.7**입니다.
+- **Context와 Mapping:** 첫 입력·일반 답변 모두 명시된 수치·시점·의도성을 같은 증상의 원자 상세로 분리합니다. Context 2회·Mapping 2회 상한과 독립 유효 행 수용을 유지합니다. 외부 수치 행은 빈 dictionary 또는 한 target·attribute의 정확한 use_measurement true marker만 허용하고 Python이 검증된 quantity/interval을 연결합니다. 숫자 재생성·marker 혼합·비불리언·임의 범주화·잘못된 단위는 거절하며 내부 exact_mapping의 정규 수치 경로는 유지합니다. 숫자가 있다는 이유로 단위만 같은 속성을 추가하지 않고, note_value와 별도로 meaning에 기존 대상·속성·값 hint·시점을 전달합니다.
+- **사실과 범위:** bound fact와 note는 로컬 anchor의 동일한 observation·episode를 사용합니다. 기존 관찰보다 명시된 새 로컬 episode를 우선하며 독립 체중·신장·과거 수치를 합치지 않습니다. 같은 scope의 unbound note는 ID로 구별하고 동일 bound 속성의 실제 숫자 충돌은 유지합니다. 현재 chief의 완전한 사람·시점·관찰·episode·보고 취득 범위만 Initiation 완료에 사용하며 objective 자료·다른 증상·과거·가족·조건부 주장으로 대신 완료하지 않습니다.
+- **시간 의미:** 시작·발현 후 경과를 onset으로, 개별 발작 지속시간·단순 측정 구간을 duration으로 구별합니다. 의미가 명시적인 Duration since onset 속성의 역할만 duration에서 onset으로 정정합니다. 모든 duration의 alias나 날짜·기간 추정 규칙을 만들지 않습니다. 과거 안정적 체중은 그 내용 그대로 기록하며 재발·치료력 부재를 만들어 넣지 않습니다.
+- **수집 관계:** target|attribute 질문 override에 선택적 collect_via를 추가합니다. 직접 연결된 기존 속성만 한 단계로 참조하며 중복·자기 참조·중첩·순환·없는 문항을 loader에서 거절합니다. Weight loss amount and time period의 수집을 Absolute weight change (kg)와 Duration since onset에 위임하고 CC 준비·질문 수·큐 제거·DD 옵션에 공통 적용합니다. 원자 수치가 있어도 Significant weight loss의 범주 fact를 생성하지 않으며 DD의 collection_only 기대값은 원래 전체 임상 기준을 보존합니다. 별도의 최근 6개월 감소율은 독립 미확인으로 남깁니다.
+- **번들과 보관:** 현재 해시 고정된 D56 build에서 질문 override 하나와 onset 역할 하나만 변경한 immutable 후속 build를 검증·로컬 활성화합니다. schema·vocabulary·clinical bytes, 지침 membership·본문·D56 EXAM text는 보존하며 guideline build_id와 manifest 해시만 새 식별자에 맞춥니다. loader·coverage·원래 prepare·실제 어휘의 scripted 초기 수용을 먼저 검증하고 installer가 parent를 보존한 뒤 manifest를 원자 교체합니다. 새 추출·폐기 checkpoint 복구·모델 작업을 수행하지 않습니다.
+- **수용 경계:** 유지 workflow·측정 참조·부분 응답·범위 반례·actual-bundle scripted opening과 독립 합성 ZIP/원래 SDK·관측 검증을 수행합니다. 원본 보고서와 C10 hashes·정확한 메타데이터 변경은 initiation-collection-2026-10-21.json, 통합 검증은 algorithm-d50-7-2026-10-21.json이 소유합니다. 새 프롬프트의 실제 모델 추출률·실제 C10 재실행·임상 타당성·공식 평가·정식 ZIP·커밋·원격 쓰기·배포는 별도 미실행 경계입니다.
+
 ## 결정 기록 방법
 
 - 사용자가 고른 선택지를 해당 항목에 기록하고 상태를 `결정 완료`로 바꿉니다.

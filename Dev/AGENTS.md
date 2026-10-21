@@ -8,6 +8,7 @@
 - Use test_context_limits.py for identical relation sharing across diseases preserved scoped evidence and terminal context rejection without output escalation.
 - Use test_d53.py for top-five guideline order full-text and citation preservation source failure boundaries direct Initiation and removal of greeting and empathy state and actions.
 - Use test_d54.py for scoped recall shared fact/question references lexical integration document partition/projection lossless expectation references and defensive getters; retain all D49-D53 boundaries.
+- Use test_d57.py and initiation_fixtures.py for strict measurement references scoped note identity atomic collection dependencies and scripted interpretation of the reviewed opening; distinguish them from actual-model extraction quality.
 - Use tests/workflow/audit_links.py to record current vocabulary endpoint violations offline without changing installed assets or enabling a strict production gate.
 - Run python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py' in the root network-disabled dev service with Dev/tests/workflow/compose.offline.yaml.
 - Run Extraction/tests in the project container with PYTHONPATH=/workspace/submission:/workspace/Extraction. Keep dependencies off the host.
