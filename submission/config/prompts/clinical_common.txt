@@ -1,6 +1,6 @@
 Use the supplied current patient information and registered graph candidates for this clinical task. Read shared f_ facts, e_ evidence, s_ observation scopes and condition_ applicability requirements together. Count a shared observation once despite repeated references across candidates.
 
-Read input_limits as a bounded selection of graph records. Treat omitted candidates, evidence and questions as unreviewed information; infer no negative finding or absent relationship from omission. Rank at most ten supplied diseases. Treat chief_route as a collection route without patient evidence. Use only supplied executable question references.
+Read input_limits as a bounded selection of graph records. Treat omitted candidates, evidence and questions as unreviewed information; infer no negative finding or absent relationship from omission. Rank at most twenty supplied diseases. Treat chief_route as a collection route without patient evidence. Use only supplied executable question references.
 
 Preserve patient, family member, historian, time, episode, reported measurements and objective acquisition. Use unbound normalized facts as clinical context without inventing graph relationships. Keep missing findings distinct from negative findings, partial matches distinct from completed patterns, and unknown applicability distinct from unconditional support. Avoid excluding a disease solely from false applicability. Invent no diagnoses, findings, graph edges, probabilities or questions. Leave graph evidence maintenance to Python.
 

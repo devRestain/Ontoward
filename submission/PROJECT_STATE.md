@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=d92de4d447e66af31e22abf44c8bf8ffd030cb0e dirty=true updated=2026-10-22T02:13:49+09:00
-/goal phase=current id=APP.D61 state=complete action="Complete bounded consultation recovery and graph input limits through honest final submission"
+/checkpoint revision=e543222d93f10fd91f73da6d14da8f3ed08151e2 dirty=true updated=2026-10-22T02:24:28+09:00
+/goal phase=current id=APP.D62 state=complete action="Expand clinical differentials to twenty and final note alternatives to ten"
+/goal phase=history id=APP.D61 state=complete action="Complete bounded consultation recovery and graph input limits through honest final submission"
 /goal phase=history id=APP.D60 state=complete action="Record token usage without cumulative case caps while preserving model calls actions and server errors"
 /goal phase=history id=APP.D59 state=complete action="Bound literal Education evidence and preserve finalization after context rejection"
 /goal phase=history id=APP.D58 state=complete action="Verify DD Context and input scope with the active augmented knowledge"
@@ -458,4 +459,7 @@
 /evidence id=APP.D61.E3 class=artifact result=pass source=../Tmp/d61-2026-10-22/verification.json observed="Pass 66 current Test checks twenty observer scenarios with 1851 updates three installed-bundle consultations text DOM controls and a matching 94-file synthetic ZIP through 42 original SDK requests twenty actions and completed receipt under network none"
 /evidence id=APP.D61.E4 class=static result=pass source=../Tmp/d61-2026-10-22/verification.json observed="Preserve user commit d92de4d entrypoint SDK requirements active manifest original runs and inherited input policy; reconcile D61 contracts requirements and guidance without restoring the older Education reserve"
 /evidence id=APP.D61.E5 class=external_service result=not_run source=../Tmp/d61-2026-10-22/verification.json observed="Leave actual models fresh NOVA clinical validity official evaluation browser visual rendering production submission remote writes and deployment unrun"
-/handoff state=ready action="Use d50.12 for the user-controlled final review and restart the existing Test web process when ready to load the rebuilt image"
+/accept id=APP.D62.A1 state=pass action="Retain twenty ranked candidates and write ten alternatives after the primary diagnosis" evidence=APP.D62.E1
+/evidence id=APP.D62.E1 class=runtime result=pass source=../Tmp/d62-2026-10-22/workflow.log observed="Pass all 266 workflow tests in the network-disabled project dev container including the expanded candidate and SOAP boundary check"
+/evidence id=APP.D62.E2 class=external_service result=not_run source=none observed="Leave actual models NOVA clinical quality official evaluation and production submission unrun"
+/handoff state=ready action="Use the updated source limits for twenty clinical candidates and ten final note alternatives"

@@ -307,22 +307,28 @@ class PacketLimitTests(unittest.TestCase):
                     self.assertIn(entry['relation'], payload['relations'])
         self.assertTrue(all(row['full_pattern'] == [dict(expected='complete criterion')] for row in payload['relations'].values()))
 
-    def test_clinical_workset_ten_and_note_five_differentials(self):
+    def test_clinical_workset_twenty_and_note_ten_differentials(self):
         c, s = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
-        for index in range(20):
+        for index in range(30):
             node = f.OW[f'Candidate{index}']
             c.knowledge._graph.add((node, f.RDF.type, f.OW.Disease))
             c.knowledge._graph.add((node, f.RDFS.label, f.Literal(f'Disease {index}', lang='en')))
             f.add_pattern(c.knowledge, f'candidate{index}', f.OW.Complaint, [], disease=node, effect='support')
         c.knowledge.prepare_terms()
         work = c.differential.prepare_decision(s)
-        self.assertEqual(len(work.payload['candidates']), 10)
+        self.assertEqual(len(work.payload['candidates']), 20)
+        self.assertEqual(work.payload['input_limits']['differential'], 20)
         raw = dict(ranked_disease_refs=[row['ref'] for row in work.payload['candidates']])
         c.differential.accept(s, raw, work, closing=True)
         c.differential.close(s, c.client, allow_model=False)
-        self.assertEqual(len(s.case.assessment.differential), 10)
+        self.assertEqual(len(s.case.assessment.differential), 20)
         c.writer.build_soap(s)
-        self.assertEqual(s.turn.payload['note']['A']['differential'].count('r/o '), 5)
+        self.assertEqual(s.turn.payload['note']['A']['differential'].count('r/o '), 10)
+        self.assertEqual(s.turn.payload['diagnosis'], s.case.assessment.differential[0].name)
+        note = s.turn.payload['note']['A']['differential']
+        for entry in s.case.assessment.differential[1:11]:
+            self.assertIn('r/o ' + entry.name + ':', note)
+        self.assertNotIn('r/o ' + s.case.assessment.differential[11].name + ':', note)
         self.assertEqual(work.payload['input_limits']['omitted_candidates'], 12)
 
 

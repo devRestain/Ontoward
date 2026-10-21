@@ -40,4 +40,4 @@ Education은 D59에 따라 단일 frozen primary Disease의 기존 매핑에서 
 
 D49의 clinical_common 모듈은 qualitative effect·전체 Pattern·scope·applicability를 해석한다. 부분 부합·불일치·미확인을 효과로 뒤집거나 점수를 계산하지 않는다. 공유 relations 표를 expected_by_disease와 근거에서 참조하여 effect·전체 조건·적용 범위를 보존한다. Python의 상황 선택과 독립 수용 경계를 유지한다. 실제 새 번들 전 manifest 부재는 prepare에서 knowledge_bundle_not_installed로 실패한다.
 
-D61의 clinical 입력은 후보·Assessment 10개와 그래프 표별 50개의 완전한 레코드를 상한으로 삼고 제외 참조를 함께 제거한다. input_limits는 제외 항목이 미검토임을 나타낸다. 입력은 known_patient_context와 현재 출력 patient_context를 구분하며 부분 repair의 null·빈/생략 영역은 새 교체가 없다는 뜻이다. 일반 Mapping의 빈 선택 허용과 chief.select의 정확히 한 등록 참조 계약을 섞지 않는다.
+D62의 clinical 입력은 후보·Assessment 20개와 그래프 표별 50개의 완전한 레코드를 상한으로 삼고 제외 참조를 함께 제거한다. input_limits는 제외 항목이 미검토임을 나타낸다. 입력은 known_patient_context와 현재 출력 patient_context를 구분하며 부분 repair의 null·빈/생략 영역은 새 교체가 없다는 뜻이다. 일반 Mapping의 빈 선택 허용과 chief.select의 정확히 한 등록 참조 계약을 섞지 않는다.

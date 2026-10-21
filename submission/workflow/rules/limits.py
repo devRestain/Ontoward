@@ -29,8 +29,8 @@ class Limits:
     clarifications: int = 2
     focused_ros: int = 6
     graph_input_items: int = 50
-    differential_entries: int = 10
-    note_differentials: int = 5
+    differential_entries: int = 20
+    note_differentials: int = 10
     hpi_priority: int = 10000
     open_inquiry_priority: int = 1000000
     clarification_priority: int = 2000000

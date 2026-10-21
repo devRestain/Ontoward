@@ -735,6 +735,13 @@
 - **Writer와 수신:** 정상 조립·정합성 실패는 그래프·LLM·Education에 의존하지 않는 최소 SOAP로 전환합니다. 실제 초기 호소·활력징후·수용 facts·미해석 수신·검증 계획만 쓰며 15 strings·빈 O.tests·별도 한 행 diagnosis·500/100000 UTF-8 bytes를 검사합니다. 한 번의 확정 형식 반려에는 실제 축소 payload와 새 ID를 쓰고, 불명 응답은 기존 동일 ID/body 재전송 한도만 사용합니다. 마지막 GET 실패만으로 POST를 포기하지 않으며 matching completed 응답만 submitted입니다. payload·최종 ID·오류는 불명 반환에도 보존하고 최종 RuntimeError와 dump/cleanup의 성공 덮어쓰기를 제거합니다.
 - **교육·보고와 증거:** 실제 정상 SAY 응답만 delivered입니다. 검증 계획과 expected utterance 수를 보존하고 진단 안내·계획 발화·부분 전달·P 내용·protocol receipt를 분리합니다. legacy 누락은 미수집으로 표시합니다. 현재 facts/unboundfacts와 수신 없는 생성 payload도 보고서에 표시합니다. 수행한 컨테이너·저장 packet 재구성·원본 SDK 합성 ZIP 검증은 `Tmp/d61-2026-10-22/verification.json`과 두 운영 상태에 기록합니다. 실제 NOVA 호출·임상 정확도·공식 평가·production 제출·게시·배포는 미실행입니다. 원본 저장 실행과 활성 지식 build는 변경하지 않습니다.
 
+<a id="D62"></a>
+## D62. 감별 후보 20개와 제출 감별 10개 (2026-10-22)
+
+- **선택:** 사용자 요청에 따라 D61의 임상 후보·수용 Assessment 상한을 10개에서 20개로, 주진단 외 note.A.differential 상한을 5개에서 10개로 늘립니다. 별도 diagnosis는 기존대로 frozen 1위 하나이며 이후 순위에서 최대 10개를 기록합니다.
+- **범위:** 공유 Limits와 clinical 공통 프롬프트 및 관련 계약·요구사항을 맞춥니다. prior·route 순서, 그래프 표별 50개, 사실·scope·조건 보존, 호출·출력·시간 예산과 활성 지식은 유지합니다.
+- **검증:** 20개를 넘는 후보에서 작업·Assessment를 20개로 제한하고 SOAP 감별 10개와 주진단 일치를 확인합니다. 실행 결과는 `Tmp/d62-2026-10-22/`와 root·submission 운영 상태에 기록하며 실제 모델·NOVA·임상·공식 평가는 미실행으로 구분합니다.
+
 ## 결정 기록 방법
 
 - 사용자가 고른 선택지를 해당 항목에 기록하고 상태를 `결정 완료`로 바꿉니다.

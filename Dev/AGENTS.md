@@ -18,4 +18,4 @@
 - Keep tests, synthetic assets, source packages, preparation data, guidance, state, and credentials outside the ZIP.
 - Record Dev operational progress in root PROJECT_STATE.md and artifact custody in data/PROJECT_STATE.md. Distinguish protocol acceptance from clinical and actual-model quality.
 
-- Use test_final_runtime.py for finite pass transitions input custody CC route separation partial repair coherent 50/10/5 limits minimal SOAP same-ID submission recovery and honest Education and receipt metrics. Preserve original preparation and SDK guards.
+- Use test_final_runtime.py for finite pass transitions input custody CC route separation partial repair coherent 50/20/10 limits minimal SOAP same-ID submission recovery and honest Education and receipt metrics. Preserve original preparation and SDK guards.

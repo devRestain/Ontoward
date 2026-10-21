@@ -40,7 +40,7 @@
 - Reuse one operation-local scoped Pattern/applicability evaluation for recall and evidence; reject contradicted paths and retain valid prior opposition and unknown partial or unobserved-Target context paths.
 - Activate an effect only when every Feature and applicability matches. Preserve partial/unknown separately; do not turn mismatch into opposition or ask remaining conditions of an explicitly impossible relation. Keep refinement within identical effect, scope, applicability, and observation.
 - Let code maintain supports against and unresolved while the calling session accepts ranked supplied disease references without numeric reranking. Send effect, rule scope, full Pattern, applicability, and disease-specific expected conditions even in first DD action-only input.
-- Limit the clinical workset and accepted differential to ten using existing prior and route order; reject unknown duplicate or omitted retained-prior ranking references. Keep the full Python graph evidence outside the bounded wire projection.
+- Limit the clinical workset and accepted differential to twenty using existing prior and route order; reject unknown duplicate or omitted retained-prior ranking references. Keep the full Python graph evidence outside the bounded wire projection.
 - Rank once at normal Initiation and ChiefComplaint exits. Replace ContextFactor exit rank and first DD action with one joint DD entry decision; judge each accepted response including unknown by revision chief and response identity and finalize unprocessed early-exit input once.
 - Accept a valid ranking independently of a faulty next action and repair only the action once.
 - Freeze the latest Assessment and its facts and chief before Education including resource exits.
@@ -86,7 +86,7 @@
 
 - Consume failed questions with scoped passed_unasked or passed_unknown markers; preserve actual response payloads and IDs before clearing the turn and never create an Answer for an unsent question.
 - Keep CC route selection separate from patient facts. Use at most one additional gateway selection over eight registered Symptoms after bounded clarification, then a deterministic registered route without invented findings.
-- Limit graph-derived relation evidence question and condition tables to fifty complete records and clinical candidates to ten; close retained references and keep all accepted patient facts. Write at most five note differentials.
+- Limit graph-derived relation evidence question and condition tables to fifty complete records and clinical candidates to twenty; close retained references and keep all accepted patient facts. Write at most ten note differentials.
 - Remove only verified ungrounded demographic echoes. Keep current quotations corrections changed values family scopes measurements and valid siblings; accept null or missing partial-repair replacements without renumbering anchors.
 - Preserve initial reports failed-input replies verified plans final payload and submission request ID; use an independent format-only minimal Writer after normal assembly or validation fails.
 - Keep preparation failures strict and actual closed expired or forbidden service states truthful; never fabricate a receipt or replay an unknown effect under a new ID.
