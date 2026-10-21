@@ -1,6 +1,8 @@
 import json
+import logging
 import re
 from dataclasses import dataclass, field
+from knowledge.guideline_passages import json_bytes, pack_passages, project_documents, source_contexts
 from .rules.limits import LIMITS, PLAN_FIELDS
 from .state.models import PlanSentence, SourceReference
 from .state.evidence import fixed_case_payload
@@ -24,14 +26,19 @@ def references(raw, contexts):
         document_id, quote = (item['document_id'], item['quote'])
         if not isinstance(document_id, str) or not isinstance(quote, str) or (not quote.strip()):
             raise ValueError('empty source reference')
+        locations = set()
         for start, text in contexts.get(document_id, []):
             position = text.find(quote)
-            if position >= 0:
+            while position >= 0:
                 offset = start + len(text[:position].encode('utf-8'))
-                accepted.append(dict(document_id=document_id, quote=quote, start_byte=offset, end_byte=offset + len(quote.encode('utf-8'))))
-                break
-        else:
+                locations.add((offset, offset + len(quote.encode('utf-8'))))
+                position = text.find(quote, position + 1)
+        if not locations:
             raise ValueError('reference is outside the supplied source context')
+        if len(locations) != 1:
+            raise ValueError('reference is ambiguous in the supplied source context')
+        start, end = locations.pop()
+        accepted.append(dict(document_id=document_id, quote=quote, start_byte=start, end_byte=end))
     return accepted
 
 def parse_plan(raw, contexts, progress):
@@ -68,7 +75,8 @@ def parse_plan(raw, contexts, progress):
                 sentence = PlanSentence(id=f'plan:{field}:{sum((s.field == field for s in progress.sentences))}', field=field, text=text.strip(), basis=row['basis'], references=tuple((SourceReference(**{k: v for k, v in ref.items() if k != 'quote'}) for ref in refs)), priority=row['priority'])
                 progress.sentences.append(sentence)
                 progress.utterances[sentence.id] = utterances
-                accepted.append(sentence.model_dump())
+                accepted.append(dict(id=sentence.id, field=field, text=sentence.text,
+                    basis=sentence.basis, priority=sentence.priority, references=row['references']))
                 existing.add((field, sentence.text))
             except (TypeError, ValueError) as error:
                 errors.append(f'{field}[{index}]: {error}')
@@ -80,6 +88,9 @@ def _request(state, client, model, config, progress, payload, parser):
     accepted = []
     for attempt in range(2):
         request = messages(config.prompt('plan.repair' if attempt else 'plan.generate'), payload)
+        if json_bytes(request) > LIMITS.education_max_messages_bytes:
+            progress.errors.append('education_model_error:LOCAL_EDUCATION_MESSAGE_LIMIT')
+            return (accepted, False)
         response = model.complete(state, client, role='education', messages=request)
         content = response.content
         if response.error:
@@ -115,18 +126,17 @@ def generate_plan(state, client, knowledge, config, model):
     documents = []
     if fixed.kind == 'disease':
         if knowledge.guidelines is None:
-            progress.errors.append('guideline_index_unavailable')
+            logging.getLogger(__name__).warning('Guideline index unavailable for Education')
         else:
             documents, failures = knowledge.guidelines.read(knowledge.term_id(fixed.name, 'Disease'))
-            progress.errors.extend((f"guideline_unavailable:{item['document_id']}" for item in failures))
-    projected = []
-    for document in documents:
-        row = {key: document[key] for key in ('document_id', 'relation', 'evidence_use', 'text')}
-        if document.get('scope') and document['scope'] != 'Fresh disease label or alias match in the supplied guideline catalog':
-            row['scope'] = document['scope']
-        projected.append(row)
-    direct = {**base, 'phase': 'direct', 'documents': projected}
-    contexts = {doc['document_id']: [(0, doc['text'])] for doc in documents}
+            for item in failures:
+                logging.getLogger(__name__).warning('Skip guideline %s: %s', item['document_id'], item['error'])
+    selected = pack_passages(documents)
+    direct = {**base, 'phase': 'direct', 'documents': project_documents(selected)}
+    while selected and json_bytes(messages(config.prompt('plan.generate'), direct)) > LIMITS.education_max_messages_bytes:
+        selected.pop()
+        direct['documents'] = project_documents(selected)
+    contexts = source_contexts(selected)
     _request(state, client, model, config, progress, direct, lambda raw: parse_plan(raw, contexts, progress))
     state.case.plan = progress.sentences
     populated = {sentence.field for sentence in progress.sentences}

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from nova_sdk import NovaError
+from knowledge.guideline_passages import json_bytes
 
 from .state import usage
 from .rules.action import failure_outcome
@@ -23,6 +24,14 @@ class DoctorBrain:
         session = state.session
         if role not in {'gateway', 'clinical', 'education', 'education_doctor'}:
             raise ValueError('Unsupported designated-model role')
+        education = role in {'education', 'education_doctor'}
+        if education:
+            if session.budget_sync_required:
+                return ModelResult(error='LOCAL_EDUCATION_BUDGET_SYNC_REQUIRED')
+            if json_bytes(messages) > LIMITS.education_max_messages_bytes:
+                return ModelResult(error='LOCAL_EDUCATION_MESSAGE_LIMIT')
+            if session.input_token_limit - session.input_tokens < LIMITS.education_min_input_remaining_tokens:
+                return ModelResult(error='LOCAL_EDUCATION_INPUT_BUDGET')
         allowance = self.budget.model_allowance(session, role, maximum=max_tokens, state=state)
         if not allowance:
             return ModelResult(error='MODEL_UNAVAILABLE')
@@ -49,7 +58,9 @@ class DoctorBrain:
                 result = ModelResult(content=content, request_id=request['request_id'])
         except NovaError as error:
             result = ModelResult(error=error.code, request_id=request['request_id'])
-            if error.code in TRANSIENT_ERRORS:
+            if education and error.code == 'CONTEXT_LIMIT_EXCEEDED':
+                session.budget_sync_required = True
+            elif error.code in TRANSIENT_ERRORS:
                 state.stop('unknown', error.code)
             elif error.code in {'MODEL_CALL_LIMIT', 'MODEL_TOKEN_BUDGET', 'REQUEST_BUDGET_EXHAUSTED'}:
                 usage.disable_models(state)

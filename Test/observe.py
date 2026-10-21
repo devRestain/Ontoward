@@ -4,6 +4,7 @@ from dataclasses import fields, is_dataclass
 from functools import partial, wraps
 import inspect
 import hashlib
+import importlib
 import json
 import os
 from pathlib import Path
@@ -11,7 +12,7 @@ import runpy
 import sys
 import time
 
-from pipeline import OWNER_FIELDS, metadata as pipeline_metadata
+from pipeline import FUNCTIONS, OWNER_FIELDS, metadata as pipeline_metadata
 
 
 def plain(value):
@@ -44,6 +45,7 @@ class Trace:
         self.sequence, self.labels, self.failed = 0, set(), False
         self.calls, self.stack, self.object_state = 0, [], None
         self.restore, self.objects = [], []
+        self.coverage = []
         self.decision_depth, self.suppressed = 0, Counter()
         self.evidence_seen = set()
         self.values = {}
@@ -100,7 +102,9 @@ class Trace:
         try:
             defined = inspect.unwrap(operation)
             source = inspect.getsourcefile(defined)
-            definition = dict(path=source[source.rfind('/workflow/') + 1:] if source and '/workflow/' in source else source,
+            relative = next((source[source.rfind('/' + folder + '/') + 1:] for folder in ('workflow', 'knowledge')
+                             if source and '/' + folder + '/' in source), source)
+            definition = dict(path=relative,
                               line=inspect.getsourcelines(defined)[1]) if source else None
         except (OSError, TypeError):
             definition = None
@@ -184,7 +188,9 @@ class Trace:
                               'prepare_clarification', 'select_question'},
             'BudgetPolicy': {'evaluate', 'can_start_action', 'model_allowance'},
             'ClinicalKnowledge': {'search_concepts', 'resolve_concept', 'get_symptom_attributes', 'concepts',
-                                  'get_exam_methods'},
+                                  'get_exam_methods', 'collection_attributes', 'question_contract',
+                                  'attribute_category', 'clarification', 'numeric_units', 'execution_time'},
+            'GuidelineLibrary': {'read'},
         }
         seen = set()
         def visit(obj, path):
@@ -204,35 +210,32 @@ class Trace:
                 self.restore.append((obj, name, previous, had_value))
                 methods.append(name)
             self.objects.append({'id': path, 'type': owner, 'methods': methods})
+            self.coverage.append(dict(object_id=path, owner=owner, attached=methods,
+                                      missing=sorted(selected.get(owner, set()) - set(methods))))
             for name in ('ear', 'brain', 'mouth', 'writer', 'nova_session', 'budget',
-                         'questions', 'interactions', 'model', 'executor', 'tools'):
+                         'questions', 'interactions', 'model', 'executor', 'tools', 'guidelines'):
                 child = getattr(obj, name, None)
-                if child is not None and type(child).__module__.startswith('workflow.'):
+                if child is not None and type(child).__module__.startswith(('workflow.', 'knowledge.')):
                     visit(child, f'{path}.{name}')
             for name, child in getattr(obj, 'sessions', {}).items():
                 visit(child, f'{path}.sessions.{name}')
         visit(consultation, 'consultation')
         visit(knowledge, 'knowledge')
         # Wrap the symbols actually called by Ear/Brain, rather than altering the rules globally.
-        from workflow import doctor_ear, education as plan
-        from workflow.rules import decision
-        from workflow.sessions import initiation, chief_complaint, context_factor, differential_diagnosis, education
-        boundaries = ((doctor_ear, 'InputBinding', ('candidate_contracts', 'exact_mapping', 'validate_mapping',
-                      'make_fact', 'note_fact')),
-                      (decision, 'GraphEvidence', ('graph_candidates',)),
-                      (education, 'EnglishPlan', ('generate_plan',)),
-                      (plan, 'EnglishPlan', ('parse_plan', 'references')),
-                      *((module, 'ClinicalInput', ('prepare_decision',)) for module in
-                        (initiation, chief_complaint, context_factor, differential_diagnosis)))
-        for module, owner, names in boundaries:
+        for module_name, owner, names in FUNCTIONS:
+            module = importlib.import_module(module_name)
+            attached, missing = [], []
             for name in names:
                 original = getattr(module, name, None)
-                if original is None:
+                if not callable(original):
+                    missing.append(name)
                     continue
                 setattr(module, name, self.wrap(original, owner, name, f'{module.__name__}.{name}', call_kind='function'))
                 self.restore.append((module, name, original, True))
                 self.objects.append({'id': f'{module.__name__}.{name}', 'type': 'function', 'owner': owner,
                                      'callable': f'{original.__module__}.{original.__qualname__}', 'methods': [name]})
+                attached.append(name)
+            self.coverage.append(dict(object_id=module_name, owner=owner, attached=attached, missing=missing))
         from workflow.state.evidence import EvidenceIndex
         for cls, names in ((EvidenceIndex, ('from_case',)),):
             for name in names:
@@ -310,6 +313,7 @@ def observing(path):
 
     def run(consultation, state):
         trace.knowledge = consultation.knowledge
+        source_files, source_hashes = {}, {}
         try:
             trace.attach(consultation, consultation.knowledge)
             from settings import configured_path, prompt_paths
@@ -318,18 +322,24 @@ def observing(path):
             manifest = configured_path('ONTOWARD_PROMPTS', 'config')
             modules = prompt_paths(manifest)
             sources = {file.relative_to(root).as_posix() for file in (root / 'workflow').rglob('*.py')}
-            sources.update({'.env', 'settings.py', 'requirements.txt', manifest.relative_to(root).as_posix()})
+            sources.update(file.relative_to(root).as_posix() for file in (root / 'knowledge').rglob('*.py'))
+            sources.update({'.env', 'run.py', 'nova_sdk.py', 'settings.py', 'requirements.txt', manifest.relative_to(root).as_posix()})
             if (root / 'knowledge/manifest.json').is_file():
                 sources.add('knowledge/manifest.json')
             sources.update(file.relative_to(root).as_posix() for parts in modules.values() for file in parts)
+            source_files = {name: root / name for name in sorted(sources)}
+            source_files.update({f'Test/{name}': Path(__file__).with_name(name)
+                                 for name in ('observe.py', 'execution.py', 'pipeline.py')})
+            source_hashes = {name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in source_files.items()}
             trace.emit('settings', education_enabled=consultation.budget.education_enabled, objects=trace.objects,
                 pipeline=pipeline_metadata(),
+                coverage=trace.coverage,
                 state_schema=WorkflowState.model_json_schema(),
                 runtime={'algorithm': __import__('settings').ALGORITHM_VERSION,
-                    'collector_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                    'test_source_sha256': {name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+                    'collector_sha256': source_hashes['Test/observe.py'],
+                    'test_source_sha256': {name: source_hashes[f'Test/{name}']
                                           for name in ('observe.py', 'execution.py', 'pipeline.py')},
-                    'source_sha256': {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in sorted(sources)},
+                    'source_sha256': {name: source_hashes[name] for name in sorted(sources)},
                     'prompt_routes': {route: [file.relative_to(root).as_posix() for file in parts]
                                       for route, parts in modules.items()}},
                 execution={'kind': 'sequential', 'callable': 'workflow.consultation.Consultation.run',
@@ -350,8 +360,23 @@ def observing(path):
                                error=type(error).__name__, message=str(error))
             else:
                 trace.snapshot('node_end', current.model_dump(mode='json'), suppressed_calls=dict(trace.suppressed))
-        with observing_operations(consultation, boundary):
-            return original_run(consultation, state)
+        try:
+            with observing_operations(consultation, boundary):
+                return original_run(consultation, state)
+        finally:
+            try:
+                if source_hashes:
+                    changed = []
+                    for name, path in source_files.items():
+                        try:
+                            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                        except OSError:
+                            digest = None
+                        if digest != source_hashes[name]:
+                            changed.append(dict(path=name, before=source_hashes[name], after=digest))
+                    trace.emit('runtime_check', changed_sources=changed)
+            except Exception as error:
+                trace.emit('observation_error', error=type(error).__name__)
 
     def request(client, method, path, body=None):
         started = time.monotonic()
@@ -370,7 +395,7 @@ def observing(path):
         return response
 
     Consultation.run, nova_sdk.Client._request = run, request
-    trace.emit('start', format_version=6)
+    trace.emit('start', format_version=7)
     try:
         yield trace
     except BaseException as error:

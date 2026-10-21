@@ -62,11 +62,11 @@ DoctorEar는 입력 전처리·해석·사실 수용을, 다섯 세션 객체는
 
 CaseState.assessment가 유일한 감별 정본이다. 순서가 순위이며 revision·chief·마지막 수용 응답 식별자·frozen·한계를 보관한다. Initiation과 CC는 정상 종료 때 각각 한 번 순위를 요청한다. Context 종료의 순위와 DD 첫 행동은 DD 진입의 joint decision 한 번으로 합친다. 이후 unknown을 포함한 새 DD 응답마다 순위와 행동을 판단하며 같은 응답의 재진입은 중복 호출하지 않는다. Context 도중과 DD 직전 자원 종료에서도 미처리 응답을 한 번 판단한 뒤 최신 성공 평가를 고정한다. 유효 순위는 잘못된 행동과 독립적으로 수용하고 행동만 제한 복구한다. 미등록·중복 참조와 기존 유효 후보 누락은 거절하며 그래프 경로가 소실된 후보만 코드가 무효화한다.
 
-점수·chief coverage·완성 패턴·가상 답변 utility는 수용 gate가 아니다. 코드가 수용 LLM 순위를 재정렬하지 않는다. 정상 임상 출력은 4096토큰, 한 번의 복구는 8000토큰이다. 기능별로 필요한 dict/list만 선택하고 JSON으로 한 번 직렬화한다. 전체 상태·큰 schema·그래프 profile 전문을 주입하지 않으며 사실·조건·미확인은 지역 참조표에 한 번 정의한다. 기존 유효 후보·반대 근거·미확인을 보존하고 고정 Top-K를 두지 않는다. 프롬프트 바이트 측정·목표·제한·진단 통계와 이에 따른 절단·배치·압축 기능은 사용하지 않는다.
+점수·chief coverage·완성 패턴·가상 답변 utility는 수용 gate가 아니다. 코드가 수용 LLM 순위를 재정렬하지 않는다. 정상 임상 출력은 4096토큰, 한 번의 복구는 8000토큰이다. 기능별로 필요한 dict/list만 선택하고 JSON으로 한 번 직렬화한다. 전체 상태·큰 schema·그래프 profile 전문을 주입하지 않으며 사실·조건·미확인은 지역 참조표에 한 번 정의한다. 기존 유효 후보·반대 근거·미확인을 보존하고 고정 Top-K를 두지 않는다. clinical/gateway의 프롬프트 바이트 제한·절단 정책은 추가하지 않으며 Education에만 D59의 고정 JSON 상한을 적용한다.
 
 공개 ONTOWARD_PROMPTS manifest에 책임·출력·상황별 프롬프트 모듈을 등록한다. Ear·세션·Education·Mouth가 Python에서 현재 작업과 initial·reply·EXAM, 일반 매핑·통합 복구, 질환·증상 안내, 실제 복구에 필요한 모듈만 선택한다. LLM에 여러 작업의 조건 분기를 해석시켜 작업을 고르게 하지 않는다. 지시와 JSON 입력을 분리하고 실제 임상 조건은 입력 데이터로 보존한다. 같은 manifest와 모듈을 독립 ZIP에 포함하고 관측기에서 해시·경로 조합을 확인한다.
 
-D52에서 target·effect·순서가 있는 전체 Pattern·rule scope·applicability가 동일한 관계는 서로 다른 질환 Association에서도 전송 정의를 공유한다. 질환별 참조·모든 후보·조건·관찰별 사실 연결과 Python의 원래 그래프 근거는 유지한다. CONTEXT_LIMIT_EXCEEDED는 출력 잘림과 구별하여 원래 오류로 즉시 종료하고, 출력 한도 확대 재호출이나 후속 수집을 실행하지 않는다.
+D52에서 target·effect·순서가 있는 전체 Pattern·rule scope·applicability가 동일한 관계는 서로 다른 질환 Association에서도 전송 정의를 공유한다. 질환별 참조·모든 후보·조건·관찰별 사실 연결과 Python의 원래 그래프 근거는 유지한다. clinical/gateway의 CONTEXT_LIMIT_EXCEEDED는 출력 잘림과 구별하여 원래 오류로 즉시 종료하고 출력 한도 확대 재호출이나 후속 수집을 실행하지 않는다. Education 두 role은 D59에 따라 예산 동기화를 요구하고 기존 최종화로 이어간다.
 
 모든 임상 질문은 같은 scopes 표를 참조하며 facts에 아직 없는 유효한 질문 observation·episode도 호출 내 별도 참조로 구분한다. relation과 0 기반 feature index로 정확히 복원하는 기대값만 중복 전송에서 제외하고 전체 full_pattern·effect·rule_scope·applicability·질환 membership은 유지한다. Context 기대 상태와 presence_required의 존재 전제는 명시하며 0·false·unknown·의도된 빈 배열을 일괄 제거하지 않는다.
 
@@ -84,7 +84,13 @@ D45에서 SDK `client.session()`의 `turns_remaining`이 행동 예산의 기준
 
 Education은 고정 1위를 먼저 알린 뒤 원문 지침·일반 지식을 구별하여 영어 P와 대응 한국어 발화를 high 요청 한 번으로 생성한다. 영어 내용·출처 인용과 한국어 NFC 1–30 codepoint 문장을 독립 검증한다. 한국어만 잘못되면 정상 영어 P를 유지하고 해당 그룹만 medium으로 제한 복구한다. 영어 부분 복구와 한국어 공급자 응답·문구 복구의 기존 상한은 유지한다. 실제 SAY receipt로 전달을 확인하며, 환자 답변은 transcript-only로 facts·진단·A를 갱신하지 않는다. 명시적 교육 비활성화는 교육 행동·예약·P.education 없이 동작한다.
 
-Education은 frozen primary Disease 하나만 조회한다. guideline selections에서 relation=exact이면서 evidence_use=care_navigation인 항목을 먼저, 나머지를 나중에 안정 분할하고 앞 다섯 항목을 읽기 전에 고정한다. 각 범주 내부의 기존 인덱스 순서·선택 문서의 경로·해시·전체 원문·인용 검증을 유지한다. 선택 문서가 실패해도 뒤의 문서로 자동 대체하지 않으며 미선택 파일은 열지 않는다. 이는 D53의 기존 인덱스 순서 정책을 개정한 D54 결정이며 임상 점수·모델 재순위를 추가하지 않는다.
+Education은 frozen primary Disease의 기존 selections만 조회한다. exact AND care_navigation 안정 분할과 그룹 내 순서를 유지하며 문서 다섯 개 제한을 제거한다. 경로·확장자·containment·전체 SHA-256·UTF-8 검증을 유지하고 동일 경로는 한 번 읽는다. read_cap=min(1048576+1, 잔여 총량)만 읽고 성공·실패의 실제 길이를 16777216 bytes에 누적하며 cap에 닿아 EOF가 불명확한 파일은 제외한다. 실패 후에도 같은 매핑의 뒤 후보를 볼 수 있다.
+
+D59는 제목 경로의 고정 관리·검사·경고·의뢰·추적·교육 어휘에 해당하는 짧고 완전한 ATX leaf와 비어 있지 않은 상위 도입문만 공급한다. 원문 byte 범위·줄바꿈·공백·BOM·Unicode를 보존하고 표·HTML·fenced code·각주·원거리 조건 참조와 2048-byte JSON을 넘는 묶음은 제외한다. direct 그룹부터 문서별 경고 우선·순환 선택으로 documents JSON 8192 bytes에 묶으며 의미 있는 scope·background_only를 보존한다. 새 검색 DB·요약·임상 점수·환자 조건 엔진과 전문 fallback은 추가하지 않는다.
+
+최종 system/user/repair messages JSON은 32768 bytes 이하이며 초기 초과 시 마지막 발췌 묶음부터 통째로 제거한다. 고정 facts·진단·지시만으로 초과하면 생성을 생략한다. 확정 packet의 spans로만 contexts를 만들고 초기·repair에 같은 packet과 contexts를 사용한다. 인용의 모든 출현을 원문 절대 byte 범위의 set으로 모아 한 위치일 때만 승인한다. repair 초과 시 호출 없이 검증된 영어 P를 유지한다. JSON 크기는 ensure_ascii=False, separators=(",", ":"), allow_nan=False 직렬화의 UTF-8 길이로 측정한다.
+
+DoctorBrain은 Education 두 role의 pending sync·messages 초과·잔여 입력 65536 tokens 미만을 ID·usage·실행 전에 각각 LOCAL_EDUCATION_BUDGET_SYNC_REQUIRED·LOCAL_EDUCATION_MESSAGE_LIMIT·LOCAL_EDUCATION_INPUT_BUDGET으로 차단한다. finalizing에서도 동일하다. 알려진 Education CONTEXT_LIMIT_EXCEEDED는 실제 요청 기록을 유지하고 소비를 추정하지 않은 채 budget_sync_required만 설정한다. 같은 prepare의 추가 Mouth 모델 호출을 차단하고 기존 외부 budget snapshot·최종화·Writer·실제 DIAGNOSE 완료 receipt를 사용한다. 검증된 영어와 사용 가능한 한국어 캐시는 보존하고 미전달을 전달로 기록하지 않는다. 지침이 없거나 개별 파일이 실패하면 model_knowledge와 빈 references를 사용할 수 있으며 정상 계획을 실패로 만들지 않는다.
 
 모델용 문서는 document_id·relation·evidence_use·text와 의미 있는 scope만 명시적으로 투영한다. 알려진 관리용 scope 상수만 제외하며 path·sha256·미래 내부 필드를 전송하지 않는다. 내부 검증 객체와 원문 UTF-8 인용 offset은 보존하고 본문 strip·헤더 삭제·절단은 하지 않는다. 교육 생성·교육 표현·진단 안내 fallback은 한 번의 current_facts에서 만든 같은 f_ 참조로 patient와 fixed_diagnosis를 함께 투영한다. 없는 근거 참조는 오류로 드러내고 도메인 ID나 정상 안내 템플릿을 바꾸지 않는다. 프롬프트는 문서를 참고 자료로 명시하여 원래 요청·환자 사실·불확실성·안전·출력 계약을 우선한다. 문서 수 제한은 실제 NOVA 입력 수용이나 임상 품질의 증거가 아니다.
 
@@ -112,6 +118,8 @@ SOAP는 통합 사실·frozen Assessment·영어 계획·실제 전달 결과를
 Consultation.run은 수용된 상태로 순차 실행하며 LangGraph와 매 작업 전체 상태 복사·재직렬화를 사용하지 않는다. 외부 데이터는 수용 전에 검증하며 처리되지 않은 예외 뒤에 행동이나 제출을 계속하지 않는다. WorkflowState에는 case·interview·session과 현재 turn만 둔다. CaseState는 통합 facts·chief·Assessment·plan·revision, InterviewState는 현재 질문·작은 Answer·수집 중단, SessionContext는 최신 제약·사용량·종료를 소유한다. SOAP는 제출 turn에만 존재한다. 그래프 후보 자료·LLM 교환·복구·원문 조각은 지역값이며 과거 순위·별도 진단 정본·가상 답변·런타임 audit를 보관하지 않는다.
 
 프로젝트 Docker에서 유지 행동 회귀, 임시 새 합성 번들의 상담, 관측 유무 일치, 독립 읽기 전용 ZIP과 원본 SDK HTTP 완료를 검증한다. Test가 프로토콜 대역·재현·관측·비교를 소유하고 Dev/tests/workflow가 유지 회귀를 소유한다. 고정 응답 통과를 실제 모델 정확도나 임상 성능으로 해석하지 않는다.
+
+Test 웹에서는 단일 증례 또는 C01·C03·C10 세 시나리오를 한 번에 시작할 수 있다. 동시 실행은 시나리오별 Docker 네트워크·시뮬레이터·에이전트·출력을 분리하고 각각의 상태와 리포트를 제공한다. NOVA 요청 상한은 시나리오별로 적용하며 전체 최대 요청 수도 실행 전에 표시한다. 한 묶음이 끝나기 전에는 새 웹·CLI 실행을 받지 않으며 자동 대기열이나 재개를 두지 않는다.
 
 제출 ZIP에는 실행 Python·고정 requirements·공개 .env·필요 프롬프트·manifest 자산만 넣는다. 루트 개발 키·Test·Dev·원본 자료·준비 DB·문서·상태·캐시는 제외한다. 구현 설명은 [한국어 백서](submission/README.md), 사용자 선택은 [결정 문서](DECISION_STATE.md), 관측 결과는 세 운영 상태와 [D51 후속 증빙](data/provenance/algorithm-d50-2-2026-10-20.json)에서 관리하며 D50 증빙은 과거 수용 기록으로 보존한다. 임상 코퍼스 확장·실제 유료 호출·공식 평가·게시·배포는 이 구현 수용과 별도다.
 

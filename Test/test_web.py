@@ -61,6 +61,62 @@ class WebTests(unittest.TestCase):
         self.assertEqual(self.request(body={'case': 'C10', 'backend': 'scripted', 'maximum': 1})[0], 409)
         self.assertFalse((self.runs.control / 'request').exists())
 
+    def test_three_scenarios_are_reserved_and_claimed_once_as_one_batch(self):
+        status, batch = self.request(body={'case': 'all', 'backend': 'nova', 'maximum': 37})
+        self.assertEqual(status, 202)
+        self.assertEqual([run['case'] for run in batch['runs']], ['C01', 'C03', 'C10'])
+        self.assertEqual(len({run['id'] for run in batch['runs']}), 3)
+        self.assertTrue(all(run['maximum'] == 37 for run in batch['runs']))
+        output = io.StringIO()
+        with redirect_stdout(output):
+            self.runs.worker('claim', [])
+            self.runs.worker('claim', [])
+        self.assertEqual(output.getvalue().splitlines(), [
+            f"{run['id']} {run['case']} nova 37" for run in batch['runs']])
+        self.assertEqual(read(self.runs.control / 'active').splitlines(), [run['id'] for run in batch['runs']])
+        self.assertEqual(self.request(body={'case': 'all', 'backend': 'scripted', 'maximum': 1})[0], 409)
+
+    def test_batch_failure_releases_only_its_member_until_all_runs_finish(self):
+        _, batch = self.request(body={'case': 'all', 'backend': 'scripted', 'maximum': 1})
+        with redirect_stdout(io.StringIO()):
+            self.runs.worker('claim', [])
+        for index, run in enumerate(batch['runs']):
+            path = self.runs.directory(run['id'])
+            (self.runs.lock / 'members' / run['id'] / 'started').mkdir()
+            write(path / 'status', 'failed' if index == 0 else 'completed')
+            self.runs.worker('finish', [run['id']])
+            self.assertTrue((path / 'report.html').exists())
+            self.assertEqual(self.request()[1]['busy'], index < 2)
+            for sibling in batch['runs'][index + 1:]:
+                self.assertEqual(self.runs.status(sibling['id'])['state'], 'starting')
+        self.assertFalse(read(self.runs.control / 'active'))
+        self.assertEqual(len(self.runs.listing()), 3)
+
+    def test_stop_interrupts_every_batch_member_without_resuming(self):
+        for claim in (False, True):
+            self.runs.worker('tick', [])
+            _, batch = self.request(body={'case': 'all', 'backend': 'scripted', 'maximum': 1})
+            if claim:
+                with redirect_stdout(io.StringIO()):
+                    self.runs.worker('claim', [])
+            self.runs.worker('stop', [])
+            self.assertTrue(all(self.runs.status(run['id'])['state'] == 'interrupted' for run in batch['runs']))
+            self.assertFalse(self.runs.lock.exists())
+            self.assertFalse((self.runs.control / 'request').exists())
+            self.assertFalse(read(self.runs.control / 'active'))
+
+    def test_batch_preparation_failure_never_publishes_partial_launch(self):
+        original = write
+        def fail_second_metadata(path, value):
+            if path.name == 'run.json' and path.parent.name.startswith('C03-'):
+                raise OSError('storage unavailable')
+            original(path, value)
+        with patch('web.write', side_effect=fail_second_metadata):
+            self.assertEqual(self.request(body={'case': 'all', 'backend': 'scripted', 'maximum': 1})[0], 500)
+        self.assertFalse(self.runs.lock.exists())
+        self.assertFalse((self.runs.control / 'request').exists())
+        self.assertTrue(all(run['state'] == 'failed' for run in self.runs.listing()))
+
     def test_worker_disconnection_preserves_partial_run_without_resume(self):
         run = self.start()
         write(self.runs.control / 'heartbeat', '0')
@@ -236,6 +292,23 @@ class WebTests(unittest.TestCase):
         self.assertIsNone(data['inspection']['runtime'])
         self.assertIsNone(data['inspection']['graph'])
         self.assertTrue(all(c['status']=='not_collected' for c in data['inspection']['checks']))
+
+    def test_current_inspection_rejects_missing_observers_and_source_pins(self):
+        from inspection import inspect_run
+        events = [dict(seq=1, kind='start', format_version=7),
+                  dict(seq=2, kind='settings', pipeline=dict(version=2, contract='D59',
+                      required_sources=['knowledge/guideline_passages.py']),
+                      coverage=[dict(object_id='workflow.education', missing=['source_contexts'])],
+                      runtime=dict(source_sha256={})),
+                  dict(seq=3, kind='initial', state={'case': {}, 'session': {}}),
+                  dict(seq=4, kind='runtime_check', changed_sources=[dict(path='workflow/education.py')]),
+                  dict(seq=5, kind='end')]
+        saved = dict(trace={'events': events}, warnings=[], summary={}, record={})
+        original = copy.deepcopy(saved)
+        checks = {row['id']: row['status'] for row in inspect_run(saved)['checks']}
+        for key in ('observation_coverage', 'runtime_sources', 'runtime_stability'):
+            self.assertEqual(checks[key], 'fail')
+        self.assertEqual(saved, original)
         from inspection import inspect_run
         legacy = inspect_run(dict(trace={'events':[{'seq':1,'kind':'initial','state':{'session':{},'interaction':{'termination':'submitted'}}},
                                                   {'seq':2,'kind':'end'}]}, warnings=[], record={},

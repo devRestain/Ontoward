@@ -4,7 +4,7 @@
 
 - Treat competition submission as the endpoint; implement one authorized acceptance slice without speculative platforms or compatibility layers.
 - Read root PROJECT_STATE.md, relevant PRD.md requirements, DECISION_STATE.md, and the owning child contract and state before changing a scope.
-- Apply D55 strict corrected-bundle loading and D54 scoped recall and request projections before D53 direct Initiation and five-document Education; preserve D52 relation sharing and terminal context rejection, D51 bounded recovery, and D49-D50 ownership and qualitative knowledge.
+- Apply D59 bounded Education passages and local context recovery before D55 strict loading and D54 scoped projections; preserve D57-D58, D53 direct Initiation, D52 clinical/gateway rejection, and D49-D51 ownership and recovery.
 - Apply D57 atomic input details, strict measurement references, scoped note identity, and one-level collection delegation before preparing questions.
 - Keep root integration, Docker configuration, requirements, and cross-scope coordination here; keep runtime Python in submission/, extraction code and prompts in Extraction/, maintained checks and packaging in Dev/, observation and local simulation in Test/, durable results in data/, and disposable evidence in Tmp/.
 - Maintain exactly root, submission/, and data/ PROJECT_STATE.md scopes. Record Extraction, Dev, Test, and Tmp operational progress in root state.
@@ -28,16 +28,16 @@
 - Limit Ear to two context and two mapping calls; share chief and row repair and reject arbitrary first-candidate completion. Preserve normalized unbound facts and valid statement and demographic siblings during bounded repairs. Normalize verified typed ages in Python and derive graph eligibility from current presence at the same subject, member, time, observation, episode, and acquisition scope.
 - Handle only exact configured unknown and acknowledgement replies or verified canonical affirmative presence replies without Ear generation; preserve each actual SAY and reply.
 - Start with the first unresolved Initiation question after initial input acceptance; exclude greeting and empathy actions, signals, templates, queues, and separate accounting.
-- Select at most five guideline documents after a stable exact-and-care_navigation partition; preserve within-group index order, full text, verified citations, and failure without backfill.
+- Select complete bounded passages only from frozen primary Disease mappings under D59; preserve stable exact-and-care_navigation groups, mapped order, literal source bytes, and unique supplied-span citations.
 - Project patient facts and frozen diagnosis with one request-local fact map across planning and Mouth; preserve question observation and episode references through the shared scope table.
 - Send initial raw text through distinct input_segments once and preserve Context meaning in mapping; integrate all lexical queries before candidate limits without alias vote accumulation.
 - Accept external numeric mappings only as one exact use_measurement true marker for one registered attribute and attach the validated Context measurement in Python.
 - Expand target-specific collect_via into direct atomic attributes for CC requirements, queue pruning, and DD options without asserting a composite criterion or an unreported time window.
-- Project only document_id relation evidence_use text and meaningful scope; retain internal source custody and original UTF-8 offsets outside model input.
+- Project only document_id relation evidence_use meaningful scope and excerpts with heading paths and literal spans; retain internal source custody and original UTF-8 offsets outside model input.
 - Reject invalid hasAttribute ranges and canHaveValue domains or ranges at production load; retain defensive getters and offline edge audits. Activate only a strictly verified corrected build and retain its immutable parent until explicit post-verification disposal.
 - Apply D56 to existing inspection auscultation palpation and percussion request text only. Preserve registered IDs links scope combined actions and required maneuvers; retain missing text and unknown anatomy rather than inventing an examination site.
 - Share relation definitions once per JSON model input and pass session-owned remaining question counts to arithmetic BudgetPolicy. Use confirmed response budgets and synchronize uncertain consumption or server-limit failures before further collection.
-- Share identical relation definitions across disease associations without dropping candidates conditions scoped matches or Python graph references. Stop on CONTEXT_LIMIT_EXCEEDED without escalating output tokens or continuing collection.
+- Share identical relation definitions across disease associations without dropping candidates conditions scoped matches or Python graph references. Stop clinical/gateway CONTEXT_LIMIT_EXCEEDED; synchronize Education errors through D59 without immediate model retries.
 - Run Consultation directly without LangGraph or per-operation whole-state copying. Keep external data validation and terminate on unhandled operation errors without replay.
 - Generate English P and Korean utterances jointly at high effort; validate and retain English independently, repair invalid Korean groups at medium effort, and keep EducationSession responsible for scheduling and receipts.
 - Select one task route in Python from submission/config/prompts.json. Preserve D48 modular prompts and existing runtime model/effort settings.

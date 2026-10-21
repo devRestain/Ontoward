@@ -7,7 +7,8 @@ class Element {
   constructor() { this.children=[];this.attributes={};this.handlers={};this.value='';this._text='';this.replacements=0;this.srcWrites=0; }
   set textContent(value) { this._text=String(value);this.children=[]; }
   get textContent() { return this._text+this.children.map(node=>node.textContent).join(''); }
-  append(...nodes) { this.children.push(...nodes); }
+  append(...nodes) { for (const node of nodes) node.parent=this; this.children.push(...nodes); }
+  remove() { this.parent.children=this.parent.children.filter(node=>node!==this); }
   replaceChildren(...nodes) { this.children=nodes;this._text='';this.replacements++; }
   setAttribute(key,value) { this.attributes[key]=value; }
   getAttribute(key) { return this.attributes[key]; }
@@ -19,7 +20,7 @@ class Element {
 }
 
 async function run() {
-  const elements=Object.fromEntries(['toggle-controls','control-panel','results','case','backend','maximum','start','mode-help','run-status','report','standalone','empty','history','selected-run','result-title','progress','launch-settings','launch'].map(id=>[id,new Element()]));
+  const elements=Object.fromEntries(['toggle-controls','control-panel','results','case','backend','maximum','start','mode-help','run-status','active-runs','report','standalone','empty','history','selected-run','result-title','progress','launch-settings','launch'].map(id=>[id,new Element()]));
   elements.case.value='C10';elements.backend.value='nova';elements.maximum.value='200';
   const classes=new Set(),listeners={},requests=[];
   const media={matches:true,addEventListener:(name,listener)=>{listeners.media=listener;}};
@@ -29,6 +30,11 @@ async function run() {
   const context=vm.createContext({document,location:{hash:'#saved-run'},window:{matchMedia:()=>media,addEventListener:(name,listener)=>{listeners[name]=listener;}},setInterval(){},fetch:async(path,options)=>{
     requests.push({path,options});
     if(options?.method==='POST'){
+      if(JSON.parse(options.body).case==='all'){
+        const batch=['C01','C03','C10'].map(id=>({id:'batch-'+id,case:id,backend:'nova',created:30,state:'starting',seconds:0}));
+        server={...server,busy:true,runs:[...batch,...server.runs]};
+        return {ok:true,json:async()=>({runs:batch})};
+      }
       server={...server,busy:true,runs:[{id:'new-run',case:'C10',backend:'nova',created:20,state:'starting'},...server.runs]};
       return {ok:true,json:async()=>({id:'new-run'})};
     }
@@ -69,6 +75,25 @@ async function run() {
   media.matches=false;listeners.media();
   assert.equal(elements['control-panel'].hidden,false);
   assert.equal(elements.results.inert,false);
-  console.log('PASS: execution rail, compact focus boundary, stable saved results and history, explicit single launch, active-run review and viewport changes');
+  server={...server,busy:false,runs:server.runs.filter(run=>run.state==='completed')};
+  await vm.runInContext('poll()',context);
+  elements.case.value='all';await elements.case.emit('change');
+  assert.match(elements.start.textContent,/3개 시나리오 동시 실행/);
+  assert.match(elements['mode-help'].textContent,/전체 최대 600회/);
+  await elements.launch.emit('submit');
+  assert.equal(JSON.parse(requests.filter(r=>r.options?.method==='POST').at(-1).options.body).case,'all');
+  assert.equal(elements['active-runs'].children.length,3);
+  assert.match(elements['run-status'].textContent,/3개 시나리오/);
+  const activeButton=elements['active-runs'].children[1];
+  await activeButton.emit('click');
+  assert.match(elements['result-title'].textContent,/C03/);
+  await vm.runInContext('poll()',context);
+  assert.equal(elements['active-runs'].children[1],activeButton,'polling must retain active button focus');
+  server.runs.find(run=>run.id==='batch-C01').state='failed';
+  await vm.runInContext('poll()',context);
+  assert.equal(elements['active-runs'].children.length,2);
+  assert.equal(elements.start.disabled,true,'one finished scenario must not allow another batch');
+  assert.match(elements['result-title'].textContent,/C03/);
+  console.log('PASS: stable workspace, explicit single and three-scenario launch, per-run selection, request ceilings, independent failure and duplicate prevention');
 }
 run().catch(error=>{console.error(error);process.exitCode=1;});

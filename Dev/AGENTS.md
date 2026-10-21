@@ -5,8 +5,8 @@
 - Treat the archived Dev/ontology, Dev/codex, Dev/guidelines and their score/admission checks as withdrawn under D49; never restore them as active builders or policy fallbacks.
 - Preserve existing D47/D48 fixtures and extend behavior checks only for changed runtime contracts. Use test_d49.py for qualitative effects, complete conditions, scopes, and question prerequisites.
 - Use test_d50.py for preserved repair siblings current scoped eligibility exact reply boundaries shared relation references response-aware cadence and independent joint Education acceptance; include D51 clarification invalid assets combined repair limits unbound preservation and dynamic Context eligibility. Test actual operation behavior instead of removed LangGraph nodes or routine GET counts.
-- Use test_context_limits.py for identical relation sharing across diseases preserved scoped evidence and terminal context rejection without output escalation.
-- Use test_d53.py for top-five guideline order full-text and citation preservation source failure boundaries direct Initiation and removal of greeting and empathy state and actions.
+- Use test_context_limits.py for clinical/gateway terminal rejection and D59 Education guards fixed repair contexts preserved English and post-error completion without output escalation.
+- Use test_d53.py for bounded mapped-source reads atomic excerpts packet limits unique UTF-8 citations direct Initiation and removal of greeting and empathy state and actions.
 - Use test_d54.py for scoped recall shared fact/question references lexical integration document partition/projection lossless expectation references and defensive getters; retain all D49-D53 boundaries.
 - Use test_d57.py and initiation_fixtures.py for strict measurement references scoped note identity atomic collection dependencies and scripted interpretation of the reviewed opening; distinguish them from actual-model extraction quality.
 - Use tests/workflow/audit_links.py to record current vocabulary endpoint violations offline without changing installed assets or enabling a strict production gate.

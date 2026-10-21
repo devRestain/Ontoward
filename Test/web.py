@@ -102,7 +102,7 @@ class Runs:
         if not isinstance(body, dict) or set(body) != {'case', 'backend', 'maximum'}:
             raise ValueError('Choose case, backend and maximum')
         case, backend, maximum = body['case'], body['backend'], body['maximum']
-        if case not in ('C01', 'C03', 'C10') or backend not in ('nova', 'scripted') or type(maximum) is not int or not 1 <= maximum <= 1000:
+        if case not in ('C01', 'C03', 'C10', 'all') or backend not in ('nova', 'scripted') or type(maximum) is not int or not 1 <= maximum <= 1000:
             raise ValueError('Invalid case, backend or request ceiling')
         with self.guard:
             if not self.online():
@@ -110,24 +110,51 @@ class Runs:
             if read(self.control / 'active'):
                 raise FileExistsError('A test is already running')
             self.lock.mkdir()
-            run_id = case + '-' + time.strftime('%Y%m%dT%H%M%SZ', time.gmtime()) + '-' + uuid.uuid4().hex[:10]
-            path = self.directory(run_id)
+            cases = ('C01', 'C03', 'C10') if case == 'all' else (case,)
+            suffix = time.strftime('%Y%m%dT%H%M%SZ', time.gmtime()) + '-' + uuid.uuid4().hex[:10]
+            run_ids = [item + '-' + suffix for item in cases]
+            owner = 'web-' + suffix if case == 'all' else run_ids[0]
             try:
-                write(self.lock / 'owner', run_id)
-                path.mkdir()
-                meta = {'id': run_id, 'case': case, 'backend': backend, 'maximum': maximum,
-                        'created': time.time(), 'origin': 'web'}
-                write(path / 'run.json', json.dumps(meta))
-                write(path / 'status', 'starting')
-                write(path / 'started', str(time.time()))
-                write(self.control / 'request', f'{run_id} {case} {backend} {maximum}')
+                write(self.lock / 'owner', owner)
+                (self.lock / 'members').mkdir()
+                for run_id, item in zip(run_ids, cases):
+                    (self.lock / 'members' / run_id).mkdir()
+                    path = self.directory(run_id)
+                    path.mkdir()
+                    meta = {'id': run_id, 'case': item, 'backend': backend, 'maximum': maximum,
+                            'created': time.time(), 'origin': 'web', 'batch_id': owner}
+                    write(path / 'run.json', json.dumps(meta))
+                    write(path / 'status', 'starting')
+                    write(path / 'started', str(time.time()))
+                write(self.control / 'request', '\n'.join(
+                    f'{run_id} {item} {backend} {maximum}' for run_id, item in zip(run_ids, cases)))
             except Exception:
-                self.release(run_id)
+                for run_id in run_ids:
+                    path = self.directory(run_id)
+                    if path.is_dir():
+                        write(path / 'status', 'failed')
+                        write(path / 'ended', str(time.time()))
+                    self.release(run_id)
+                if read(self.lock / 'owner') == owner:
+                    self.release(owner)
                 raise
-            return self.status(run_id)
+            results = [self.status(run_id) for run_id in run_ids]
+            return {'runs': results} if case == 'all' else results[0]
 
     def release(self, run_id):
+        member = self.lock / 'members' / run_id
+        if member.is_dir():
+            if (member / 'started').is_dir():
+                (member / 'started').rmdir()
+            member.rmdir()
+            if any((self.lock / 'members').iterdir()):
+                return
+            (self.lock / 'members').rmdir()
+            run_id = read(self.lock / 'owner')
         if read(self.lock / 'owner') == run_id:
+            members = self.lock / 'members'
+            if members.is_dir():
+                members.rmdir()
             (self.lock / 'owner').unlink(missing_ok=True)
             started = self.lock / 'started'
             if started.is_dir():
@@ -140,24 +167,33 @@ class Runs:
         elif command == 'claim':
             request = read(self.control / 'request')
             if request:
-                run_id = request.split()[0]
-                self.directory(run_id)
-                write(self.control / 'active', run_id)
+                run_ids = [line.split()[0] for line in request.splitlines()]
+                for run_id in run_ids:
+                    self.directory(run_id)
+                write(self.control / 'active', '\n'.join(run_ids))
                 (self.control / 'request').unlink()
                 print(request)
         elif command in ('finish', 'stop'):
-            run_id = args[0] if command == 'finish' else read(self.control / 'active') or read(self.control / 'request').split(' ')[0]
-            if run_id:
+            active = read(self.control / 'active').splitlines()
+            pending = read(self.control / 'request').splitlines()
+            run_ids = args[:1] if command == 'finish' else list(dict.fromkeys(
+                active + [line.split()[0] for line in pending]))
+            for run_id in run_ids:
                 path = self.directory(run_id)
                 unfinished = read(path / 'status') in ACTIVE
                 if unfinished:
                     write(path / 'ended', str(time.time()))
-                render(path)
+                if unfinished or not (path / 'report.html').is_file():
+                    render(path)
                 if unfinished:
                     write(path / 'status', 'interrupted' if command == 'stop' else 'failed')
                 self.release(run_id)
-            write(self.control / 'active', '')
-            (self.control / 'request').unlink(missing_ok=True)
+            write(self.control / 'active', '\n'.join(item for item in active if item not in run_ids))
+            pending = [line for line in pending if line.split()[0] not in run_ids]
+            if pending:
+                write(self.control / 'request', '\n'.join(pending))
+            else:
+                (self.control / 'request').unlink(missing_ok=True)
             if command == 'stop':
                 (self.control / 'heartbeat').unlink(missing_ok=True)
 

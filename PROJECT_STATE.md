@@ -1,8 +1,10 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=33a1395ab37149e4d81e57f3f9f2cb5f5c7d87ec dirty=true updated=2026-10-21T21:16:22+09:00
-/goal phase=current id=ROOT.D58 state=complete action="Complete latest-bundle augmentation activation and authorized checkpoint disposal"
+/checkpoint revision=5e09affe00813e2a7da7a796d5c7ac34e4ec95f3 dirty=true updated=2026-10-21T22:20:13+09:00
+/goal phase=current id=ROOT.D59 state=complete action="Implement fixed Education passage limits and verify narrow offline finalization"
+/goal phase=history id=ROOT.TESTPARALLEL31 state=complete action="Enable explicit three-scenario web starts with isolated runners and verify offline launch and interruption"
+/goal phase=history id=ROOT.D58 state=complete action="Complete latest-bundle augmentation activation and authorized checkpoint disposal"
 /goal phase=history id=ROOT.D57 state=complete action="Implement the reviewed Initiation input repair and verify bounded offline acceptance"
 /goal phase=history id=ROOT.D56 state=complete action="Normalize existing four-modality EXAM request text and verify immutable local activation"
 /goal phase=history id=ROOT.D55 state=complete action="Correct the current v5 bundle offline and activate only verified strict knowledge while preserving the parent"
@@ -634,7 +636,7 @@
 /evidence id=ROOT.C01_EDUCATION_DIAG.E2 class=runtime result=pass source=Tmp/c01-education-diagnosis-2026-10-21/delivery-tests.log observed="Pass twenty-one maintained delivery tests with the corrected project PYTHONPATH including the intentional full-source mock test; retain the initial missing-PYTHONPATH import failure as an invocation error"
 /evidence id=ROOT.C01_EDUCATION_DIAG.E3 class=static result=pass source=Tmp/c01-education-diagnosis-2026-10-21/DIAGNOSIS.md observed="Identify the 1727930-character user message containing nineteen complete related background-only documents; propose a bounded source-context design while leaving runtime prompts installed knowledge and accepted decisions unchanged"
 /evidence id=ROOT.C01_EDUCATION_DIAG.E4 class=external_service result=not_run source=Tmp/c01-education-diagnosis-2026-10-21/audit.json observed="Leave exact provider thresholds fresh NOVA acceptance actual C01 completion model quality clinical validity official evaluation and production artifacts unverified"
-/decision id=ROOT.EDUCATION_SOURCE_POLICY.D1 state=accepted action="Use the user-selected top-five full-document policy and preserve the original plan task above source data" source=DECISION_STATE.md#D53
+/decision id=ROOT.EDUCATION_SOURCE_POLICY.D1 state=accepted action="Use D59 fixed bounded passages and Education-local context synchronization while preserving the original plan task" source=DECISION_STATE.md#D59
 /blocker id=ROOT.EDUCATION_SOURCE_POLICY.B1 state=resolved action="Apply the user-selected D53 source policy without adding passage retrieval or separate reading stages" source=DECISION_STATE.md#D53
 /scope id=ROOT.C01_EDUCATION_DIAG.S1 state=in action="Inspect preserved C01 logs replay serialization run focused offline checks and record the proposed repair"
 /scope id=ROOT.C01_EDUCATION_DIAG.S2 state=out action="Exclude automatic source selection workflow redesign runtime edits new model requests installed-asset edits and production packaging"
@@ -698,4 +700,19 @@
 /evidence id=ROOT.D58.E4 class=semantic result=pass source=data/PROJECT_STATE.md observed="Reference empty delta roundtrip zero unauthorized parent changes unchanged units overrides roles schema and guideline payloads"
 /evidence id=ROOT.D58.E5 class=artifact result=pass source=data/provenance/augmentation-d58-cleanup-2026-10-21.json observed="Delete 518 allowlisted files totaling 220481422 bytes and preserve all 182 protected hashes with successful post-deletion loader and prepare"
 /evidence id=ROOT.D58.E6 class=external_service result=not_run source=data/provenance/augmentation-d58-2026-10-21.json observed="Defer actual-model consultations clinical accuracy official evaluation publication and deployment beyond this authorized slice"
-/handoff state=ready action="Use the verified active child and compact receipts; obtain separate authorization before optional actual-model consultation evaluation"
+/accept id=ROOT.TESTPARALLEL31.A1 state=pass action="Implement batch reservation independent status request ceilings and duplicate prevention" evidence=ROOT.TESTPARALLEL31.E1,ROOT.TESTPARALLEL31.E2
+/accept id=ROOT.TESTPARALLEL31.A2 state=pass action="Verify concurrent isolated containers CLI exclusion and interruption cleanup" evidence=ROOT.TESTPARALLEL31.E3
+/accept id=ROOT.TESTPARALLEL31.A3 state=pass action="Reconcile D31 requirements Test contracts and restart guidance while preserving concurrent D59 work" evidence=ROOT.TESTPARALLEL31.E4
+/evidence id=ROOT.TESTPARALLEL31.E1 class=runtime result=pass source=Tmp/test-evaluator/verify-20261021T130401Z-99127/verification.json observed="Pass all 59 maintained evaluator web-control and model-boundary checks; pass 26 focused web checks after the final report-rendering refinement"
+/evidence id=ROOT.TESTPARALLEL31.E2 class=runtime result=pass source=Test/test_app.js observed="Pass actual-controller text-DOM checks for three-scenario launch per-scenario and aggregate request ceilings stable selection independent failure and duplicate prevention; pass the unchanged report viewer checks in the project extraction image"
+/evidence id=ROOT.TESTPARALLEL31.E3 class=runtime result=pass source=Tmp/test-parallel-2026-10-21/verification.json observed="Capture six simultaneous containers in three isolated Compose projects and networks with six separate output mounts; reject a CLI overlap with exit 2 and preserve three interrupted reports after Ctrl+C with all run containers and locks removed"
+/evidence id=ROOT.TESTPARALLEL31.E4 class=semantic result=pass source=DECISION_STATE.md observed="Update D31 PRD and Test ownership and Korean usage guidance; rebuild the local Test image without downloads and preserve the existing main web launcher and concurrent Education changes"
+/evidence id=ROOT.TESTPARALLEL31.E5 class=runtime result=fail source=Tmp/test-parallel-2026-10-21/verification.json observed="Preserve primary_chief_unresolved for all three scripted public consultations as independent failed reports without treating launcher acceptance as clinical consultation success"
+/evidence id=ROOT.TESTPARALLEL31.E6 class=external_service result=not_run source=Tmp/test-parallel-2026-10-21/verification.json observed="Defer actual NOVA calls clinical quality official evaluation publication and deployment; mark browser screenshots layout and accessibility unrun because no project browser runtime is installed"
+/accept id=ROOT.D59.A1 state=pass action="Complete bounded Education implementation and narrow offline finalization" evidence=ROOT.D59.E1
+/accept id=ROOT.D59.A2 state=pass action="Preserve installed custody and verify the standard local package" evidence=ROOT.D59.E2
+/evidence id=ROOT.D59.E1 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.D59 for the four required regressions and preserved clinical gateway behavior"
+/evidence id=ROOT.D59.E2 class=artifact result=pass source=data/PROJECT_STATE.md observed="Reference DATA.D59 for seventeen unchanged protected hashes original prepare and the ninety-file local package"
+/evidence id=ROOT.D59.E3 class=static result=pass source=data/provenance/algorithm-d50-9-2026-10-21.json observed="Reconcile D59 contracts requirements four orientation documents and three states while preserving concurrent Test work and the D31 amendment"
+/evidence id=ROOT.D59.E4 class=external_service result=not_run source=data/provenance/algorithm-d50-9-2026-10-21.json observed="Leave actual-model consultations clinical validity official evaluation final version selection remote writes and deployment unrun"
+/handoff state=ready action="Use verified d50.9 Education and the preserved active child with compact receipts; obtain separate authorization for optional actual-model evaluation"

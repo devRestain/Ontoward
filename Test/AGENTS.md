@@ -31,7 +31,8 @@
 - Use sh Test/web.sh for the localhost website and shell worker; share the same atomic execution lock with CLI runs.
 - Use sh Test/knowledge.sh start or stop for the separate loopback knowledge viewer without model calls or consultation execution.
 - Preserve SQLite WAL visibility through directory mounts and mode=ro connections; keep preparation candidates distinct from admitted graph nodes and derived display names distinct from source labels.
-- Default the website to C10 NOVA and 200 total role requests; require an explicit start action and retain one active run without queuing or automatic resumption.
+- Default the website to C10 NOVA and 200 total role requests per scenario; require an explicit single-case or C01/C03/C10 batch start without queuing or automatic resumption.
+- Reserve one shared CLI/web lock per launch and retain each batch member until all scenarios finish; isolate each run in its own Compose project and preserve independent status and reports.
 - Observe the original run.py through Test-only Consultation operation and SDK wrappers; delegate once and preserve errors retries routing and all clinical decisions. Use execution.py only outside the agent artifact.
 - Store the initial state and reversible node changes with actual node names session turn request IDs and source labels; mark missing or partial traces explicitly.
 - Observe DoctorEar DoctorBrain DoctorMouth the five session objects QuestionTools and other collaborator methods from Test-only wrappers without runtime audit injection and preserve each original call exception and method binding once.

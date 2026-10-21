@@ -1,0 +1,156 @@
+{
+  "decision": "D59",
+  "algorithm": "d50.9",
+  "base_head": "5e09affe00813e2a7da7a796d5c7ac34e4ec95f3",
+  "observed_at": "2026-10-21T22:15:19+09:00",
+  "starting_worktree": "clean",
+  "attached_context_read": true,
+  "limits": {
+    "max_document_bytes": 1048576,
+    "total_read_bytes": 16777216,
+    "max_excerpt_json_bytes": 2048,
+    "max_documents_json_bytes": 8192,
+    "max_messages_json_bytes": 32768,
+    "min_input_remaining_tokens": 65536,
+    "plan_initial_calls": 1,
+    "plan_max_repairs": 1,
+    "mouth_repair_limits": "unchanged"
+  },
+  "json_size": "len(json.dumps(value, ensure_ascii=False, separators=(\",\", \":\"), allow_nan=False).encode(\"utf-8\"))",
+  "workflow": {
+    "command": "python -B -m unittest -v test_d53 test_d54 test_context_limits test_delivery test_budget test_prompts",
+    "environment": "ontoward dev image 0999f2b28fd1; Compose workspace mount; network_mode=none; no credentials",
+    "first_run": {
+      "tests": 79,
+      "passed": 78,
+      "errors": 1,
+      "failed_test": "test_full_source_context_is_preserved_in_plan_request",
+      "cause": "Retain obsolete full-document expectation in delivery fixture",
+      "log": "Tmp/d59-2026-10-21/workflow-first.log"
+    },
+    "targeted_recheck": {
+      "result": "pass",
+      "tests": 5,
+      "names": [
+        "test_delivery.DeliveryTests.test_unsupported_full_source_is_omitted_without_failing_general_plan",
+        "test_d54.GuidelineAndGetterTests.test_document_projection_repair_and_non_ascii_citation_preserve_original_bytes",
+        "test_context_limits.EducationLimitTests.test_message_fit_fixes_contexts_once_and_oversized_repair_keeps_valid_english",
+        "test_d53.EducationSourceTests.test_plan_packs_seven_sources_atomic_passages_and_unique_utf8_citations",
+        "test_prompts.PromptTests.test_plan_repair_preserves_accepted_sentences_without_full_plan_obligation"
+      ]
+    },
+    "distinct_final_tests_verified": 79,
+    "four_required_checks": {
+      "passages_and_utf8": "pass",
+      "local_guards_without_requests_ids_usage": "pass",
+      "oversized_repair_and_same_contexts": "pass",
+      "education_context_error_sync_finalization_completed": "pass"
+    },
+    "frozen_context_cases": {
+      "education": "completed with four accepted P rows",
+      "education_doctor": "completed with five accepted P rows"
+    },
+    "clinical_and_gateway_terminal_rejection": "pass",
+    "full_workflow_suite": "not_run",
+    "full_suite_reason": "Honor requested narrow acceptance; rerun only failed or subsequently affected checks"
+  },
+  "prepare": {
+    "result": "pass",
+    "entrypoint": "submission/run.py:prepare",
+    "algorithm": "d50.9",
+    "build_id": "cec62f4596bedd9b9488aa75e3d38f04",
+    "schema_version": "5.0",
+    "knowledge_contract": "v5-enum-1",
+    "diseases": 948,
+    "protected_hashes_unchanged": 17,
+    "clinical_quality": "not_run",
+    "actual_model": "not_run"
+  },
+  "package": {
+    "result": "pass",
+    "archive": "Tmp/d59-2026-10-21/package/ontoward-submission.zip",
+    "file_count": 90,
+    "expanded_bytes": 12220612,
+    "compressed_bytes": 1533300,
+    "sha256": "78a92cf506024ce0ed04613109c06161ab88d4f714fc5d6656de4d1bce061f26",
+    "new_module_and_prompt_match": true,
+    "only_active_manifest_assets": true,
+    "original_guideline_documents_included": false,
+    "archive_consultation": "not_run",
+    "official_evaluation": "not_run",
+    "final_version_selection": "not_run"
+  },
+  "custody": {
+    "protected_hashes": {
+      "submission/run.py": "aba06a9366085acfb98cf97798380182e48b6d4081458e178b780eb12f3859af",
+      "submission/requirements.txt": "748ee369d8f5b52c85f44545fa2ad79daa3ec376265483929a9c0f421df43d01",
+      "submission/knowledge/manifest.json": "04accb50722f2c4f8583e25f0a3b1600bf2d384c820d91cc68e5dc42a1fa21db",
+      "submission/knowledge/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "submission/knowledge/builds/.DS_Store": "d65165279105ca6773180500688df4bdc69a2c7b771752f0a46ef120b7fd8ec3",
+      "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/clinical.ttl": "25dd1bfe06d27b7c1f6dc7474ad6e94d8f398eda947b0755079dfc8e262c3e06",
+      "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/guideline-index.json": "6aae5720a4789b878d75e4cb280f888428826613cad435a9603a4236c5cc30b0",
+      "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/manifest.json": "1e571b7145601cb795297244b71321671b577174066225fd7af0f7a791076185",
+      "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/questions.ko.json": "1a4793202bfd2f412cb6d309a1a2c985940bd907b33652fe8c16aa1ab93a902f",
+      "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "submission/knowledge/builds/1bcaba1dffb744c468bb191df3267dad/vocabulary.ttl": "6e5b30d306110ea2bb1dd07f54c33f2acbf83ae7c85ff91daacab53e42fb7ef5",
+      "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/clinical.ttl": "eed873cb3bec008440ddd687d5c97f60ac3dc13175a5ac38c0c092b1250fdd69",
+      "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/guideline-index.json": "676a029d6ef1727fb3a201cea28662908ca48af9df0edfa30cc78bd4f1df6161",
+      "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/manifest.json": "85597f767026a948bafd2a9571650dffea2c9870ea2952130baec5e1794c86cc",
+      "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/questions.ko.json": "b53449739ecbfcf5cad4cd21de199fb487063fbe9a19aec1a2eb680a359e1a3e",
+      "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/schema.ttl": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "submission/knowledge/builds/cec62f4596bedd9b9488aa75e3d38f04/vocabulary.ttl": "f15b60ebeb50fb1ee4c200c621dbcca49b8cc6d49a72047aabf003950ee1c985"
+    },
+    "protected_against_head": "git diff --exit-code passed for manifest builds schema SDK entrypoint requirements Extraction and assets",
+    "d57_d58_runtime_scope": "Preserve Ear collection sessions graph semantics and active knowledge",
+    "concurrent_changes": "Preserve separate Test UI and runner work and the existing D31 decision amendment"
+  },
+  "not_run": {
+    "actual_model_consultations": "No live service or paid model requests in this slice",
+    "clinical_validity": "Offline fixtures do not establish clinical accuracy",
+    "official_evaluation": "Outside authorized scope",
+    "final_version_selection": "Outside authorized scope",
+    "archive_consultations": "Limit artifact verification to standard packaging and inclusion",
+    "corpus_tuning": "Explicitly excluded",
+    "commits_remote_writes_deployment": "Outside authorized scope"
+  },
+  "runtime_hashes": {
+    "submission/settings.py": "468a45d39c28bacdc29a922a6581ac7ee4d866d4be54c925704b084e3ae60b40",
+    "submission/knowledge/guideline_passages.py": "4101e34903b20a2f495564355eab01969dba384a59d8d523997d7d2eaa543264",
+    "submission/knowledge/guidelines.py": "b2d98a5561516c0780bd0a5fe251c46bbb7e7b4ce8553c834992b797fd4286e5",
+    "submission/workflow/education.py": "413d99c0e46086e19b0bb1da980f3077d41b581df1f06e347efa24f6198ae045",
+    "submission/workflow/doctor_brain.py": "f9ab657bf23f63fd507e5840764fab2e24827bcdacbeec4d5705137be80d3dbf",
+    "submission/workflow/rules/limits.py": "e6333cf4ff54d2b1571082a43d8e335012f03977c69b86e95719cb09b3036450",
+    "submission/config/prompts/plan_common.txt": "a07ef7c0e3af90b503a67b5dbe49b176a49e81e06c262786031e73665071c2ed"
+  },
+  "changed_files": [
+    "submission/knowledge/guideline_passages.py",
+    "submission/knowledge/guidelines.py",
+    "submission/workflow/education.py",
+    "submission/workflow/doctor_brain.py",
+    "submission/workflow/rules/limits.py",
+    "submission/config/prompts/plan_common.txt",
+    "submission/settings.py",
+    "Dev/tests/workflow/test_context_limits.py",
+    "Dev/tests/workflow/test_d53.py",
+    "Dev/tests/workflow/test_d54.py",
+    "Dev/tests/workflow/test_delivery.py",
+    "AGENTS.md",
+    "submission/AGENTS.md",
+    "Dev/AGENTS.md",
+    "PRD.md",
+    "DECISION_STATE.md",
+    "README.md",
+    "submission/README.md",
+    "submission/knowledge/README.md",
+    "submission/config/README.md",
+    "PROJECT_STATE.md",
+    "submission/PROJECT_STATE.md",
+    "data/PROJECT_STATE.md",
+    "data/provenance/algorithm-d50-9-2026-10-21.json"
+  ],
+  "static_checks": {
+    "scoped_git_diff_check": "pass",
+    "protected_paths_equal_head": "pass",
+    "concurrent_change_policy": "Preserve Test files the existing D31 amendment and ROOT.TESTPARALLEL31 state records"
+  }
+}

@@ -37,7 +37,7 @@ def inspect_run(data):
     check('trace_boundaries', counts['initial'] == 1 and counts['end'] == 1 and not counts['observation_error']
           and events[-1]['kind'] == 'end' and not data['warnings'],
           'Require initial state, final collector event and no observation or JSON errors', bool(events))
-    defined, missing = set(), []
+    defined, missing, values = set(), [], {}
     def references(value, seq):
         if isinstance(value, dict):
             if set(value) == {'trace_value_ref'} and value['trace_value_ref'] not in defined:
@@ -53,6 +53,7 @@ def inspect_run(data):
                 missing.append(event['seq'])
             references(event['data'], event['seq'])
             defined.add(event['value_id'])
+            values[event['value_id']] = event['data']
         else:
             references(event, event.get('seq'))
     check('recorded_values', not missing, dict(values=len(defined), invalid_sequences=missing),
@@ -61,6 +62,27 @@ def inspect_run(data):
     seen_calls, previous = set(), None
     collaborator_errors, definition_errors = [], []
     pipeline = settings.get('pipeline', {})
+    coverage = settings.get('coverage', [])
+    current_contract = pipeline.get('version', 0) >= 2
+    check('observation_coverage', bool(coverage) and not any(row.get('missing') for row in coverage),
+          dict(attachments=coverage), current_contract)
+    hashes = (settings.get('runtime') or {}).get('source_sha256', {})
+    required_sources = pipeline.get('required_sources', [])
+    check('runtime_sources', bool(required_sources) and all(
+        isinstance(hashes.get(name), str) and len(hashes[name]) == 64 for name in required_sources),
+        dict(required=required_sources, missing=[name for name in required_sources if name not in hashes]), current_contract)
+    source_checks = [event for event in events if event['kind'] == 'runtime_check']
+    check('runtime_stability', bool(source_checks) and not any(event.get('changed_sources') for event in source_checks),
+          dict(checks=source_checks), current_contract)
+    def resolve(value, seen=frozenset()):
+        if isinstance(value, dict):
+            if set(value) == {'trace_value_ref'}:
+                key = value['trace_value_ref']
+                return resolve(values[key], seen | {key}) if key in values and key not in seen else value
+            return {key: resolve(item, seen) for key, item in value.items()}
+        return [resolve(item, seen) for item in value] if isinstance(value, list) else value
+    object_state, model_calls, model_outcomes = None, {}, []
+    budget_fields = ('doctor_calls', 'input_tokens', 'output_tokens', 'models_available', 'budget_sync_required', 'finalizing')
     state, state_error, frozen, frozen_changes = None, None, None, []
     modern, unified, freeze_seq, sent = False, False, None, []
     for event in events:
@@ -109,6 +131,21 @@ def inspect_run(data):
         if state_error:
             continue
         try:
+            if 'object_state' in event:
+                object_state = deepcopy(event['object_state'])
+            elif object_state is not None and 'object_patch' in event:
+                object_state = apply(object_state, event['object_patch'])
+            if event.get('owner') == 'DoctorBrain' and event.get('method') == 'complete':
+                budget = {key: (object_state or {}).get('session', {}).get(key) for key in budget_fields}
+                if kind == 'call_start':
+                    model_calls[event['call_id']] = dict(seq=seq, role=event.get('inputs', {}).get('role'), before=budget)
+                elif kind == 'call_end':
+                    result = resolve(event.get('output')) or {}
+                    result = result.get('data', {}) if result.get('type') == 'ModelResult' else {}
+                    error = result.get('error')
+                    model_outcomes.append(dict(**model_calls.pop(event['call_id'], dict(seq=seq)),
+                        end_seq=seq, error=error, request_id=result.get('request_id'), after=budget,
+                        local_education_guard=isinstance(error, str) and error.startswith('LOCAL_EDUCATION_')))
             if kind == 'initial':
                 state = deepcopy(event['state'])
             elif state is not None and 'patch' in event:
@@ -129,9 +166,16 @@ def inspect_run(data):
                     assessment_response=assessment.get('based_on_response'),
                     assessment_chief=assessment.get('based_on_chief_fact_id'),
                     education_status=state.get('interview', {}).get('education_status'),
+                    education_reason=state.get('interview', {}).get('education_reason'),
+                    budget={key: state.get('session', {}).get(key) for key in budget_fields},
+                    education_delivered=sum(a.get('purpose') == 'education' and a.get('outcome') == 'delivered'
+                                            for a in state.get('interview', {}).get('answers', [])),
+                    education_undelivered=sum(a.get('purpose') == 'education' and a.get('outcome') == 'undelivered'
+                                              for a in state.get('interview', {}).get('answers', [])),
                     plan_count=len(case.get('plan', [])),
                     primary=primary, frozen=assessment.get('frozen'), turn_present=state.get('turn') is not None,
                     fact_count=len(case.get('facts', {})), note_count=len(case.get('notes', {})),
+                    measured_fact_count=sum(bool(f.get('measurement')) for f in case.get('facts', {}).values()),
                     unbound_fact_count=sum(not f.get('graph_binding') for f in case.get('facts', {}).values()) if unified else None))
         except (KeyError, IndexError, TypeError, ValueError) as error:
             state_error = dict(seq=seq, error=type(error).__name__)
@@ -176,6 +220,7 @@ def inspect_run(data):
                 'pass' if events and not state_error else 'not_collected',
                 runtime=settings.get('runtime'), graph=settings.get('graph'), execution=settings.get('execution'),
                 pipeline=pipeline,
+                coverage=coverage, model_outcomes=model_outcomes,
                 state_layout='D50' if execution.get('kind') == 'sequential' else 'D47' if unified else 'D46' if modern else 'legacy_or_unknown', checks=checks,
                 event_counts=dict(counts), observed_methods=dict(methods),
                 declared_objects=settings.get('objects', []), checkpoints=checkpoints,

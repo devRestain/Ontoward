@@ -2,7 +2,7 @@
 
 ## Ownership and State
 
-- Apply D55 strict corrected-bundle loading and D54 scoped recall and request projections before D53 direct Initiation and five-source Education; preserve D52 context rejection, D51 recovery, and D49-D50 qualitative knowledge and sequential ownership.
+- Apply D59 bounded Education passages and local context recovery before D55 strict loading and D54 scoped projections; preserve D57-D58, D53 direct Initiation, D52 clinical/gateway rejection, and D49-D51 sequential ownership and recovery.
 - Keep run.py as the unchanged SDK callback entrypoint and Consultation as the sole five-session coordinator.
 - Assign input interpretation and acceptance to DoctorEar clinical ranking and questions to the five session objects English plans and Education delivery scheduling to EducationSession all model execution to one injected DoctorBrain and patient expression and SAY/EXAM execution to DoctorMouth.
 - Pass only a current successful unfrozen CC Assessment into ContextFactor through Consultation without passing another session object.
@@ -58,17 +58,20 @@
 - Reject answered unknown blocked incorrectly scoped unprepared or unaffordable optional questions without hypothetical utility gates.
 - Use high effort for clinical decisions and English planning and medium effort for Ear and Mouth on the existing designated model.
 - Generate English P with corresponding Korean utterances in one high-effort request. Validate both independently, preserve accepted English and source quotes, and repair only invalid Korean groups with the existing medium-effort response and text repair limits.
-- Query only the frozen primary Disease and fix at most five documents after a stable exact-and-care_navigation partition; preserve within-group order full text and failure without backfill.
-- Project document_id relation evidence_use text and meaningful scope at the plan boundary; retain source custody and original UTF-8 citation offsets internally through repairs.
+- Query only frozen primary Disease mappings in stable exact-and-care_navigation groups; bound reads to 1048576 bytes per accepted file and 16777216 total bytes, count failed reads, and visit later mapped candidates after failures.
+- Pack complete supported ATX leaves with ancestor introductions in warning-first document round robin; cap excerpt JSON at 2048 bytes and documents JSON at 8192 bytes without truncation or full-text fallback.
+- Project document_id relation evidence_use meaningful scope and excerpts with heading_path and literal spans; freeze the packet before contexts and repair, reject ambiguous quotes, and keep path hash and absolute offsets internal.
+- Cap actual Education messages at 32768 JSON bytes and require 65536 remaining input tokens before both roles, including finalization; apply pending-sync rejection before request IDs usage and execution without modifying messages.
 - Project patient and frozen diagnosis with one request-local fact map across plan generation Education rendering and announcement fallback; reject missing frozen evidence without dumping GraphRefs.
 - Start with unresolved Initiation intake or necessary chief clarification after initial input acceptance; exclude greeting and empathy implementation and account every SAY or EXAM in its session actions.
-- Select explicit task keys and normalized values without whole-state dumps large schemas or full graph profiles; keep clinical output at 4096 tokens and one recovery at 8000 tokens. Do not measure cap or trim prompts by bytes.
+- Select explicit task keys and normalized values without whole-state dumps large schemas or full graph profiles; keep clinical output at 4096 tokens and one recovery at 8000 tokens. Apply byte limits only to D59 Education.
 - Load task recipes from ONTOWARD_PROMPTS inside config and select initial reply EXAM mapping ranking action plan expression and repair routes in the owning Python caller.
 - Keep each request's output contract and situation instructions specific to the active task; preserve clinical conditions as patient data and bounded repair decisions in Python.
 - Preserve official server turns separate from model tokens calls internal nodes and DIAGNOSE while protecting response final clinical decision Education and submission resources.
 - Reuse confirmed response budgets without routine GETs; synchronize uncertain actions and server model-limit failures and retain pre-submission refresh. Keep clinical question computation in sessions and pass integer requirements into BudgetPolicy with one shared cost table and the existing reservation floor.
 - Serialize model data as one JSON object and share full relation definitions with shallow evidence and question references. Aggregate questions by complete scope before executability checks and reuse only operation-local graph work.
-- Share identical clinical relation definitions across disease associations only when target effect ordered full Pattern rule scope and applicability match. Preserve every disease candidate scoped fact match and Python graph reference. Terminate on CONTEXT_LIMIT_EXCEEDED without output-token escalation or another collection action.
+- Share identical clinical relation definitions only when target effect ordered full Pattern rule scope and applicability match; preserve every disease candidate scoped match and graph reference, and terminate clinical/gateway CONTEXT_LIMIT_EXCEEDED without output escalation.
+- Mark Education CONTEXT_LIMIT_EXCEEDED as budget_sync_required without stopping or disabling models; preserve verified English and cached Korean, block subsequent models before sync, and use existing finalization and actual SAY/DIAGNOSE receipts.
 - Include every question scope and register needed unobserved observations locally; replace repeated expectations only with exact relation/feature references and retain context and presence prerequisites explicitly.
 - Preserve same-identity transient replay shared limits session caps and explicit unknown transport termination.
 - Validate every patient utterance independently as NFC Korean with 1-30 codepoints without truncation.
@@ -82,7 +85,7 @@
 ## Assets and Acceptance
 
 - Preserve the unchanged SDK and entrypoint, pinned Pydantic and RDFLib requirements, Python-selected task routes, and historical custody; load only the v5-enum-1 relative-path/hash-pinned six-file contract without old-format conversion.
-- Pin the algorithm as d50.7 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
+- Pin the algorithm as d50.9 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
 - Reject invalid hasAttribute ranges and canHaveValue domains or ranges during load; retain typed getters and block failed attribute lookup from becoming a presence question. Keep D55 strict loading and preserve its original parent directory byte-for-byte until explicit post-verification disposal.
 - Load the D56 text-normalized descendant of the D55 bundle. Keep ExamMethod identities and question selection unchanged and preserve required actions and positioning in normalized Korean EXAM request text.
 - Load the D57 collection-metadata descendant only after strict loader, coverage, entrypoint, and scoped input verification; preserve its D56 parent and all graph bytes.

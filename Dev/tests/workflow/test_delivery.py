@@ -48,7 +48,7 @@ class DeliveryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             references([{'document_id':'doc','quote':'invented'}],{'doc':[(0,'actual')]})
 
-    def test_full_source_context_is_preserved_in_plan_request(self):
+    def test_unsupported_full_source_is_omitted_without_failing_general_plan(self):
         source = 'Source text.\n' * 10000
         c = f.consultation(prepared=f.resources(education=True))
         c.knowledge.guidelines.read = lambda disease: ([{'document_id': 'd', 'text': source,
@@ -59,8 +59,9 @@ class DeliveryTests(unittest.TestCase):
         c.sessions['Education'].prepare_plan(state, c.client)
         requests = [row for row in c.client.requests if row['task'] == 'education']
         self.assertEqual(len(requests), 1)
-        self.assertEqual(requests[0]['documents'][0]['text'], source)
+        self.assertEqual(requests[0]['documents'], [])
         self.assertEqual(len(state.case.plan), 5)
+        self.assertEqual(state.interview.education_status, 'complete')
 
     def test_invalid_render_is_bounded_without_losing_english_plan(self):
         def response(payload):

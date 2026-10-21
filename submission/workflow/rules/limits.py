@@ -19,6 +19,8 @@ class Limits:
     education_turns: int = 7
     education_tokens: int = 8000
     education_doctor_tokens: int = 8000
+    education_max_messages_bytes: int = 32_768
+    education_min_input_remaining_tokens: int = 65_536
     model_calls: int = 200
     input_tokens: int = 500000
     output_tokens: int = 100000

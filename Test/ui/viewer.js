@@ -258,7 +258,7 @@ function diagnosisPanel(before,after){
       }
     }
     root.append(jsonDetail(after.case.assessment?'CaseState.assessment':'CaseState.diagnosis',after.case.assessment??after.case.diagnosis));
-    root.append(note(sequential ? 'D50의 CaseState.assessment는 현재 감별 순위와 근거를 보관하고 수집 종료에서 고정합니다. 판단은 revision·chief·수용 응답으로 구별합니다.' : after.case.assessment ? 'CaseState.assessment에 보존된 감별 순위와 고정 여부입니다. 당시 기록한 형식을 유지합니다.' : '이전 D44 reasoner의 진단 기록입니다. 현재 Assessment 형식으로 추정하지 않습니다.'));
+    root.append(note(sequential ? '이 실행의 CaseState.assessment는 현재 감별 순위와 근거를 보관하고 수집 종료에서 고정합니다. 판단은 revision·chief·수용 응답으로 구별합니다.' : after.case.assessment ? 'CaseState.assessment에 보존된 감별 순위와 고정 여부입니다. 당시 기록한 형식을 유지합니다.' : '이전 D44 reasoner의 진단 기록입니다. 현재 Assessment 형식으로 추정하지 않습니다.'));
     return root;
   }
   const root=panel('기록된 진단 후보와 근거');

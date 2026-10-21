@@ -2,9 +2,11 @@
 from contextlib import nullcontext
 import copy
 import json
+import hashlib
 import os
 from pathlib import Path
 import sys
+from unittest.mock import patch
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,os.environ.get('ONTOWARD_WORKFLOW_FIXTURES',str(ROOT/'Dev/tests/workflow')))
@@ -19,20 +21,43 @@ OUTPUT=Path(os.environ.get('ONTOWARD_OBSERVER_OUTPUT',ROOT/'Tmp/d44-observer'))
 
 def capture(name,observed):
     client=f.FakeSDK(context='absent' if name=='negative_context' else 'unknown' if name=='unknown_context' else 'present')
-    if name == 'education_repair':
+    if name in {'education_repair', 'education_passages', 'education_context', 'education_doctor_context'}:
         from education_fixtures import education_response
         def response(payload):
             if payload['task'] == 'education':
+                if name == 'education_context' and payload['phase'] == 'repair':
+                    raise f.NovaError('CONTEXT_LIMIT_EXCEEDED', 400)
                 raw = education_response(payload)
-                raw['P']['treatment'][0]['utterances'] = ['가' * 31]
+                if name == 'education_passages':
+                    raw['P']['tests'][0].update(basis='guideline',
+                        references=[dict(document_id='observer-source', quote='Seek care promptly.')])
+                elif name == 'education_repair':
+                    raw['P']['treatment'][0]['utterances'] = ['가' * 31]
+                else:
+                    for field, rows in raw['P'].items():
+                        if field != 'tests':
+                            rows[0]['utterances'] = ['가' * 31]
+                    if name == 'education_context':
+                        raw['P']['treatment'] = 'invalid rows'
                 return raw
+            if name in {'education_context', 'education_doctor_context'} and payload['task'] == 'education_doctor':
+                raise f.NovaError('CONTEXT_LIMIT_EXCEEDED', 400)
         client.chat_handler = response
     if name == 'fixed_unknown':
         original_action = client._action
         def unknown(*args):
             return {**original_action(*args), 'content': '모르겠습니다'}
         client._action = unknown
-    c=f.consultation(client,prepared=f.resources(education=name in {'education', 'education_repair'}))
+    c=f.consultation(client,prepared=f.resources(education=name.startswith('education')))
+    corpus = OUTPUT / 'guideline-corpus'
+    if name == 'education_passages':
+        from knowledge.guidelines import GuidelineLibrary
+        corpus.mkdir(exist_ok=True)
+        raw = b'# Management\nSimulation introduction.\n## Warning\nSeek care promptly.\n## Treatment\nReview options.\n'
+        (corpus / 'source.md').write_bytes(raw)
+        source = dict(document_id='observer-source', path='source.md', sha256=hashlib.sha256(raw).hexdigest(),
+                      relation='exact', evidence_use='care_navigation', scope='Synthetic protocol source')
+        c.knowledge.guidelines = GuidelineLibrary({str(f.OW.Alpha): [source], str(f.OW.Beta): [source]})
     if name=='closed':
         client.status='closed'
     if name=='expired':
@@ -58,8 +83,21 @@ def capture(name,observed):
     if path.is_file():
         path.unlink()
     context=observing(path) if observed else nullcontext()
-    with context:
+    environment = patch.dict(os.environ, {'NOVA_GUIDELINES_DIR': str(corpus)}) if name == 'education_passages' else nullcontext()
+    original_read, reads = Path.read_bytes, []
+    def drift(file):
+        raw = original_read(file)
+        if file.as_posix().endswith('/knowledge/guideline_passages.py'):
+            reads.append(file)
+            if len(reads) > 1:
+                return raw + b'\n# Simulated concurrent source change\n'
+        return raw
+    source_guard = patch.object(Path, 'read_bytes', drift) if name == 'source_drift' else nullcontext()
+    with environment, source_guard, context:
         initial=c.nova_session.initialize_case(client)
+        if name in {'education_context', 'education_doctor_context'}:
+            initial = f.chief(f.state())
+            f.freeze_for_education(c, initial)
         initial_raw=initial.model_dump(mode='json')
         updates=[]
         def capture_update(kind, name, state, error):
@@ -91,7 +129,8 @@ def apply(state,change):
 
 def verify_trace(rows, name):
     inspection = inspect_run(dict(trace={'events': rows}, warnings=[], summary={}, record={}))
-    assert not [c for c in inspection['checks'] if c['status']=='fail'], (name, inspection['checks'])
+    failed = [c['id'] for c in inspection['checks'] if c['status']=='fail']
+    assert failed == (['runtime_stability'] if name == 'source_drift' else []), (name, inspection['checks'])
     current = objects = None
     for row in rows:
         if row['kind']=='initial':
@@ -111,7 +150,11 @@ def verify_trace(rows, name):
         assert 'config/prompts/input_initial.txt' in runtime['prompt_routes']['input.initial']
         assert 'config/prompts/input_initial.txt' not in runtime['prompt_routes']['input.reply']
         settings = next(r for r in rows if r['kind'] == 'settings')
-        assert settings['pipeline']['contract'] == 'D50'
+        assert settings['pipeline']['contract'] == 'D59'
+        assert rows[0]['format_version'] == 7
+        assert not any(row['missing'] for row in settings['coverage'])
+        assert all(name in runtime['source_sha256'] for name in
+                   ('run.py', 'nova_sdk.py', 'knowledge/guidelines.py', 'knowledge/guideline_passages.py'))
         assert set(runtime['test_source_sha256']) == {'observe.py', 'execution.py', 'pipeline.py'}
         for owner, field in [('BudgetPolicy', 'required_counts'), ('ContextFactorSession', 'candidate_ids'),
                              ('DifferentialDiagnosisSession', 'last_input')]:
@@ -128,19 +171,36 @@ def verify_trace(rows, name):
         assert any(r['kind'] == 'call_start' and r['owner'] == 'DoctorBrain' and r['inputs'].get('role') == 'education_doctor' for r in rows)
     if name == 'fixed_unknown':
         assert any(r['kind'] == 'call_end' and r['owner'] == 'DoctorEar' and r['method'] == '_fixed_reply' and r['output'] is not None for r in rows)
+    if name == 'education_passages':
+        for owner, method in [('GuidelineLibrary', 'read'), ('GuidelineEvidence', 'pack_passages'),
+                              ('GuidelineEvidence', 'project_documents'), ('GuidelineEvidence', 'source_contexts'),
+                              ('ModelProjection', 'fixed_case_payload'), ('EnglishPlan', 'references')]:
+            assert any(r['kind'] == 'call_end' and (r['owner'], r['method']) == (owner, method) for r in rows), (owner, method)
+        assert any(r['kind'] == 'call_start' and (r.get('definition') or {}).get('path') == 'knowledge/guidelines.py' for r in rows)
+    if name in {'education_context', 'education_doctor_context'}:
+        errors = [row for row in inspection['model_outcomes'] if row['error'] == 'CONTEXT_LIMIT_EXCEEDED']
+        assert len(errors) == 1 and errors[0]['request_id'], (name, errors)
+        assert errors[0]['after']['budget_sync_required']
+        if name == 'education_context':
+            guards = [row for row in inspection['model_outcomes'] if row['local_education_guard']]
+            assert guards and all(row['request_id'] is None and row['before'] == row['after'] for row in guards)
+        assert any(r['kind'] == 'call_end' and r.get('owner') == 'NovaSessionClient' and r.get('method') == 'refresh_snapshot' for r in rows)
+        assert inspection['checkpoints'][-1]['education_undelivered'] > 0
     return inspection
 
 
 def verify():
     OUTPUT.mkdir(parents=True,exist_ok=True)
     scenarios=[]
-    for name in ('normal','negative_context','unknown_context','fixed_unknown','education','education_repair','transient_model','model_limit',
+    for name in ('normal','negative_context','unknown_context','fixed_unknown','education','education_repair',
+                 'education_passages','education_context','education_doctor_context','source_drift','transient_model','model_limit',
                  'malformed_context','expired','closed','soap_repair','unconfirmed','refusal','action_format','recording_failure'):
         baseline,_=capture(name,False)
         observed,path=capture(name,True)
         assert baseline==observed,name
         end=WorkflowState.model_validate(next(iter(observed['updates'][-1].values())))
-        if name in {'normal','education','education_repair','fixed_unknown','negative_context','unknown_context','soap_repair','refusal','action_format','transient_model','recording_failure'}:
+        if name in {'normal','education','education_repair','education_passages','education_context','education_doctor_context',
+                    'fixed_unknown','negative_context','unknown_context','soap_repair','refusal','action_format','source_drift','transient_model','recording_failure'}:
             assert end.session.termination=='submitted',(name,end.session.reason)
         if name!='recording_failure':
             current=None
@@ -160,7 +220,7 @@ def verify():
             assert any(row['kind']=='call_end' for row in rows) or name in {'closed','expired'},name
         scenarios.append(dict(name=name,termination=end.session.termination,nodes=len(observed['updates'])))
     report=dict(status='pass',scenarios=scenarios,node_updates=sum(row['nodes'] for row in scenarios),
-                recording_failure='nonfatal_no_replay',network='none',actual_models='not_run')
+                recording_failure='nonfatal_no_replay',source_drift='detected_without_behavior_change',network='none',actual_models='not_run')
     (OUTPUT/'verification.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
     return report

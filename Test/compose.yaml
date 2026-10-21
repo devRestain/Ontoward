@@ -15,6 +15,7 @@ services:
       NOVA_RUN_TOKEN: ontoward-local-test
       NOVA_SESSION_ID: 00000000-0000-4000-8000-000000000001
     labels:
+      io.ontoward.test-owner: ontoward
       io.ontoward.test-run: ${TEST_RUN_ID:-manual}
     volumes:
       - ../assets/nova-samples-2026:/cases:ro
@@ -34,6 +35,8 @@ services:
   test-agent:
     image: ontoward-test:local
     command: [python, /test/agent.py]
+    labels:
+      io.ontoward.test-owner: ontoward
     user: "${ONTOWARD_TEST_UID:-501}:${ONTOWARD_TEST_GID:-20}"
     working_dir: /submission
     cpus: 2.0

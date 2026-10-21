@@ -1,6 +1,6 @@
 # Ontoward 진료 워크플로우 백서
 
-현재 구현은 **D58·d50.8**이며 D57의 입력·수치·원자 수집, D55 strict 지식·D56 진찰 문구, D53 직접 문진·최대 다섯 전체 문서·실패 비보충, D52 관계 공유·컨텍스트 종료, D51 입력 복구, D49 무점수 지식, D48 프롬프트 모듈과 D47 객체·사실 소유권을 유지한다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D58 결정](../DECISION_STATE.md#D58), [생성·설치 검증](../data/provenance/augmentation-d58-2026-10-21.json), [PRD](../PRD.md), [상태 정의](workflow/state/models.py)를 기준으로 읽으며 과거 증빙은 보존한다. 최신 부모 `1bcaba1dffb744c468bb191df3267dad`를 증분 보완한 `cec62f4596bedd9b9488aa75e3d38f04`를 활성화했다. 새 진단 3개·성장속도·행동 Context·구별 질문을 추가하고 허용된 관계만 수정했다. 기존 질문·단위·D56 진찰 문구·지침 payload는 같다. 변경 없는 run.py의 prepare와 활성 지식의 protocol double 상담 3개를 검증했다. 실제 모델 상담·임상·공식 평가와 실제 지식의 정식 ZIP은 미실행이다. 합성 번들은 계속 Tmp/에서만 사용한다. 이번 빌드의 불필요한 체크포인트·중복 DB 산출물은 [별도 명세](../data/provenance/augmentation-d58-cleanup-2026-10-21.json)에 따라 삭제했다.
+현재 구현은 **D59·d50.9**이며 Education의 짧고 완전한 발췌·고정 입력 경계와 context 오류 후 최종화를 적용한다. D57·D58 입력·수치·원자 수집과 활성 지식, D55 strict 지식·D56 진찰 문구, D53 직접 문진, D52 관계 공유·clinical/gateway 종료, D51 입력 복구, D49 무점수 지식, D48 프롬프트 모듈과 D47 객체·사실 소유권을 유지한다. 다섯 세션 객체가 목적별 입력 전처리와 응답 검증을 소유하고 **DoctorBrain은 모든 LLM 호출의 공통 실행기**다. 환자 정보는 CaseState.facts의 **CaseFact 하나**에 저장한다. [D59 결정](../DECISION_STATE.md#D59), [D58 결정](../DECISION_STATE.md#D58), [생성·설치 검증](../data/provenance/augmentation-d58-2026-10-21.json), [PRD](../PRD.md), [상태 정의](workflow/state/models.py)를 기준으로 읽으며 과거 증빙은 보존한다. 최신 부모 `1bcaba1dffb744c468bb191df3267dad`를 증분 보완한 `cec62f4596bedd9b9488aa75e3d38f04`를 활성화했다. 새 진단 3개·성장속도·행동 Context·구별 질문을 추가하고 허용된 관계만 수정했다. 기존 질문·단위·D56 진찰 문구·지침 payload는 같다. D58에서 변경 없는 run.py의 prepare와 활성 지식의 protocol double 상담 3개를 검증했다. D59는 좁은 회귀와 같은 활성 지식의 prepare·정규 로컬 ZIP만 추가 검증했으며 실제 모델 상담·임상·공식 평가·최종 버전 선택은 미실행이다. 합성 번들은 계속 Tmp/에서만 사용한다. 이번 빌드의 불필요한 체크포인트·중복 DB 산출물은 [별도 명세](../data/provenance/augmentation-d58-cleanup-2026-10-21.json)에 따라 삭제했다.
 
 D56은 현재 저장된 시진·청진·촉진·타진 실행 문구 119개를 정규화한다. `목을 보여 주세요.`는 `목 시진합니다.`, `피부를 눈으로 살펴보세요.`는 `피부 시진합니다.`로 바뀌었다. 복합 동작·특수 수기·필요한 자세와 ID·임상 관계·질문 계약은 보존했다. 문구가 없던 메서드 37개는 그대로 두며 부위 미지정 공용 메서드 2개에는 임의 부위를 넣지 않는다. [D56 결정](../DECISION_STATE.md#D56)·[전체 전후 명세](../data/provenance/exam-text-normalization-plan-2026-10-21.json)·[현재 검증](../data/provenance/exam-text-normalization-2026-10-21.json)을 따른다. 실제 NOVA의 새 문구 수용 여부는 재검증하지 않았다.
 
@@ -91,11 +91,11 @@ D57에서는 첫 입력과 여러 내용을 함께 답한 일반 응답의 onset
 
 [rules/decision.py](workflow/rules/decision.py)는 호출 목적에 필요한 Key와 Value만 고른다. 사실 f_, 후보 d_, 근거 e_, 질문 q_, 범위 s_, 조건 condition_, 관계 r_를 지역 참조로 연결하고 같은 사실·조건·미확인을 한 번 정의한다. relations 표에 effect·scope·전체 Pattern·applicability를 한 번 정의하고 근거와 expected_by_disease에서 참조한다. 필요한 dict/list를 한 JSON 객체로 직렬화한다. 전체 상태 model_dump·큰 Pydantic schema·그래프 profile 전문을 프롬프트에 넣지 않는다. 기존 유효 후보를 보존하고 고정 Top-K를 두지 않는다. 순위 전용 요청에는 질문을 넣지 않으며 행동 복구는 수용 순위와 실행 가능한 질문 중심이다.
 
-**런타임은 프롬프트 바이트 측정·목표·제한·진단 통계·크기 비교를 하지 않는다.** 이를 맞추기 위한 절단·배치·조각 읽기·근거 결합 경로도 없다. D54의 문자/UTF-8 크기·참조 무결성은 별도 오프라인 검증이며 런타임 상태나 모델 입력에 넣지 않는다. 의미별 전처리와 공유 참조는 필요한 정보를 명확히 전달하기 위해 사용한다. 공식 토큰·호출·행동·시간 예산은 각자 유지한다.
+**D59는 Education에만 고정 JSON byte 상한을 적용한다.** 원자 발췌는 2048 bytes, 전체 documents는 8192 bytes, 실제 messages는 system/user/repair를 포함해 32768 bytes다. JSON의 ensure_ascii=False·compact separators·allow_nan=False 직렬화를 UTF-8로 측정한다. 초기 초과 시 마지막 발췌 묶음부터 통째로 제거하며 고정 환자 사실·진단·지시는 자르지 않는다. clinical/gateway의 기존 정책과 공식 토큰·호출·행동·시간 예산은 유지하며 bytes를 tokens로 환산하거나 동적 예약을 추가하지 않는다.
 
 D54는 초기 원문을 opening/vital_signs별 input_segments로 한 번 보내고 mapping에 Context의 해석 의미 normalized_claim을 전달한다. 어휘 후보는 영어 hint·한국어 인용 전체를 통합한 뒤 상한을 적용하고 별칭 수만으로 점수를 누적하지 않는다. recall과 근거 구성은 같은 관찰별 Pattern/applicability 판정을 공유하여 모순 경로를 차단한다. unknown 부분 후보·Target 미관찰 Context 경로·유효한 prior opposition은 유지한다. 질문은 미관찰 observation도 구분하는 scopes 참조를 가지며, relation/feature로 기대값을 복원한다. full_pattern과 applicability는 그대로 두고 Context·존재 전제는 명시한다.
 
-[D52 수정](../DECISION_STATE.md#D52)은 서로 다른 질환 Association의 관계 정의가 target·effect·순서가 있는 전체 Pattern·rule scope·applicability까지 동일할 때 전송 정의를 공유한다. 모든 후보·조건·관찰별 사실 연결과 Python의 원래 그래프 근거는 유지한다. CONTEXT_LIMIT_EXCEEDED는 출력 잘림과 구별하여 즉시 종료하고 출력 한도 확대 재호출이나 후속 수집을 실행하지 않는다. 실제 NOVA에서 수정 입력의 수용과 C10 완료 여부는 별도 검증이다.
+[D52 수정](../DECISION_STATE.md#D52)은 서로 다른 질환 Association의 관계 정의가 target·effect·순서가 있는 전체 Pattern·rule scope·applicability까지 동일할 때 전송 정의를 공유한다. 모든 후보·조건·관찰별 사실 연결과 Python의 원래 그래프 근거는 유지한다. clinical/gateway의 CONTEXT_LIMIT_EXCEEDED는 출력 잘림과 구별하여 즉시 종료하고 출력 한도 확대 재호출이나 후속 수집을 실행하지 않는다. Education 두 role은 D59 예외로 예산 동기화를 요구하고 기존 최종화를 사용한다. 실제 NOVA에서 수정 입력의 수용과 C10 완료 여부는 별도 검증이다.
 
 ## 6. 작은 응답과 독립 수용
 
@@ -119,7 +119,11 @@ D45의 공식 turns_remaining이 행동 예산의 기준이다. 성공 응답의
 
 input 2회·8192토큰은 정상 경로 보호량이며 선택적 복구는 각 호출에서 최종 임상·교육 자원을 남긴 allowance로 수행한다. 새 행동 전에 응답 해석·최종 판단과 복구·활성 계획·한국어 안내·제출을 보호한다. 임상 정상 출력은 4096·한 번의 복구 8000토큰이다. Education은 7턴을 보호하고 상한은 10이다. 명시적 비활성 설정은 교육 행동·예약·P.education을 사용하지 않는다. 일시 전송 오류는 동일 ID·payload로 2초 뒤 한 번 재전송한다.
 
-EducationSession은 고정 진단 안내 후 환자 사실과 단일 frozen primary Disease의 지침으로 영어 P·한국어 발화를 high 호출 한 번에 준비한다. 문서는 exact AND care_navigation을 먼저 안정 분할한 뒤 최대 다섯 개를 읽기 전에 고정한다. 각 범주 내부 순서·전체 원문·경로/hash/인용 검증·실패 비보충을 유지한다. 모델용 documents에는 document_id·relation·evidence_use·text와 의미 있는 scope만 남기며 원문 UTF-8 offset은 내부에서 검증한다. 교육 생성·Mouth 표현·진단 fallback은 같은 current_facts의 f_ map으로 patient와 fixed_diagnosis를 함께 투영한다. 내부 GraphRef dump나 없는 근거를 조용히 전달하지 않는다.
+EducationSession은 고정 진단 안내 후 환자 사실과 단일 frozen primary Disease의 기존 매핑으로 영어 P·한국어 발화를 high 호출 한 번에 준비한다. exact AND care_navigation 안정 분할과 그룹 내 순서는 유지하며 다섯 문서 제한을 제거한다. 동일 경로는 한 번, 채택 파일은 최대 1048576 bytes, 성공·실패의 실제 누적 읽기는 최대 16777216 bytes다. read_cap=min(1048576+1, 잔여 총량)에 닿으면 EOF 불명으로 제외하며 완전한 원문만 전체 hash·UTF-8을 검증한다. 실패 뒤 같은 매핑의 후속 후보를 볼 수 있다.
+
+짧은 ATX leaf 전체와 상위 도입 본문·heading path를 원자 묶음으로 공급하고 표·HTML·fenced code·각주·원거리 조건 참조는 제외한다. direct 그룹부터 문서별 경고 우선·순환 선택으로 패킷을 구성한다. 모델용 documents는 document_id·relation·evidence_use·의미 있는 scope와 excerpts의 heading_path·spans.text만 가진다. 확정 패킷으로 contexts를 만든 뒤 초기·최대 한 번의 plan repair에서 같은 근거를 사용한다. 모든 공급 span의 인용 출현을 절대 UTF-8 위치 set으로 모아 한 위치일 때만 승인하며 repair에는 내부 offsets를 보내지 않는다. 과대 repair는 생략하고 검증된 영어를 보존한다. 근거가 없으면 model_knowledge와 빈 references를 사용한다. 교육 생성·Mouth 표현·진단 fallback은 같은 current_facts의 f_ map을 유지한다.
+
+Brain은 education·education_doctor 호출 전에 pending sync·32768-byte messages·잔여 입력 65536 tokens를 검사하고 로컬 거절이면 ID·usage·실제 요청을 만들지 않는다. finalizing에서도 동일하다. 알려진 Education CONTEXT_LIMIT_EXCEEDED는 실제 요청을 남기고 token 소비를 추정하지 않은 채 pending sync로 전환한다. 같은 prepare의 한국어 복구 호출은 차단하고 기존 외부 snapshot·최종화·Writer·실제 DIAGNOSE receipt를 사용한다. 검증된 영어 P와 사용 가능한 한국어 캐시는 유지하고 미전달을 전달로 기록하지 않는다.
 
 영어 내용·인용과 한국어 발화를 독립 검증하고 한국어만 실패하면 정상 영어 P를 보존하여 해당 그룹만 medium으로 복구한다. 원문 문서는 NOVA_GUIDELINES_DIR 마운트에서 읽고 ZIP에 넣지 않는다. EducationSession이 안내/계획의 순서·턴 배분·큐·실패 결과를 관리하고 Mouth는 큐·준비 상태를 바꾸지 않고 NFC 1–30자 표현과 실제 SAY를 담당한다. 공급자·문구 복구 상한과 미전달 receipt·재진입 비재생성·공통 QuestionLifecycle을 유지한다. 빈 selections는 명시적 model-knowledge 출처로 계획을 생성한다. 문서는 참고 자료이며 원래 요청·환자 사실·안전·출력 계약이 우선한다. 이 선택 정책은 실제 NOVA 입력 수용이나 임상 품질을 보장하지 않는다.
 
@@ -134,7 +138,7 @@ S의 cc/hpi/pmh/fh/sh/ros, O의 exam/tests, A의 evidence/differential, P의 tes
 
 [설정 안내](config/README.md)의 ONTOWARD_PROMPTS가 [작업별 조합](config/prompts.json)을 가리킨다. Ear·세션·Education·Mouth가 Python에서 현재 작업을 고르고 공통 규칙·작은 출력 계약·현재 상황 모듈만 조립한다. 초기 정보·문진·EXAM, 일반 매핑·통합 복구, 순위·행동, 전체 계획·부분 복구, 질환·증상 안내와 한국어 전달은 서로 다른 경로를 사용한다. 복구 지시는 해당 복구 호출에만 넣는다. 이전 혼합 프롬프트와 개별 환경변수는 제거했으며 비밀 키·서버 원문은 공개 설정에 넣지 않는다.
 
-프로젝트 Docker에서 유지 행동 회귀·임시 새 합성 RDF 상담·관측 일치·원본 SDK HTTP·읽기 전용 독립 ZIP을 검증한다. 과거 비교 도구와 atlas는 당시 스냅샷의 증거다. 이번 실제 모델·로그인·생성·실제 설치·정식 ZIP·공식 평가는 not_run이며 [D51 후속 증빙](../data/provenance/algorithm-d50-2-2026-10-20.json)이 소스·합성 artifact와 수행 검증을 기록한다. 소스와 독립 ZIP의 회귀는 각각 176개, 정상 3상담 전후 결과 일치, 관측은 16시나리오·1,516 작업 snapshot, SDK는 21행동·44 HTTP 요청과 completed를 확인했다. 진단 안내 LLM 제거는 실제 번들 전체의 의미·한국어·길이 보장 뒤에 수행하며 현재 fallback은 유지한다.
+프로젝트 Docker에서 유지 행동 회귀·임시 새 합성 RDF 상담·관측 일치·원본 SDK HTTP·읽기 전용 독립 ZIP을 검증한다. 과거 비교 도구와 atlas는 당시 스냅샷의 증거다. D51 당시 실제 모델·로그인·생성·실제 설치·정식 ZIP·공식 평가는 not_run이며 [D51 후속 증빙](../data/provenance/algorithm-d50-2-2026-10-20.json)이 소스·합성 artifact와 수행 검증을 기록한다. 소스와 독립 ZIP의 회귀는 각각 176개, 정상 3상담 전후 결과 일치, 관측은 16시나리오·1,516 작업 snapshot, SDK는 21행동·44 HTTP 요청과 completed를 확인했다. 진단 안내 LLM 제거는 실제 번들 전체의 의미·한국어·길이 보장 뒤에 수행하며 현재 fallback은 유지한다.
 
 ZIP에는 필요한 실행 Python·requirements·SDK·공개 설정·프롬프트·manifest 자산만 넣는다. 문서·상태·Test·Dev·준비 DB·개발 키·원본 지침은 제외한다. 독립본은 부모 data나 원본 준비 자료 없이 검증한다.
 

@@ -236,3 +236,29 @@ const partialCall=walk(d50Partial.get('detail-panel')).find(node=>node.className
 partialCall.click();assert.match(d50Partial.text(),/종료 미수집|반환값이 수집되지 않았습니다/);
 assert.doesNotMatch(d50Partial.text(),/answer-10/);
 console.log('PASS: D50 sequential flow, trace landmarks, callable source locations, collaborator field snapshots, partial coverage and immutable records');
+
+const d59Data=structuredClone(d50Data);
+d59Data.trace.events[0].format_version=7;
+d59Data.trace.events[1].pipeline={version:2,contract:'D59',landmarks:[
+  {id:'guidelines',owners:['GuidelineEvidence'],methods:['pack_passages']},
+  {id:'sync',owners:['DoctorBrain'],methods:['complete']}]};
+Object.assign(d59Data.trace.events[4],{owner:'GuidelineEvidence',method:'pack_passages',
+  callable:'knowledge.guideline_passages.pack_passages',definition:{path:'knowledge/guideline_passages.py',line:126}});
+Object.assign(d59Data.trace.events[5],{owner:'GuidelineEvidence',method:'pack_passages'});
+d59Data.inspection={status:'pass',runtime:{algorithm:'d50.9'},state_layout:'D50',pipeline:{contract:'D59'},
+  checks:[{id:'runtime_sources',status:'pass',detail:{}},{id:'runtime_stability',status:'pass',detail:{}}],
+  checkpoints:[],transitions:[],declared_objects:[],observed_methods:{},
+  model_outcomes:[{role:'education_doctor',error:'LOCAL_EDUCATION_BUDGET_SYNC_REQUIRED',request_id:null}],
+  coverage:[{object_id:'workflow.education',missing:[]}],limits:{scope:'Recorded boundaries'}};
+const d59Original=JSON.stringify(d59Data),d59=load(d59Data);
+assert.match(d59.text(),/매핑 원문·발췌·인용 문맥/);
+assert.match(d59.text(),/모델 차단·예산 동기화/);
+const packet=d59.get('detail-panel').querySelector('.landmark');packet.open=true;packet.emit('toggle');packet.querySelector('button').click();
+assert.match(d59.text(),/knowledge\/guideline_passages.py:126/);
+d59.get('tab-execution').click();
+assert.match(d59.text(),/d50.9/);assert.match(d59.text(),/D59/);
+assert.match(d59.text(),/지식 코드·진입점 소스 해시/);
+const outcomes=walk(d59.get('detail-panel')).find(node=>node.tagName==='details'&&node.children[0].textContent==='모델 반환 · 로컬 차단 · 전후 예산');
+outcomes.open=true;outcomes.emit('toggle');assert.match(outcomes.textContent,/LOCAL_EDUCATION_BUDGET_SYNC_REQUIRED/);
+assert.equal(JSON.stringify(d59Data),d59Original);
+console.log('PASS: D59 source packet navigation, guard outcomes, source checks and immutable historical reports');

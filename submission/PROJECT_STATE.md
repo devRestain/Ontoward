@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=33a1395ab37149e4d81e57f3f9f2cb5f5c7d87ec dirty=true updated=2026-10-21T21:16:22+09:00
-/goal phase=current id=APP.D58 state=complete action="Verify DD Context and input scope with the active augmented knowledge"
+/checkpoint revision=5e09affe00813e2a7da7a796d5c7ac34e4ec95f3 dirty=true updated=2026-10-21T22:20:13+09:00
+/goal phase=current id=APP.D59 state=complete action="Bound literal Education evidence and preserve finalization after context rejection"
+/goal phase=history id=APP.D58 state=complete action="Verify DD Context and input scope with the active augmented knowledge"
 /goal phase=history id=APP.D57 state=complete action="Preserve initial clinical details and collect only unresolved scoped atomic attributes"
 /goal phase=history id=APP.D56 state=complete action="Load normalized EXAM text and verify original prepare and all physical question paths"
 /goal phase=history id=APP.D55 state=complete action="Activate corrected knowledge with strict endpoint loading and verify original prepare and D54 semantics"
@@ -432,4 +433,11 @@
 /evidence id=APP.D58.E3 class=artifact result=pass source=../data/provenance/augmentation-d58-2026-10-21.json observed="Verify the 89-file synthetic ZIP through original SDK HTTP loopback with completed receipt forty-two requests and twenty actions without credentials"
 /evidence id=APP.D58.E4 class=runtime result=pass source=../data/provenance/augmentation-d58-cleanup-2026-10-21.json observed="Pass installed loader and original prepare after deletion while preserving every protected runtime and parent asset hash"
 /evidence id=APP.D58.E5 class=external_service result=not_run source=../data/provenance/augmentation-d58-2026-10-21.json observed="Defer actual-model consultation accuracy clinical validity and official evaluation; record actual knowledge generation separately"
-/handoff state=ready action="Use the verified active child and compact receipts; obtain separate authorization before optional actual-model consultation evaluation"
+/accept id=APP.D59.A1 state=pass action="Bound mapped source reads atomic passages messages and unique supplied-span citations" evidence=APP.D59.E1
+/accept id=APP.D59.A2 state=pass action="Reject local Education calls before IDs and usage and preserve post-context finalization" evidence=APP.D59.E1
+/accept id=APP.D59.A3 state=pass action="Load the unchanged active knowledge through the original entrypoint" evidence=APP.D59.E2
+/evidence id=APP.D59.E1 class=runtime result=pass source=../data/provenance/algorithm-d50-9-2026-10-21.json observed="Verify seventy-nine distinct narrow tests with an initial seventy-eight passes one stale full-text expectation and five passing targeted rechecks; complete frozen Education and Mouth context-error cases with preserved English and actual DIAGNOSE receipts"
+/evidence id=APP.D59.E2 class=runtime result=pass source=../Tmp/d59-2026-10-21/prepare.json observed="Pass original run.py prepare with d50.9 schema 5.0 v5-enum-1 active cec62f4596bedd9b9488aa75e3d38f04 and 948 Diseases"
+/evidence id=APP.D59.E3 class=runtime result=not_run source=../data/provenance/algorithm-d50-9-2026-10-21.json observed="Leave full workflow discovery and archive consultations unrun under the requested narrow acceptance"
+/evidence id=APP.D59.E4 class=external_service result=not_run source=../data/provenance/algorithm-d50-9-2026-10-21.json observed="Leave actual-model quality clinical accuracy and official evaluation unrun"
+/handoff state=ready action="Use verified d50.9 Education and the preserved active child with compact receipts; obtain separate authorization for optional actual-model evaluation"

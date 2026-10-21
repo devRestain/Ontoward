@@ -11,7 +11,8 @@ import fixtures as f
 from education_fixtures import education_response
 from knowledge.conditions import ExpectedValue, QuestionTemplate
 from knowledge.guidelines import GuidelineLibrary
-from workflow.education import references
+from knowledge.guideline_passages import pack_passages, source_contexts
+from workflow.education import parse_plan, references
 from workflow.input_types import ContextStatement
 from workflow.rules.assessment import graph_candidates
 from workflow.rules.normalization import candidate_contracts, concept_rank
@@ -414,7 +415,7 @@ class GuidelineAndGetterTests(unittest.TestCase):
     def sources(self, root):
         rows = []
         for index in range(8):
-            raw = f'\ufeff# 원문 {index}\n\n  원문 인용입니다.\n'.encode()
+            raw = f'\ufeff# 원문 {index}\r\nAdults only.\r\n## 관리\r\n  원문 인용입니다.\r\n'.encode()
             (root / f'{index}.md').write_bytes(raw)
             rows.append(dict(document_id=f'd{index}', path=f'{index}.md', sha256=hashlib.sha256(raw).hexdigest(),
                 relation='exact' if index in {3, 6, 7} else 'related',
@@ -422,22 +423,23 @@ class GuidelineAndGetterTests(unittest.TestCase):
                 scope='Adults in outpatient care', audit_private={'future': True}))
         return rows
 
-    def test_direct_partition_freezes_five_before_reads_and_failure_never_backfills(self):
+    def test_direct_partition_preserves_all_mapped_order_and_reads_each_path_once(self):
         with tempfile.TemporaryDirectory() as folder, patch.dict('os.environ', NOVA_GUIDELINES_DIR=folder):
             root = Path(folder)
             rows = self.sources(root)
             library = GuidelineLibrary({'disease': rows})
             documents, _ = library.read('disease')
-            self.assertEqual([d['document_id'] for d in documents], ['d6', 'd7', 'd0', 'd1', 'd2'])
+            self.assertEqual([d['document_id'] for d in documents], ['d6', 'd7', 'd0', 'd1', 'd2', 'd3', 'd4', 'd5'])
             (root / '6.md').write_text('Changed')
-            opened, original = [], Path.read_bytes
-            def read(path):
+            rows.append({**rows[7], 'document_id': 'duplicate-path'})
+            opened, original = [], Path.open
+            def read(path, *args, **kwargs):
                 opened.append(path.name)
-                return original(path)
-            with patch.object(Path, 'read_bytes', read):
+                return original(path, *args, **kwargs)
+            with patch.object(Path, 'open', read):
                 documents, failures = library.read('disease')
-            self.assertEqual(opened, ['6.md', '7.md', '0.md', '1.md', '2.md'])
-            self.assertEqual([d['document_id'] for d in documents], ['d7', 'd0', 'd1', 'd2'])
+            self.assertEqual(opened, ['6.md', '7.md', '0.md', '1.md', '2.md', '3.md', '4.md', '5.md'])
+            self.assertEqual([d['document_id'] for d in documents], ['d7', 'd0', 'd1', 'd2', 'd3', 'd4', 'd5'])
             self.assertEqual([d['document_id'] for d in failures], ['d6'])
             self.assertEqual(documents[1]['relation'], 'related')
 
@@ -454,26 +456,41 @@ class GuidelineAndGetterTests(unittest.TestCase):
                 requested.append(disease)
                 return library.read('primary')
             c.knowledge.guidelines.read = read
-            c.client.chat_handler = lambda payload: {'P': {}} if payload.get('phase') == 'direct' else education_response(payload)
-            c.sessions['Education'].prepare_plan(s, c.client)
+            def respond(payload):
+                value = education_response(payload)
+                if payload.get('phase') == 'direct':
+                    row = value['P']['tests'][0]
+                    row.update(basis='guideline', references=[dict(document_id='d7', quote='원문 인용입니다.')])
+                    return {'P': {'tests': [row]}}
+                return value
+            c.client.chat_handler = respond
+            with patch('workflow.education.parse_plan', wraps=parse_plan) as parser:
+                c.sessions['Education'].prepare_plan(s, c.client)
             self.assertEqual(requested, [c.knowledge.term_id(s.case.primary().name, 'Disease')])
             payloads = [p for p in c.client.requests if p['task'] == 'education']
             self.assertEqual(len(payloads), 2)
+            self.assertEqual(payloads[0]['documents'], payloads[1]['documents'])
+            self.assertIs(parser.call_args_list[0].args[1], parser.call_args_list[1].args[1])
+            self.assertEqual(payloads[1]['accepted'][0]['references'],
+                [dict(document_id='d7', quote='원문 인용입니다.')])
             for payload in payloads:
                 for doc in payload['documents']:
-                    self.assertTrue(set(doc) <= {'document_id', 'relation', 'evidence_use', 'scope', 'text'})
-                    self.assertEqual(doc['text'].encode(), (root / f"{doc['document_id'][1:]}.md").read_bytes())
+                    self.assertTrue(set(doc) <= {'document_id', 'relation', 'evidence_use', 'scope', 'excerpts'})
+                    raw = (root / f"{doc['document_id'][1:]}.md").read_bytes()
+                    self.assertTrue(all(span['text'].encode() in raw
+                        for excerpt in doc['excerpts'] for span in excerpt['spans']))
                     if doc['document_id'] == 'd0':
                         self.assertNotIn('scope', doc)
                     else:
                         self.assertEqual(doc['scope'], 'Adults in outpatient care')
-            contexts = {d['document_id']: [(0, d['text'])] for d in payloads[0]['documents']}
+            documents, _ = library.read('primary')
+            contexts = source_contexts(pack_passages(documents))
             quote = '원문 인용입니다.'
             ref = references([dict(document_id='d7', quote=quote)], contexts)[0]
             raw = (root / '7.md').read_bytes()
             self.assertEqual(raw[ref['start_byte']:ref['end_byte']], quote.encode())
             with self.assertRaises(ValueError):
-                references([dict(document_id='d5', quote=quote)], contexts)
+                references([dict(document_id='not-supplied', quote=quote)], contexts)
 
     def test_invalid_links_are_filtered_without_casting_attributes_to_presence(self):
         k = f.knowledge()

@@ -2,7 +2,7 @@ const stateObjects = {
   interview: ['InterviewState', '질문과 수집 진행', '현재 세션 대기열, 작은 완료 기록, 필요한 중단 사유'],
   turn: ['TurnContext', '현재 작업', '작업 중 요청과 응답, 처리 후 해제'],
   case: ['CaseState', '환자 사실과 평가', '통합 facts와 graph_binding, chief, 현재·고정 Assessment와 영어 계획'],
-  session: ['SessionContext', '세션과 예산', '현재 세션, 남은 턴, 모델 사용량, 종료 준비'],
+  session: ['SessionContext', '세션과 예산', '남은 턴, 모델 사용량, 예산 동기화 필요 여부와 종료 준비'],
   differential: ['DifferentialState', '추론 결과', '질환 후보, Pattern, 점수 기여, 선택된 후보'],
   questions: ['QuestionPlan', '질문 계획', '등록된 질문, 수집 상태, 선택 평가, 교육 계획'],
   interaction: ['InteractionState', '입출력과 전달', '입력, 선택 행동, 대화, 파서 결과, 제출 payload']
@@ -12,6 +12,7 @@ const roleNames = {
   InitiationSession: '초기 수집·평가', ChiefComplaintSession: '주호소 수집·평가',
   ContextFactorSession: 'CC 후보 고정·맥락 수집', DifferentialDiagnosisSession: '응답별 순위·다음 행동', EducationSession: '공동 계획·교육 일정',
   InputBinding: 'Python 입력 연결', GraphEvidence: '그래프 후보·근거', EnglishPlan: '영어 계획',
+  GuidelineLibrary: '매핑 원문 읽기', GuidelineEvidence: '원문 발췌·전송 패킷', ModelProjection: '고정 사실·진단 참조',
   InputInterpreter: '해석', ClinicalKnowledge: 'DB 조회', ClinicalReasoner: '추론',
   InterviewPlanner: '계획', Doctor: '행동', SubmissionWriter: '제출',
   Consultation: '조정', ModelClient: '이전 모델 실행기', RequestExecutor: '전송', QuestionTools: '질문 계약',
@@ -392,6 +393,7 @@ function landmarkPanel(group) {
     return root;
   }
   const titles = {input:'입력·부분 복구', evidence:'범위별 그래프 근거', assessment:'평가·다음 행동', budget:'필수 질문·예산',
+    sync:'모델 차단·예산 동기화', guidelines:'매핑 원문·발췌·인용 문맥', projection:'고정 사실·진단 공유 참조',
     plan:'영어·한국어 공동 계획', delivery:'한국어 검증·전달', submission:'SOAP·완료 수신'};
   root.append(el('h4', '이 턴의 추적 지점'), note('관측된 호출로 바로 이동합니다. 호출이 없는 지점은 이 턴의 수집 범위를 뜻하며, 임상 요구 충족 여부를 판정하지 않습니다.'));
   const grid = el('div', null, 'landmark-grid');
@@ -435,8 +437,10 @@ function executionPanel() {
   root.append(note('보존된 trace와 수신 기록만 검사합니다. 고정 응답 실행의 의미 해석·임상 정확도와 공식 채점은 검증하지 않습니다.'),pipelinePath(events));
   if(!inspection){root.append(el('p','이 저장 리포트에는 실행 검증 파일이 없습니다. 웹에서 리포트를 다시 열면 보존 로그로 생성합니다.','coverage-message'));return root;}
   root.append(kv([['실행 알고리즘',inspection.runtime?.algorithm||'당시 미수집'],['상태 구조',inspection.state_layout],
+    ['관측 계약',inspection.pipeline?.contract||'당시 미수집'],
     ['관측 검사',inspection.status],['Assessment 고정',inspection.frozen?`seq ${inspection.frozen.seq} · ${inspection.frozen.primary}`:'미관측']]));
   const titles={event_sequence:'이벤트 순서',trace_boundaries:'수집 시작·종료',recorded_values:'저장 값 참조의 완전성',call_boundaries:'객체 호출·반환과 부모 연결',collaborator_fields:'실행 객체의 허용된 소유 필드',definition_locations:'호출 정의 파일·행',node_boundaries:'실행 단계 시작·종료',execution_operations:'실제 순차 실행 작업',sdk_boundaries:'SDK 요청·응답',state_reconstruction:'작업 경계 상태 복원',graph_transitions:'실제 그래프 경로',frozen_patient_state:'고정 후 사실·평가 보존',assessment_revision:'고정 평가의 revision·chief 일치',submission_primary:'고정 1위와 제출 진단 일치',received_soap:'전송 SOAP와 수신 기록 일치',confirmed_completion:'로컬 완료 영수증과 종료 상태'};
+  Object.assign(titles,{observation_coverage:'선언한 관측 지점 연결',runtime_sources:'지식 코드·진입점 소스 해시',runtime_stability:'실행 중 소스 변경 여부'});
   for(const check of inspection.checks){
     const row=el('div',null,'inspection-check'),status=el('span',({pass:'확인',fail:'불일치',not_collected:'미수집'})[check.status]||check.status,`badge ${check.status==='pass'?'good':'warn'}`);
     const content=el('div');content.append(el('strong',titles[check.id]||check.id),jsonDetail('판정 근거',check.detail));row.append(status,content);root.append(row);
@@ -456,6 +460,8 @@ function executionPanel() {
     for(const edge of inspection.graph.edges){const count=inspection.transitions.find(item=>item.source===edge.source&&item.target===edge.target)?.count||0,row=el('tr'),boundary=edge.source==='__start__'||edge.target==='__end__';for(const value of [edge.source,edge.target,count||(boundary?'경계 · 호출 관측 제외':'미실행')])row.append(el('td',value));table.append(row);}graph.append(table);
   });
   root.append(graph,jsonDetail('노드별 revision · facts · Assessment · TurnContext 생애',inspection.checkpoints),
+    jsonDetail('모델 반환 · 로컬 차단 · 전후 예산',inspection.model_outcomes||{status:'당시 미수집'}),
+    jsonDetail('선언한 관측 지점 · 연결과 누락',inspection.coverage||{status:'당시 미수집'}),
     jsonDetail('실제 실행 소스 SHA256 · manifest',inspection.runtime||{status:'당시 미수집'}));
   const coverage=el('details',null,'detail-json');coverage.append(el('summary','관측 대상 메서드 · 실제 호출 수'));
   coverage.addEventListener('toggle',()=>{

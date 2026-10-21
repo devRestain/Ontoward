@@ -375,7 +375,7 @@
 
 - **상태:** 사용자 요청과 구현 계획 승인으로 선택 완료.
 - **진입점:** Test의 로컬 웹사이트에서 증례·모드·요청 상한을 정하고 버튼으로 테스트를 시작합니다. 기본은 C10·NOVA·200회이며 C01·C03과 scripted 모드도 제공합니다. 실행 중에는 상태·경과 시간을 확인하고 완료 후 같은 사이트에서 리포트를 탐색합니다.
-- **실행 경계:** 기존 CLI와 공유하는 단일 실행 잠금과 파일 기반 요청을 사용합니다. Python 표준 라이브러리 웹 서버는 프로젝트 컨테이너, Docker 실행은 호스트 셸에 둡니다. 웹 포트는 127.0.0.1:8765에만 연결하고 개발 키·Docker 소켓·증례 원본 마운트는 웹 컨테이너에 전달하지 않습니다. NOVA 키는 기존 시뮬레이터에만 전달하며 웹의 명시적인 실행 요청에 선택한 상한을 적용합니다.
+- **실행 경계:** 기존 CLI와 공유하는 단일 실행 잠금과 파일 기반 요청을 사용합니다. 2026-10-21 사용자 요청으로 C01·C03·C10 세 시나리오의 동시 시작을 추가합니다. 한 시작 요청이 모든 실행을 예약하고 호스트 셸이 각 실행의 독립 Compose 프로젝트·네트워크·시뮬레이터·에이전트를 병렬로 시작합니다. 모든 실행이 끝날 때까지 잠금을 유지하고 실패·종료·리포트는 각각 보존합니다. 추가 묶음의 대기열이나 자동 재개는 없습니다. Python 표준 라이브러리 웹 서버는 프로젝트 컨테이너, Docker 실행은 호스트 셸에 둡니다. 웹 포트는 127.0.0.1:8765에만 연결하고 개발 키·Docker 소켓·증례 원본 마운트는 웹 컨테이너에 전달하지 않습니다. NOVA 키는 시뮬레이터에만 전달하며 요청 상한은 시나리오별로 적용하고 세 실행의 전체 상한도 화면에 표시합니다.
 - **관측 경계:** submission 전체를 보존하고 Test의 메모리 래퍼로 원본 진입점·그래프 노드·SDK 요청을 관측합니다. 초기 상태와 복원 가능한 변경분, 세션·턴·요청 ID, 실제 전달 발화·모델 messages와 응답·질문·예산·해석 결과·후보와 진단 근거를 기록합니다. 선택·점수·재시도·SOAP·종료 로직을 바꾸거나 모델로 사후 이유를 생성하지 않습니다.
 - **화면과 보존:** 세션·턴 목록과 대화·Note 상태·상태 변화·진단 근거·모델 호출을 제공하고 원시 JSON과 전체 상태를 접어 둡니다. Note는 S·O·A·P의 15개 필드와 별도 diagnosis의 저장 기록·완료와 임상 값 상태·개념·출처를 보여주고, 생성된 SOAP payload·최종 수신본과 구분합니다. 미구조화 환자 보고는 기록된 구간만 표시합니다. 실행별 report.html과 원시 로그를 Tmp/test-evaluator에 보존하고 과거 실행은 수집한 정보만 표시합니다. 저장된 결과를 열 때 리포트만 갱신하며 테스트는 재실행하지 않습니다. 실패·시간 초과·중단과 부분 수집도 결과로 제공합니다.
 - **LangSmith 검토:** 설정과 기존 로그의 별도 사후 내보내기 연결안을 안내합니다. 외부 전송·계정 연결·내보내기 기능은 이번 Note 화면 구현에 포함하지 않으며, 에이전트 격리와 웹의 키 비공개를 유지합니다.
@@ -702,6 +702,16 @@
 - **활성화와 런타임:** 모든 installer가 같은 target lock을 공유하고 부모 hash 재검증 뒤 manifest를 원자 교체합니다. augmentation은 보관 파일을 삭제하지 않습니다. DD의 현재 평가에 연결된 Context/clarification만 기존 eligibility와 budget으로 허용합니다. 입력·임상 prompt에는 주체·실제 약물 조건·과거 금단·성장 경과·계획 검사와 관측 결과의 구별만 보완합니다. applicability의 여러 Context를 약물/episode로 조인하는 보장은 구현하지 않습니다.
 - **검증 경계:** 실제 부모 보존, production 후보/질문 함수의 합성 검사, mock 생성, 실제 모델 생성과 상담 정확도를 분리합니다. C01/C03/C10 정보는 평가 fixture에만 두고 생성 입력이나 runtime Case ID 분기에 넣지 않습니다. 수행 수치·설치 여부는 세 운영 상태와 D58 provenance에서 확인합니다.
 - **실행 결과와 정리:** 승인된 API Luna medium 생성은 16회 상한 중 7회로 완료했고 child `cec62f4596bedd9b9488aa75e3d38f04`를 최신 부모 위에 로컬 활성화했습니다. 사용자 후속 요청에 따라 이번 실행의 불필요한 체크포인트 네 개·mock DB·중복 번들·임시 파일을 별도 allowlist로 삭제했습니다. 518개·210.27 MiB의 [삭제 명세](data/provenance/augmentation-d58-cleanup-2026-10-21.json), [최종 보존·usage·검증](data/provenance/augmentation-d58-2026-10-21.json), [수용 delta](data/provenance/augmentation-d58-delta-2026-10-21.json)를 남기고 활성 child·기존 부모·현재 소스·원자료·인증은 유지합니다. installer의 기본 보존 동작은 바꾸지 않으며 삭제한 원래 요청/응답과 run의 재개는 불가능합니다.
+
+<a id="D59"></a>
+## D59. 마감 제출용 Education 원문 발췌와 고정 입력 경계 (2026-10-21)
+
+- **결정과 보존:** 사용자가 고정 정책의 구현·좁은 회귀 확인을 명시했습니다. 첨부 ONTOWARD_Education_Deadline_Context_2026-10-21.md는 확인 자료로 읽었으며 실제 기준 HEAD는 `5e09affe00813e2a7da7a796d5c7ac34e4ec95f3`입니다. 알고리즘은 **d50.9**로 올리고 D57·D58 및 활성 `cec62f4596bedd9b9488aa75e3d38f04`의 manifest·assets는 유지합니다. Education에 한해 D53·D54의 다섯 전문·실패 비보충, 기존 byte 제한 금지와 D52 전역 context 종료를 개정합니다.
+- **원문과 후보:** frozen primary Disease의 기존 selections만 exact AND care_navigation 안정 분할로 읽습니다. 동일 경로는 한 번, 채택 원문은 최대 1048576 bytes, 실제 누적 읽기는 최대 16777216 bytes입니다. cap=min(1048576+1, 잔여 총량)에 도달한 파일은 EOF 불명으로 제외하고 완전히 읽은 원문만 전체 SHA-256·UTF-8을 검증합니다. 개별 실패 뒤 같은 매핑의 후속 후보를 볼 수 있으며 정상 계획을 실패로 만들지 않습니다.
+- **발췌와 패킷:** 고정 제목 어휘의 짧은 ATX leaf 전체와 상위 도입 본문·heading path를 2048-byte JSON 이하의 원자 묶음으로 보존합니다. direct 그룹부터 경고 우선·문서 순환 선택으로 documents JSON 8192 bytes 이하를 구성합니다. 표·HTML·fenced code·각주·원거리 조건 참조와 큰 묶음은 제외합니다. 원문 공백·줄바꿈·BOM·Unicode를 바꾸거나 전문·앞 N자 fallback을 추가하지 않습니다.
+- **고정 검증 문맥:** 실제 messages JSON은 system/user/repair를 모두 포함해 최대 32768 bytes입니다. 초기 초과 시 마지막 묶음을 통째로 빼고 고정 facts·진단·지시만으로 초과하면 생성하지 않습니다. 확정 packet의 supplied spans만 contexts로 고정하여 초기·최대 한 번의 plan repair에서 재사용합니다. 인용은 모든 출현의 절대 UTF-8 byte 범위를 set으로 모아 정확히 한 위치일 때 승인합니다. 출력 document_id/quote·PlanRow·PlanSentence·SourceReference는 유지하며 repair에는 quote만 투영하고 내부 offsets를 노출하지 않습니다. 과대 repair는 생략하고 검증된 영어 P를 남깁니다.
+- **호출과 최종화:** Brain은 education·education_doctor에만 pending sync, messages 초과, 잔여 입력 65536 tokens 미만을 request ID·usage·executor 전에 로컬 코드로 차단하며 finalizing에서도 동일합니다. 알려진 CONTEXT_LIMIT_EXCEEDED는 실제 요청을 유지하고 token 소비를 추정하지 않은 채 budget_sync_required만 설정합니다. 같은 prepare의 추가 Mouth 호출은 차단하고 기존 외부 snapshot·최종화·Writer·DIAGNOSE receipt를 사용합니다. 검증된 영어·모델 없이 가능한 한국어와 실제 SAY 전달 의미를 보존합니다. clinical/gateway 종료·다른 오류·Mouth 복구 상한·기존 시간·호출·출력 예산은 유지합니다.
+- **확인 경계:** JSON 크기는 len(json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8"))로 고정합니다. bytes→tokens 환산·tokenizer·동적 예약·새 DB/검색·모델 요약·augmentation·코퍼스 튜닝·유료 실험을 추가하지 않습니다. 좁은 기존 fixtures와 필요한 정규 패키징만 확인하며 실제 모델 품질·임상·공식 평가·최종 버전 선택은 수행하지 않습니다. 수행 결과는 세 상태와 `data/provenance/algorithm-d50-9-2026-10-21.json`이 소유합니다.
 
 ## 결정 기록 방법
 

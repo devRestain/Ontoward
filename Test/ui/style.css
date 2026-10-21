@@ -271,3 +271,7 @@ pre { font-family: var(--mono); font-size: 12px; line-height: 1.7; white-space: 
   .report-heading h1, .metrics { display: none; }
   .report-content { padding-top: 8px; }
 }
+.active-runs { display: grid; gap: 8px; margin: 12px 0; }
+.active-runs[hidden] { display: none; }
+.active-runs button { width: 100%; text-align: left; }
+.active-runs button[aria-pressed="true"] { border-color: var(--accent, #245dc6); font-weight: 700; }

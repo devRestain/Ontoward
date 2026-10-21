@@ -3,6 +3,7 @@ const activeStates = new Set(['starting', 'running']);
 const names = {starting:'시작 준비 중',running:'실행 중',completed:'실행 완료',failed:'실행 실패',timeout:'시간 초과',interrupted:'실행 중단',saved:'저장된 실행'};
 const caseLabel = run => run.fixture_kind === 'protocol_fixture' ? '합성 프로토콜' : run.case;
 let runs = [], selected = location.hash.slice(1), busy = true, online = false, posting = false, polling = false, loaded = '', pendingRun = '', historyVersion = '';
+const activeButtons = new Map();
 const toggle = $('toggle-controls');
 const compact = window.matchMedia('(max-width: 900px)');
 function setControls(open) {
@@ -18,11 +19,13 @@ toggle.addEventListener('click', () => setControls(toggle.getAttribute('aria-exp
 
 function modeHelp() {
   const nova = $('backend').value === 'nova';
-  $('maximum').disabled = busy || !nova;
+  const count = $('case').value === 'all' ? 3 : 1;
+  const maximum = Number($('maximum').value) || 200;
+  $('maximum').disabled = busy || posting || !nova;
   $('mode-help').textContent = nova
-    ? `루트 .env의 키로 개발 크레딧을 사용합니다. 환자·진찰·Gateway 호출을 합쳐 최대 ${$('maximum').value || 200}회 요청합니다.`
+    ? `루트 .env의 키로 개발 크레딧을 사용합니다. 환자·진찰·Gateway 호출을 합쳐 시나리오별 최대 ${maximum}회${count === 3 ? `, 세 시나리오 전체 최대 ${maximum * 3}회` : ''} 요청합니다.`
     : '외부 호출 없이 고정 응답으로 진행합니다. 대화의 의미 해석이나 임상 정확성을 검증하는 모드는 아닙니다.';
-  $('start').textContent = nova ? 'NOVA 테스트 실행' : '오프라인 테스트 실행';
+  $('start').textContent = (nova ? 'NOVA' : '오프라인') + (count === 3 ? ' 3개 시나리오 동시 실행' : ' 테스트 실행');
 }
 function controls() {
   $('start').disabled = busy || posting || !online;
@@ -37,6 +40,7 @@ function status(text, detail, warn=false) {
   $('run-status').append(badge, description);
 }
 function showResult() {
+  for (const [id, button] of activeButtons) button.setAttribute('aria-pressed', String(id === selected));
   const run = runs.find(row => row.id === selected);
   const url = run?.report_url;
   $('selected-run').textContent = run?.id || '';
@@ -65,8 +69,20 @@ async function poll() {
     runs = data.runs; online = data.worker_online;
     if (runs.some(row => row.id === pendingRun)) pendingRun='';
     busy = data.busy || !!pendingRun;
-    const active = runs.find(row => activeStates.has(row.state));
-    if (!selected || (!pendingRun && !runs.some(row => row.id === selected))) selected = active?.id || runs[0]?.id || '';
+    const active = runs.filter(row => activeStates.has(row.state));
+    if (!selected || (!pendingRun && !runs.some(row => row.id === selected))) selected = active[0]?.id || runs[0]?.id || '';
+    const activeIds = active.map(run => run.id);
+    for (const [id, button] of activeButtons) if (!activeIds.includes(id)) { button.remove(); activeButtons.delete(id); }
+    for (const run of active) {
+      if (!activeButtons.has(run.id)) {
+        const button = document.createElement('button'); button.type = 'button';
+        button.addEventListener('click', () => { selected=run.id; location.hash=selected; $('history').value=selected; showResult(); });
+        activeButtons.set(run.id, button); $('active-runs').append(button);
+      }
+      activeButtons.get(run.id).textContent = `${caseLabel(run)} · ${names[run.state]} · ${Math.floor(run.seconds/60)}분 ${run.seconds%60}초`;
+    }
+    // Keep the buttons stable while polling so keyboard focus stays on the chosen run.
+    $('active-runs').hidden = !active.length;
     const history = $('history'),version=JSON.stringify(runs.map(run=>[run.id,run.case,run.backend,run.created,run.state,run.fixture_kind]));
     if(version!==historyVersion){
       historyVersion=version;history.replaceChildren();
@@ -80,13 +96,13 @@ async function poll() {
     history.value=selected;
     if (!runs.length) $('launch-settings').open = true;
     if (!online) status('실행기 연결 끊김', '시작한 터미널을 확인하거나 sh Test/web.sh로 사이트를 시작하세요.', true);
-    else if (active) status(names[active.state], `${caseLabel(active)} · ${active.backend} · ${Math.floor(active.seconds/60)}분 ${active.seconds%60}초 경과`);
+    else if (active.length) status(`${active.length}개 시나리오 진행 중`, active.map(run => `${caseLabel(run)} · ${names[run.state]}`).join(' / '));
     else if (busy) status('다른 실행 진행 중', '기존 웹 또는 CLI 테스트가 끝나면 새로 실행할 수 있습니다.');
     else {
       const current = runs.find(row => row.id === selected);
-      status(current ? names[current.state] || current.state : '실행 준비됨', current ? `${caseLabel(current)} · ${current.backend}${current.result==='pass'?' · 로컬 검사 통과':current.result==='fail'?' · 로컬 검사 실패':''}` : '한 번에 한 증례를 실행합니다.', current && ['failed','timeout','interrupted'].includes(current.state));
+      status(current ? names[current.state] || current.state : '실행 준비됨', current ? `${caseLabel(current)} · ${current.backend}${current.result==='pass'?' · 로컬 검사 통과':current.result==='fail'?' · 로컬 검사 실패':''}` : '한 증례 또는 세 시나리오 동시 실행을 선택하세요.', current && ['failed','timeout','interrupted'].includes(current.state));
     }
-    $('progress').classList.toggle('running', !!active);
+    $('progress').classList.toggle('running', !!active.length);
     controls(); showResult();
   } catch (error) {
     online=false; controls(); status('연결 오류', error.message, true);
@@ -99,7 +115,7 @@ $('launch').addEventListener('submit', async event => {
     const response=await fetch('/api/runs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({case:$('case').value,backend:$('backend').value,maximum:Number($('maximum').value)})});
     const data=await response.json();
     if (!response.ok) throw new Error(data.message || data.error);
-    selected=data.id; pendingRun=data.id; location.hash=selected; loaded='';
+    selected=data.runs ? data.runs[0].id : data.id; pendingRun=selected; location.hash=selected; loaded='';
     await poll();
   } catch(error) { status('실행 요청 실패',error.message,true); }
   finally { posting=false; controls(); }
@@ -107,5 +123,6 @@ $('launch').addEventListener('submit', async event => {
 $('history').addEventListener('change',()=>{ selected=$('history').value; location.hash=selected; showResult(); });
 window.addEventListener('hashchange',()=>{selected=location.hash.slice(1);$('history').value=selected;showResult();});
 $('backend').addEventListener('change',modeHelp);
+$('case').addEventListener('change',modeHelp);
 $('maximum').addEventListener('input',modeHelp);
 poll(); setInterval(poll,2000);

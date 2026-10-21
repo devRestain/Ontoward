@@ -41,15 +41,19 @@ export ONTOWARD_TEST_UID="$(id -u)"
 export ONTOWARD_TEST_GID="$(id -g)"
 mkdir -p "$test_runs"
 test_lock="$test_runs/.run-lock"
+web_run=0
 if ! mkdir "$test_lock" 2>/dev/null; then
-    if [ "${TEST_WEB_RUN:-}" != "$TEST_RUN_ID" ] || [ "$(cat "$test_lock/owner" 2>/dev/null)" != "$TEST_RUN_ID" ]; then
+    if [ "${TEST_WEB_RUN:-}" != "$TEST_RUN_ID" ] || [ ! -d "$test_lock/members/$TEST_RUN_ID" ]; then
         echo 'Another test owns Tmp/test-evaluator/.run-lock. Finish that run before starting another.' >&2
         exit 2
     fi
+    web_run=1
+    test_slot="$test_lock/members/$TEST_RUN_ID"
 else
     printf '%s\n' "$TEST_RUN_ID" > "$test_lock/owner"
+    test_slot="$test_lock"
 fi
-if ! mkdir "$test_lock/started" 2>/dev/null; then
+if ! mkdir "$test_slot/started" 2>/dev/null; then
     echo 'This test has already been started.' >&2
     exit 2
 fi
@@ -58,9 +62,10 @@ output_owned=0
 agent_pid=
 reported=0
 agent_name="ontoward-test-agent-$TEST_RUN_ID"
+test_project="ontoward-test-$(printf '%s' "$TEST_RUN_ID" | tr '[:upper:]' '[:lower:]')"
 
 compose_base() {
-    docker compose -f "$test_root/Test/compose.yaml" "$@"
+    docker compose -p "$test_project" -f "$test_root/Test/compose.yaml" "$@"
 }
 set_status() {
     printf '%s\n' "$1" > "$TEST_OUTPUT/status.tmp"
@@ -72,7 +77,7 @@ cleanup_test() {
     if [ -n "$agent_pid" ]; then
         kill -TERM "$agent_pid" 2>/dev/null || true
         agent_owner=$(docker inspect --format '{{index .Config.Labels "com.docker.compose.project"}}|{{index .Config.Labels "com.docker.compose.service"}}|{{index .Config.Labels "io.ontoward.test-run"}}' "$agent_name" 2>/dev/null || true)
-        if [ "$agent_owner" = "ontoward|test-agent|$TEST_RUN_ID" ]; then
+        if [ "$agent_owner" = "$test_project|test-agent|$TEST_RUN_ID" ]; then
             docker stop -t 3 "$agent_name" >/dev/null 2>&1 || true
         fi
         wait "$agent_pid" 2>/dev/null || true
@@ -80,10 +85,14 @@ cleanup_test() {
     if [ "$simulator_owned" = 1 ]; then
         simulator_id=$(compose_base ps -a -q test-simulator 2>/dev/null || true)
         simulator_owner=$(docker inspect --format '{{index .Config.Labels "com.docker.compose.project"}}|{{index .Config.Labels "com.docker.compose.service"}}|{{index .Config.Labels "io.ontoward.test-run"}}' "$simulator_id" 2>/dev/null || true)
-        if [ "$simulator_owner" = "ontoward|test-simulator|$TEST_RUN_ID" ]; then
+        if [ "$simulator_owner" = "$test_project|test-simulator|$TEST_RUN_ID" ]; then
             docker stop -t 3 "$simulator_id" >/dev/null 2>&1 || true
             docker rm "$simulator_id" >/dev/null 2>&1 || true
         fi
+    fi
+    if [ "$simulator_owned" = 1 ]; then
+        # This Compose project belongs only to this run, including its egress network.
+        compose_test down >/dev/null 2>&1 || true
     fi
     if [ "$output_owned" = 1 ]; then
         case "$test_exit" in
@@ -100,7 +109,7 @@ cleanup_test() {
         set_status "$final_status"
         echo "Evidence: $TEST_OUTPUT"
     fi
-    if [ "$(cat "$test_lock/owner" 2>/dev/null)" = "$TEST_RUN_ID" ]; then
+    if [ "$web_run" = 0 ] && [ "$(cat "$test_lock/owner" 2>/dev/null)" = "$TEST_RUN_ID" ]; then
         unlink "$test_lock/owner"
         rmdir "$test_lock/started" "$test_lock"
     fi
@@ -123,12 +132,12 @@ set_status starting
 compose_test() {
     if [ "$test_mode" = nova ]; then
         if [ -f "$test_root/.env" ]; then
-            docker compose --env-file "$test_root/.env" -f "$test_root/Test/compose.yaml" -f "$test_root/Test/compose.nova.yaml" "$@"
+            docker compose -p "$test_project" --env-file "$test_root/.env" -f "$test_root/Test/compose.yaml" -f "$test_root/Test/compose.nova.yaml" "$@"
         else
-            docker compose -f "$test_root/Test/compose.yaml" -f "$test_root/Test/compose.nova.yaml" "$@"
+            docker compose -p "$test_project" -f "$test_root/Test/compose.yaml" -f "$test_root/Test/compose.nova.yaml" "$@"
         fi
     else
-        docker compose -f "$test_root/Test/compose.yaml" "$@"
+        compose_base "$@"
     fi
 }
 

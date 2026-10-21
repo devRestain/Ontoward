@@ -4,6 +4,8 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 
+from .guideline_passages import GUIDELINE_MAX_DOCUMENT_BYTES, GUIDELINE_TOTAL_READ_BYTES, direct_source
+
 
 def relative_document(value):
     if not isinstance(value, str):
@@ -43,21 +45,27 @@ class GuidelineLibrary:
     def read(self, disease_id):
         root = Path(os.environ.get("NOVA_GUIDELINES_DIR", "/opt/nova/guidelines")).resolve()
         documents, failures = [], []
-        seen = set()
+        seen, bytes_read = set(), 0
         selections = self.entries.get(disease_id, [])
-        def direct(source):
-            return source['relation'] == 'exact' and source['evidence_use'] == 'care_navigation'
-        selected = ([source for source in selections if direct(source)]
-                    + [source for source in selections if not direct(source)])[:5]
+        selected = ([source for source in selections if direct_source(source)]
+                    + [source for source in selections if not direct_source(source)])
         for source in selected:
-            if source["path"] in seen:
-                continue
-            seen.add(source["path"])
+            remaining = GUIDELINE_TOTAL_READ_BYTES - bytes_read
+            if remaining <= 0:
+                break
             try:
                 path = (root / relative_document(source["path"])).resolve()
                 if not path.is_relative_to(root):
                     raise ValueError("path_outside_corpus")
-                raw = path.read_bytes()
+                if path in seen:
+                    continue
+                seen.add(path)
+                read_cap = min(GUIDELINE_MAX_DOCUMENT_BYTES + 1, remaining)
+                with path.open('rb') as stream:
+                    raw = stream.read(read_cap)
+                bytes_read += len(raw)
+                if len(raw) == read_cap or len(raw) > GUIDELINE_MAX_DOCUMENT_BYTES:
+                    raise ValueError("document_read_limit")
                 if hashlib.sha256(raw).hexdigest() != source["sha256"]:
                     raise ValueError("hash_mismatch")
                 documents.append({**source, "text": raw.decode("utf-8")})
