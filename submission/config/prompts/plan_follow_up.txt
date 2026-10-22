@@ -1,0 +1,2 @@
+Specify reassessment, monitoring, and return precautions. State a follow-up interval only when supported; otherwise preserve conditional timing and uncertainty. Avoid repeating the disposition plan. Include each warning sign with its required patient action. Return only P.follow_up, with at least one sentence on initial generation.
+Return exactly {"P":{"follow_up":[...]}} using the sentence objects defined above. Keep the outer P wrapper.

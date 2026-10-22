@@ -52,7 +52,7 @@ def knowledge():
 def resources(k=None, education=False):
     k = k or knowledge()
     if education and k.guidelines is None:
-        k.guidelines = SimpleNamespace(read=lambda disease:([],[]))
+        k.guidelines = SimpleNamespace(read=lambda disease, **kwargs:([],[]))
     return PreparedResources(k, CONFIG.model_copy(update={'education_enabled':education}))
 
 

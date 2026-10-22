@@ -20,7 +20,7 @@ class DoctorBrain:
         self.executor, self.budget = executor, budget
         self.new_request_id = new_request_id
 
-    def complete(self, state, client, *, role, messages, max_tokens=None):
+    def complete(self, state, client, *, role, messages, max_tokens=None, reserve_calls=0):
         session = state.session
         if role not in {'gateway', 'clinical', 'education', 'education_doctor'}:
             raise ValueError('Unsupported designated-model role')
@@ -31,11 +31,11 @@ class DoctorBrain:
                 return ModelResult(error='LOCAL_EDUCATION_BUDGET_SYNC_REQUIRED')
             if input_metrics['messages_json_bytes'] > LIMITS.education_max_messages_bytes:
                 return ModelResult(error='LOCAL_EDUCATION_MESSAGE_LIMIT')
-        allowance = self.budget.model_allowance(session, role, maximum=max_tokens, state=state)
+        allowance = self.budget.model_allowance(session, role, maximum=max_tokens, state=state, reserve_calls=reserve_calls)
         if not allowance:
             return ModelResult(error='MODEL_UNAVAILABLE')
         request = {'messages':messages, 'model':LIMITS.model, 'request_id':self.new_request_id(),
-                   'max_tokens':allowance, 'reasoning_effort':'high' if role in {'education','clinical'} else LIMITS.gateway_reasoning}
+                   'max_tokens':allowance, 'reasoning_effort':'high' if role == 'clinical' else LIMITS.gateway_reasoning}
         attempts, response, accounted = [], None, False
         usage.record_model_request(state)
         try:

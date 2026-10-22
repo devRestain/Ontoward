@@ -9,7 +9,7 @@ from workflow.doctor_brain import ModelResult
 from workflow.input_types import ContextInput, ContextStatement, PatientContextFact
 from workflow.rules.collection import answered, slot_resolved
 from workflow.rules.chief import force_chief
-from workflow.rules.decision import bound_graph_input
+from workflow.rules.decision import close_graph_input
 from workflow.rules.submission import validate_wire_payload
 from workflow.state.models import Answer, CaseFact, DifferentialEntry, Assessment, PlanSentence, Question, TurnContext
 from inspection import outcome_metrics
@@ -287,7 +287,7 @@ class ChiefAndContextTests(unittest.TestCase):
 
 
 class PacketLimitTests(unittest.TestCase):
-    def test_large_graph_packet_has_fifty_complete_records_and_closed_references(self):
+    def test_large_graph_packet_keeps_all_complete_records_and_closed_references(self):
         payload = dict(facts={'f1': dict(scope='s1')}, scopes={f's{i}': dict(subject='patient') for i in range(1, 107)},
             conditions={f'c{i}': [dict(status='present')] for i in range(111)},
             relations={f'r{i}': dict(full_pattern=[dict(expected='complete criterion')], applicability=f'c{i}') for i in range(111)},
@@ -295,9 +295,12 @@ class PacketLimitTests(unittest.TestCase):
             candidates=[dict(ref='d1', supports=[f'e{i}' for i in range(113)], against=[], unresolved=[])],
             questions=[dict(ref=f'q{i}', scope=f's{1 + i % 106}', expected_by_disease={'d1': [dict(relation=f'r{i % 111}', feature=0)]}) for i in range(99)],
             input_limits={})
-        bound_graph_input(payload)
-        for key in ('relations', 'evidence', 'questions', 'scopes', 'conditions'):
-            self.assertLessEqual(len(payload[key]), 50, key)
+        before = copy.deepcopy(payload)
+        close_graph_input(payload)
+        for key in ('relations', 'evidence', 'questions', 'scopes', 'conditions', 'candidates'):
+            self.assertEqual(payload[key], before[key], key)
+        self.assertEqual([len(payload[key]) for key in ('relations', 'evidence', 'questions', 'scopes', 'conditions')],
+                         [111, 113, 99, 106, 111])
         self.assertEqual(len(payload['facts']), 1)
         for row in payload['evidence'].values():
             self.assertIn(row['relation'], payload['relations'])
@@ -339,7 +342,7 @@ class PacketLimitTests(unittest.TestCase):
             scopes={f's{i}': dict(subject='patient') for i in range(65)},
             conditions={}, relations={}, evidence={}, questions=[], input_limits={},
             candidates=[dict(ref=f'd{i}', supports=[], against=[], unresolved=[]) for i in range(65)])
-        bound_graph_input(payload)
+        close_graph_input(payload)
         self.assertEqual(len(payload['facts']), 65)
         self.assertEqual(len(payload['scopes']), 65)
         self.assertEqual(len(payload['candidates']), 65)

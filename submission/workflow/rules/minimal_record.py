@@ -4,6 +4,7 @@ from nova_sdk import empty_record
 
 from .collection import CATEGORY_FIELDS
 from .limits import LIMITS
+from .record import dd_ros_facts
 from .submission import validate_wire_payload
 
 
@@ -34,6 +35,7 @@ def minimal_payload(case, interview, diagnosis, *, compact=False):
     suppressed = {ident for fact in case.facts.values() if fact.status in {'present', 'absent'}
                   for ident in fact.resolves if ident in case.facts and case.facts[ident].status in {'unknown', 'uncertain'}}
     facts = list(case.facts.values())
+    ros = dd_ros_facts(case, interview)
     for fact in facts[:10 if compact else None]:
         if fact.id in suppressed:
             continue
@@ -54,7 +56,7 @@ def minimal_payload(case, interview, diagnosis, *, compact=False):
             context += '; episode=' + fact.episode_id
         field = ('O.exam' if (fact.acquisition == 'EXAM' or fact.acquisition == 'initial' and fact.source_ref == 'initial:vital_signs')
                  and fact.subject == 'patient' else 'S.fh' if fact.subject == 'family'
-                 else CATEGORY_FIELDS.get(fact.category, 'S.hpi'))
+                 else 'S.ros' if fact.id in ros else CATEGORY_FIELDS.get(fact.category, 'S.hpi'))
         append(field, content + ' (' + context + ')')
     for answer in ([] if compact else interview.answers):
         raw = answer.response

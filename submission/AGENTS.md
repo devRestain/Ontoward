@@ -2,7 +2,8 @@
 
 ## Ownership and State
 
-- Apply D63 candidate and SOAP count-limit withdrawal, scoped history completion, exact-unknown assessment recovery, safety-first Education allocation, and cumulative output enforcement. Preserve D61 bounded recovery and independent graph record limits, D59 guards, D55 strict loading, D54 scopes, D57-D58, D53 direct Initiation, and D49-D51 ownership.
+- Apply D67 scoped DD action reselection strict missing-P normalization repair-aware Education packets section delivery allocations and conservative same-episode repeat suppression. Preserve distinct clinical targets episodes family members and time scopes.
+- Apply D66 receipt-backed DD minimums ROS routing four medium Education sections and uncapped graph records. Preserve D63 finalization and token enforcement D61 bounded recovery D59 guards D55 strict loading D54 scopes D57-D58 D53 direct Initiation and D49-D51 ownership.
 - Keep run.py as the unchanged SDK callback entrypoint and Consultation as the sole five-session coordinator.
 - Assign input interpretation and acceptance to DoctorEar clinical ranking and questions to the five session objects English plans and Education delivery scheduling to EducationSession all model execution to one injected DoctorBrain and patient expression and SAY/EXAM execution to DoctorMouth.
 - Pass only a current successful unfrozen CC Assessment into ContextFactor through Consultation without passing another session object.
@@ -56,8 +57,8 @@
 - Expand target-specific one-level collect_via before CC counts and DD options; prune resolved atomic questions and preserve composite graph criteria and separate time-window questions.
 - Resolve Initiation slots only from the current chief's complete reported scope and distinguish elapsed onset from attack duration and measurement windows.
 - Reject answered unknown blocked incorrectly scoped unprepared or unaffordable optional questions without hypothetical utility gates.
-- Use high effort for clinical decisions and English planning and medium effort for Ear and Mouth on the existing designated model.
-- Generate English P with corresponding Korean utterances in one high-effort request. Validate both independently, preserve accepted English and source quotes, and repair only invalid Korean groups with the existing medium-effort response and text repair limits.
+- Use high effort for clinical decisions and medium effort for Ear English planning and Mouth on the existing designated model.
+- Generate tests with treatment disposition follow_up and education through four distinct medium prompts. Complete initial sections before one repair per failed section and preserve accepted English citations and Korean groups independently.
 - Query only frozen primary Disease mappings in stable exact-and-care_navigation groups; bound reads to 1048576 bytes per accepted file and 16777216 total bytes, count failed reads, and visit later mapped candidates after failures.
 - Pack complete supported ATX leaves with ancestor introductions in warning-first document round robin; cap excerpt JSON at 2048 bytes and documents JSON at 8192 bytes without truncation or full-text fallback.
 - Project document_id relation evidence_use meaningful scope and excerpts with heading_path and literal spans; freeze the packet before contexts and repair, reject ambiguous quotes, and keep path hash and absolute offsets internal.
@@ -71,7 +72,7 @@
 - Preserve official server turns separate from model tokens calls internal nodes and DIAGNOSE while protecting response final clinical decision Education and submission resources.
 - Reuse confirmed response budgets without routine GETs; synchronize uncertain actions and server model-limit failures and retain pre-submission refresh. Keep clinical question computation in sessions and pass integer requirements into BudgetPolicy with one shared cost table and the existing reservation floor.
 - Serialize model data as one JSON object and share full relation definitions with shallow evidence and question references. Aggregate questions by complete scope before executability checks and reuse only operation-local graph work.
-- Apply D64 request-local clinical allowlists after bound_graph_input and before clinical_messages serialization. Remove revision empty required rank resources and empty questions repeated question scope fields and explicitly documented inactive defaults without mutating Candidate Assessment facts options or GraphRefs.
+- Apply D64 request-local clinical allowlists after close_graph_input and before clinical_messages serialization. Preserve complete logical records without mutating Candidate Assessment facts options or GraphRefs.
 - Share exact ordered full Patterns in patterns and identical entire disease expectation arrays in expected_groups using canonical JSON without unit conversion or list sorting. Preserve feature zero explicit expectations collection_only attribute expected_status all current facts retained question scopes and incomplete meaning; validate reference closure and reject unknown clinical schema fields.
 - Keep numeric Mapping categorical values in original validation contracts and omit them only from measurement statement wire contracts. Measure final DoctorBrain input bytes and nested counts with a pure request-local helper observed by Test; retain only returned scalars and never infer tokens or add a general byte guard.
 - Share identical clinical relation definitions only when target effect ordered full Pattern rule scope and applicability match; preserve every disease candidate scoped match and graph reference, and return clinical/gateway CONTEXT_LIMIT_EXCEEDED without output escalation; pass the failed operation and continue toward final payload.
@@ -89,7 +90,7 @@
 
 - Consume failed questions with scoped passed_unasked or passed_unknown markers; preserve actual response payloads and IDs before clearing the turn and never create an Answer for an unsent question.
 - Keep CC route selection separate from patient facts. Use at most one additional gateway selection over eight registered Symptoms after bounded clarification, then a deterministic registered route without invented findings.
-- Limit graph-derived relation evidence question and condition tables to fifty complete records; close references and preserve every patient fact and its scope without capping candidates or Assessment entries. Write every accepted alternative after the primary to SOAP and use explicit byte-limit failure and existing minimal recovery for oversized notes.
+- Retain every eligible question evidence relation condition fact and required scope without count truncation. Preserve all candidates and Assessment entries and write accepted alternatives within the existing note byte limit and explicit minimal recovery.
 - Exclude demographics and other family members from patient HISTORY completion; resolve family_history only from actual family history or a delivered whole-domain family history answer, including unknown.
 - Retain an unfrozen disease assessment after failed reassessment only for one verified exact unknown SAY response with unchanged clinical revision and chief; preserve original evidence response basis and limitations and mark the missing reassessment explicitly.
 - Schedule diagnosis announcement before plan delivery and allocate complete safety groups before routine groups while preserving length validation capacity and actual receipt accounting.
@@ -100,10 +101,14 @@
 ## Assets and Acceptance
 
 - Preserve the unchanged SDK and entrypoint, pinned Pydantic and RDFLib requirements, Python-selected task routes, and historical custody; load only the v5-enum-1 relative-path/hash-pinned six-file contract without old-format conversion.
-- Pin the algorithm as d50.12 in settings and keep all public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed while the real manifest is absent; keep all synthetic bundles beneath Tmp/. Permit empty guideline selections to use explicit model-knowledge Education.
+- Pin the algorithm as d50.14 in settings and keep public runtime settings inside submission. Fail prepare and production packaging with knowledge_bundle_not_installed when the real manifest is absent; keep synthetic bundles beneath Tmp/ and permit explicit model-knowledge Education when sources are unavailable.
 - Reject invalid hasAttribute ranges and canHaveValue domains or ranges during load; retain typed getters and block failed attribute lookup from becoming a presence question. Keep D55 strict loading and preserve its original parent directory byte-for-byte until explicit post-verification disposal.
 - Load the D56 text-normalized descendant of the D55 bundle. Keep ExamMethod identities and question selection unchanged and preserve required actions and positioning in normalized Korean EXAM request text.
 - Load the D57 collection-metadata descendant only after strict loader, coverage, entrypoint, and scoped input verification; preserve its D56 parent and all graph bytes.
 - Keep maintained behavior tests in Dev/tests/workflow observation and comparison in Test and disposable evidence in Tmp.
 - Verify source and independent read-only archive consultations in project containers with network disabled and original SDK HTTP on the internal project network.
 - Record runtime and artifact evidence separately from actual model quality clinical accuracy real NOVA official evaluation commits and deployment.
+
+- Use CC 5/10 and DD 15/20 with at least ten confirmed SAY and five EXAM DD receipts when registered questions exist. Exhaust shorter lists and record shortages without inventing questions or counting unsent rejected or replayed actions.
+- Preserve DD SAY symptom provenance in S.ros before chief HPI grouping in normal and independent minimal Writer while retaining objective family and history classifications.
+- Share at most three verified mapped documents and fixed citation contexts across four Education sections with the existing source guards seven protected turns and ten delivery actions.

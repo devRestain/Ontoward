@@ -91,7 +91,7 @@ def duplicate_payload(count=50, features=16, diseases=62):
             's_4': dict(subject='patient', time='unspecified', observation='o_3', episode='episode_3')},
         conditions={'condition_1': [dict(target='Context', status='absent', subject='family', member='father', time='past')]},
         relations={}, candidates=[], evidence={}, questions=[], prior_order=['d_1'], required=[],
-        resources=dict(turns=12, calls=80), input_limits=dict(graph_items=50))
+        resources=dict(turns=12, calls=80), input_limits={})
     for index in range(1, count + 1):
         payload['relations'][f'r_{index}'] = dict(target='Synthetic target',
             effect='support' if index % 2 else 'against', full_pattern=deepcopy(feature_rows),

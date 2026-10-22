@@ -17,7 +17,8 @@
 - Expose only start_information before actual SAY and EXAM responses.
 - Give patient_script only to the patient role and examination rows only to examiner roles.
 - Exclude model_record files from all runtime inputs and prompts.
-- Keep NOVA_DEV_KEY in the NOVA simulator environment and use only session-free development chat for its model calls.
+- Keep NOVA_DEV_KEY in the NOVA simulator environment and use only session-free development chat for NOVA model calls.
+- Permit an explicitly selected openai_api Test backend using OPENAI_API_KEY only in the simulator and the fixed OpenAI Responses endpoint. Keep the default gpt-6-luna and explicit TEST_OPENAI_MODEL override separate from submission settings; never fall back between providers or start paid calls during offline verification.
 - Keep the agent on the internal case network with submission/ its own output and the read-only organizer guideline corpus mounted.
 - Expose the local guideline corpus at /opt/nova/guidelines through NOVA_GUIDELINES_DIR without adding originals to the submission ZIP.
 - Give the web container only run outputs; exclude the Docker socket development key original case mounts and submission mount.
@@ -39,7 +40,7 @@
 - Observe input binding graph candidates frozen fact projections mapped guideline reads passage packets citation contexts and English-plan functions at their actual call sites; record definition paths and distinguish functions from methods.
 - Store large serialized call values once by content hash in trace value events; resolve recorded references in the viewer without implying Python object identity or losing argument mutation paths.
 - Pin entrypoint SDK workflow knowledge Python prompt manifest collector and Test boundary hashes at Consultation.run; record format 7 and compare tracked sources at exit while preserving historical graph and format 5/6 traces.
-- Keep the D59 observation contract coverage inventory landmarks and collaborator field allowlists in pipeline.py; capture session-owned values only at actual call boundaries and exclude arbitrary service dictionaries and credentials.
+- Keep the D66 observation contract coverage inventory landmarks and collaborator field allowlists in pipeline.py; capture session-owned values at actual boundaries and exclude arbitrary service dictionaries and credentials.
 - Report model results request IDs local guards budget synchronization Education delivery outcomes missing observer bindings and source drift from recorded events without inferring transmissions or field reads.
 - Observe D64 compact_clinical_payload and DoctorBrain message_metrics at their actual call sites. Expose final role/task/phase system/user UTF-8 bytes whole messages JSON bytes block sizes nested counts recorded response prompt usage and evidenced error origin in model_outcomes. Keep metrics out of model input and resident state, distinguish scripted usage from actual tokens, and retain not_collected semantics for older traces.
 - Record callable definition files and lines and the first EvidenceIndex for each case revision and chief within an operation; count repeated inner lookups without reconstructing unrecorded eligibility or field reads.
@@ -52,6 +53,8 @@
 - Show D47 unified facts graph bindings final diagnosis plan current submission work and current or frozen Assessment; read older split facts and notes as historical formats; keep old fifteen-case-field traces readable and distinguish saved state from received SOAP without rerunning clinical logic.
 - Refresh saved report HTML from preserved logs when opened; keep LangSmith setup guidance distinct from an implemented exporter or authorized external upload.
 - Use the separate compose.nova.yaml overlay for explicitly scoped NOVA execution.
+- Use compose.openai.yaml only for explicitly selected OpenAI execution. Preserve requested messages effort output caps actual provider responses and reasoning-inclusive usage; distinguish rate quota context authentication and unknown transport errors without automatic adapter retries.
+- Check executable Test source hashes against the image before CLI or web launch; retain the start comparison and simulator source manifest with policy version and actual provider/model in new run evidence. Preserve historical runs and missing-version semantics.
 - Preserve each run in a fresh root Tmp/test-evaluator directory and disable automatic resumption.
 - Enforce cumulative input 500000 and D63 cumulative output 100000 with reported request-input 100000 and output 8000 per call. Clip output allowance to actual remaining output and report the optional remaining value and official local limits. Preserve actual reservations usage request ceilings deadlines original saved runs and D61 request-local recovery.
 - Preserve request identity, completed responses, refused turns, failed requests, and final submission receipts.
@@ -85,3 +88,5 @@
 - Read only the new effect, target_scope, Pattern/applicability, attribute_roles, and five asset pins in current graph inspection; do not restore score or source-required metadata.
 
 - Apply D61 request-local adapter failures without clearing request caches reservations conflicts or pending outcomes. Show protocol completion Education preparation diagnosis announcements expected plan utterances facts preserved payload transmission and actual receipt separately; mark missing legacy fields not_collected.
+
+- Report D66 confirmed DD SAY and EXAM counts shortages four medium planning sections and P coverage from actual records; preserve legacy missing-data semantics and unscored protocol evidence.

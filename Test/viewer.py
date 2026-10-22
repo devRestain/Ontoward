@@ -53,6 +53,7 @@ def collect(root):
         run_id = root.name
     data = {'run_id': meta.get('id') or run_id, 'result': read('result.json', {}), 'process': read('agent/process.json', {}),
             'summary': read('simulator/summary.json', {}), 'run': meta,
+            'test_version': read('test-version.json', {}),
             'transcript': read('simulator/transcript.json', {}), 'requests': read('simulator/requests.json', {}),
             'record': read('simulator/record.json', {}), 'models': lines('simulator/model-calls.jsonl'),
             'trace': {'status': 'complete' if complete else 'incomplete' if events else 'not_collected', 'events': events},

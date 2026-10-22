@@ -70,3 +70,5 @@ class QuestionLifecycle:
         if operation:
             state.interview.collection[operation] = reason
         state.turn = None
+        if question and state.interview.current == 'DifferentialDiagnosis':
+            state.interview.status = 'needs_preparation'

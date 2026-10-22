@@ -115,7 +115,7 @@ class SessionTaskTests(unittest.TestCase):
         self.assertTrue(all(q.target == 'Test history' for q in state.interview.queue))
         self.assertFalse(c.client.requests)
 
-    def test_focused_ros_moves_to_dd_and_keeps_its_limit(self):
+    def test_focused_ros_moves_to_dd_without_the_withdrawn_six_question_cap(self):
         k = f.knowledge()
         k._graph.add((f.OW.SyntheticSystem, f.RDF.type, f.OW.BodySystem))
         for target in (f.OW.Complaint, f.OW.Other):
@@ -129,7 +129,7 @@ class SessionTaskTests(unittest.TestCase):
         for index in range(6):
             state.interview.answers.append(Answer(question_id=str(index), source_ref=str(index),
                 scope='DifferentialDiagnosis', purpose='ros', outcome='unknown'))
-        self.assertFalse(c.tools._allowed_now(state, spec))
+        self.assertTrue(c.tools._allowed_now(state, spec))
 
     def test_action_request_omits_full_graph_and_schema(self):
         c, state = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
@@ -181,7 +181,7 @@ class SessionTaskTests(unittest.TestCase):
         c, state = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
         c.differential.decide(state, c.client)
         state.interview.queue.clear()
-        state.session.usage['DifferentialDiagnosis'].actions = 10
+        state.session.usage['DifferentialDiagnosis'].actions = 20
         state.interview.answers.append(Answer(question_id='cap', source_ref='last-at-cap',
             scope='DifferentialDiagnosis', purpose='feature', outcome='unknown'))
         calls = len(c.client.requests)

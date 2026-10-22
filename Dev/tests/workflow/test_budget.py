@@ -9,7 +9,7 @@ from workflow.state.models import Question
 
 class OfficialBudgetTests(unittest.TestCase):
     def test_input_repairs_cannot_spend_final_judgment_and_enabled_delivery_reserves(self):
-        for enabled,protected in ((False,2),(True,4)):
+        for enabled,protected in ((False,2),(True,7)):
             c=f.consultation(prepared=f.resources(education=enabled));s=f.chief(f.state('DifferentialDiagnosis'))
             s.session.doctor_calls=s.session.call_limit-protected
             c.client.chat=Mock(return_value=f.FakeSDK.completion('{}'))
@@ -18,7 +18,8 @@ class OfficialBudgetTests(unittest.TestCase):
             for _ in range(2):
                 self.assertIsNone(c.brain.complete(s,c.client,role='clinical',messages=[]).error)
             if enabled:
-                self.assertIsNone(c.brain.complete(s,c.client,role='education',messages=[]).error)
+                for index in range(4):
+                    self.assertIsNone(c.brain.complete(s,c.client,role='education',messages=[], reserve_calls=3-index).error)
                 self.assertIsNone(c.mouth.model.complete(s,c.client,role='education_doctor',messages=[]).error)
             self.assertEqual(c.budget.calls_left(s.session),0)
 

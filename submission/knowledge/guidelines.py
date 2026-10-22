@@ -42,7 +42,7 @@ class GuidelineLibrary:
                     raise ValueError("Invalid guideline source custody or scope")
         return cls(entries)
 
-    def read(self, disease_id):
+    def read(self, disease_id, *, max_documents=None):
         root = Path(os.environ.get("NOVA_GUIDELINES_DIR", "/opt/nova/guidelines")).resolve()
         documents, failures = [], []
         seen, bytes_read = set(), 0
@@ -50,6 +50,8 @@ class GuidelineLibrary:
         selected = ([source for source in selections if direct_source(source)]
                     + [source for source in selections if not direct_source(source)])
         for source in selected:
+            if max_documents is not None and len(documents) >= max_documents:
+                break
             remaining = GUIDELINE_TOTAL_READ_BYTES - bytes_read
             if remaining <= 0:
                 break

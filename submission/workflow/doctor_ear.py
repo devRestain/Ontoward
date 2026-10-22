@@ -222,7 +222,7 @@ class DoctorEar:
                 attribute = knowledge.term_id(question.attribute, 'FindingAttribute')
                 target = next((ident for kind in ('Symptom', 'ExamFinding', 'ContextFactor')
                     if (ident := knowledge.term_id(question.target, kind))), None)
-                binding['allowed_values'] = [knowledge.term(value) for value in knowledge.get_attribute_values(attribute)[:LIMITS.graph_input_items]]
+                binding['allowed_values'] = [knowledge.term(value) for value in knowledge.get_attribute_values(attribute)]
                 binding['allowed_units'] = knowledge.numeric_units(target, attribute)
         payload = {'task': 'input_context', 'phase': 'context', 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'known_patient_context': {n.context_key: n.value for n in state.case.current_facts() if n.context_key and n.subject == 'patient' and (n.status == 'present')}, 'input_segments': segments, **self._project_context(state, question)}
         if segments is None:

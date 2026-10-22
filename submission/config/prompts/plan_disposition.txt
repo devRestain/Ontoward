@@ -1,0 +1,2 @@
+Specify the appropriate care setting and urgency. State the conditions for referral, urgent assessment, or emergency escalation. Preserve the working diagnosis and unresolved findings. Keep future monitoring schedules in follow_up. Return only P.disposition, with at least one sentence on initial generation.
+Return exactly {"P":{"disposition":[...]}} using the sentence objects defined above. Keep the outer P wrapper.

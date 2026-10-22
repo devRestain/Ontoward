@@ -1,0 +1,2 @@
+Recommend investigations and explain their purpose. Recommend treatment with its diagnostic and indication prerequisites. Preserve medication precautions and distinguish proposed care from completed care. Explain when a test or treatment is unnecessary. Return only P.tests and P.treatment, with at least one sentence in each field on initial generation.
+Return exactly {"P":{"tests":[...],"treatment":[...]}} using the sentence objects defined above. Keep the outer P wrapper.

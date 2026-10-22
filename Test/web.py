@@ -102,7 +102,7 @@ class Runs:
         if not isinstance(body, dict) or set(body) != {'case', 'backend', 'maximum'}:
             raise ValueError('Choose case, backend and maximum')
         case, backend, maximum = body['case'], body['backend'], body['maximum']
-        if case not in ('C01', 'C03', 'C10', 'all') or backend not in ('nova', 'scripted') or type(maximum) is not int or not 1 <= maximum <= 1000:
+        if case not in ('C01', 'C03', 'C10', 'all') or backend not in ('nova', 'scripted', 'openai_api') or type(maximum) is not int or not 1 <= maximum <= 1000:
             raise ValueError('Invalid case, backend or request ceiling')
         with self.guard:
             if not self.online():

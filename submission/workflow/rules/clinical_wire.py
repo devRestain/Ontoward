@@ -60,9 +60,9 @@ def compact_feature(feature):
 
 
 def compact_clinical_payload(payload):
-    """Project the already bounded logical payload, with exact ordered sharing."""
+    """Project the complete logical payload, with exact ordered sharing."""
     check_fields(payload, 'task stage revision chief chief_route facts scopes conditions relations prior_order '
-           'required resources candidates evidence questions input_limits validation_error', 'payload')
+           'required resources candidates evidence questions input_limits validation_error asked_questions', 'payload')
     task = payload['task']
     if task not in {'clinical_rank', 'clinical_decision', 'clinical_action'}:
         raise ValueError('unsupported_clinical_wire_task')
@@ -73,7 +73,7 @@ def compact_clinical_payload(payload):
     if payload.get('required'):
         wire['required'] = deepcopy(payload['required'])
     if task != 'clinical_rank':
-        wire['resources'] = fields(payload['resources'], 'turns calls', 'resources')
+        wire['resources'] = fields(payload['resources'], 'turns calls required_say required_exam finish_allowed', 'resources')
     # Detailed omission counts are bookkeeping. Preserve their clinical meaning.
     check_fields(payload['input_limits'], 'graph_items omitted_question_options omitted_evidence omitted_questions', 'limits')
     if any(value > 0 for key, value in payload['input_limits'].items() if key.startswith('omitted_')):
@@ -96,6 +96,10 @@ def compact_clinical_payload(payload):
     used_relations = {row['relation'] for row in wire['evidence'].values() if row.get('relation')}
     used_scopes = {row['scope'] for row in wire['facts'].values()}
     used_scopes.update(row['scope'] for row in wire['evidence'].values() if 'scope' in row)
+    if 'asked_questions' in payload:
+        wire['asked_questions'] = [fields(row, 'kind target attribute outcome scope', 'asked_question')
+                                  for row in payload['asked_questions']]
+        used_scopes.update(row['scope'] for row in wire['asked_questions'])
     questions = []
     for question in payload['questions']:
         row = fields(question, 'ref kind target attribute subject member time scope expected_by_disease', 'question')
@@ -185,7 +189,7 @@ def validate_clinical_references(wire):
             pattern = wire['patterns'].get(relation.get('pattern'), [])
             if type(row['feature']) is not int or not 0 <= row['feature'] < len(pattern):
                 raise ValueError('clinical_wire_invalid_feature_index')
-    for row in [*wire['facts'].values(), *wire['evidence'].values()]:
+    for row in [*wire['facts'].values(), *wire['evidence'].values(), *wire.get('asked_questions', [])]:
         check(row)
     question_refs = set()
     for question in wire.get('questions', []):

@@ -1,6 +1,7 @@
 from ..state import usage
 from ..rules.decision import ActionReply, accept_ranking, clinical_messages, prepare_decision, latest_response
-from ..rules.limits import LIMITS
+from ..rules.limits import DD_MINIMUMS, LIMITS, SESSION_INTERVIEW_LIMITS
+from ..rules.dd import action_counts, required_kinds
 from ..rules.normalization import strict_json
 from ..state.models import Assessment, DifferentialEntry, EvidenceRef, GraphRef
 
@@ -9,6 +10,7 @@ class DifferentialDiagnosisSession:
     def __init__(self, knowledge, config, tools, brain):
         self.knowledge, self.config, self.tools, self.brain = knowledge, config, tools, brain
         self.last_input = None
+        self.last_passed = ()
         self.error = None
 
     def input_key(self, state):
@@ -39,26 +41,59 @@ class DifferentialDiagnosisSession:
         if closing:
             return
         action = ActionReply.model_validate({'next_action': raw['next_action']}).next_action
+        needed = required_kinds(state, work.options)
         if action.kind == 'ask':
             spec = work.options.get(action.question_ref)
             if not spec or not self.tools._allowed_now(state, spec) or not self.tools.budget.can_start_action(state):
                 raise ValueError('question_not_executable')
+            if needed and spec['kind'] not in needed:
+                raise ValueError('dd_action_reserves_required_kind')
             if spec['purpose'] == 'clarification':
                 usage.record_clarification(state)
             self.tools._register(state, spec, 0, 1)
         else:
+            if needed and self.tools.budget.can_start_action(state):
+                raise ValueError('dd_collection_minimum_unmet')
             state.interview.collection['DifferentialDiagnosis:completion'] = 'finish_collection'
+
+    def required_actions(self, state):
+        counts = action_counts(state.interview)
+        return sum(max(0, minimum - counts[kind]) for kind, minimum in DD_MINIMUMS.items())
+
+    def record_shortfall(self, state):
+        counts = action_counts(state.interview)
+        if state.session.usage['DifferentialDiagnosis'].actions >= SESSION_INTERVIEW_LIMITS['DifferentialDiagnosis'][1]:
+            reason = 'dd_action_limit'
+        elif not self.tools.budget.action_capacity(state):
+            reason = state.session.reason or 'shared_action_limit'
+        elif not self.tools.budget.collection_available(state):
+            reason = self.error or 'collection_resources_unavailable'
+        else:
+            reason = self.error or 'registered_questions_exhausted'
+        for kind, minimum in DD_MINIMUMS.items():
+            key = 'DifferentialDiagnosis:' + kind + '_shortfall'
+            if counts[kind] < minimum:
+                state.interview.collection[key] = f'{minimum - counts[kind]}; received={counts[kind]}; reason={reason}'
+            else:
+                state.interview.collection.pop(key, None)
 
     def decide(self, state, client, *, closing=False):
         if state.session.termination or state.case.assessment and state.case.assessment.frozen:
             return
         key = self.input_key(state)
-        if self.last_input == key:
+        passed = tuple(sorted(k for k, v in state.interview.collection.items()
+                              if k.startswith(('SAY|', 'EXAM|')) and v.startswith('passed_')))
+        if self.last_input == key and self.last_passed == passed:
             return
+        assessment = state.case.assessment
+        action_only = (not closing and self.last_input == key and assessment is not None
+            and (assessment.based_on_case_revision, assessment.based_on_chief_fact_id,
+                 assessment.based_on_response) == key)
         self.last_input = key
-        work = self.prepare_decision(state, mode='rank' if closing else 'decision', closing=closing)
+        self.last_passed = passed
+        work = self.prepare_decision(state, mode='rank' if closing else 'action' if action_only else 'decision', closing=closing)
         self.error = None
-        ranking_accepted = False
+        ranking_accepted = action_only
         for attempt in range(2):
             response = self.brain.complete(state, client, role='clinical', messages=clinical_messages(self.config, work),
                 max_tokens=LIMITS.gateway_recovery_tokens if attempt else LIMITS.gateway_tokens)
@@ -79,6 +114,16 @@ class DifferentialDiagnosisSession:
                     work = self.prepare_decision(state, mode='action', candidates=work.candidates)
                 work.payload['validation_error'] = self.error
         state.interview.collection[f'{state.interview.current}:decision'] = self.error
+        if ranking_accepted and not closing and not response.error and self.tools.budget.can_start_action(state):
+            needed = required_kinds(state, work.options)
+            for spec in work.options.values():
+                if spec['kind'] in needed and self.tools._allowed_now(state, spec):
+                    if spec['purpose'] == 'clarification':
+                        usage.record_clarification(state)
+                    self.tools._register(state, spec, 0, 1)
+                    state.interview.collection['DifferentialDiagnosis:action_fallback'] = self.error
+                    self.error = None
+                    break
 
     def prepare(self, state, client):
         if state.turn or state.session.termination:
@@ -91,6 +136,7 @@ class DifferentialDiagnosisSession:
         if state.case.assessment and state.case.assessment.frozen:
             state.case.diagnosis = state.case.diagnosis or state.case.primary().name
             return
+        self.record_shortfall(state)
         if state.interview.current == 'Education':
             raise ValueError('Education requires an already frozen assessment')
         if state.turn:
@@ -165,6 +211,8 @@ class DifferentialDiagnosisSession:
             limitations.append('Some patient facts use forced database approximations')
         limitations.extend(f'{key}: {value}' for key, value in state.interview.collection.items()
             if key.endswith((':completion', ':decision')) and value not in {'advance_stage', 'finish_collection'})
+        limitations.extend(f'{key}: {value}' for key, value in state.interview.collection.items()
+                           if key.startswith('DifferentialDiagnosis:') and key.endswith('_shortfall'))
         if self.error:
             limitations.append(self.error)
         if reason:

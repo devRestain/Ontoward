@@ -24,6 +24,31 @@ def apply(state, patch):
     return state
 
 
+def dd_collection_metrics(interview):
+    answers = interview.get('answers')
+    collection = interview.get('collection', {})
+    if not isinstance(answers, list):
+        return None
+    rows = [row for row in answers if row.get('scope') == 'DifferentialDiagnosis']
+    if (not rows and not any(key.endswith('_shortfall') for key in collection)
+            or any(not isinstance(row.get('response'), dict) or len(row.get('key', [])) != 8 for row in rows)):
+        return None
+    counts, seen = dict(SAY=0, EXAM=0), set()
+    for row in rows:
+        raw, source, kind = row['response'], row.get('source_ref'), row['key'][0]
+        if (kind not in counts or not source or source in seen or row.get('outcome') == 'undelivered'
+                or raw.get('status') != 'OK' or raw.get('error')
+                or type(row.get('turn')) is not int or not 1 <= row['turn'] <= 50
+                or type(raw.get('turn')) is not int or raw['turn'] != row['turn']
+                or not isinstance(raw.get('content' if kind == 'SAY' else 'result'), str)):
+            continue
+        seen.add(source)
+        counts[kind] += 1
+    return {kind: dict(received=counts[kind], minimum=minimum, shortfall=max(0, minimum-counts[kind]),
+                      reason=collection.get(f'DifferentialDiagnosis:{kind}_shortfall'))
+            for kind, minimum in (('SAY', 10), ('EXAM', 5))}
+
+
 def outcome_metrics(state, record, sent, summary):
     """Describe preserved output and actual receipts without synthesizing a record."""
     case, interview, session = ((state or {}).get(key, {}) for key in ('case', 'interview', 'session'))
@@ -47,6 +72,7 @@ def outcome_metrics(state, record, sent, summary):
                 'delivered' if expected and good == expected and not bad and not queued else
                 'undelivered' if bad and not good else 'not_collected'))
     return dict(education_status=interview.get('education_status'), education_reason=interview.get('education_reason'),
+        dd_collection=dd_collection_metrics(interview),
         plan_count=len(plans) if isinstance(plans, list) else None,
         diagnosis_announcement_delivered=sum(row.get('outcome') == 'delivered' and row.get('question_id', '').startswith('Education:diagnosis:')
                                             for row in answers) if isinstance(answers, list) else None,

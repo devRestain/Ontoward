@@ -1,0 +1,11 @@
+services:
+  test-simulator:
+    environment:
+      TEST_BACKEND: openai_api
+      OPENAI_API_KEY: ${OPENAI_API_KEY:?Set OPENAI_API_KEY in the root .env for OpenAI mode}
+      TEST_OPENAI_MODEL: ${TEST_OPENAI_MODEL:-gpt-6-luna}
+      TEST_MAX_MODEL_REQUESTS: ${TEST_MAX_MODEL_REQUESTS:-200}
+    networks: [test-case, test-egress]
+
+networks:
+  test-egress: {}

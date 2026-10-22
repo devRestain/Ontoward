@@ -6,6 +6,7 @@ test_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 test_runs="$test_root/Tmp/test-evaluator"
 export ONTOWARD_TEST_UID="$(id -u)"
 export ONTOWARD_TEST_GID="$(id -g)"
+sh "$test_root/Test/check-image.sh"
 mkdir -p "$test_runs/.web"
 
 compose_web() {
@@ -75,7 +76,7 @@ while :; do
             fi
             while [ "$#" -gt 0 ]; do
                 run_id=$1
-                TEST_RUN_ID="$1" TEST_WEB_RUN="$1" TEST_MAX_NOVA_REQUESTS="$4" \
+                TEST_RUN_ID="$1" TEST_WEB_RUN="$1" TEST_MAX_MODEL_REQUESTS="$4" \
                     sh "$test_root/Test/run.sh" "$2" "$3" >> "$test_runs/$1/runner.log" 2>&1 &
                 runners="$runners $!:$run_id"
                 shift 4

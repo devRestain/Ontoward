@@ -64,8 +64,8 @@ class InputPreservationTests(unittest.TestCase):
 
     def test_exhausted_mapping_repair_keeps_notes_and_final_assessment_resources(self):
         c, s = f.consultation(prepared=f.resources(education=True)), f.chief(f.state('DifferentialDiagnosis'))
-        # Three gateway calls are available; the fourth must leave the four final calls protected.
-        s.session.doctor_calls = s.session.call_limit - 7
+        # Three gateway calls leave two clinical, four plan and one Mouth call protected.
+        s.session.doctor_calls = s.session.call_limit - 10
         def respond(payload):
             if payload['task'] == 'input_context':
                 row = f.statement('New', target_terms=['test'], note_value='Additional reported complaint')
@@ -79,7 +79,7 @@ class InputPreservationTests(unittest.TestCase):
         s.turn = TurnContext(kind='initial', response={'opening': 'New'})
         c.ear.process_input(s, c.knowledge, client)
         self.assertEqual(len(client.requests), 3)
-        self.assertEqual(c.budget.calls_left(s.session), 4)
+        self.assertEqual(c.budget.calls_left(s.session), 7)
         self.assertTrue(any(v.value == 'Additional reported complaint' for v in f.unbound(s.case).values()))
         c.close_collection(s)
         self.assertTrue(s.case.assessment.frozen)
@@ -303,7 +303,7 @@ class SharedWorkTests(unittest.TestCase):
             c.check_budget(s)
         c.client.session.assert_not_called()
         self.assertFalse(hasattr(c.budget, 'knowledge'))
-        self.assertEqual(c.budget.collection_calls(s), 6)
+        self.assertEqual(c.budget.collection_calls(s), 9)
 
 
 class ClinicalCadenceTests(unittest.TestCase):
@@ -350,7 +350,7 @@ class JointEducationTests(unittest.TestCase):
     def test_normal_joint_plan_needs_no_translation_call(self):
         c, s, _ = f.run(prepared=f.resources(education=True))
         self.assertEqual(s.session.termination, 'submitted')
-        self.assertEqual(sum(p['task'] == 'education' for p in c.client.requests), 1)
+        self.assertEqual(sum(p['task'] == 'education' for p in c.client.requests), 4)
         self.assertFalse(any(p['task'] == 'education_doctor' for p in c.client.requests))
         self.assertEqual(len(s.case.plan), 5)
 
@@ -362,7 +362,8 @@ class JointEducationTests(unittest.TestCase):
             requests.append(copy.deepcopy(payload))
             if payload['task'] == 'education':
                 raw = education_response(payload)
-                raw['P']['treatment'][0]['utterances'] = ['가' * 31]
+                if 'treatment' in raw['P']:
+                    raw['P']['treatment'][0]['utterances'] = ['가' * 31]
                 return raw
         c = f.consultation(f.FakeSDK(chat_handler=response), f.resources(education=True))
         s = f.chief(f.state())

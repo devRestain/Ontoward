@@ -62,8 +62,8 @@ class PromptTests(unittest.TestCase):
                 self.assertIn('Rank the supplied registered disease candidates', prompt)
                 self.assertIn('Select one executable supplied question', prompt)
             elif task == 'education':
-                self.assertIn('Generate the complete plan', prompt)
-                self.assertNotIn('Repair the management plan', prompt)
+                self.assertIn('Return only P.' + payload['fields'][0], prompt)
+                self.assertNotIn('Repair only this section', prompt)
             elif task == 'education_doctor':
                 self.assertIn('Translate and simplify each requested English plan sentence', prompt)
                 self.assertNotIn('fixed working-diagnosis notice', prompt)
@@ -149,9 +149,9 @@ class PromptTests(unittest.TestCase):
         def reply(payload):
             if payload['task'] == 'education':
                 result = education_response(payload)
-                if payload['phase'] == 'direct':
+                if payload['phase'] == 'direct' and 'tests' in result['P']:
                     result['P']['tests'] = []
-                else:
+                elif payload['phase'] == 'repair':
                     result['P'] = {'tests': result['P']['tests']}
                 return result
         client = PromptSDK(chat_handler=reply)
@@ -159,11 +159,11 @@ class PromptTests(unittest.TestCase):
         f.freeze_for_education(c, state)
         c.sessions['Education'].prepare_plan(state, client)
         calls = [(p, text) for p, text in client.exchanges if p['task'] == 'education']
-        self.assertEqual(len(calls), 2)
-        self.assertIn('Generate the complete plan', calls[0][1])
-        self.assertNotIn('Generate the complete plan', calls[1][1])
-        self.assertIn('return only missing or invalid items', calls[1][1])
-        self.assertEqual(len(calls[1][0]['accepted']), 4)
+        self.assertEqual(len(calls), 5)
+        self.assertNotIn('Repair only this section', calls[0][1])
+        self.assertIn('Repair only this section', calls[-1][1])
+        self.assertIn('return only missing or invalid items', calls[-1][1])
+        self.assertEqual(len(calls[-1][0]['accepted']), 1)
         self.assertEqual(len(state.case.plan), 5)
 
     def test_mouth_keeps_response_and_text_repair_budgets_and_frozen_assessment(self):

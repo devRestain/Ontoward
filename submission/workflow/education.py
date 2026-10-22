@@ -3,7 +3,7 @@ import logging
 import re
 from dataclasses import dataclass, field
 from knowledge.guideline_passages import json_bytes, pack_passages, project_documents, source_contexts
-from .rules.limits import LIMITS, PLAN_FIELDS
+from .rules.limits import LIMITS, PLAN_FIELDS, PLAN_SECTIONS
 from .state.models import PlanSentence, SourceReference
 from .state.evidence import fixed_case_payload
 from .model_context import messages
@@ -41,15 +41,18 @@ def references(raw, contexts):
         accepted.append(dict(document_id=document_id, quote=quote, start_byte=start, end_byte=end))
     return accepted
 
-def parse_plan(raw, contexts, progress):
+def parse_plan(raw, contexts, progress, *, fields=PLAN_FIELDS):
     errors = []
+    # Normalize only the missing wrapper; keep all sentence and citation checks.
+    if isinstance(raw, dict) and set(raw) == set(fields) and all(isinstance(v, list) for v in raw.values()):
+        raw = {'P': raw}
     if not isinstance(raw, dict) or set(raw) != {'P'} or (not isinstance(raw['P'], dict)):
-        return ([], ['expected P object with five sentence arrays'])
-    if set(raw['P']) - set(PLAN_FIELDS):
+        return ([], ['expected P object with assigned sentence arrays'])
+    if set(raw['P']) - set(fields):
         errors.append('unexpected P fields')
     accepted = []
     existing = {(sentence.field, sentence.text) for sentence in progress.sentences}
-    for field in PLAN_FIELDS:
+    for field in fields:
         rows = raw['P'].get(field, [])
         if not isinstance(rows, list):
             errors.append(f'{field}: expected sentence array')
@@ -84,37 +87,23 @@ def parse_plan(raw, contexts, progress):
             errors.append(f'{field}: empty')
     return (accepted, errors)
 
-def _request(state, client, model, config, progress, payload, parser):
-    accepted = []
-    for attempt in range(2):
-        request = messages(config.prompt('plan.repair' if attempt else 'plan.generate'), payload)
-        if json_bytes(request) > LIMITS.education_max_messages_bytes:
-            progress.errors.append('education_model_error:LOCAL_EDUCATION_MESSAGE_LIMIT')
-            return (accepted, False)
-        response = model.complete(state, client, role='education', messages=request)
-        content = response.content
-        if response.error:
-            values, errors = ([], [f'education_model_error:{response.error}'])
-            if response.error != 'PROVIDER_RESPONSE_INVALID':
-                progress.errors.extend(errors)
-                return (accepted, False)
-        else:
-            try:
-                raw = json.loads(content)
-            except (TypeError, ValueError):
-                raw = None
-            values, errors = parser(raw)
-        accepted.extend((value for value in values if value not in accepted))
-        if not errors:
-            return (accepted, True)
-        if attempt or progress.repairs or state.session.termination or (not model.budget.model_allowance(state.session, 'education')):
-            progress.errors.extend((f"{payload['phase']}: {error}" for error in errors))
-            return (accepted, False)
-        progress.repairs += 1
-        payload = {**payload, 'phase': 'repair', 'repair_phase': payload['phase'], 'validation_errors': [] if response.error else errors, 'accepted': accepted}
-        if response.error:
-            payload['generation_error'] = response.error
-    return (accepted, False)
+def _request(state, client, model, config, progress, payload, parser, *, reserve_calls=0):
+    routes = ['plan.' + payload['section']]
+    if payload['phase'] == 'repair':
+        routes.append('plan.repair')
+    request = messages(config.prompt(*routes), payload)
+    if json_bytes(request) > LIMITS.education_max_messages_bytes:
+        return [], ['education_model_error:LOCAL_EDUCATION_MESSAGE_LIMIT'], False
+    response = model.complete(state, client, role='education', messages=request, reserve_calls=reserve_calls)
+    if response.error:
+        return [], [f'education_model_error:{response.error}'], response.error in {
+            'PROVIDER_RESPONSE_INVALID', 'OUTPUT_TRUNCATED'}
+    try:
+        raw = json.loads(response.content)
+    except (TypeError, ValueError):
+        raw = None
+    values, errors = parser(raw)
+    return values, errors, bool(errors)
 
 def generate_plan(state, client, knowledge, config, model):
     if state.interview.education_status != 'not_started':
@@ -122,23 +111,69 @@ def generate_plan(state, client, knowledge, config, model):
     state.interview.education_status = 'failed'
     progress = _EducationWork()
     fixed = state.case.primary()
-    base = {'task': 'education', **fixed_case_payload(state.case), 'delivery_turn_budget': model.budget.action_capacity(state)}
+    capacity = model.budget.action_capacity(state)
+    section_budgets = dict.fromkeys(PLAN_SECTIONS, 0)
+    for index in range(capacity):
+        section_budgets[tuple(PLAN_SECTIONS)[index % len(PLAN_SECTIONS)]] += 1
+    base = {'task': 'education', **fixed_case_payload(state.case)}
     documents = []
     if fixed.kind == 'disease':
         if knowledge.guidelines is None:
             logging.getLogger(__name__).warning('Guideline index unavailable for Education')
         else:
-            documents, failures = knowledge.guidelines.read(knowledge.term_id(fixed.name, 'Disease'))
+            documents, failures = knowledge.guidelines.read(knowledge.term_id(fixed.name, 'Disease'),
+                                                          max_documents=LIMITS.education_documents)
             for item in failures:
                 logging.getLogger(__name__).warning('Skip guideline %s: %s', item['document_id'], item['error'])
-    selected = pack_passages(documents)
+    selected = pack_passages(documents[:LIMITS.education_documents])
     direct = {**base, 'phase': 'direct', 'documents': project_documents(selected)}
-    while selected and json_bytes(messages(config.prompt('plan.generate'), direct)) > LIMITS.education_max_messages_bytes:
+    def section_payload(section, fields):
+        return {**direct, 'section': section, 'fields': list(fields),
+                'delivery_turn_budget': section_budgets[section],
+                'accepted_plan': [dict(field=s.field, text=s.text) for s in progress.sentences]}
+    def planning_size(section, fields, repair):
+        payload = section_payload(section, fields)
+        routes = ['plan.' + section]
+        if repair:
+            routes.append('plan.repair')
+            payload.update(phase='repair', repair_phase='direct', accepted=[],
+                           validation_errors=['expected P object with assigned sentence arrays'])
+        return json_bytes(messages(config.prompt(*routes), payload))
+    # Include the repair envelope and leave 2 KiB for accepted summaries/errors.
+    # Fixed patient content still uses the existing hard guard when no excerpt fits.
+    while selected and any(planning_size(section, fields, repair)
+            > LIMITS.education_max_messages_bytes - 2048
+            for section, fields in PLAN_SECTIONS.items() for repair in (False, True)):
         selected.pop()
         direct['documents'] = project_documents(selected)
     contexts = source_contexts(selected)
-    _request(state, client, model, config, progress, direct, lambda raw: parse_plan(raw, contexts, progress))
-    state.case.plan = progress.sentences
+    results = {}
+    # Complete all initial sections before spending optional repair calls.
+    for index, (section, fields) in enumerate(PLAN_SECTIONS.items()):
+        if state.session.termination or state.session.budget_sync_required:
+            results[section] = ([], ['education_model_error:MODEL_UNAVAILABLE'], False)
+            continue
+        results[section] = _request(state, client, model, config, progress,
+            section_payload(section, fields), lambda raw: parse_plan(raw, contexts, progress, fields=fields),
+            reserve_calls=len(PLAN_SECTIONS) - index - 1)
+        state.case.plan = list(progress.sentences)
+    for section, fields in PLAN_SECTIONS.items():
+        accepted, errors, repairable = results[section]
+        if (errors and repairable and not state.session.termination and not state.session.budget_sync_required
+                and model.budget.model_allowance(state.session, 'education', state=state)):
+            initial_errors = errors
+            progress.repairs += 1
+            payload = {**section_payload(section, fields), 'phase': 'repair', 'repair_phase': 'direct',
+                       'validation_errors': errors, 'accepted': accepted}
+            if any(error.startswith('education_model_error:') for error in errors):
+                payload['generation_error'] = errors[0].split(':', 1)[1]
+                payload['validation_errors'] = []
+            _, errors, _ = _request(state, client, model, config, progress, payload,
+                lambda raw: parse_plan(raw, contexts, progress, fields=fields))
+            if errors:
+                errors = [f'{initial_errors[0]}; repair: {error}' for error in errors]
+            state.case.plan = list(progress.sentences)
+        progress.errors.extend(f'{section}: {error}' for error in errors)
     populated = {sentence.field for sentence in progress.sentences}
     state.interview.education_status = 'complete' if populated == set(PLAN_FIELDS) and (not progress.errors) else 'partial' if populated else 'failed'
     state.interview.education_reason = progress.errors[0] if progress.errors else None

@@ -1,8 +1,10 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=07420ee44587a323eb2434d95c7656cdec1986b9 dirty=true updated=2026-10-22T11:48:38+09:00
-/goal phase=current id=APP.D64 state=complete action="Preserve clinical meaning through final wire compaction and request-local byte metrics"
+/checkpoint revision=c311c7583fc8aa20cd5010dc464d67561b9bdb59 dirty=true updated=2026-10-22T17:45:04+09:00
+/goal phase=current id=APP.D67 state=complete action="Repair DD action reselection Education format and repair space and conservative question repeats"
+/goal phase=history id=APP.D66 state=complete action="Enforce available DD minimums preserve ROS provenance split Education planning and remove graph record caps"
+/goal phase=history id=APP.D64 state=complete action="Preserve clinical meaning through final wire compaction and request-local byte metrics"
 /goal phase=history id=APP.D63 state=complete action="Implement final submission stabilization without candidate or SOAP count caps"
 /goal phase=history id=APP.D62 state=complete action="Expand clinical differentials to twenty and final note alternatives to ten"
 /goal phase=history id=APP.D61 state=complete action="Complete bounded consultation recovery and graph input limits through honest final submission"
@@ -479,4 +481,19 @@
 /evidence id=APP.D64.E2 class=runtime result=pass source=../Tmp/d64-2026-10-22/admitted/verification.json observed="Load the unchanged active manifest and complete three installed-bundle protocol consultations with Education disabled enabled positive and enabled negative Context; preserve fifteen-field SOAP and actual local receipts"
 /evidence id=APP.D64.E3 class=artifact result=pass source=../Tmp/d64-2026-10-22/synthetic-sdk/sdk-http.json observed="Complete a fresh ninety-five-file read-only synthetic ZIP through unchanged run.py original SDK forty-two loopback requests twenty actions and completed receipt under network none with LangGraph imports blocked"
 /evidence id=APP.D64.E4 class=external_service result=not_run source=../data/provenance/minimal-input-d64-2026-10-22.json observed="Leave actual models tokenizer measurement fresh NOVA clinical validity official evaluation submission and deployment unrun; preserve graph_input_items fifty cumulative input500k output100k request input100k output8k and D59 Education guards"
-/handoff state=ready action="Review D64 input semantics and metrics before separately authorizing actual-model evaluation"
+/decision id=APP.D66 state=accepted action="Apply CC 5/10 DD 15/20 with SAY ten EXAM five and uncapped registered graph inputs" source=../DECISION_STATE.md
+/accept id=APP.D66.A1 state=pass action="Verify confirmed DD minimums short lists ROS provenance and complete logical projection" evidence=APP.D66.E1
+/accept id=APP.D66.A2 state=pass action="Verify four medium Education sections source sharing local repairs and preserved finalization" evidence=APP.D66.E1,APP.D66.E2
+/accept id=APP.D66.A3 state=pass action="Verify installed preparation independent SDK artifacts and original knowledge and SDK custody" evidence=APP.D66.E2,APP.D66.E3,APP.D66.E4
+/evidence id=APP.D66.E1 class=semantic result=pass source=../Tmp/d66-2026-10-22/workflow-current.log observed="Pass all 308 workflow checks including fifteen D66 regressions; verify ten SAY and five EXAM despite repeated early finish shorter-list exhaustion confirmed-only counts twenty DD actions unavailable assets every graph record above fifty all registered values normal and minimal ROS four medium routes and one repair per failed section"
+/evidence id=APP.D66.E2 class=runtime result=pass source=../Tmp/d66-2026-10-22/admitted/verification.json observed="Prepare the unchanged installed bundle and complete three protocol consultations with Education disabled and enabled positive and negative Context; use an intentionally unavailable guideline mount to verify explicit model-knowledge fallback while temporary-source tests verify three-document selection hashes and UTF-8 citations"
+/evidence id=APP.D66.E3 class=artifact result=pass source=../Tmp/d66-2026-10-22/sdk-current/sdk-http.json observed="Complete the current hundred-file synthetic ZIP through unchanged run.py original SDK forty-five loopback requests twenty actions fifteen-field SOAP confirmed receipt and complete trace under network none read-only mounts and blocked LangGraph; verify four medium plan calls and five populated P fields"
+/evidence id=APP.D66.E4 class=static result=pass source=../Tmp/d66-2026-10-22/verification.json observed="Verify production and synthetic archive source equality forty-three protected hashes original SDK entrypoint and active manifest; preserve D63 cumulative input500k output100k request input100k output8k Education seven protected turns and ten delivery actions"
+/evidence id=APP.D66.E5 class=external_service result=not_run source=../Tmp/d66-2026-10-22/verification.json observed="Leave new actual models clinical quality score improvement official evaluation production submission commits remote writes and deployment unrun"
+/decision id=APP.D67 state=accepted action="Apply the user-requested shallow saved-run repair without paid calls or broad verification" source=../DECISION_STATE.md
+/accept id=APP.D67.A1 state=pass action="Verify failed EXAM continuation strict P normalization repair space shared delivery allocation and scoped repeat rules" evidence=APP.D67.E1
+/evidence id=APP.D67.E1 class=semantic result=pass source=../Tmp/d67-shallow-20261022/focused.log observed="Pass 88 focused offline workflow checks including six new saved-run regressions in the project dev image with network none"
+/evidence id=APP.D67.E2 class=static result=pass source=../Tmp/d67-shallow-20261022/changes.diff observed="Record the bounded delta against preserved dirty source snapshots and reconcile current contracts requirements orientation and states"
+/evidence id=APP.D67.E3 class=artifact result=not_run source=../Tmp/d67-shallow-20261022/verification.json observed="Defer full regression packaging independent ZIP SDK replay and Test image rebuild under the requested minimal verification scope"
+/evidence id=APP.D67.E4 class=external_service result=not_run source=../Tmp/d67-shallow-20261022/verification.json observed="Leave paid OpenAI and NOVA calls clinical validity official evaluation production submission commits and deployment unrun"
+/handoff state=ready action="Review the D67 focused offline result and use a fresh source-matched image before any separately authorized model evaluation"

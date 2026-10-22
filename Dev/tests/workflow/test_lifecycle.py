@@ -136,7 +136,7 @@ class LifecycleTests(unittest.TestCase):
         self.assertIsNone(s.turn)
 
     def test_budget_evaluation_is_pure_and_preserves_open_inquiry(self):
-        s = f.chief(f.state('ChiefComplaint',turns=18,initialized=True))
+        s = f.chief(f.state('ChiefComplaint',turns=25,initialized=True))
         c = f.consultation()
         c.sessions["ChiefComplaint"].prepare(s)
         before = s.model_dump()

@@ -18,5 +18,7 @@
 - Keep tests, synthetic assets, source packages, preparation data, guidance, state, and credentials outside the ZIP.
 - Record Dev operational progress in root PROJECT_STATE.md and artifact custody in data/PROJECT_STATE.md. Distinguish protocol acceptance from clinical and actual-model quality.
 
-- Use test_final_runtime.py for finite pass transitions input custody CC route separation partial repair independent fifty-record graph limits uncapped candidate and SOAP counts scoped HISTORY exact-unknown assessment recovery minimal SOAP same-ID submission recovery and honest receipt metrics. Preserve original preparation and SDK guards.
-- Use test_clinical_wire.py and the Dev-only clinical_wire_fixtures expansion for D64 typed semantic equivalence against the current bound logical payload reference closure exact Pattern and expectation sharing numeric validation and final message metrics. Use measure_clinical_wire.py for saved-request and explicitly synthetic comparisons including changed prompts; keep historical selection loss separate and never report scripted usage as measured tokens.
+- Use test_final_runtime.py for finite pass transitions input custody CC route separation partial repair uncapped graph candidate and SOAP records scoped HISTORY exact-unknown recovery minimal SOAP same-ID submission recovery and honest receipts.
+- Use test_clinical_wire.py and clinical_wire_fixtures for typed equivalence against complete logical records reference closure exact sharing numeric validation and final metrics. Preserve historical selection loss separately in saved-request comparisons without reporting scripted tokens as measured usage.
+
+- Use test_d66.py for confirmed DD minimums short lists uncapped projection ROS provenance four medium Education sections three shared sources field-local repairs and model-free finalization.

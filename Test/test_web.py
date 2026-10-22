@@ -55,6 +55,18 @@ class WebTests(unittest.TestCase):
         self.assertEqual(self.request(body={'case': 'C01', 'backend': 'nova', 'maximum': 50})[0], 409)
         self.assertEqual(read(self.runs.lock / 'owner'), run['id'])
 
+    def test_openai_route_is_explicit_and_never_accepts_a_key_from_browser(self):
+        body = {'case': 'C01', 'backend': 'openai_api', 'maximum': 23}
+        self.assertEqual(self.request(body={**body, 'OPENAI_API_KEY': 'do-not-save'})[0], 400)
+        status, run = self.request(body=body)
+        self.assertEqual(status, 202)
+        self.assertEqual(run['backend'], 'openai_api')
+        output = io.StringIO()
+        with redirect_stdout(output):
+            self.runs.worker('claim', [])
+        self.assertEqual(output.getvalue().strip(), f"{run['id']} C01 openai_api 23")
+        self.assertNotIn('do-not-save', read(self.runs.directory(run['id']) / 'run.json'))
+
     def test_cli_lock_blocks_web_start(self):
         self.runs.lock.mkdir()
         write(self.runs.lock / 'owner', 'C10-cli')

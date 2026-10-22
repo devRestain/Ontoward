@@ -32,6 +32,7 @@ def main():
         report['status'] = 'timeout'
     report.update(seconds=round(time.monotonic() - started, 3), uid=os.getuid(),
                   development_key_present=bool(os.getenv('NOVA_DEV_KEY')),
+                  openai_key_present=bool(os.getenv('OPENAI_API_KEY')),
                   samples_visible=Path('/cases').exists(), sandbox=sandbox())
     (output / 'process.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report))

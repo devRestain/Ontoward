@@ -5,6 +5,7 @@ from .rules.collection import CATEGORY_FIELDS
 from .rules.limits import LIMITS
 from .rules.submission import validate_payload, validate_wire_payload
 from .rules.minimal_record import minimal_payload
+from .rules.record import dd_ros_facts
 from .rules.input import objective
 from .state.models import TurnContext
 
@@ -81,7 +82,7 @@ class SubmissionWriter:
             return 'S.pmh'
         return 'S.hpi' if fact.attribute else 'S.ros'
 
-    def build_record_view(self, case):
+    def build_record_view(self, case, interview=None):
         texts = self.config.texts
         fields = {f'{section}.{name}':[] for section,names in RECORD_FIELDS.items() for name in names}
         references, episodes, groups = {}, {}, {}
@@ -90,6 +91,7 @@ class SubmissionWriter:
             if fact.episode_id:
                 episodes.setdefault((fact.subject,fact.target,fact.episode_id),len(episodes)+1)
         chief = case.chief(confirmed=True)
+        ros = dd_ros_facts(case, interview)
         if chief:
             fields['S.cc'].append(self._line(texts.soap_labels['cc'],chief.target))
         used = set()
@@ -102,8 +104,8 @@ class SubmissionWriter:
                     content += f' ({texts.status_labels[note.status]})'
                 fields['S.hpi'].append(self._line(label,content)); used.add(note.id)
         for fact in facts:
-            destination = ('S.hpi' if chief and fact.id==chief.id else self._destination(fact))
-            if chief and destination not in {'O.exam','S.fh'} and (
+            destination = ('S.ros' if fact.id in ros else 'S.hpi' if chief and fact.id==chief.id else self._destination(fact))
+            if chief and fact.id not in ros and destination not in {'O.exam','S.fh'} and (
                 fact.target,fact.observation_id,fact.episode_id,fact.time_context)==(
                 chief.target,chief.observation_id,chief.episode_id,chief.time_context):
                 destination = 'S.hpi'
@@ -134,7 +136,7 @@ class SubmissionWriter:
             if note.category=='objective_observation' and objective(note.acquisition,note.source_ref):
                 destination='O.exam'
             else:
-                destination='S.fh' if note.subject=='family' else CATEGORY_FIELDS.get(note.category,'S.hpi')
+                destination='S.ros' if note.id in ros else 'S.fh' if note.subject=='family' else CATEGORY_FIELDS.get(note.category,'S.hpi')
             content = '; '.join(filter(None,(note.value,self._measurement(note.measurement) if note.measurement else '')))
             phrase = content + f' ({texts.status_labels[note.status]})' + self._context(note,episodes)
             if destination=='O.exam':
@@ -177,7 +179,7 @@ class SubmissionWriter:
         assessment = state.case.assessment
         if (assessment.based_on_case_revision,assessment.based_on_chief_fact_id)!=(state.case.revision,state.case.chief_fact_id):
             raise ValueError('stale_frozen_assessment')
-        fields, references = self.build_record_view(state.case)
+        fields, references = self.build_record_view(state.case, state.interview)
         texts = self.config.texts
         fields['A.evidence'] = [self._line('Diagnosis','#1. '+primary.name),self._line('Certainty','Working diagnosis'),
             self._assessment_text(primary,references)]

@@ -11,6 +11,8 @@ import uuid
 
 from nova_sdk import NovaError, RECORD_FIELDS
 from models import MODEL, NovaModels, ScriptedModels
+from openai_models import OpenAIModels
+from version import source_version
 
 
 PATIENT = '''Play the patient, or the accompanying caregiver in a pediatric case, using only the supplied script.
@@ -83,6 +85,7 @@ class Evaluation:
         self.lock, self.inflight = threading.RLock(), None
         self.note = self.diagnosis = self.receipt = None
         self.case_hash = case_hash
+        self.test_runtime = source_version()
         self.save()
 
     def snapshot(self):
@@ -168,8 +171,8 @@ class Evaluation:
         request_id = request_id or str(uuid.uuid4())
         entry = {'request_id': request_id, 'parent_request_id': self.inflight, 'role': role,
                  'messages': messages, 'max_tokens': max_tokens, 'backend': self.backend,
-                 'model': 'openai/gpt-6-luna' if self.backend == 'nova' else None,
-                 'reasoning_effort': reasoning_effort if self.backend == 'nova' else None, 'status': 'requested'}
+                 'model': getattr(self.models, 'model', MODEL if self.backend == 'nova' else None),
+                 'reasoning_effort': reasoning_effort if self.backend != 'scripted' else None, 'status': 'requested'}
         def record(**values):
             try:
                 with (self.output / 'model-calls.jsonl').open('a', encoding='utf-8') as stream:
@@ -314,7 +317,7 @@ class Evaluation:
         response, text = self.call_model(role, messages, max_tokens, body['request_id'],
                                         reasoning_effort=body.get('reasoning_effort'))
         self.doctor_calls += 1
-        if not text.strip():
+        if not text.strip() and self.backend != 'openai_api':
             raise NovaError('PROVIDER_RESPONSE_INVALID', 503)
         self.input_tokens += response['usage']['prompt_tokens']
         self.output_tokens += response['usage']['completion_tokens']
@@ -322,7 +325,11 @@ class Evaluation:
             raise NovaError('CONTEXT_LIMIT_EXCEEDED', 400)
         if self.input_tokens > DOCTOR_INPUT_TOKENS or self.output_tokens > DOCTOR_OUTPUT_TOKENS:
             raise NovaError('MODEL_TOKEN_BUDGET', 429)
-        self.doctor_successes += 1
+        # Direct API reasoning-only responses consume real usage, including when text is empty.
+        if not text.strip() and response['choices'][0].get('finish_reason') != 'length':
+            raise NovaError('PROVIDER_RESPONSE_INVALID', 503)
+        if text.strip():
+            self.doctor_successes += 1
         return response
 
     def submit(self, body):
@@ -359,7 +366,14 @@ class Evaluation:
                    'limits': {'prepare_seconds': 600, 'consult_seconds': 1800, 'turns': 50, 'doctor_calls': 200,
                               'input_tokens': DOCTOR_INPUT_TOKENS, 'output_tokens': DOCTOR_OUTPUT_TOKENS,
                               'input_tokens_per_call': REQUEST_INPUT_TOKENS, 'max_output_tokens_per_call': DEFAULT_MAX_TOKENS},
-                   'official_api': 'not_run', 'clinical_accuracy': 'not_evaluated'}
+                   'official_api': 'not_run', 'clinical_accuracy': 'not_evaluated',
+                   'provider_model': getattr(self.models, 'model', MODEL if self.backend == 'nova' else None),
+                   'policy_version': 'ontoward-local-D63', 'test_runtime': self.test_runtime,
+                   'provider_usage': dict(input_tokens=self.models.reported_input_tokens,
+                                          output_tokens=self.models.reported_output_tokens,
+                                          requests_with_usage=self.models.requests_with_usage,
+                                          scope='all_roles_reported_usage') if self.backend == 'openai_api' else None,
+                   'actual_openai_api': 'run' if self.backend == 'openai_api' and self.models.calls else 'not_run'}
         files = {'summary.json': summary, 'transcript.json': {'initial': self.case['start_information'], 'events': self.events},
                  'requests.json': self.requests}
         if self.note is not None:
@@ -408,10 +422,14 @@ def main():
     if backend == 'nova':
         models = NovaModels(os.getenv('NOVA_API_BASE', 'https://nova.snubhai.org'), os.environ['NOVA_DEV_KEY'],
                             output, int(os.getenv('TEST_MAX_NOVA_REQUESTS', '200')))
+    elif backend == 'openai_api':
+        models = OpenAIModels(os.environ.get('OPENAI_API_KEY', ''), output,
+                              int(os.getenv('TEST_MAX_MODEL_REQUESTS', '200')),
+                              model=os.getenv('TEST_OPENAI_MODEL', 'gpt-6-luna'))
     elif backend == 'scripted':
         models = ScriptedModels(case)
     else:
-        raise ValueError('Choose scripted or nova backend')
+        raise ValueError('Choose scripted, nova or openai_api backend')
     evaluation = Evaluation(case, models, output, backend=backend, case_hash=digest)
     print(json.dumps({'case': case['case_id'], 'backend': backend, 'status': 'listening', 'score_status': 'not_scored'}), flush=True)
     http_server(evaluation, os.environ['NOVA_RUN_TOKEN']).serve_forever()

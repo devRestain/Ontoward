@@ -764,7 +764,37 @@
 - **50 유지:** options[:50]과 bound_graph_input의 기존 상세 선택을 유지합니다. 절단 이전 전체 적격 정보의 의미·최종 요청 예산·일반 요청 전 차단과 owner 오류 소비까지 입증한 철회 경로는 이번 slice에서 실행하지 않습니다. 기존 상세 선택으로 제외된 질문 기대조건·scope의 손실과 큰 nested 입력 위험은 남습니다. Ear vocabulary 제한·새 ranking·whole-bundle fitting·추가 LLM·DB 재구축·원문 요약·모델 설정은 변경하지 않습니다.
 - **증거 경계:** 저장된 실제 request를 추가 모델 호출 없이 재구성하고 현재 bound 기준의 전후 최종 messages를 새 prompt 비용까지 포함해 비교합니다. 이전 무제한 request에 현행 bound를 적용한 감소는 wire 효과와 구별하며 현행 scope가 없는 옛 request는 unsupported로 표시합니다. 작은 fixture와 중복이 많은 synthetic fixture를 함께 측정하고 작은 입력의 prompt/header 증가도 보고합니다. 수행한 회귀·관측 parity·설치 prepare·합성 ZIP/원본 SDK 증거와 수치는 scoped state 및 `data/provenance/minimal-input-d64-2026-10-22.json`에 기록합니다. 실모델·새 NOVA 수용·token 절감률·100k 오류 소멸·임상 정확도·공식 평가·제출·배포를 주장하지 않습니다.
 
+<a id="D65"></a>
+## D65. 개인 OpenAI API 시험 경로와 최신 Test 실행 일치 (2026-10-22)
+
+- **요청과 범위:** 사용자가 NOVA 시험 한도 소진에 대비해 본인의 OPENAI_API_KEY로 테스트하는 경로와 최신 구현에 맞춘 Test 구조 갱신을 요청했습니다. Test 전용 변경이며 D64 runtime d50.12·submission SDK·알고리즘·프롬프트·모델 설정·지식 번들을 유지합니다. 실제 유료 호출을 이번 오프라인 구현 검증에 포함하지 않습니다.
+- **명시적 공급자:** CLI와 웹에 openai_api를 추가합니다. simulator만 키와 외부 네트워크를 받고 고정 OpenAI Responses endpoint로 요청합니다. 기본은 기존 gpt-6-luna이며 TEST_OPENAI_MODEL로 명시한 API model ID만 사용합니다. agent·web·출력·이미지·제출물에 키를 넣지 않고 NOVA 자동 fallback과 adapter 자동 retry를 추가하지 않습니다.
+- **보존과 사용량:** 실제 messages·effort·output allowance·request ID를 보존하고 Responses 원응답과 provider request ID를 별도 저장합니다. input_tokens/output_tokens를 SDK usage로 변환하며 reasoning을 중복 가산하지 않습니다. output 한도로 text 없이 끝난 incomplete도 실제 usage와 length로 전달합니다. 기존 NOVA empty 응답 의미는 유지합니다. Doctor 증례 input500k/output100k/request input100k/output8k와 전체 역할의 요청 ceiling을 유지하고 API 전체 역할의 보고 usage를 별도로 기록합니다. rate·확정 quota·context·authentication·불명 timeout을 구분하며 불명 비용은 추정하지 않습니다.
+- **최신 실행 확인:** CLI·웹 시작 전 실행 Test 파일과 이미지 hash를 비교해 오래된 이미지를 차단합니다. 새 실행에 test-version.json과 simulator source manifest·policy·provider/model을 남깁니다. D64의 기존 최종 messages 계측과 format 7을 보존하고 프로토콜 검사 통과를 Education 성공과 구분합니다. 과거 기록과 누락 자료를 소급 보완하지 않습니다.
+- **증거:** 오프라인 adapter·SDK·web·관측 parity·이미지 일치 및 credential isolation 결과는 root PROJECT_STATE.md와 Tmp/d65-2026-10-22/에 기록합니다. 실제 API 계정 권한·요금·모델 수용·새 상담·임상 품질·NOVA·공식 평가는 별도 미실행 증거입니다.
+
+<a id="D66"></a>
+## D66. DD 최소 수집·ROS 분류·Education 분할과 상세 선택 제한 철회 (2026-10-22)
+
+- **요청과 기준:** 사용자가 확정한 구현 계획과 후속 50개 선택 제한 철회 요청을 함께 적용한다. 기준 HEAD는 `c311c7583fc8aa20cd5010dc464d67561b9bdb59`이며 시작 당시 D65·Test 변경을 보존한다. 알고리즘은 **d50.13**이다. 활성 지식 `cec62f4596bedd9b9488aa75e3d38f04`, 원본 SDK·entrypoint·추출·저장 실행은 유지한다.
+- **수집:** CC 예산은 5/10, DD는 15/20이다. 정상 DD SAY 10회·EXAM 5회를 각각 요구하고 확인된 unknown도 횟수에 포함한다. 미전송·거절·동일 ID 재전송은 추가 횟수로 세지 않는다. 해당 종류의 목록이 부족하면 기존 실행 가능한 질문을 모두 사용하고 생성 없이 부족 수·이유를 기록한다. 조기 종료와 이미 충족한 종류의 선택은 Python이 검증하며 기존 한 번의 행동 복구 후에도 실패하면 수용 순위를 보존한 채 필요한 등록 질문을 안정 순서로 고른다. 집중 ROS 6개 제한은 철회하며 최대 20 DD·전체 50행동을 유지한다.
+- **상세 개수:** D61·D64의 relation/evidence/question/condition·scope 선택과 allowed_values의 50개 절단을 이 범위에서 supersede한다. 전체 유효 레코드와 기대조건·참조를 유지하고 사용하지 않는 정의만 닫는다. 후보·수용 순위·SOAP 감별 무상한과 D64 의미 보존 공유를 유지한다. 실제 요청 input 100000·누적 input500000/output100000·호출 output8000과 기존 context 오류 소비는 유지하며 새 tokenizer·byte guard·자동 context 재시도를 추가하지 않는다. 과거 저장 입력의 생략분을 복원했다고 주장하지 않는다.
+- **기록:** 실제 Answer의 DD scope·SAY 채널·source·연결 사실을 사용해 증상·부정·속성·측정·미매핑 증상 상세를 S.ros로 보낸다. chief HPI 묶음보다 우선하며 사실을 복제하지 않는다. 초기·CC HPI, 실제 EXAM O.exam과 가족력·과거력·약물·알레르기·사회력 분류를 보존하고 정상·최소 Writer에 동일하게 적용한다.
+- **교육:** 최대 3개 검증 문서를 기존 직접 연결 우선순서와 읽기·해시·인용·byte 제한 안에서 확보하고 네 요청의 고정 발췌·인용 문맥으로 공유한다. tests+treatment, disposition, follow_up, education은 각각 다른 프롬프트와 medium effort로 생성한다. 네 최초 호출 뒤 실패한 영역마다 최대 한 번 복구하고 수용 영어·인용·한국어를 독립 보존한다. 호출 보호 비용도 네 최초 계획 호출로 조정한다. Education 7턴 보호·최대 10행동, safety 우선·NFC 30자·완전한 발화 그룹과 실제 전달 영수증을 유지한다.
+- **증거와 경계:** 수행 검증·artifact·보존 해시는 root/submission 운영 상태와 `Tmp/d66-2026-10-22/verification.json`에 기록한다. 실제 DD 횟수·부족 사유, P coverage·발화 전달·최종 protocol receipt를 구분하며 실제 모델·임상 품질·새 점수·공식 평가·production 제출·remote write·배포는 미실행이다.
+
+<a id="D67"></a>
+## D67. 저장 실행의 DD 조기 종료·Education 형식과 반복 질문 최소 보수 (2026-10-22)
+
+- **범위:** `20261022T075835Z-d68af002c5` 분석을 바탕으로 시간·비용을 제한한 보수만 수행한다. 알고리즘은 **d50.14**다. D66의 수집 최소치·예산·소유권·활성 지식·SDK·entrypoint·저장 실행은 유지한다.
+- **DD:** 실패한 질문을 기존 scoped pass로 소비한 뒤 재준비한다. pass 목록이 바뀌면 같은 사실·응답에서도 다음 행동을 다시 선택하며, 현재 수용 순위가 유효하면 action 전용 호출로 보존한다. 거절된 행동은 정상 수집 횟수에 포함하지 않는다.
+- **Education:** 영역별 완전한 `P` 외형을 프롬프트에 명시한다. 최상위가 배정된 필드들과 정확히 일치하고 모두 배열인 경우에만 빠진 `P`를 감싼 뒤 기존 문장·인용 검증을 적용한다. 문서 패킷 확정 시 실제 repair 지시·봉투와 수용 요약·오류용 2 KiB 공간을 고려한다. 32768-byte 상한을 유지하며 고정 facts나 이후 비정상적으로 긴 수용 문장 때문에 초과하면 기존 차단·영어 보존을 적용한다. 복구 실패 이유에는 최초 오류도 남긴다.
+- **전달:** 남은 Education 행동을 네 영역에 나눠 주고 복구에도 같은 영역 할당량을 보낸다. 전체 계획을 보존하며 safety 우선·완전한 한국어 그룹·실제 SAY 확인은 기존 Python 일정이 담당한다. 실제 전달 완료를 보장한 결과로 해석하지 않는다.
+- **중복:** DD에 질문 대상·속성·결과·공유 scope의 짧은 기질문 표를 공급한다. CC와 DD는 같은 대상·속성·주체·가족 구성원·시점·명시 episode에서 unknown이었던 동일 문구를 다른 observation으로 반복하지 않는다. 서로 다른 대상이나 episode를 의미 추정으로 합치지 않는다. 따라서 C03의 별도 episode로 기록된 반복까지 결정론적으로 모두 제거했다는 주장은 하지 않는다.
+- **검증:** `Tmp/d67-shallow-20261022/verification.json`과 집중 회귀 로그를 따른다. 전체 회귀·패키징·Test 이미지 재구성·새 모델 호출·임상 검증·공식 평가·배포는 이번 범위에서 미실행이다.
+
 ## 결정 기록 방법
+
 
 - 사용자가 고른 선택지를 해당 항목에 기록하고 상태를 `결정 완료`로 바꿉니다.
 - 선택 이유와 새로 제공된 정보의 위치를 짧게 남깁니다.

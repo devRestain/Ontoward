@@ -25,7 +25,7 @@ def education_response(payload):
         return {"P": {field: [{"text": text, "basis": "model_knowledge", "references": [],
                                "priority": "safety" if field in {"follow_up", "disposition"} else "routine",
                                "utterances": [KOREAN[field]]}]
-                      for field, text in TEXT.items()}}
+                      for field, text in TEXT.items() if field in payload.get('fields', TEXT)}}
     if task == "education_doctor":
         if payload.get('announcement'):
             return {'items':[{'id':'diagnosis','utterances':['가상 질환이 의심됩니다.']}]}

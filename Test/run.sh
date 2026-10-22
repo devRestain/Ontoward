@@ -6,12 +6,14 @@ test_case=${1:-C10}
 test_mode=${2:-scripted}
 case "$test_case" in
     C01|C03|C10|verify) ;;
-    *) echo 'Usage: sh Test/run.sh [C01|C03|C10] [scripted|nova], or sh Test/run.sh verify' >&2; exit 2 ;;
+    *) echo 'Usage: sh Test/run.sh [C01|C03|C10] [scripted|nova|openai_api], or sh Test/run.sh verify' >&2; exit 2 ;;
 esac
 case "$test_mode" in
-    scripted|nova) ;;
-    *) echo 'Choose scripted or nova mode' >&2; exit 2 ;;
+    scripted|nova|openai_api) ;;
+    *) echo 'Choose scripted, nova or openai_api mode' >&2; exit 2 ;;
 esac
+test_overlay="$test_mode"
+if [ "$test_mode" = openai_api ]; then test_overlay=openai; fi
 if [ "$test_case" = verify ] && [ "$test_mode" != scripted ]; then
     echo 'Verification always runs offline' >&2
     exit 2
@@ -26,13 +28,14 @@ if [ "${#TEST_RUN_ID}" -gt 128 ]; then
     echo 'Test run ID is too long' >&2
     exit 2
 fi
-export TEST_MAX_NOVA_REQUESTS="${TEST_MAX_NOVA_REQUESTS:-200}"
+export TEST_MAX_NOVA_REQUESTS="${TEST_MAX_MODEL_REQUESTS:-${TEST_MAX_NOVA_REQUESTS:-200}}"
+export TEST_MAX_MODEL_REQUESTS="$TEST_MAX_NOVA_REQUESTS"
 case "$TEST_MAX_NOVA_REQUESTS" in
     [0-9]|[0-9][0-9]|[0-9][0-9][0-9]|1000) ;;
-    *) echo 'Choose a NOVA request ceiling from 1 to 1000' >&2; exit 2 ;;
+    *) echo 'Choose a model request ceiling from 1 to 1000' >&2; exit 2 ;;
 esac
 if [ "$TEST_MAX_NOVA_REQUESTS" -eq 0 ]; then
-    echo 'Choose a NOVA request ceiling from 1 to 1000' >&2
+    echo 'Choose a model request ceiling from 1 to 1000' >&2
     exit 2
 fi
 test_runs="$test_root/Tmp/test-evaluator"
@@ -130,16 +133,18 @@ date +%s > "$TEST_OUTPUT/started"
 set_status starting
 
 compose_test() {
-    if [ "$test_mode" = nova ]; then
+    if [ "$test_mode" = nova ] || [ "$test_mode" = openai_api ]; then
         if [ -f "$test_root/.env" ]; then
-            docker compose -p "$test_project" --env-file "$test_root/.env" -f "$test_root/Test/compose.yaml" -f "$test_root/Test/compose.nova.yaml" "$@"
+            docker compose -p "$test_project" --env-file "$test_root/.env" -f "$test_root/Test/compose.yaml" -f "$test_root/Test/compose.$test_overlay.yaml" "$@"
         else
-            docker compose -p "$test_project" -f "$test_root/Test/compose.yaml" -f "$test_root/Test/compose.nova.yaml" "$@"
+            docker compose -p "$test_project" -f "$test_root/Test/compose.yaml" -f "$test_root/Test/compose.$test_overlay.yaml" "$@"
         fi
     else
         compose_base "$@"
     fi
 }
+
+sh "$test_root/Test/check-image.sh" > "$TEST_OUTPUT/test-version.json"
 
 if [ "$test_case" = verify ]; then
     compose_test run --rm --no-deps --pull never -T test-check

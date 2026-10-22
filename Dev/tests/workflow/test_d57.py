@@ -333,7 +333,7 @@ class AtomicCollectionTests(unittest.TestCase):
                 statuses = self.c.tools.chief_statuses(s)
                 self.assertNotIn(COMBINED, statuses)
                 self.assertEqual(self.c.sessions['ChiefComplaint'].required_actions(s),
-                    min(7, sum(value == 'unasked' for value in statuses.values()) + 1))
+                    min(5, sum(value == 'unasked' for value in statuses.values()) + 1))
                 self.c.sessions['ChiefComplaint'].prepare(s)
                 attrs = [q.attribute for q in s.interview.queue if q.attribute]
                 self.assertNotIn(COMBINED, attrs)

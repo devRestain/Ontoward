@@ -18,14 +18,16 @@ compact.addEventListener('change', () => setControls(!compact.matches));
 toggle.addEventListener('click', () => setControls(toggle.getAttribute('aria-expanded') !== 'true'));
 
 function modeHelp() {
-  const nova = $('backend').value === 'nova';
+  const backend = $('backend').value;
+  const live = backend !== 'scripted';
   const count = $('case').value === 'all' ? 3 : 1;
   const maximum = Number($('maximum').value) || 200;
-  $('maximum').disabled = busy || posting || !nova;
-  $('mode-help').textContent = nova
-    ? `루트 .env의 키로 개발 크레딧을 사용합니다. 환자·진찰·Gateway 호출을 합쳐 시나리오별 최대 ${maximum}회${count === 3 ? `, 세 시나리오 전체 최대 ${maximum * 3}회` : ''} 요청합니다.`
+  $('maximum').disabled = busy || posting || !live;
+  const payment = backend === 'openai_api' ? '루트 .env의 OPENAI_API_KEY로 OpenAI API 요금을 사용합니다.' : '루트 .env의 NOVA 키로 개발 크레딧을 사용합니다.';
+  $('mode-help').textContent = live
+    ? `${payment} 환자·진찰·Gateway 호출을 합쳐 시나리오별 최대 ${maximum}회${count === 3 ? `, 세 시나리오 전체 최대 ${maximum * 3}회` : ''} 요청합니다.`
     : '외부 호출 없이 고정 응답으로 진행합니다. 대화의 의미 해석이나 임상 정확성을 검증하는 모드는 아닙니다.';
-  $('start').textContent = (nova ? 'NOVA' : '오프라인') + (count === 3 ? ' 3개 시나리오 동시 실행' : ' 테스트 실행');
+  $('start').textContent = (backend === 'openai_api' ? 'OpenAI API' : live ? 'NOVA' : '오프라인') + (count === 3 ? ' 3개 시나리오 동시 실행' : ' 테스트 실행');
 }
 function controls() {
   $('start').disabled = busy || posting || !online;

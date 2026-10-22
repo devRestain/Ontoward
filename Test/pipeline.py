@@ -22,6 +22,8 @@ FUNCTIONS = (
     ('workflow.education', 'GuidelineEvidence', ('pack_passages', 'project_documents', 'source_contexts')),
     ('workflow.education', 'ModelProjection', ('fixed_case_payload',)),
     ('workflow.doctor_mouth', 'ModelProjection', ('fixed_case_payload',)),
+    ('workflow.submission_writer', 'SOAPClassification', ('dd_ros_facts',)),
+    ('workflow.rules.minimal_record', 'SOAPClassification', ('dd_ros_facts',)),
     *((f'workflow.sessions.{name}', 'ClinicalInput', ('prepare_decision',)) for name in
       ('initiation', 'chief_complaint', 'differential_diagnosis')),
 )
@@ -29,7 +31,7 @@ FUNCTIONS = (
 REQUIRED_SOURCES = ('run.py', 'nova_sdk.py', 'settings.py', 'knowledge/graph.py',
                     'knowledge/guidelines.py', 'knowledge/guideline_passages.py',
                     'workflow/education.py', 'workflow/doctor_brain.py', 'workflow/model_context.py',
-                    'workflow/rules/clinical_wire.py')
+                    'workflow/rules/clinical_wire.py', 'workflow/rules/dd.py', 'workflow/rules/record.py')
 
 # These are navigation landmarks, not mandatory calls or a compiled topology.
 LANDMARKS = (
@@ -57,7 +59,7 @@ LANDMARKS = (
 
 
 def metadata():
-    return dict(version=2, contract='D59', input_metrics='D64', landmarks=list(LANDMARKS),
+    return dict(version=3, contract='D66', input_metrics='D64', landmarks=list(LANDMARKS),
                 owner_fields=OWNER_FIELDS,
                 required_sources=list(REQUIRED_SOURCES),
                 semantics='Observed call landmarks; absence does not imply a skipped requirement')

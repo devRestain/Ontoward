@@ -85,14 +85,14 @@ class DeliveryTests(unittest.TestCase):
     def test_unsupported_full_source_is_omitted_without_failing_general_plan(self):
         source = 'Source text.\n' * 10000
         c = f.consultation(prepared=f.resources(education=True))
-        c.knowledge.guidelines.read = lambda disease: ([{'document_id': 'd', 'text': source,
+        c.knowledge.guidelines.read = lambda disease, **kwargs: ([{'document_id': 'd', 'text': source,
             'relation': 'exact', 'evidence_use': 'care_navigation', 'scope': 'Synthetic full source'}], [])
         state = f.chief(f.state('DifferentialDiagnosis'))
         c.close_collection(state)
         state.interview.current = 'Education'
         c.sessions['Education'].prepare_plan(state, c.client)
         requests = [row for row in c.client.requests if row['task'] == 'education']
-        self.assertEqual(len(requests), 1)
+        self.assertEqual(len(requests), 4)
         self.assertEqual(requests[0]['documents'], [])
         self.assertEqual(len(state.case.plan), 5)
         self.assertEqual(state.interview.education_status, 'complete')
@@ -228,7 +228,7 @@ class DeliveryTests(unittest.TestCase):
         c,s,_ = f.run(client, prepared=f.resources(education=True))
         ident = c.knowledge.term_id(s.case.primary().name, 'Disease')
         expected = c.config.texts.diagnosis_announcement.format(diagnosis=c.knowledge.label(ident))
-        self.assertEqual(notice, [expected])
+        self.assertEqual(notice, [expected] * 4)
         self.assertEqual(s.interview.answers[-6].question_id, 'Education:diagnosis:0')
 
     def test_long_diagnosis_notice_uses_the_short_complete_sentence(self):
@@ -293,9 +293,9 @@ class DeliveryTests(unittest.TestCase):
         c,s,_ = f.run(f.FakeSDK(chat_handler=response), prepared=f.resources(education=True))
         self.assertEqual(s.session.termination, 'submitted')
         self.assertEqual(s.interview.education_status, 'complete')
-        self.assertEqual(len(requests), 2)
-        self.assertEqual(requests[1]['generation_error'], 'PROVIDER_RESPONSE_INVALID')
-        self.assertEqual(requests[1]['validation_errors'], [])
+        self.assertEqual(len(requests), 5)
+        self.assertEqual(requests[-1]['generation_error'], 'PROVIDER_RESPONSE_INVALID')
+        self.assertEqual(requests[-1]['validation_errors'], [])
 
     def test_conditional_group_withholds_whole_invalid_group(self):
         def response(payload):
@@ -322,14 +322,15 @@ class DeliveryTests(unittest.TestCase):
             if payload['task']=='education':
                 count += 1
                 raw = education_response(payload)
-                raw['P']['treatment'] = []
+                if 'treatment' in raw['P']:
+                    raw['P']['treatment'] = []
                 return raw
         c = f.consultation(f.FakeSDK(chat_handler=response),f.resources(education=True))
         s = f.chief(f.state('Education'))
         f.freeze_for_education(c,s)
         c.sessions["Education"].prepare_plan(s,c.client)
         c.sessions["Education"].prepare_plan(s,c.client)
-        self.assertEqual(count,2)
+        self.assertEqual(count,5)
         self.assertEqual(len(s.case.plan),4)
         self.assertEqual(s.interview.education_status,'partial')
 

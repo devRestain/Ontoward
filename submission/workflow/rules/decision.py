@@ -6,6 +6,7 @@ from pydantic import StrictStr, model_validator
 
 from .assessment import graph_candidates
 from .clinical_wire import compact_clinical_payload
+from .dd import requirements
 from .limits import LIMITS
 from .normalization import strict_json
 from ..model_context import fact_record, messages
@@ -109,7 +110,7 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
         prior_order=[refs[ident] for ident in protected], required=[],
         resources=dict(turns=tools.budget.action_capacity(state), calls=tools.budget.calls_left(state.session)),
         candidates=[], evidence={}, questions=[],
-        input_limits=dict(graph_items=LIMITS.graph_input_items))
+        input_limits=dict(omitted_question_options=0))
     if state.case.chief_route:
         payload['chief_route'] = dict(target=state.case.chief_route.target, routing_only=True)
     evidence_refs = {}
@@ -196,9 +197,8 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
         payload['candidates'].append(row)
     included = set(shown)
     options = tools._options(state, {i: candidates[i] for i in shown}) if mode != 'rank' and not closing else {}
-    payload['input_limits']['omitted_question_options'] = max(0, len(options) - LIMITS.graph_input_items)
     question_refs = {}
-    for spec, diseases in list(options.values())[:LIMITS.graph_input_items]:
+    for spec, diseases in options.values():
         ref = f'q_{len(question_refs) + 1}'
         question = tools._question(spec, '', 0, 0)
         row = dict(ref=ref, kind=question.kind, target=question.target, attribute=question.attribute,
@@ -227,51 +227,40 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
             row['expected_by_disease'][refs[disease]] = entries
         payload['questions'].append({key: value for key, value in row.items() if value is not None})
         question_refs[ref] = spec
-    bound_graph_input(payload)
-    question_refs = {ref: spec for ref, spec in question_refs.items()
-                     if ref in {row['ref'] for row in payload['questions']}}
+    if state.interview.current == 'DifferentialDiagnosis' and mode != 'rank':
+        payload['asked_questions'] = []
+        for answer in state.interview.answers:
+            if len(answer.key) != 8 or answer.outcome == 'undelivered':
+                continue
+            kind, target, attribute, subject, member, timing, observation, episode = answer.key
+            payload['asked_questions'].append(dict(kind=kind, target=target, attribute=attribute or None,
+                outcome=answer.outcome, scope=scope(subject, member or None, timing,
+                    observation or None, episode or None)))
+    close_graph_input(payload)
+    if state.interview.current == 'DifferentialDiagnosis' and mode != 'rank':
+        payload['resources'].update(requirements(state, question_refs))
     work = DecisionWork(payload, {refs[i]: i for i in included}, candidates, question_refs)
     return work
 
 
-def bound_graph_input(payload):
-    """Keep complete graph records and close every retained wire reference."""
-    cap = LIMITS.graph_input_items
+def close_graph_input(payload):
+    """Keep every evidence/question record and remove only unused definitions."""
     fact_scopes = {row['scope'] for row in payload['facts'].values()}
-    allowed_scopes = set(fact_scopes)
-    for ref in payload['scopes']:
-        if len(allowed_scopes) >= cap:
-            break
-        allowed_scopes.add(ref)
-    relations = dict(list(payload['relations'].items())[:cap])
-    evidence = {ref: row for ref, row in payload['evidence'].items()
-                if row.get('relation') in {None, *relations}
-                and row.get('scope') in {None, *allowed_scopes}}
-    evidence = dict(list(evidence.items())[:cap])
-    for candidate in payload['candidates']:
-        for category in ('supports', 'against', 'unresolved'):
-            if category in candidate:
-                candidate[category] = [ref for ref in candidate[category] if ref in evidence]
-    questions = []
-    for row in payload['questions'][:cap]:
-        if row['scope'] not in allowed_scopes:
-            continue
-        expected = {disease: [entry for entry in entries if entry.get('relation') in {None, *relations}]
-                    for disease, entries in row['expected_by_disease'].items()}
-        row['expected_by_disease'] = {key: entries for key, entries in expected.items() if entries}
-        if row['expected_by_disease']:
-            questions.append(row)
+    evidence, questions = payload['evidence'], payload['questions']
     used_relations = {row['relation'] for row in evidence.values() if 'relation' in row}
     used_relations.update(entry['relation'] for row in questions for entries in row['expected_by_disease'].values()
                           for entry in entries if entry.get('relation'))
     used_scopes = fact_scopes | {row['scope'] for row in evidence.values() if 'scope' in row} | {row['scope'] for row in questions}
-    payload['relations'] = {ref: row for ref, row in relations.items() if ref in used_relations}
+    used_scopes.update(row['scope'] for row in payload.get('asked_questions', []))
+    if not used_relations <= payload['relations'].keys() or not used_scopes <= payload['scopes'].keys():
+        raise ValueError('clinical_input_missing_definition')
+    payload['relations'] = {ref: row for ref, row in payload['relations'].items() if ref in used_relations}
     used_conditions = {row['applicability'] for row in payload['relations'].values() if row.get('applicability')}
+    if not used_conditions <= payload['conditions'].keys():
+        raise ValueError('clinical_input_missing_condition')
     payload['conditions'] = {ref: row for ref, row in payload['conditions'].items() if ref in used_conditions}
     payload['scopes'] = {ref: row for ref, row in payload['scopes'].items() if ref in used_scopes}
-    payload['input_limits']['omitted_evidence'] = len(payload['evidence']) - len(evidence)
-    payload['input_limits']['omitted_questions'] = len(payload['questions']) - len(questions)
-    payload['evidence'], payload['questions'] = evidence, questions
+    payload['input_limits'].update(omitted_evidence=0, omitted_questions=0)
 
 
 def accept_ranking(state, raw, work):

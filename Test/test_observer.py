@@ -28,16 +28,16 @@ def capture(name,observed):
                 if name == 'education_context' and payload['phase'] == 'repair':
                     raise f.NovaError('CONTEXT_LIMIT_EXCEEDED', 400)
                 raw = education_response(payload)
-                if name == 'education_passages':
+                if name == 'education_passages' and 'tests' in raw['P']:
                     raw['P']['tests'][0].update(basis='guideline',
                         references=[dict(document_id='observer-source', quote='Seek care promptly.')])
-                elif name == 'education_repair':
+                elif name == 'education_repair' and 'treatment' in raw['P']:
                     raw['P']['treatment'][0]['utterances'] = ['가' * 31]
                 else:
                     for field, rows in raw['P'].items():
                         if field != 'tests':
                             rows[0]['utterances'] = ['가' * 31]
-                    if name == 'education_context':
+                    if name == 'education_context' and 'treatment' in raw['P']:
                         raw['P']['treatment'] = 'invalid rows'
                 return raw
             if name in {'education_context', 'education_doctor_context'} and payload['task'] == 'education_doctor':
@@ -150,7 +150,7 @@ def verify_trace(rows, name):
         assert 'config/prompts/input_initial.txt' in runtime['prompt_routes']['input.initial']
         assert 'config/prompts/input_initial.txt' not in runtime['prompt_routes']['input.reply']
         settings = next(r for r in rows if r['kind'] == 'settings')
-        assert settings['pipeline']['contract'] == 'D59'
+        assert settings['pipeline']['contract'] == 'D66'
         assert settings['pipeline']['input_metrics'] == 'D64'
         outcomes = inspection['model_outcomes']
         assert outcomes and all(row.get('input_metrics') for row in outcomes)

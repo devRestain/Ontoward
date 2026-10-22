@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from .limits import LIMITS, SESSION_INTERVIEW_LIMITS, SESSION_ORDER
+from .limits import LIMITS, PLAN_SECTIONS, SESSION_INTERVIEW_LIMITS, SESSION_ORDER
 
 # Protect normal input (context + mapping) and final clinical/education work.
 # The optional Ear repairs share the remaining calls; each call still protects
@@ -11,7 +11,7 @@ MODEL_CALLS = {
     'input': 2,
     'decision': 1,
     'clinical': 2,
-    'education': 1,
+    'education': len(PLAN_SECTIONS),
     'education_doctor': 1,
 }
 
@@ -101,7 +101,7 @@ class BudgetPolicy:
     def can_clarify(self, state):
         return state.session.clarifications < LIMITS.clarifications and self.can_start_action(state)
 
-    def model_allowance(self, session, role='gateway', *, maximum=None, state=None):
+    def model_allowance(self, session, role='gateway', *, maximum=None, state=None, reserve_calls=0):
         if not self.calls_left(session):
             return 0
         maximum = min(maximum or {'education':LIMITS.education_tokens,
@@ -120,7 +120,7 @@ class BudgetPolicy:
             calls = self.reserve(work, tasks)
         elif role == 'education' and not session.finalizing:
             calls = MODEL_CALLS['education_doctor']
-        if self.calls_left(session) <= calls:
+        if self.calls_left(session) <= calls + reserve_calls:
             return 0
         return min(maximum, session.output_token_limit - session.output_tokens)
 

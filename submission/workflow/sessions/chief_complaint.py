@@ -1,5 +1,5 @@
 from ..rules.decision import prepare_decision, accept_ranking, rank_exchange
-from ..rules.limits import LIMITS
+from ..rules.limits import LIMITS, SESSION_INTERVIEW_LIMITS
 from ..state.models import Question
 
 
@@ -41,6 +41,10 @@ class ChiefComplaintSession:
             key = '|'.join(('SAY', chief.target, name, 'patient', '', chief.time_context, chief.observation_id or '', chief.episode_id or ''))
             if spec is None:
                 state.interview.collection[key] = 'blocked_asset'
+            elif self.tools.repeated_unknown_attribute(state, spec):
+                self.tools.questions.discard_unasked(state, {q.item_id for q in state.interview.queue
+                    if q.semantic_key() == self.tools._question(spec, '', 0, 0).semantic_key()}, reason='already_resolved')
+                state.interview.collection[key] = 'passed_unknown'
             elif self.tools.budget.action_capacity(state) <= 1:
                 state.interview.collection[key] = 'budget_stopped'
             else:
@@ -54,5 +58,5 @@ class ChiefComplaintSession:
         self.prepare_collection(state)
 
     def required_actions(self, state):
-        return min(7, sum(value == 'unasked' for value in self.tools.chief_statuses(state).values())
+        return min(SESSION_INTERVIEW_LIMITS['ChiefComplaint'][0], sum(value == 'unasked' for value in self.tools.chief_statuses(state).values())
                    + int(not self.tools.open_done(state)))

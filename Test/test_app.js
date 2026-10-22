@@ -77,11 +77,16 @@ async function run() {
   assert.equal(elements.results.inert,false);
   server={...server,busy:false,runs:server.runs.filter(run=>run.state==='completed')};
   await vm.runInContext('poll()',context);
+  elements.backend.value='openai_api';await elements.backend.emit('change');
+  assert.match(elements.start.textContent,/OpenAI API/);
+  assert.match(elements['mode-help'].textContent,/OPENAI_API_KEY/);
+  assert.equal(elements.maximum.disabled,false);
   elements.case.value='all';await elements.case.emit('change');
   assert.match(elements.start.textContent,/3개 시나리오 동시 실행/);
   assert.match(elements['mode-help'].textContent,/전체 최대 600회/);
   await elements.launch.emit('submit');
   assert.equal(JSON.parse(requests.filter(r=>r.options?.method==='POST').at(-1).options.body).case,'all');
+  assert.equal(JSON.parse(requests.filter(r=>r.options?.method==='POST').at(-1).options.body).backend,'openai_api');
   assert.equal(elements['active-runs'].children.length,3);
   assert.match(elements['run-status'].textContent,/3개 시나리오/);
   const activeButton=elements['active-runs'].children[1];

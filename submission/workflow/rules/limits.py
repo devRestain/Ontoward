@@ -5,9 +5,14 @@ from typing import Literal
 SessionName = Literal["Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education"]
 SESSION_ORDER: tuple[SessionName, ...] = ("Initiation", "ChiefComplaint", "ContextFactor", "DifferentialDiagnosis", "Education")
 PLAN_FIELDS = ("tests", "treatment", "disposition", "follow_up", "education")
+PLAN_SECTIONS = {
+    'tests_treatment': ('tests', 'treatment'), 'disposition': ('disposition',),
+    'follow_up': ('follow_up',), 'education': ('education',),
+}
+DD_MINIMUMS = {'SAY': 10, 'EXAM': 5}
 SESSION_INTERVIEW_LIMITS = {
-    "Initiation": (5, 7), "ChiefComplaint": (7, 14), "ContextFactor": (7, 9),
-    "DifferentialDiagnosis": (3, 10), "Education": (5, 10),
+    "Initiation": (5, 7), "ChiefComplaint": (5, 10), "ContextFactor": (7, 9),
+    "DifferentialDiagnosis": (15, 20), "Education": (5, 10),
 }
 
 
@@ -28,8 +33,7 @@ class Limits:
     gateway_recovery_tokens: int = 8000
     submission_repairs: int = 1
     clarifications: int = 2
-    focused_ros: int = 6
-    graph_input_items: int = 50
+    education_documents: int = 3
     hpi_priority: int = 10000
     open_inquiry_priority: int = 1000000
     clarification_priority: int = 2000000

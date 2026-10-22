@@ -15,6 +15,7 @@ from models import completion, MODEL, NovaModels, ScriptedModels
 from report import report
 from server import Evaluation, http_server, load_case
 from test_web import WebTests
+from test_openai import OpenAITests
 
 
 class Replies:
@@ -539,7 +540,7 @@ class BrainProtocolTests(unittest.TestCase):
 
 if __name__ == '__main__':
     stream = io.StringIO()
-    suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromTestCase(cls) for cls in (EvaluatorTests, WebTests, BrainProtocolTests))
+    suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromTestCase(cls) for cls in (EvaluatorTests, WebTests, BrainProtocolTests, OpenAITests))
     result = unittest.TextTestRunner(stream=stream, verbosity=2).run(suite)
     print(stream.getvalue())
     report = {'status': 'pass' if result.wasSuccessful() else 'fail', 'tests': result.testsRun,

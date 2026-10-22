@@ -35,12 +35,16 @@ def report(root):
               'root_read_only': sandbox.get('root_read_only') is True,
               'submission_read_only': sandbox.get('submission_read_only') is True,
               'output_writable': sandbox.get('output_writable') is True}
+    if 'openai_key_present' in process or summary['backend'] == 'openai_api':
+        checks['no_openai_key_in_agent'] = process.get('openai_key_present') is False
     result = {'status': 'pass' if all(checks.values()) else 'fail', 'backend': summary['backend'],
               'case_id': summary['case_id'], 'turns': summary['turns'], 'doctor_calls': summary['doctor_calls'],
               'nonempty_gateway_responses': summary['doctor_successes'],
               'sandbox': sandbox, 'missing_evidence': missing,
               'model_requests': summary['model_requests'], 'checks': checks, 'score_status': 'not_scored',
               'actual_nova': 'run' if summary['backend'] == 'nova' and summary['model_requests'] else 'not_run',
+              'actual_openai_api': 'run' if summary['backend'] == 'openai_api' and summary['model_requests'] else 'not_run',
+              'provider_model': summary.get('provider_model'),
               'official_submission': 'not_run', 'clinical_accuracy': 'not_evaluated'}
     observed = collect(root)
     result['trace_status'] = observed['trace']['status']

@@ -12,7 +12,7 @@ from workflow.doctor_ear import DoctorEar
 from workflow.input_types import ContextStatement
 from workflow.model_context import message_metrics, messages
 from workflow.rules.clinical_wire import compact_clinical_payload, compact_expected, compact_feature, wire_key
-from workflow.rules.decision import bound_graph_input, clinical_messages, prepare_decision
+from workflow.rules.decision import close_graph_input, clinical_messages, prepare_decision
 from workflow.rules.normalization import validate_mapping
 
 
@@ -120,22 +120,22 @@ class ClinicalWireTests(unittest.TestCase):
         self.assertEqual(work.options, options)
         self.assertEqual({q['ref'] for q in repaired['questions']}, set(options))
 
-    def test_fifty_record_selection_stays_before_lossless_compaction(self):
+    def test_all_records_above_fifty_survive_closure_and_lossless_compaction(self):
         logical = duplicate_payload(count=65)
         for index in range(5, 70):
             logical['scopes'][f's_{index}'] = dict(subject='patient', time='past', observation=f'o_{index}')
             logical['facts'][f'f_{index}'] = dict(status='unknown', value=f'Unbound {index}', scope=f's_{index}',
                 category='medical_history', acquisition='SAY', reported_by='patient')
-        bound_graph_input(logical)
-        self.assertEqual(len(logical['relations']), 50)
+        close_graph_input(logical)
+        self.assertEqual(len(logical['relations']), 65)
         self.assertEqual(len(logical['candidates']), 62)
         self.assertEqual(len(logical['facts']), 68)
         wire = compact_clinical_payload(logical)
         assert_same_meaning(self, logical, wire)
-        self.assertTrue(wire['incomplete'])
+        self.assertNotIn('incomplete', wire)
         self.assertEqual(set(wire['facts']), set(logical['facts']))
-        self.assertNotIn('r_51', wire['relations'])
-        self.assertEqual(len(wire['relations']), 50)
+        self.assertIn('r_65', wire['relations'])
+        self.assertEqual(len(wire['relations']), 65)
 
     def test_unknown_schema_fields_and_invalid_refs_fail_explicitly(self):
         for path, value in [('feature', 999), ('feature', False), ('relation', 'r_missing'), ('facts', ['f_missing'])]:

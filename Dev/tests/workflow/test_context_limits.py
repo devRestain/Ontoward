@@ -124,7 +124,7 @@ class EducationLimitTests(unittest.TestCase):
                 '## Follow-up\r\nReview symptoms.\r\n')
         c, s = f.consultation(prepared=f.resources(education=True)), f.chief(f.state())
         f.freeze_for_education(c, s)
-        c.knowledge.guidelines = SimpleNamespace(read=lambda _: ([source], []))
+        c.knowledge.guidelines = SimpleNamespace(read=lambda _, **kwargs: ([source], []))
         initial = education_response({'task': 'education', 'phase': 'direct'})
         initial['P']['tests'][0].update(text='Discuss ' + 'care ' * 6000 + '.', basis='guideline',
             references=[dict(document_id='doc', quote='정확한 원문입니다.')])
@@ -135,9 +135,9 @@ class EducationLimitTests(unittest.TestCase):
             c.sessions['Education'].prepare_plan(s, c.client)
         self.assertEqual(len([p for p in c.client.requests if p['task'] == 'education']), 1)
         c.brain.new_request_id.assert_called_once()
-        self.assertEqual(len(s.case.plan), 4)
+        self.assertEqual(len(s.case.plan), 1)
         self.assertEqual(s.case.plan[0].text, initial['P']['tests'][0]['text'])
-        self.assertEqual(s.interview.education_reason, 'education_model_error:LOCAL_EDUCATION_MESSAGE_LIMIT')
+        self.assertTrue(s.interview.education_reason.endswith('education_model_error:LOCAL_EDUCATION_MESSAGE_LIMIT'))
         contexts = parser.call_args.args[1]
         expected = [(source, passage) for passage in passages(source['text'])]
         self.assertEqual(contexts, source_contexts(expected))
@@ -150,12 +150,19 @@ class EducationLimitTests(unittest.TestCase):
             c, s = f.consultation(prepared=f.resources(education=True)), f.chief(f.state())
             f.freeze_for_education(c, s)
             frozen = s.case.model_dump(exclude={'plan'})
-            c.knowledge.guidelines = SimpleNamespace(read=lambda _: ([source], []))
+            c.knowledge.guidelines = SimpleNamespace(read=lambda _, **kwargs: ([source], []))
             selected = [(source, passages(source['text'])[0])] if not fixed_too_large else []
             payload = dict(task='education', **fixed_case_payload(s.case),
-                delivery_turn_budget=c.budget.action_capacity(s), phase='direct', documents=project_documents(selected))
-            prompt_size = LIMITS.education_max_messages_bytes - json_bytes(messages('', payload))
-            config = SimpleNamespace(prompt=lambda *routes: 'x' * (prompt_size + (1 if fixed_too_large else 0)))
+                delivery_turn_budget=3, phase='direct', documents=project_documents(selected),
+                section='tests_treatment', fields=['tests', 'treatment'], accepted_plan=[])
+            if fixed_too_large:
+                payload.update(section='education', fields=['education'], delivery_turn_budget=2)
+                prompt_size = LIMITS.education_max_messages_bytes - json_bytes(messages('', payload)) + 100
+            else:
+                payload.update(phase='repair', repair_phase='direct', accepted=[],
+                    validation_errors=['expected P object with assigned sentence arrays'])
+                prompt_size = LIMITS.education_max_messages_bytes - 2048 - json_bytes(messages('', payload))
+            config = SimpleNamespace(prompt=lambda *routes: 'x' * prompt_size)
             before = (s.session.doctor_calls, s.session.input_tokens, s.session.output_tokens)
             c.brain.new_request_id = Mock(wraps=c.brain.new_request_id)
             with patch('workflow.education.parse_plan', wraps=parse_plan) as parser:
@@ -166,10 +173,11 @@ class EducationLimitTests(unittest.TestCase):
                 parser.assert_not_called()
                 self.assertFalse(s.case.plan)
             else:
-                c.brain.new_request_id.assert_called_once()
+                self.assertEqual(c.brain.new_request_id.call_count, 4)
                 self.assertEqual(c.client.requests[-1]['documents'], project_documents(selected))
                 self.assertEqual(parser.call_args.args[1], source_contexts(selected))
-                self.assertEqual(len(s.case.plan), 5)
+                self.assertEqual({sentence.field for sentence in s.case.plan},
+                                 {'tests', 'treatment', 'disposition', 'follow_up', 'education'})
             self.assertEqual(s.case.model_dump(exclude={'plan'}), frozen)
 
     def test_context_error_blocks_same_prepare_mouth_then_syncs_and_completes_diagnose(self):

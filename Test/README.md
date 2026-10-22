@@ -1,6 +1,6 @@
 # 웹에서 실행하는 공개 샘플 테스트
 
-**D61 현재 상태:** 활성 v5-enum-1 지식은 build cec62f4596bedd9b9488aa75e3d38f04이며 runtime d50.12와 format 7 관측을 사용한다. 중간 오류 뒤에도 최종 payload로 전진하고 실제 completed와 미확정을 구분한다. 오프라인 프로토콜 수용과 실제 모델·임상 품질은 별도다.
+**현재 상태:** 활성 v5-enum-1 지식은 build cec62f4596bedd9b9488aa75e3d38f04이며 D66 runtime d50.13과 format 7 관측을 사용한다. D65의 개인 OpenAI API 시험 경로와 Test 이미지 일치 검사를 유지한다. DD의 확인된 SAY·EXAM 횟수와 부족 사유, 네 medium 계획 호출·P coverage·실제 전달 결과를 구분하며 그래프 상세 50개 제한은 없다. 중간 오류 뒤에도 최종 payload로 전진하고 실제 completed와 미확정을 구분한다. 오프라인 프로토콜 수용과 실제 모델·임상 품질은 별도다.
 
 `Test/`는 기존 `submission/run.py`와 SDK를 그대로 실행하면서, 공모전의 세션 API와 예선 컨테이너 제약을 로컬에서 재현한다. 공개 `C01`·`C03`·`C10`의 `case.json`을 읽으며 공식 서버의 비공개 구현이나 채점 기준을 재현하지 않는다. 모든 결과의 채점 상태는 `not_scored`다.
 
@@ -49,6 +49,30 @@ docker compose -f Test/compose.yaml build --pull=false test-simulator
 ```
 
 기반 이미지가 없는 경우 먼저 기존 프로젝트 절차인 `docker compose build dev`로 준비한다. 기반 이미지 준비에는 PyPI 다운로드가 필요할 수 있다. Test 이미지 빌드는 프로젝트의 로컬 기반 이미지에서 네트워크 없이 수행한다. Test 코드를 수정하면 이 이미지를 다시 빌드한다.
+
+CLI와 웹 실행기는 시작 전에 현재 Test 실행 파일과 이미지의 SHA-256을 비교한다. 불일치하면 모델을 호출하기 전에 중지하고 위 빌드 명령을 표시한다. 새 실행의 `test-version.json`과 `summary.json.test_runtime`에서 시작 검사와 실제 simulator 소스를 확인한다. 문서·키는 hash 대상에서 제외한다. 과거 실행에 이 자료가 없으면 미수집이며 기록을 소급 변경하지 않는다.
+
+## 개인 OpenAI API로 테스트하기
+
+루트 `.env`에 아래 설정을 추가한다. 기존 값과 실제 키는 유지하고 `submission/.env`에는 넣지 않는다. 셸의 환경변수로 전달할 수도 있다.
+
+```dotenv
+OPENAI_API_KEY=<본인의 OpenAI API 키>
+TEST_OPENAI_MODEL=gpt-6-luna
+```
+
+기본 모델은 프로젝트에서 사용하던 Luna다. 다른 모델을 명시하려면 `TEST_OPENAI_MODEL`에 OpenAI API 모델 ID를 넣는다. `openai/` 접두사는 붙이지 않는다. 해당 계정의 모델 접근 가능 여부는 실제 API 응답으로 확인해야 하며 자동 대체 모델은 없다.
+
+```sh
+docker compose -f Test/compose.yaml build --pull=false test-simulator
+TEST_MAX_MODEL_REQUESTS=200 sh Test/run.sh C01 openai_api
+```
+
+웹에서는 기존 실행기를 종료하고 `sh Test/web.sh`로 다시 시작한 뒤 **응답 방식 → OpenAI API · 개인 API 요금**을 선택한다. C01 하나 또는 세 증례 동시 실행을 명시적으로 선택한다. 화면에는 키를 입력하지 않는다. 이 모드는 환자·진찰·Doctor의 실제 messages를 `https://api.openai.com/v1/responses`에 전송하고 개인 API 사용량을 발생시킨다. NOVA quota와 별도이며 OpenAI 계정의 rate limit·잔액·모델 권한이 적용된다. 요청 상한은 각 증례의 전체 역할을 합산한다. 기존 `TEST_MAX_NOVA_REQUESTS`도 CLI 호환 입력으로 받지만 새 공통 변수 `TEST_MAX_MODEL_REQUESTS`가 우선한다.
+
+키와 외부 네트워크는 simulator에만 전달한다. agent·web·이미지·리포트·제출 ZIP에는 키를 넣지 않는다. 기존 NOVA SDK·진료 알고리즘·프롬프트·번들은 그대로 사용하고 simulator가 Responses 응답을 SDK 형식으로 변환한다. `max_output_tokens`와 요청 effort를 전달하고 실제 `output_tokens`에 포함된 reasoning을 중복 합산하지 않는다. reasoning만 생성하고 잘린 응답도 실제 usage와 `finish_reason=length`를 전달한다. 자동 재시도·자동 공급자 전환은 없으며 timeout은 `OPENAI_OUTCOME_UNKNOWN`, rate limit은 `OPENAI_RATE_LIMIT`, 확정 quota 소진은 `REQUEST_BUDGET_EXHAUSTED`로 구별한다.
+
+`simulator/openai-requests.jsonl`은 실제 요청 body·원응답·provider request ID를 보존하고 인증 header는 기록하지 않는다. summary의 기존 input/output은 Doctor 증례 예산이며 `provider_usage`는 환자·진찰을 포함해 usage가 보고된 전체 역할의 사용량이다. 불명 요청 비용은 추정하지 않는다. `backend=openai_api`·실제 provider model·`actual_openai_api`를 NOVA와 구분하고 공식 제출·채점·임상 정확성은 계속 별도 상태로 남긴다. 리포트의 프로토콜 통과와 Education 성공은 별개다.
 
 ## 웹에서 실행하고 결과 확인하기
 

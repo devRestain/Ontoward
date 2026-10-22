@@ -1,9 +1,11 @@
 import hashlib
+import unicodedata
 
 from ..state import usage
 from .collection import INTAKE, HISTORY, answered, slot_resolved
 from .limits import LIMITS
 from .chief import force_chief
+from .action import content_error
 from ..state.models import Question
 
 
@@ -134,7 +136,10 @@ class QuestionTools:
         if exam:
             if subject != 'patient' or time_context != 'current':
                 return None
-            methods = self.knowledge.get_exam_methods(target)
+            try:
+                methods = self.knowledge.get_exam_methods(target)
+            except ValueError:
+                return None
             if not methods:
                 return None
             text, answer_type, affirmative = methods[0]['text'], 'free_text', False
@@ -144,6 +149,8 @@ class QuestionTools:
                 return None
             text = self.knowledge.question(attribute or target, target)
             answer_type, affirmative = template.answer_type, template.affirmative
+        if content_error(unicodedata.normalize('NFC', text)):
+            return None
         route = state.case.chief_route
         route_collection = (purpose in {'hpi', 'chief'} and route and route.target_id == target
                             and (subject, subject_member, time_context, observation, episode) ==
@@ -171,6 +178,8 @@ class QuestionTools:
         self.questions.register(state, self._question(spec, ident, order, priority))
 
     def _eligible(self, state, spec):
+        if self.repeated_unknown_attribute(state, spec):
+            return False
         target, attribute = spec['target_id'], spec['attribute_id']
         args = (state, target, attribute, spec['observation_id'], spec['episode_id'], spec['subject'], spec['time_context'], spec.get('subject_member'))
         if self.has_resolved_evidence(*args):
@@ -196,7 +205,27 @@ class QuestionTools:
                 for f in state.case.current_facts())
         return True
 
+    def repeated_unknown_attribute(self, state, spec):
+        """Block the same failed information request within one concrete episode."""
+        if spec['kind'] != 'SAY' or not spec['attribute_id'] or not spec['episode_id']:
+            return False
+        name = self.knowledge.term(spec['target_id'])
+        attribute = self.knowledge.term(spec['attribute_id'])
+        for answer in state.interview.answers:
+            if answer.outcome != 'unknown' or len(answer.key) != 8:
+                continue
+            kind, target, attr, subject, member, timing, _, episode = answer.key
+            if (kind, target, attr, subject, member, timing, episode) != ('SAY', name, attribute, spec['subject'],
+                    spec.get('subject_member') or '', spec['time_context'], spec['episode_id']):
+                continue
+            target_id = self.knowledge.term_id(target, 'Symptom')
+            if target_id and self.knowledge.question(spec['attribute_id'], target_id) == spec['text']:
+                return True
+        return False
+
     def _allowed_now(self, state, spec):
+        if spec['kind'] not in state.session.allowed_actions:
+            return False
         if not self._eligible(state, spec):
             return False
         if state.interview.current == 'ChiefComplaint':
@@ -211,10 +240,7 @@ class QuestionTools:
             chief = state.case.collection_chief()
             systems = self.knowledge.get_symptom_systems(self.knowledge.term_id(chief.target, 'Symptom')) if chief else []
             targets = {t for system in systems for t in self.knowledge.get_system_symptoms(system)}
-            delivered = sum(a.purpose == 'ros' and a.outcome != 'undelivered' for a in state.interview.answers)
             if spec['target_id'] in targets:
-                if delivered >= LIMITS.focused_ros:
-                    return False
                 spec['purpose'] = 'ros'
         if state.interview.current == 'ContextFactor' and not self.knowledge.has_type(spec['target_id'], 'ContextFactor'):
             return False

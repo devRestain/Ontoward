@@ -4,7 +4,7 @@
 
 - Treat competition submission as the endpoint; implement one authorized acceptance slice without speculative platforms or compatibility layers.
 - Read root PROJECT_STATE.md, relevant PRD.md requirements, DECISION_STATE.md, and the owning child contract and state before changing a scope.
-- Apply D63 candidate and SOAP count-limit withdrawal, scoped history completion, exact-unknown assessment recovery, safety-first Education allocation, and cumulative output enforcement. Preserve D61 bounded recovery and independent graph record limits, D59 guards, D55 strict loading, D54 scopes, D57-D58, D53 direct Initiation, and D49-D51 ownership.
+- Apply D66 receipt-backed DD minimums ROS routing four medium Education sections and uncapped graph records. Preserve D63 finalization and token enforcement D61 bounded recovery D59 guards D55 strict loading D54 scopes D57-D58 D53 direct Initiation and D49-D51 ownership.
 - Apply D57 atomic input details, strict measurement references, scoped note identity, and one-level collection delegation before preparing questions.
 - Keep root integration, Docker configuration, requirements, and cross-scope coordination here; keep runtime Python in submission/, extraction code and prompts in Extraction/, maintained checks and packaging in Dev/, observation and local simulation in Test/, durable results in data/, and disposable evidence in Tmp/.
 - Maintain exactly root, submission/, and data/ PROJECT_STATE.md scopes. Record Extraction, Dev, Test, and Tmp operational progress in root state.
@@ -14,6 +14,7 @@
 
 ## Runtime contract
 
+- Apply D67 scoped DD action reselection strict missing-P normalization repair-aware Education packets section delivery allocations and conservative same-episode repeat suppression. Preserve distinct clinical targets episodes family members and time scopes.
 - Keep submission/run.py as the unchanged SDK entrypoint exposing prepare and consult from workflow/runtime.py.
 - Keep Consultation as the sole session coordinator. Assign input to DoctorEar, clinical ranking and question selection to session objects, English plans and Education delivery scheduling to EducationSession, all LLM execution to one DoctorBrain, expression and SAY/EXAM to DoctorMouth, and SOAP/DIAGNOSE to SubmissionWriter.
 - Pass a current successful CC Assessment to ContextFactor through Consultation; keep sessions independent of other session objects. Keep Education rendering free of queue and delivery-status writes and reuse queued or receipted plan groups on reentry.
@@ -39,17 +40,17 @@
 - Share relation definitions once per JSON model input and pass session-owned remaining question counts to arithmetic BudgetPolicy. Use confirmed response budgets and synchronize uncertain consumption or server-limit failures before further collection.
 - Enforce cumulative input 500000 and output 100000, reported request-input 100000, and output 8000 per call. Tighten output allowance using actual completion usage and optional server remaining output; stop new model calls at zero without blocking Writer finalization. Preserve call and action ceilings, deadlines, and the absence of the withdrawn Education token reserve.
 - Share identical relation definitions across disease associations within the bounded workset without dropping complete conditions scoped matches or Python graph references. Return clinical/gateway CONTEXT_LIMIT_EXCEEDED without immediate model retries; let the owner pass the operation and continue. Synchronize Education errors through D59.
-- Apply D64 compact clinical projection only after existing graph bounding and immediately before messages. Keep logical work unchanged; allowlist task fields, share exact ordered Patterns and complete identical disease expectation arrays with canonical JSON keys, validate reference closure, and preserve accepted facts retained question scopes and incomplete meaning. Keep the fifty-record selection and D63 uncapped candidates rankings and SOAP alternatives.
+- Apply D64 compact clinical projection after reference closure and immediately before messages. Preserve complete logical work with allowlisted fields exact ordered Patterns complete identical expectation arrays canonical JSON keys and validated references.
 - Omit categorical values only from numeric Mapping wire contracts; retain original contracts for strict use_measurement validation. Measure final role/task/phase system and user content bytes whole messages JSON bytes block sizes and nested counts through Test observation without adding metrics to model input resident state token estimates or new byte guards.
 - Run Consultation directly without LangGraph or per-operation whole-state copying. Keep external data validation and consume failed operations through pass_step or a session transition without replay.
-- Generate English P and Korean utterances jointly at high effort; validate and retain English independently, repair invalid Korean groups at medium effort, and keep EducationSession responsible for scheduling and receipts.
+- Generate tests with treatment disposition follow_up and education through four distinct medium prompts. Complete initial sections before one repair per failed section and preserve accepted English citations and Korean groups independently.
 - Select one task route in Python from submission/config/prompts.json. Preserve D48 modular prompts and existing runtime model/effort settings.
 - Load runtime knowledge only inside submission/ through a relative-path/hash-pinned manifest. Fail prepare and production packaging with knowledge_bundle_not_installed until a real new bundle is installed; use synthetic bundles only in Tmp/.
 
 
 - Consume failed questions with scoped passed_unasked or passed_unknown markers; preserve actual response payloads and IDs before clearing the turn and never create an Answer for an unsent question.
 - Keep CC route selection separate from patient facts. Use at most one additional gateway selection over eight registered Symptoms after bounded clarification, then a deterministic registered route without invented findings.
-- Limit graph-derived relation evidence question and condition tables to fifty complete records; close retained references and keep all accepted patient facts and their scopes. Retain every eligible disease candidate and every accepted ranking entry without a count cap; write all accepted alternatives after the primary to SOAP subject to the existing note byte limit and explicit minimal recovery.
+- Retain every eligible question evidence relation condition fact and required scope without count truncation. Preserve all candidates and Assessment entries and write accepted alternatives within the existing note byte limit and explicit minimal recovery.
 - Exclude patient and caregiver demographics from HISTORY completion; require patient facts for patient history slots and actual family history or a delivered whole-family history answer for family_history.
 - Preserve an unfrozen disease assessment after failed reassessment only for one verified exact unknown SAY reply with unchanged facts revision and chief; retain its original response basis and limitations and add the failed-reassessment limitation.
 - Allocate complete safety plan utterance groups before routine groups after diagnosis announcement; preserve NFC length checks actual SAY receipts and undelivered records.
@@ -99,6 +100,7 @@
 - Verify representative full consultations and the independent synthetic ZIP through the unchanged entrypoint and original SDK. Keep fixtures outside the agent artifact and document actual model/clinical/official checks as not_run.
 - Package only required runtime Python, pinned requirements, public .env, referenced prompts/text, and five knowledge assets plus manifest. Exclude source originals, preparation code, credentials, tests, guidance, state, and caches.
 - Keep Test observation read-only; preserve saved traces and accepted evidence. Keep atlas.html as a dated source-backed explanation snapshot rather than acceptance evidence; label old comparison tools as historical.
+- Permit explicitly selected OpenAI API testing only through the Test simulator with simulator-only OPENAI_API_KEY and no automatic NOVA fallback. Keep the submission SDK entrypoint prompts knowledge and model settings unchanged; verify Test image source parity before launching and distinguish direct API evidence from NOVA and official evaluation.
 
 ## Documentation and handoff
 
@@ -109,3 +111,7 @@
 - Report performed static, semantic, runtime, and artifact checks separately from actual model quality, clinical validity, official evaluation, publication, and deployment.
 
 - Honor explicit post-verification disposal of prior knowledge builds only after checking active manifest targets and runtime readiness. Retain current assets and compact hash and deletion receipts.
+
+- Use CC 5/10 and DD 15/20 with at least ten confirmed SAY and five EXAM DD receipts when registered questions exist. Exhaust shorter lists and record shortages without inventing questions or counting unsent rejected or replayed actions.
+- Preserve DD SAY symptom provenance in S.ros before chief HPI grouping in normal and independent minimal Writer while retaining objective family and history classifications.
+- Share at most three verified mapped documents and fixed citation contexts across four Education sections with the existing source guards seven protected turns and ten delivery actions.

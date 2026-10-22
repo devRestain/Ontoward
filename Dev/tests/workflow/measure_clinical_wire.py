@@ -13,7 +13,7 @@ from workflow.doctor_ear import DoctorEar
 from workflow.input_types import ContextStatement
 from workflow.model_context import message_metrics, messages
 from workflow.rules.clinical_wire import compact_clinical_payload
-from workflow.rules.decision import bound_graph_input, clinical_messages, prepare_decision
+from workflow.rules.decision import close_graph_input, clinical_messages, prepare_decision
 
 
 def baseline_config(root):
@@ -40,14 +40,14 @@ def compare(test, baseline, current, logical, **labels):
     return dict(**labels, role='clinical', task=logical['task'],
         phase='repair' if 'validation_error' in logical else 'initial',
         before=message_metrics('clinical', before), after=message_metrics('clinical', after),
-        semantic_equivalence='pass_against_current_bound', actual_after_tokens='not_measured')
+        semantic_equivalence='pass_against_full_projection', actual_after_tokens='not_measured')
 
 
 def measure(baseline, output, inventory):
     test = unittest.TestCase()
     c, s = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
     report = dict(status='pass', baseline_revision='07420ee44587a323eb2434d95c7656cdec1986b9',
-        actual_model_calls=0, token_estimation='not_performed', graph_detail_limit=50,
+        actual_model_calls=0, token_estimation='not_performed', graph_detail_limit=None,
         byte_metric='ensure_ascii=False,separators=(comma,colon),allow_nan=False; UTF-8',
         block_sizes='Diagnostic values; exclude enclosing key/separator overhead and may overlap',
         comparisons=[], unsupported_saved_requests=[])
@@ -70,7 +70,7 @@ def measure(baseline, output, inventory):
                 for category in ('supports', 'against', 'unresolved'):
                     candidate.pop(category)
             logical['evidence'] = {}
-        bound_graph_input(logical)
+        close_graph_input(logical)
         for phase in ('initial', 'repair'):
             if phase == 'repair':
                 logical['validation_error'] = 'invalid_reference ' * 80
@@ -127,10 +127,9 @@ def measure(baseline, output, inventory):
                 if task.startswith('clinical_'):
                     logical = deepcopy(payload)
                     if 'input_limits' not in logical:
-                        logical['input_limits'] = dict(graph_items=50,
-                            omitted_question_options=max(0, len(logical['questions']) - 50))
-                        bound_graph_input(logical)
-                        labels['historical_selection'] = 'Apply current bound to older unbounded payload; do not attribute that loss to compaction'
+                        logical['input_limits'] = dict(omitted_question_options=0)
+                        close_graph_input(logical)
+                        labels['historical_selection'] = 'Preserve all supplied records; do not reconstruct historically omitted records'
                     rows.append(compare(test, baseline, c.config, logical, **labels))
                 else:
                     wire = deepcopy(payload)

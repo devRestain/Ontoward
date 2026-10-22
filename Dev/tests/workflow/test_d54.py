@@ -221,9 +221,9 @@ class ProjectionTests(unittest.TestCase):
             initial={ident: ['x' * 31]})
         with patch.object(c.knowledge, 'label', return_value='Disease alpha'):
             c.mouth.render_diagnosis(s, c.client, c.knowledge)
-        self.assertEqual([p['phase'] for p in c.client.requests if p['task'] == 'education'], ['direct', 'repair'])
+        self.assertEqual([p['phase'] for p in c.client.requests if p['task'] == 'education'], ['direct'] * 4 + ['repair'])
         requests = [p for p in c.client.requests if p['task'] in {'education', 'education_doctor'}]
-        self.assertEqual(len(requests), 4)
+        self.assertEqual(len(requests), 7)
         for payload in requests:
             self.check_fixed(payload)
             self.assertEqual(payload['fixed_diagnosis']['evidence_ids'], ['f_1'])
@@ -452,13 +452,13 @@ class GuidelineAndGetterTests(unittest.TestCase):
             f.freeze_for_education(c, s)
             requested = []
             library = GuidelineLibrary({'primary': rows})
-            def read(disease):
+            def read(disease, **kwargs):
                 requested.append(disease)
-                return library.read('primary')
+                return library.read('primary', **kwargs)
             c.knowledge.guidelines.read = read
             def respond(payload):
                 value = education_response(payload)
-                if payload.get('phase') == 'direct':
+                if payload.get('phase') == 'direct' and payload['section'] == 'tests_treatment':
                     row = value['P']['tests'][0]
                     row.update(basis='guideline', references=[dict(document_id='d7', quote='원문 인용입니다.')])
                     return {'P': {'tests': [row]}}
@@ -468,10 +468,10 @@ class GuidelineAndGetterTests(unittest.TestCase):
                 c.sessions['Education'].prepare_plan(s, c.client)
             self.assertEqual(requested, [c.knowledge.term_id(s.case.primary().name, 'Disease')])
             payloads = [p for p in c.client.requests if p['task'] == 'education']
-            self.assertEqual(len(payloads), 2)
-            self.assertEqual(payloads[0]['documents'], payloads[1]['documents'])
-            self.assertIs(parser.call_args_list[0].args[1], parser.call_args_list[1].args[1])
-            self.assertEqual(payloads[1]['accepted'][0]['references'],
+            self.assertEqual(len(payloads), 5)
+            self.assertTrue(all(payload['documents'] == payloads[0]['documents'] for payload in payloads))
+            self.assertTrue(all(call.args[1] is parser.call_args_list[0].args[1] for call in parser.call_args_list))
+            self.assertEqual(payloads[-1]['accepted'][0]['references'],
                 [dict(document_id='d7', quote='원문 인용입니다.')])
             for payload in payloads:
                 for doc in payload['documents']:
