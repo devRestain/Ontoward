@@ -1,0 +1,1 @@
+Read {"table":"dict|list","groups":[{"fields":[...],"rows":[[...]]}]} as lossless row tables. Pair each cell with its field. $key is the dictionary key; $index preserves original input order and is never a clinical score. Different field layouts preserve missing versus explicit null. Other blocks keep ordinary JSON. Resolve every supplied reference within this request.

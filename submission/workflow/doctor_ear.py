@@ -2,18 +2,21 @@ import json
 from pydantic import ValidationError
 from .input_types import ContextInput, ContextStatement, InputResult, PatientContextFact, normalized_text
 from .output_types import MappingBatch
+from .input_wire import InputProjection
 from .model_context import messages, fact_record
 from .rules.input import fact_scope, make_fact, note_fact
 from .state.models import CaseFact, ObservedNumber
 from .rules.limits import LIMITS
 from .rules.normalization import candidate_contracts, exact_mapping, measurement_value, statement_outcome, strict_json, validate_mapping
+from .rules.coverage import CoverageWork, accept as accept_coverage, answer_record, question_record, unknown_answers
 
 class DoctorEar:
 
-    def __init__(self, config, model, questions):
+    def __init__(self, config, model, questions, *, pending_questions=None):
         self.config, self.model = (config, model)
         self.questions = questions
         self.dialogue = []
+        self.pending_questions = pending_questions
 
     def record_delivery(self, question, source, raw):
         if not any((row['id'] == source for row in self.dialogue)):
@@ -67,6 +70,8 @@ class DoctorEar:
             conflict = any((current.get(ident) and current[ident].status == 'uncertain' for ident in matched))
             outcome = 'conflict' if conflict else 'mapped' if matched else 'not_applicable' if 'not_applicable' in outcomes else 'unknown' if 'unknown' in outcomes else 'recorded' if notes else 'unknown' if result.facts else 'unsupported' if 'unsupported' in outcomes else 'nonclinical'
             self.questions.complete(state, question, source, outcome=outcome, fact_ids=matched, turn=raw.get('turn'))
+        if result.coverage:
+            accept_coverage(state, result.coverage, knowledge, self.config, result.statement_facts)
         state.turn = None
 
     def _call(self, state, client, payload, prompt, *, recovery=False):
@@ -79,7 +84,7 @@ class DoctorEar:
         if question and question.observation_id:
             related = {f.id for f in facts if f.observation_id == question.observation_id and f.episode_id == question.episode_id}
         facts = sorted(facts, key=lambda f: (f.id not in related, -f.turn, f.id))
-        records = [dict(fact_record(f), source_ref=f.source_ref) for f in facts[:LIMITS.expanded_context_records]]
+        records = [dict(fact_record(f), source_ref=f.source_ref) for f in facts]
         for row in records:
             if row['id'].startswith('patient_context:') and 'context_key' not in row:
                 row['context_key'] = row['id'].rsplit(':', 1)[-1]
@@ -210,11 +215,15 @@ class DoctorEar:
                 continue
         return False
 
-    def _context(self, state, knowledge, client, text, segments=None):
+    def _context(self, state, knowledge, client, text, segments=None, *, coverage_work=None):
         question = state.question()
         fixed = self._fixed_reply(question, knowledge, text)
         if fixed is not None:
             return fixed
+        coverage_work = coverage_work if coverage_work is not None else CoverageWork()
+        if self.pending_questions:
+            coverage_work.questions = {f'p_{index}': q for index, q in enumerate(self.pending_questions(state), 1)}
+        coverage_work.answer_refs = unknown_answers(state, self.config)
         binding = question.model_dump(exclude_none=True, exclude_defaults=True, exclude={'text', 'priority', 'order', 'coverage', 'plan_sentence_id'}) if question else None
         if binding is not None:
             binding['kind'] = question.kind
@@ -224,9 +233,15 @@ class DoctorEar:
                     if (ident := knowledge.term_id(question.target, kind))), None)
                 binding['allowed_values'] = [knowledge.term(value) for value in knowledge.get_attribute_values(attribute)]
                 binding['allowed_units'] = knowledge.numeric_units(target, attribute)
-        payload = {'task': 'input_context', 'phase': 'context', 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'known_patient_context': {n.context_key: n.value for n in state.case.current_facts() if n.context_key and n.subject == 'patient' and (n.status == 'present')}, 'input_segments': segments, **self._project_context(state, question)}
+        payload = {'task': 'input_context', 'phase': 'context', 'input_kind': 'reply' if question else 'initial', 'turn': LIMITS.turns - state.session.turns_remaining, 'question': binding, 'spoken_question': question.text if question else None, 'input_segments': segments, **self._project_context(state, question)}
+        if coverage_work.questions:
+            payload['pending_questions'] = [question_record(ref, q) for ref, q in coverage_work.questions.items()]
+        if coverage_work.answer_refs:
+            payload['asked_questions'] = [answer_record(ref, answer) for ref, answer in coverage_work.answer_refs.items()]
         if segments is None:
             payload['input'] = text
+        projection = InputProjection(payload)
+        coverage_work.fact_refs = {ref: ident for ident, ref in projection.refs['id'].items()}
         context, indices, demographic_indices = (None, None, None)
         review_chief = False
         errors = []
@@ -236,11 +251,16 @@ class DoctorEar:
             routes = [route]
             if attempt:
                 routes.append('input.chief_repair' if review_chief else 'input.rows_repair' if indices is not None else 'input.repair')
-            response = self._call(state, client, payload, self.config.prompt(*routes), recovery=bool(attempt))
+            response = self._call(state, client, projection.payload(payload), self.config.prompt(*routes), recovery=bool(attempt))
             if state.session.termination:
                 break
             try:
-                context, errors = self._read_context(strict_json(response.content), payload, text, context, indices, demographic_indices)
+                raw = projection.restore(strict_json(response.content))
+                proposals = raw.pop('covered_questions', []) if isinstance(raw, dict) else []
+                context, errors = self._read_context(raw, payload, text,
+                    context, indices, demographic_indices)
+                if isinstance(proposals, list):
+                    coverage_work.proposals.extend(proposals)
                 review_chief = False
                 for i, statement in enumerate(context.statements):
                     fallback = '; '.join(dict.fromkeys(statement.target_terms + statement.attribute_terms + statement.value_terms))
@@ -259,6 +279,9 @@ class DoctorEar:
                 if not errors:
                     break
                 indices = sorted({e['index'] for e in errors if e['area'] == 'statements'})
+                coverage_work.proposals = [p for p in coverage_work.proposals if not isinstance(p, dict)
+                    or not isinstance(p.get('statement_indices', []), list)
+                    or not any(i in indices for i in p.get('statement_indices', []))]
                 demographic_indices = [e['index'] for e in errors if e['area'] == 'patient_context']
                 payload.update(statement_indices=indices, patient_context_indices=demographic_indices,
                     repair_statements=[e for e in errors if e['area'] == 'statements'],
@@ -372,8 +395,9 @@ class DoctorEar:
         return decoded
 
     def _parse_text(self, state, knowledge, client, text, source, number, segments=None):
-        context = self._context(state, knowledge, client, text, segments)
-        result = InputResult()
+        coverage_work = CoverageWork()
+        context = self._context(state, knowledge, client, text, segments, coverage_work=coverage_work)
+        result = InputResult(coverage=coverage_work)
         result.facts.extend(self._demographic_facts(state, context.patient_context, source, number, segments))
         question = state.question()
         contracts, decoded, waiting = ({}, {}, [])
@@ -409,6 +433,7 @@ class DoctorEar:
                         'episode_id': statement.episode_id or episode})
             outcome = statement_outcome(statement)
             accepted = []
+            statement_ids = []
             if i in decoded:
                 values, broader = decoded[i]
                 for offset, value in enumerate(values):
@@ -420,6 +445,7 @@ class DoctorEar:
                     except (TypeError, ValueError, ValidationError) as error:
                         pass
             result.facts.extend(accepted)
+            statement_ids.extend(f.id for f in accepted)
             if accepted:
                 result.outcomes.append('mapped')
             elif statement.role in {'clinical', 'uncertain', 'unknown'} or statement.role == 'not_applicable':
@@ -428,9 +454,11 @@ class DoctorEar:
                     note = None
                 if note:
                     result.facts.append(note)
+                    statement_ids.append(note.id)
                 result.outcomes.append(outcome or ('recorded' if note else 'unsupported'))
             else:
                 result.outcomes.append(outcome or 'nonclinical')
+            result.statement_facts[i] = statement_ids
         if len(set(preferred)) == 1:
             result.preferred = preferred[0]
         return result

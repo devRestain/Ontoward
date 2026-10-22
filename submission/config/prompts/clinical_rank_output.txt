@@ -1,1 +1,1 @@
-Return exactly {"ranked_disease_refs":["d_..."]}. Perform ranking only; omit next_action.
+Return {"ranked_disease_refs":["d_..."]}, optionally adding covered_questions for supplied pending_questions. Perform ranking only; omit next_action.

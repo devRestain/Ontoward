@@ -1,1 +1,1 @@
-Select the next action using the accepted ranking in prior_order without reranking it. Return exactly {"next_action":{"kind":"ask","question_ref":"q_..."}} or {"next_action":{"kind":"finish_collection"}}. Omit ranked_disease_refs and extra fields.
+Select the next action using the accepted ranking in prior_order without reranking it. Return {"next_action":{"kind":"ask","question_ref":"q_..."}} or {"next_action":{"kind":"finish_collection"}}, optionally adding covered_questions. Omit ranked_disease_refs and other fields.

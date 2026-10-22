@@ -5,7 +5,7 @@ OWNER_FIELDS = {
     'InitiationSession': ('closed', 'error'),
     'ChiefComplaintSession': ('closed', 'error'),
     'ContextFactorSession': ('candidate_ids', 'rules'),
-    'DifferentialDiagnosisSession': ('last_input', 'error'),
+    'DifferentialDiagnosisSession': ('last_input', 'last_passed', 'rank_basis', 'handled_response', 'error'),
     'EducationSession': ('generated_utterances',),
     'BudgetPolicy': ('required_counts',),
 }
@@ -16,6 +16,10 @@ FUNCTIONS = (
     ('workflow.doctor_ear', 'InputBinding', ('candidate_contracts', 'exact_mapping', 'validate_mapping', 'make_fact', 'note_fact')),
     ('workflow.rules.decision', 'GraphEvidence', ('graph_candidates',)),
     ('workflow.rules.decision', 'ClinicalInput', ('compact_clinical_payload',)),
+    ('workflow.rules.decision', 'ModelProjection', ('table_payload',)),
+    ('workflow.input_wire', 'ModelProjection', ('table_payload',)),
+    *((f'workflow.{name}', 'QuestionCoverage', ('accept_coverage',)) for name in
+      ('doctor_ear', 'sessions.initiation', 'sessions.chief_complaint', 'sessions.differential_diagnosis')),
     ('workflow.doctor_brain', 'ModelInput', ('message_metrics',)),
     ('workflow.sessions.education', 'EnglishPlan', ('generate_plan',)),
     ('workflow.education', 'EnglishPlan', ('_request', 'parse_plan', 'references')),
@@ -31,7 +35,8 @@ FUNCTIONS = (
 REQUIRED_SOURCES = ('run.py', 'nova_sdk.py', 'settings.py', 'knowledge/graph.py',
                     'knowledge/guidelines.py', 'knowledge/guideline_passages.py',
                     'workflow/education.py', 'workflow/doctor_brain.py', 'workflow/model_context.py',
-                    'workflow/rules/clinical_wire.py', 'workflow/rules/dd.py', 'workflow/rules/record.py')
+                    'workflow/rules/clinical_wire.py', 'workflow/rules/dd.py', 'workflow/rules/record.py',
+                    'workflow/wire.py', 'workflow/input_wire.py', 'workflow/rules/coverage.py')
 
 # These are navigation landmarks, not mandatory calls or a compiled topology.
 LANDMARKS = (
@@ -59,7 +64,7 @@ LANDMARKS = (
 
 
 def metadata():
-    return dict(version=3, contract='D66', input_metrics='D64', landmarks=list(LANDMARKS),
+    return dict(version=4, contract='D68', input_metrics='D68', landmarks=list(LANDMARKS),
                 owner_fields=OWNER_FIELDS,
                 required_sources=list(REQUIRED_SOURCES),
                 semantics='Observed call landmarks; absence does not imply a skipped requirement')

@@ -17,6 +17,7 @@ from workflow.rules.decision import clinical_messages
 from workflow.rules.limits import DD_MINIMUMS, PLAN_SECTIONS, SESSION_INTERVIEW_LIMITS
 from workflow.rules.minimal_record import minimal_payload
 from workflow.state.models import Answer, CaseFact, ObservedNumber
+from protocol import decode_context
 
 
 def receipt(kind, number, *, scope='DifferentialDiagnosis', outcome='unknown', source=None, key=None, fact_ids=()):
@@ -168,7 +169,7 @@ class DDCollectionTests(unittest.TestCase):
         state.case.apply([CaseFact(id=f'n{i}', category='other', value=f'Accepted report {i}',
             source_ref='initial', observation_id=f'preserved{i}', episode_id=f'preserved{i}') for i in range(55)])
         work = c.differential.prepare_decision(state)
-        wire = json.loads(clinical_messages(c.config, work)[-1]['content'])
+        wire = decode_context(clinical_messages(c.config, work)[-1]['content'])
         self.assertEqual({q['kind'] for q in wire['questions']}, {'SAY', 'EXAM'})
         self.assertEqual(len(wire['facts']), 56)
         self.assertGreater(len(wire['relations']), 50)

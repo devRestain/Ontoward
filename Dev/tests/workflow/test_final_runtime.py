@@ -263,7 +263,9 @@ class ChiefAndContextTests(unittest.TestCase):
             return dict(statements=[f.statement('Complaint')], patient_context=[dict(key='sex', value='female', quote='earlier female')])
         s, c, client = f.interpret([], s=s, text='Complaint', responses=response)
         self.assertEqual(len(client.requests), 1)
-        self.assertIn('known_patient_context', client.requests[0])
+        self.assertNotIn('known_patient_context', client.requests[0])
+        self.assertTrue(any(row.get('context_key') == 'sex' and row['value'] == 'female'
+                            for row in client.requests[0]['records']))
         self.assertNotIn('patient_context', client.requests[0])
         self.assertTrue(s.case.chief(confirmed=True))
         self.assertEqual(s.case.facts['patient_context:patient::sex'].source_ref, 'initial:opening')

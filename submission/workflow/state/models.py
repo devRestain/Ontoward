@@ -337,12 +337,20 @@ class Answer(Model):
     response: dict[str, object] | None = None
 
 
+class QuestionCoverage(Model):
+    outcome: Literal['known', 'asked_unknown']
+    fact_signatures: dict[str, str] = Field(default_factory=dict)
+    answer_signatures: dict[str, str] = Field(default_factory=dict)
+    revision: int
+
+
 class InterviewState(Model):
     current: SessionName = 'Initiation'
     status: Literal['uninitialized', 'collecting', 'needs_preparation'] = 'uninitialized'
     queue: list[Question] = Field(default_factory=list)
     answers: list[Answer] = Field(default_factory=list)
     collection: dict[str, str] = Field(default_factory=dict)
+    question_coverage: dict[str, QuestionCoverage] = Field(default_factory=dict)
     education_status: Literal['not_started', 'complete', 'partial', 'failed', 'disabled'] = 'not_started'
     education_reason: str | None = None
     education_utterances: dict[str, int] = Field(default_factory=dict)

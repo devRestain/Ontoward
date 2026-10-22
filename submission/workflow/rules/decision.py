@@ -11,6 +11,8 @@ from .limits import LIMITS
 from .normalization import strict_json
 from ..model_context import fact_record, messages
 from ..state.models import Assessment, Model
+from ..wire import table_payload
+from .coverage import CoverageWork, question_record, unknown_answers
 
 
 class RankingReply(Model):
@@ -38,6 +40,7 @@ class DecisionWork:
     refs: dict
     candidates: dict
     options: dict = field(default_factory=dict)
+    coverage: CoverageWork = field(default_factory=CoverageWork)
 
 
 def clinical_messages(config, work):
@@ -46,7 +49,8 @@ def clinical_messages(config, work):
     routes = [route, 'session.' + work.payload['stage']]
     if 'validation_error' in work.payload:
         routes.append('clinical.repair')
-    return messages(config.prompt(*routes), compact_clinical_payload(work.payload))
+    return messages(config.prompt(*routes), table_payload(compact_clinical_payload(work.payload),
+        ('facts', 'scopes', 'candidates', 'evidence', 'relations', 'questions', 'asked_questions', 'pending_questions')))
 
 
 def latest_response(state):
@@ -227,19 +231,36 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
             row['expected_by_disease'][refs[disease]] = entries
         payload['questions'].append({key: value for key, value in row.items() if value is not None})
         question_refs[ref] = spec
-    if state.interview.current == 'DifferentialDiagnosis' and mode != 'rank':
+    coverage = CoverageWork(questions={ref: tools._question(spec, '', 0, 0) for ref, spec in question_refs.items()},
+        fact_refs={ref: ident for ident, ref in fact_refs.items()}, answer_refs=unknown_answers(state, tools.config))
+    next_stage = {'Initiation': 'ChiefComplaint', 'ChiefComplaint': 'ContextFactor'}.get(state.interview.current)
+    if mode == 'rank' and next_stage:
+        coverage.questions = {f'p_{index}': question for index, question in enumerate(
+            tools.pending_questions(state, stage=next_stage, candidates=candidates), 1)}
+        if coverage.questions:
+            payload['pending_questions'] = []
+            for ref, question in coverage.questions.items():
+                row = question_record(ref, question)
+                for key in ('subject', 'subject_member', 'time_context', 'observation_id', 'episode_id'):
+                    row.pop(key)
+                row['scope'] = scope(question.subject, question.subject_member, question.time_context,
+                    question.observation_id, question.episode_id)
+                payload['pending_questions'].append(row)
+    if state.interview.current == 'DifferentialDiagnosis' and mode != 'rank' or coverage.questions and coverage.answer_refs:
         payload['asked_questions'] = []
-        for answer in state.interview.answers:
+        for index, answer in enumerate(state.interview.answers, 1):
             if len(answer.key) != 8 or answer.outcome == 'undelivered':
                 continue
+            if mode == 'rank' and f'a_{index}' not in coverage.answer_refs:
+                continue
             kind, target, attribute, subject, member, timing, observation, episode = answer.key
-            payload['asked_questions'].append(dict(kind=kind, target=target, attribute=attribute or None,
+            payload['asked_questions'].append(dict(ref=f'a_{index}', kind=kind, target=target, attribute=attribute or None,
                 outcome=answer.outcome, scope=scope(subject, member or None, timing,
                     observation or None, episode or None)))
     close_graph_input(payload)
     if state.interview.current == 'DifferentialDiagnosis' and mode != 'rank':
         payload['resources'].update(requirements(state, question_refs))
-    work = DecisionWork(payload, {refs[i]: i for i in included}, candidates, question_refs)
+    work = DecisionWork(payload, {refs[i]: i for i in included}, candidates, question_refs, coverage)
     return work
 
 
@@ -252,6 +273,7 @@ def close_graph_input(payload):
                           for entry in entries if entry.get('relation'))
     used_scopes = fact_scopes | {row['scope'] for row in evidence.values() if 'scope' in row} | {row['scope'] for row in questions}
     used_scopes.update(row['scope'] for row in payload.get('asked_questions', []))
+    used_scopes.update(row['scope'] for row in payload.get('pending_questions', []))
     if not used_relations <= payload['relations'].keys() or not used_scopes <= payload['scopes'].keys():
         raise ValueError('clinical_input_missing_definition')
     payload['relations'] = {ref: row for ref, row in payload['relations'].items() if ref in used_relations}
@@ -264,7 +286,7 @@ def close_graph_input(payload):
 
 
 def accept_ranking(state, raw, work):
-    if not isinstance(raw, dict) or set(raw) - {'ranked_disease_refs', 'next_action'}:
+    if not isinstance(raw, dict) or set(raw) - {'ranked_disease_refs', 'next_action', 'covered_questions'}:
         raise ValueError('invalid_clinical_response_fields')
     ranked = RankingReply.model_validate({'ranked_disease_refs': raw.get('ranked_disease_refs')}).ranked_disease_refs
     if (bool(work.refs) != bool(ranked) or len(ranked) != len(set(ranked))
@@ -284,7 +306,7 @@ def rank_exchange(state, client, brain, config, work, accept):
             return response.error
         try:
             raw = strict_json(response.content)
-            if not isinstance(raw, dict) or set(raw) != {'ranked_disease_refs'}:
+            if not isinstance(raw, dict) or set(raw) - {'covered_questions'} != {'ranked_disease_refs'}:
                 raise ValueError('expected_rank_only_response')
             accept(raw)
             return None

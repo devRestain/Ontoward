@@ -150,8 +150,8 @@ def verify_trace(rows, name):
         assert 'config/prompts/input_initial.txt' in runtime['prompt_routes']['input.initial']
         assert 'config/prompts/input_initial.txt' not in runtime['prompt_routes']['input.reply']
         settings = next(r for r in rows if r['kind'] == 'settings')
-        assert settings['pipeline']['contract'] == 'D66'
-        assert settings['pipeline']['input_metrics'] == 'D64'
+        assert settings['pipeline']['contract'] == 'D68'
+        assert settings['pipeline']['input_metrics'] == 'D68'
         outcomes = inspection['model_outcomes']
         assert outcomes and all(row.get('input_metrics') for row in outcomes)
         assert all(row['reported_prompt_tokens'] == 20 and row['error_origin'] is None for row in outcomes)

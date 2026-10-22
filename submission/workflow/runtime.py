@@ -46,9 +46,9 @@ def assemble_consultation(client, resources, *, now=utc_now, sleep=None, new_req
     executor = RequestExecutor(budget, sleep)
     nova_session = NovaSessionClient(executor, budget, interactions)
     brain = DoctorBrain(executor, budget, new_request_id)
-    ear = DoctorEar(resources.config, brain, questions)
     mouth = DoctorMouth(executor, nova_session, questions, interactions, brain, resources.config, budget)
     tools = QuestionTools(resources.knowledge, resources.config, questions, interactions, budget)
+    ear = DoctorEar(resources.config, brain, questions, pending_questions=tools.pending_questions)
     tools.chief_fallback = lambda state: force_chief(state, resources.knowledge, resources.config, brain, client)
     args = (resources.knowledge, resources.config, tools, brain)
     sessions = dict(Initiation=InitiationSession(*args), ChiefComplaint=ChiefComplaintSession(*args),

@@ -1,5 +1,4 @@
-from ..rules.assessment import context_questions, applicability
-from ..state.evidence import EvidenceIndex
+from ..rules.assessment import context_questions
 from ..rules.limits import LIMITS
 from ..rules.collection import HISTORY, answered
 
@@ -36,19 +35,7 @@ class ContextFactorSession:
             self.tools._register(state, dict(spec, coverage=len(covered) < 2), 0, LIMITS.hpi_priority)
 
     def context_specs(self, state):
-        specs = {}
-        index = EvidenceIndex.from_case(state.case, self.knowledge)
-        for ident, rule_scope in self.rules:
-            from knowledge.conditions import Applicability
-            conditions = [Applicability(concept_id=ident,status=status,**{key:value for key,value in rule_scope.model_dump().items() if key not in {'concept_id','status'}})
-                for status in ('present','absent')]
-            if any(applicability([condition],index.contexts)[0] == 'matched' for condition in conditions):
-                continue
-            spec = self.tools._spec(state, ident, purpose='context', subject=rule_scope.subject,
-                subject_member=rule_scope.subject_member, time_context=self.knowledge.execution_time(ident,rule_scope))
-            if spec and self.tools._eligible(state,spec):
-                specs[self.tools._key(spec)] = spec
-        return specs
+        return self.tools.context_specs(state, self.rules)
 
     def required_actions(self, state, *, specs=None):
         covered = {a.key[1] for a in state.interview.answers if a.purpose == 'context' and a.coverage

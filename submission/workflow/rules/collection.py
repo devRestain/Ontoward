@@ -29,6 +29,11 @@ def answered(state, slot):
     if slot_resolved(state.case, slot):
         return True
     chief = state.case.collection_chief()
+    if slot in INTAKE and chief:
+        from .coverage import status
+        if status(state, ('SAY', chief.target, '', chief.subject, chief.subject_member or '', chief.time_context,
+                chief.observation_id or '', chief.episode_id or '', slot)):
+            return True
     for answer in state.interview.answers:
         if answer.category != slot or answer.outcome == 'undelivered':
             continue

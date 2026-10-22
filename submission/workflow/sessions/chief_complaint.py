@@ -1,6 +1,7 @@
 from ..rules.decision import prepare_decision, accept_ranking, rank_exchange
 from ..rules.limits import LIMITS, SESSION_INTERVIEW_LIMITS
 from ..state.models import Question
+from ..rules.coverage import accept as accept_coverage
 
 
 class ChiefComplaintSession:
@@ -14,6 +15,8 @@ class ChiefComplaintSession:
 
     def accept(self, state, raw, work):
         accept_ranking(state, raw, work)
+        work.coverage.proposals = raw.get('covered_questions', []) if isinstance(raw.get('covered_questions', []), list) else []
+        accept_coverage(state, work.coverage, self.knowledge, self.config)
 
     def close(self, state, client):
         if self.closed or state.session.termination or state.case.assessment and state.case.assessment.frozen:
@@ -31,13 +34,7 @@ class ChiefComplaintSession:
                  and q.target and (chief is None or (q.target, q.observation_id, q.episode_id, q.time_context) !=
                      (chief.target, chief.observation_id, chief.episode_id, chief.time_context))}
         self.tools.questions.discard_unasked(state, stale, reason='chief_changed')
-        target = self.tools.knowledge.term_id(chief.target, 'Symptom')
-        for order, (name, status) in enumerate(self.tools.chief_statuses(state).items()):
-            if status != 'unasked':
-                continue
-            attribute = self.tools.knowledge.term_id(name, 'FindingAttribute')
-            spec = self.tools._spec(state, target, attribute, chief.observation_id, chief.episode_id,
-                              purpose='hpi', field='S.hpi', time_context=chief.time_context) if attribute else None
+        for order, (name, spec) in enumerate(self.tools.chief_specs(state)):
             key = '|'.join(('SAY', chief.target, name, 'patient', '', chief.time_context, chief.observation_id or '', chief.episode_id or ''))
             if spec is None:
                 state.interview.collection[key] = 'blocked_asset'

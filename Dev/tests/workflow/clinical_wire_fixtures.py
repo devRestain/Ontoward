@@ -1,6 +1,7 @@
 """Dev-only semantic expansion and synthetic packets, never a runtime decoder."""
 from copy import deepcopy
 import json
+from protocol import expand_tables
 
 
 def canonical(value):
@@ -8,7 +9,7 @@ def canonical(value):
 
 
 def expand_wire(wire):
-    payload = deepcopy(wire)
+    payload = expand_tables(deepcopy(wire))
     patterns = payload.pop('patterns')
     for relation in payload['relations'].values():
         features = deepcopy(patterns[relation.pop('pattern')])

@@ -44,7 +44,6 @@ class Limits:
     retry_delays: tuple[int, ...] = (2,)
     model: str = "openai/gpt-6-luna"
     gateway_reasoning: str = "medium"
-    expanded_context_records: int = 64
     expanded_context_turns: int = 12
 
 

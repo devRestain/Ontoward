@@ -7,6 +7,7 @@ from .limits import LIMITS
 from .chief import force_chief
 from .action import content_error
 from ..state.models import Question
+from .coverage import covered, status as coverage_status
 
 
 class QuestionTools:
@@ -50,9 +51,24 @@ class QuestionTools:
                 return True
         return False
 
+    def common_questions(self, state, categories, texts, purpose):
+        chief = state.case.collection_chief()
+        result = []
+        for order, slot in enumerate(categories):
+            result.append(Question(item_id=f'{purpose}:{slot}', purpose=purpose, text=texts[slot], order=order,
+                priority=LIMITS.hpi_priority, coverage=True, category=slot,
+                target=chief.target if chief and slot in INTAKE else None,
+                observation_id=chief.observation_id if chief and slot in INTAKE else None,
+                episode_id=chief.episode_id if chief and slot in INTAKE else None,
+                time_context=chief.time_context if chief and slot in INTAKE else 'unspecified',
+                subject='family' if slot == 'family_history' else 'patient',
+                answer_type='presence' if slot in {'course', 'recurrence', 'medical_history', 'medication', 'allergy', 'family_history'} else 'free_text'))
+        return result
+
     def _prepare_common(self, state, categories, texts, purpose):
         chief = state.case.collection_chief()
-        for order, slot in enumerate(categories):
+        for question in self.common_questions(state, categories, texts, purpose):
+            slot = question.category
             ident = f'{state.interview.current}:{slot}'
             if answered(state, slot):
                 self.questions.discard_unasked(state, {ident}, reason='already_resolved')
@@ -61,14 +77,7 @@ class QuestionTools:
             if existing and chief and slot in INTAKE and (existing.target, existing.observation_id, existing.episode_id) != (
                     chief.target, chief.observation_id, chief.episode_id):
                 self.questions.discard_unasked(state, {ident}, reason='chief_changed')
-            self.questions.register(state, Question(item_id=ident, purpose=purpose, text=texts[slot], order=order,
-                priority=LIMITS.hpi_priority, coverage=True, category=slot,
-                target=chief.target if chief and slot in INTAKE else None,
-                observation_id=chief.observation_id if chief and slot in INTAKE else None,
-                episode_id=chief.episode_id if chief and slot in INTAKE else None,
-                time_context=chief.time_context if chief and slot in INTAKE else 'unspecified',
-                subject='family' if slot == 'family_history' else 'patient',
-                answer_type='presence' if slot in {'course', 'recurrence', 'medical_history', 'medication', 'allergy', 'family_history'} else 'free_text'))
+            self.questions.register(state, question.model_copy(update={'item_id': ident}))
 
     def chief_statuses(self, state):
         chief = state.case.collection_chief()
@@ -82,11 +91,65 @@ class QuestionTools:
                 statuses[name] = 'acquired'
                 continue
             key = ('SAY', chief.target, name, 'patient', '', chief.time_context, chief.observation_id or '', chief.episode_id or '')
+            coverage = coverage_status(state, (*key, ''))
+            if coverage:
+                statuses[name] = 'recorded_unmapped' if coverage == 'known' else 'unknown'
+                continue
             answer = next((a for a in reversed(state.interview.answers) if a.key == key), None)
             statuses[name] = (('recorded_unmapped' if answer.outcome == 'recorded' else
                 answer.outcome if answer.outcome in {'not_applicable', 'unsupported', 'conflict'} else 'unknown')
                 if answer else state.interview.collection.get('|'.join(key), 'unasked'))
         return statuses
+
+    def chief_specs(self, state):
+        chief = state.case.collection_chief()
+        if chief is None:
+            return []
+        target = self.knowledge.term_id(chief.target, 'Symptom')
+        result = []
+        for name, value in self.chief_statuses(state).items():
+            if value != 'unasked':
+                continue
+            attribute = self.knowledge.term_id(name, 'FindingAttribute')
+            spec = self._spec(state, target, attribute, chief.observation_id, chief.episode_id,
+                purpose='hpi', field='S.hpi', time_context=chief.time_context) if attribute else None
+            result.append((name, spec))
+        return result
+
+    def context_specs(self, state, rules):
+        from .assessment import applicability
+        from ..state.evidence import EvidenceIndex
+        from knowledge.conditions import Applicability
+        specs, index = {}, EvidenceIndex.from_case(state.case, self.knowledge)
+        for ident, rule_scope in rules:
+            conditions = [Applicability(concept_id=ident, status=value, **{key: value
+                for key, value in rule_scope.model_dump().items() if key not in {'concept_id', 'status'}})
+                for value in ('present', 'absent')]
+            if any(applicability([condition], index.contexts)[0] == 'matched' for condition in conditions):
+                continue
+            spec = self._spec(state, ident, purpose='context', subject=rule_scope.subject,
+                subject_member=rule_scope.subject_member, time_context=self.knowledge.execution_time(ident, rule_scope))
+            if spec and self._eligible(state, spec):
+                specs[self._key(spec)] = spec
+        return specs
+
+    def pending_questions(self, state, *, stage=None, candidates=None):
+        stage = stage or state.interview.current
+        if stage == 'Initiation':
+            return [q for q in self.common_questions(state, INTAKE, self.config.texts.intake_questions, 'intake')
+                    if not answered(state, q.category)]
+        if stage == 'ChiefComplaint':
+            return [self._question(spec, '', index, 0) for index, (_, spec) in enumerate(self.chief_specs(state))
+                    if spec and not self.repeated_unknown_attribute(state, spec)]
+        if stage == 'ContextFactor':
+            from .assessment import context_questions
+            ids = candidates if candidates is not None else [self.knowledge.term_id(e.name, 'Disease')
+                for e in state.case.assessment.differential if e.kind == 'disease'] if state.case.assessment else []
+            questions = [q for q in self.common_questions(state, HISTORY, self.config.texts.history_questions, 'history')
+                         if not answered(state, q.category)]
+            specs = self.context_specs(state, context_questions(self.knowledge, ids))
+            return [*questions, *(self._question(spec, '', 0, 0) for spec in specs.values())]
+        return []
 
     def prepare_clarification(self, state, original=None, *, primary_choice=False):
         if original and state.interview.collection.get('|'.join(original.semantic_key()), '').startswith('passed_'):
@@ -178,6 +241,8 @@ class QuestionTools:
         self.questions.register(state, self._question(spec, ident, order, priority))
 
     def _eligible(self, state, spec):
+        if covered(state, self._question(spec, '', 0, 0)):
+            return False
         if self.repeated_unknown_attribute(state, spec):
             return False
         target, attribute = spec['target_id'], spec['attribute_id']
@@ -255,6 +320,7 @@ class QuestionTools:
             self.collection_keys(q.semantic_key()) != [q.semantic_key()])
         redundant.update(q.item_id for q in state.interview.queue if q.target and q.purpose not in {'clarification', 'education', 'intake', 'history'}
             and self.has_resolved_evidence(state, q.target, q.attribute, q.observation_id, q.episode_id, q.subject, q.time_context, q.subject_member))
+        redundant.update(q.item_id for q in state.interview.queue if covered(state, q))
         self.questions.discard_unasked(state, redundant, reason='resolved')
         if state.interview.queue:
             self.interactions.select_question(state, min(state.interview.queue, key=lambda q:(q.order, q.item_id)))

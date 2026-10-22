@@ -14,6 +14,7 @@ from workflow.model_context import message_metrics, messages
 from workflow.rules.clinical_wire import compact_clinical_payload, compact_expected, compact_feature, wire_key
 from workflow.rules.decision import close_graph_input, clinical_messages, prepare_decision
 from workflow.rules.normalization import validate_mapping
+from protocol import decode_context
 
 
 class ClinicalWireTests(unittest.TestCase):
@@ -26,7 +27,7 @@ class ClinicalWireTests(unittest.TestCase):
                 c.differential.accept(s, {'ranked_disease_refs': list(work.refs)}, work, closing=True)
             work = prepare_decision(s, c.knowledge, c.tools, mode=mode)
             original, state = deepcopy(work), s.model_dump(mode='json')
-            wire = json.loads(clinical_messages(c.config, work)[-1]['content'])
+            wire = decode_context(clinical_messages(c.config, work)[-1]['content'])
             assert_same_meaning(self, work.payload, wire)
             self.assertEqual(work, original)
             self.assertEqual(s.model_dump(mode='json'), state)
@@ -111,10 +112,10 @@ class ClinicalWireTests(unittest.TestCase):
     def test_same_work_repair_keeps_all_references_and_options(self):
         c, s = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
         work = c.differential.prepare_decision(s)
-        first = json.loads(clinical_messages(c.config, work)[-1]['content'])
+        first = decode_context(clinical_messages(c.config, work)[-1]['content'])
         options = deepcopy(work.options)
         work.payload['validation_error'] = 'invalid_question_ref'
-        repaired = json.loads(clinical_messages(c.config, work)[-1]['content'])
+        repaired = decode_context(clinical_messages(c.config, work)[-1]['content'])
         self.assertEqual(repaired.pop('validation_error'), 'invalid_question_ref')
         self.assertEqual(first, repaired)
         self.assertEqual(work.options, options)

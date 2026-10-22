@@ -93,3 +93,5 @@ class InputResult:
     facts: list[CaseFact] = field(default_factory=list)
     outcomes: list[str] = field(default_factory=list)
     preferred: str | None = None
+    coverage: object | None = None
+    statement_facts: dict[int, list[str]] = field(default_factory=dict)

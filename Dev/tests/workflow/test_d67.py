@@ -6,6 +6,7 @@ import unittest
 from unittest.mock import Mock
 
 import fixtures as f
+from protocol import decode_context
 from education_fixtures import education_response
 from test_d66 import collection_knowledge, finish_early, receipt
 from workflow.education import _EducationWork, generate_plan, parse_plan
@@ -117,7 +118,7 @@ class SavedRunRepairs(unittest.TestCase):
         state.interview.current = 'DifferentialDiagnosis'
         before = copy.deepcopy(state.case.model_dump())
         work = c.differential.prepare_decision(state)
-        wire = json.loads(clinical_messages(c.config, work)[-1]['content'])
+        wire = decode_context(clinical_messages(c.config, work)[-1]['content'])
         asked = wire['asked_questions'][0]
         self.assertEqual((asked['attribute'], asked['outcome']), ('Quality', 'unknown'))
         self.assertIn(asked['scope'], wire['scopes'])

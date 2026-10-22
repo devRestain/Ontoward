@@ -15,19 +15,30 @@ def message_metrics(role, messages):
         blocks={}, counts={})
     blocks = {'facts', 'scopes', 'records', 'dialogue', 'statements', 'candidates', 'relations', 'patterns',
         'conditions', 'evidence', 'questions', 'documents', 'repair', 'validation_error', 'validation_errors',
-        'known_context_records', 'input_segments', 'patient', 'fixed_diagnosis', 'invalid_groups', 'generation_error'}
+        'known_context_records', 'input_segments', 'patient', 'fixed_diagnosis', 'invalid_groups', 'generation_error',
+        'pending_questions', 'asked_questions'}
     counts = result['counts']
     def count(key, amount):
         counts[key] = counts.get(key, 0) + amount
     def visit(value, path):
         if isinstance(value, dict):
+            if set(value) == {'table', 'groups'} and value['table'] in {'dict', 'list'}:
+                for group in value['groups']:
+                    for cells in group['rows']:
+                        row = dict(zip(group['fields'], cells))
+                        index, ident = row.pop('$index'), row.pop('$key', None)
+                        visit(row, f'{path}[{ident if ident is not None else index}]')
+                return
             for key, item in value.items():
                 location = f'{path}.{key}'
                 if key in blocks:
+                    amount = (sum(len(group['rows']) for group in item['groups'])
+                              if isinstance(item, dict) and set(item) == {'table', 'groups'}
+                              else len(item) if isinstance(item, (dict, list)) else None)
                     result['blocks'][location] = dict(json_bytes=size(item),
-                        count=len(item) if isinstance(item, (dict, list)) else None)
-                    if isinstance(item, (dict, list)):
-                        count(key, len(item))
+                        count=amount)
+                    if amount is not None:
+                        count(key, amount)
                 if key == 'full_pattern' and isinstance(item, list):
                     count('features', len(item))
                 elif key == 'patterns' and isinstance(item, dict):

@@ -1,5 +1,6 @@
 from ..rules.decision import prepare_decision, accept_ranking, rank_exchange
 from ..rules.collection import INTAKE, answered
+from ..rules.coverage import accept as accept_coverage
 
 
 class InitiationSession:
@@ -13,6 +14,8 @@ class InitiationSession:
 
     def accept(self, state, raw, work):
         accept_ranking(state, raw, work)
+        work.coverage.proposals = raw.get('covered_questions', []) if isinstance(raw.get('covered_questions', []), list) else []
+        accept_coverage(state, work.coverage, self.knowledge, self.config)
 
     def close(self, state, client):
         if self.closed or state.session.termination or state.case.assessment and state.case.assessment.frozen:
