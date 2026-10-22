@@ -64,6 +64,9 @@ class CompletionTests(unittest.TestCase):
         failed_id = None
         def say(**request):
             nonlocal failed_id
+            from workflow.rules.limits import FIXED_UTTERANCES
+            if request['content'] in {text for lines in FIXED_UTTERANCES.values() for text in lines}:
+                return original(**request)
             calls.append(copy.deepcopy(request))
             if failed_id is None:
                 failed_id = request['request_id']
@@ -78,7 +81,7 @@ class CompletionTests(unittest.TestCase):
         self.assertTrue(client.actions)
         failed = next(row for row in s.interview.answers if row.source_ref == failed_id)
         self.assertEqual((failed.outcome, failed.turn, failed.response), ('undelivered', None, {'error': 'API_UNAVAILABLE'}))
-        self.assertEqual(sum(row.actions for row in s.session.usage.values()), len(client.actions))
+        self.assertEqual(sum(row.actions for row in s.session.usage.values()) + s.session.fixed_actions, len(client.actions))
         self.assertFalse(any(fact.source_ref == failed_id for fact in s.case.facts.values()))
 
     def test_received_reply_survives_parser_exception_without_replay(self):
@@ -313,7 +316,7 @@ class PacketLimitTests(unittest.TestCase):
                     self.assertIn(entry['relation'], payload['relations'])
         self.assertTrue(all(row['full_pattern'] == [dict(expected='complete criterion')] for row in payload['relations'].values()))
 
-    def test_all_candidates_rank_freeze_and_write_without_count_limits(self):
+    def test_all_candidates_rank_and_freeze_with_top_five_soap_alternatives(self):
         c, s = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
         for index in range(60):
             node = f.OW[f'Candidate{index}']
@@ -332,11 +335,13 @@ class PacketLimitTests(unittest.TestCase):
         c.differential.close(s, c.client, allow_model=False)
         self.assertEqual(len(s.case.assessment.differential), 62)
         c.writer.build_soap(s)
-        self.assertEqual(s.turn.payload['note']['A']['differential'].count('r/o '), 61)
+        self.assertEqual(s.turn.payload['note']['A']['differential'].count('r/o '), 5)
         self.assertEqual(s.turn.payload['diagnosis'], s.case.assessment.differential[0].name)
         note = s.turn.payload['note']['A']['differential']
-        for entry in s.case.assessment.differential[1:]:
+        for entry in s.case.assessment.differential[1:6]:
             self.assertIn('r/o ' + entry.name + ':', note)
+        for entry in s.case.assessment.differential[6:]:
+            self.assertNotIn('r/o ' + entry.name + ':', note)
         validate_wire_payload(s.turn.payload)
 
     def test_graph_projection_keeps_all_fact_scopes_and_candidate_references(self):
@@ -349,7 +354,7 @@ class PacketLimitTests(unittest.TestCase):
         self.assertEqual(len(payload['scopes']), 65)
         self.assertEqual(len(payload['candidates']), 65)
 
-    def test_large_full_differential_uses_explicit_size_failure_and_minimal_writer(self):
+    def test_large_internal_differential_keeps_five_in_normal_and_minimal_writer(self):
         c, s = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
         c.close_collection(s)
         entry = s.case.assessment.differential[0]
@@ -358,11 +363,15 @@ class PacketLimitTests(unittest.TestCase):
                      for i in range(400)))})
         c.client.chat = Mock(side_effect=AssertionError('Writer must not call a model'))
         c.writer.build_soap(s)
-        self.assertEqual(s.turn.payload['note']['A']['differential'].count('r/o '), 400)
+        self.assertEqual(s.turn.payload['note']['A']['differential'].count('r/o '), 5)
         c.writer.validate_submission(s)
-        self.assertEqual(s.turn.error, 'record_too_large')
+        self.assertIsNone(s.turn.error)
+        c.writer.build_minimal(s, 'forced writer failure')
+        self.assertEqual(s.turn.payload['note']['A']['differential'].count('r/o '), 5)
+        self.assertIn('r/o Accepted alternative 4 ', s.turn.payload['note']['A']['differential'])
+        self.assertNotIn('r/o Accepted alternative 5 ', s.turn.payload['note']['A']['differential'])
         c.finish_submission(s)
-        self.assertEqual(s.interview.collection['submission:minimal'], 'record_too_large')
+        self.assertEqual(s.interview.collection['submission:minimal'], 'forced writer failure')
         validate_wire_payload(s.session.final_payload)
         self.assertEqual(s.session.final_payload['diagnosis'], entry.name)
         self.assertEqual(len(s.case.assessment.differential), 401)
@@ -475,13 +484,14 @@ class UnknownAssessmentTests(unittest.TestCase):
                 self.assertTrue(assessment.frozen)
                 self.assertEqual(c.client.chat.call_count, 1 if failure == 'context' else 0)
 
-    def test_exact_unknown_alone_does_not_authorize_reusing_an_unreviewed_assessment(self):
-        c, s, _ = self.reply_after_ranking()
+    def test_model_free_exit_retains_last_accepted_disease_assessment(self):
+        c, s, previous = self.reply_after_ranking()
         c.differential.close(s, c.client, allow_model=False)
-        self.assertEqual(s.case.primary().kind, 'symptom')
-        self.assertFalse(any('not clinically reassessed' in item for item in s.case.assessment.limitations))
+        self.assertEqual(s.case.assessment.differential, previous.differential)
+        self.assertEqual(s.case.assessment.based_on_response, previous.based_on_response)
+        self.assertTrue(any('not clinically reassessed' in item for item in s.case.assessment.limitations))
 
-    def test_negative_unparsed_changed_and_stale_inputs_cannot_reuse_assessment(self):
+    def test_failed_reassessment_retains_diseases_after_changed_or_unparsed_inputs(self):
         for kind in ('negative', 'acknowledgement', 'parser', 'free_text', 'revision', 'chief',
                      'error', 'turn', 'response', 'status', 'exam', 'earlier_reply'):
             with self.subTest(kind=kind):
@@ -505,8 +515,11 @@ class UnknownAssessmentTests(unittest.TestCase):
                     s.interview.answers.insert(0, s.interview.answers[-1].model_copy(update={'source_ref': 'unreviewed'}))
                 c.client.chat = Mock(side_effect=f.NovaError('CONTEXT_LIMIT_EXCEEDED', 400))
                 c.differential.close(s, c.client)
-                self.assertEqual(s.case.primary().kind, 'symptom')
-                self.assertFalse(any('not clinically reassessed' in item for item in s.case.assessment.limitations))
+                self.assertEqual(s.case.assessment.differential, previous.differential)
+                self.assertEqual(s.case.assessment.based_on_case_revision, previous.based_on_case_revision)
+                self.assertEqual(s.case.assessment.based_on_chief_fact_id, previous.based_on_chief_fact_id)
+                self.assertEqual(s.case.assessment.based_on_response, previous.based_on_response)
+                self.assertTrue(any('not clinically reassessed' in item for item in s.case.assessment.limitations))
 
     def test_successful_reassessment_after_unknown_takes_precedence(self):
         c, s, previous = self.reply_after_ranking()

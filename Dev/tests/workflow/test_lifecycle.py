@@ -74,7 +74,8 @@ class LifecycleTests(unittest.TestCase):
             raise ValueError('invalid operation')
         c.select_action = fail
         c.run(s)
-        self.assertFalse(c.client.actions)
+        from workflow.rules.limits import FIXED_UTTERANCES
+        self.assertEqual([row['content'] for row in c.client.actions], list(FIXED_UTTERANCES['closing']))
         self.assertEqual(s.session.termination, 'submitted')
         self.assertEqual(len(c.client.submissions), 1)
         self.assertIn('invalid operation', str(s.interview.collection))
@@ -164,7 +165,7 @@ class LifecycleTests(unittest.TestCase):
         done = c.run(s)
         self.assertEqual(done.session.termination, 'submitted')
         self.assertEqual(done.interview.collection['DifferentialDiagnosis:completion'], 'model_call_budget')
-        self.assertEqual(len(c.client.actions), 2)
+        self.assertEqual(len(c.client.actions) - done.session.fixed_actions, 2)
         self.assertEqual(done.case.primary().kind,'symptom')
         self.assertIn(c.knowledge.label(str(f.OW.Complaint)),c.client.actions[0]['content'])
 

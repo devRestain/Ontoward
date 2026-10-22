@@ -64,7 +64,7 @@ class InputPreservationTests(unittest.TestCase):
 
     def test_exhausted_mapping_repair_keeps_notes_and_final_assessment_resources(self):
         c, s = f.consultation(prepared=f.resources(education=True)), f.chief(f.state('DifferentialDiagnosis'))
-        # Three gateway calls leave two clinical, four plan and one Mouth call protected.
+        # Two context and two mapping calls retain the current finalization reserve.
         s.session.doctor_calls = s.session.call_limit - 10
         def respond(payload):
             if payload['task'] == 'input_context':
@@ -78,8 +78,8 @@ class InputPreservationTests(unittest.TestCase):
         client.chat_handler = respond
         s.turn = TurnContext(kind='initial', response={'opening': 'New'})
         c.ear.process_input(s, c.knowledge, client)
-        self.assertEqual(len(client.requests), 3)
-        self.assertEqual(c.budget.calls_left(s.session), 7)
+        self.assertEqual(len(client.requests), 4)
+        self.assertEqual(c.budget.calls_left(s.session), 6)
         self.assertTrue(any(v.value == 'Additional reported complaint' for v in f.unbound(s.case).values()))
         c.close_collection(s)
         self.assertTrue(s.case.assessment.frozen)
@@ -174,7 +174,7 @@ class DeterministicReplyTests(unittest.TestCase):
             self.assertEqual(c.ear.dialogue[-1]['patient'], text)
             self.assertIsNone(s.turn)
             c.differential.decide(s, client)
-            self.assertEqual([p['task'] for p in client.requests], ['clinical_decision'])
+            self.assertEqual([p['task'] for p in client.requests], ['clinical_action'])
 
     def test_canonical_presence_reply_uses_exact_question_scope(self):
         for text, status in (('네.', 'present'), ('아니요.', 'absent')):
@@ -303,7 +303,7 @@ class SharedWorkTests(unittest.TestCase):
             c.check_budget(s)
         c.client.session.assert_not_called()
         self.assertFalse(hasattr(c.budget, 'knowledge'))
-        self.assertEqual(c.budget.collection_calls(s), 9)
+        self.assertEqual(c.budget.collection_calls(s), 7)
 
 
 class ClinicalCadenceTests(unittest.TestCase):
@@ -316,7 +316,7 @@ class ClinicalCadenceTests(unittest.TestCase):
             scope='ContextFactor', purpose='context', outcome='unknown'))
         return c, s
 
-    def test_unknown_context_gets_one_joint_dd_entry_without_revision_change(self):
+    def test_unknown_context_gets_one_dd_selection_without_reranking(self):
         c, s = self.context_unknown()
         revision = s.case.revision
         before = len(c.client.requests)
@@ -325,8 +325,8 @@ class ClinicalCadenceTests(unittest.TestCase):
         s.interview.current = 'DifferentialDiagnosis'
         c.differential.decide(s, c.client)
         self.assertEqual(s.case.revision, revision)
-        self.assertEqual(c.client.requests[-1]['task'], 'clinical_decision')
-        self.assertEqual(s.case.assessment.based_on_response, 'last-context-unknown')
+        self.assertEqual(c.client.requests[-1]['task'], 'clinical_action')
+        self.assertNotEqual(s.case.assessment.based_on_response, 'last-context-unknown')
         c.differential.decide(s, c.client)
         self.assertEqual(len(c.client.requests), before + 1)
 
@@ -350,7 +350,7 @@ class JointEducationTests(unittest.TestCase):
     def test_normal_joint_plan_needs_no_translation_call(self):
         c, s, _ = f.run(prepared=f.resources(education=True))
         self.assertEqual(s.session.termination, 'submitted')
-        self.assertEqual(sum(p['task'] == 'education' for p in c.client.requests), 4)
+        self.assertEqual(sum(p['task'] == 'education' for p in c.client.requests), 2)
         self.assertFalse(any(p['task'] == 'education_doctor' for p in c.client.requests))
         self.assertEqual(len(s.case.plan), 5)
 

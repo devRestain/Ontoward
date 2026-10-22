@@ -24,6 +24,11 @@ def minimal_payload(case, interview, diagnosis, *, compact=False):
         if len(json.dumps(note, ensure_ascii=False).encode('utf-8')) > LIMITS.record_bytes:
             note[section][key] = old
 
+    if case.assessment:
+        for limitation in case.assessment.limitations:
+            append('A.evidence', 'Incomplete assessment: ' + limitation)
+        for entry in case.assessment.differential[1:1 + LIMITS.soap_differentials]:
+            append('A.differential', 'r/o ' + entry.name)
     if case.presenting_text.strip():
         # Keep complete quoted lines; never cut a quantity, negation or UTF-8 name.
         for line in case.presenting_text.splitlines()[:1 if compact else None]:

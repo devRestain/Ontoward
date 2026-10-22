@@ -6,6 +6,7 @@ import unicodedata
 import uuid
 
 from nova_sdk import Client, NovaError
+from privacy import recorded_model_response
 
 
 MODEL = 'openai/gpt-6-luna'
@@ -53,7 +54,7 @@ class NovaModels:
                 self.stopped = error.code
             self.record({**entry, 'status': 'failed_or_unknown', 'error': error.code})
             raise
-        self.record({**entry, 'status': 'received', 'response': response})
+        self.record({**entry, 'status': 'received', 'response': recorded_model_response(role, messages, response)})
         return response
 
     def record(self, value):

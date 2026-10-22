@@ -1,6 +1,6 @@
 from nova_sdk import NovaError
 
-from .rules.limits import LIMITS, SESSION_ORDER
+from .rules.limits import FIXED_UTTERANCES, LIMITS, SESSION_ORDER
 from .rules.chief import force_chief
 
 
@@ -28,6 +28,8 @@ class Consultation:
 
     def run(self, state):
         self.accept_input(state)
+        if state.interview.current == 'Initiation':
+            self.deliver_fixed(state, 'opening')
         while state.session.termination != 'submitted':
             if state.session.termination:
                 # Actual expiry/closure prevents transmission, but never discards the result.
@@ -60,6 +62,10 @@ class Consultation:
                 else:
                     self.pass_session(state, error)
         return state
+
+    def deliver_fixed(self, state, phase):
+        for number, text in enumerate(FIXED_UTTERANCES[phase]):
+            self.mouth.execute_fixed(state, self.client, f'{phase}:{number}', text)
 
     def pass_session(self, state, error):
         scope = state.interview.current
@@ -221,6 +227,7 @@ class Consultation:
             state.interview.education_status = 'partial' if state.case.plan else 'failed'
             state.interview.education_reason = self.error_reason(error)
         self.questions.discard_unasked(state, {q.item_id for q in state.interview.queue}, reason='finalization_budget')
+        self.deliver_fixed(state, 'closing')
         try:
             self.writer.build_soap(state)
         except Exception as error:

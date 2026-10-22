@@ -468,7 +468,7 @@ class GuidelineAndGetterTests(unittest.TestCase):
                 c.sessions['Education'].prepare_plan(s, c.client)
             self.assertEqual(requested, [c.knowledge.term_id(s.case.primary().name, 'Disease')])
             payloads = [p for p in c.client.requests if p['task'] == 'education']
-            self.assertEqual(len(payloads), 5)
+            self.assertEqual(len(payloads), 3)
             self.assertTrue(all(payload['documents'] == payloads[0]['documents'] for payload in payloads))
             self.assertTrue(all(call.args[1] is parser.call_args_list[0].args[1] for call in parser.call_args_list))
             self.assertEqual(payloads[-1]['accepted'][0]['references'],

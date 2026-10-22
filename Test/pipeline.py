@@ -21,6 +21,8 @@ FUNCTIONS = (
     *((f'workflow.{name}', 'QuestionCoverage', ('accept_coverage',)) for name in
       ('doctor_ear', 'sessions.initiation', 'sessions.chief_complaint', 'sessions.differential_diagnosis')),
     ('workflow.doctor_brain', 'ModelInput', ('message_metrics',)),
+    ('workflow.model_context', 'PromptProjection', ('prompt_payload',)),
+    ('workflow.education', 'PromptProjection', ('source_spans',)),
     ('workflow.sessions.education', 'EnglishPlan', ('generate_plan',)),
     ('workflow.education', 'EnglishPlan', ('_request', 'parse_plan', 'references')),
     ('workflow.education', 'GuidelineEvidence', ('pack_passages', 'project_documents', 'source_contexts')),
@@ -36,10 +38,13 @@ REQUIRED_SOURCES = ('run.py', 'nova_sdk.py', 'settings.py', 'knowledge/graph.py'
                     'knowledge/guidelines.py', 'knowledge/guideline_passages.py',
                     'workflow/education.py', 'workflow/doctor_brain.py', 'workflow/model_context.py',
                     'workflow/rules/clinical_wire.py', 'workflow/rules/dd.py', 'workflow/rules/record.py',
-                    'workflow/wire.py', 'workflow/input_wire.py', 'workflow/rules/coverage.py')
+                    'workflow/wire.py', 'workflow/input_wire.py', 'workflow/rules/coverage.py',
+                    'workflow/prompt_data.py')
 
 # These are navigation landmarks, not mandatory calls or a compiled topology.
 LANDMARKS = (
+    dict(id='fixed', title='Fixed opening and closing SAY receipts', owners=['Consultation', 'DoctorMouth'],
+         methods=['deliver_fixed', 'execute_fixed']),
     dict(id='input', title='Input preservation', owners=['DoctorEar', 'InputBinding'],
          methods=['_fixed_reply', '_read_context', '_project_context', '_mapping_payload', 'validate_mapping', '_demographic_facts', 'make_fact', 'note_fact']),
     dict(id='evidence', title='Scoped evidence', owners=['EvidenceIndex', 'GraphEvidence'],
@@ -54,6 +59,8 @@ LANDMARKS = (
     dict(id='guidelines', title='Mapped sources and literal evidence packet', owners=['GuidelineLibrary', 'GuidelineEvidence'],
          methods=['read', 'pack_passages', 'project_documents', 'source_contexts']),
     dict(id='projection', title='Shared frozen facts and diagnosis', owners=['ModelProjection'], methods=['fixed_case_payload']),
+    dict(id='prompt', title='Prompt prose projection and original citation spans', owners=['PromptProjection'],
+         methods=['prompt_payload', 'source_spans']),
     dict(id='plan', title='Joint English and Korean plan', owners=['EnglishPlan', 'EducationSession'],
          methods=['generate_plan', '_request', 'parse_plan', 'references', 'prepare_plan', 'prepare_delivery']),
     dict(id='delivery', title='Korean validation and delivery', owners=['DoctorMouth'],
@@ -64,7 +71,7 @@ LANDMARKS = (
 
 
 def metadata():
-    return dict(version=4, contract='D68', input_metrics='D68', landmarks=list(LANDMARKS),
+    return dict(version=5, contract='D68', input_metrics='D68', landmarks=list(LANDMARKS),
                 owner_fields=OWNER_FIELDS,
                 required_sources=list(REQUIRED_SOURCES),
                 semantics='Observed call landmarks; absence does not imply a skipped requirement')

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from .limits import LIMITS, PLAN_SECTIONS, SESSION_INTERVIEW_LIMITS, SESSION_ORDER
+from .limits import FIXED_UTTERANCES, LIMITS, PLAN_SECTIONS, SESSION_INTERVIEW_LIMITS, SESSION_ORDER
 
 # Protect normal input (context + mapping) and final clinical/education work.
 # The optional Ear repairs share the remaining calls; each call still protects
@@ -70,10 +70,15 @@ class BudgetPolicy:
     def reserve(work, tasks):
         return sum(work[name] for name in tasks if name in work)
 
+    @staticmethod
+    def closing_turns(state):
+        return sum(f'closing:{number}' not in state.session.fixed_utterances
+                   for number in range(len(FIXED_UTTERANCES['closing'])))
+
     def shared_action_capacity(self, state):
         following = SESSION_ORDER[SESSION_ORDER.index(state.interview.current) + 1:]
         protected = sum(self.required_actions(state, scope) for scope in following)
-        return max(0, state.session.turns_remaining - protected)
+        return max(0, state.session.turns_remaining - protected - self.closing_turns(state))
 
     def action_capacity(self, state):
         shared = self.shared_action_capacity(state)
@@ -86,7 +91,7 @@ class BudgetPolicy:
     def collection_available(self, state):
         session = state.session
         education = state.interview.current == 'Education' and self.education_enabled
-        return (not session.finalizing and session.turns_remaining > 0 and (education or self.calls_left(session) >= self.collection_calls(state))
+        return (not session.finalizing and session.turns_remaining > self.closing_turns(state) and (education or self.calls_left(session) >= self.collection_calls(state))
             and self.seconds_left(session) > session.reserve_seconds + LIMITS.response_seconds)
 
     def can_start_action(self, state):
@@ -94,7 +99,7 @@ class BudgetPolicy:
 
     def education_available(self, state):
         session = state.session
-        return (self.education_enabled and 'SAY' in session.allowed_actions and session.turns_remaining > 0
+        return (self.education_enabled and 'SAY' in session.allowed_actions and session.turns_remaining > self.closing_turns(state)
             and self.seconds_left(session) > session.reserve_seconds + LIMITS.response_seconds
             and session.usage['Education'].actions < SESSION_INTERVIEW_LIMITS['Education'][1])
 
@@ -131,7 +136,7 @@ class BudgetPolicy:
             return BudgetDecision(expired=True)
         if not self.collection_available(state):
             session = state.session
-            reason = ('collection_complete' if session.finalizing else 'turn_budget' if not session.turns_remaining
+            reason = ('collection_complete' if session.finalizing else 'turn_budget' if session.turns_remaining <= self.closing_turns(state)
                 else 'time_budget' if self.seconds_left(session) <= session.reserve_seconds + LIMITS.response_seconds
                 else 'model_token_budget' if session.input_tokens >= session.input_token_limit
                     or session.output_tokens >= session.output_token_limit

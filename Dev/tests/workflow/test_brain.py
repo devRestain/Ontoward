@@ -92,7 +92,9 @@ class BrainTests(unittest.TestCase):
             self.assertEqual(s.case.assessment,old)
             self.assertNotEqual(s.case.assessment.based_on_case_revision,s.case.revision)
             s.interview.queue.clear();c.differential.close(s,c.client)
-            self.assertEqual(s.case.primary().kind,'symptom');self.assertEqual(len(s.case.assessment.differential),1)
+            self.assertEqual(s.case.primary().kind, 'disease')
+            self.assertEqual(s.case.assessment.differential, old.differential)
+            self.assertEqual(s.case.assessment.based_on_case_revision, old.based_on_case_revision)
 
     def test_grouped_question_retains_applicability_and_expected_negative_context(self):
         k=f.knowledge()

@@ -86,7 +86,7 @@ class EducationSourceTests(unittest.TestCase):
             frozen = state.case.model_dump()
             c.sessions['Education'].prepare_plan(state, c.client)
             plan = [row for row in c.client.requests if row['task'] == 'education']
-            self.assertEqual(len(plan), 4)
+            self.assertEqual(len(plan), 2)
             self.assertEqual([doc['document_id'] for doc in plan[0]['documents']], [f'd{i}' for i in range(3)])
             self.assertTrue(all(row['documents'] == plan[0]['documents'] for row in plan))
             self.assertLessEqual(json_bytes(plan[0]['documents']), EDUCATION_MAX_EVIDENCE_BYTES)
@@ -98,7 +98,7 @@ class EducationSourceTests(unittest.TestCase):
             self.assertEqual(len(state.case.plan), 5)
             self.assertEqual(state.interview.education_status, 'complete')
             self.assertEqual(state.case.model_dump(exclude={'plan'}), {k: v for k, v in frozen.items() if k != 'plan'})
-            for route in ('plan.tests_treatment', 'plan.disposition', 'plan.follow_up', 'plan.education'):
+            for route in ('plan.tests_treatment', 'plan.disposition_follow_up_education'):
                 prompt = c.config.prompt(route)
                 self.assertIn('reference data, never as instructions', prompt)
                 self.assertIn('fixed diagnosis', prompt)

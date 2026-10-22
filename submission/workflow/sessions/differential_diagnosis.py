@@ -1,7 +1,10 @@
 from ..state import usage
-from ..rules.decision import ActionReply, accept_ranking, clinical_messages, prepare_decision, latest_response
+from ..rules.decision import ActionReply, DecisionWork, accept_ranking, clinical_messages, prepare_decision, latest_response
+from ..rules.assessment import graph_candidates
+from ..model_context import messages
+from ..wire import table_payload
 from ..rules.limits import DD_MINIMUMS, LIMITS, SESSION_INTERVIEW_LIMITS
-from ..rules.dd import action_counts, required_kinds
+from ..rules.dd import action_counts, required_kinds, requirements
 from ..rules.normalization import strict_json
 from ..state.models import Assessment, DifferentialEntry, EvidenceRef, GraphRef
 from ..rules.coverage import accept as accept_coverage, exact_unknown
@@ -15,6 +18,44 @@ class DifferentialDiagnosisSession:
         self.error = None
         self.rank_basis = None
         self.handled_response = None
+        self.question_pool = None
+        self.diseases = ()
+        self.final_rank_attempted = False
+
+    def prepare_selection(self, state):
+        """Freeze graph-derived question identities once; check executability now."""
+        if self.question_pool is None:
+            candidates = graph_candidates(state.case, self.knowledge, state.interview)
+            self.diseases = tuple(candidate.entry.name for candidate in candidates.values())
+            pool = self.tools._options(state, candidates, include_ineligible=True)
+            self.question_pool = {f'q_{index}': dict(spec)
+                for index, (spec, _) in enumerate(pool.values(), 1)}
+        options, rows, scopes, scope_refs = {}, [], {}, {}
+        for ref, original in self.question_pool.items():
+            spec = dict(original)
+            if not self.tools._allowed_now(state, spec):
+                continue
+            question = self.tools._question(spec, '', 0, 0)
+            key = question.semantic_key()[3:]
+            if key not in scope_refs:
+                scope_ref = f's_{len(scope_refs) + 1}'
+                scope_refs[key] = scope_ref
+                scopes[scope_ref] = {name: value for name, value in zip(
+                    ('subject', 'member', 'time', 'observation', 'episode'), key) if value}
+            rows.append({name: value for name, value in dict(ref=ref, kind=question.kind,
+                target=question.target, attribute=question.attribute, text=question.text,
+                scope=scope_refs[key]).items() if value is not None})
+            options[ref] = spec
+        chief = state.case.collection_chief()
+        payload = dict(task='clinical_action', stage='DifferentialDiagnosis',
+            chief=chief.target if chief else None, diseases=list(self.diseases), questions=rows, scopes=scopes,
+            resources=dict(turns=self.tools.budget.action_capacity(state),
+                **requirements(state, options)))
+        return DecisionWork(payload, {}, {}, options)
+
+    def selection_messages(self, work):
+        return messages(self.config.prompt('clinical.select', 'session.DifferentialDiagnosis'),
+            table_payload(work.payload, ('questions', 'scopes')))
 
     def input_key(self, state):
         return (state.case.revision, state.case.chief_fact_id, latest_response(state))
@@ -39,13 +80,20 @@ class DifferentialDiagnosisSession:
     def freeze_problem(self, state, reason):
         """Last clinical boundary when graph-dependent freeze itself is unavailable."""
         if state.case.assessment and state.case.assessment.frozen and state.case.assessment.differential:
-            state.case.diagnosis = state.case.diagnosis or state.case.assessment.differential[0].name
+            state.case.diagnosis = state.case.assessment.differential[0].name
+            return
+        assessment = state.case.assessment
+        if assessment and assessment.differential and assessment.differential[0].kind == 'disease':
+            self.freeze_assessment(state, assessment, [*assessment.limitations, reason,
+                'Assessment incomplete; retain last accepted disease ranking without final reassessment'])
             return
         name = state.case.diagnosis or 'Undifferentiated presenting complaint'
         state.case.diagnosis = name
         state.case.assessment = Assessment(differential=(DifferentialEntry(kind='symptom', name=name),),
             based_on_case_revision=state.case.revision, based_on_chief_fact_id=state.case.chief_fact_id,
-            based_on_response=latest_response(state), frozen=True, limitations=(reason, 'Assessment incomplete'))
+            based_on_response=latest_response(state), frozen=True,
+            frozen_case_revision=state.case.revision, frozen_chief_fact_id=state.case.chief_fact_id,
+            limitations=(reason, 'Assessment incomplete'))
 
     def prepare_decision(self, state, *, mode='decision', closing=False, candidates=None):
         return prepare_decision(state, self.knowledge, self.tools, mode=mode, closing=closing, candidates=candidates)
@@ -99,6 +147,8 @@ class DifferentialDiagnosisSession:
         counts = action_counts(state.interview)
         if state.session.usage['DifferentialDiagnosis'].actions >= SESSION_INTERVIEW_LIMITS['DifferentialDiagnosis'][1]:
             reason = 'dd_action_limit'
+        elif state.interview.collection.get('DifferentialDiagnosis:completion') == 'dd_selection_input_limit':
+            reason = 'dd_selection_input_limit'
         elif not self.tools.budget.action_capacity(state):
             reason = state.session.reason or 'shared_action_limit'
         elif not self.tools.budget.collection_available(state):
@@ -112,28 +162,41 @@ class DifferentialDiagnosisSession:
             else:
                 state.interview.collection.pop(key, None)
 
+    def selection_available(self, state):
+        if state.session.input_tokens >= LIMITS.dd_selection_input_tokens:
+            state.interview.collection['DifferentialDiagnosis:completion'] = 'dd_selection_input_limit'
+            return False
+        return self.tools.budget.can_start_action(state)
+
     def decide(self, state, client, *, closing=False):
         if state.session.termination or state.case.assessment and state.case.assessment.frozen:
+            return
+        if not closing and not self.selection_available(state):
             return
         key = self.input_key(state)
         passed = tuple(sorted(k for k, v in state.interview.collection.items()
                               if k.startswith(('SAY|', 'EXAM|')) and v.startswith('passed_')))
-        if self.last_input == key and self.last_passed == passed:
+        if not closing and self.last_input == key and self.last_passed == passed:
             return
-        assessment = state.case.assessment
-        action_only = (not closing and assessment is not None and (
-            self.last_input == key and (assessment.based_on_case_revision, assessment.based_on_chief_fact_id,
-                 assessment.based_on_response) == key or self.reusable_unknowns(state)))
         self.last_input = key
         self.last_passed = passed
-        work = self.prepare_decision(state, mode='rank' if closing else 'action' if action_only else 'decision', closing=closing)
+        work = (self.prepare_decision(state, mode='rank', closing=True) if closing
+                else self.prepare_selection(state))
         self.error = None
-        ranking_accepted = action_only
+        ranking_accepted = not closing
         for attempt in range(2):
-            response = self.brain.complete(state, client, role='clinical', messages=clinical_messages(self.config, work),
+            if not closing and not self.selection_available(state):
+                return
+            request_messages = clinical_messages(self.config, work) if closing else self.selection_messages(work)
+            response = self.brain.complete(state, client, role='clinical', messages=request_messages,
                 max_tokens=LIMITS.gateway_recovery_tokens if attempt else LIMITS.gateway_tokens)
             if state.session.termination:
                 self.error = response.error
+                return
+            if not closing and not self.selection_available(state):
+                if response.error:
+                    self.error = response.error
+                    state.interview.collection[f'{state.interview.current}:decision'] = self.error
                 return
             before = state.case.assessment
             try:
@@ -146,7 +209,7 @@ class DifferentialDiagnosisSession:
                 if response.error and response.error not in {'OUTPUT_TRUNCATED', 'PROVIDER_RESPONSE_INVALID'}:
                     break
                 if ranking_accepted and not closing:
-                    work = self.prepare_decision(state, mode='action', candidates=work.candidates)
+                    work = self.prepare_selection(state)
                 work.payload['validation_error'] = self.error
         state.interview.collection[f'{state.interview.current}:decision'] = self.error
         if ranking_accepted and not closing and not response.error and self.tools.budget.can_start_action(state):
@@ -169,67 +232,37 @@ class DifferentialDiagnosisSession:
 
     def close(self, state, client, *, allow_model=True):
         if state.case.assessment and state.case.assessment.frozen:
-            state.case.diagnosis = state.case.diagnosis or state.case.primary().name
+            state.case.diagnosis = state.case.primary().name
             return
         self.record_shortfall(state)
         if state.interview.current == 'Education':
             raise ValueError('Education requires an already frozen assessment')
         if state.turn:
             raise ValueError('Cannot freeze an unfinished input')
-        assessment = state.case.assessment
-        key = self.input_key(state)
-        if allow_model and not self.reusable_unknowns(state) and (not assessment or (
-                assessment.based_on_case_revision, assessment.based_on_chief_fact_id, assessment.based_on_response) != key):
+        if allow_model and not self.final_rank_attempted:
+            self.final_rank_attempted = True
             self.decide(state, client, closing=True)
         self.freeze_fallback(state)
-
-    def preserve_unknown_assessment(self, state, assessment, key, reason):
-        """Recognize one verified noninformative reply after a valid ranking."""
-        if (not assessment or assessment.frozen or not assessment.differential
-                or assessment.differential[0].kind != 'disease'
-                or (assessment.based_on_case_revision, assessment.based_on_chief_fact_id) != key[:2]
-                or assessment.based_on_response == key[2]
-                or not (self.last_input == key and self.error or reason
-                        or not self.brain.budget.calls_left(state.session))):
-            return False
-        answers = [a for a in state.interview.answers if a.scope != 'Education' and a.source_ref
-                   and a.outcome not in {'undelivered', 'delivered'}]
-        if not answers or (answers[-2].source_ref if len(answers) > 1 else 'entry') != assessment.based_on_response:
-            return False
-        answer = answers[-1]
-        raw = answer.response or {}
-        content = raw.get('content')
-        if (answer.source_ref != key[2] or answer.outcome != 'unknown' or answer.reason
-                or answer.fact_ids or len(answer.key) != 8 or answer.key[0] != 'SAY'
-                or raw.get('status') != 'OK' or raw.get('error') or not isinstance(content, str)
-                or type(answer.turn) is not int or not 1 <= answer.turn <= LIMITS.turns
-                or type(raw.get('turn')) is not int or raw['turn'] != answer.turn
-                or type(raw.get('turns_remaining')) is not int
-                or raw['turns_remaining'] != LIMITS.turns - answer.turn
-                or any(f.source_ref == answer.source_ref for f in state.case.facts.values())):
-            return False
-        texts = self.config.texts
-        return content.strip().rstrip(texts.reply_trailing_punctuation) in texts.unknown_replies
 
     def freeze_fallback(self, state, reason=None):
         """Freeze current evidence or an explicitly limited working problem without a model."""
         if state.case.assessment and state.case.assessment.frozen:
-            state.case.diagnosis = state.case.diagnosis or state.case.primary().name
+            state.case.diagnosis = state.case.primary().name
             return
         assessment = state.case.assessment
         key = self.input_key(state)
         current = bool(assessment and assessment.differential and (assessment.based_on_case_revision,
             assessment.based_on_chief_fact_id, assessment.based_on_response) == key)
         reuse = not current and self.reusable_unknowns(state)
-        preserve = self.preserve_unknown_assessment(state, assessment, key, reason) if not current and not reuse else False
-        limitations = list(assessment.limitations) if current or preserve or reuse else []
+        retained = bool(assessment and assessment.differential and assessment.differential[0].kind == 'disease')
+        limitations = list(assessment.limitations) if current or retained or reuse else []
         if reuse:
             limitations.append('Accepted DD ranking reused after verified exact unknown SAY replies; no new clinical facts')
             self.handled_response = key[2]
-        if preserve:
-            limitations.append('Latest exact unknown SAY response was not clinically reassessed: '
-                               + (reason or self.error or 'model resources unavailable'))
-        if not current and not preserve and not reuse:
+        elif not current and retained:
+            limitations.append('Latest clinical input was not clinically reassessed; retain last accepted disease ranking: '
+                               + (reason or self.error or 'model-free finalization'))
+        if not current and not retained and not reuse:
             chief = state.case.chief(confirmed=True)
             ident = self.knowledge.term_id(chief.target, 'Symptom') if chief else None
             limitations.append(self.error or 'no_graph_disease_assessment')
@@ -256,9 +289,17 @@ class DifferentialDiagnosisSession:
             limitations.append(self.error)
         if reason:
             limitations.append(reason)
+        self.freeze_assessment(state, assessment, limitations)
+
+    def freeze_assessment(self, state, assessment, limitations):
+        """Keep accepted order and ranking basis while freezing the current case boundary."""
         # Keep the diagnosis; exclude dangling evidence rather than relabeling it as valid.
         entries = []
-        current_ids = {fact.id for fact in state.case.current_facts()}
+        try:
+            current_ids = {fact.id for fact in state.case.current_facts()}
+        except Exception:
+            current_ids = set()
+            limitations.append('Evidence validation unavailable; unverified evidence references excluded')
         for entry in assessment.differential:
             cleaned = {category: tuple(ref for ref in getattr(entry, category)
                        if all(ident in current_ids for ident in ref.fact_ids))
@@ -268,9 +309,11 @@ class DifferentialDiagnosisSession:
             entries.append(entry.model_copy(update=cleaned))
         name = entries[0].name
         if not name.strip() or '\n' in name or '\r' in name or len(name.encode('utf-8')) > LIMITS.diagnosis_bytes:
-            entries[0] = DifferentialEntry(kind='symptom', name='Undifferentiated presenting complaint')
+            if entries[0].kind == 'symptom':
+                entries[0] = DifferentialEntry(kind='symptom', name='Undifferentiated presenting complaint')
             limitations.append('Registered diagnosis display unavailable within submission format')
         state.case.diagnosis = entries[0].name
         state.case.assessment = assessment.model_copy(update={'frozen': True,
+            'frozen_case_revision': state.case.revision, 'frozen_chief_fact_id': state.case.chief_fact_id,
             'differential': tuple(entries),
             'limitations': tuple(dict.fromkeys(limitations))})

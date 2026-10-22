@@ -22,6 +22,9 @@ def record_clarification(state):
 
 def apply_server_budget(state, value):
     session = state.session
+    if session.fixed_pending_turns is not None:
+        session.fixed_actions += max(0, session.fixed_pending_turns - value.turns_remaining)
+        session.fixed_pending_turns = None
     session.turns_remaining = value.turns_remaining
     if value.doctor_calls_remaining is not None:
         session.call_limit = min(session.call_limit, session.doctor_calls + value.doctor_calls_remaining)

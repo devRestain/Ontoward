@@ -178,12 +178,12 @@ class Trace:
         selected = {
             'Consultation': {'enter_session', 'prepare_session', 'refresh_requirements', 'refresh_after_input',
                              'close_collection', 'check_budget', 'select_action', 'advance_session',
-                             'finalize', 'repair_submission', 'release'},
+                             'finalize', 'repair_submission', 'deliver_fixed', 'release'},
             'DoctorEar': {'process_input', 'record_delivery', '_context', '_read_context', '_project_context',
                           '_mapping_payload', '_map_batch', '_parse_text', '_demographic_facts', '_fixed_reply'},
             'DoctorBrain': {'complete'},
             'DoctorMouth': {'_render', 'render_diagnosis', 'render_education',
-                            'validate_action', 'execute_action'},
+                            'validate_action', 'execute_action', 'execute_fixed'},
             'QuestionTools': {'_spec', '_question', '_register', '_options', 'chief_statuses',
                               'prepare_clarification', 'select_question'},
             'BudgetPolicy': {'evaluate', 'can_start_action', 'model_allowance'},
@@ -379,6 +379,7 @@ def observing(path):
                 trace.emit('observation_error', error=type(error).__name__)
 
     def request(client, method, path, body=None):
+        from privacy import fixed_action, response_metadata
         started = time.monotonic()
         trace.emit('sdk_request', method=method, path=path, body=body,
             request_id=(body or {}).get('request_id'), timeout=client.timeout,
@@ -390,7 +391,8 @@ def observing(path):
                 error=getattr(error, 'code', type(error).__name__), message=str(error),
                 elapsed=round(time.monotonic() - started, 6))
             raise
-        trace.emit('sdk_response', path=path, request_id=(body or {}).get('request_id'), response=response,
+        trace.emit('sdk_response', path=path, request_id=(body or {}).get('request_id'),
+            response=response_metadata(response) if fixed_action(body) else response,
             elapsed=round(time.monotonic() - started, 6))
         return response
 

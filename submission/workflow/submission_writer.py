@@ -177,7 +177,10 @@ class SubmissionWriter:
             raise ValueError('pending_action_at_finalization')
         primary = state.case.primary()
         assessment = state.case.assessment
-        if (assessment.based_on_case_revision,assessment.based_on_chief_fact_id)!=(state.case.revision,state.case.chief_fact_id):
+        frozen_basis = ((assessment.frozen_case_revision, assessment.frozen_chief_fact_id)
+                        if assessment.frozen_case_revision is not None else
+                        (assessment.based_on_case_revision, assessment.based_on_chief_fact_id))
+        if frozen_basis != (state.case.revision, state.case.chief_fact_id):
             raise ValueError('stale_frozen_assessment')
         fields, references = self.build_record_view(state.case, state.interview)
         texts = self.config.texts
@@ -188,7 +191,7 @@ class SubmissionWriter:
         if assessment.limitations:
             fields['A.evidence'].append(self._line('Incomplete assessment','; '.join(assessment.limitations)))
         fields['A.differential'] = [self._line('r/o '+entry.name,self._assessment_text(entry,references))
-            for entry in assessment.differential[1:]]
+            for entry in assessment.differential[1:1 + LIMITS.soap_differentials]]
         for sentence in state.case.plan:
             if sentence.field=='education' and not self.config.education_enabled:
                 continue

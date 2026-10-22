@@ -1,6 +1,8 @@
 # 웹에서 실행하는 공개 샘플 테스트
 
-**현재 상태:** 활성 v5-enum-1 지식은 build cec62f4596bedd9b9488aa75e3d38f04이며 D66 runtime d50.13과 format 7 관측을 사용한다. D65의 개인 OpenAI API 시험 경로와 Test 이미지 일치 검사를 유지한다. DD의 확인된 SAY·EXAM 횟수와 부족 사유, 네 medium 계획 호출·P coverage·실제 전달 결과를 구분하며 그래프 상세 50개 제한은 없다. 중간 오류 뒤에도 최종 payload로 전진하고 실제 completed와 미확정을 구분한다. 오프라인 프로토콜 수용과 실제 모델·임상 품질은 별도다.
+**현재 상태:** 활성 v5-enum-1 지식은 build cec62f4596bedd9b9488aa75e3d38f04이며 D68 runtime d50.16과 format 7 관측을 사용한다. D65의 개인 OpenAI API 시험 경로와 Test 이미지 일치 검사를 유지한다. DD의 확인된 SAY·EXAM 횟수와 부족 사유, 두 medium 계획 그룹·P coverage·실제 전달 결과를 구분하며 그래프 상세 50개 제한은 없다. 중간 오류 뒤에도 최종 payload로 전진하고 마지막 수용 질환 순위·실제 completed·미확정을 구분한다. 오프라인 프로토콜 수용과 실제 모델·임상 품질은 별도다.
+
+현재 관측 지도는 초기 입력 뒤 시작 두 SAY, Education 뒤 종료 두 SAY, SOAP·DIAGNOSE 순서를 포함한다. 고정 발화는 세션별 임상 횟수와 별도로 공유 50턴을 사용하며 응답 본문 대신 전달 메타데이터만 남긴다. D68의 요청별 따옴표 투영과 원문 인용 구간 복원을 실제 호출 지점에서 관측한다. Education은 `tests+treatment`와 `disposition+follow_up+education`의 두 medium 그룹을 먼저 호출하고 실패한 그룹만 한 번 복구한다. 과거 저장 실행과 아틀라스는 당시 스냅샷으로 보존한다.
 
 `Test/`는 기존 `submission/run.py`와 SDK를 그대로 실행하면서, 공모전의 세션 API와 예선 컨테이너 제약을 로컬에서 재현한다. 공개 `C01`·`C03`·`C10`의 `case.json`을 읽으며 공식 서버의 비공개 구현이나 채점 기준을 재현하지 않는다. 모든 결과의 채점 상태는 `not_scored`다.
 
@@ -160,6 +162,12 @@ sh Test/run.sh C10 scripted
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T dev python Test/test_observer.py
 ```
 
+시간이 부족하면 아래처럼 필요한 시나리오만 선택한다. 선택한 각 시나리오의 관측 유무 동작 일치와 trace 재구성을 검사하며 전체 회귀 통과를 뜻하지 않는다. 결과 경로를 새로 지정하여 이전 증거를 보존한다.
+
+```sh
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm --no-deps --pull never -T -e PYTHONPATH=/workspace/submission:/workspace/Test -e ONTOWARD_OBSERVER_OUTPUT=/workspace/Tmp/test-workflow-focused dev python -B Test/test_observer.py --scenario normal --scenario education --scenario education_passages --scenario education_repair
+```
+
 Note 뷰어의 동작 검사는 `Test/test_viewer.js`가 실제 뷰어 코드를 텍스트 DOM 대역에서 실행하여 필드 매핑·턴별 상태·완료/임상 상태·출처·Unicode 구간·payload 구분·과거 및 부분 로그·키보드 탭을 확인한다. Node가 이미 있는 프로젝트 extraction 이미지가 준비되어 있으면 다음처럼 네트워크 없이 실행한다. 선택적으로 컨테이너에서 접근 가능한 `report.html` 경로를 인자로 주어 저장된 로그도 확인할 수 있다. 실제 브라우저 렌더링 검증과는 구분한다.
 
 ```sh
@@ -221,7 +229,7 @@ ready 이전에는 증례를 공개하지 않고 준비는 10분, ready 이후 �
 
 ## Education 실행 자산
 
-D37부터 에이전트에는 기존 submission·출력 마운트와 함께 원본 가이드라인 폴더가 /opt/nova/guidelines에 읽기 전용으로 제공된다. NOVA_GUIDELINES_DIR이 이 경로를 가리키며 문서 자체는 제출 ZIP에 포함하지 않는다. education high 요청과 education_doctor medium 요청의 reasoning 값은 로컬 모델 브리지에서도 보존한다. scripted 모드의 계획·한국어 문장은 프로토콜 검증용 대역으로 실제 모델이나 임상 품질의 증거가 아니다.
+D37부터 에이전트에는 기존 submission·출력 마운트와 함께 원본 가이드라인 폴더가 /opt/nova/guidelines에 읽기 전용으로 제공된다. NOVA_GUIDELINES_DIR이 이 경로를 가리키며 문서 자체는 제출 ZIP에 포함하지 않는다. 현재 D68의 두 education medium 요청과 제한 복구의 reasoning 값은 로컬 모델 브리지에서도 보존한다. scripted 모드의 계획·한국어 문장은 프로토콜 검증용 대역으로 실제 모델이나 임상 품질의 증거가 아니다.
 
 ## D47 세션 대역과 저장 C03 비교
 

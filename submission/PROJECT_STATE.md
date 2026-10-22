@@ -1,8 +1,14 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=c311c7583fc8aa20cd5010dc464d67561b9bdb59 dirty=true updated=2026-10-22T17:45:04+09:00
-/goal phase=current id=APP.D67 state=complete action="Repair DD action reselection Education format and repair space and conservative question repeats"
+/checkpoint revision=c45eb13cccd7fd8c45dee151e9262deab4707b21 dirty=true updated=2026-10-22T23:24:25+09:00
+/goal phase=current id=APP.D70 state=complete action="Provide DD disease context stop only question selection at 300000 input and keep top-five SOAP alternatives"
+/goal phase=history id=APP.D69 state=complete action="Collect DD questions from one entry pool and rank current evidence once before freezing"
+/goal phase=history id=APP.PATH22 state=complete action="Verify submission-relative assets and organizer guideline mount parity without runtime changes"
+/goal phase=history id=APP.D68 state=complete action="Project quote-free prompt prose and generate Education through two bounded groups"
+/goal phase=history id=APP.FIXED22 state=complete action="Deliver fixed opening and closing SAYs with reply disposal and unchanged session limits"
+/goal phase=history id=APP.RANKED22 state=complete action="Freeze the first ranked disease through failed reassessment and preserve normal and minimal SOAP"
+/goal phase=history id=APP.D67 state=complete action="Repair DD action reselection Education format and repair space and conservative question repeats"
 /goal phase=history id=APP.D66 state=complete action="Enforce available DD minimums preserve ROS provenance split Education planning and remove graph record caps"
 /goal phase=history id=APP.D64 state=complete action="Preserve clinical meaning through final wire compaction and request-local byte metrics"
 /goal phase=history id=APP.D63 state=complete action="Implement final submission stabilization without candidate or SOAP count caps"
@@ -496,4 +502,40 @@
 /evidence id=APP.D67.E2 class=static result=pass source=../Tmp/d67-shallow-20261022/changes.diff observed="Record the bounded delta against preserved dirty source snapshots and reconcile current contracts requirements orientation and states"
 /evidence id=APP.D67.E3 class=artifact result=not_run source=../Tmp/d67-shallow-20261022/verification.json observed="Defer full regression packaging independent ZIP SDK replay and Test image rebuild under the requested minimal verification scope"
 /evidence id=APP.D67.E4 class=external_service result=not_run source=../Tmp/d67-shallow-20261022/verification.json observed="Leave paid OpenAI and NOVA calls clinical validity official evaluation production submission commits and deployment unrun"
-/handoff state=ready action="Review the D67 focused offline result and use a fresh source-matched image before any separately authorized model evaluation"
+/decision id=APP.RANKED22 state=accepted action="Retain accepted diseases through error and resource finalization and use symptoms only without a disease differential" source=../DECISION_STATE.md
+/accept id=APP.RANKED22.A1 state=pass action="Retain accepted disease order through failed reassessment graph failures and model-free exits" evidence=APP.RANKED22.E1,APP.RANKED22.E2
+/accept id=APP.RANKED22.A2 state=pass action="Preserve original ranking provenance current frozen boundaries and complete normal and minimal SOAP alternatives" evidence=APP.RANKED22.E1,APP.RANKED22.E2
+/evidence id=APP.RANKED22.E1 class=runtime result=pass source=../Tmp/ranked-finalization-20261022/workflow.log observed="Pass 346 maintained workflow checks including six ranked-finalization regressions budget and context failures graph-dependent close failure minimal Writer fallback evidence cleanup post-freeze guards and empty-list symptom behavior"
+/evidence id=APP.RANKED22.E2 class=runtime result=pass source=../Tmp/ranked-finalization-20261022/saved-replay.json observed="Replay C01 revision32 to frozen33 and C10 revision25 to frozen26; retain all thirty-seven and sixty-seven accepted diseases original response bases and first diagnoses in normal and minimal SOAP with zero model calls and unchanged originals"
+/evidence id=APP.RANKED22.E3 class=runtime result=pass source=../Tmp/ranked-finalization-20261022/verification.json observed="Pass twenty observer scenarios three active-bundle scripted consultations and the extracted synthetic archive original SDK completed receipt with network none"
+/evidence id=APP.RANKED22.E4 class=external_service result=not_run source=../Tmp/ranked-finalization-20261022/verification.json observed="Leave actual models clinical accuracy official evaluation production archive Test image rebuild production submission commits and deployment unrun"
+/accept id=APP.FIXED22.A1 state=pass action="Deliver approved NFC literals at the requested boundaries without model calls or clinical reply storage" evidence=APP.FIXED22.E1
+/accept id=APP.FIXED22.A2 state=pass action="Preserve every session target and maximum while protecting closing turns and submission" evidence=APP.FIXED22.E1
+/evidence id=APP.FIXED22.E1 class=runtime result=pass source=../Tmp/fixed-utterances-20261022/focused.log observed="Pass 145 focused checks including nine fixed-SAY regressions for ordering reply disposal shared accounting once-only delivery same-ID recovery later budget sync forbidden states and local reply redaction"
+/evidence id=APP.FIXED22.E2 class=static result=pass source=../Tmp/fixed-utterances-20261022/verification.json observed="Verify NFC lengths 28 27 28 28 unchanged 5/7 5/10 7/9 15/20 5/10 limits original SDK entrypoint and settings and all five installed manifest asset hashes"
+/evidence id=APP.FIXED22.E3 class=artifact result=not_run source=../Tmp/fixed-utterances-20261022/verification.json observed="Defer full regression and production and independent SDK ZIP verification under the requested minimum scope"
+/evidence id=APP.FIXED22.E4 class=external_service result=not_run source=../Tmp/fixed-utterances-20261022/verification.json observed="Leave actual models clinical validity official evaluation production submission and deployment unrun"
+/accept id=APP.D68.A1 state=pass action="Implement quote projection original grounding grouped Education and strict prompt packaging" evidence=APP.D68.E1
+/evidence id=APP.D68.E1 class=runtime result=pass source=../Tmp/prompt-education-d68-20261022/verification.json observed="Pass 51 focused network-none checks covering request-local quotes source spans ambiguity grouped repairs delivery call reserves and six packaging regressions"
+/evidence id=APP.D68.E2 class=static result=pass source=settings.py observed="Reconcile d50.16 routes prompts contracts requirements and state while preserving prior dirty work"
+/evidence id=APP.D68.E3 class=artifact result=not_run source=../Tmp/prompt-education-d68-20261022/verification.json observed="Defer production ZIP Test image rebuild independent SDK replay and full regression under the requested minimum scope"
+/evidence id=APP.D68.E4 class=external_service result=not_run source=../Tmp/prompt-education-d68-20261022/verification.json observed="Leave actual models clinical validation official evaluation production submission commits and deployment unrun"
+/accept id=APP.PATH22.A1 state=pass action="Load current assets and guideline documents independently of installation path and working directory" evidence=APP.PATH22.E1
+/accept id=APP.PATH22.A2 state=pass action="Match source and extracted callbacks input payloads actions final SOAP and returned state with scripted responses" evidence=APP.PATH22.E2
+/evidence id=APP.PATH22.E1 class=semantic result=pass source=../Tmp/path-portability-20261022/verification.json observed="Verify all 3467 indexed originals against exact catalog paths and pinned hashes; match 948 disease document and excerpt packets across workspace and /opt/nova/guidelines roots with 1305 accepted reads and the same two existing document_read_limit failures"
+/evidence id=APP.PATH22.E2 class=runtime result=pass source=../Tmp/path-portability-20261022/archive.json observed="Run unchanged prepare and consult callbacks from /app with unrelated cwd UID65532 two CPUs eight GiB read-only root code and guidelines network none and no credentials or source workspace; match three scripted consultations and complete both enabled Education cases"
+/evidence id=APP.PATH22.E3 class=runtime result=pass source=../Tmp/path-portability-20261022/verification.json observed="Verify the environment override actual default-root read nine invalid path rejections symlink escape hash mismatch and missing-source reporting without local fallback"
+/evidence id=APP.PATH22.E4 class=external_service result=not_run source=../Tmp/path-portability-20261022/verification.json observed="Leave actual model outputs official builder official container clinical accuracy upload commits and deployment unrun"
+/accept id=APP.D69.A1 state=pass action="Freeze one DD entry question pool and rank once at exit" evidence=APP.D69.E1
+/accept id=APP.D69.A2 state=pass action="Verify the separate d50.17 submission archive and production prepare" evidence=APP.D69.E2
+/evidence id=APP.D69.E1 class=runtime result=pass source=../Tmp/dd-collection-20261022/verification.json observed="Pass 102 distinct focused workflow tests across 69 regression and 37 finalization checks with four shared tests; preserve prerequisites scopes DD minimums final ranking and retained-disease fallback"
+/evidence id=APP.D69.E2 class=artifact result=pass source=../Tmp/dd-collection-20261022/archive-verification.json observed="Verify all 106 archive members against source and receipt hashes; load installed knowledge with archived prepare and pass four DD tests using extracted runtime and prompts with workspace synthetic fixture RDF; retain ZIP SHA256 06e667ffd5b5b725bc091189bc8de8a07234012f9dcdda7040a6f0c2cd010beb"
+/evidence id=APP.D69.E3 class=external_service result=not_run source=../Tmp/dd-collection-20261022/verification.json observed="Leave actual model calls token savings clinical accuracy full regression Test image rebuild official submission commits and deployment unrun"
+/handoff state=ready action="Use Tmp/packaging/ontoward-submission-d50.18.zip with the selection-only 300000-input ceiling; preserve actual-model and official-evaluation boundaries"
+
+/accept id=APP.D70.A1 state=pass action="Provide candidate disease names with executable DD questions and skip selection at zero capacity or 300000 reported input" evidence=APP.D70.E1
+/accept id=APP.D70.A2 state=pass action="Preserve final ranking above the selection ceiling and write top-five alternatives in normal and minimal SOAP" evidence=APP.D70.E1
+/accept id=APP.D70.A3 state=pass action="Verify the final d50.18 archive and original prepare callback" evidence=APP.D70.E2
+/evidence id=APP.D70.E1 class=runtime result=pass source=../Tmp/dd-submission-d70-20261022/verification.json observed="Pass 84 focused DD budget context-error ranked-finalization SOAP and packaging checks; verify final ranking at 450000 input and a twenty-action consultation without zero-capacity selection or repair"
+/evidence id=APP.D70.E2 class=artifact result=pass source=../Tmp/dd-submission-d70-20261022/archive-verification.json observed="Match all 106 ZIP members to current source and receipt hashes; archived original prepare loads 948 Diseases with Education enabled; ZIP SHA256 c2a75025a995faf2275d5c2df1523dad4dd12cd44b98bab462378dc3c7085fc1"
+/evidence id=APP.D70.E3 class=external_service result=not_run source=../Tmp/dd-submission-d70-20261022/verification.json observed="Leave full regression actual model quality clinical accuracy official submission Test image rebuild commits and deployment unrun"

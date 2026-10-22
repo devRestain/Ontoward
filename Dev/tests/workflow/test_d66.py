@@ -91,14 +91,16 @@ class DDCollectionTests(unittest.TestCase):
         c, state, options = self.run_collection(collection_knowledge(say=4, exam=2))
         expected = Counter(spec['kind'] for spec, _ in options.values())
         self.assertEqual(action_counts(state.interview), dict(expected))
-        self.assertEqual(len(c.client.actions), len(options))
+        self.assertEqual(len(c.client.actions) - state.session.fixed_actions, len(options))
         keys = [a.key for a in state.interview.answers]
         self.assertEqual(len(keys), len(set(keys)))
         for kind, minimum in DD_MINIMUMS.items():
             self.assertIn(str(minimum-expected[kind]), state.interview.collection[f'DifferentialDiagnosis:{kind}_shortfall'])
             self.assertIn('registered_questions_exhausted', state.interview.collection[f'DifferentialDiagnosis:{kind}_shortfall'])
         supplied = {spec['text'] for spec, _ in options.values()}
-        self.assertTrue(all(row['content'] in supplied for row in c.client.actions))
+        from workflow.rules.limits import FIXED_UTTERANCES
+        fixed = {text for lines in FIXED_UTTERANCES.values() for text in lines}
+        self.assertTrue(all(row['content'] in supplied | fixed for row in c.client.actions))
         self.assertEqual(state.session.termination, 'submitted')
 
     def test_counts_require_actual_receipts_and_deduplicate_requests(self):
@@ -156,7 +158,7 @@ class DDCollectionTests(unittest.TestCase):
         self.assertGreaterEqual(action_counts(state.interview)['EXAM'], 5)
         enabled = f.consultation(prepared=f.resources(education=True))
         late = f.chief(f.state('DifferentialDiagnosis', turns=22))
-        self.assertEqual(enabled.budget.action_capacity(late), 15)
+        self.assertEqual(enabled.budget.action_capacity(late), 13)
         self.assertEqual(state.session.termination, 'submitted')
 
     def test_all_options_relations_and_fact_scopes_survive_above_fifty(self):
@@ -229,7 +231,7 @@ class SectionPlanningTests(unittest.TestCase):
         c.client.chat = Mock(wraps=c.client.chat)
         return c, state
 
-    def test_four_distinct_medium_requests_preserve_all_five_fields_and_fixed_context(self):
+    def test_two_distinct_medium_requests_preserve_all_five_fields_and_fixed_context(self):
         c, state = self.planning()
         frozen = copy.deepcopy(state.case.model_dump(exclude={'plan'}))
         c.sessions['Education'].prepare_plan(state, c.client)
@@ -237,27 +239,30 @@ class SectionPlanningTests(unittest.TestCase):
         self.assertEqual([p['section'] for p in requests], list(PLAN_SECTIONS))
         self.assertEqual([p['fields'] for p in requests], [list(fields) for fields in PLAN_SECTIONS.values()])
         prompts = [call.kwargs['messages'][0]['content'] for call in c.client.chat.call_args_list]
-        self.assertEqual(len(set(prompts)), 4)
+        self.assertEqual(len(set(prompts)), 2)
         for call in c.client.chat.call_args_list:
             self.assertEqual(call.kwargs['reasoning_effort'], 'medium')
             self.assertEqual(call.kwargs['max_tokens'], 8000)
         self.assertEqual(state.interview.education_status, 'complete')
         self.assertEqual({s.field for s in state.case.plan}, set(f for fields in PLAN_SECTIONS.values() for f in fields))
         self.assertEqual(state.case.model_dump(exclude={'plan'}), frozen)
-        self.assertEqual([len(p['accepted_plan']) for p in requests], [0, 2, 3, 4])
+        self.assertEqual([len(p['accepted_plan']) for p in requests], [0, 2])
+        self.assertEqual([p['fields'] for p in requests],
+                         [['tests', 'treatment'], ['disposition', 'follow_up', 'education']])
+        self.assertEqual([p['delivery_turn_budget'] for p in requests], [4, 6])
         c.sessions['Education'].prepare_plan(state, c.client)
-        self.assertEqual(c.client.chat.call_count, 4)
+        self.assertEqual(c.client.chat.call_count, 2)
 
     def test_initial_sections_precede_one_local_truncation_repair(self):
         def respond(payload):
             if payload['task'] == 'education':
-                if payload['section'] == 'disposition' and payload['phase'] == 'direct':
+                if payload['section'] == 'disposition_follow_up_education' and payload['phase'] == 'direct':
                     return f.FakeSDK.completion('', finish_reason='length')
                 return education_response(payload)
         c, state = self.planning(respond)
         c.sessions['Education'].prepare_plan(state, c.client)
         self.assertEqual([(p['section'], p['phase']) for p in c.client.requests],
-                         [(s, 'direct') for s in PLAN_SECTIONS] + [('disposition', 'repair')])
+                         [(s, 'direct') for s in PLAN_SECTIONS] + [('disposition_follow_up_education', 'repair')])
         self.assertEqual(state.interview.education_status, 'complete')
         self.assertEqual(len(state.case.plan), 5)
         self.assertEqual(c.client.requests[-1]['generation_error'], 'OUTPUT_TRUNCATED')
@@ -285,8 +290,25 @@ class SectionPlanningTests(unittest.TestCase):
         c.sessions['Education'].prepare_plan(state, c.client)
         c.sessions['Education'].prepare_plan(state, c.client)
         self.assertEqual(Counter(p['section'] for p in c.client.requests), dict.fromkeys(PLAN_SECTIONS, 2))
-        self.assertEqual(c.client.chat.call_count, 8)
+        self.assertEqual(c.client.chat.call_count, 4)
         self.assertEqual(state.interview.education_status, 'failed')
+
+    def test_triple_group_repair_preserves_accepted_disposition_and_education(self):
+        def respond(payload):
+            raw = education_response(payload)
+            if payload['section'] == 'disposition_follow_up_education':
+                if payload['phase'] == 'direct':
+                    raw['P']['follow_up'] = []
+                else:
+                    self.assertEqual({row['field'] for row in payload['accepted']}, {'disposition', 'education'})
+                    self.assertEqual(payload['delivery_turn_budget'], 6)
+                    raw['P'] = {'follow_up': raw['P']['follow_up']}
+            return raw
+        c, state = self.planning(respond)
+        c.sessions['Education'].prepare_plan(state, c.client)
+        self.assertEqual(state.interview.education_status, 'complete')
+        self.assertEqual(len(c.client.requests), 3)
+        self.assertEqual(len(state.case.plan), 5)
 
     def test_assigned_field_validation_cannot_accept_another_sections_content(self):
         raw = education_response({'task': 'education'})
@@ -307,7 +329,7 @@ class SectionPlanningTests(unittest.TestCase):
         self.assertEqual(c.client.chat.call_count, 1)
         self.assertEqual(state.session.output_tokens, 100_000)
 
-    def test_three_verified_documents_are_shared_across_all_four_sections(self):
+    def test_three_verified_documents_are_shared_across_both_sections(self):
         with tempfile.TemporaryDirectory() as folder, patch.dict('os.environ', NOVA_GUIDELINES_DIR=folder):
             root = Path(folder)
             selections = []
@@ -325,7 +347,7 @@ class SectionPlanningTests(unittest.TestCase):
             c.knowledge.guidelines = GuidelineLibrary({str(f.OW.Alpha): selections})
             c.sessions['Education'].prepare_plan(state, c.client)
             packets = [p['documents'] for p in c.client.requests]
-            self.assertEqual(len(packets), 4)
+            self.assertEqual(len(packets), 2)
             self.assertTrue(all(packet == packets[0] for packet in packets))
             self.assertEqual({d['document_id'] for packet in packets for d in packet}, {'d1', 'd2', 'd3'})
 

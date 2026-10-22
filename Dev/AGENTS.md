@@ -7,7 +7,8 @@
 - Use test_d50.py for preserved repair siblings current scoped eligibility exact reply boundaries shared relation references response-aware cadence and independent joint Education acceptance; include D51 clarification invalid assets combined repair limits unbound preservation and dynamic Context eligibility. Test actual operation behavior instead of removed LangGraph nodes or routine GET counts.
 - Use test_context_limits.py for clinical/gateway rejection without immediate retry and D59 Education guards fixed repair contexts preserved English and post-error completion without output escalation.
 - Use test_budget.py for D63 actual cumulative input and output limits, optional stricter server output remaining, per-call allowance clipping, zero-output model-free finalization, call reserves, and truthful provider error accounting.
-- Use test_d53.py for bounded mapped-source reads atomic excerpts packet limits unique UTF-8 citations direct Initiation and removal of greeting and empathy state and actions.
+- Use test_d53.py for bounded mapped-source reads atomic excerpts packet limits unique UTF-8 citations direct clinical Initiation and removal of generated greeting and empathy state and actions.
+- Use test_fixed_utterances.py for approved fixed text ordering reply disposal unchanged session caps shared turn reserves and local SDK simulator and provider-log redaction.
 - Use test_d54.py for scoped recall shared fact/question references lexical integration document partition/projection lossless expectation references and defensive getters; retain all D49-D53 boundaries.
 - Use test_d57.py and initiation_fixtures.py for strict measurement references scoped note identity atomic collection dependencies and scripted interpretation of the reviewed opening; distinguish them from actual-model extraction quality.
 - Use tests/workflow/audit_links.py to record current vocabulary endpoint violations offline without changing installed assets or enabling a strict production gate.
@@ -19,7 +20,11 @@
 - Keep tests, synthetic assets, source packages, preparation data, guidance, state, and credentials outside the ZIP.
 - Record Dev operational progress in root PROJECT_STATE.md and artifact custody in data/PROJECT_STATE.md. Distinguish protocol acceptance from clinical and actual-model quality.
 
-- Use test_final_runtime.py for finite pass transitions input custody CC route separation partial repair uncapped graph candidate and SOAP records scoped HISTORY exact-unknown recovery minimal SOAP same-ID submission recovery and honest receipts.
+- Use test_final_runtime.py for finite pass transitions input custody CC route separation partial repair uncapped graph candidates and top-five SOAP alternatives scoped HISTORY ranked-disease retention minimal SOAP same-ID submission recovery and honest receipts.
+- Use test_ranked_finalization.py for accepted-rank retention through budget and graph errors normal and minimal SOAP original ranking basis frozen case boundaries and symptom fallback only without disease differentials.
 - Use test_clinical_wire.py and clinical_wire_fixtures for typed equivalence against complete logical records reference closure exact sharing numeric validation and final metrics. Preserve historical selection loss separately in saved-request comparisons without reporting scripted tokens as measured usage.
 
-- Use test_d66.py for confirmed DD minimums short lists uncapped projection ROS provenance four medium Education sections three shared sources field-local repairs and model-free finalization.
+- Use test_d66.py for confirmed DD minimums short lists uncapped projection ROS provenance two medium Education groups three shared sources field-local repairs and model-free finalization.
+
+- Use test_prompt_data.py and focused Education checks for quote projection original-span recovery citation collisions grouped repairs delivery allocation call reserves and strict prompt packaging.
+- Use test_dd_collection.py for one DD entry question pool candidate disease context latent prerequisite activation unchanged Assessment zero-capacity and 300000-input selection suppression with unrestricted final ranking below the overall input limit and one fresh final ranking before freezing. Verify top-five alternatives in both normal and minimal Writer through test_final_runtime.py.

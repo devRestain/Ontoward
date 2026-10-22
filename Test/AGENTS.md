@@ -23,6 +23,7 @@
 - Expose the local guideline corpus at /opt/nova/guidelines through NOVA_GUIDELINES_DIR without adding originals to the submission ZIP.
 - Give the web container only run outputs; exclude the Docker socket development key original case mounts and submission mount.
 - Record model messages only at the existing simulator boundary and SDK bodies without authentication headers or environment dumps.
+- Discard replies to the four fixed social SAYs from SDK traces persisted simulator requests transcripts patient history and provider logs; retain delivery and usage metadata and preserve ordinary replies and historical runs.
 
 ## Workflow
 
@@ -40,7 +41,8 @@
 - Observe input binding graph candidates frozen fact projections mapped guideline reads passage packets citation contexts and English-plan functions at their actual call sites; record definition paths and distinguish functions from methods.
 - Store large serialized call values once by content hash in trace value events; resolve recorded references in the viewer without implying Python object identity or losing argument mutation paths.
 - Pin entrypoint SDK workflow knowledge Python prompt manifest collector and Test boundary hashes at Consultation.run; record format 7 and compare tracked sources at exit while preserving historical graph and format 5/6 traces.
-- Keep the D66 observation contract coverage inventory landmarks and collaborator field allowlists in pipeline.py; capture session-owned values at actual boundaries and exclude arbitrary service dictionaries and credentials.
+- Keep the D68 observation contract coverage inventory landmarks and collaborator field allowlists in pipeline.py; capture session-owned values at actual boundaries and exclude arbitrary service dictionaries and credentials.
+- Observe fixed opening and closing delivery and request-local prompt projection and original citation spans at their actual call sites. Preserve fixed-reply disposal and historical traces.
 - Report model results request IDs local guards budget synchronization Education delivery outcomes missing observer bindings and source drift from recorded events without inferring transmissions or field reads.
 - Observe D64 compact_clinical_payload and DoctorBrain message_metrics at their actual call sites. Expose final role/task/phase system/user UTF-8 bytes whole messages JSON bytes block sizes nested counts recorded response prompt usage and evidenced error origin in model_outcomes. Keep metrics out of model input and resident state, distinguish scripted usage from actual tokens, and retain not_collected semantics for older traces.
 - Record callable definition files and lines and the first EvidenceIndex for each case revision and chief within an operation; count repeated inner lookups without reconstructing unrecorded eligibility or field reads.
@@ -61,6 +63,7 @@
 - Preserve actual Gateway request bodies and responses in simulator output so transmitted candidates can be audited without exposing credentials.
 - Keep the scripted Gateway case-independent and limited to supplied source names and aliases; do not add case-to-concept fixtures or clinical synonym tables.
 - Handle DoctorEar input_segments and normalized_claim and session clinical_rank clinical_decision and clinical_action through the common DoctorBrain executor in scripted doubles without treating protocol fixtures as semantic-quality evidence.
+- Observe D69 DD clinical_action as question-only selection from one entry pool and clinical_rank as the final full-evidence evaluation; do not require a per-response disease ranking or infer actual token savings from scripted usage.
 - Return the exact use_measurement true marker for supplied compatible numeric Mapping rows in scripted doubles without regenerating their quantities or categorical thresholds.
 - Handle D37 education and education_doctor protocol fixtures and forward the requested reasoning effort through the model bridge.
 - Permit bounded Education response repair and D59 Education-local context rejection within the shared request ceiling; preserve failed reservations and isolate each provider or uncertain request failure; keep only a confirmed shared call ceiling globally stopped.
@@ -73,6 +76,7 @@
 - Mark scripted replies as test fixtures and all local results as unscored.
 - Record fixture and runtime hashes in the data-owned provenance receipt.
 - Run sh Test/run.sh verify for API and web controls and Test/test_observer.py in the root offline dev service for full workflow parity and trace reconstruction.
+- Use repeated test_observer.py --scenario selections and a fresh ONTOWARD_OBSERVER_OUTPUT for explicitly bounded parity checks; report only the selected scenarios and keep the default full scenario list.
 - Run test_viewer.js and test_app.js in an existing project-owned Node image without downloads; distinguish text-DOM and HTTP checks from actual browser layout and accessibility evidence.
 - Run sh Test/knowledge.sh verify for actual graph traversal source-row lookup table browsing and read-only preservation; record browser evidence separately.
 - Keep C10 scripted clinical failure separate from successful website execution and result delivery; never tune fixtures to a case answer or alter submission for a green report.
@@ -89,4 +93,4 @@
 
 - Apply D61 request-local adapter failures without clearing request caches reservations conflicts or pending outcomes. Show protocol completion Education preparation diagnosis announcements expected plan utterances facts preserved payload transmission and actual receipt separately; mark missing legacy fields not_collected.
 
-- Report D66 confirmed DD SAY and EXAM counts shortages four medium planning sections and P coverage from actual records; preserve legacy missing-data semantics and unscored protocol evidence.
+- Report D66 confirmed DD SAY and EXAM counts shortages two medium planning groups and P coverage from actual records; preserve legacy missing-data semantics and unscored protocol evidence.

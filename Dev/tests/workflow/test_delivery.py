@@ -24,8 +24,8 @@ def invalid_joint_utterances(payload):
 class DeliveryTests(unittest.TestCase):
     def test_safety_after_routine_field_heads_gets_capacity_before_routine(self):
         c = f.consultation(prepared=f.resources(education=True))
-        s = f.chief(f.state('Education', turns=6, initialized=True))
-        c.client.remaining = 6
+        s = f.chief(f.state('Education', turns=8, initialized=True))
+        c.client.remaining = 8
         f.freeze(s)
         edu = c.sessions['Education']
         s.case.plan = [PlanSentence(id=field, field=field, text='Routine ' + field, basis='model_knowledge')
@@ -50,7 +50,7 @@ class DeliveryTests(unittest.TestCase):
             c.mouth.validate_action(s)
             c.mouth.execute_action(s, c.client)
             c.ear.process_input(s, c.knowledge, c.client)
-        self.assertEqual(s.session.turns_remaining, 0)
+        self.assertEqual(s.session.turns_remaining, 2)
         self.assertEqual(s.session.usage['Education'].actions, 6)
         self.assertEqual(s.interview.education_utterances['safety'], 1)
         self.assertEqual(sum(a.plan_sentence_id == 'safety' and a.outcome == 'delivered' for a in s.interview.answers), 1)
@@ -92,7 +92,7 @@ class DeliveryTests(unittest.TestCase):
         state.interview.current = 'Education'
         c.sessions['Education'].prepare_plan(state, c.client)
         requests = [row for row in c.client.requests if row['task'] == 'education']
-        self.assertEqual(len(requests), 4)
+        self.assertEqual(len(requests), 2)
         self.assertEqual(requests[0]['documents'], [])
         self.assertEqual(len(state.case.plan), 5)
         self.assertEqual(state.interview.education_status, 'complete')
@@ -136,7 +136,7 @@ class DeliveryTests(unittest.TestCase):
         self.assertEqual(repair['generation_error'], 'PROVIDER_RESPONSE_INVALID')
         self.assertEqual(repair['validation_errors'], {})
         self.assertTrue(all(client.submissions[0]['note']['P'].values()))
-        self.assertEqual(client.actions[0]['content'], c.config.texts.intake_questions['onset'])
+        self.assertEqual(client.actions[2]['content'], c.config.texts.intake_questions['onset'])
 
     def test_repeated_provider_render_failure_retains_cause_and_english_plan(self):
         requests = []
@@ -228,7 +228,7 @@ class DeliveryTests(unittest.TestCase):
         c,s,_ = f.run(client, prepared=f.resources(education=True))
         ident = c.knowledge.term_id(s.case.primary().name, 'Disease')
         expected = c.config.texts.diagnosis_announcement.format(diagnosis=c.knowledge.label(ident))
-        self.assertEqual(notice, [expected] * 4)
+        self.assertEqual(notice, [expected] * 2)
         self.assertEqual(s.interview.answers[-6].question_id, 'Education:diagnosis:0')
 
     def test_long_diagnosis_notice_uses_the_short_complete_sentence(self):
@@ -293,7 +293,7 @@ class DeliveryTests(unittest.TestCase):
         c,s,_ = f.run(f.FakeSDK(chat_handler=response), prepared=f.resources(education=True))
         self.assertEqual(s.session.termination, 'submitted')
         self.assertEqual(s.interview.education_status, 'complete')
-        self.assertEqual(len(requests), 5)
+        self.assertEqual(len(requests), 3)
         self.assertEqual(requests[-1]['generation_error'], 'PROVIDER_RESPONSE_INVALID')
         self.assertEqual(requests[-1]['validation_errors'], [])
 
@@ -330,7 +330,7 @@ class DeliveryTests(unittest.TestCase):
         f.freeze_for_education(c,s)
         c.sessions["Education"].prepare_plan(s,c.client)
         c.sessions["Education"].prepare_plan(s,c.client)
-        self.assertEqual(count,5)
+        self.assertEqual(count,3)
         self.assertEqual(len(s.case.plan),4)
         self.assertEqual(s.interview.education_status,'partial')
 

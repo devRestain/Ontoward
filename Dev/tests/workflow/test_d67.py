@@ -38,7 +38,7 @@ class SavedRunRepairs(unittest.TestCase):
         self.assertEqual((failed.outcome, failed.turn, failed.response),
                          ('undelivered', None, {'error': 'EXAM_NOT_SPECIFIC'}))
         self.assertTrue(any(p['task'] == 'clinical_action' for p in client.requests))
-        self.assertGreater(c.differential.prepare.call_count, len(client.actions))
+        self.assertGreater(c.differential.prepare.call_count, len(client.actions) - state.session.fixed_actions)
         self.assertTrue(any(a.key[0] == 'EXAM' and a.turn for a in state.interview.answers))
         self.assertIn('registered_questions_exhausted', state.interview.collection['DifferentialDiagnosis:EXAM_shortfall'])
 
@@ -57,18 +57,18 @@ class SavedRunRepairs(unittest.TestCase):
         _, errors = parse_plan({**raw, 'unexpected': []}, {}, _EducationWork())
         self.assertEqual(errors, ['expected P object with assigned sentence arrays'])
 
-    def test_four_unwrapped_sections_need_no_paid_format_repair(self):
+    def test_two_unwrapped_sections_need_no_paid_format_repair(self):
         client = f.FakeSDK(chat_handler=lambda p: education_response(p)['P'])
         c = f.consultation(client, f.resources(education=True))
         state = f.chief(f.state('Education'))
         f.freeze(state)
         c.sessions['Education'].prepare_plan(state, client)
         self.assertEqual(state.interview.education_status, 'complete')
-        self.assertEqual(len(client.requests), 4)
+        self.assertEqual(len(client.requests), 2)
         self.assertEqual({s.field for s in state.case.plan}, set(PLAN_FIELDS))
         self.assertEqual(sum(p['delivery_turn_budget'] for p in client.requests), c.budget.action_capacity(state))
 
-    def test_near_limit_documents_leave_space_for_four_repairs(self):
+    def test_near_limit_documents_leave_space_for_two_repairs(self):
         def reply(payload):
             return {} if payload['phase'] == 'direct' else education_response(payload)
         c = f.consultation(f.FakeSDK(chat_handler=reply), f.resources(education=True))
@@ -81,7 +81,7 @@ class SavedRunRepairs(unittest.TestCase):
         c.client.chat = Mock(wraps=c.client.chat)
         generate_plan(state, c.client, c.knowledge, config, c.brain)
         self.assertEqual(state.interview.education_status, 'complete')
-        self.assertEqual(len(c.client.requests), 8)
+        self.assertEqual(len(c.client.requests), 4)
         packets = [p['documents'] for p in c.client.requests]
         self.assertTrue(all(p == packets[0] for p in packets))
         self.assertLess(len(packets[0][0]['excerpts']) if packets[0] else 0, 7)

@@ -4,6 +4,7 @@ from functools import wraps
 
 
 BOUNDARIES = (
+    ('', 'deliver_fixed'),
     ('ear', 'process_input'), ('', 'refresh_after_input'), ('', 'enter_session'),
     ('', 'check_budget'), ('', 'select_action'), ('mouth', 'validate_action'),
     ('mouth', 'execute_action'), ('', 'advance_session'), ('', 'finalize'),

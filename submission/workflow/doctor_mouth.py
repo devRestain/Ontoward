@@ -8,6 +8,7 @@ from .rules.limits import LIMITS
 from .state.evidence import fixed_case_payload
 from .output_types import RenderedGroup
 from .doctor_brain import ModelResult
+from .state.models import FixedUtteranceReceipt
 
 class DoctorMouth:
 
@@ -15,6 +16,51 @@ class DoctorMouth:
         self.executor, self.nova_session = (executor, nova_session)
         self.questions, self.interactions, self.model = (questions, interactions, model)
         self.config, self.budget = (config, budget)
+
+    def execute_fixed(self, state, client, ident, text):
+        """Deliver one fixed SAY and retain only its receipt and turn cost."""
+        session = state.session
+        if ident in session.fixed_utterances or session.termination:
+            return
+        if (state.turn or session.budget_sync_required or session.turns_remaining <= 0
+                or 'SAY' not in session.allowed_actions):
+            return
+        if text != unicodedata.normalize('NFC', text) or content_error(text):
+            raise ValueError('invalid_fixed_utterance')
+        receipt = FixedUtteranceReceipt(request_id=self.interactions.new_request_id())
+        session.fixed_utterances[ident] = receipt
+        previous = session.turns_remaining
+        attempts = []
+
+        def say_without_reply(**request):
+            raw = client.say(**request)
+            # Do not expose patient text to the executor, state, Ear, or dialogue.
+            if not isinstance(raw, dict):
+                raise ValueError('invalid_fixed_response')
+            return {key: raw.get(key) for key in ('status', 'turn', 'turns_remaining')}
+
+        try:
+            raw = self.executor.execute(state, client, say_without_reply,
+                {'content': text, 'request_id': receipt.request_id}, attempts,
+                action=True, final=ident.startswith('closing:'))
+            response = ActionResponse.model_validate(raw)
+            if response.status != 'OK' or response.turn + response.turns_remaining != LIMITS.turns:
+                raise ValueError('invalid_fixed_response')
+            if response.turns_remaining >= previous:
+                raise ValueError('invalid_fixed_turn_cost')
+            session.turns_remaining = response.turns_remaining
+            session.fixed_actions += previous - response.turns_remaining
+            receipt.outcome, receipt.turn = 'delivered', response.turn
+        except (NovaError, TypeError, ValueError) as error:
+            receipt.outcome = error.code if isinstance(error, NovaError) else 'invalid_fixed_response'
+            if isinstance(error, NovaError) and error.code in {'SESSION_EXPIRED', 'SESSION_CLOSED', 'RUN_NOT_ACTIVE'}:
+                state.stop('expired' if error.code == 'SESSION_EXPIRED' else 'closed', error.code)
+            if attempts and not session.termination:
+                session.fixed_pending_turns = previous
+                try:
+                    self.nova_session.refresh_snapshot(state, client)
+                except (NovaError, TypeError, ValueError):
+                    session.budget_sync_required = True
 
     def _render(self, state, client, base, sentences, budgets, initial=None):
         pending = {row['id']: row for row in sentences}

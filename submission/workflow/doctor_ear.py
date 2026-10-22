@@ -4,6 +4,7 @@ from .input_types import ContextInput, ContextStatement, InputResult, PatientCon
 from .output_types import MappingBatch
 from .input_wire import InputProjection
 from .model_context import messages, fact_record
+from .prompt_data import recover_quote
 from .rules.input import fact_scope, make_fact, note_fact
 from .state.models import CaseFact, ObservedNumber
 from .rules.limits import LIMITS
@@ -126,6 +127,8 @@ class DoctorEar:
                 continue
             try:
                 statement = ContextStatement.model_validate(row)
+                if statement.quote not in text:
+                    statement.quote = recover_quote(text, statement.quote)
                 if not statement.quote.strip() or statement.quote not in text:
                     raise ValueError('statement_not_in_current_input')
                 if statement.correction_id and statement.correction_id not in supplied:
@@ -185,6 +188,11 @@ class DoctorEar:
                 continue
             try:
                 item = PatientContextFact.model_validate(row)
+                if item.quote not in text:
+                    try:
+                        item.quote = recover_quote(text, item.quote)
+                    except ValueError:
+                        pass  # Preserve the existing ungrounded-echo check below.
                 if item.quote not in text:
                     known = payload.get('known_context_records', payload.get('records', []))
                     if self._demographic_echo(item, known):

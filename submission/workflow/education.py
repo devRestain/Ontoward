@@ -7,6 +7,7 @@ from .rules.limits import LIMITS, PLAN_FIELDS, PLAN_SECTIONS
 from .state.models import PlanSentence, SourceReference
 from .state.evidence import fixed_case_payload
 from .model_context import messages
+from .prompt_data import prompt_text, source_spans
 from .output_types import PlanRow
 
 @dataclass
@@ -28,11 +29,9 @@ def references(raw, contexts):
             raise ValueError('empty source reference')
         locations = set()
         for start, text in contexts.get(document_id, []):
-            position = text.find(quote)
-            while position >= 0:
-                offset = start + len(text[:position].encode('utf-8'))
-                locations.add((offset, offset + len(quote.encode('utf-8'))))
-                position = text.find(quote, position + 1)
+            for first, last in source_spans(text, quote):
+                locations.add((start + len(text[:first].encode('utf-8')),
+                               start + len(text[:last].encode('utf-8'))))
         if not locations:
             raise ValueError('reference is outside the supplied source context')
         if len(locations) != 1:
@@ -51,7 +50,7 @@ def parse_plan(raw, contexts, progress, *, fields=PLAN_FIELDS):
     if set(raw['P']) - set(fields):
         errors.append('unexpected P fields')
     accepted = []
-    existing = {(sentence.field, sentence.text) for sentence in progress.sentences}
+    existing = {(sentence.field, prompt_text(sentence.text)) for sentence in progress.sentences}
     for field in fields:
         rows = raw['P'].get(field, [])
         if not isinstance(rows, list):
@@ -73,14 +72,14 @@ def parse_plan(raw, contexts, progress, *, fields=PLAN_FIELDS):
                 refs = references(row['references'], contexts)
                 if row['basis'] in {'guideline', 'mixed'} and (not refs) or (row['basis'] == 'model_knowledge' and refs):
                     raise ValueError('basis differs from source references')
-                if (field, text.strip()) in existing:
+                if (field, prompt_text(text.strip())) in existing:
                     continue
                 sentence = PlanSentence(id=f'plan:{field}:{sum((s.field == field for s in progress.sentences))}', field=field, text=text.strip(), basis=row['basis'], references=tuple((SourceReference(**{k: v for k, v in ref.items() if k != 'quote'}) for ref in refs)), priority=row['priority'])
                 progress.sentences.append(sentence)
                 progress.utterances[sentence.id] = utterances
                 accepted.append(dict(id=sentence.id, field=field, text=sentence.text,
                     basis=sentence.basis, priority=sentence.priority, references=row['references']))
-                existing.add((field, sentence.text))
+                existing.add((field, prompt_text(sentence.text)))
             except (TypeError, ValueError) as error:
                 errors.append(f'{field}[{index}]: {error}')
         if not any((sentence.field == field for sentence in progress.sentences)):
@@ -112,9 +111,9 @@ def generate_plan(state, client, knowledge, config, model):
     progress = _EducationWork()
     fixed = state.case.primary()
     capacity = model.budget.action_capacity(state)
-    section_budgets = dict.fromkeys(PLAN_SECTIONS, 0)
+    field_budgets = dict.fromkeys(PLAN_FIELDS, 0)
     for index in range(capacity):
-        section_budgets[tuple(PLAN_SECTIONS)[index % len(PLAN_SECTIONS)]] += 1
+        field_budgets[PLAN_FIELDS[index % len(PLAN_FIELDS)]] += 1
     base = {'task': 'education', **fixed_case_payload(state.case)}
     documents = []
     if fixed.kind == 'disease':
@@ -129,7 +128,7 @@ def generate_plan(state, client, knowledge, config, model):
     direct = {**base, 'phase': 'direct', 'documents': project_documents(selected)}
     def section_payload(section, fields):
         return {**direct, 'section': section, 'fields': list(fields),
-                'delivery_turn_budget': section_budgets[section],
+                'delivery_turn_budget': sum(field_budgets[field] for field in fields),
                 'accepted_plan': [dict(field=s.field, text=s.text) for s in progress.sentences]}
     def planning_size(section, fields, repair):
         payload = section_payload(section, fields)

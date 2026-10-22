@@ -1,7 +1,7 @@
 import copy
 from datetime import timedelta
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import fixtures as f
 from workflow.state.models import Question
@@ -9,7 +9,7 @@ from workflow.state.models import Question
 
 class OfficialBudgetTests(unittest.TestCase):
     def test_input_repairs_cannot_spend_final_judgment_and_enabled_delivery_reserves(self):
-        for enabled,protected in ((False,2),(True,7)):
+        for enabled,protected in ((False,2),(True,5)):
             c=f.consultation(prepared=f.resources(education=enabled));s=f.chief(f.state('DifferentialDiagnosis'))
             s.session.doctor_calls=s.session.call_limit-protected
             c.client.chat=Mock(return_value=f.FakeSDK.completion('{}'))
@@ -18,8 +18,8 @@ class OfficialBudgetTests(unittest.TestCase):
             for _ in range(2):
                 self.assertIsNone(c.brain.complete(s,c.client,role='clinical',messages=[]).error)
             if enabled:
-                for index in range(4):
-                    self.assertIsNone(c.brain.complete(s,c.client,role='education',messages=[], reserve_calls=3-index).error)
+                for index in range(2):
+                    self.assertIsNone(c.brain.complete(s,c.client,role='education',messages=[], reserve_calls=1-index).error)
                 self.assertIsNone(c.mouth.model.complete(s,c.client,role='education_doctor',messages=[]).error)
             self.assertEqual(c.budget.calls_left(s.session),0)
 
@@ -47,7 +47,7 @@ class OfficialBudgetTests(unittest.TestCase):
         self.assertEqual(result.error, 'MODEL_UNAVAILABLE')
         self.assertEqual(c.client.chat.call_count, 4)
 
-    def test_education_completes_below_input_and_output_limits_without_old_reserve(self):
+    def test_education_completes_below_input_and_output_limits_after_dd_reserve(self):
         c = f.consultation(prepared=f.resources(education=True))
         s = f.chief(f.state())
         f.freeze_for_education(c, s)
@@ -325,7 +325,10 @@ class OfficialBudgetTests(unittest.TestCase):
         c, s = self.ready_action(turns=1, purpose='education', education=True)
         c.client.chat = Mock(return_value=f.FakeSDK.completion('{}'))
         c.ear.model.complete(s, c.client, role='gateway', messages=[])
-        c.mouth.execute_action(s, c.client)
+        # Isolate acceptance of an already-budgeted last reply; normal selection
+        # now protects the closing pair (covered by test_fixed_utterances).
+        with patch.object(c.budget, 'closing_turns', return_value=0):
+            c.mouth.execute_action(s, c.client)
         self.assertEqual(s.session.turns_remaining, 0)
         c.ear.process_input(s, c.knowledge, c.client)
         self.assertIsNone(s.turn)

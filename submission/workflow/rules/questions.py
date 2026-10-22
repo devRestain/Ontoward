@@ -336,8 +336,8 @@ class QuestionTools:
         return [(*key[:2], self.knowledge.term(component), *key[3:])
                 for component in self.knowledge.collection_attributes(target, attribute)]
 
-    def _options(self, state, candidates):
-        if not self.budget.can_start_action(state):
+    def _options(self, state, candidates, *, include_ineligible=False):
+        if not include_ineligible and not self.budget.can_start_action(state):
             return {}
         grouped = {}
         for disease, candidate in candidates.items():
@@ -357,7 +357,7 @@ class QuestionTools:
             spec = self._spec(state, target, attribute,
                 observation or None, episode or None, purpose='context' if self.knowledge.has_type(target,'ContextFactor') else 'feature',
                 subject=subject, subject_member=member or None, time_context=timing)
-            if spec and self._allowed_now(state, spec):
+            if spec and (include_ineligible or self._allowed_now(state, spec)):
                 options[self._key(spec)] = (spec, diseases)
         return options
 

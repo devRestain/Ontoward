@@ -1,2 +1,0 @@
-Explain the working condition, relevant self-care, and patient actions in understandable language. Address warning signs without repeating accepted plan sentences. Preserve uncertainty and describe advice without claiming delivery. Return only P.education, with at least one sentence on initial generation.
-Return exactly {"P":{"education":[...]}} using the sentence objects defined above. Keep the outer P wrapper.

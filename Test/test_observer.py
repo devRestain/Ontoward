@@ -17,6 +17,9 @@ from execution import observing_operations
 from workflow.state.models import WorkflowState
 
 OUTPUT=Path(os.environ.get('ONTOWARD_OBSERVER_OUTPUT',ROOT/'Tmp/d44-observer'))
+SCENARIOS = ('normal','negative_context','unknown_context','fixed_unknown','education','education_repair',
+             'education_passages','education_context','education_doctor_context','source_drift','transient_model','model_limit',
+             'malformed_context','expired','closed','soap_repair','unconfirmed','refusal','action_format','recording_failure')
 
 
 def capture(name,observed):
@@ -53,7 +56,7 @@ def capture(name,observed):
     if name == 'education_passages':
         from knowledge.guidelines import GuidelineLibrary
         corpus.mkdir(exist_ok=True)
-        raw = b'# Management\nSimulation introduction.\n## Warning\nSeek care promptly.\n## Treatment\nReview options.\n'
+        raw = b'# Management\nSimulation introduction.\n## Warning\nSeek "care" promptly.\n## Treatment\nReview options.\n'
         (corpus / 'source.md').write_bytes(raw)
         source = dict(document_id='observer-source', path='source.md', sha256=hashlib.sha256(raw).hexdigest(),
                       relation='exact', evidence_use='care_navigation', scope='Synthetic protocol source')
@@ -152,6 +155,12 @@ def verify_trace(rows, name):
         settings = next(r for r in rows if r['kind'] == 'settings')
         assert settings['pipeline']['contract'] == 'D68'
         assert settings['pipeline']['input_metrics'] == 'D68'
+        assert 'workflow/prompt_data.py' in runtime['source_sha256']
+        fixed = [r for r in rows if r['kind'] == 'call_start' and
+                 (r.get('owner'), r.get('method')) == ('DoctorMouth', 'execute_fixed')]
+        assert [r['inputs']['ident'] for r in fixed] == ['opening:0', 'opening:1', 'closing:0', 'closing:1']
+        assert any(r['kind'] == 'node_end' and r['node'] == 'deliver_fixed' for r in rows)
+        assert any(r['kind'] == 'call_end' and r.get('owner') == 'PromptProjection' for r in rows)
         outcomes = inspection['model_outcomes']
         assert outcomes and all(row.get('input_metrics') for row in outcomes)
         assert all(row['reported_prompt_tokens'] == 20 and row['error_origin'] is None for row in outcomes)
@@ -181,6 +190,25 @@ def verify_trace(rows, name):
                               ('ModelProjection', 'fixed_case_payload'), ('EnglishPlan', 'references')]:
             assert any(r['kind'] == 'call_end' and (r['owner'], r['method']) == (owner, method) for r in rows), (owner, method)
         assert any(r['kind'] == 'call_start' and (r.get('definition') or {}).get('path') == 'knowledge/guidelines.py' for r in rows)
+        assert any(r['kind'] == 'call_end' and (r.get('owner'), r.get('method')) ==
+                   ('PromptProjection', 'source_spans') for r in rows)
+    if name.startswith('education'):
+        values = {r['value_id']: r['data'] for r in rows if r['kind'] == 'value'}
+        def resolve(value):
+            if isinstance(value, dict):
+                if set(value) == {'trace_value_ref'}:
+                    return resolve(values[value['trace_value_ref']])
+                return {key: resolve(item) for key, item in value.items()}
+            return [resolve(item) for item in value] if isinstance(value, list) else value
+        requests = [r for r in rows if r['kind'] == 'call_start' and
+                    (r.get('owner'), r.get('method')) == ('EnglishPlan', '_request')]
+        payloads = [resolve(r['inputs']['payload']) for r in requests]
+        initial = [payload for payload in payloads if payload.get('phase') == 'direct']
+        assert [r['section'] for r in initial] == ['tests_treatment', 'disposition_follow_up_education'], initial
+        assert [r['fields'] for r in initial] == [['tests', 'treatment'], ['disposition', 'follow_up', 'education']]
+        assert all(payload['phase'] == 'direct' for payload in payloads[:2]), payloads
+        for section in ('tests_treatment', 'disposition_follow_up_education'):
+            assert sum(payload['phase'] == 'repair' and payload['section'] == section for payload in payloads) <= 1
     if name in {'education_context', 'education_doctor_context'}:
         errors = [row for row in inspection['model_outcomes'] if row['error'] == 'CONTEXT_LIMIT_EXCEEDED']
         assert len(errors) == 1 and errors[0]['request_id'], (name, errors)
@@ -195,12 +223,10 @@ def verify_trace(rows, name):
     return inspection
 
 
-def verify():
+def verify(selected=None):
     OUTPUT.mkdir(parents=True,exist_ok=True)
     scenarios=[]
-    for name in ('normal','negative_context','unknown_context','fixed_unknown','education','education_repair',
-                 'education_passages','education_context','education_doctor_context','source_drift','transient_model','model_limit',
-                 'malformed_context','expired','closed','soap_repair','unconfirmed','refusal','action_format','recording_failure'):
+    for name in SCENARIOS if selected is None else selected:
         baseline,_=capture(name,False)
         observed,path=capture(name,True)
         assert baseline==observed,name
@@ -225,12 +251,20 @@ def verify():
             assert reconstructed==expected,name
             assert any(row['kind']=='call_end' for row in rows) or name in {'closed','expired'},name
         scenarios.append(dict(name=name,termination=end.session.termination,nodes=len(observed['updates'])))
+    names = {row['name'] for row in scenarios}
     report=dict(status='pass',scenarios=scenarios,node_updates=sum(row['nodes'] for row in scenarios),
-                recording_failure='nonfatal_no_replay',source_drift='detected_without_behavior_change',network='none',actual_models='not_run')
+                coverage='full' if names == set(SCENARIOS) else 'selected',
+                recording_failure='nonfatal_no_replay' if 'recording_failure' in names else 'not_run',
+                source_drift='detected_without_behavior_change' if 'source_drift' in names else 'not_run',
+                network='none',actual_models='not_run')
     (OUTPUT/'verification.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
     return report
 
 
 if __name__=='__main__':
-    verify()
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--scenario', action='append', choices=SCENARIOS,
+                        help='Run only this parity scenario; repeat for a focused check.')
+    verify(parser.parse_args().scenario)

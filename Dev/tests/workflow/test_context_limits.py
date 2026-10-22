@@ -156,10 +156,11 @@ class EducationLimitTests(unittest.TestCase):
                 delivery_turn_budget=3, phase='direct', documents=project_documents(selected),
                 section='tests_treatment', fields=['tests', 'treatment'], accepted_plan=[])
             if fixed_too_large:
-                payload.update(section='education', fields=['education'], delivery_turn_budget=2)
+                payload.update(section='disposition_follow_up_education', fields=['disposition', 'follow_up', 'education'], delivery_turn_budget=2)
                 prompt_size = LIMITS.education_max_messages_bytes - json_bytes(messages('', payload)) + 100
             else:
-                payload.update(phase='repair', repair_phase='direct', accepted=[],
+                payload.update(section='disposition_follow_up_education', fields=['disposition', 'follow_up', 'education'],
+                    delivery_turn_budget=6, phase='repair', repair_phase='direct', accepted=[],
                     validation_errors=['expected P object with assigned sentence arrays'])
                 prompt_size = LIMITS.education_max_messages_bytes - 2048 - json_bytes(messages('', payload))
             config = SimpleNamespace(prompt=lambda *routes: 'x' * prompt_size)
@@ -173,7 +174,7 @@ class EducationLimitTests(unittest.TestCase):
                 parser.assert_not_called()
                 self.assertFalse(s.case.plan)
             else:
-                self.assertEqual(c.brain.new_request_id.call_count, 4)
+                self.assertEqual(c.brain.new_request_id.call_count, 2)
                 self.assertEqual(c.client.requests[-1]['documents'], project_documents(selected))
                 self.assertEqual(parser.call_args.args[1], source_contexts(selected))
                 self.assertEqual({sentence.field for sentence in s.case.plan},

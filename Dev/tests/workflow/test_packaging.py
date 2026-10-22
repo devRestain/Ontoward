@@ -77,7 +77,7 @@ class PackagingTests(unittest.TestCase):
         self.assertEqual(self.output.read_bytes(), b"previous accepted archive")
 
     def test_missing_prompt_fails(self):
-        (self.source / "config/prompts/plan_disposition.txt").unlink()
+        (self.source / "config/prompts/plan_disposition_follow_up_education.txt").unlink()
         result = self.package()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Missing runtime files", result.stderr)

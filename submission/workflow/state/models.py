@@ -174,6 +174,8 @@ class Assessment(Model):
     based_on_chief_fact_id: str | None
     based_on_response: str = 'entry'
     frozen: bool = False
+    frozen_case_revision: int | None = None
+    frozen_chief_fact_id: str | None = None
     limitations: tuple[str, ...] = ()
 
 
@@ -360,6 +362,12 @@ class Usage(Model):
     actions: int = 0
 
 
+class FixedUtteranceReceipt(Model):
+    request_id: str
+    outcome: str = 'pending'
+    turn: int | None = None
+
+
 class SessionContext(Model):
     session_id: str
     deadline: datetime
@@ -367,6 +375,9 @@ class SessionContext(Model):
     finalizing: bool = False
     reserve_seconds: int = LIMITS.finalization_seconds
     usage: dict[SessionName, Usage] = Field(default_factory=lambda: {s: Usage() for s in SESSION_ORDER})
+    fixed_utterances: dict[str, FixedUtteranceReceipt] = Field(default_factory=dict)
+    fixed_actions: int = 0
+    fixed_pending_turns: int | None = None
     allowed_actions: list[str] = Field(default_factory=lambda: ['SAY', 'EXAM', 'DIAGNOSE'])
     doctor_calls: int = 0
     doctor_successes: int = 0

@@ -7,6 +7,7 @@ import urllib.error
 import urllib.request
 
 from nova_sdk import NovaError
+from privacy import recorded_model_response
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -78,7 +79,8 @@ class OpenAIModels:
                          'error_type': type(error).__name__})
             raise NovaError('OPENAI_OUTCOME_UNKNOWN', 503) from None
         # Preserve the actual response before interpreting it. Never retry an uncertain effect.
-        self.record({**entry, 'status': 'received', 'provider_request_id': provider_id, 'response': raw})
+        self.record({**entry, 'status': 'received', 'provider_request_id': provider_id,
+                     'response': recorded_model_response(role, messages, raw)})
         amounts = raw.get('usage') if isinstance(raw, dict) else None
         if isinstance(amounts, dict) and all(type(amounts.get(name)) is int and amounts[name] >= 0
                                              for name in ('input_tokens', 'output_tokens')):

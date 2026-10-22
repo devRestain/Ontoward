@@ -1,9 +1,10 @@
 import json
+from .prompt_data import prompt_payload
 
 
 def messages(prompt, payload):
     return [{'role': 'system', 'content': prompt}, {'role': 'user', 'content':
-        json.dumps(payload, ensure_ascii=False, separators=(',', ':'), allow_nan=False)}]
+        json.dumps(prompt_payload(payload), ensure_ascii=False, separators=(',', ':'), allow_nan=False)}]
 
 
 def message_metrics(role, messages):

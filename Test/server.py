@@ -186,7 +186,8 @@ class Evaluation:
         except Exception as error:
             record(status='error', error=getattr(error, 'code', type(error).__name__), seconds=time.monotonic() - started)
             raise
-        record(status='received', response=response, seconds=time.monotonic() - started)
+        from privacy import recorded_model_response
+        record(status='received', response=recorded_model_response(role, messages, response), seconds=time.monotonic() - started)
         try:
             text = response['choices'][0]['message']['content']
             usage = response['usage']
@@ -209,7 +210,8 @@ class Evaluation:
 
     def patient(self, utterance):
         history = [{'doctor': event['effective_content'], 'patient': event['response']['content']}
-                   for event in self.events if event['action'] == 'SAY' and 'response' in event]
+                   for event in self.events if event['action'] == 'SAY' and 'response' in event
+                   and not event.get('reply_discarded')]
         for _ in range(2):
             reply = self.json_reply('patient', PATIENT,
                                     {'initial': self.case['start_information'], 'script': self.case['patient_script']},
@@ -278,8 +280,13 @@ class Evaluation:
         self.turns += 1
         response = {'status': 'OK', 'content' if kind == 'SAY' else 'result': text,
                     'turn': self.turns, 'turns_remaining': 50 - self.turns}
-        self.events.append({'action': kind, 'content': content, 'effective_content': effective,
-                            'request_id': body['request_id'], 'turn': self.turns, 'response': response})
+        from privacy import fixed_action, response_metadata
+        private = fixed_action(body)
+        self.events.append({'action': kind, 'content': content,
+                            'effective_content': content if private else effective,
+                            'request_id': body['request_id'], 'turn': self.turns,
+                            **({'reply_discarded': True} if private else {}),
+                            'response': response_metadata(response) if private else response})
         return response
 
     def chat(self, body):
@@ -374,8 +381,13 @@ class Evaluation:
                                           requests_with_usage=self.models.requests_with_usage,
                                           scope='all_roles_reported_usage') if self.backend == 'openai_api' else None,
                    'actual_openai_api': 'run' if self.backend == 'openai_api' and self.models.calls else 'not_run'}
+        from privacy import response_metadata
+        private_ids = {event['request_id'] for event in self.events if event.get('reply_discarded')}
+        recorded_requests = {ident: {**request, **({'outcome': [request['outcome'][0],
+            response_metadata(request['outcome'][1])]} if ident in private_ids and 'outcome' in request else {})}
+            for ident, request in self.requests.items()}
         files = {'summary.json': summary, 'transcript.json': {'initial': self.case['start_information'], 'events': self.events},
-                 'requests.json': self.requests}
+                 'requests.json': recorded_requests}
         if self.note is not None:
             files['record.json'] = {'note': self.note, 'diagnosis': self.diagnosis}
         for name, value in files.items():
