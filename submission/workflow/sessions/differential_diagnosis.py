@@ -11,8 +11,9 @@ from ..rules.coverage import accept as accept_coverage, exact_unknown
 
 
 class DifferentialDiagnosisSession:
-    def __init__(self, knowledge, config, tools, brain):
+    def __init__(self, knowledge, config, tools, brain, *, record_view):
         self.knowledge, self.config, self.tools, self.brain = knowledge, config, tools, brain
+        self.record_view = record_view
         self.last_input = None
         self.last_passed = ()
         self.error = None
@@ -47,8 +48,11 @@ class DifferentialDiagnosisSession:
                 scope=scope_refs[key]).items() if value is not None})
             options[ref] = spec
         chief = state.case.collection_chief()
+        fields, _ = self.record_view(state.case, state.interview)
         payload = dict(task='clinical_action', stage='DifferentialDiagnosis',
             chief=chief.target if chief else None, diseases=list(self.diseases), questions=rows, scopes=scopes,
+            patient_history={field: '\n'.join(lines) for field, lines in fields.items()
+                if field.startswith(('S.', 'O.')) and lines},
             resources=dict(turns=self.tools.budget.action_capacity(state),
                 **requirements(state, options)))
         return DecisionWork(payload, {}, {}, options)

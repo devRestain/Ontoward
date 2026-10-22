@@ -8,7 +8,7 @@ from .prompt_data import recover_quote
 from .rules.input import fact_scope, make_fact, note_fact
 from .state.models import CaseFact, ObservedNumber
 from .rules.limits import LIMITS
-from .rules.normalization import candidate_contracts, exact_mapping, measurement_value, statement_outcome, strict_json, validate_mapping
+from .rules.normalization import allows_multiple_family_targets, candidate_contracts, exact_mapping, measurement_value, statement_outcome, strict_json, validate_mapping
 from .rules.coverage import CoverageWork, accept as accept_coverage, answer_record, question_record, unknown_answers
 
 class DoctorEar:
@@ -426,6 +426,14 @@ class DoctorEar:
             decoded.update(self._map_batch(state, knowledge, client, context.statements, waiting, contracts))
         preferred = []
         for i, statement in enumerate(context.statements):
+            values = decoded.get(i, ([], False))[0]
+            targets = {value[0] for value in values}
+            if len(targets) > 1 and allows_multiple_family_targets(statement):
+                target = question.target if question and question.target in targets else values[0][0]
+                observation, episode = fact_scope(statement, self._source(statement, source, segments),
+                    i, question, case=state.case, target=target)
+                statement = statement.model_copy(update={'observation_id': observation, 'episode_id': episode})
+                context.statements[i] = statement
             if statement.anchor is not None:
                 anchor = context.statements[statement.anchor]
                 mapped = decoded.get(statement.anchor)

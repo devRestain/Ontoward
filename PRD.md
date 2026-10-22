@@ -2,7 +2,7 @@
 
 ## 목적과 실행 경계
 
-Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 구현은 d50.18이며 [D67](DECISION_STATE.md#D67)로 DD SAY 10회·EXAM 5회 수집, DD 취득 증상의 ROS 분류, 네 medium Education 영역과 최대 3개 문서 공유를 적용한다. 그래프 상세 표의 50개 선택 제한도 철회한다. [D63](DECISION_STATE.md#D63)으로 감별 후보·수용 Assessment 개수 제한을 철회하고 SOAP는 D70의 상위 대안 5개를 적용하며 병력 주체·정확한 unknown 복구·safety 우선 전달·누적 output 한도를 안정화한다. D61 유한 pass·최소 SOAP·정직한 수신 상태를 유지한다. D58의 최신 strict 번들·현재 평가 DD Context 질문을 유지한다. [D57](DECISION_STATE.md#D57)의 초기 상세정보 수치 연결·scope·원자 질문 수집, [D55](DECISION_STATE.md#D55)의 strict 번들과 D56 진찰 문구를 유지한다. [D54](DECISION_STATE.md#D54)의 scoped 후보 유입·호출 내 참조·어휘 통합·문서 projection과 직접 연결 문서 우선 순서를 유지한다. 초기 고정 발화 뒤 D53의 임상 Initiation과 D66의 최대 3개 검증 문서 공유, D52 관계 공유·컨텍스트 재시도 금지와 D61의 실패 작업 pass, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 검증되지 않은 과거 DB fallback은 허용하지 않으며 실제 설치 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
+Ontoward는 N.O.V.A. 예선의 모의 환자에게 문진·신체진찰을 수행하고 SOAP 초진 기록과 주진단 하나를 제출한다. 공모전 제출이 프로젝트의 완성 지점이다. 현재 구현은 d50.19이며 [D67](DECISION_STATE.md#D67)로 DD SAY 10회·EXAM 5회 수집, DD 취득 증상의 ROS 분류, 네 medium Education 영역과 최대 3개 문서 공유를 적용한다. 그래프 상세 표의 50개 선택 제한도 철회한다. [D63](DECISION_STATE.md#D63)으로 감별 후보·수용 Assessment 개수 제한을 철회하고 SOAP는 D70의 상위 대안 5개를 적용하며 병력 주체·정확한 unknown 복구·safety 우선 전달·누적 output 한도를 안정화한다. D61 유한 pass·최소 SOAP·정직한 수신 상태를 유지한다. D58의 최신 strict 번들·현재 평가 DD Context 질문을 유지한다. [D57](DECISION_STATE.md#D57)의 초기 상세정보 수치 연결·scope·원자 질문 수집, [D55](DECISION_STATE.md#D55)의 strict 번들과 D56 진찰 문구를 유지한다. [D54](DECISION_STATE.md#D54)의 scoped 후보 유입·호출 내 참조·어휘 통합·문서 projection과 직접 연결 문서 우선 순서를 유지한다. 초기 고정 발화 뒤 D53의 임상 Initiation과 D66의 최대 3개 검증 문서 공유, D52 관계 공유·컨텍스트 재시도 금지와 D61의 실패 작업 pass, D51 입력 복구, D50 정보 보존·호출 병합·순차 실행과 D49 무점수 지식, D48 프롬프트 모듈, D47 객체·사실, D45 공식 행동 예산을 유지한다. 검증되지 않은 과거 DB fallback은 허용하지 않으며 실제 설치 번들의 manifest가 없으면 prepare와 정식 패키징은 knowledge_bundle_not_installed로 실패해야 한다.
 
 진료 중에는 ZIP 내부의 읽기 전용 RDFLib Graph를 사용한다. 원본 RF2·BODHI·DDXPlus·준비 SQLite는 개발 자산이다. 등록되지 않은 질환·관계·질문을 런타임에서 만들지 않는다. 제공 가이드라인 원문은 진단을 고정한 뒤 지정 마운트에서만 읽는다. 실제 모델 품질과 공식 평가는 로컬 실행 증거와 구분한다.
 
@@ -41,6 +41,10 @@ DoctorEar는 입력 전처리·해석·사실 수용을, 다섯 세션 객체는
 원문은 DoctorEar의 참조 해석 문맥에 한 번만 보관한다. 정확한 영어 용어·허용 속성 값은 Python이 먼저 연결하고 미해결 임상 진술만 제한된 DB 후보로 정규화한다. 독립 유효 행을 보존하며 문맥과 매핑 각각 기본 1회·복구 최대 1회로 제한한다. 초기 chief 검토는 같은 문맥 복구에 포함하고 매핑 형식·참조·미해결 오류도 같은 한 번에 복구한다. 의미 근거 없이 첫 후보·첫 값을 확정하지 않으며 미해결 내용은 영어·수치·조건·scope를 가진 unbound 사실로 보존한다. 실제 모름을 양성으로 만들거나 측정값만으로 증상 존재를 만들지 않는다.
 
 초기 원문의 전송 정본은 opening과 vital_signs를 구분한 input_segments다. 같은 초기 원문을 input·dialogue에 반복하지 않으며 일반 reply·EXAM의 input은 유지한다. 매핑은 Context가 이미 해소한 note_value 또는 짧은 의미 hint를 normalized_claim으로 함께 읽는다. 어휘 후보는 영어 hint와 한국어 인용 전체의 후보를 통합한 후 제한하며, 각 질의의 최선 별칭 일치만 합산한다. 이 어휘 유사도는 임상 근거 점수가 아니며 무관련 입력은 빈 후보를 허용한다. Target 8/32·속성 2/4·값 8/32와 기존 repair 상한을 유지한다.
+
+D71은 비수치 가족력 target 진술에 한해 같은 가족 구성원·시점·극성의 명시적 복합 의미를 한 Mapping dictionary의 여러 target으로 수용한다. 각 target은 자체 후보·속성·값 계약으로 검증하고 별도 fact ID로 저장하며 원래 observation·episode·보고자·취득 출처를 공유한다. 서로 다른 구성원·시점·극성은 별도 진술로 유지하고 수치·속성 전용·correction 진술에는 기존 단일 target 계약을 적용한다.
+
+D71의 DD 질문 선택은 기존 Writer의 순수 record view에서 현재 비어 있지 않은 S·O 필드를 patient_history로 추가한다. 연령·성별·측정·가족력·부정·미매핑 서술과 실제 진찰 출처를 기존 SOAP와 같은 문구로 매 선택 시 갱신하며 별도 모델 요약은 호출하지 않는다. 질환 이름·고정 질문 풀·수집 최소량·선택 전용 입력 상한·종료 시 한 번의 순위 평가는 유지한다.
 
 첫 입력과 일반 답변에서 명시된 증상의 기간·변화량·의도성·수식어를 같은 증상의 원자 속성으로 분리한다. 이전 체중·현재 체중·감소량을 구별하고 근사값·단위·시점을 보존한다. Context가 검증한 수치는 외부 Mapping에서 다시 생성하지 않는다. Mapping은 빈 dictionary 또는 한 target·attribute의 정확한 `{"use_measurement":true}`만 반환하며 Python이 원래 measurement를 기존 수치 validator에 연결한다. 숫자와 marker의 혼합·1이나 문자열 true·단위 불일치·범주값 대체를 거절한다. 후보는 속성 의미를 확인한 뒤 단위를 검사하며 kg만 같다는 이유로 현재 체중을 감소량에 연결하지 않는다. note_value가 있어도 대상·속성·값 hint와 시점을 meaning에 보존한다.
 

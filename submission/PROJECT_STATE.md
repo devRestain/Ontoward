@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=c45eb13cccd7fd8c45dee151e9262deab4707b21 dirty=true updated=2026-10-22T23:24:25+09:00
-/goal phase=current id=APP.D70 state=complete action="Provide DD disease context stop only question selection at 300000 input and keep top-five SOAP alternatives"
+/checkpoint revision=1b9638065e29ed31f31f45e41a125aea314a32dd dirty=true updated=2026-10-22T23:49:15+09:00
+/goal phase=current id=APP.D71 state=complete action="Provide current SOAP history during DD selection and accept compound family-history mappings through minimal checks"
+/goal phase=history id=APP.D70 state=complete action="Provide DD disease context stop only question selection at 300000 input and keep top-five SOAP alternatives"
 /goal phase=history id=APP.D69 state=complete action="Collect DD questions from one entry pool and rank current evidence once before freezing"
 /goal phase=history id=APP.PATH22 state=complete action="Verify submission-relative assets and organizer guideline mount parity without runtime changes"
 /goal phase=history id=APP.D68 state=complete action="Project quote-free prompt prose and generate Education through two bounded groups"
@@ -539,3 +540,12 @@
 /evidence id=APP.D70.E1 class=runtime result=pass source=../Tmp/dd-submission-d70-20261022/verification.json observed="Pass 84 focused DD budget context-error ranked-finalization SOAP and packaging checks; verify final ranking at 450000 input and a twenty-action consultation without zero-capacity selection or repair"
 /evidence id=APP.D70.E2 class=artifact result=pass source=../Tmp/dd-submission-d70-20261022/archive-verification.json observed="Match all 106 ZIP members to current source and receipt hashes; archived original prepare loads 948 Diseases with Education enabled; ZIP SHA256 c2a75025a995faf2275d5c2df1523dad4dd12cd44b98bab462378dc3c7085fc1"
 /evidence id=APP.D70.E3 class=external_service result=not_run source=../Tmp/dd-submission-d70-20261022/verification.json observed="Leave full regression actual model quality clinical accuracy official submission Test image rebuild commits and deployment unrun"
+
+/accept id=APP.D71.A1 state=pass action="Provide current S and O SOAP fields in each DD selection without state mutation or added model calls" evidence=APP.D71.E1
+/accept id=APP.D71.A2 state=pass action="Store multiple validated family-history targets as separately identified facts with shared original scope and acquisition" evidence=APP.D71.E1
+/evidence id=APP.D71.E1 class=runtime result=pass source=../Tmp/dd-history-d71-20261022/verification.log observed="Pass six selected offline tests for current history fixed pool and ranking cadence compound family storage scope and candidate rejection and numeric marker guards"
+/evidence id=APP.D71.E2 class=artifact result=not_run source=../Tmp/dd-history-d71-20261022/verification.log observed="Leave full regression actual model quality clinical accuracy official evaluation and new packaging unrun"
+/handoff state=ready action="Use d50.19 source with current history in DD selection and the bounded family-history Mapping exception; regenerate any submission ZIP separately"
+
+/accept id=APP.D71.A3 state=pass action="Retain mixed exact and unresolved family hints for Mapping and resolve multi-target statement scope before storage" evidence=APP.D71.E3
+/evidence id=APP.D71.E3 class=runtime result=pass source=../Tmp/d71-family-fix-20261022/verification.log observed="Pass six selected offline tests for compound family Mapping and question scope candidate and numeric guards exact single-target behavior distinct members correction scope and DD history; preserve both corrected review reproductions in reproduce.log"

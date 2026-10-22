@@ -23,6 +23,8 @@
 
 ## Input and Graph Decisions
 
+- Include current S and O record-view fields in each DD selection request through the pure Writer view; preserve age sex measurements family scope negative and unbound facts without adding model calls.
+- Accept multiple target entries only for nonnumeric family-history target statements without corrections. Validate every entry under its supplied contract and store separate facts with the original shared scope and acquisition.
 - Remove prose quotation delimiters only in request-local prompt data; preserve originals identities typed units word apostrophes numerical unit symbols and unique source-byte grounding.
 
 - Accept initial input before the first SAY and every collection reply through DoctorEar; bypass generation only for configured exact unknown/acknowledgement SAY replies and canonical affirmative single-target presence questions.

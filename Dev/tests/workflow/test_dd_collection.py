@@ -11,6 +11,31 @@ from workflow.rules.assessment import graph_candidates
 
 
 class DDCollectionCadenceTests(unittest.TestCase):
+    def test_selection_includes_current_soap_history_without_state_writes(self):
+        c, state = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
+        state.case.apply([
+            f.CaseFact(id='age', source_ref='initial', category='patient_context', context_key='age', value='6 years'),
+            f.CaseFact(id='sex', source_ref='initial', category='patient_context', context_key='sex', value='male'),
+            f.CaseFact(id='family', source_ref='reply', category='family_history', subject='family',
+                subject_member='father', time_context='past', value='Father grew during high school'),
+            f.CaseFact(id='measurement', source_ref='reply', category='measurement',
+                value='Reported height velocity', measurement=f.ObservedNumber(kind='quantity', value=5, unit='cm/year'))])
+        before = state.model_dump(mode='json')
+        work = c.differential.prepare_selection(state)
+        payload = decode_context(c.differential.selection_messages(work)[-1]['content'])
+        fields, _ = c.writer.build_record_view(state.case, state.interview)
+        self.assertEqual(payload['patient_history'], {key: '\n'.join(lines) for key, lines in fields.items()
+            if key.startswith(('S.', 'O.')) and lines})
+        self.assertIn('Age: 6 years', payload['patient_history']['S.hpi'])
+        self.assertIn('Sex: male', payload['patient_history']['S.hpi'])
+        self.assertIn('5 cm/year', payload['patient_history']['S.hpi'])
+        self.assertIn('Father grew during high school', payload['patient_history']['S.fh'])
+        self.assertIn('Family: father; Past', payload['patient_history']['S.fh'])
+        self.assertEqual(state.model_dump(mode='json'), before)
+        state.case.apply([f.CaseFact(id='new', source_ref='next', category='medical_history',
+            value='Medication use', status='absent')])
+        self.assertIn('Medication use (-)', c.differential.prepare_selection(state).payload['patient_history']['S.pmh'])
+
     def test_complete_collection_ranks_once_after_last_answer(self):
         c = f.consultation(prepared=f.resources(collection_knowledge(say=16, exam=10)))
         state = f.chief(f.state('DifferentialDiagnosis'))

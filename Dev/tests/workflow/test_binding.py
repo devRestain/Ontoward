@@ -10,6 +10,54 @@ from workflow.state.evidence import EvidenceIndex
 
 
 class BindingTests(unittest.TestCase):
+    def test_compound_family_history_maps_and_stores_each_scoped_target(self):
+        from rdflib import RDF, RDFS, Literal
+        k = f.knowledge()
+        k._graph.set((f.OW.Context, f.OW.contextType, Literal('family_history')))
+        k._graph.add((f.OW.LateFamily, RDF.type, f.OW.ContextFactor))
+        k._graph.add((f.OW.LateFamily, RDFS.label, Literal('Late family growth', lang='en')))
+        k._graph.add((f.OW.LateFamily, f.OW.contextType, Literal('family_history')))
+        k = type(k)(k._graph, k.questions, k.attribute_roles)
+        k.prepare_terms()
+        row = f.statement('Father has Test history and Late family growth', target_terms=['Test history', 'Late growth'],
+            subject='family', subject_member='father', reported_by='mother', time_context='past',
+            record_category='family_history', note_value='Father was short and grew late')
+        def reply(payload):
+            if payload['task'] == 'input_context':
+                return {'statements': [row]}
+            return [{'Test history': '(+)', 'Late family growth': '(+)'}]
+        question = Question(item_id='family', purpose='context', target='Test history', text='가족력을 알려주세요.',
+            subject='family', subject_member='father', time_context='past',
+            observation_id='family-observation', episode_id='family-episode')
+        state, c, client = f.interpret([], text=row['quote'], k=k, q=question, responses=reply)
+        facts = list(f.graph_facts(state.case).values())
+        self.assertEqual({fact.target for fact in facts}, {'Test history', 'Late family growth'})
+        self.assertEqual(len({fact.id for fact in facts}), 2)
+        self.assertEqual(len({(fact.source_ref, fact.observation_id, fact.episode_id) for fact in facts}), 1)
+        self.assertEqual({(fact.observation_id, fact.episode_id) for fact in facts},
+            {('family-observation', 'family-episode')})
+        self.assertTrue(all((fact.subject, fact.subject_member, fact.reported_by, fact.time_context) ==
+            ('family', 'father', 'mother', 'past') for fact in facts))
+        self.assertEqual(len(EvidenceIndex.from_case(state.case, k).contexts), 2)
+        fields, _ = c.writer.build_record_view(state.case)
+        self.assertTrue(all(target in '\n'.join(fields['S.fh']) for target in ('Test history', 'Late family growth')))
+        self.assertEqual([p['phase'] for p in client.requests], ['context', 'mapping'])
+
+    def test_multi_target_mapping_keeps_scope_numeric_and_candidate_guards(self):
+        row = ContextStatement(**f.statement(subject='family', subject_member='father',
+            record_category='family_history'))
+        contracts = [{'id': name, 'attributes': []} for name in ('First', 'Second')]
+        mapping = {'First': '(+)', 'Second': '(+)'}
+        self.assertEqual(len(validate_mapping(mapping, row, contracts, external=True)), 2)
+        for changes in ({'subject': 'patient', 'subject_member': None}, {'record_category': 'medical_history'},
+                        {'focus': 'attribute'}, {'measurement': ObservedNumber(kind='quantity', value=5, unit='cm')},
+                        {'correction_id': 'old'}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                validate_mapping(mapping, row.model_copy(update=changes), contracts, external=True)
+        for invalid in ({'First': '(+)', 'Outside': '(+)'}, {'First': '(+)', 'Second': '(-)'}):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                validate_mapping(invalid, row, contracts, external=True)
+
     def test_exact_binding_calls_context_once_and_no_mapper(self):
         s,c,client = f.interpret([f.statement()])
         self.assertEqual([p['task'] for p in client.requests],['input_context'])

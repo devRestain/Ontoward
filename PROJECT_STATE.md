@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=c45eb13cccd7fd8c45dee151e9262deab4707b21 dirty=true updated=2026-10-22T23:24:25+09:00
-/goal phase=current id=ROOT.D70 state=complete action="Provide DD disease context stop only question selection at 300000 input and keep top-five SOAP alternatives"
+/checkpoint revision=1b9638065e29ed31f31f45e41a125aea314a32dd dirty=true updated=2026-10-22T23:49:15+09:00
+/goal phase=current id=ROOT.D71 state=complete action="Provide current SOAP history during DD selection and accept compound family-history mappings through minimal checks"
+/goal phase=history id=ROOT.D70 state=complete action="Provide DD disease context stop only question selection at 300000 input and keep top-five SOAP alternatives"
 /goal phase=history id=ROOT.D69 state=complete action="Complete DD question-only collection and one final ranking with a separate verified submission ZIP"
 /goal phase=history id=ROOT.PATH22 state=complete action="Verify submission relocation and organizer guideline paths through isolated offline archive parity"
 /goal phase=history id=ROOT.TESTFLOW68 state=complete action="Align Test observation with fixed SAY delivery and D68 grouped Education through selected offline parity checks"
@@ -881,3 +882,11 @@
 /evidence id=ROOT.D70.E1 class=runtime result=pass source=Tmp/dd-submission-d70-20261022/verification.json observed="Pass 84 focused DD budget context-error ranked-finalization SOAP and packaging checks; verify final ranking at 450000 input and a twenty-action consultation without zero-capacity selection or repair"
 /evidence id=ROOT.D70.E2 class=artifact result=pass source=Tmp/dd-submission-d70-20261022/archive-verification.json observed="Match all 106 ZIP members to current source and receipt hashes; archived original prepare loads 948 Diseases with Education enabled; ZIP SHA256 c2a75025a995faf2275d5c2df1523dad4dd12cd44b98bab462378dc3c7085fc1"
 /evidence id=ROOT.D70.E3 class=external_service result=not_run source=Tmp/dd-submission-d70-20261022/verification.json observed="Leave full regression actual model quality clinical accuracy official submission Test image rebuild commits and deployment unrun"
+
+/accept id=ROOT.D71.A1 state=pass action="Verify the authorized DD history and compound family-history slice with six focused offline tests" evidence=ROOT.D71.E1
+/evidence id=ROOT.D71.E1 class=runtime result=pass source=Tmp/dd-history-d71-20261022/verification.log observed="Pass six selected tests in the network-disabled project dev container; preserve import-path and synthetic vocabulary-cache setup failures separately; reference submission/PROJECT_STATE.md APP.D71 for runtime ownership"
+/evidence id=ROOT.D71.E2 class=artifact result=not_run source=submission/PROJECT_STATE.md observed="Leave package regeneration full regression actual model quality clinical accuracy official submission commits and deployment unrun; preserve the historical d50.18 ZIP"
+/handoff state=ready action="Use the d50.19 working source and package it separately before submission artifact use"
+
+/accept id=ROOT.D71.A2 state=pass action="Repair only the reviewed compound-family exact bypass and shared-scope defects" evidence=ROOT.D71.E3
+/evidence id=ROOT.D71.E3 class=runtime result=pass source=Tmp/d71-family-fix-20261022/verification.log observed="Pass six focused offline tests and confirm both saved review reproductions now retain two targets with shared statement scope; reference APP.D71.E3 and leave full regression actual models and packaging unrun"

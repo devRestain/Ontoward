@@ -14,6 +14,7 @@
 
 ## Runtime contract
 
+- Apply D71 current SOAP-style patient history in DD selection and multi-target nonnumeric family-history Mapping. Validate each supplied target independently and preserve shared member time observation episode polarity and acquisition.
 - Apply D70 disease-context DD selection, the 300000-input DD selection ceiling, and top-five SOAP alternatives. Skip DD selection and repair at zero action capacity or the selection threshold; use the existing final ranking and Education transition.
 - Apply D67 scoped DD action reselection strict missing-P normalization repair-aware Education packets section delivery allocations and conservative same-episode repeat suppression. Preserve distinct clinical targets episodes family members and time scopes.
 - Keep submission/run.py as the unchanged SDK entrypoint exposing prepare and consult from workflow/runtime.py.

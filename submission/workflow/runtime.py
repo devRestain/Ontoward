@@ -50,11 +50,12 @@ def assemble_consultation(client, resources, *, now=utc_now, sleep=None, new_req
     tools = QuestionTools(resources.knowledge, resources.config, questions, interactions, budget)
     ear = DoctorEar(resources.config, brain, questions, pending_questions=tools.pending_questions)
     tools.chief_fallback = lambda state: force_chief(state, resources.knowledge, resources.config, brain, client)
+    writer = SubmissionWriter(client, resources.knowledge, resources.config, executor, nova_session, new_request_id)
     args = (resources.knowledge, resources.config, tools, brain)
     sessions = dict(Initiation=InitiationSession(*args), ChiefComplaint=ChiefComplaintSession(*args),
-        ContextFactor=ContextFactorSession(resources.knowledge, resources.config, tools), DifferentialDiagnosis=DifferentialDiagnosisSession(*args),
+        ContextFactor=ContextFactorSession(resources.knowledge, resources.config, tools),
+        DifferentialDiagnosis=DifferentialDiagnosisSession(*args, record_view=writer.build_record_view),
         Education=EducationSession(resources.knowledge, resources.config, brain, mouth, questions, budget))
-    writer = SubmissionWriter(client, resources.knowledge, resources.config, executor, nova_session, new_request_id)
     return Consultation(client, ear, brain, mouth, writer, nova_session, budget, questions, interactions,
         resources.knowledge, resources.config, tools, sessions)
 

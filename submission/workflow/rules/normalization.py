@@ -29,6 +29,11 @@ def statement_outcome(statement):
     return None
 
 
+def allows_multiple_family_targets(statement):
+    return (statement.record_category == 'family_history' and statement.subject == 'family'
+            and statement.focus == 'target' and statement.measurement is None and not statement.correction_id)
+
+
 def concept_rank(knowledge, terms, kinds):
     ranked = []
     ranked.extend(term for term in terms if term.startswith(("urn:", "http://", "https://"))
@@ -64,7 +69,7 @@ def candidate_contracts(knowledge, statement, question, *, expanded=False):
     ranked = concept_rank(knowledge, terms, kinds)
     exact_targets = {target for term in statement.target_terms for target in knowledge.resolve_concept(term)
                      if any(knowledge.has_type(target, kind) for kind in ('Symptom', 'ExamFinding', 'ContextFactor'))}
-    if exact_targets:
+    if exact_targets and not (allows_multiple_family_targets(statement) and len(statement.target_terms) > 1):
         ranked = [target for target in ranked if target in exact_targets]
     direct = bool(question and qtarget and statement.subject == question.subject
                   and (not statement.target_terms or qtarget in ranked[:8]))
@@ -126,8 +131,15 @@ def measurement_value(measured):
 
 
 def validate_mapping(mapping, statement, contracts, *, external=False):
-    if not isinstance(mapping, dict) or len(mapping) > 1:
+    if not isinstance(mapping, dict):
         raise ValueError("mapping_requires_one_target_dictionary")
+    if len(mapping) > 1:
+        if not allows_multiple_family_targets(statement):
+            raise ValueError("mapping_requires_one_target_dictionary")
+        decoded = []
+        for target, value in mapping.items():
+            decoded.extend(validate_mapping({target: value}, statement, contracts, external=external))
+        return decoded
     if not mapping:
         return []
     if statement_outcome(statement):
@@ -198,6 +210,8 @@ def validate_mapping(mapping, statement, contracts, *, external=False):
 
 def exact_mapping(knowledge, statement, contracts, question):
     if statement_outcome(statement) or not contracts:
+        return None
+    if allows_multiple_family_targets(statement) and len(statement.target_terms) > 1:
         return None
     terms = statement.target_terms
     exact = {knowledge.term(ident) for term in terms for ident in knowledge.resolve_concept(term)
