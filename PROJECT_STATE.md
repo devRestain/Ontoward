@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=c311c7583fc8aa20cd5010dc464d67561b9bdb59 dirty=true updated=2026-10-22T17:45:04+09:00
-/goal phase=current id=ROOT.D67 state=complete action="Complete the saved-run DD Education and repeat-question maintenance slice with focused offline checks"
+/checkpoint revision=9cf7281b26af864335a4c5d76aa405ead7c87874 dirty=true updated=2026-10-22T17:58:04+09:00
+/goal phase=current id=ROOT.PACKAGE22 state=complete action="Verify current runtime archive coverage and update packaging checks and commands"
+/goal phase=history id=ROOT.D67 state=complete action="Complete the saved-run DD Education and repeat-question maintenance slice with focused offline checks"
 /goal phase=history id=ROOT.D66 state=complete action="Implement confirmed DD minimums ROS routing four medium Education sections and uncapped graph records through offline acceptance"
 /goal phase=history id=ROOT.D65 state=complete action="Add explicit OpenAI API testing and align Test image provenance with the current D64 runtime"
 /goal phase=history id=ROOT.D64 state=complete action="Implement bounded semantic input compaction and final-message byte observation"
@@ -805,4 +806,14 @@
 /evidence id=ROOT.D67.E2 class=static result=pass source=Tmp/d67-shallow-20261022/changes.diff observed="Record the bounded delta against preserved dirty source snapshots and reconcile current contracts requirements orientation and states"
 /evidence id=ROOT.D67.E3 class=artifact result=not_run source=Tmp/d67-shallow-20261022/verification.json observed="Defer full regression packaging independent ZIP SDK replay and Test image rebuild under the requested minimal verification scope"
 /evidence id=ROOT.D67.E4 class=external_service result=not_run source=Tmp/d67-shallow-20261022/verification.json observed="Leave paid OpenAI and NOVA calls clinical validity official evaluation production submission commits and deployment unrun"
+
+/accept id=ROOT.PACKAGE22.A1 state=pass action="Include current runtime modules prompt references and only active manifest assets" evidence=ROOT.PACKAGE22.E1,ROOT.PACKAGE22.E2
+/accept id=ROOT.PACKAGE22.A2 state=pass action="Verify extracted runtime and independent unchanged SDK completion" evidence=ROOT.PACKAGE22.E3,ROOT.PACKAGE22.E4
+/accept id=ROOT.PACKAGE22.A3 state=pass action="Document offline rebuild commands and preserve prior archive and runtime sources" evidence=ROOT.PACKAGE22.E5
+/evidence id=ROOT.PACKAGE22.E1 class=artifact result=pass source=Tmp/packaging-review-20261022/coverage.json observed="Match all one hundred ZIP files byte for byte with current d50.14 source including fifty-two Python files thirty-eight prompt modules twenty-seven routes and five assets from active build cec62f4596bedd9b9488aa75e3d38f04; retain archive SHA-256 d8d0469524160b3c31c299be9b63974480ee620e90f4fe903482a2de006ffcde at Tmp/packaging/ontoward-submission.zip"
+/evidence id=ROOT.PACKAGE22.E2 class=semantic result=pass source=Tmp/packaging-review-20261022/packaging-tests.log observed="Pass six final packaging regressions covering new module inclusion active assets referenced prompts missing imports parent packages modified knowledge rejected files symlinks and preservation of an existing archive on failure"
+/evidence id=ROOT.PACKAGE22.E3 class=runtime result=pass source=Tmp/packaging-review-20261022/workflow.log observed="Pass 319 maintained offline workflow checks before the final parent-package validation refinement; pass six focused packaging checks after that refinement without changing runtime source"
+/evidence id=ROOT.PACKAGE22.E4 class=runtime result=pass source=Tmp/packaging-review-20261022/verification.json observed="Load the extracted production ZIP and complete three scripted consultations; complete the independent synthetic ZIP through unchanged run.py original SDK HTTP loopback forty-five requests twenty actions and matching completed receipt with read-only submission network none and blocked LangGraph"
+/evidence id=ROOT.PACKAGE22.E5 class=static result=pass source=Dev/README.md observed="Document offline image rebuild and isolated package commands; verify git diff whitespace and unchanged submission sources; preserve prior ZIP under Tmp/packaging-review-20261022/previous and record package version build per-file hashes and archive digest"
+/evidence id=ROOT.PACKAGE22.E6 class=external_service result=not_run source=Tmp/packaging-review-20261022/verification.json observed="Leave actual model calls clinical accuracy official evaluation production submission publication commits remote writes and deployment unrun"
 /handoff state=ready action="Review the D67 focused offline result and use a fresh source-matched image before any separately authorized model evaluation"

@@ -117,6 +117,8 @@ docker compose run --rm -T control status
 docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm -T --no-deps dev python -B -m unittest discover -s Dev/tests/workflow -p 'test_*.py'
 ```
 
+제출 ZIP은 [Dev 패키징 명령](Dev/README.md)의 이미지 갱신·네트워크 차단 압축 순서로 생성한다. 출력은 `Tmp/packaging/ontoward-submission.zip`이며 현재 workflow Python·참조 프롬프트·활성 지식 manifest의 다섯 자산을 포함한다.
+
 [D51 후속 증빙](data/provenance/algorithm-d50-2-2026-10-20.json)은 소스·독립 읽기 전용 ZIP의 회귀 각각 176개, 정상 scripted 상담 3개의 전후 행동·사실·평가·P·SOAP·사용량 일치, 관측 16시나리오와 1,516 작업 snapshot 재구성을 기록한다. 독립 합성 ZIP은 원본 SDK·run.py를 통해 21행동·44 HTTP 요청 뒤 completed를 받았다. [D50 증빙](data/provenance/algorithm-d50-2026-10-20.json)은 이전 d50.1의 역사적 수용 기록으로 보존한다. 합성 프로토콜 수용은 실제 모델·임상·공식 성능 검증과 구분한다.
 
 D59의 좁은 검사 79개는 최초 78개 통과와 오래된 전문 기대 수정 후 영향받은 5개 재확인으로 검증했다. 변경 없는 run.py prepare는 활성 948 Diseases를 로드했고 보호 해시 17개가 일치했다. 정규 패키저로 [로컬 ZIP](Tmp/d59-2026-10-21/package/ontoward-submission.zip)을 한 번 생성하여 새 모듈·프롬프트 포함과 원문 지침 제외를 확인했다. D59 당시 실제 모델 품질·임상적 정확성·공식 평가·최종 버전 선택·업로드·배포·브라우저 시각 검증과 전체 회귀/독립 ZIP 상담은 not_run이었다.

@@ -12,6 +12,7 @@
 | tests/workflow/fixture_bundle.py | Tmp/의 새 합성 번들 구성 |
 | tests/workflow/test_admitted.py | 명시적 새 번들의 전체 상담·Education 경로 |
 | packaging/package_submission.py | 필요한 runtime·공개 설정·참조 prompts/assets만 ZIP에 포함 |
+| tests/workflow/test_packaging.py | 새 모듈·프롬프트 포함, 활성 자산 한정, 누락 import·변조·미승인 파일 거부 |
 | architecture/ | 과거 설계·리뷰 기록; 현재 활성 계약은 PRD·AGENTS를 우선 |
 
 ```sh
@@ -24,8 +25,12 @@ docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --
 [아틀라스](../Test/atlas.html#evidence)는 검증 층위와 코드 탐색 경로를 안내합니다. [D50 provenance](../data/provenance/algorithm-d50-2026-10-20.json)의 과거 소스·독립 ZIP 169회귀와 SDK completed 기록을 현재 문서 작업의 새 테스트 실행으로 해석하지 않습니다. 실제 번들 설치 전 production prepare/패키징 실패와 Tmp/ 합성 수용을 분리합니다.
 
 ```sh
-docker compose build package
-docker compose run --rm -T package
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml build --pull=false package
+docker compose -f compose.yaml -f Dev/tests/workflow/compose.offline.yaml run --rm -T --no-deps package
 ```
 
-manifest가 없으면 마지막 명령은 knowledge_bundle_not_installed로 실패한다. 현재 설치 번들의 loader/prepare 검증과 정식 ZIP 생성은 별도이며 이 작업은 Tmp/의 합성 ZIP만 검증했다. 합성 번들은 별도 읽기 전용 /submission mount와 Tmp/ 출력으로 검증하며 정식 경로에 설치하지 않는다. 운영 결과는 [루트 상태](../PROJECT_STATE.md), D54 입력 지표와 보존 근거는 [d50.5 증빙](../data/provenance/algorithm-d50-5-2026-10-21.json)을 따른다.
+프로젝트 루트에서 두 명령을 순서대로 실행한다. 첫 명령은 현재 패키징 코드로 이미지를 갱신하고, 두 번째 명령은 최신 submission/을 읽기 전용으로 압축해 **Tmp/packaging/ontoward-submission.zip**을 만든다. 빌드의 RUN 네트워크와 패키징 실행 네트워크를 차단하며 기존 로컬 base image를 사용한다. base image가 없으면 별도 승인된 이미지 준비가 필요하다.
+
+ZIP 루트에는 run.py·settings.py·원본 nova_sdk.py·고정 requirements.txt·공개 .env를 배치한다. workflow/·knowledge/의 Python 파일은 재귀적으로 전부 포함하고 현재 로컬 import의 모듈·패키지 누락을 검사한다. config의 두 manifest·문구 파일과 prompts.json의 모든 참조 모듈을 포함하며, 지식 데이터는 활성 manifest와 해시가 일치하는 다섯 자산만 포함한다. 이전 빌드·원본 가이드라인·개발 도구·테스트·문서·상태·캐시·인증정보는 제외한다. manifest가 없으면 knowledge_bundle_not_installed로 실패한다. 실패 시 이전 ZIP을 보존하며 성공 시에만 원자적으로 교체한다.
+
+성공 출력 JSON에는 알고리즘 버전·활성 build ID·파일 목록과 개별 SHA-256·파일 수·압축 전후 크기·ZIP SHA-256을 남긴다. 크기 상한은 압축 50,000,000 bytes·해제 500,000,000 bytes·5,000파일이다. 압축 성공과 loader/prepare·상담 검증은 별개다. 합성 번들은 별도 읽기 전용 /submission mount와 Tmp/ 출력으로 검증하며 정식 경로에 설치하지 않는다. 최신 수행 결과는 [루트 상태](../PROJECT_STATE.md), D54 입력 지표의 과거 기록은 [d50.5 증빙](../data/provenance/algorithm-d50-5-2026-10-21.json)을 따른다.

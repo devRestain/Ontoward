@@ -15,6 +15,7 @@
 - Run Extraction/tests in the project container with PYTHONPATH=/workspace/submission:/workspace/Extraction. Keep dependencies off the host.
 - Use fixture_bundle.py only to stage a fresh synthetic submission beneath Tmp/. Verify complete consultations with test_admitted.py and the independent Test/compose.d49.yaml SDK process.
 - Require a valid v5-enum-1 bundle before packaging. Read only /submission and write only /output in the package service; include manifest-referenced assets and prompt modules.
+- Use test_packaging.py for recursive runtime coverage local import closure active manifest assets prompt references rejected files and preservation of the prior archive on failure. Rebuild the package image before generating a final ZIP.
 - Keep tests, synthetic assets, source packages, preparation data, guidance, state, and credentials outside the ZIP.
 - Record Dev operational progress in root PROJECT_STATE.md and artifact custody in data/PROJECT_STATE.md. Distinguish protocol acceptance from clinical and actual-model quality.
 
