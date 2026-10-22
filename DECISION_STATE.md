@@ -742,6 +742,17 @@
 - **범위:** 공유 Limits와 clinical 공통 프롬프트 및 관련 계약·요구사항을 맞춥니다. prior·route 순서, 그래프 표별 50개, 사실·scope·조건 보존, 호출·출력·시간 예산과 활성 지식은 유지합니다.
 - **검증:** 20개를 넘는 후보에서 작업·Assessment를 20개로 제한하고 SOAP 감별 10개와 주진단 일치를 확인합니다. 실행 결과는 `Tmp/d62-2026-10-22/`와 root·submission 운영 상태에 기록하며 실제 모델·NOVA·임상·공식 평가는 미실행으로 구분합니다.
 
+<a id="D63"></a>
+## D63. 감별 개수 제한 전면 철회와 최종 제출 안정화 (2026-10-22)
+
+- **확정과 우선순위:** 사용자의 직접 구현 요청과 확정 명세 `ONTOWARD_Final_Decision_Implementation_Context_D63.md`를 따른 결정 완료 항목입니다. 시작 HEAD는 `8a04580835c5b6ec0ca5f019d844cd57a118cbe0`이며 dirty 변경은 없었습니다. D61의 후보 10·SOAP 감별 5와 D62의 후보 20·SOAP 감별 10을 해당 범위에서 명시적으로 supersede합니다. 이전 결정과 증거는 당시 이력으로 보존하며 다른 숫자나 graph_input_items=50으로 후보 상한을 대체하지 않습니다. D61 유한 복구와 D59·D55·D54·D57–D58 및 기존 소유권은 유지합니다.
+- **후보·수용·SOAP:** 현재 유효 그래프 경로의 모든 적격 disease 후보를 Python과 임상 후보 참조에 유지합니다. 미등록·중복·유효 prior 누락 검증과 신규 후보의 임상적 선택권은 유지하되 정상 수용 순위는 자르지 않습니다. freeze는 전체 수용 순위와 유효 근거를 보존하고 주진단은 검증 1위 하나로 고정합니다. SOAP A.differential에는 주진단 이외 전 순위를 기록합니다. relation·evidence·question·condition 표별 50개는 독립적인 상세 projection 한도이며 후보·Assessment·SOAP 개수 상한이 아닙니다. 환자 facts·필수 scope와 참조 closure를 보존하고 생략을 음성 근거로 해석하지 않습니다. note 100000 UTF-8 bytes·진단 500 bytes·50행동·DD 10행동과 실제 요청 한도를 유지하며 크기 초과는 기존 명시적 오류·최소 Writer로 처리합니다.
+- **병력 완료:** 저장된 보호자 age·sex와 환자 인구학 사실·출처·SOAP 표현을 보존하되 HISTORY 완료 근거에서는 제외합니다. 환자 과거력·약물·알레르기·사회력은 환자 본인 사실만 완료시킵니다. 가족력은 실제 가족 병력의 명시적 사실·부정 또는 실제 전달한 전체 가족력 질문의 답변으로 완료하며 환자가 보고한 전체 가족력 부정과 unknown 답변의 반복 방지 원칙을 보존합니다. 다른 목적·주체·인구학 전용 Answer로 일반 HISTORY를 완료하지 않습니다.
+- **정확한 unknown 예외:** 정상 SAY의 설정된 정확한 unknown 답변 하나만 새로 수신했고 facts revision·chief가 동일하며 그 입력 재평가가 실패하거나 자원이 없을 때에만 직전 미고정 질환 Assessment를 보존합니다. content·status·turn·source·outcome·오류·기존 응답 연결을 검사합니다. 기존 순위·근거·limitations와 based_on_response는 그대로 두고 현재 미재평가를 새 한계로 기록합니다. 새 사실·부정·정정·미해석 발화·parser 실패·오래된 평가·여러 미평가 응답에는 확대하지 않으며 정상 최신 평가가 성공하면 그 평가를 사용합니다.
+- **Education:** 진단 안내 다음 미처리 계획 전체에서 safety를 먼저 배정합니다. 같은 priority에서는 기존 다섯 필드의 분산과 안정 순서를 유지하고 문장별 utterance 그룹·NFC 1–30자·전체 capacity·실제 정상 SAY receipt·미전달 기록을 유지합니다. 새 모델 단계나 안전 문장 합성은 추가하지 않습니다.
+- **제출용 output 복귀:** D60의 누적 output 무상한 시험 예외와 D61의 해당 유지 문구를 이 범위에서 supersede하여 증례별 output 100000을 복귀합니다. input 500000·보고된 요청 input 100000·호출 output 8000과 호출 수·기한을 유지합니다. 실제 completion_tokens에는 reasoning 사용량도 포함하며 세부 reasoning 항목을 중복 가산하지 않습니다. optional 서버 output remaining은 로컬 한도를 더 엄격하게만 조정하며 없으면 100000이 작동합니다. max_tokens는 기존 역할 한도와 실제 남은 output의 최솟값이며 0이면 추가 모델 없이 기존 Writer 최종화를 진행합니다. 알 수 없는 오류 비용을 추정하지 않고 MODEL_TOKEN_BUDGET·동일 ID·pending sync와 실제 0토큰 PROVIDER_RESPONSE_INVALID 의미를 보존합니다. Test 시뮬레이터·summary·report도 같은 기본 한도를 사용합니다. Education 입력 reserve는 복구하지 않습니다.
+- **검증과 범위:** 수행한 source 회귀·설치 번들 prepare·패키징·원본 SDK 프로토콜 증거는 운영 상태와 `Tmp/d63-2026-10-22/verification.json`에서 확인합니다. P1 evidence 재배분과 최초 GET 재시도는 P0 밖의 선택 정책·I/O 경계를 보존하기 위해 미수정합니다. DB·Extraction·SDK 본체·모델 설정·새 LLM 단계·Test UI는 바꾸지 않습니다. 실모델·임상·공식 평가·NOVA 제출·remote write·배포는 미실행입니다.
+
 ## 결정 기록 방법
 
 - 사용자가 고른 선택지를 해당 항목에 기록하고 상태를 `결정 완료`로 바꿉니다.

@@ -6,7 +6,8 @@ from unittest.mock import Mock, patch
 
 import fixtures as f
 from workflow.doctor_brain import ModelResult
-from workflow.input_types import ContextInput, ContextStatement
+from workflow.input_types import ContextInput, ContextStatement, PatientContextFact
+from workflow.rules.collection import answered, slot_resolved
 from workflow.rules.chief import force_chief
 from workflow.rules.decision import bound_graph_input
 from workflow.rules.submission import validate_wire_payload
@@ -307,29 +308,207 @@ class PacketLimitTests(unittest.TestCase):
                     self.assertIn(entry['relation'], payload['relations'])
         self.assertTrue(all(row['full_pattern'] == [dict(expected='complete criterion')] for row in payload['relations'].values()))
 
-    def test_clinical_workset_twenty_and_note_ten_differentials(self):
+    def test_all_candidates_rank_freeze_and_write_without_count_limits(self):
         c, s = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
-        for index in range(30):
+        for index in range(60):
             node = f.OW[f'Candidate{index}']
             c.knowledge._graph.add((node, f.RDF.type, f.OW.Disease))
             c.knowledge._graph.add((node, f.RDFS.label, f.Literal(f'Disease {index}', lang='en')))
             f.add_pattern(c.knowledge, f'candidate{index}', f.OW.Complaint, [], disease=node, effect='support')
         c.knowledge.prepare_terms()
         work = c.differential.prepare_decision(s)
-        self.assertEqual(len(work.payload['candidates']), 20)
-        self.assertEqual(work.payload['input_limits']['differential'], 20)
+        self.assertEqual(len(work.payload['candidates']), 62)
+        self.assertEqual(len(work.candidates), 62)
+        self.assertEqual(len(work.refs), 62)
+        self.assertNotIn('differential', work.payload['input_limits'])
+        self.assertNotIn('omitted_candidates', work.payload['input_limits'])
         raw = dict(ranked_disease_refs=[row['ref'] for row in work.payload['candidates']])
         c.differential.accept(s, raw, work, closing=True)
         c.differential.close(s, c.client, allow_model=False)
-        self.assertEqual(len(s.case.assessment.differential), 20)
+        self.assertEqual(len(s.case.assessment.differential), 62)
         c.writer.build_soap(s)
-        self.assertEqual(s.turn.payload['note']['A']['differential'].count('r/o '), 10)
+        self.assertEqual(s.turn.payload['note']['A']['differential'].count('r/o '), 61)
         self.assertEqual(s.turn.payload['diagnosis'], s.case.assessment.differential[0].name)
         note = s.turn.payload['note']['A']['differential']
-        for entry in s.case.assessment.differential[1:11]:
+        for entry in s.case.assessment.differential[1:]:
             self.assertIn('r/o ' + entry.name + ':', note)
-        self.assertNotIn('r/o ' + s.case.assessment.differential[11].name + ':', note)
-        self.assertEqual(work.payload['input_limits']['omitted_candidates'], 12)
+        validate_wire_payload(s.turn.payload)
+
+    def test_graph_projection_keeps_all_fact_scopes_and_candidate_references(self):
+        payload = dict(facts={f'f{i}': dict(scope=f's{i}') for i in range(65)},
+            scopes={f's{i}': dict(subject='patient') for i in range(65)},
+            conditions={}, relations={}, evidence={}, questions=[], input_limits={},
+            candidates=[dict(ref=f'd{i}', supports=[], against=[], unresolved=[]) for i in range(65)])
+        bound_graph_input(payload)
+        self.assertEqual(len(payload['facts']), 65)
+        self.assertEqual(len(payload['scopes']), 65)
+        self.assertEqual(len(payload['candidates']), 65)
+
+    def test_large_full_differential_uses_explicit_size_failure_and_minimal_writer(self):
+        c, s = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
+        c.close_collection(s)
+        entry = s.case.assessment.differential[0]
+        s.case.assessment = s.case.assessment.model_copy(update={'differential': (
+            entry, *(DifferentialEntry(kind='disease', name=f'Accepted alternative {i} ' + 'x' * 300)
+                     for i in range(400)))})
+        c.client.chat = Mock(side_effect=AssertionError('Writer must not call a model'))
+        c.writer.build_soap(s)
+        self.assertEqual(s.turn.payload['note']['A']['differential'].count('r/o '), 400)
+        c.writer.validate_submission(s)
+        self.assertEqual(s.turn.error, 'record_too_large')
+        c.finish_submission(s)
+        self.assertEqual(s.interview.collection['submission:minimal'], 'record_too_large')
+        validate_wire_payload(s.session.final_payload)
+        self.assertEqual(s.session.final_payload['diagnosis'], entry.name)
+        self.assertEqual(len(s.case.assessment.differential), 401)
+        self.assertEqual(s.session.termination, 'submitted')
+        c.client.chat.assert_not_called()
+
+
+class HistoryCompletionTests(unittest.TestCase):
+    def test_child_and_caregiver_demographics_leave_family_history_question_open(self):
+        c, s = f.consultation(), f.chief(f.state('ContextFactor'))
+        rows = [PatientContextFact(key='age', value='6 years', quote='6세',
+                    measurement=dict(kind='quantity', value=6, unit='year')),
+                PatientContextFact(key='sex', value='male', quote='남아'),
+                PatientContextFact(key='age', value='37 years', quote='37세 모', subject='family', subject_member='mother',
+                    measurement=dict(kind='quantity', value=37, unit='year')),
+                PatientContextFact(key='sex', value='female', quote='모', subject='family', subject_member='mother')]
+        s.case.apply(c.ear._demographic_facts(s, rows, 'initial', 0, {'opening': '6세 남아, 37세 모'}))
+        s.case.apply([CaseFact(id='weight', category='measurement', value='Weight 20 kg; height 110 cm', source_ref='initial:opening')])
+        self.assertFalse(slot_resolved(s.case, 'family_history'))
+        self.assertFalse(answered(s, 'family_history'))
+        c.tools._prepare_common(s, ('family_history',), c.config.texts.history_questions, 'history')
+        self.assertEqual([q.category for q in s.interview.queue], ['family_history'])
+        fields, refs = c.writer.build_record_view(s.case)
+        self.assertIn('6 years', ' '.join(fields['S.hpi']))
+        self.assertNotIn('37 years', ' '.join(fields['S.hpi']))
+        self.assertIn('37 years', ' '.join(fields['S.fh']))
+        self.assertEqual(s.case.facts['patient_context:family:mother:age'].source_ref, 'initial:opening')
+        s.case.apply([CaseFact(id='father', category='family_history', value='Father had late growth',
+            subject='family', subject_member='father', source_ref='family-reply')])
+        self.assertTrue(answered(s, 'family_history'))
+
+    def test_family_patient_and_demographic_only_answers_do_not_complete_patient_history(self):
+        for slot in ('medical_history', 'medication', 'allergy', 'social_history'):
+            with self.subTest(slot=slot):
+                s = f.state('ContextFactor')
+                family = CaseFact(id='family', category=slot, value='Family report', subject='family',
+                    subject_member='mother', source_ref='family')
+                s.case.apply([family])
+                self.assertFalse(answered(s, slot))
+                s.case.apply([CaseFact(id='patient_context:family:mother:age', category=slot, value='37 years',
+                    subject='family', subject_member='mother', source_ref='demographic-reply')])
+                s.interview.answers = [Answer(question_id='q', source_ref='demographic-reply', scope='ContextFactor',
+                    category=slot, purpose='history', key=('SAY', '', '', 'patient', '', 'unspecified', '', ''), outcome='recorded')]
+                self.assertFalse(answered(s, slot))
+                for purpose, key, facts in [('context', ('SAY', 'Test history', '', 'patient', '', 'past', '', ''), ()),
+                        ('history', ('SAY', '', '', 'family', 'mother', 'unspecified', '', ''), ()),
+                        ('history', ('SAY', '', '', 'patient', '', 'unspecified', '', ''), ('family',))]:
+                    s.interview.answers = [Answer(question_id='q', source_ref='reply', scope='ContextFactor',
+                        category=slot, purpose=purpose, key=key, outcome='recorded', fact_ids=facts)]
+                    self.assertFalse(answered(s, slot))
+                s.case.apply([family.model_copy(update={'id': 'patient', 'subject': 'patient', 'subject_member': None})])
+                self.assertTrue(answered(s, slot))
+
+    def test_whole_family_denial_and_delivered_unknown_resolve_family_history(self):
+        s = f.state('ContextFactor')
+        s.case.apply([CaseFact(id='denial', category='family_history', value='No family history reported',
+            status='absent', subject='patient', source_ref='initial')])
+        self.assertTrue(answered(s, 'family_history'))
+        c, s = f.consultation(), f.state('ContextFactor')
+        c.tools._prepare_common(s, ('family_history',), c.config.texts.history_questions, 'history')
+        q = s.interview.queue[0]
+        c.interactions.select_question(s, q)
+        s.turn.response = dict(status='OK', turn=1, turns_remaining=49, content='모르겠어요')
+        c.ear.process_input(s, c.knowledge, c.client)
+        self.assertTrue(answered(s, 'family_history'))
+        self.assertFalse(slot_resolved(s.case, 'family_history'))
+
+
+class UnknownAssessmentTests(unittest.TestCase):
+    def reply_after_ranking(self, content='모르겠어요', *, parse_failure=False):
+        c, s = f.consultation(), f.chief(f.state('DifferentialDiagnosis', initialized=True))
+        work = c.differential.prepare_decision(s, mode='rank', closing=True)
+        c.differential.accept(s, dict(ranked_disease_refs=list(work.refs)), work, closing=True)
+        s.case.assessment = s.case.assessment.model_copy(update={'limitations': ('Prior limitation',)})
+        previous = s.case.assessment
+        q = Question(item_id='unknown', purpose='feature', text='가상증상이 있나요?', target='Test complaint',
+            observation_id='obs1', episode_id='episode1', time_context='current',
+            affirmative_presence=True, answer_type='presence')
+        c.questions.register(s, q)
+        c.interactions.select_question(s, q)
+        original = c.client.say
+        def say(**request):
+            return dict(original(**request), content=content)
+        c.client.say = say
+        c.mouth.validate_action(s)
+        c.mouth.execute_action(s, c.client)
+        if parse_failure:
+            with patch.object(c.ear, '_parse_text', side_effect=ValueError('parser failure')), \
+                    patch.object(c, 'refresh_after_input'):
+                c.accept_input(s)
+        else:
+            c.ear.process_input(s, c.knowledge, c.client)
+        return c, s, previous
+
+    def test_exact_unknown_failed_reassessment_preserves_order_evidence_and_original_basis(self):
+        for failure in ('context', 'output_exhausted'):
+            with self.subTest(failure=failure):
+                c, s, previous = self.reply_after_ranking()
+                self.assertEqual((s.case.revision, s.case.chief_fact_id),
+                                 (previous.based_on_case_revision, previous.based_on_chief_fact_id))
+                c.client.chat = Mock(side_effect=f.NovaError('CONTEXT_LIMIT_EXCEEDED', 400))
+                if failure == 'output_exhausted':
+                    s.session.output_tokens = 100_000
+                c.differential.close(s, c.client)
+                assessment = s.case.assessment
+                self.assertEqual(assessment.differential, previous.differential)
+                self.assertEqual(assessment.based_on_response, previous.based_on_response)
+                self.assertIn('Prior limitation', assessment.limitations)
+                self.assertTrue(any('not clinically reassessed' in item for item in assessment.limitations))
+                self.assertTrue(assessment.frozen)
+                self.assertEqual(c.client.chat.call_count, 1 if failure == 'context' else 0)
+
+    def test_exact_unknown_alone_does_not_authorize_reusing_an_unreviewed_assessment(self):
+        c, s, _ = self.reply_after_ranking()
+        c.differential.close(s, c.client, allow_model=False)
+        self.assertEqual(s.case.primary().kind, 'symptom')
+        self.assertFalse(any('not clinically reassessed' in item for item in s.case.assessment.limitations))
+
+    def test_negative_unparsed_changed_and_stale_inputs_cannot_reuse_assessment(self):
+        for kind in ('negative', 'acknowledgement', 'parser', 'free_text', 'revision', 'chief',
+                     'error', 'turn', 'response', 'status', 'exam', 'earlier_reply'):
+            with self.subTest(kind=kind):
+                c, s, previous = self.reply_after_ranking(
+                    '아니요' if kind == 'negative' else '알겠습니다' if kind == 'acknowledgement' else
+                    '잘 모르겠지만 어제 새 통증이 생겼어요' if kind == 'free_text' else '모르겠어요',
+                    parse_failure=kind == 'parser')
+                if kind == 'revision':
+                    s.case.apply([CaseFact(id='new', value='New family history', category='family_history',
+                        subject='family', subject_member='father', source_ref='new')])
+                elif kind == 'chief':
+                    s.case.chief_fact_id = None
+                elif kind in {'error', 'turn', 'response', 'status', 'exam'}:
+                    answer = s.interview.answers[-1]
+                    update = {'response': dict(answer.response, error='API_UNAVAILABLE')} if kind == 'error' else (
+                        {'turn': None} if kind == 'turn' else {'response': None} if kind == 'response' else
+                        {'response': dict(answer.response, status='failed')} if kind == 'status' else
+                        {'key': ('EXAM', *answer.key[1:])})
+                    s.interview.answers[-1] = answer.model_copy(update=update)
+                elif kind == 'earlier_reply':
+                    s.interview.answers.insert(0, s.interview.answers[-1].model_copy(update={'source_ref': 'unreviewed'}))
+                c.client.chat = Mock(side_effect=f.NovaError('CONTEXT_LIMIT_EXCEEDED', 400))
+                c.differential.close(s, c.client)
+                self.assertEqual(s.case.primary().kind, 'symptom')
+                self.assertFalse(any('not clinically reassessed' in item for item in s.case.assessment.limitations))
+
+    def test_successful_reassessment_after_unknown_takes_precedence(self):
+        c, s, previous = self.reply_after_ranking()
+        c.differential.close(s, c.client)
+        self.assertNotEqual(s.case.assessment.based_on_response, previous.based_on_response)
+        self.assertEqual(s.case.assessment.based_on_response, s.interview.answers[-1].source_ref)
+        self.assertFalse(any('not clinically reassessed' in item for item in s.case.assessment.limitations))
 
 
 class OutcomeTests(unittest.TestCase):

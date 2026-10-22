@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=e543222d93f10fd91f73da6d14da8f3ed08151e2 dirty=true updated=2026-10-22T02:24:28+09:00
-/goal phase=current id=APP.D62 state=complete action="Expand clinical differentials to twenty and final note alternatives to ten"
+/checkpoint revision=8a04580835c5b6ec0ca5f019d844cd57a118cbe0 dirty=true updated=2026-10-22T08:20:12+09:00
+/goal phase=current id=APP.D63 state=complete action="Implement final submission stabilization without candidate or SOAP count caps"
+/goal phase=history id=APP.D62 state=complete action="Expand clinical differentials to twenty and final note alternatives to ten"
 /goal phase=history id=APP.D61 state=complete action="Complete bounded consultation recovery and graph input limits through honest final submission"
 /goal phase=history id=APP.D60 state=complete action="Record token usage without cumulative case caps while preserving model calls actions and server errors"
 /goal phase=history id=APP.D59 state=complete action="Bound literal Education evidence and preserve finalization after context rejection"
@@ -462,4 +463,11 @@
 /accept id=APP.D62.A1 state=pass action="Retain twenty ranked candidates and write ten alternatives after the primary diagnosis" evidence=APP.D62.E1
 /evidence id=APP.D62.E1 class=runtime result=pass source=../Tmp/d62-2026-10-22/workflow.log observed="Pass all 266 workflow tests in the network-disabled project dev container including the expanded candidate and SOAP boundary check"
 /evidence id=APP.D62.E2 class=external_service result=not_run source=none observed="Leave actual models NOVA clinical quality official evaluation and production submission unrun"
-/handoff state=ready action="Use the updated source limits for twenty clinical candidates and ten final note alternatives"
+/decision id=APP.D63 state=accepted action="Supersede D61 and D62 differential counts and D60 output exception only within D63" source=../DECISION_STATE.md
+/accept id=APP.D63.A1 state=pass action="Preserve uncapped candidates and SOAP scoped history exact unknown recovery safety groups and actual output limits" evidence=APP.D63.E1
+/accept id=APP.D63.A2 state=pass action="Verify active prepare original SDK archives and unchanged knowledge custody" evidence=APP.D63.E2,APP.D63.E3
+/evidence id=APP.D63.E1 class=runtime result=pass source=../Tmp/d63-2026-10-22/workflow-final.log observed="Pass 281 workflow tests including sixty-two retained ranked candidates sixty-one SOAP alternatives fifty-record graph details scoped HISTORY exact unknown failure and resource exits safety delivery output clipping and model-free finalization; retain 120 focused and thirty-three final runtime passes"
+/evidence id=APP.D63.E2 class=runtime result=pass source=../Tmp/d63-2026-10-22/admitted/verification.json observed="Load active build cec62f4596bedd9b9488aa75e3d38f04 through unchanged prepare and complete three installed-bundle protocol consultations"
+/evidence id=APP.D63.E3 class=artifact result=pass source=../data/provenance/final-stabilization-d63-2026-10-22.json observed="Verify matching ninety-four-file production ZIP e2cb449260935095d6fca16920330aa55704bfce013e6d5f6ec48d61dd1eaa81 through seventy-seven SDK requests twenty-nine actions and completed receipt; verify separate synthetic ZIP through forty-two requests twenty actions and completed receipt"
+/evidence id=APP.D63.E4 class=external_service result=not_run source=../data/provenance/final-stabilization-d63-2026-10-22.json observed="Leave actual model and clinical quality fresh NOVA official evaluation submission and deployment unrun"
+/handoff state=ready action="Use the verified D63 production artifact for local review while retaining all protected assets and original receipts"

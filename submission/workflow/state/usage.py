@@ -27,3 +27,5 @@ def apply_server_budget(state, value):
         session.call_limit = min(session.call_limit, session.doctor_calls + value.doctor_calls_remaining)
     if value.input_tokens_remaining is not None:
         session.input_token_limit = min(session.input_token_limit, session.input_tokens + value.input_tokens_remaining)
+    if value.output_tokens_remaining is not None:
+        session.output_token_limit = min(session.output_token_limit, session.output_tokens + value.output_tokens_remaining)

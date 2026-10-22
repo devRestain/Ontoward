@@ -1,0 +1,210 @@
+{
+  "decision": "D63",
+  "status": "pass",
+  "base_revision": "8a04580835c5b6ec0ca5f019d844cd57a118cbe0",
+  "updated": "2026-10-22T08:20:12+09:00",
+  "specification": "ONTOWARD_Final_Decision_Implementation_Context_D63.md",
+  "algorithm_setting": "d50.12 unchanged; pin changed source by sha256",
+  "p0": {
+    "candidate_assessment_and_soap_counts": "uncapped",
+    "graph_detail_records": 50,
+    "history": "exclude demographics and family facts from patient slots",
+    "assessment_recovery": "one verified exact unknown SAY with unchanged revision and chief; preserve original response basis",
+    "delivery": "diagnosis first; safety groups before routine groups",
+    "input_tokens": 500000,
+    "output_tokens": 100000,
+    "request_input_tokens": 100000,
+    "request_output_tokens": 8000
+  },
+  "checks": {
+    "focused": {
+      "result": "pass",
+      "tests": 120,
+      "log": "Tmp/d63-2026-10-22/focused.log"
+    },
+    "workflow": {
+      "result": "pass",
+      "tests": 281,
+      "log": "Tmp/d63-2026-10-22/workflow-final.log"
+    },
+    "final_runtime": {
+      "result": "pass",
+      "tests": 33,
+      "log": "Tmp/d63-2026-10-22/final-runtime-final.log"
+    },
+    "evaluator": {
+      "result": "pass",
+      "tests": 66,
+      "log": "Tmp/d63-2026-10-22/evaluator-final.log"
+    }
+  },
+  "installed": {
+    "result": "pass",
+    "build_id": "cec62f4596bedd9b9488aa75e3d38f04",
+    "manifest_sha256": "04accb50722f2c4f8583e25f0a3b1600bf2d384c820d91cc68e5dc42a1fa21db",
+    "asset_sha256": {
+      "schema": "c74e3a64f50a124d90699c40b5d9dff3122b2fdac7385877aa0c66ee355ca3df",
+      "vocabulary": "f15b60ebeb50fb1ee4c200c621dbcca49b8cc6d49a72047aabf003950ee1c985",
+      "clinical": "eed873cb3bec008440ddd687d5c97f60ac3dc13175a5ac38c0c092b1250fdd69",
+      "questions": "b53449739ecbfcf5cad4cd21de199fb487063fbe9a19aec1a2eb680a359e1a3e",
+      "guidelines": "676a029d6ef1727fb3a201cea28662908ca48af9df0edfa30cc78bd4f1df6161"
+    },
+    "protocol_cases": [
+      {
+        "education": false,
+        "context": "unknown",
+        "termination": "submitted",
+        "nodes": 165
+      },
+      {
+        "education": true,
+        "context": "present",
+        "termination": "submitted",
+        "nodes": 205
+      },
+      {
+        "education": true,
+        "context": "absent",
+        "termination": "submitted",
+        "nodes": 205
+      }
+    ],
+    "evidence": "Tmp/d63-2026-10-22/admitted/verification.json"
+  },
+  "observer": {
+    "result": "pass",
+    "scenarios": 20,
+    "node_updates": 1851,
+    "evidence": "Tmp/d63-2026-10-22/observer/verification.json"
+  },
+  "production_archive": {
+    "status": "pass",
+    "file_count": 94,
+    "sha256": "e2cb449260935095d6fca16920330aa55704bfce013e6d5f6ec48d61dd1eaa81",
+    "source_bytes_match": true,
+    "build_id": "cec62f4596bedd9b9488aa75e3d38f04",
+    "compressed_bytes": 1543059,
+    "path": "Tmp/d63-2026-10-22/production/ontoward-submission.zip",
+    "expanded_bytes": 12253973,
+    "sdk": {
+      "status": "pass",
+      "entrypoint": "run.py",
+      "transport": "original_sdk_http_loopback",
+      "receipt": "completed",
+      "requests": 77,
+      "actions": 29,
+      "diagnosis": "Inflammation of skin and/or subcutaneous tissue",
+      "network": "none",
+      "development_credentials": false,
+      "actual_models": "not_run",
+      "clinical_accuracy": "not_run",
+      "langgraph_import": "blocked"
+    },
+    "sdk_evidence": "Tmp/d63-2026-10-22/production-sdk/sdk-http.json"
+  },
+  "synthetic_archive": {
+    "status": "pass",
+    "fixture_kind": "synthetic",
+    "files": 94,
+    "sha256": "c57bf05a5a58f536293f3908ea6e6a0f733225dda9bf67d3dcc726b88230d74a",
+    "path": "Tmp/d63-2026-10-22/synthetic-package/ontoward-submission.zip",
+    "sdk": {
+      "status": "pass",
+      "entrypoint": "run.py",
+      "transport": "original_sdk_http_loopback",
+      "receipt": "completed",
+      "requests": 42,
+      "actions": 20,
+      "diagnosis": "Disease alpha",
+      "network": "none",
+      "development_credentials": false,
+      "actual_models": "not_run",
+      "clinical_accuracy": "not_run",
+      "langgraph_import": "blocked"
+    },
+    "sdk_evidence": "Tmp/d63-2026-10-22/synthetic-sdk/sdk-http.json"
+  },
+  "custody": {
+    "status": "pass",
+    "protected_files": 89,
+    "same_inventory": true,
+    "changed_files": [],
+    "manifest_sha256": "04accb50722f2c4f8583e25f0a3b1600bf2d384c820d91cc68e5dc42a1fa21db",
+    "prior_archive_unchanged": true,
+    "d60_d61_d62_history_unchanged": true,
+    "before": "Tmp/d63-2026-10-22/protected-before.json",
+    "after": "Tmp/d63-2026-10-22/protected-after.json"
+  },
+  "static": {
+    "diff_check": "pass; exclude operational state syntax checks",
+    "d60_d61_d62_history": "byte-for-byte preserved",
+    "sdk_entrypoint_settings_requirements": "unchanged"
+  },
+  "p1": {
+    "evidence_rebalancing": "deferred; preserve existing graph projection selection policy",
+    "initial_get_retry": "deferred; preserve existing initial snapshot I/O boundary"
+  },
+  "unrun": [
+    "actual paid models",
+    "fresh NOVA consultation",
+    "clinical validity",
+    "official evaluation",
+    "official submission",
+    "remote writes",
+    "publication",
+    "deployment"
+  ],
+  "changed_files": [
+    "AGENTS.md",
+    "DECISION_STATE.md",
+    "Dev/AGENTS.md",
+    "Dev/tests/workflow/test_budget.py",
+    "Dev/tests/workflow/test_delivery.py",
+    "Dev/tests/workflow/test_final_runtime.py",
+    "PRD.md",
+    "PROJECT_STATE.md",
+    "README.md",
+    "Test/AGENTS.md",
+    "Test/README.md",
+    "Test/report.py",
+    "Test/server.py",
+    "Test/test_evaluator.py",
+    "data/PROJECT_STATE.md",
+    "data/provenance/final-stabilization-d63-2026-10-22.json",
+    "submission/AGENTS.md",
+    "submission/PROJECT_STATE.md",
+    "submission/README.md",
+    "submission/config/prompts/clinical_common.txt",
+    "submission/workflow/doctor_brain.py",
+    "submission/workflow/io/nova_session.py",
+    "submission/workflow/rules/budget.py",
+    "submission/workflow/rules/collection.py",
+    "submission/workflow/rules/decision.py",
+    "submission/workflow/rules/limits.py",
+    "submission/workflow/sessions/differential_diagnosis.py",
+    "submission/workflow/sessions/education.py",
+    "submission/workflow/state/models.py",
+    "submission/workflow/state/usage.py",
+    "submission/workflow/submission_writer.py"
+  ],
+  "source_and_test_sha256": {
+    "Dev/tests/workflow/test_budget.py": "86140565d1419a6abe853667534ab5aea97b1de0175d605ca5c23ae18a950a39",
+    "Dev/tests/workflow/test_delivery.py": "a2e002540d7dff1ca8ca0b4dd7795c81c2f15fe8a3ea69248d2006ab4b541b76",
+    "Dev/tests/workflow/test_final_runtime.py": "24e28752acb53e7cec65dfb8438450c47cdd965e0676f4f929fec08e3300898b",
+    "Test/report.py": "a00743f2254070be67c43b03f1b5c3c81e61820d907b54901f5c5de911ddf0bb",
+    "Test/server.py": "05e13cb6563ed57e650c2f911e537624994b031e1cb655935db010f44dbf518b",
+    "Test/test_evaluator.py": "3cd000186ec30886dad562220d340fa7d2beed793fca22944368c85bd8b52ebd",
+    "submission/config/prompts/clinical_common.txt": "ba7fbcce6ba4f2e302e05a5372f534116ee62edc501f047ff0f9a8eeeb3e19df",
+    "submission/workflow/doctor_brain.py": "5125960ed77f45e8ec594ae1d6b726656bcb8cb3fa1bb48c51eb0d56409da7e9",
+    "submission/workflow/io/nova_session.py": "8283006cd4a98db3e56e633da7b3bd22f8793a14451fbaf6168fc09f38094413",
+    "submission/workflow/rules/budget.py": "8df458ad0c729991613d875facfd274adb68e93a06ad1bf2e8a13445714322b1",
+    "submission/workflow/rules/collection.py": "647c5394d37bf20ad6c7c1c2ce1a00a7a57f28e0aeb24be20376ef381c4194ac",
+    "submission/workflow/rules/decision.py": "e0091bb41dfd84826f85379490b6c01b62d0421b026f8a5269b4d9dcfca402e7",
+    "submission/workflow/rules/limits.py": "f64452a02145bb6c19a9cdc17a65d9d6c89d9eee5f270f6bee18a86cd36690fb",
+    "submission/workflow/sessions/differential_diagnosis.py": "5ddbb46807131e97e076c034683c35e79462e55e6c400b64ca6e8d27887a72d1",
+    "submission/workflow/sessions/education.py": "32c2ac38822d6a12414889dffb9a23318504e0f90361a318e256f0c23e53e240",
+    "submission/workflow/state/models.py": "8b8362c578c85da7f2372c8298f0c0598c2635c32a64503a200c77594dc6626a",
+    "submission/workflow/state/usage.py": "8972f39f04b9f13e26874e3015f4578b2e42e5de3d33bf62e8da0ff40cb19a48",
+    "submission/workflow/submission_writer.py": "39e99e60e5971e8cb7305e80dcb1f519cfda69964131faafecc09d4bd453b7e7"
+  }
+}

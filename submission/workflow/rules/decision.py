@@ -71,11 +71,8 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
                 if ident in remaining:
                     ordered.append(ident)
                     remaining.remove(ident)
-    # Bound the clinical workset before building evidence and question choices.
-    # Preserve the existing prior/route order; never cut a relation's conditions.
-    recalled_count = len(ordered)
-    ordered = ordered[:min(LIMITS.graph_input_items, LIMITS.differential_entries)]
-    protected = [ident for ident in protected if ident in ordered]
+    # Candidate membership is independent of the bounded graph detail tables.
+    ordered.extend(sorted(remaining))
     candidates = {ident: candidates[ident] for ident in ordered}
     refs = {ident: f'd_{index}' for index, ident in enumerate(ordered, 1)}
     facts = state.case.current_facts()
@@ -111,8 +108,7 @@ def prepare_decision(state, knowledge, tools, *, mode='decision', closing=False,
         prior_order=[refs[ident] for ident in protected], required=[],
         resources=dict(turns=tools.budget.action_capacity(state), calls=tools.budget.calls_left(state.session)),
         candidates=[], evidence={}, questions=[],
-        input_limits=dict(graph_items=LIMITS.graph_input_items, differential=LIMITS.differential_entries,
-                          omitted_candidates=max(0, recalled_count - len(ordered))))
+        input_limits=dict(graph_items=LIMITS.graph_input_items))
     if state.case.chief_route:
         payload['chief_route'] = dict(target=state.case.chief_route.target, routing_only=True)
     evidence_refs = {}
@@ -284,7 +280,7 @@ def accept_ranking(state, raw, work):
     if (bool(work.refs) != bool(ranked) or len(ranked) != len(set(ranked))
             or any(ref not in work.refs for ref in ranked) or not set(work.payload['prior_order']) <= set(ranked)):
         raise ValueError('invalid_or_incomplete_ranking')
-    state.case.assessment = Assessment(differential=tuple(work.candidates[work.refs[ref]].entry for ref in ranked[:LIMITS.differential_entries]),
+    state.case.assessment = Assessment(differential=tuple(work.candidates[work.refs[ref]].entry for ref in ranked),
         based_on_case_revision=state.case.revision, based_on_chief_fact_id=state.case.chief_fact_id,
         based_on_response=latest_response(state))
 

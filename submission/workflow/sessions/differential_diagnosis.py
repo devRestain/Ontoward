@@ -102,6 +102,34 @@ class DifferentialDiagnosisSession:
             self.decide(state, client, closing=True)
         self.freeze_fallback(state)
 
+    def preserve_unknown_assessment(self, state, assessment, key, reason):
+        """Recognize one verified noninformative reply after a valid ranking."""
+        if (not assessment or assessment.frozen or not assessment.differential
+                or assessment.differential[0].kind != 'disease'
+                or (assessment.based_on_case_revision, assessment.based_on_chief_fact_id) != key[:2]
+                or assessment.based_on_response == key[2]
+                or not (self.last_input == key and self.error or reason
+                        or not self.brain.budget.calls_left(state.session))):
+            return False
+        answers = [a for a in state.interview.answers if a.scope != 'Education' and a.source_ref
+                   and a.outcome not in {'undelivered', 'delivered'}]
+        if not answers or (answers[-2].source_ref if len(answers) > 1 else 'entry') != assessment.based_on_response:
+            return False
+        answer = answers[-1]
+        raw = answer.response or {}
+        content = raw.get('content')
+        if (answer.source_ref != key[2] or answer.outcome != 'unknown' or answer.reason
+                or answer.fact_ids or len(answer.key) != 8 or answer.key[0] != 'SAY'
+                or raw.get('status') != 'OK' or raw.get('error') or not isinstance(content, str)
+                or type(answer.turn) is not int or not 1 <= answer.turn <= LIMITS.turns
+                or type(raw.get('turn')) is not int or raw['turn'] != answer.turn
+                or type(raw.get('turns_remaining')) is not int
+                or raw['turns_remaining'] != LIMITS.turns - answer.turn
+                or any(f.source_ref == answer.source_ref for f in state.case.facts.values())):
+            return False
+        texts = self.config.texts
+        return content.strip().rstrip(texts.reply_trailing_punctuation) in texts.unknown_replies
+
     def freeze_fallback(self, state, reason=None):
         """Freeze current evidence or an explicitly limited working problem without a model."""
         if state.case.assessment and state.case.assessment.frozen:
@@ -109,9 +137,14 @@ class DifferentialDiagnosisSession:
             return
         assessment = state.case.assessment
         key = self.input_key(state)
-        limitations = []
-        if not assessment or not assessment.differential or (assessment.based_on_case_revision,
-                assessment.based_on_chief_fact_id, assessment.based_on_response) != key:
+        current = bool(assessment and assessment.differential and (assessment.based_on_case_revision,
+            assessment.based_on_chief_fact_id, assessment.based_on_response) == key)
+        preserve = self.preserve_unknown_assessment(state, assessment, key, reason) if not current else False
+        limitations = list(assessment.limitations) if current or preserve else []
+        if preserve:
+            limitations.append('Latest exact unknown SAY response was not clinically reassessed: '
+                               + (reason or self.error or 'model resources unavailable'))
+        if not current and not preserve:
             chief = state.case.chief(confirmed=True)
             ident = self.knowledge.term_id(chief.target, 'Symptom') if chief else None
             limitations.append(self.error or 'no_graph_disease_assessment')
@@ -139,7 +172,7 @@ class DifferentialDiagnosisSession:
         # Keep the diagnosis; exclude dangling evidence rather than relabeling it as valid.
         entries = []
         current_ids = {fact.id for fact in state.case.current_facts()}
-        for entry in assessment.differential[:LIMITS.differential_entries]:
+        for entry in assessment.differential:
             cleaned = {category: tuple(ref for ref in getattr(entry, category)
                        if all(ident in current_ids for ident in ref.fact_ids))
                        for category in ('supports', 'against', 'unresolved')}

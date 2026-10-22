@@ -186,7 +186,7 @@ class SubmissionWriter:
         if assessment.limitations:
             fields['A.evidence'].append(self._line('Incomplete assessment','; '.join(assessment.limitations)))
         fields['A.differential'] = [self._line('r/o '+entry.name,self._assessment_text(entry,references))
-            for entry in assessment.differential[1:1 + LIMITS.note_differentials]]
+            for entry in assessment.differential[1:]]
         for sentence in state.case.plan:
             if sentence.field=='education' and not self.config.education_enabled:
                 continue

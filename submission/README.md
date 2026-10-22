@@ -1,6 +1,6 @@
 # Ontoward 진료 워크플로우 백서
 
-현재 구현은 **D61·d50.12**다. 중간 오류의 scoped pass·세션 전진·독립 최소 SOAP와 실제 completed만 인정하는 완료 계약을 적용한다. 모델에 전달하는 그래프 relation/evidence/question/condition 표는 각각 최대 50개, 임상 후보·Assessment는 D62에 따라 최대 20개, 주진단 외 note differential은 최대 10개다. 실제 환자 facts·수치·범위와 완전한 relation 조건은 보존한다. D55 strict 지식·D56 진찰·D57–D58 입력/원자 수집·D59 Education byte/인용 검증·D48 모듈과 기존 소유권은 유지한다. [D61 결정](../DECISION_STATE.md#D61), [D62 결정](../DECISION_STATE.md#D62), [현재 오프라인 검증](../Tmp/d62-2026-10-22/workflow.log), [PRD](../PRD.md)를 따른다. 실제 모델·임상·공식 평가는 미실행이다. 최신 부모 `1bcaba1dffb744c468bb191df3267dad`를 증분 보완한 `cec62f4596bedd9b9488aa75e3d38f04`를 활성화했다. 새 진단 3개·성장속도·행동 Context·구별 질문을 추가하고 허용된 관계만 수정했다. 기존 질문·단위·D56 진찰 문구·지침 payload는 같다. D58에서 변경 없는 run.py의 prepare와 활성 지식의 protocol double 상담 3개를 검증했다. D59는 좁은 회귀와 같은 활성 지식의 prepare·정규 로컬 ZIP만 추가 검증했으며 실제 모델 상담·임상·공식 평가·최종 버전 선택은 미실행이다. 합성 번들은 계속 Tmp/에서만 사용한다. 이번 빌드의 불필요한 체크포인트·중복 DB 산출물은 [별도 명세](../data/provenance/augmentation-d58-cleanup-2026-10-21.json)에 따라 삭제했다.
+현재 구현은 **D63 안정화·d50.12**다. 중간 오류의 scoped pass·세션 전진·독립 최소 SOAP와 실제 completed만 인정하는 완료 계약을 적용한다. 모델에 전달하는 그래프 relation/evidence/question/condition 상세 표는 각각 최대 50개다. 적격 disease 후보·모델 후보 참조·정상 수용 Assessment·주진단 외 SOAP 감별에는 고정 개수 상한을 두지 않는다. note가 100000 bytes를 넘으면 기존 명시적 오류·최소 Writer로 복구한다. 실제 환자 facts·수치·범위와 완전한 relation 조건은 보존한다. D55 strict 지식·D56 진찰·D57–D58 입력/원자 수집·D59 Education byte/인용 검증·D48 모듈과 기존 소유권은 유지한다. [D61 결정](../DECISION_STATE.md#D61), [D63 결정](../DECISION_STATE.md#D63), [현재 오프라인 검증](../Tmp/d63-2026-10-22/workflow.log), [PRD](../PRD.md)를 따른다. 실제 모델·임상·공식 평가는 미실행이다. 최신 부모 `1bcaba1dffb744c468bb191df3267dad`를 증분 보완한 `cec62f4596bedd9b9488aa75e3d38f04`를 활성화했다. 새 진단 3개·성장속도·행동 Context·구별 질문을 추가하고 허용된 관계만 수정했다. 기존 질문·단위·D56 진찰 문구·지침 payload는 같다. D58에서 변경 없는 run.py의 prepare와 활성 지식의 protocol double 상담 3개를 검증했다. D59는 좁은 회귀와 같은 활성 지식의 prepare·정규 로컬 ZIP만 추가 검증했으며 실제 모델 상담·임상·공식 평가·최종 버전 선택은 미실행이다. 합성 번들은 계속 Tmp/에서만 사용한다. 이번 빌드의 불필요한 체크포인트·중복 DB 산출물은 [별도 명세](../data/provenance/augmentation-d58-cleanup-2026-10-21.json)에 따라 삭제했다.
 
 D56은 현재 저장된 시진·청진·촉진·타진 실행 문구 119개를 정규화한다. `목을 보여 주세요.`는 `목 시진합니다.`, `피부를 눈으로 살펴보세요.`는 `피부 시진합니다.`로 바뀌었다. 복합 동작·특수 수기·필요한 자세와 ID·임상 관계·질문 계약은 보존했다. 문구가 없던 메서드 37개는 그대로 두며 부위 미지정 공용 메서드 2개에는 임의 부위를 넣지 않는다. [D56 결정](../DECISION_STATE.md#D56)·[전체 전후 명세](../data/provenance/exam-text-normalization-plan-2026-10-21.json)·[현재 검증](../data/provenance/exam-text-normalization-2026-10-21.json)을 따른다. 실제 NOVA의 새 문구 수용 여부는 재검증하지 않았다.
 
@@ -89,7 +89,7 @@ D57에서는 첫 입력과 여러 내용을 함께 답한 일반 응답의 onset
 
 [rules/assessment.py](workflow/rules/assessment.py)가 현재 적격 사실과 등록 관계로 후보를 회수하고 supports·against·unresolved를 만든다. 새 후보는 support·strong_support의 scoped Target 또는 applicability 경로로 넓게 회수하며 against-only 관계로 확장하지 않는다. 전체 Pattern과 applicability가 맞을 때만 등록 effect를 활성화한다. 부분 일치·불일치는 자동 지지/반대가 아니다. 명시적 모순으로 불가능해진 관계의 남은 조건은 질문하지 않는다. Feature 매칭과 Association 적용 조건을 따로 판정하며 관찰·episode·주체를 합쳐 완성하지 않는다. 수치·값 불일치에는 실제 fact 참조를 남긴다.
 
-[rules/decision.py](workflow/rules/decision.py)는 호출 목적에 필요한 Key와 Value만 고른다. 사실 f_, 후보 d_, 근거 e_, 질문 q_, 범위 s_, 조건 condition_, 관계 r_를 지역 참조로 연결하고 같은 사실·조건·미확인을 한 번 정의한다. relations 표에 effect·scope·전체 Pattern·applicability를 한 번 정의하고 근거와 expected_by_disease에서 참조한다. 필요한 dict/list를 한 JSON 객체로 직렬화한다. 전체 상태 model_dump·큰 Pydantic schema·그래프 profile 전문을 프롬프트에 넣지 않는다. 기존 prior·route 순서에서 임상 후보를 열 개로 제한한다. graph relation·evidence·question·condition 표는 각각 최대 50개의 완전한 레코드를 보내고 참조·미사용 조건·scope를 함께 정리한다. 환자 facts와 그 scope는 이 제한으로 삭제하지 않는다. 순위 전용 요청에는 질문을 넣지 않으며 행동 복구는 수용 순위와 실행 가능한 질문 중심이다.
+[rules/decision.py](workflow/rules/decision.py)는 호출 목적에 필요한 Key와 Value만 고른다. 사실 f_, 후보 d_, 근거 e_, 질문 q_, 범위 s_, 조건 condition_, 관계 r_를 지역 참조로 연결하고 같은 사실·조건·미확인을 한 번 정의한다. relations 표에 effect·scope·전체 Pattern·applicability를 한 번 정의하고 근거와 expected_by_disease에서 참조한다. 필요한 dict/list를 한 JSON 객체로 직렬화한다. 전체 상태 model_dump·큰 Pydantic schema·그래프 profile 전문을 프롬프트에 넣지 않는다. 기존 prior·route 순서로 모든 적격 임상 후보를 제공하며 고정 개수로 자르지 않는다. graph relation·evidence·question·condition 표는 각각 최대 50개의 완전한 레코드를 보내고 참조·미사용 조건·scope를 함께 정리한다. 환자 facts와 그 scope는 이 제한으로 삭제하지 않는다. 순위 전용 요청에는 질문을 넣지 않으며 행동 복구는 수용 순위와 실행 가능한 질문 중심이다.
 
 **D59는 Education에만 고정 JSON byte 상한을 적용한다.** 원자 발췌는 2048 bytes, 전체 documents는 8192 bytes, 실제 messages는 system/user/repair를 포함해 32768 bytes다. JSON의 ensure_ascii=False·compact separators·allow_nan=False 직렬화를 UTF-8로 측정한다. 초기 초과 시 마지막 발췌 묶음부터 통째로 제거하며 고정 환자 사실·진단·지시는 자르지 않는다. clinical/gateway의 기존 정책과 호출별 출력·호출 수·행동·시간 예산은 유지하며 bytes를 tokens로 환산하거나 동적 예약을 추가하지 않는다.
 
@@ -115,9 +115,9 @@ DD 종료는 **마지막 응답 수용→필요 판단→최신 평가 재사용
 <a id="budgets-and-submission"></a>
 ## 8. 공식 자원·Education·종료
 
-D45의 공식 turns_remaining이 행동 예산의 기준이다. 성공 응답의 자원을 재사용하고 최초·불명 소비·서버 한도 오류·제출 직전만 조회한다. 세션이 실제 필수 질문 수를 계산해 Budget에 전달하고 공유 비용 표와 기존 종료 보호 하한을 유지한다. SAY·EXAM의 실제 소비를 응답/조회로 정산하고 같은 요청 재전송은 중복 계산하지 않는다. 현재 보존한 작업 트리의 정책은 50행동·모델 200회·누적 입력 500,000·보고된 요청 입력 100,000·호출 출력 8,000이다. 누적 출력 상한과 Education 입력 reserve는 없으며 실제 사용량과 서버가 확인한 입력 잔여량을 정산한다. 내부 처리·모델 호출·세션 조회·SOAP·DIAGNOSE는 행동 턴이 아니다.
+D45의 공식 turns_remaining이 행동 예산의 기준이다. 성공 응답의 자원을 재사용하고 최초·불명 소비·서버 한도 오류·제출 직전만 조회한다. 세션이 실제 필수 질문 수를 계산해 Budget에 전달하고 공유 비용 표와 기존 종료 보호 하한을 유지한다. SAY·EXAM의 실제 소비를 응답/조회로 정산하고 같은 요청 재전송은 중복 계산하지 않는다. D63 제출용 정책은 50행동·모델 200회·누적 입력 500,000·누적 출력 100,000·보고된 요청 입력 100,000·호출 출력 최대 8,000이다. 실제 completion usage와 optional 서버 입력·출력 잔량만 정산하고 출력 잔량이 0이면 새 모델 없이 기존 Writer 최종화·DIAGNOSE로 진행한다. reasoning 세부 사용량을 중복 가산하지 않으며 Education 입력 reserve는 없다. 내부 처리·모델 호출·세션 조회·SOAP·DIAGNOSE는 행동 턴이 아니다.
 
-정상 input 2회와 최종 임상·교육 호출 수를 보호하며 선택적 복구도 남은 호출 수와 호출별 출력 상한으로 제한한다. 누적 출력 잔여량으로 max_tokens를 줄이지 않는다. 새 행동 전에 응답 해석·최종 판단과 복구·활성 계획·한국어 안내·제출을 보호한다. 호출별 출력 상한은 정상·복구 모두 현재 설정의 8000토큰이다. Education은 7턴을 보호하고 상한은 10이다. 명시적 비활성 설정은 교육 행동·예약·P.education을 사용하지 않는다. 일시 전송 오류는 동일 ID·payload로 2초 뒤 한 번 재전송한다.
+정상 input 2회와 최종 임상·교육 호출 수를 보호하며 선택적 복구도 남은 호출 수와 호출별 출력 상한으로 제한한다. max_tokens는 역할 한도와 실제 남은 누적 출력의 최솟값이며 예상 비용을 만들지 않는다. 새 행동 전에 응답 해석·최종 판단과 복구·활성 계획·한국어 안내·제출을 보호한다. 호출별 출력 상한은 정상·복구 모두 현재 설정의 8000토큰이다. Education은 7턴을 보호하고 상한은 10이다. 명시적 비활성 설정은 교육 행동·예약·P.education을 사용하지 않는다. 일시 전송 오류는 동일 ID·payload로 2초 뒤 한 번 재전송한다.
 
 EducationSession은 고정 진단 안내 후 환자 사실과 단일 frozen primary Disease의 기존 매핑으로 영어 P·한국어 발화를 high 호출 한 번에 준비한다. exact AND care_navigation 안정 분할과 그룹 내 순서는 유지하며 다섯 문서 제한을 제거한다. 동일 경로는 한 번, 채택 파일은 최대 1048576 bytes, 성공·실패의 실제 누적 읽기는 최대 16777216 bytes다. read_cap=min(1048576+1, 잔여 총량)에 닿으면 EOF 불명으로 제외하며 완전한 원문만 전체 hash·UTF-8을 검증한다. 실패 뒤 같은 매핑의 후속 후보를 볼 수 있다.
 
@@ -205,6 +205,10 @@ nova_dev·codex_subscription·openai_api 중 한 빌드의 공급자를 고정�
 | 실제 SDK에 무슨 내용을 보냈나요? | Test의 별도 관측·model-calls·최종 제출 결과 | [Test 안내](../Test/README.md) |
 
 환자 사실과 등록 지식은 서로 다른 역할입니다. 그래프가 제공하는 것은 일반 조건이며, 환자에게 그 조건이 실제로 확인되었는지는 CaseFact의 사람·시점·episode·취득 경로로 판정합니다. 추출 SQLite에는 환자 사실을 저장하지 않습니다.
+
+## D63 제출 안정화
+
+보호자 age·sex와 patient_context 사실은 HISTORY 완료 근거가 아니다. 가족의 약물·과거력은 환자 슬롯을 완료하지 않으며 가족력은 실제 가족 병력 또는 실제 전달한 전체 가족력 질문 답변으로 완료한다. 정확한 unknown SAY 하나 뒤 revision·chief가 그대로이고 재평가가 실패한 경우에만 직전 미고정 질환 평가와 원래 응답 기준을 한계 표시와 함께 보존한다. 미해석 발화·새 사실·parser 실패에는 적용하지 않는다. 진단 안내 뒤에는 모든 미처리 계획에서 safety 그룹을 routine보다 먼저 배정하고 그룹·30자·capacity·실제 receipt를 보존한다.
 
 ## D61 오류 뒤 전진과 수집 경로
 

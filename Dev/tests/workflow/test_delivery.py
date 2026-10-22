@@ -9,7 +9,7 @@ import fixtures as f
 from education_fixtures import TEXT, education_response
 from workflow.education import generate_plan, _EducationWork, parse_plan, references
 from workflow.rules.limits import LIMITS
-from workflow.state.models import Question
+from workflow.state.models import PlanSentence, Question
 
 
 def invalid_joint_utterances(payload):
@@ -22,6 +22,40 @@ def invalid_joint_utterances(payload):
 
 
 class DeliveryTests(unittest.TestCase):
+    def test_safety_after_routine_field_heads_gets_capacity_before_routine(self):
+        c = f.consultation(prepared=f.resources(education=True))
+        s = f.chief(f.state('Education', turns=6, initialized=True))
+        c.client.remaining = 6
+        f.freeze(s)
+        edu = c.sessions['Education']
+        s.case.plan = [PlanSentence(id=field, field=field, text='Routine ' + field, basis='model_knowledge')
+                       for field in ('education', 'tests', 'treatment', 'disposition', 'follow_up')]
+        s.case.plan.append(PlanSentence(id='safety', field='follow_up', text='Seek immediate care for red flags.',
+            basis='model_knowledge', priority='safety'))
+        edu.generated_utterances = {sentence.id: ['위험하면 바로 진료받으세요.' if sentence.id == 'safety' else '계획을 확인하세요.']
+                                    for sentence in s.case.plan}
+        self.assertTrue(edu.prepare_diagnosis(s, c.client))
+        diagnosis = s.interview.queue[0]
+        edu.prepare_delivery(s, c.client)
+        queue = sorted(s.interview.queue, key=lambda q: q.order)
+        self.assertEqual(queue[0].item_id, diagnosis.item_id)
+        self.assertEqual(queue[1].plan_sentence_id, 'safety')
+        self.assertEqual(len(queue), 6)
+        self.assertTrue(all(1 <= len(q.text) <= 30 for q in queue))
+        self.assertEqual([(a.plan_sentence_id, a.outcome, a.reason) for a in s.interview.answers],
+                         [('follow_up', 'undelivered', 'delivery_budget')])
+        self.assertFalse(any(a.outcome == 'delivered' for a in s.interview.answers))
+        for q in queue:
+            c.interactions.select_question(s, q)
+            c.mouth.validate_action(s)
+            c.mouth.execute_action(s, c.client)
+            c.ear.process_input(s, c.knowledge, c.client)
+        self.assertEqual(s.session.turns_remaining, 0)
+        self.assertEqual(s.session.usage['Education'].actions, 6)
+        self.assertEqual(s.interview.education_utterances['safety'], 1)
+        self.assertEqual(sum(a.plan_sentence_id == 'safety' and a.outcome == 'delivered' for a in s.interview.answers), 1)
+        self.assertEqual(c.client.actions[0]['content'], diagnosis.text)
+
     def test_complete_education_and_replies_are_transcript_only(self):
         c,s,updates = f.run(prepared=f.resources(education=True))
         self.assertEqual(s.session.termination,'submitted')

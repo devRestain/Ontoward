@@ -38,7 +38,8 @@ class BudgetPolicy:
 
     def calls_left(self, session):
         if (not session.models_available or self.seconds_left(session) <= session.reserve_seconds
-                or session.input_tokens >= session.input_token_limit):
+                or session.input_tokens >= session.input_token_limit
+                or session.output_tokens >= session.output_token_limit):
             return 0
         return max(0, session.call_limit - session.doctor_calls)
 
@@ -121,7 +122,7 @@ class BudgetPolicy:
             calls = MODEL_CALLS['education_doctor']
         if self.calls_left(session) <= calls:
             return 0
-        return maximum
+        return min(maximum, session.output_token_limit - session.output_tokens)
 
     def evaluate(self, state):
         if state.session.termination:
@@ -133,6 +134,7 @@ class BudgetPolicy:
             reason = ('collection_complete' if session.finalizing else 'turn_budget' if not session.turns_remaining
                 else 'time_budget' if self.seconds_left(session) <= session.reserve_seconds + LIMITS.response_seconds
                 else 'model_token_budget' if session.input_tokens >= session.input_token_limit
+                    or session.output_tokens >= session.output_token_limit
                 else 'model_call_budget')
             return BudgetDecision(finalize=True, discard=frozenset(q.item_id for q in state.interview.queue), reason=reason)
         if state.interview.status == 'uninitialized':

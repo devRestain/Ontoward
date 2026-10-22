@@ -34,13 +34,15 @@ class EducationSession:
         if not remaining:
             return
         capacity = max(0, self.budget.action_capacity(state) - len(state.interview.queue))
-        core = []
-        for field in ('education', 'tests', 'treatment', 'disposition', 'follow_up'):
-            sentence = next((s for s in remaining if s.field == field), None)
-            if sentence:
-                core.append(sentence)
-                remaining.remove(sentence)
-        ordered = [*core, *sorted(remaining, key=lambda s: s.priority != 'safety')]
+        ordered = []
+        for priority in ('safety', 'routine'):
+            group = [s for s in remaining if s.priority == priority]
+            for field in ('education', 'tests', 'treatment', 'disposition', 'follow_up'):
+                sentence = next((s for s in group if s.field == field), None)
+                if sentence:
+                    ordered.append(sentence)
+                    group.remove(sentence)
+            ordered.extend(group)
         budgets = {sentence.id: 1 for sentence in ordered[:capacity]}
         for ident in list(budgets)[:max(0, capacity - len(budgets))]:
             budgets[ident] += 1

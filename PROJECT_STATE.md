@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=e543222d93f10fd91f73da6d14da8f3ed08151e2 dirty=true updated=2026-10-22T02:24:28+09:00
-/goal phase=current id=ROOT.D62 state=complete action="Expand clinical differentials to twenty and final note alternatives to ten"
+/checkpoint revision=8a04580835c5b6ec0ca5f019d844cd57a118cbe0 dirty=true updated=2026-10-22T08:20:12+09:00
+/goal phase=current id=ROOT.D63 state=complete action="Implement final submission stabilization without candidate or SOAP count caps"
+/goal phase=history id=ROOT.D62 state=complete action="Expand clinical differentials to twenty and final note alternatives to ten"
 /goal phase=history id=ROOT.D61 state=complete action="Complete bounded consultation recovery and graph input limits through honest final submission"
 /goal phase=history id=ROOT.D60 state=complete action="Remove cumulative case token enforcement from runtime and Test while preserving accounting and per-call limits"
 /goal phase=history id=ROOT.RUNDIAG22 state=complete action="Diagnose saved C01 C03 and C10 failures and verify C01 Education and submission evidence without runtime changes"
@@ -757,4 +758,11 @@
 /accept id=ROOT.D62.A1 state=pass action="Retain twenty ranked candidates and write ten alternatives after the primary diagnosis" evidence=ROOT.D62.E1
 /evidence id=ROOT.D62.E1 class=runtime result=pass source=Tmp/d62-2026-10-22/workflow.log observed="Pass all 266 workflow tests in the network-disabled project dev container including the expanded candidate and SOAP boundary check"
 /evidence id=ROOT.D62.E2 class=external_service result=not_run source=none observed="Leave actual models NOVA clinical quality official evaluation and production submission unrun"
-/handoff state=ready action="Use the updated source limits for twenty clinical candidates and ten final note alternatives"
+/decision id=ROOT.D63 state=accepted action="Supersede D61 and D62 differential counts and D60 output exception only within D63" source=DECISION_STATE.md
+/accept id=ROOT.D63.A1 state=pass action="Integrate APP.D63 final runtime stabilization without candidate or SOAP count caps" evidence=ROOT.D63.E1
+/accept id=ROOT.D63.A2 state=pass action="Verify Test contracts independent artifacts and unchanged source custody" evidence=ROOT.D63.E2,ROOT.D63.E3
+/evidence id=ROOT.D63.E1 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.D63 for all five P0 behaviors installed knowledge and final runtime checks"
+/evidence id=ROOT.D63.E2 class=artifact result=pass source=data/provenance/final-stabilization-d63-2026-10-22.json observed="Verify production and synthetic ZIPs through original SDK completion under network none; pass sixty-six evaluator checks and twenty observer scenarios with 1851 updates"
+/evidence id=ROOT.D63.E3 class=static result=pass source=DECISION_STATE.md observed="Record D63 supersession reconcile affected contracts requirements orientation and states and preserve D60 D61 D62 history all eighty-nine protected files and the prior archive"
+/evidence id=ROOT.D63.E4 class=external_service result=not_run source=data/provenance/final-stabilization-d63-2026-10-22.json observed="Leave paid models fresh NOVA clinical validation official evaluation submission remote writes publication and deployment unrun"
+/handoff state=ready action="Review the D63 production ZIP and preserved validation receipts without transmitting it"

@@ -52,7 +52,7 @@
 - Refresh saved report HTML from preserved logs when opened; keep LangSmith setup guidance distinct from an implemented exporter or authorized external upload.
 - Use the separate compose.nova.yaml overlay for explicitly scoped NOVA execution.
 - Preserve each run in a fresh root Tmp/test-evaluator directory and disable automatic resumption.
-- Preserve the inherited d50.11 cumulative input 500000 and reported request-input 100000 limits and 8000 per-call output cap. Keep output totals uncapped and actual reservations usage request ceilings deadlines and original saved runs intact; apply D61 request-local recovery.
+- Enforce cumulative input 500000 and D63 cumulative output 100000 with reported request-input 100000 and output 8000 per call. Clip output allowance to actual remaining output and report the optional remaining value and official local limits. Preserve actual reservations usage request ceilings deadlines original saved runs and D61 request-local recovery.
 - Preserve request identity, completed responses, refused turns, failed requests, and final submission receipts.
 - Preserve actual Gateway request bodies and responses in simulator output so transmitted candidates can be audited without exposing credentials.
 - Keep the scripted Gateway case-independent and limited to supplied source names and aliases; do not add case-to-concept fixtures or clinical synonym tables.

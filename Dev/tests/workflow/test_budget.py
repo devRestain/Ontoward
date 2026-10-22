@@ -22,35 +22,35 @@ class OfficialBudgetTests(unittest.TestCase):
                 self.assertIsNone(c.mouth.model.complete(s,c.client,role='education_doctor',messages=[]).error)
             self.assertEqual(c.budget.calls_left(s.session),0)
 
-    def test_input_budget_and_snapshot_gate_calls_without_cumulative_output_cap(self):
+    def test_actual_output_remaining_clips_each_role_and_blocks_at_zero(self):
         from workflow.io.nova_session import SessionInput
         c = f.consultation(prepared=f.resources(education=True))
         s = f.chief(f.state('DifferentialDiagnosis'))
-        s.session.input_tokens, s.session.output_tokens = 490_020, 250_000
+        s.session.input_tokens, s.session.output_tokens = 490_020, 99_880
         snapshot = c.client.session()
-        snapshot.update(input_tokens_remaining=9980, output_tokens_remaining=0)
+        snapshot.update(input_tokens_remaining=9980, output_tokens_remaining=120)
         c.nova_session.apply_snapshot(s, SessionInput.model_validate(snapshot))
         self.assertTrue(c.budget.can_start_action(s))
         c.client.chat = Mock(return_value=f.FakeSDK.completion('{}'))
-        for role in ('gateway', 'clinical', 'education', 'education_doctor'):
+        for index, role in enumerate(('gateway', 'clinical', 'education', 'education_doctor')):
             with self.subTest(role=role):
                 result = c.brain.complete(s, c.client, role=role,
                     messages=[{'role': 'user', 'content': '{}'}])
                 self.assertIsNone(result.error)
-                self.assertEqual(c.client.chat.call_args.kwargs['max_tokens'], 8000)
-        self.assertEqual((s.session.input_tokens, s.session.output_tokens), (490_100, 250_040))
-        snapshot['input_tokens_remaining'] = 0
+                self.assertEqual(c.client.chat.call_args.kwargs['max_tokens'], 120 - 10 * index)
+        self.assertEqual((s.session.input_tokens, s.session.output_tokens), (490_100, 99_920))
+        snapshot['output_tokens_remaining'] = 0
         c.nova_session.apply_snapshot(s, SessionInput.model_validate(snapshot))
         self.assertFalse(c.budget.can_start_action(s))
         result = c.brain.complete(s, c.client, role='gateway', messages=[])
         self.assertEqual(result.error, 'MODEL_UNAVAILABLE')
         self.assertEqual(c.client.chat.call_count, 4)
 
-    def test_education_completes_with_less_than_old_reserve_and_high_output_usage(self):
+    def test_education_completes_below_input_and_output_limits_without_old_reserve(self):
         c = f.consultation(prepared=f.resources(education=True))
         s = f.chief(f.state())
         f.freeze_for_education(c, s)
-        s.session.input_tokens, s.session.output_tokens = 490_020, 250_000
+        s.session.input_tokens, s.session.output_tokens = 490_020, 99_000
         c.run(s)
         self.assertEqual(s.session.termination, 'submitted')
         self.assertEqual(s.interview.education_status, 'complete')
@@ -61,7 +61,65 @@ class OfficialBudgetTests(unittest.TestCase):
                             for answer in s.interview.answers))
         self.assertGreater(s.session.input_tokens, 490_020)
         self.assertLessEqual(s.session.input_tokens, 500_000)
-        self.assertGreater(s.session.output_tokens, 250_000)
+        self.assertGreater(s.session.output_tokens, 99_000)
+        self.assertLessEqual(s.session.output_tokens, 100_000)
+
+    def test_optional_server_output_remaining_only_tightens_limit_without_consumption(self):
+        from workflow.io.nova_session import SessionInput
+        c, s = f.consultation(), f.state()
+        raw = c.client.session()
+        c.nova_session.apply_snapshot(s, SessionInput.model_validate(raw))
+        self.assertEqual(s.session.output_token_limit, 100_000)
+        s.session.output_tokens = 400
+        for remaining in (120, 100_000, None):
+            c.nova_session.apply_snapshot(s, SessionInput.model_validate(dict(raw, output_tokens_remaining=remaining)))
+            self.assertEqual(s.session.output_token_limit, 520)
+            self.assertEqual(s.session.output_tokens, 400)
+
+    def test_output_boundary_and_overshoot_use_actual_usage_once(self):
+        for before in (99_990, 99_991):
+            with self.subTest(before=before):
+                c, s = f.consultation(), f.state()
+                s.session.output_tokens = before
+                c.client.chat = Mock(return_value=f.FakeSDK.completion('{}'))
+                result = c.brain.complete(s, c.client, role='gateway', messages=[])
+                self.assertEqual(s.session.output_tokens, before + 10)
+                self.assertEqual(c.client.chat.call_args.kwargs['max_tokens'], 100_000 - before)
+                self.assertEqual(result.error, None if before == 99_990 else 'MODEL_TOKEN_BUDGET')
+                self.assertEqual(c.budget.calls_left(s.session), 0)
+                self.assertEqual(c.brain.complete(s, c.client, role='gateway', messages=[]).error, 'MODEL_UNAVAILABLE')
+                c.client.chat.assert_called_once()
+
+    def test_no_output_left_finalizes_existing_assessment_and_writer_without_model(self):
+        c, s = f.consultation(), f.chief(f.state('DifferentialDiagnosis'))
+        c.close_collection(s)
+        s.session.output_tokens = 100_000
+        c.client.chat = Mock(side_effect=AssertionError('Output exhausted'))
+        for role in ('gateway', 'clinical', 'education', 'education_doctor'):
+            self.assertEqual(c.brain.complete(s, c.client, role=role, messages=[]).error, 'MODEL_UNAVAILABLE')
+        c.run(s)
+        self.assertEqual(s.session.termination, 'submitted')
+        self.assertEqual(s.session.receipt['status'], 'completed')
+        self.assertTrue(c.client.submissions[-1]['note']['A']['evidence'])
+        self.assertEqual(s.session.output_tokens, 100_000)
+        c.client.chat.assert_not_called()
+
+    def test_provider_response_invalid_does_not_invent_usage(self):
+        c, s = f.consultation(), f.state()
+        c.client.chat = Mock(side_effect=f.NovaError('PROVIDER_RESPONSE_INVALID', 503))
+        result = c.brain.complete(s, c.client, role='clinical', messages=[])
+        self.assertEqual(result.error, 'PROVIDER_RESPONSE_INVALID')
+        self.assertEqual((s.session.doctor_calls, s.session.input_tokens, s.session.output_tokens), (1, 0, 0))
+
+    def test_completion_usage_includes_reasoning_without_double_counting_details(self):
+        c, s = f.consultation(), f.state()
+        response = f.FakeSDK.completion('{}')
+        response['usage'].update(completion_tokens=120, completion_tokens_details={'reasoning_tokens': 100})
+        s.session.output_tokens = 99_880
+        c.client.chat = Mock(return_value=response)
+        self.assertIsNone(c.brain.complete(s, c.client, role='clinical', messages=[]).error)
+        self.assertEqual(s.session.output_tokens, 100_000)
+        self.assertEqual(c.budget.calls_left(s.session), 0)
 
     def test_total_input_boundary_and_overshoot_account_once_then_block_models(self):
         for before in (499_980, 499_981):

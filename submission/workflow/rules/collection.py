@@ -11,6 +11,8 @@ def slot_records(case, slot):
     chief = case.collection_chief()
     return [f for f in case.current_facts() if f.category == slot
             and f.polarity_scope == 'general'
+            and (slot not in HISTORY or not (f.id.startswith('patient_context:') or f.context_key)
+                 and (slot == 'family_history' or f.subject == 'patient' and f.subject_member is None))
             and (slot not in INTAKE or chief and f.subject == chief.subject and f.subject_member == chief.subject_member
                  and f.time_context == chief.time_context
                  and f.acquisition != 'EXAM' and f.source_ref != 'initial:vital_signs'
@@ -30,6 +32,18 @@ def answered(state, slot):
     for answer in state.interview.answers:
         if answer.category != slot or answer.outcome == 'undelivered':
             continue
+        if slot in HISTORY:
+            # Only a delivered whole-domain history question can complete a slot
+            # without a decisive fact. A focused family or demographic answer cannot.
+            if (answer.purpose != 'history' or not answer.source_ref or len(answer.key) != 8
+                    or answer.key[:3] != ('SAY', '', '')
+                    or answer.key[3:] != ('family' if slot == 'family_history' else 'patient', '', 'unspecified', '', '')):
+                continue
+            linked = [f for f in state.case.facts.values()
+                      if f.id in answer.fact_ids or f.source_ref == answer.source_ref]
+            if linked and not any(f in slot_records(state.case, slot) for f in linked):
+                continue
+            return True
         if slot not in INTAKE or chief and answer.key and (
                 answer.key[0], answer.key[1], answer.key[3], answer.key[4], answer.key[5], answer.key[6], answer.key[7]) == (
                 'SAY', chief.target, chief.subject, chief.subject_member or '', chief.time_context,

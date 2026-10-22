@@ -45,7 +45,7 @@ class DoctorBrain:
             accounted = True
             if amounts[0] > LIMITS.request_input_tokens:
                 raise NovaError('CONTEXT_LIMIT_EXCEEDED', 400)
-            if session.input_tokens > session.input_token_limit:
+            if session.input_tokens > session.input_token_limit or session.output_tokens > session.output_token_limit:
                 raise NovaError('MODEL_TOKEN_BUDGET', 429)
             choice = response['choices'][0]
             content = choice['message']['content'] or ''

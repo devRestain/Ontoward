@@ -17,6 +17,7 @@ class SessionInput(BaseModel):
     allowed_actions: list[str] = Field(default_factory=lambda: ["SAY", "EXAM", "DIAGNOSE"])
     doctor_calls_remaining: int | None = Field(default=None, ge=0)
     input_tokens_remaining: int | None = Field(default=None, ge=0)
+    output_tokens_remaining: int | None = Field(default=None, ge=0)
 
     @field_validator("initial")
     @classmethod

@@ -1,10 +1,10 @@
 # Ontoward
 
-Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D61·d50.12**다. 중간 오류가 발생한 질문·작업은 실제 수신과 범위를 보존해 마감하고 후속 세션과 최종 작성으로 전진한다. 정상 Writer 실패에는 추가 모델·그래프 조회 없는 최소 SOAP를 사용한다. 실제 matching completed 응답만 제출 성공이며, 수신 미확정에도 생성한 note·diagnosis와 최종 요청 ID·오류는 반환한다. 준비·manifest·임상 출처·수치·scope 검증은 유지한다.
+Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D63 안정화·d50.12**다. 중간 오류가 발생한 질문·작업은 실제 수신과 범위를 보존해 마감하고 후속 세션과 최종 작성으로 전진한다. 정상 Writer 실패에는 추가 모델·그래프 조회 없는 최소 SOAP를 사용한다. 실제 matching completed 응답만 제출 성공이며, 수신 미확정에도 생성한 note·diagnosis와 최종 요청 ID·오류는 반환한다. 준비·manifest·임상 출처·수치·scope 검증은 유지한다.
 
-[D62](DECISION_STATE.md#D62)에 따라 임상 후보와 Assessment는 **최대 20개**, 주진단 외 note.A.differential은 **최대 10개**다. [D61](DECISION_STATE.md#D61)의 그래프 relation·evidence·question·condition 표별 **최대 50개**와 기존 prior·route 순서·완전한 관계 조건·환자 facts 보존은 유지한다. [현재 오프라인 검증](Tmp/d62-2026-10-22/workflow.log)을 따른다. 저장 C10 DD 입력의 과거 10개 후보 재구성 결과는 [D61 당시 증거](Tmp/d61-2026-10-22/packet-replay.json)이며 현재 20개 후보 입력의 측정값이 아니다. 실제 모델 수용·진단 품질은 별도다.
+[D63](DECISION_STATE.md#D63)에 따라 **적격 질환 후보·수용 Assessment·SOAP 감별의 고정 개수 상한을 철회**했다. Python과 임상 후보 참조는 전체 적격 후보를 유지하고 정상 수용 순위 전부를 보존하며 note.A.differential은 주진단 외 전 순위를 기록한다. 그래프 relation·evidence·question·condition 표별 **최대 50개**는 독립 상세 projection 한도이며 후보 수를 자르지 않는다. 원래 환자 facts·scope·관계 조건·prior 검증을 유지한다. [현재 회귀](Tmp/d63-2026-10-22/workflow.log)는 62개 후보·전체 SOAP와 100000-byte 초과의 명시적 최소 Writer 복구를 포함하며 실제 모델·임상 성능은 별도다.
 
-작업 시작 시 이미 있던 변경과 중간에 관찰한 d50.11 입력 정책을 보존했다. 현재 로컬 설정은 누적 입력 500,000·보고된 요청 입력 100,000·호출 출력 8,000이며 누적 출력 상한과 Education 입력 reserve는 없다. 모델·effort·호출 수·행동·시간·같은 ID retry는 유지한다. [D60](DECISION_STATE.md#D60)의 당시 제한 해제와 [당시 검증](Tmp/d60-2026-10-22/verification.json)은 역사적 기록이다. 현재 공식 서버 정책을 새로 확인하거나 실제 모델 평가를 수행한 것은 아니다.
+현재 제출용 설정은 누적 입력 **500,000**·누적 출력 **100,000**·보고된 요청 입력 **100,000**·호출 출력 최대 **8,000**이다. 실제 completion usage와 optional 서버 잔량만 사용해 max_tokens를 줄이며 출력 잔량 0이면 새 모델 없이 기존 Writer로 종료한다. Education 입력 reserve는 없다. D60의 output 무상한 시험 예외와 D61/D62의 후보·SOAP 개수 제한은 D63이 해당 범위에서 대체하고 당시 결정·로그는 보존한다. 보호자 인구학·가족 병력의 HISTORY 완료 혼동, 정확한 unknown 뒤 재평가 실패, safety 계획 전달 순서도 수정했다. 실모델·공식 서버 평가·제출은 실행하지 않았다.
 
 D56은 현재 저장된 시진·청진·촉진·타진 실행 문구 119개를 정규화한다. `목을 보여 주세요.`는 `목 시진합니다.`, `피부를 눈으로 살펴보세요.`는 `피부 시진합니다.`로 바뀌었다. 복합 동작·특수 수기·필요한 자세와 ID·임상 관계·질문 계약은 보존했다. 문구가 없던 메서드 37개는 그대로 두며 부위 미지정 공용 메서드 2개에는 임의 부위를 넣지 않는다. [D56 결정](DECISION_STATE.md#D56)·[전체 전후 명세](data/provenance/exam-text-normalization-plan-2026-10-21.json)·[현재 검증](data/provenance/exam-text-normalization-2026-10-21.json)을 따른다. 실제 NOVA의 새 문구 수용 여부는 재검증하지 않았다.
 
@@ -56,7 +56,7 @@ flowchart TD
 | Consultation | 다섯 세션·공식 자원·입력→판단→행동의 조정 |
 | SubmissionWriter | frozen Assessment와 사실의 Python SOAP·DIAGNOSE·완료 확인 |
 
-Association은 질환·Pattern·명시적 target_scope·applicability·`support / strong_support / against / strong_against`로 구성한다. 새 후보는 positive effect의 Target 또는 applicability 경로로 넓게 회수하고, **전체 Pattern과 applicability가 맞을 때만 effect를 활성화**한다. 부분 일치·수치 불일치가 자동 지지나 반대가 되지 않는다. 기존 후보는 현재 유효한 경로에서 회수하며 모델 입력과 현재 Assessment에는 D61의 열 개 상한을 적용한다. LLM이 수용한 순서를 점수로 다시 정렬하지 않는다.
+Association은 질환·Pattern·명시적 target_scope·applicability·`support / strong_support / against / strong_against`로 구성한다. 새 후보는 positive effect의 Target 또는 applicability 경로로 넓게 회수하고, **전체 Pattern과 applicability가 맞을 때만 effect를 활성화**한다. 부분 일치·수치 불일치가 자동 지지나 반대가 되지 않는다. 기존 후보는 현재 유효한 경로에서 회수하며 모델 후보 참조와 수용 Assessment에는 개수 상한을 두지 않는다. LLM이 수용한 순서를 점수로 다시 정렬하지 않는다.
 
 Context도 같은 CaseFact를 사용하며 가족 구성원·시점·관찰·episode를 섞지 않는다. 속성 질문에는 같은 Target·scope의 존재 확인이 앞선다. rule의 any와 실제 질문의 current/past/unspecified를 구분한다. 나이·측정값·기간·단위·통증 수치와 실제 취득 경로는 유지한다.
 

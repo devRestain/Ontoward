@@ -366,6 +366,7 @@ class SessionContext(Model):
     output_tokens: int = 0
     call_limit: int = LIMITS.model_calls
     input_token_limit: int = LIMITS.input_tokens
+    output_token_limit: int = LIMITS.output_tokens
     models_available: bool = True
     budget_sync_required: bool = False
     clarifications: int = Field(default=0, ge=0, le=LIMITS.clarifications)

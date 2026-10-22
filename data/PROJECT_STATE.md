@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-data
 /status value=complete
-/checkpoint revision=5e09affe00813e2a7da7a796d5c7ac34e4ec95f3 dirty=true updated=2026-10-21T22:20:13+09:00
-/goal phase=current id=DATA.D59 state=complete action="Pin narrow Education verification and preserve active knowledge during local packaging"
+/checkpoint revision=8a04580835c5b6ec0ca5f019d844cd57a118cbe0 dirty=true updated=2026-10-22T08:20:12+09:00
+/goal phase=current id=DATA.D63 state=complete action="Pin final stabilization source artifact and immutable knowledge custody"
+/goal phase=history id=DATA.D59 state=complete action="Pin narrow Education verification and preserve active knowledge during local packaging"
 /goal phase=history id=DATA.D58 state=complete action="Preserve immutable augmentation lineage and dispose verified unused generation records"
 /goal phase=history id=DATA.D57 state=complete action="Pin the review saved-run custody and immutable collection-metadata bundle lineage"
 /goal phase=history id=DATA.D56 state=complete action="Pin exact EXAM text amendments and retain active assets original C03 and parent hash receipts"
@@ -410,4 +411,10 @@
 /evidence id=DATA.D59.E1 class=static result=pass source=provenance/algorithm-d50-9-2026-10-21.json observed="Match all seventeen protected hashes and preserve HEAD bytes for manifest builds schema SDK entrypoint requirements Extraction and assets"
 /evidence id=DATA.D59.E2 class=artifact result=pass source=../Tmp/d59-2026-10-21/package.json observed="Pass standard packaging once and inspect ninety files with SHA256 78a92cf506024ce0ed04613109c06161ab88d4f714fc5d6656de4d1bce061f26; include the new passage module and prompt and exclude source guideline documents"
 /evidence id=DATA.D59.E3 class=external_service result=not_run source=provenance/algorithm-d50-9-2026-10-21.json observed="Leave official evaluation final version selection upload publication and deployment unrun"
-/handoff state=ready action="Use verified d50.9 Education and the preserved active child with compact receipts; obtain separate authorization for optional actual-model evaluation"
+/accept id=DATA.D63.A1 state=pass action="Preserve installed assets SDK settings Extraction and prior accepted archive bytes" evidence=DATA.D63.E1
+/accept id=DATA.D63.A2 state=pass action="Pin D63 production and synthetic artifacts source hashes and performed checks" evidence=DATA.D63.E2
+/evidence id=DATA.D63.E1 class=artifact result=pass source=provenance/final-stabilization-d63-2026-10-22.json observed="Preserve all eighty-nine protected files and manifest 04accb50722f2c4f8583e25f0a3b1600bf2d384c820d91cc68e5dc42a1fa21db for active build cec62f4596bedd9b9488aa75e3d38f04 without knowledge or Extraction changes"
+/evidence id=DATA.D63.E2 class=artifact result=pass source=provenance/final-stabilization-d63-2026-10-22.json observed="Pin source and test hashes 281 workflow passes sixty-six evaluator checks twenty observer scenarios three installed consultations and separate production and synthetic ZIPs with completed original SDK receipts"
+/evidence id=DATA.D63.E3 class=external_service result=not_run source=provenance/final-stabilization-d63-2026-10-22.json observed="Leave actual models clinical validity fresh NOVA official evaluation submission remote writes and deployment unrun"
+/decision id=DATA.D63 state=accepted action="Preserve knowledge and historical receipts while recording D63 runtime-only stabilization" source=../DECISION_STATE.md
+/handoff state=ready action="Use the pinned D63 artifact receipt and retain the active knowledge bundle unchanged"

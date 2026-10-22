@@ -214,7 +214,7 @@ class EvaluatorTests(unittest.TestCase):
         self.assertFalse(result['checks']['agent_exit_zero'])
         self.assertFalse(result['checks']['no_development_key_in_agent'])
 
-    def test_output_totals_do_not_clip_calls_and_restored_input_budget_is_reported(self):
+    def test_output_remaining_clips_call_and_blocks_next_call_without_blocking_diagnose(self):
         output_caps = []
         def complete(role, messages, max_tokens, request_id, **options):
             self.models.calls += 1
@@ -223,21 +223,21 @@ class EvaluatorTests(unittest.TestCase):
         self.models.complete = complete
         self.evaluation.input_tokens = 490000
         self.evaluation.output_tokens = 93000
-        for _ in range(2):
+        for expected in (200, 429):
             self.assertEqual(self.request('/v1/chat/completions', session_id=self.evaluation.session_id,
                 messages=[{'role': 'user', 'content': 'Interpret acquired evidence'}],
-                model=MODEL, max_tokens=8000)[0], 200)
-        self.assertEqual(output_caps, [8000, 8000])
+                model=MODEL, max_tokens=8000)[0], expected)
+        self.assertEqual(output_caps, [7000])
         self.assertEqual((self.evaluation.doctor_successes, self.evaluation.input_tokens,
-                          self.evaluation.output_tokens), (2, 490040, 107000))
+                          self.evaluation.output_tokens), (1, 490020, 100000))
         snapshot = self.evaluation.snapshot()
-        self.assertEqual(snapshot['input_tokens_remaining'], 9960)
-        self.assertNotIn('output_tokens_remaining', snapshot)
+        self.assertEqual(snapshot['input_tokens_remaining'], 9980)
+        self.assertEqual(snapshot['output_tokens_remaining'], 0)
         self.assertEqual(self.request(action='DIAGNOSE', note=self.record(), diagnosis='Test diagnosis')[0], 200)
         summary = json.loads((Path(self.temp.name) / 'summary.json').read_text())
         self.assertEqual(summary['limits']['input_tokens'], 500000)
         self.assertEqual(summary['limits']['input_tokens_per_call'], 100000)
-        self.assertIsNone(summary['limits']['output_tokens'])
+        self.assertEqual(summary['limits']['output_tokens'], 100000)
         simulator = Path(self.temp.name) / 'simulator'
         simulator.mkdir()
         for name in ('summary.json', 'transcript.json', 'requests.json', 'record.json'):
@@ -251,6 +251,12 @@ class EvaluatorTests(unittest.TestCase):
         result = json.loads((Path(self.temp.name) / 'result.json').read_text())
         self.assertEqual(status, 0, result)
         self.assertTrue(result['checks']['within_model_limits'])
+        summary['output_tokens'] = 100001
+        (simulator / 'summary.json').write_text(json.dumps(summary))
+        with redirect_stdout(io.StringIO()):
+            self.assertEqual(report(self.temp.name), 1)
+        self.assertFalse(json.loads((Path(self.temp.name) / 'result.json').read_text())['checks']['within_model_limits'])
+        summary['output_tokens'] = 100000
         summary['input_tokens'] = 500001
         (simulator / 'summary.json').write_text(json.dumps(summary))
         with redirect_stdout(io.StringIO()):

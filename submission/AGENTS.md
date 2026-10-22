@@ -2,7 +2,7 @@
 
 ## Ownership and State
 
-- Apply D61 bounded recovery and graph input limits before historical fail-fast rules. Preserve current input and per-call limits, D59 Education byte and citation guards, D55 strict loading, D54 scopes, D57-D58, D53 direct Initiation, and D49-D51 ownership.
+- Apply D63 candidate and SOAP count-limit withdrawal, scoped history completion, exact-unknown assessment recovery, safety-first Education allocation, and cumulative output enforcement. Preserve D61 bounded recovery and independent graph record limits, D59 guards, D55 strict loading, D54 scopes, D57-D58, D53 direct Initiation, and D49-D51 ownership.
 - Keep run.py as the unchanged SDK callback entrypoint and Consultation as the sole five-session coordinator.
 - Assign input interpretation and acceptance to DoctorEar clinical ranking and questions to the five session objects English plans and Education delivery scheduling to EducationSession all model execution to one injected DoctorBrain and patient expression and SAY/EXAM execution to DoctorMouth.
 - Pass only a current successful unfrozen CC Assessment into ContextFactor through Consultation without passing another session object.
@@ -40,7 +40,7 @@
 - Reuse one operation-local scoped Pattern/applicability evaluation for recall and evidence; reject contradicted paths and retain valid prior opposition and unknown partial or unobserved-Target context paths.
 - Activate an effect only when every Feature and applicability matches. Preserve partial/unknown separately; do not turn mismatch into opposition or ask remaining conditions of an explicitly impossible relation. Keep refinement within identical effect, scope, applicability, and observation.
 - Let code maintain supports against and unresolved while the calling session accepts ranked supplied disease references without numeric reranking. Send effect, rule scope, full Pattern, applicability, and disease-specific expected conditions even in first DD action-only input.
-- Limit the clinical workset and accepted differential to twenty using existing prior and route order; reject unknown duplicate or omitted retained-prior ranking references. Keep the full Python graph evidence outside the bounded wire projection.
+- Retain every eligible disease in Python and clinical candidate references without count truncation; accept every valid ranked entry while rejecting unknown duplicate or omitted retained-prior references. Preserve prior and route order and keep full Python graph evidence outside the independently bounded detail projection.
 - Rank once at normal Initiation and ChiefComplaint exits. Replace ContextFactor exit rank and first DD action with one joint DD entry decision; judge each accepted response including unknown by revision chief and response identity and finalize unprocessed early-exit input once.
 - Accept a valid ranking independently of a faulty next action and repair only the action once.
 - Freeze the latest Assessment and its facts and chief before Education including resource exits.
@@ -62,7 +62,7 @@
 - Pack complete supported ATX leaves with ancestor introductions in warning-first document round robin; cap excerpt JSON at 2048 bytes and documents JSON at 8192 bytes without truncation or full-text fallback.
 - Project document_id relation evidence_use meaningful scope and excerpts with heading_path and literal spans; freeze the packet before contexts and repair, reject ambiguous quotes, and keep path hash and absolute offsets internal.
 - Cap actual Education messages at 32768 JSON bytes, including finalization; apply pending-sync rejection before request IDs usage and execution without modifying messages.
-- Preserve the inherited 500000 cumulative input and 100000 reported request-input limits, 8000 output per call, actual usage, call and action ceilings and deadlines. Keep cumulative output uncapped and omit the withdrawn Education token reserve.
+- Enforce cumulative input 500000 and output 100000, reported request-input 100000, and output 8000 per call. Tighten output allowance from actual completion usage and optional server remaining output; finalize through Writer without new model calls at zero. Preserve call and action ceilings, deadlines, and the absence of the withdrawn Education token reserve.
 - Project patient and frozen diagnosis with one request-local fact map across plan generation Education rendering and announcement fallback; reject missing frozen evidence without dumping GraphRefs.
 - Start with unresolved Initiation intake or necessary chief clarification after initial input acceptance; exclude greeting and empathy implementation and account every SAY or EXAM in its session actions.
 - Select explicit task keys and normalized values without whole-state dumps large schemas or full graph profiles; preserve the inherited 8000-token normal and recovery output caps. Apply byte limits only to D59 Education.
@@ -86,7 +86,10 @@
 
 - Consume failed questions with scoped passed_unasked or passed_unknown markers; preserve actual response payloads and IDs before clearing the turn and never create an Answer for an unsent question.
 - Keep CC route selection separate from patient facts. Use at most one additional gateway selection over eight registered Symptoms after bounded clarification, then a deterministic registered route without invented findings.
-- Limit graph-derived relation evidence question and condition tables to fifty complete records and clinical candidates to twenty; close retained references and keep all accepted patient facts. Write at most ten note differentials.
+- Limit graph-derived relation evidence question and condition tables to fifty complete records; close references and preserve every patient fact and its scope without capping candidates or Assessment entries. Write every accepted alternative after the primary to SOAP and use explicit byte-limit failure and existing minimal recovery for oversized notes.
+- Exclude demographics and other family members from patient HISTORY completion; resolve family_history only from actual family history or a delivered whole-domain family history answer, including unknown.
+- Retain an unfrozen disease assessment after failed reassessment only for one verified exact unknown SAY response with unchanged clinical revision and chief; preserve original evidence response basis and limitations and mark the missing reassessment explicitly.
+- Schedule diagnosis announcement before plan delivery and allocate complete safety groups before routine groups while preserving length validation capacity and actual receipt accounting.
 - Remove only verified ungrounded demographic echoes. Keep current quotations corrections changed values family scopes measurements and valid siblings; accept null or missing partial-repair replacements without renumbering anchors.
 - Preserve initial reports failed-input replies verified plans final payload and submission request ID; use an independent format-only minimal Writer after normal assembly or validation fails.
 - Keep preparation failures strict and actual closed expired or forbidden service states truthful; never fabricate a receipt or replay an unknown effect under a new ID.
