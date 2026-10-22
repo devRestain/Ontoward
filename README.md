@@ -1,6 +1,8 @@
 # Ontoward
 
-Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D63 안정화·d50.12**다. 중간 오류가 발생한 질문·작업은 실제 수신과 범위를 보존해 마감하고 후속 세션과 최종 작성으로 전진한다. 정상 Writer 실패에는 추가 모델·그래프 조회 없는 최소 SOAP를 사용한다. 실제 matching completed 응답만 제출 성공이며, 수신 미확정에도 생성한 note·diagnosis와 최종 요청 ID·오류는 반환한다. 준비·manifest·임상 출처·수치·scope 검증은 유지한다.
+Ontoward는 N.O.V.A. 예선에서 문진·신체진찰을 수행하고 **15개 SOAP 문자열과 주진단 하나를 제출하는 에이전트**다. 현재 구현은 **D63 안정화·d50.12에 D64 최소 LLM 입력 전처리를 적용한 상태**다. 중간 오류가 발생한 질문·작업은 실제 수신과 범위를 보존해 마감하고 후속 세션과 최종 작성으로 전진한다. 정상 Writer 실패에는 추가 모델·그래프 조회 없는 최소 SOAP를 사용한다. 실제 matching completed 응답만 제출 성공이며, 수신 미확정에도 생성한 note·diagnosis와 최종 요청 ID·오류는 반환한다. 준비·manifest·임상 출처·수치·scope 검증은 유지한다.
+
+[D64](DECISION_STATE.md#D64)는 기존 상세 50개 선택 뒤의 logical payload를 보존하고 최종 전송 객체만 정리한다. 작업별 불필요 필드·수치 조건의 명시 기본값을 제외하고 동일한 전체 Pattern과 질환별 기대조건 배열을 공유한다. 수치 Mapping의 범주 값 목록은 wire에서만 생략하며 원래 검증 계약·수치·단위·부정·scope·실행 참조는 유지한다. 모든 역할의 최종 system/user/messages bytes와 nested 개수는 Test에서 관측한다. 이는 token 계측이나 새 입력 차단 정책이 아니며 상세 50 제한을 유지한다. [의미 보존·전후 bytes·오프라인 검증 증빙](data/provenance/minimal-input-d64-2026-10-22.json)을 따른다. 저장된 실패 request는 모델 호출 없이 재구성했고 실제 모델 수용·임상 품질은 재검증하지 않았다.
 
 [D63](DECISION_STATE.md#D63)에 따라 **적격 질환 후보·수용 Assessment·SOAP 감별의 고정 개수 상한을 철회**했다. Python과 임상 후보 참조는 전체 적격 후보를 유지하고 정상 수용 순위 전부를 보존하며 note.A.differential은 주진단 외 전 순위를 기록한다. 그래프 relation·evidence·question·condition 표별 **최대 50개**는 독립 상세 projection 한도이며 후보 수를 자르지 않는다. 원래 환자 facts·scope·관계 조건·prior 검증을 유지한다. [현재 회귀](Tmp/d63-2026-10-22/workflow.log)는 62개 후보·전체 SOAP와 100000-byte 초과의 명시적 최소 Writer 복구를 포함하며 실제 모델·임상 성능은 별도다.
 

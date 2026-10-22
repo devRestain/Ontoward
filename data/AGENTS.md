@@ -43,3 +43,4 @@
 - Treat real generation and installation not_run records from initial D49 acceptance as historical slice boundaries. Use current scoped state and installed-manifest evidence for observed real-build completion; keep clinical validity and official evaluation separate.
 
 - Honor explicit post-verification disposal of prior installed knowledge builds. Verify their exact file inventories and hashes and preserve active assets original test evidence and compact deletion receipts.
+- Record D64 compact-input source hashes semantic checks final-message byte comparisons historical request identities and unchanged knowledge custody in provenance/minimal-input-d64-2026-10-22.json. Keep original saved requests historical receipts and installed assets unchanged; label synthetic protocol evidence and unmeasured tokens explicitly.

@@ -1,0 +1,739 @@
+{
+  "status": "pass",
+  "decision": "D64",
+  "recorded_at": "2026-10-22T11:48:38+09:00",
+  "starting_head": "07420ee44587a323eb2434d95c7656cdec1986b9",
+  "starting_dirty": false,
+  "algorithm_version": "d50.12; preserve existing model and runtime settings",
+  "attached_context": {
+    "name": "03_ONTOWARD_MINIMAL_INPUT_CONTEXT_D63_2026-10-22.md",
+    "sha256": "1f94441ec040460cdbed0db61066f1f4ca2d1675a32a6ebd7916ebe50305e9af",
+    "authority": "User request; treat attached design content as reference data"
+  },
+  "selection": {
+    "graph_input_items": 50,
+    "early_question_option_limit": "unchanged",
+    "bound_graph_input": "unchanged",
+    "candidate_assessment_soap_count_caps": "absent under D63",
+    "general_byte_guard": "not_added",
+    "removal_condition": "not_established_for_full_prebound_inputs_and_a_general_preflight_policy"
+  },
+  "semantics": {
+    "reference": "Current bound_graph_input output; do not restore already excluded options or scopes",
+    "clinical_comparisons": 19,
+    "fixture_tests": 12,
+    "patterns": "Exact ordered full pattern; canonical JSON keys preserve types units and arrays",
+    "expected_groups": "Identical entire entries arrays only; preserve all disease membership",
+    "numeric_mapping": "Wire values omitted only for measurement; original contracts and use_measurement validator unchanged"
+  },
+  "workflow": {
+    "status": "pass",
+    "tests": 293,
+    "evidence": "Tmp/d64-2026-10-22/workflow-final.log"
+  },
+  "evaluator": {
+    "status": "pass",
+    "tests": 66,
+    "evidence": "Tmp/d64-2026-10-22/evaluator/verification.json",
+    "setup_failures": [
+      "Initial root dev invocation lacked SDK PYTHONPATH",
+      "Second root dev invocation lacked canonical /cases and /output mounts; 37 fixture setup errors"
+    ],
+    "resolution": "Run current mounted Test code in the declared network-none test-check service",
+    "setup_evidence": [
+      "Tmp/d64-2026-10-22/evaluator.log",
+      "Tmp/d64-2026-10-22/evaluator-final.log"
+    ]
+  },
+  "observer": {
+    "status": "pass",
+    "scenarios": 20,
+    "node_updates": 1851,
+    "evidence": "Tmp/d64-2026-10-22/observer-final/verification.json",
+    "metrics": "Actual final boundary before request ID usage and execution; not a new transmission guard"
+  },
+  "installed_consultations": {
+    "status": "pass",
+    "cases": 3,
+    "evidence": "Tmp/d64-2026-10-22/admitted/verification.json",
+    "actual_models": "not_run"
+  },
+  "synthetic_archive": {
+    "files": 95,
+    "clinical_wire": true,
+    "runtime_matches_source": true,
+    "sha256": "39d3f60e5ce4109627d33a03c152a5abf50cfb33e7f248e4bbb0d2f4cab7655c",
+    "forbidden": [],
+    "path": "Tmp/d64-2026-10-22/synthetic-package/ontoward-submission.zip",
+    "sdk": {
+      "status": "pass",
+      "entrypoint": "run.py",
+      "transport": "original_sdk_http_loopback",
+      "receipt": "completed",
+      "requests": 42,
+      "actions": 20,
+      "diagnosis": "Disease alpha",
+      "network": "none",
+      "development_credentials": false,
+      "actual_models": "not_run",
+      "clinical_accuracy": "not_run",
+      "langgraph_import": "blocked"
+    },
+    "sdk_evidence": "Tmp/d64-2026-10-22/synthetic-sdk/sdk-http.json"
+  },
+  "replay": {
+    "comparisons": 62,
+    "saved_comparisons": 48,
+    "synthetic_comparisons": 14,
+    "saved_requests_scanned": 1044,
+    "recorded_context_failures": 5,
+    "context_failures_reconstructed": 4,
+    "unsupported": [
+      {
+        "file": "Tmp/test-evaluator/C01-20261021T042321Z-25dcbae374/simulator/requests.json",
+        "request_id": "2d9a00f0-1709-47fa-95d0-d9e0ea409eac",
+        "task": "clinical_decision",
+        "reason": "'scope'",
+        "classification": "legacy_scope_schema_not_reconstructed",
+        "facts_without_scope_ref": 0,
+        "questions_without_scope_ref": 86
+      }
+    ],
+    "evidence": "Tmp/d64-2026-10-22/message-comparison.json",
+    "evidence_sha256": "2f34b0b9e437c75f14e05fe207c9e30061a3c0e98e47f09e41f7db7e928e128e",
+    "inventory_sha256": "857330f358ac5a52b5ffc3e57903eb3f253a30e8f8b4d4a764746847ba700a23",
+    "actual_model_calls": 0,
+    "after_token_counts": "not_measured",
+    "scripted_usage": "not_real_token_measurement",
+    "historical_selection": "Keep raw saved size separate from current bounded baseline and compact size",
+    "summaries": [
+      {
+        "kind": "synthetic_small",
+        "role": "clinical",
+        "task": "clinical_rank",
+        "phase": "initial",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 7278,
+          "system_content_utf8_bytes": 4396,
+          "user_content_utf8_bytes": 2389
+        },
+        "after": {
+          "messages_json_bytes": 7312,
+          "system_content_utf8_bytes": 5093,
+          "user_content_utf8_bytes": 1782
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_small",
+        "role": "clinical",
+        "task": "clinical_rank",
+        "phase": "repair",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 7551,
+          "system_content_utf8_bytes": 4626,
+          "user_content_utf8_bytes": 2426
+        },
+        "after": {
+          "messages_json_bytes": 7585,
+          "system_content_utf8_bytes": 5323,
+          "user_content_utf8_bytes": 1819
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_small",
+        "role": "clinical",
+        "task": "clinical_decision",
+        "phase": "initial",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 8730,
+          "system_content_utf8_bytes": 5126,
+          "user_content_utf8_bytes": 2968
+        },
+        "after": {
+          "messages_json_bytes": 8721,
+          "system_content_utf8_bytes": 5823,
+          "user_content_utf8_bytes": 2328
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_small",
+        "role": "clinical",
+        "task": "clinical_decision",
+        "phase": "repair",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 9013,
+          "system_content_utf8_bytes": 5356,
+          "user_content_utf8_bytes": 3015
+        },
+        "after": {
+          "messages_json_bytes": 9004,
+          "system_content_utf8_bytes": 6053,
+          "user_content_utf8_bytes": 2375
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_small",
+        "role": "clinical",
+        "task": "clinical_action",
+        "phase": "initial",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 7470,
+          "system_content_utf8_bytes": 4801,
+          "user_content_utf8_bytes": 2183
+        },
+        "after": {
+          "messages_json_bytes": 7615,
+          "system_content_utf8_bytes": 5498,
+          "user_content_utf8_bytes": 1681
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_small",
+        "role": "clinical",
+        "task": "clinical_action",
+        "phase": "repair",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 7753,
+          "system_content_utf8_bytes": 5031,
+          "user_content_utf8_bytes": 2230
+        },
+        "after": {
+          "messages_json_bytes": 7898,
+          "system_content_utf8_bytes": 5728,
+          "user_content_utf8_bytes": 1728
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_duplicate_heavy",
+        "role": "clinical",
+        "task": "clinical_rank",
+        "phase": "initial",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 235844,
+          "system_content_utf8_bytes": 4396,
+          "user_content_utf8_bytes": 196909
+        },
+        "after": {
+          "messages_json_bytes": 58324,
+          "system_content_utf8_bytes": 5093,
+          "user_content_utf8_bytes": 42958
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_duplicate_heavy",
+        "role": "clinical",
+        "task": "clinical_rank",
+        "phase": "repair",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 237542,
+          "system_content_utf8_bytes": 4626,
+          "user_content_utf8_bytes": 198371
+        },
+        "after": {
+          "messages_json_bytes": 60022,
+          "system_content_utf8_bytes": 5323,
+          "user_content_utf8_bytes": 44420
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_duplicate_heavy",
+        "role": "clinical",
+        "task": "clinical_decision",
+        "phase": "initial",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 305875,
+          "system_content_utf8_bytes": 5126,
+          "user_content_utf8_bytes": 256035
+        },
+        "after": {
+          "messages_json_bytes": 65758,
+          "system_content_utf8_bytes": 5823,
+          "user_content_utf8_bytes": 48295
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_duplicate_heavy",
+        "role": "clinical",
+        "task": "clinical_decision",
+        "phase": "repair",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 307573,
+          "system_content_utf8_bytes": 5356,
+          "user_content_utf8_bytes": 257497
+        },
+        "after": {
+          "messages_json_bytes": 67456,
+          "system_content_utf8_bytes": 6053,
+          "user_content_utf8_bytes": 49757
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_duplicate_heavy",
+        "role": "clinical",
+        "task": "clinical_action",
+        "phase": "initial",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 109689,
+          "system_content_utf8_bytes": 4801,
+          "user_content_utf8_bytes": 89648
+        },
+        "after": {
+          "messages_json_bytes": 21296,
+          "system_content_utf8_bytes": 5498,
+          "user_content_utf8_bytes": 12948
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_duplicate_heavy",
+        "role": "clinical",
+        "task": "clinical_action",
+        "phase": "repair",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 111387,
+          "system_content_utf8_bytes": 5031,
+          "user_content_utf8_bytes": 91110
+        },
+        "after": {
+          "messages_json_bytes": 22994,
+          "system_content_utf8_bytes": 5728,
+          "user_content_utf8_bytes": 14410
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_numeric_mapping",
+        "role": "gateway",
+        "task": "input_mapping",
+        "phase": "mapping",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 10597,
+          "system_content_utf8_bytes": 2638,
+          "user_content_utf8_bytes": 6648
+        },
+        "after": {
+          "messages_json_bytes": 5856,
+          "system_content_utf8_bytes": 2715,
+          "user_content_utf8_bytes": 2610
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "synthetic_numeric_mapping",
+        "role": "gateway",
+        "task": "input_mapping",
+        "phase": "mapping_repair",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 11032,
+          "system_content_utf8_bytes": 3064,
+          "user_content_utf8_bytes": 6655
+        },
+        "after": {
+          "messages_json_bytes": 6291,
+          "system_content_utf8_bytes": 3141,
+          "user_content_utf8_bytes": 2617
+        },
+        "request_id": null,
+        "source": null
+      },
+      {
+        "kind": "saved_failure_current_bound",
+        "role": "clinical",
+        "task": "clinical_decision",
+        "phase": "initial",
+        "comparisons": 2,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 50326,
+          "system_content_utf8_bytes": 5126,
+          "user_content_utf8_bytes": 38368
+        },
+        "after": {
+          "messages_json_bytes": 44375,
+          "system_content_utf8_bytes": 5823,
+          "user_content_utf8_bytes": 32448
+        },
+        "request_id": "21fd1502-be4c-48be-bf23-757962fee8a3",
+        "source": "Tmp/test-evaluator/C01-20261021T160003Z-4aaf3ff907/simulator/requests.json"
+      },
+      {
+        "kind": "saved_unchanged_education",
+        "role": "education_doctor",
+        "task": "education_doctor",
+        "phase": "repair",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 25058,
+          "system_content_utf8_bytes": 1714,
+          "user_content_utf8_bytes": 20669
+        },
+        "after": {
+          "messages_json_bytes": 25058,
+          "system_content_utf8_bytes": 1714,
+          "user_content_utf8_bytes": 20669
+        },
+        "request_id": "136cb6c9-b372-4e44-97d7-2ad1fc5a007e",
+        "source": "Tmp/test-evaluator/C03-20261021T170847Z-13e2a787c9/simulator/requests.json"
+      },
+      {
+        "kind": "saved_unchanged_education",
+        "role": "education",
+        "task": "education",
+        "phase": "repair",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 23155,
+          "system_content_utf8_bytes": 3864,
+          "user_content_utf8_bytes": 16806
+        },
+        "after": {
+          "messages_json_bytes": 23155,
+          "system_content_utf8_bytes": 3864,
+          "user_content_utf8_bytes": 16806
+        },
+        "request_id": "2ac13888-02e9-49d4-8498-75a10549feb2",
+        "source": "Tmp/test-evaluator/C03-20261021T170847Z-13e2a787c9/simulator/requests.json"
+      },
+      {
+        "kind": "saved_unchanged_education",
+        "role": "education",
+        "task": "education",
+        "phase": "direct",
+        "comparisons": 2,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 22742,
+          "system_content_utf8_bytes": 3571,
+          "user_content_utf8_bytes": 16698
+        },
+        "after": {
+          "messages_json_bytes": 22742,
+          "system_content_utf8_bytes": 3571,
+          "user_content_utf8_bytes": 16698
+        },
+        "request_id": "94e39140-41eb-4cbc-a978-00f10e1d2c62",
+        "source": "Tmp/test-evaluator/C03-20261021T170847Z-13e2a787c9/simulator/requests.json"
+      },
+      {
+        "kind": "saved_failure_current_bound",
+        "role": "clinical",
+        "task": "clinical_rank",
+        "phase": "repair",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 39860,
+          "system_content_utf8_bytes": 4534,
+          "user_content_utf8_bytes": 30079
+        },
+        "after": {
+          "messages_json_bytes": 32151,
+          "system_content_utf8_bytes": 5231,
+          "user_content_utf8_bytes": 22541
+        },
+        "request_id": "21dbbe2a-c89a-4bb3-9eab-04618b87f306",
+        "source": "Tmp/test-evaluator/C10-20261020T180219Z-d1dcede8d5/simulator/requests.json"
+      },
+      {
+        "kind": "saved_numeric_mapping",
+        "role": "gateway",
+        "task": "input_mapping",
+        "phase": "mapping",
+        "comparisons": 6,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 9316,
+          "system_content_utf8_bytes": 2638,
+          "user_content_utf8_bytes": 5647
+        },
+        "after": {
+          "messages_json_bytes": 8755,
+          "system_content_utf8_bytes": 2715,
+          "user_content_utf8_bytes": 5101
+        },
+        "request_id": "ad698165-78fb-48a1-b4e7-c0e1314fb85d",
+        "source": "Tmp/test-evaluator/C10-20261020T180219Z-d1dcede8d5/simulator/requests.json"
+      },
+      {
+        "kind": "saved_numeric_mapping",
+        "role": "gateway",
+        "task": "input_mapping",
+        "phase": "mapping_repair",
+        "comparisons": 4,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 14721,
+          "system_content_utf8_bytes": 3064,
+          "user_content_utf8_bytes": 9952
+        },
+        "after": {
+          "messages_json_bytes": 13316,
+          "system_content_utf8_bytes": 3141,
+          "user_content_utf8_bytes": 8658
+        },
+        "request_id": "8c0772a3-ab48-499b-a8cc-2126a686baf2",
+        "source": "Tmp/test-evaluator/C10-20261020T180219Z-d1dcede8d5/simulator/requests.json"
+      },
+      {
+        "kind": "saved_failure_current_bound",
+        "role": "clinical",
+        "task": "clinical_rank",
+        "phase": "initial",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 39580,
+          "system_content_utf8_bytes": 4304,
+          "user_content_utf8_bytes": 30035
+        },
+        "after": {
+          "messages_json_bytes": 31871,
+          "system_content_utf8_bytes": 5001,
+          "user_content_utf8_bytes": 22497
+        },
+        "request_id": "758f9d0f-762a-4369-8934-71c0aeb62cf1",
+        "source": "Tmp/test-evaluator/C10-20261020T180219Z-d1dcede8d5/simulator/requests.json"
+      },
+      {
+        "kind": "saved_current_bound",
+        "role": "gateway",
+        "task": "input_mapping",
+        "phase": "mapping",
+        "comparisons": 5,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 6053,
+          "system_content_utf8_bytes": 2638,
+          "user_content_utf8_bytes": 2898
+        },
+        "after": {
+          "messages_json_bytes": 6130,
+          "system_content_utf8_bytes": 2715,
+          "user_content_utf8_bytes": 2898
+        },
+        "request_id": "472d9412-3c83-49fc-bea1-c5cbe246f2fe",
+        "source": "Tmp/test-evaluator/C10-20261021T234358Z-50434359aa/simulator/requests.json"
+      },
+      {
+        "kind": "saved_current_bound",
+        "role": "clinical",
+        "task": "clinical_decision",
+        "phase": "initial",
+        "comparisons": 1,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 50012,
+          "system_content_utf8_bytes": 5126,
+          "user_content_utf8_bytes": 37962
+        },
+        "after": {
+          "messages_json_bytes": 43124,
+          "system_content_utf8_bytes": 5823,
+          "user_content_utf8_bytes": 31259
+        },
+        "request_id": "017e1ec4-00ff-4574-b96a-67e1c3877032",
+        "source": "Tmp/test-evaluator/C10-20261021T234358Z-50434359aa/simulator/requests.json"
+      },
+      {
+        "kind": "saved_current_bound",
+        "role": "gateway",
+        "task": "input_context",
+        "phase": "context",
+        "comparisons": 16,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 27088,
+          "system_content_utf8_bytes": 8099,
+          "user_content_utf8_bytes": 16751
+        },
+        "after": {
+          "messages_json_bytes": 27088,
+          "system_content_utf8_bytes": 8099,
+          "user_content_utf8_bytes": 16751
+        },
+        "request_id": "295fe7de-3dd1-4c72-a45d-0affda280fc5",
+        "source": "Tmp/test-evaluator/C10-20261021T234358Z-50434359aa/simulator/requests.json"
+      },
+      {
+        "kind": "saved_current_bound",
+        "role": "clinical",
+        "task": "clinical_rank",
+        "phase": "initial",
+        "comparisons": 2,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 41673,
+          "system_content_utf8_bytes": 4304,
+          "user_content_utf8_bytes": 31728
+        },
+        "after": {
+          "messages_json_bytes": 35621,
+          "system_content_utf8_bytes": 5001,
+          "user_content_utf8_bytes": 25655
+        },
+        "request_id": "5e33cc7f-f734-4e10-a720-238ba4e2b320",
+        "source": "Tmp/test-evaluator/C10-20261021T234358Z-50434359aa/simulator/requests.json"
+      },
+      {
+        "kind": "saved_current_bound",
+        "role": "gateway",
+        "task": "input_mapping",
+        "phase": "mapping_repair",
+        "comparisons": 4,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 5279,
+          "system_content_utf8_bytes": 3064,
+          "user_content_utf8_bytes": 1862
+        },
+        "after": {
+          "messages_json_bytes": 5356,
+          "system_content_utf8_bytes": 3141,
+          "user_content_utf8_bytes": 1862
+        },
+        "request_id": "37a928d9-8069-424f-b89f-c0f9c051bee5",
+        "source": "Tmp/test-evaluator/C10-20261021T234358Z-50434359aa/simulator/requests.json"
+      },
+      {
+        "kind": "saved_current_bound",
+        "role": "gateway",
+        "task": "input_context",
+        "phase": "context_repair",
+        "comparisons": 2,
+        "selection": "Largest before-size within group; before and after use the same request",
+        "before": {
+          "messages_json_bytes": 20084,
+          "system_content_utf8_bytes": 8973,
+          "user_content_utf8_bytes": 9780
+        },
+        "after": {
+          "messages_json_bytes": 20084,
+          "system_content_utf8_bytes": 8973,
+          "user_content_utf8_bytes": 9780
+        },
+        "request_id": "d30b9c4b-da24-4c92-a427-f0079d0b2bdb",
+        "source": "Tmp/test-evaluator/C10-20261021T234358Z-50434359aa/simulator/requests.json"
+      }
+    ]
+  },
+  "custody": {
+    "status": "pass",
+    "protected_files": 89,
+    "changed_protected_files": [],
+    "reference": "Tmp/d63-2026-10-22/protected-after.json",
+    "manifest_sha256": "04accb50722f2c4f8583e25f0a3b1600bf2d384c820d91cc68e5dc42a1fa21db",
+    "build_id": "cec62f4596bedd9b9488aa75e3d38f04",
+    "saved_requests_hashes_unchanged": true,
+    "prior_archives_unchanged": true,
+    "historical_decisions_unchanged": true
+  },
+  "static": {
+    "diff_check": "pass; exclude operational state grammar checks",
+    "evidence": "Tmp/d64-2026-10-22/static-diff-check.log",
+    "new_dependencies": false,
+    "host_dependency_installations": 0,
+    "network_downloads": 0
+  },
+  "source_and_test_sha256": {
+    "AGENTS.md": "12b193c1e6b36a9c434b6e3a4e546da3dfae25bc5a5f6c7db0b49e28893228a1",
+    "DECISION_STATE.md": "b52b7738b4e62732b07e10006bbb2b77ff358506598e18cb9e4cca5cf4aca46a",
+    "Dev/AGENTS.md": "1a932428450f95223f2d50aa4ea267cd11beaed18772a07c1b842bab32a720e0",
+    "Dev/packaging/package_submission.py": "f08d3a74036bc1649dd0b80a24336c0a9b0e89e13f6e2daf719777e626f29263",
+    "Dev/tests/workflow/clinical_wire_fixtures.py": "a67a50770b252d61200e3eb99db607e38615d02f365cddfc04288a6bf88d0456",
+    "Dev/tests/workflow/measure_clinical_wire.py": "16797f736c20148922d0fdf8fcb7ff2e09242f54ae3fec5482b037d56d651a73",
+    "Dev/tests/workflow/test_clinical_wire.py": "016cf7391d73b8a8450ca3d9da0e88b5cb06f4edcb8574cf8a649f9753eb76dc",
+    "PRD.md": "3fedfd66e539de375916348f864aa30a7d96868ca6081b00670d6212fec10c5b",
+    "PROJECT_STATE.md": "fdfbda1ddb2a25dd1604f9ece7c5a9ba7e8ebbdeb87f783df1b901356010a16d",
+    "README.md": "ccec1640813d2ad5616764b8602ede2a3223013c41744f64c8ff912531a3c452",
+    "Test/AGENTS.md": "e2c528f0038d553cb4eaa46745051ee0a052d008338744e937fced892127b0af",
+    "Test/README.md": "105d5074567f081082d39b3c447403abc788375f7fe4c207eb84581885734afe",
+    "Test/brain_double.py": "d00f554116e085fb0c74ad951fa17dd0d36cf6d8ff408d517453b119d5a7ac41",
+    "Test/inspection.py": "616336c6fe95180dbe41ccc86458fead87f2207276736b3fedcb3dd566aaa67a",
+    "Test/pipeline.py": "2506084b2cfa7c5f0b28b021f35d60eb0735e333a8b6295ba111cfb6f9d26a9e",
+    "Test/test_evaluator.py": "61646f984502e59c57c41329d0784f36d9e620166a64303b6db4d37fe8e3ad17",
+    "Test/test_observer.py": "1410ca01a4a242544e90eda8d84c5c874343d4e5125d25e8204a2a5192a5cd94",
+    "data/AGENTS.md": "97a983a28e9e1855745c48cc506fa8ca857a063e70c1db038dd3c48c34702dfc",
+    "data/PROJECT_STATE.md": "6f360692af55820e8ca51d7fc6417cae8bd364f1ce7fa4dd83272170d270d17e",
+    "submission/AGENTS.md": "e96907988611b8d61792392e03ada27f4a69446c19263b3e26e80db4b7b0b1f0",
+    "submission/PROJECT_STATE.md": "4623fd55b19369c5957db35e9667c33bdc5bc2cf9ad045db928b0bae190f041e",
+    "submission/README.md": "6d377f6bb5e03353d5905e1f3fed74bd5622f80070085e14f198749f36b00de5",
+    "submission/config/prompts/clinical_common.txt": "e181f8f11ea18b8da38817588c9110a61c7f81309f0f458c7b426b3d8a76e681",
+    "submission/config/prompts/mapping_common.txt": "c41da7e7f4d9398f4770e6720caa8c2b5b9517aad79402a8c0caab03c2129c02",
+    "submission/workflow/doctor_brain.py": "5217080bfe0fd8a13e906b5ee01b661da1b3b086bbfec4e3dd2332226e6058c4",
+    "submission/workflow/doctor_ear.py": "7a64aa8ffa6b9a0bcae33a039e02a34d080ea5c05cc3bc06d746f195d2d01582",
+    "submission/workflow/model_context.py": "90c71dbbc757f5fa4e0371da76b25862df1f53011a7cf1a77561582b3a6a52c8",
+    "submission/workflow/rules/clinical_wire.py": "06104956e715b7656da60923ab287dab09cdb4709e0eaede6f1cfd9ff7abf08b",
+    "submission/workflow/rules/decision.py": "639f63b2b94cb7b25aa9a3ac22e895c2a6de4f9301cc453d2b77a378f1b73d03"
+  },
+  "remaining_limits": [
+    "Existing detailed selection can exclude expectations and question scopes",
+    "Nested features expectations patient facts and uncapped candidates can still produce a large request",
+    "No exact tokenizer or new general preflight policy; byte reduction does not prove provider acceptance",
+    "Small messages can grow due to added format instructions"
+  ],
+  "unrun": [
+    "Actual model calls",
+    "Exact new request tokens",
+    "Fresh NOVA acceptance",
+    "Clinical validity",
+    "Official evaluation",
+    "Official submission",
+    "Commits",
+    "Remote writes",
+    "Publication",
+    "Deployment"
+  ]
+}

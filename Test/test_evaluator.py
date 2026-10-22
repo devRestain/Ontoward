@@ -512,6 +512,7 @@ class BrainProtocolTests(unittest.TestCase):
                    upper_unit='year', approximate=True, lower_inclusive=False),
                    candidates=[dict(id='Complaint', attributes=[dict(id='Onset', units=['month', 'year'],
                                    values=[dict(id='Categorical range')])])])
+        row['candidates'][0]['attributes'][0].pop('values')  # D64 numeric wire has no categorical values.
         for units, expected in ((['month', 'year'], {'Complaint': {'Onset': {'use_measurement': True}}}), (['month'], {})):
             row['candidates'][0]['attributes'][0]['units'] = units
             payload = dict(task='input_mapping', statements=[row])
@@ -521,7 +522,7 @@ class BrainProtocolTests(unittest.TestCase):
     def test_scripted_brain_supports_rank_and_action_only_contracts(self):
         from models import ScriptedModels
         model=ScriptedModels({})
-        payload=dict(task='clinical_decision',required=[],stage='DifferentialDiagnosis',prior_order=['d_2'],
+        payload=dict(task='clinical_decision',stage='DifferentialDiagnosis',prior_order=['d_2'],
             candidates=[{'ref':'d_1'},{'ref':'d_2'}],questions=[{'ref':'q_1','kind':'EXAM'}])
         result=model.complete('doctor',[{'role':'user','content':json.dumps(payload)}],4096,'rank',reasoning_effort='high')
         value=json.loads(result['choices'][0]['message']['content'])
@@ -530,6 +531,10 @@ class BrainProtocolTests(unittest.TestCase):
         payload.update(task='clinical_action',questions=[])
         result=model.complete('doctor',[{'role':'user','content':json.dumps(payload)}],4096,'action',reasoning_effort='high')
         self.assertEqual(json.loads(result['choices'][0]['message']['content']),{'next_action':{'kind':'finish_collection'}})
+        payload['task'] = 'clinical_rank'
+        payload.pop('questions')
+        result=model.complete('doctor',[{'role':'user','content':json.dumps(payload)}],4096,'rank-only')
+        self.assertEqual(json.loads(result['choices'][0]['message']['content']), {'ranked_disease_refs': ['d_2', 'd_1']})
 
 
 if __name__ == '__main__':

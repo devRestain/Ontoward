@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 
 from nova_sdk import NovaError
-from knowledge.guideline_passages import json_bytes
+
+from .model_context import message_metrics
 
 from .state import usage
 from .rules.limits import LIMITS, TRANSIENT_ERRORS
@@ -23,11 +24,12 @@ class DoctorBrain:
         session = state.session
         if role not in {'gateway', 'clinical', 'education', 'education_doctor'}:
             raise ValueError('Unsupported designated-model role')
+        input_metrics = message_metrics(role, messages)
         education = role in {'education', 'education_doctor'}
         if education:
             if session.budget_sync_required:
                 return ModelResult(error='LOCAL_EDUCATION_BUDGET_SYNC_REQUIRED')
-            if json_bytes(messages) > LIMITS.education_max_messages_bytes:
+            if input_metrics['messages_json_bytes'] > LIMITS.education_max_messages_bytes:
                 return ModelResult(error='LOCAL_EDUCATION_MESSAGE_LIMIT')
         allowance = self.budget.model_allowance(session, role, maximum=max_tokens, state=state)
         if not allowance:

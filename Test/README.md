@@ -85,6 +85,8 @@ sh Test/web.sh
 
 새 수집 형식은 Ear·Brain·Mouth·Consultation·Writer의 메서드와 Ear의 Python exact/forced 연결·fact 생성, 각 세션의 `graph_candidates`·입력 준비·순위/질문 수용·영어 계획 함수를 감싼다. 함수는 정의된 모듈과 실제 호출 지점을 함께 기록하며 객체 메서드와 구별한다. 큰 직렬화 값은 `value` 이벤트에 한 번 보존하고 `trace_value_ref`로 참조한다. 트리를 펼치면 저장한 실제 값이 해독된다. 같은 참조는 **직렬화 내용의 일치**를 뜻하며 Python 인스턴스의 동일성을 뜻하지 않는다. 별도의 상세 값 파일 없이 `report.html`에 필요한 값과 schema를 모두 포함한다.
 
+D64의 `ModelInput.message_metrics`는 DoctorBrain에 도착한 실제 최종 messages를 ID·usage·전송 전에 계측한다. `inspection.json`의 `model_outcomes[].input_metrics`에서 role/task/phase별 system/user UTF-8 bytes, 전체 messages JSON bytes, 주요 블록별 JSON bytes와 후보·Pattern feature·질환별 expectation 개수를 읽는다. `reported_prompt_tokens`는 실제 관측된 응답 usage이고 scripted 모델 값은 실모델 token 실측이 아니다. `error_origin`은 관측된 local_preflight·client_or_server·response_usage_check를 구별하며 증거가 없으면 unknown이다. 블록 크기는 중첩될 수 있고 key·구분자 비용이 없으므로 합산해 전체로 쓰지 않는다. 통계는 모델 입력이나 장기 runtime 상태에 들어가지 않으며 일반 byte guard를 추가하지 않는다. 과거 trace에 계측이 없으면 값을 추정하지 않는다.
+
 Submission에 audit sink나 상세 이벤트를 주입하지 않으며 Python heap과 반복 내부 조회의 상세 값은 수집하지 않는다. 반복 횟수는 노드 종료에서 확인한다. 특정 필드를 읽었다는 추정은 하지 않는다. 내부 메서드·정의 위치·실행 소스가 없는 과거 로그는 미수집으로 표시한다. 원본 `submission/`을 수정하지 않고 Test 메모리 래퍼를 실행 후 복원한다. `inspection.json`은 보존된 로그의 검사 결과이며 임상 판단을 다시 실행하지 않는다. 공개 증례와 별개인 통제 fixture 결과는 **합성 프로토콜**로 표시한다.
 
 웹 서버는 기존 Test 이미지의 Python 표준 라이브러리를 사용하고 프론트엔드는 별도 패키지가 필요 없다. 웹 컨테이너는 출력 폴더만 읽고 쓰며, 작업 요청을 받은 호스트 셸이 기존 실행기를 호출한다. 웹 컨테이너에 Docker 소켓·개발 키·증례 원본 마운트를 전달하지 않는다. 웹 포트는 localhost에만 연결한다. 계정·DB·대기열·자동 재개는 두지 않는다.

@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward
 /status value=complete
-/checkpoint revision=8a04580835c5b6ec0ca5f019d844cd57a118cbe0 dirty=true updated=2026-10-22T08:20:12+09:00
-/goal phase=current id=ROOT.D63 state=complete action="Implement final submission stabilization without candidate or SOAP count caps"
+/checkpoint revision=07420ee44587a323eb2434d95c7656cdec1986b9 dirty=true updated=2026-10-22T11:48:38+09:00
+/goal phase=current id=ROOT.D64 state=complete action="Implement bounded semantic input compaction and final-message byte observation"
+/goal phase=history id=ROOT.D63 state=complete action="Implement final submission stabilization without candidate or SOAP count caps"
 /goal phase=history id=ROOT.D62 state=complete action="Expand clinical differentials to twenty and final note alternatives to ten"
 /goal phase=history id=ROOT.D61 state=complete action="Complete bounded consultation recovery and graph input limits through honest final submission"
 /goal phase=history id=ROOT.D60 state=complete action="Remove cumulative case token enforcement from runtime and Test while preserving accounting and per-call limits"
@@ -765,4 +766,14 @@
 /evidence id=ROOT.D63.E2 class=artifact result=pass source=data/provenance/final-stabilization-d63-2026-10-22.json observed="Verify production and synthetic ZIPs through original SDK completion under network none; pass sixty-six evaluator checks and twenty observer scenarios with 1851 updates"
 /evidence id=ROOT.D63.E3 class=static result=pass source=DECISION_STATE.md observed="Record D63 supersession reconcile affected contracts requirements orientation and states and preserve D60 D61 D62 history all eighty-nine protected files and the prior archive"
 /evidence id=ROOT.D63.E4 class=external_service result=not_run source=data/provenance/final-stabilization-d63-2026-10-22.json observed="Leave paid models fresh NOVA clinical validation official evaluation submission remote writes publication and deployment unrun"
-/handoff state=ready action="Review the D63 production ZIP and preserved validation receipts without transmitting it"
+/decision id=ROOT.D64 state=accepted action="Keep the existing fifty-record selection and D63 uncapped candidates while compacting only final wire input" source=DECISION_STATE.md
+/accept id=ROOT.D64.A1 state=pass action="Integrate the owning clinical wire mapping prompts and maintained semantic regressions" evidence=ROOT.D64.E1
+/accept id=ROOT.D64.A2 state=pass action="Verify final-message observation parity saved replay and synthetic byte comparisons" evidence=ROOT.D64.E2,ROOT.D64.E3
+/accept id=ROOT.D64.A3 state=pass action="Verify independent synthetic SDK completion and preserve protected knowledge and history" evidence=ROOT.D64.E4,ROOT.D64.E5
+/evidence id=ROOT.D64.E1 class=runtime result=pass source=submission/PROJECT_STATE.md observed="Reference APP.D64 for typed compaction strict numeric mapping current facts reference closure work repair and 293 workflow passes"
+/evidence id=ROOT.D64.E2 class=runtime result=pass source=Tmp/d64-2026-10-22/observer-final/verification.json observed="Pass twenty observer parity scenarios with 1851 operation updates final input metrics reported response usage and evidenced error origins; pass sixty-six evaluator checks in the canonical network-none Test service"
+/evidence id=ROOT.D64.E3 class=semantic result=pass source=Tmp/d64-2026-10-22/message-comparison.json observed="Compare 62 final-message pairs including 48 saved and fourteen synthetic inputs; reconstruct four of five context failures against the current bound and mark one older missing-scope request unsupported; include new prompt costs and small-input growth without token inference"
+/evidence id=ROOT.D64.E4 class=artifact result=pass source=data/provenance/minimal-input-d64-2026-10-22.json observed="Pin the ninety-five-file synthetic archive with matching runtime bytes original SDK completed receipt forty-two requests twenty actions blocked LangGraph and network none"
+/evidence id=ROOT.D64.E5 class=static result=pass source=data/provenance/minimal-input-d64-2026-10-22.json observed="Preserve eighty-nine protected files prior D63 production and synthetic archives historical decisions saved request hashes SDK entrypoint model settings and installed knowledge; reconcile D64 contracts requirements orientation and three states"
+/evidence id=ROOT.D64.E6 class=external_service result=not_run source=data/provenance/minimal-input-d64-2026-10-22.json observed="Leave actual models new token measurement fresh NOVA clinical validity official evaluation submission remote writes and deployment unrun; retain fifty-record selection and D59-only byte guards"
+/handoff state=ready action="Review the D64 code and byte receipt while retaining the detailed graph cap and original evidence"

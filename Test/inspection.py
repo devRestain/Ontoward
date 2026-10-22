@@ -171,6 +171,17 @@ def inspect_run(data):
                 object_state = deepcopy(event['object_state'])
             elif object_state is not None and 'object_patch' in event:
                 object_state = apply(object_state, event['object_patch'])
+            active_model = next((model_calls[ident] for ident in reversed(active_calls) if ident in model_calls), None)
+            if active_model is not None:
+                if event.get('owner') == 'ModelInput' and event.get('method') == 'message_metrics' and kind == 'call_end':
+                    active_model['input_metrics'] = resolve(event.get('output'))
+                if event.get('owner') == 'RequestExecutor' and event.get('method') == 'execute':
+                    if kind == 'call_end':
+                        usage = (resolve(event.get('output')) or {}).get('usage', {})
+                        if type(usage.get('prompt_tokens')) is int:
+                            active_model['reported_prompt_tokens'] = usage['prompt_tokens']
+                    elif kind == 'call_error':
+                        active_model['executor_error'] = True
             if event.get('owner') == 'DoctorBrain' and event.get('method') == 'complete':
                 budget = {key: (object_state or {}).get('session', {}).get(key) for key in budget_fields}
                 if kind == 'call_start':
@@ -179,8 +190,16 @@ def inspect_run(data):
                     result = resolve(event.get('output')) or {}
                     result = result.get('data', {}) if isinstance(result, dict) and result.get('type') == 'ModelResult' else {}
                     error = result.get('error')
-                    model_outcomes.append(dict(**model_calls.pop(event['call_id'], dict(seq=seq)),
+                    recorded = model_calls.pop(event['call_id'], dict(seq=seq))
+                    origin = None
+                    if error:
+                        origin = ('local_preflight' if not result.get('request_id') else
+                            'client_or_server' if recorded.get('executor_error') else
+                            'response_usage_check' if error in {'CONTEXT_LIMIT_EXCEEDED', 'MODEL_TOKEN_BUDGET'}
+                                and 'reported_prompt_tokens' in recorded else 'unknown')
+                    model_outcomes.append(dict(**recorded,
                         end_seq=seq, error=error, request_id=result.get('request_id'), after=budget,
+                        error_origin=origin,
                         local_education_guard=isinstance(error, str) and error.startswith('LOCAL_EDUCATION_')))
             if kind == 'initial':
                 state = deepcopy(event['state'])

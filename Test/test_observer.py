@@ -151,6 +151,10 @@ def verify_trace(rows, name):
         assert 'config/prompts/input_initial.txt' not in runtime['prompt_routes']['input.reply']
         settings = next(r for r in rows if r['kind'] == 'settings')
         assert settings['pipeline']['contract'] == 'D59'
+        assert settings['pipeline']['input_metrics'] == 'D64'
+        outcomes = inspection['model_outcomes']
+        assert outcomes and all(row.get('input_metrics') for row in outcomes)
+        assert all(row['reported_prompt_tokens'] == 20 and row['error_origin'] is None for row in outcomes)
         assert rows[0]['format_version'] == 7
         assert not any(row['missing'] for row in settings['coverage'])
         assert all(name in runtime['source_sha256'] for name in
@@ -180,10 +184,12 @@ def verify_trace(rows, name):
     if name in {'education_context', 'education_doctor_context'}:
         errors = [row for row in inspection['model_outcomes'] if row['error'] == 'CONTEXT_LIMIT_EXCEEDED']
         assert len(errors) == 1 and errors[0]['request_id'], (name, errors)
+        assert errors[0]['error_origin'] == 'client_or_server'
         assert errors[0]['after']['budget_sync_required']
         if name == 'education_context':
             guards = [row for row in inspection['model_outcomes'] if row['local_education_guard']]
             assert guards and all(row['request_id'] is None and row['before'] == row['after'] for row in guards)
+            assert all(row['error_origin'] == 'local_preflight' and row['input_metrics'] for row in guards)
         assert any(r['kind'] == 'call_end' and r.get('owner') == 'NovaSessionClient' and r.get('method') == 'refresh_snapshot' for r in rows)
         assert inspection['checkpoints'][-1]['education_undelivered'] > 0
     return inspection

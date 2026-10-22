@@ -310,13 +310,19 @@ class DoctorEar:
         rows = []
         for i in indices:
             statement = statements[i]
+            candidates = contracts[i]
+            if statement.measurement:
+                # Validation retains the original contracts, including categorical values.
+                candidates = [dict(id=target['id'], kind=target['kind'], attributes=[
+                    dict(id=attribute['id'], units=list(attribute['units'])) for attribute in target['attributes']])
+                    for target in candidates]
             hints = {key: getattr(statement, key) for key in ('target_terms', 'attribute_terms', 'value_terms')
                      if getattr(statement, key)}
             rows.append(dict(quote=statement.quote, focus=statement.focus, assertion=statement.assertion,
                 normalized_claim=statement.note_value or '; '.join(dict.fromkeys(value for values in hints.values() for value in values)),
                 meaning=dict(hints, time_context=statement.time_context,
                     **({'category': statement.record_category} if statement.record_category else {})),
-                candidates=contracts[i], **({'measurement': measurement_value(statement.measurement)} if statement.measurement else {})))
+                candidates=candidates, **({'measurement': measurement_value(statement.measurement)} if statement.measurement else {})))
         return {'task': 'input_mapping', 'phase': phase, 'statement_indices': indices,
                 'statements': rows, 'validation_errors': feedback}
 

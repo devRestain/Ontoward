@@ -5,7 +5,7 @@ def clinical_response(payload):
     if payload.get('task') not in {'clinical_rank','clinical_decision','clinical_action'}:
         return None
     questions = payload.get('questions',[])
-    if payload['required']:
+    if payload.get('required', []):
         action = {'kind':'continue_required'}
     elif questions:
         question = next((q for q in questions if q.get('kind')=='EXAM'),questions[0])

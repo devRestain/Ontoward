@@ -21,6 +21,7 @@ REQUIRED = {
     'workflow/model_context.py',
     'workflow/output_types.py',
     'workflow/rules/decision.py',
+    'workflow/rules/clinical_wire.py',
     'workflow/rules/questions.py',
     'workflow/sessions/__init__.py',
     'workflow/sessions/initiation.py',

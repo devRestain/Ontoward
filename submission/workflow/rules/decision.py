@@ -5,6 +5,7 @@ from typing import Literal
 from pydantic import StrictStr, model_validator
 
 from .assessment import graph_candidates
+from .clinical_wire import compact_clinical_payload
 from .limits import LIMITS
 from .normalization import strict_json
 from ..model_context import fact_record, messages
@@ -44,7 +45,7 @@ def clinical_messages(config, work):
     routes = [route, 'session.' + work.payload['stage']]
     if 'validation_error' in work.payload:
         routes.append('clinical.repair')
-    return messages(config.prompt(*routes), work.payload)
+    return messages(config.prompt(*routes), compact_clinical_payload(work.payload))
 
 
 def latest_response(state):

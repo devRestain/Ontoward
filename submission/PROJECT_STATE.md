@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-submission
 /status value=complete
-/checkpoint revision=8a04580835c5b6ec0ca5f019d844cd57a118cbe0 dirty=true updated=2026-10-22T08:20:12+09:00
-/goal phase=current id=APP.D63 state=complete action="Implement final submission stabilization without candidate or SOAP count caps"
+/checkpoint revision=07420ee44587a323eb2434d95c7656cdec1986b9 dirty=true updated=2026-10-22T11:48:38+09:00
+/goal phase=current id=APP.D64 state=complete action="Preserve clinical meaning through final wire compaction and request-local byte metrics"
+/goal phase=history id=APP.D63 state=complete action="Implement final submission stabilization without candidate or SOAP count caps"
 /goal phase=history id=APP.D62 state=complete action="Expand clinical differentials to twenty and final note alternatives to ten"
 /goal phase=history id=APP.D61 state=complete action="Complete bounded consultation recovery and graph input limits through honest final submission"
 /goal phase=history id=APP.D60 state=complete action="Record token usage without cumulative case caps while preserving model calls actions and server errors"
@@ -470,4 +471,12 @@
 /evidence id=APP.D63.E2 class=runtime result=pass source=../Tmp/d63-2026-10-22/admitted/verification.json observed="Load active build cec62f4596bedd9b9488aa75e3d38f04 through unchanged prepare and complete three installed-bundle protocol consultations"
 /evidence id=APP.D63.E3 class=artifact result=pass source=../data/provenance/final-stabilization-d63-2026-10-22.json observed="Verify matching ninety-four-file production ZIP e2cb449260935095d6fca16920330aa55704bfce013e6d5f6ec48d61dd1eaa81 through seventy-seven SDK requests twenty-nine actions and completed receipt; verify separate synthetic ZIP through forty-two requests twenty actions and completed receipt"
 /evidence id=APP.D63.E4 class=external_service result=not_run source=../data/provenance/final-stabilization-d63-2026-10-22.json observed="Leave actual model and clinical quality fresh NOVA official evaluation submission and deployment unrun"
-/handoff state=ready action="Use the verified D63 production artifact for local review while retaining all protected assets and original receipts"
+/decision id=APP.D64 state=accepted action="Project only the current bounded logical input and preserve all internal clinical owners output contracts budgets and selection" source=../DECISION_STATE.md
+/accept id=APP.D64.A1 state=pass action="Preserve typed conditions exact sharing scopes references numeric validation and repair semantics" evidence=APP.D64.E1
+/accept id=APP.D64.A2 state=pass action="Verify final metrics and representative installed-bundle consultations without actual models" evidence=APP.D64.E2
+/accept id=APP.D64.A3 state=pass action="Verify the compact module and prompts through an independent synthetic archive and original SDK" evidence=APP.D64.E3
+/evidence id=APP.D64.E1 class=semantic result=pass source=../Tmp/d64-2026-10-22/workflow-final.log observed="Pass all 293 maintained workflow tests including twelve new D64 regressions for bound-payload expansion typed zero false open ranges exact ordered sharing complete disease groups unbound facts novel question scopes strict numeric mapping stable repair refs and final byte metrics"
+/evidence id=APP.D64.E2 class=runtime result=pass source=../Tmp/d64-2026-10-22/admitted/verification.json observed="Load the unchanged active manifest and complete three installed-bundle protocol consultations with Education disabled enabled positive and enabled negative Context; preserve fifteen-field SOAP and actual local receipts"
+/evidence id=APP.D64.E3 class=artifact result=pass source=../Tmp/d64-2026-10-22/synthetic-sdk/sdk-http.json observed="Complete a fresh ninety-five-file read-only synthetic ZIP through unchanged run.py original SDK forty-two loopback requests twenty actions and completed receipt under network none with LangGraph imports blocked"
+/evidence id=APP.D64.E4 class=external_service result=not_run source=../data/provenance/minimal-input-d64-2026-10-22.json observed="Leave actual models tokenizer measurement fresh NOVA clinical validity official evaluation submission and deployment unrun; preserve graph_input_items fifty cumulative input500k output100k request input100k output8k and D59 Education guards"
+/handoff state=ready action="Review D64 input semantics and metrics before separately authorizing actual-model evaluation"

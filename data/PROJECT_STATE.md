@@ -1,8 +1,9 @@
 /state version=1
 /project id=ontoward-data
 /status value=complete
-/checkpoint revision=8a04580835c5b6ec0ca5f019d844cd57a118cbe0 dirty=true updated=2026-10-22T08:20:12+09:00
-/goal phase=current id=DATA.D63 state=complete action="Pin final stabilization source artifact and immutable knowledge custody"
+/checkpoint revision=07420ee44587a323eb2434d95c7656cdec1986b9 dirty=true updated=2026-10-22T11:48:38+09:00
+/goal phase=current id=DATA.D64 state=complete action="Pin compact-input evidence and preserve installed knowledge and saved request custody"
+/goal phase=history id=DATA.D63 state=complete action="Pin final stabilization source artifact and immutable knowledge custody"
 /goal phase=history id=DATA.D59 state=complete action="Pin narrow Education verification and preserve active knowledge during local packaging"
 /goal phase=history id=DATA.D58 state=complete action="Preserve immutable augmentation lineage and dispose verified unused generation records"
 /goal phase=history id=DATA.D57 state=complete action="Pin the review saved-run custody and immutable collection-metadata bundle lineage"
@@ -417,4 +418,10 @@
 /evidence id=DATA.D63.E2 class=artifact result=pass source=provenance/final-stabilization-d63-2026-10-22.json observed="Pin source and test hashes 281 workflow passes sixty-six evaluator checks twenty observer scenarios three installed consultations and separate production and synthetic ZIPs with completed original SDK receipts"
 /evidence id=DATA.D63.E3 class=external_service result=not_run source=provenance/final-stabilization-d63-2026-10-22.json observed="Leave actual models clinical validity fresh NOVA official evaluation submission remote writes and deployment unrun"
 /decision id=DATA.D63 state=accepted action="Preserve knowledge and historical receipts while recording D63 runtime-only stabilization" source=../DECISION_STATE.md
-/handoff state=ready action="Use the pinned D63 artifact receipt and retain the active knowledge bundle unchanged"
+/decision id=DATA.D64 state=accepted action="Preserve installed knowledge historical receipts original requests and source custody during runtime-only input preprocessing" source=../DECISION_STATE.md
+/accept id=DATA.D64.A1 state=pass action="Preserve protected source assets manifest previous artifacts and saved requests byte for byte" evidence=DATA.D64.E1
+/accept id=DATA.D64.A2 state=pass action="Pin performed semantic runtime artifact and byte comparison evidence without new model claims" evidence=DATA.D64.E2
+/evidence id=DATA.D64.E1 class=artifact result=pass source=provenance/minimal-input-d64-2026-10-22.json observed="Verify all eighty-nine D63 protected hashes unchanged with active build cec62f4596bedd9b9488aa75e3d38f04 manifest 04accb50722f2c4f8583e25f0a3b1600bf2d384c820d91cc68e5dc42a1fa21db prior accepted archives and all replayed request hashes preserved"
+/evidence id=DATA.D64.E2 class=artifact result=pass source=provenance/minimal-input-d64-2026-10-22.json observed="Pin D64 source hashes 293 workflow passes sixty-six evaluator checks twenty observer scenarios three installed consultations one independent synthetic SDK archive and 62 final-message comparisons with explicit legacy replay and token limits"
+/evidence id=DATA.D64.E3 class=external_service result=not_run source=provenance/minimal-input-d64-2026-10-22.json observed="Leave actual models new token measurement clinical quality fresh NOVA official evaluation submission publication and deployment unrun"
+/handoff state=ready action="Use the D64 source and byte receipt while preserving installed assets and original saved evidence"

@@ -15,6 +15,8 @@ OWNER_FIELDS = {
 FUNCTIONS = (
     ('workflow.doctor_ear', 'InputBinding', ('candidate_contracts', 'exact_mapping', 'validate_mapping', 'make_fact', 'note_fact')),
     ('workflow.rules.decision', 'GraphEvidence', ('graph_candidates',)),
+    ('workflow.rules.decision', 'ClinicalInput', ('compact_clinical_payload',)),
+    ('workflow.doctor_brain', 'ModelInput', ('message_metrics',)),
     ('workflow.sessions.education', 'EnglishPlan', ('generate_plan',)),
     ('workflow.education', 'EnglishPlan', ('_request', 'parse_plan', 'references')),
     ('workflow.education', 'GuidelineEvidence', ('pack_passages', 'project_documents', 'source_contexts')),
@@ -26,7 +28,8 @@ FUNCTIONS = (
 
 REQUIRED_SOURCES = ('run.py', 'nova_sdk.py', 'settings.py', 'knowledge/graph.py',
                     'knowledge/guidelines.py', 'knowledge/guideline_passages.py',
-                    'workflow/education.py', 'workflow/doctor_brain.py')
+                    'workflow/education.py', 'workflow/doctor_brain.py', 'workflow/model_context.py',
+                    'workflow/rules/clinical_wire.py')
 
 # These are navigation landmarks, not mandatory calls or a compiled topology.
 LANDMARKS = (
@@ -40,7 +43,7 @@ LANDMARKS = (
     dict(id='budget', title='Required questions and budget', owners=['Consultation', 'BudgetPolicy'],
          methods=['refresh_requirements', 'evaluate']),
     dict(id='sync', title='Model guards and budget synchronization', owners=['DoctorBrain', 'NovaSessionClient'],
-         methods=['complete', 'refresh_snapshot', 'apply_snapshot']),
+         methods=['message_metrics', 'complete', 'refresh_snapshot', 'apply_snapshot']),
     dict(id='guidelines', title='Mapped sources and literal evidence packet', owners=['GuidelineLibrary', 'GuidelineEvidence'],
          methods=['read', 'pack_passages', 'project_documents', 'source_contexts']),
     dict(id='projection', title='Shared frozen facts and diagnosis', owners=['ModelProjection'], methods=['fixed_case_payload']),
@@ -54,7 +57,7 @@ LANDMARKS = (
 
 
 def metadata():
-    return dict(version=2, contract='D59', landmarks=list(LANDMARKS),
+    return dict(version=2, contract='D59', input_metrics='D64', landmarks=list(LANDMARKS),
                 owner_fields=OWNER_FIELDS,
                 required_sources=list(REQUIRED_SOURCES),
                 semantics='Observed call landmarks; absence does not imply a skipped requirement')
